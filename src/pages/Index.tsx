@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
   const [patients, setPatients] = useState<Patient[]>(mockPatients);
+  const [printingSector, setPrintingSector] = useState<string | null>(null);
   const { toast } = useToast();
   
   const redPatients = patients.filter((p) => p.sector === "red");
@@ -29,7 +30,16 @@ const Index = () => {
   };
 
   const handlePrint = () => {
-    window.print();
+    setPrintingSector(null);
+    setTimeout(() => window.print(), 100);
+  };
+
+  const handlePrintSector = (sector: string) => {
+    setPrintingSector(sector);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setPrintingSector(null), 500);
+    }, 100);
   };
 
   return (
@@ -92,9 +102,33 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 print:py-2">
         <div className="space-y-4 print:space-y-2">
-          <SectorSection sector="red" patients={redPatients} onUpdatePatient={handleUpdatePatient} />
-          <SectorSection sector="yellow" patients={yellowPatients} onUpdatePatient={handleUpdatePatient} />
-          <SectorSection sector="blue" patients={bluePatients} onUpdatePatient={handleUpdatePatient} />
+          <div className={printingSector && printingSector !== "red" ? "print:hidden" : ""}>
+            <SectorSection 
+              sector="red" 
+              patients={redPatients} 
+              onUpdatePatient={handleUpdatePatient}
+              expandedForPrint={printingSector === "red"}
+              onPrintSector={() => handlePrintSector("red")}
+            />
+          </div>
+          <div className={printingSector && printingSector !== "yellow" ? "print:hidden" : ""}>
+            <SectorSection 
+              sector="yellow" 
+              patients={yellowPatients} 
+              onUpdatePatient={handleUpdatePatient}
+              expandedForPrint={printingSector === "yellow"}
+              onPrintSector={() => handlePrintSector("yellow")}
+            />
+          </div>
+          <div className={printingSector && printingSector !== "blue" ? "print:hidden" : ""}>
+            <SectorSection 
+              sector="blue" 
+              patients={bluePatients} 
+              onUpdatePatient={handleUpdatePatient}
+              expandedForPrint={printingSector === "blue"}
+              onPrintSector={() => handlePrintSector("blue")}
+            />
+          </div>
         </div>
       </main>
 

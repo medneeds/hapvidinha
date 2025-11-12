@@ -1,11 +1,14 @@
 import { Patient, SectorType } from "@/types/patient";
 import { PatientCard } from "./PatientCard";
-import { Activity } from "lucide-react";
+import { Activity, Printer } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface SectorSectionProps {
   sector: SectorType;
   patients: Patient[];
-  onUpdatePatient: (updatedPatient: Patient) => void;
+  onUpdatePatient: (patient: Patient) => void;
+  expandedForPrint?: boolean;
+  onPrintSector?: () => void;
 }
 
 const sectorInfo = {
@@ -29,7 +32,7 @@ const sectorInfo = {
   }
 };
 
-export function SectorSection({ sector, patients, onUpdatePatient }: SectorSectionProps) {
+export function SectorSection({ sector, patients, onUpdatePatient, expandedForPrint = false, onPrintSector }: SectorSectionProps) {
   const info = sectorInfo[sector];
 
   return (
@@ -43,11 +46,23 @@ export function SectorSection({ sector, patients, onUpdatePatient }: SectorSecti
             </div>
             <p className="text-xs text-muted-foreground print:hidden">{info.subtitle}</p>
           </div>
-          <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50 print:px-2 print:py-1">
-            <Activity className="h-4 w-4 text-primary" />
-            <div>
-              <p className="text-[10px] text-muted-foreground">Leitos</p>
-              <p className="text-base font-bold text-foreground">{patients.length}</p>
+          <div className="flex items-center gap-2">
+            {onPrintSector && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={onPrintSector}
+                className="h-8 w-8 print:hidden"
+              >
+                <Printer className="h-3.5 w-3.5" />
+              </Button>
+            )}
+            <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50 print:px-2 print:py-1">
+              <Activity className="h-4 w-4 text-primary" />
+              <div>
+                <p className="text-[10px] text-muted-foreground">Leitos</p>
+                <p className="text-base font-bold text-foreground">{patients.length}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -60,7 +75,12 @@ export function SectorSection({ sector, patients, onUpdatePatient }: SectorSecti
           </div>
         ) : (
           patients.map((patient) => (
-            <PatientCard key={patient.id} patient={patient} onUpdate={onUpdatePatient} />
+            <PatientCard 
+              key={patient.id} 
+              patient={patient} 
+              onUpdate={onUpdatePatient}
+              expandedForPrint={expandedForPrint}
+            />
           ))
         )}
       </div>

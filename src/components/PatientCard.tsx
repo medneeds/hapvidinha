@@ -10,6 +10,7 @@ import { EditPatientDialog } from "./EditPatientDialog";
 interface PatientCardProps {
   patient: Patient;
   onUpdate: (updatedPatient: Patient) => void;
+  expandedForPrint?: boolean;
 }
 
 const sectorConfig = {
@@ -30,7 +31,7 @@ const sectorConfig = {
   }
 };
 
-export function PatientCard({ patient, onUpdate }: PatientCardProps) {
+export function PatientCard({ patient, onUpdate, expandedForPrint = false }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
@@ -115,7 +116,10 @@ export function PatientCard({ patient, onUpdate }: PatientCardProps) {
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="px-2.5 pb-2.5 space-y-2 border-t border-border/50 pt-2 bg-card/50">
+        <div className={cn(
+          "px-2.5 pb-2.5 space-y-2 border-t border-border/50 pt-2 bg-card/50",
+          !expandedForPrint && "print:hidden"
+        )}>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Calendar className="h-3 w-3" />
             <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>
