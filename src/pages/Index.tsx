@@ -5,6 +5,7 @@ import { Patient } from "@/types/patient";
 import { Activity, Users, Clock, Printer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
   const [patients, setPatients] = useState<Patient[]>(mockPatients);
@@ -48,6 +49,7 @@ const Index = () => {
             </div>
 
             <div className="flex gap-3 print:gap-2">
+              <ThemeToggle />
               <Button
                 variant="outline"
                 size="icon"
