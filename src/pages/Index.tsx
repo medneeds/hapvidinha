@@ -2,8 +2,9 @@ import { useState } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock } from "lucide-react";
+import { Activity, Users, Clock, Printer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [patients, setPatients] = useState<Patient[]>(mockPatients);
@@ -26,42 +27,55 @@ const Index = () => {
     });
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 print:static print:border-b-2">
+        <div className="container mx-auto px-4 py-3 print:py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center">
-                <Activity className="h-6 w-6 text-primary-foreground" />
+              <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center print:h-8 print:w-8">
+                <Activity className="h-6 w-6 text-primary-foreground print:h-4 print:w-4" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Mapa de Pacientes</h1>
-                <p className="text-sm text-muted-foreground">Sistema de Controle Hospitalar</p>
+                <h1 className="text-2xl font-bold text-foreground print:text-xl">Mapa de Pacientes</h1>
+                <p className="text-sm text-muted-foreground print:text-xs">Sistema de Controle Hospitalar</p>
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <div className="flex items-center gap-2 bg-muted px-4 py-2 rounded-lg">
-                <Users className="h-5 w-5 text-primary" />
+            <div className="flex gap-3 print:gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePrint}
+                className="print:hidden gap-2"
+              >
+                <Printer className="h-4 w-4" />
+                Imprimir A4
+              </Button>
+              <div className="flex items-center gap-2 bg-muted px-3 py-1.5 rounded-lg print:px-2 print:py-1">
+                <Users className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Total</p>
-                  <p className="text-lg font-bold text-foreground">{totalPatients}</p>
+                  <p className="text-[10px] text-muted-foreground">Total</p>
+                  <p className="text-base font-bold text-foreground">{totalPatients}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 bg-critical/10 px-4 py-2 rounded-lg border border-critical/20">
-                <Activity className="h-5 w-5 text-critical" />
+              <div className="flex items-center gap-2 bg-critical/10 px-3 py-1.5 rounded-lg border border-critical/20 print:px-2 print:py-1">
+                <Activity className="h-4 w-4 text-critical" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Críticos</p>
-                  <p className="text-lg font-bold text-critical">{criticalPatients}</p>
+                  <p className="text-[10px] text-muted-foreground">Críticos</p>
+                  <p className="text-base font-bold text-critical">{criticalPatients}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 bg-muted px-4 py-2 rounded-lg">
-                <Clock className="h-5 w-5 text-primary" />
+              <div className="flex items-center gap-2 bg-muted px-3 py-1.5 rounded-lg print:hidden">
+                <Clock className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Atualizado</p>
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-[10px] text-muted-foreground">Atualizado</p>
+                  <p className="text-xs font-medium text-foreground">
                     {new Date().toLocaleTimeString("pt-BR", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -75,8 +89,8 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
+      <main className="container mx-auto px-4 py-6 print:py-2">
+        <div className="space-y-4 print:space-y-2">
           <SectorSection sector="red" patients={redPatients} onUpdatePatient={handleUpdatePatient} />
           <SectorSection sector="yellow" patients={yellowPatients} onUpdatePatient={handleUpdatePatient} />
           <SectorSection sector="blue" patients={bluePatients} onUpdatePatient={handleUpdatePatient} />
@@ -84,9 +98,9 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-12">
-        <div className="container mx-auto px-4 py-6">
-          <p className="text-center text-sm text-muted-foreground">
+      <footer className="border-t border-border mt-8 print:hidden">
+        <div className="container mx-auto px-4 py-4">
+          <p className="text-center text-xs text-muted-foreground">
             Sistema de Gestão Hospitalar - Todos os direitos reservados
           </p>
         </div>

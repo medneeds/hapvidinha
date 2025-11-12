@@ -121,3 +121,25 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Print Styles for A4 */
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  * {
+    box-shadow: none !important;
+  }
+  
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+}

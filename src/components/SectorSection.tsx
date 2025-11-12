@@ -33,27 +33,27 @@ export function SectorSection({ sector, patients, onUpdatePatient }: SectorSecti
   const info = sectorInfo[sector];
 
   return (
-    <section className="space-y-4">
-      <div className={`bg-gradient-to-r ${info.gradientClass} rounded-xl p-6 border border-border/50`}>
+    <section className="space-y-2 print:space-y-1 print:break-inside-avoid">
+      <div className={`bg-gradient-to-r ${info.gradientClass} rounded-xl p-3 border border-border/50 print:p-2 print:mb-1`}>
         <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-2xl">{info.icon}</span>
-              <h2 className="text-2xl font-bold text-foreground">{info.title}</h2>
+            <div className="flex items-center gap-2 mb-0.5">
+              <span className="text-xl print:text-base">{info.icon}</span>
+              <h2 className="text-xl font-bold text-foreground print:text-base">{info.title}</h2>
             </div>
-            <p className="text-sm text-muted-foreground">{info.subtitle}</p>
+            <p className="text-xs text-muted-foreground print:hidden">{info.subtitle}</p>
           </div>
-          <div className="flex items-center gap-3 bg-card/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-border/50">
-            <Activity className="h-5 w-5 text-primary" />
+          <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50 print:px-2 print:py-1">
+            <Activity className="h-4 w-4 text-primary" />
             <div>
-              <p className="text-xs text-muted-foreground">Leitos ocupados</p>
-              <p className="text-xl font-bold text-foreground">{patients.length}</p>
+              <p className="text-[10px] text-muted-foreground">Leitos</p>
+              <p className="text-base font-bold text-foreground">{patients.length}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-1.5 print:space-y-1">
         {patients.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
             <p>Nenhum paciente neste setor</p>
