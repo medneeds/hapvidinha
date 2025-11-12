@@ -50,12 +50,11 @@ const Index = () => {
             <div className="flex gap-3 print:gap-2">
               <Button
                 variant="outline"
-                size="sm"
+                size="icon"
                 onClick={handlePrint}
-                className="print:hidden gap-2"
+                className="print:hidden"
               >
                 <Printer className="h-4 w-4" />
-                Imprimir A4
               </Button>
               <div className="flex items-center gap-2 bg-muted px-3 py-1.5 rounded-lg print:px-2 print:py-1">
                 <Users className="h-4 w-4 text-primary" />
