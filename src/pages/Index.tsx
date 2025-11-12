@@ -1,14 +1,30 @@
+import { useState } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { mockPatients } from "@/data/mockPatients";
+import { Patient } from "@/types/patient";
 import { Activity, Users, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const redPatients = mockPatients.filter((p) => p.sector === "red");
-  const yellowPatients = mockPatients.filter((p) => p.sector === "yellow");
-  const bluePatients = mockPatients.filter((p) => p.sector === "blue");
+  const [patients, setPatients] = useState<Patient[]>(mockPatients);
+  const { toast } = useToast();
+  
+  const redPatients = patients.filter((p) => p.sector === "red");
+  const yellowPatients = patients.filter((p) => p.sector === "yellow");
+  const bluePatients = patients.filter((p) => p.sector === "blue");
 
-  const totalPatients = mockPatients.length;
+  const totalPatients = patients.length;
   const criticalPatients = redPatients.length;
+
+  const handleUpdatePatient = (updatedPatient: Patient) => {
+    setPatients((prev) =>
+      prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
+    );
+    toast({
+      title: "Paciente atualizado",
+      description: `Os dados do paciente ${updatedPatient.name} foram atualizados com sucesso.`,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,9 +77,9 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="space-y-8">
-          <SectorSection sector="red" patients={redPatients} />
-          <SectorSection sector="yellow" patients={yellowPatients} />
-          <SectorSection sector="blue" patients={bluePatients} />
+          <SectorSection sector="red" patients={redPatients} onUpdatePatient={handleUpdatePatient} />
+          <SectorSection sector="yellow" patients={yellowPatients} onUpdatePatient={handleUpdatePatient} />
+          <SectorSection sector="blue" patients={bluePatients} onUpdatePatient={handleUpdatePatient} />
         </div>
       </main>
 

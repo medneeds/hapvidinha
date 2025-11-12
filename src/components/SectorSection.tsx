@@ -5,6 +5,7 @@ import { Activity } from "lucide-react";
 interface SectorSectionProps {
   sector: SectorType;
   patients: Patient[];
+  onUpdatePatient: (updatedPatient: Patient) => void;
 }
 
 const sectorInfo = {
@@ -28,7 +29,7 @@ const sectorInfo = {
   }
 };
 
-export function SectorSection({ sector, patients }: SectorSectionProps) {
+export function SectorSection({ sector, patients, onUpdatePatient }: SectorSectionProps) {
   const info = sectorInfo[sector];
 
   return (
@@ -59,7 +60,7 @@ export function SectorSection({ sector, patients }: SectorSectionProps) {
           </div>
         ) : (
           patients.map((patient) => (
-            <PatientCard key={patient.id} patient={patient} />
+            <PatientCard key={patient.id} patient={patient} onUpdate={onUpdatePatient} />
           ))
         )}
       </div>

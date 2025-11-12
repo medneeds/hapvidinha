@@ -2,11 +2,14 @@ import { useState } from "react";
 import { Patient } from "@/types/patient";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronUp, Clock, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EditPatientDialog } from "./EditPatientDialog";
 
 interface PatientCardProps {
   patient: Patient;
+  onUpdate: (updatedPatient: Patient) => void;
 }
 
 const sectorConfig = {
@@ -27,17 +30,16 @@ const sectorConfig = {
   }
 };
 
-export function PatientCard({ patient }: PatientCardProps) {
+export function PatientCard({ patient, onUpdate }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
 
   return (
-    <Card className={cn("overflow-hidden transition-all hover:shadow-md", config.color)}>
-      <div
-        className="p-4 cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <div className="flex items-start justify-between gap-4">
+    <>
+      <Card className={cn("overflow-hidden transition-all hover:shadow-md", config.color)}>
+        <div className="p-4">
+          <div className="flex items-start justify-between gap-4">
           <div className="flex-1 grid grid-cols-1 md:grid-cols-7 gap-3 items-start">
             {/* Leito */}
             <div className="flex flex-col">
@@ -84,16 +86,32 @@ export function PatientCard({ patient }: PatientCardProps) {
             </div>
           </div>
 
-          {/* Expand Button */}
-          <button className="flex-shrink-0 p-2 hover:bg-accent/50 rounded-full transition-colors">
-            {isExpanded ? (
-              <ChevronUp className="h-5 w-5 text-foreground" />
-            ) : (
-              <ChevronDown className="h-5 w-5 text-foreground" />
-            )}
-          </button>
+          {/* Action Buttons */}
+          <div className="flex-shrink-0 flex gap-2">
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditDialogOpen(true);
+              }}
+              className="hover:bg-primary hover:text-primary-foreground"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <button 
+              className="flex-shrink-0 p-2 hover:bg-accent/50 rounded-full transition-colors"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-5 w-5 text-foreground" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-foreground" />
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+        </div>
 
       {/* Expanded Content */}
       {isExpanded && (
@@ -157,6 +175,14 @@ export function PatientCard({ patient }: PatientCardProps) {
           </div>
         </div>
       )}
-    </Card>
+      </Card>
+
+      <EditPatientDialog
+        patient={patient}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        onSave={onUpdate}
+      />
+    </>
   );
 }

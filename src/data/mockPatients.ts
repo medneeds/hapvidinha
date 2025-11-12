@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 
 export const mockPatients: Patient[] = [
-  // Sala Vermelha - Cuidados Especiais
+  // Sala Vermelha - Cuidados Especiais (2 leitos)
   {
     id: "1",
     bedNumber: "V01",
@@ -30,22 +30,8 @@ export const mockPatients: Patient[] = [
     admissionHistory: "Paciente vítima de queda de altura (aproximadamente 3m). Encontrado no chão por vizinhos. SAMU acionado. Na chegada Glasgow 10, pupilas isocóricas e fotorreagentes. Ferimento corto-contuso em região temporal direita. Realizado TC de crânio evidenciando hematoma subdural à direita com desvio de linha média. Conduta expectante por neurocirurgia.",
     admissionDate: "2025-11-12 10:15"
   },
-  {
-    id: "3",
-    bedNumber: "V03",
-    name: "Ana Paula Ferreira",
-    age: 72,
-    sector: "red",
-    diagnoses: ["Sepse", "Pneumonia grave"],
-    medicalHistory: ["DPOC", "HAS"],
-    relevantExams: ["Lactato 4.2", "RX tórax: consolidação bibasal"],
-    pendencies: ["Hemocultura", "Cultura escarro"],
-    schedule: ["Antibioticoterapia EV 6/6h", "Gasometria controle"],
-    admissionHistory: "Paciente com quadro de febre há 3 dias (38.5°C), tosse produtiva, dispneia progressiva. Trazida por familiares. Apresenta-se taquidispneica, FR 28ipm, SpO2 88% em ar ambiente. Ausculta pulmonar com crepitações difusas. Iniciado oxigenioterapia, antibioticoterapia empírica e ressuscitação volêmica.",
-    admissionDate: "2025-11-11 22:45"
-  },
 
-  // Observação Amarela
+  // Observação Amarela (7 leitos)
   {
     id: "4",
     bedNumber: "A01",
@@ -88,8 +74,64 @@ export const mockPatients: Patient[] = [
     admissionHistory: "Paciente hipertenso com PA habitualmente controlada, apresentou cefaleia frontal intensa e epistaxe há 2h. Refere não ter tomado medicação anti-hipertensiva há 3 dias. PA de chegada 200x120mmHg. Iniciado captopril SL e clonidina. Sem sinais de lesão de órgão alvo.",
     admissionDate: "2025-11-12 13:40"
   },
+  {
+    id: "10",
+    bedNumber: "A04",
+    name: "Sandra Regina Torres",
+    age: 48,
+    sector: "yellow",
+    diagnoses: ["Broncoespasmo", "Asma agudizada"],
+    medicalHistory: ["Asma", "Rinite alérgica"],
+    relevantExams: ["Peak flow 200 L/min"],
+    pendencies: ["Nebulização", "Reavaliação função pulmonar"],
+    schedule: ["Nebulização 4/4h", "Alta se melhora"],
+    admissionHistory: "Paciente asmática com crise de dispneia há 3h, desencadeada após exposição a poeira domiciliar. Apresenta sibilos difusos, tiragem intercostal leve. SpO2 92% em ar ambiente. Iniciado nebulização com fenoterol e ipratrópio, corticoide EV. Boa resposta inicial.",
+    admissionDate: "2025-11-12 09:15"
+  },
+  {
+    id: "11",
+    bedNumber: "A05",
+    name: "Roberto da Silva Martins",
+    age: 63,
+    sector: "yellow",
+    diagnoses: ["Descompensação cardíaca"],
+    medicalHistory: ["ICC", "HAS", "FA crônica"],
+    relevantExams: ["BNP elevado", "RX tórax: congestão"],
+    pendencies: ["Ajuste diurético", "Ecocardiograma"],
+    schedule: ["Controle diurese", "Reavaliação cardiologia"],
+    admissionHistory: "Paciente com história de ICC, refere piora da dispneia aos esforços há 5 dias, evoluindo para ortopneia e dispneia paroxística noturna. Ao exame: edema de MMII 3+/4+, crepitações bibasais, turgência jugular. Iniciado furosemida EV e ajuste de medicação cardiovascular.",
+    admissionDate: "2025-11-11 18:30"
+  },
+  {
+    id: "12",
+    bedNumber: "A06",
+    name: "Claudia Ferreira Rocha",
+    age: 29,
+    sector: "yellow",
+    diagnoses: ["Pielonefrite"],
+    medicalHistory: ["ITU de repetição"],
+    relevantExams: ["Leucocitose", "EAS: piúria"],
+    pendencies: ["Urocultura", "Antibioticoterapia"],
+    schedule: ["Reavaliação após 48h antibiótico"],
+    admissionHistory: "Paciente com febre (39°C), dor lombar direita, disúria e polaciúria há 2 dias. Giordano positivo à direita. EAS com leucocitúria. Iniciado antibioticoterapia empírica com ceftriaxona e hidratação venosa. Aguardando resultado de urocultura.",
+    admissionDate: "2025-11-12 07:45"
+  },
+  {
+    id: "13",
+    bedNumber: "A07",
+    name: "Marcos Paulo Gomes",
+    age: 51,
+    sector: "yellow",
+    diagnoses: ["Pancreatite aguda leve"],
+    medicalHistory: ["Etilismo"],
+    relevantExams: ["Amilase 450", "Lipase 600"],
+    pendencies: ["Jejum", "Controle da dor"],
+    schedule: ["Reavaliação laboratorial 24h"],
+    admissionHistory: "Paciente com dor abdominal epigástrica em faixa há 12h, de forte intensidade, associada a náuseas e vômitos. Refere ingesta alcoólica importante há 2 dias. Dor à palpação em epigástrio. Amilase e lipase elevadas. Iniciado jejum, hidratação venosa e analgesia.",
+    admissionDate: "2025-11-12 03:20"
+  },
 
-  // Observação Azul
+  // Observação Azul (6 leitos)
   {
     id: "7",
     bedNumber: "Z01",
@@ -131,5 +173,47 @@ export const mockPatients: Patient[] = [
     schedule: ["Alta após melhora sintomática"],
     admissionHistory: "Paciente com cefaleia holocraniana em peso há 8h, de intensidade moderada. Refere estresse no trabalho. Nega febre, náuseas ou alterações visuais. Exame neurológico sem déficits. Sinais vitais estáveis. Realizado analgesia com dipirona e metoclopramida com boa resposta.",
     admissionDate: "2025-11-12 16:30"
+  },
+  {
+    id: "14",
+    bedNumber: "Z04",
+    name: "Lucas Henrique Barbosa",
+    age: 23,
+    sector: "blue",
+    diagnoses: ["Reação alérgica leve"],
+    medicalHistory: ["Rinite alérgica"],
+    relevantExams: ["Sem alterações"],
+    pendencies: ["Observação", "Anti-histamínico"],
+    schedule: ["Alta após 2h observação"],
+    admissionHistory: "Paciente com quadro de urticária generalizada após ingestão de camarão. Nega angioedema ou sinais de anafilaxia. Sem dispneia ou alteração de vias aéreas. Realizado anti-histamínico EV com melhora das lesões. Paciente estável, em observação.",
+    admissionDate: "2025-11-12 17:10"
+  },
+  {
+    id: "15",
+    bedNumber: "Z05",
+    name: "Juliana Santos Pereira",
+    age: 41,
+    sector: "blue",
+    diagnoses: ["Síncope"],
+    medicalHistory: ["Anemia crônica"],
+    relevantExams: ["ECG normal", "Hb 9.5"],
+    pendencies: ["Monitorização", "Investigação anemia"],
+    schedule: ["Observação 6h", "Reavaliação clínica"],
+    admissionHistory: "Paciente relata episódio de síncope há 1h ao levantar-se rapidamente. Recuperação espontânea em segundos. Nega pródromos, palpitações ou dor torácica. ECG sem alterações. Hemograma evidenciou anemia (Hb 9.5). Pressão arterial 100x60mmHg. Paciente hidratada, em observação.",
+    admissionDate: "2025-11-12 12:00"
+  },
+  {
+    id: "16",
+    bedNumber: "Z06",
+    name: "André Luiz Campos",
+    age: 37,
+    sector: "blue",
+    diagnoses: ["Lombalgia aguda"],
+    medicalHistory: ["Sedentarismo"],
+    relevantExams: ["Sem alterações neurológicas"],
+    pendencies: ["Analgesia", "Orientação fisioterapia"],
+    schedule: ["Alta com receita"],
+    admissionHistory: "Paciente com dor lombar aguda após esforço físico (carregar peso) há 6h. Dor de forte intensidade, sem irradiação. Nega alteração de sensibilidade ou força em MMII. Exame físico com contratura paravertebral lombar. Sem sinais de alerta para lombociatalgia. Realizado analgesia com boa resposta.",
+    admissionDate: "2025-11-12 13:25"
   }
 ];
