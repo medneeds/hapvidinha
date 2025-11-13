@@ -91,8 +91,13 @@ export default function MedicalCodesPage() {
   };
 
   const handleSave = async () => {
+    if (role !== 'admin') {
+      toast.error("APENAS ADMINISTRADORES PODEM CRIAR OU EDITAR CÓDIGOS MÉDICOS");
+      return;
+    }
+
     if (!formData.code || !formData.name || !formData.system_description) {
-      toast.error("Preencha todos os campos");
+      toast.error("PREENCHA TODOS OS CAMPOS");
       return;
     }
 
@@ -111,22 +116,22 @@ export default function MedicalCodesPage() {
         .eq("id", editingCode.id);
 
       if (error) {
-        toast.error("Erro ao atualizar código");
+        toast.error("ERRO AO ATUALIZAR CÓDIGO");
         console.error(error);
         return;
       }
 
-      toast.success("Código atualizado com sucesso");
+      toast.success("CÓDIGO ATUALIZADO COM SUCESSO");
     } else {
       const { error } = await supabase.from("medical_codes").insert(dataToSave);
 
       if (error) {
-        toast.error("Erro ao criar código");
+        toast.error("ERRO AO CRIAR CÓDIGO");
         console.error(error);
         return;
       }
 
-      toast.success("Código criado com sucesso");
+      toast.success("CÓDIGO CRIADO COM SUCESSO");
     }
 
     setIsDialogOpen(false);
@@ -136,21 +141,31 @@ export default function MedicalCodesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja deletar este código?")) return;
+    if (role !== 'admin') {
+      toast.error("APENAS ADMINISTRADORES PODEM DELETAR CÓDIGOS MÉDICOS");
+      return;
+    }
+
+    if (!confirm("TEM CERTEZA QUE DESEJA DELETAR ESTE CÓDIGO?")) return;
 
     const { error } = await supabase.from("medical_codes").delete().eq("id", id);
 
     if (error) {
-      toast.error("Erro ao deletar código");
+      toast.error("ERRO AO DELETAR CÓDIGO");
       console.error(error);
       return;
     }
 
-    toast.success("Código deletado com sucesso");
+    toast.success("CÓDIGO DELETADO COM SUCESSO");
     fetchCodes();
   };
 
   const openDialog = (code?: MedicalCode) => {
+    if (role !== 'admin') {
+      toast.error("APENAS ADMINISTRADORES PODEM CRIAR OU EDITAR CÓDIGOS MÉDICOS");
+      return;
+    }
+
     if (code) {
       setEditingCode(code);
       setFormData({
@@ -217,7 +232,12 @@ export default function MedicalCodesPage() {
               className="pl-10 uppercase"
             />
           </div>
-          <Button onClick={() => openDialog()} className="gap-2">
+          <Button 
+            onClick={() => openDialog()} 
+            className="gap-2"
+            disabled={role !== 'admin'}
+            title={role !== 'admin' ? 'APENAS ADMINISTRADORES PODEM ADICIONAR CÓDIGOS' : ''}
+          >
             <Plus className="h-4 w-4" />
             ADICIONAR
           </Button>
@@ -257,6 +277,8 @@ export default function MedicalCodesPage() {
                           size="icon"
                           onClick={() => openDialog(code)}
                           className="h-8 w-8"
+                          disabled={role !== 'admin'}
+                          title={role !== 'admin' ? 'APENAS ADMINISTRADORES' : ''}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -265,6 +287,8 @@ export default function MedicalCodesPage() {
                           size="icon"
                           onClick={() => handleDelete(code.id)}
                           className="h-8 w-8 text-destructive hover:text-destructive"
+                          disabled={role !== 'admin'}
+                          title={role !== 'admin' ? 'APENAS ADMINISTRADORES' : ''}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

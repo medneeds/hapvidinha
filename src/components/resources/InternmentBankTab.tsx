@@ -149,6 +149,16 @@ const InternmentBankTab = () => {
       return;
     }
 
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast({
+        title: "ERRO",
+        description: "USUÁRIO NÃO AUTENTICADO",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase
       .from("internment_requests")
       .insert({
@@ -158,6 +168,7 @@ const InternmentBankTab = () => {
         patient_record: formData.patientRecord.toUpperCase() || null,
         title: formData.title.toUpperCase(),
         content: formData.content.toUpperCase(),
+        created_by: user.id,
       });
 
     if (error) {
