@@ -77,7 +77,7 @@ export default function HandoversPage() {
       const { data, error } = await (supabase as any)
         .from('shift_handovers')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('handover_datetime', { ascending: false });
 
       if (error) throw error;
 
@@ -129,6 +129,18 @@ export default function HandoversPage() {
     return date.toLocaleString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
