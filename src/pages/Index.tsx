@@ -88,16 +88,17 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 print:static print:border-b-2">
+      <header className="border-b border-border/30 bg-gradient-to-b from-card/95 via-card/90 to-card/80 backdrop-blur-xl sticky top-0 z-10 shadow-lg shadow-primary/5 print:static print:border-b-2 print:shadow-none">
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
         <div className="container mx-auto px-4 py-3 print:py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center print:h-8 print:w-8 shadow-md">
+              <div className="h-10 w-10 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center print:h-8 print:w-8 shadow-lg shadow-primary/30 transition-transform hover:scale-105">
                 <ClipboardList className="h-6 w-6 text-primary-foreground print:h-4 print:w-4" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground print:text-xl uppercase">Mapa de Pacientes</h1>
-                <p className="text-sm text-muted-foreground print:text-xs uppercase">Sistema de Controle Hospitalar</p>
+                <h1 className="text-2xl font-bold text-foreground print:text-xl uppercase tracking-tight">Mapa de Pacientes</h1>
+                <p className="text-sm text-muted-foreground print:text-xs uppercase tracking-wide">Sistema de Controle Hospitalar</p>
               </div>
             </div>
 
