@@ -18,6 +18,7 @@ interface RegisterHandoverDialogProps {
 export function RegisterHandoverDialog({ open, onOpenChange, patients }: RegisterHandoverDialogProps) {
   const [notes, setNotes] = useState("");
   const [shiftType, setShiftType] = useState<string>("MATUTINO");
+  const [handoverFrom, setHandoverFrom] = useState("");
   const [handoverTo, setHandoverTo] = useState("");
   const [handoverDatetime, setHandoverDatetime] = useState(() => {
     const now = new Date();
@@ -76,6 +77,7 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
           total_patients: totalPatients,
           occupied_beds: occupiedBeds,
           shift_type: shiftType,
+          handover_from: handoverFrom.trim().toUpperCase() || null,
           handover_to: handoverTo.trim().toUpperCase() || null,
           handover_datetime: new Date(handoverDatetime).toISOString(),
         });
@@ -89,6 +91,7 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
 
       setNotes("");
       setShiftType("MATUTINO");
+      setHandoverFrom("");
       setHandoverTo("");
       setHandoverDatetime(new Date().toISOString().slice(0, 16));
       onOpenChange(false);
@@ -162,15 +165,29 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="handover-from" className="uppercase text-sm font-semibold">
+              Passagem De (Médicos) - Opcional
+            </Label>
+            <input
+              id="handover-from"
+              type="text"
+              value={handoverFrom}
+              onChange={(e) => setHandoverFrom(e.target.value.toUpperCase())}
+              placeholder="NOMES DOS MÉDICOS SEPARADOS POR VÍRGULA"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 uppercase"
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="handover-to" className="uppercase text-sm font-semibold">
-              Passagem Para (Médico) - Opcional
+              Passagem Para (Médicos) - Opcional
             </Label>
             <input
               id="handover-to"
               type="text"
               value={handoverTo}
               onChange={(e) => setHandoverTo(e.target.value.toUpperCase())}
-              placeholder="NOME DO MÉDICO"
+              placeholder="NOMES DOS MÉDICOS SEPARADOS POR VÍRGULA"
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 uppercase"
             />
           </div>

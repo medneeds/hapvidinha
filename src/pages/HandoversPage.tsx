@@ -54,6 +54,7 @@ interface HandoverRecord {
   total_patients: number;
   occupied_beds: number;
   shift_type: string | null;
+  handover_from: string | null;
   handover_to: string | null;
   handover_datetime: string;
 }
@@ -259,9 +260,14 @@ export default function HandoversPage() {
                                   {handover.shift_type}
                                 </Badge>
                               )}
+                              {handover.handover_from && (
+                                <Badge variant="outline" className="uppercase text-xs">
+                                  DE: {handover.handover_from}
+                                </Badge>
+                              )}
                               {handover.handover_to && (
                                 <Badge variant="outline" className="uppercase text-xs">
-                                  → {handover.handover_to}
+                                  PARA: {handover.handover_to}
                                 </Badge>
                               )}
                             </div>
