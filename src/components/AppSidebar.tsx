@@ -1,10 +1,7 @@
 import {
-  FileText,
-  Stethoscope,
   FileSearch,
   ClipboardList,
   BookOpen,
-  Library,
   LogOut,
   ClipboardCheck,
   LayoutDashboard,
@@ -31,27 +28,22 @@ import { ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const menuItems = [
   {
-    title: "MAPA DE PACIENTES",
+    title: "MAPA",
     icon: LayoutDashboard,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
     link: "/",
   },
   {
     title: "PASSAGENS",
     icon: ClipboardCheck,
-    color: "text-primary",
-    bgColor: "bg-primary/10",
     link: "/handovers",
   },
   {
     title: "CÓDIGOS",
     icon: FileSearch,
-    color: "text-purple-500",
-    bgColor: "bg-purple-500/10",
     items: [
       { name: "EXAMES", link: "/codigos?category=exames" },
       { name: "PROCEDIMENTOS", link: "/codigos?category=procedimentos" },
@@ -62,8 +54,6 @@ const menuItems = [
   {
     title: "PROTOCOLOS",
     icon: BookOpen,
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/10",
     items: [
       "SEPSE",
       "IAM",
@@ -75,8 +65,6 @@ const menuItems = [
   {
     title: "PACIENTES",
     icon: ClipboardList,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
     items: [
       { name: "BLOCO DE NOTAS", link: "/resources" },
       { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
@@ -102,22 +90,14 @@ export function AppSidebar() {
   return (
     <Sidebar 
       collapsible="icon" 
-      className="border-r border-border/50 bg-gradient-to-b from-card via-card/95 to-card/90 backdrop-blur-xl transition-all duration-300 data-[state=collapsed]:w-[72px]"
+      className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
     >
-      <SidebarHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
-        <div className={`flex items-center transition-all duration-300 ${!open ? 'justify-center px-0 py-6' : 'gap-4 px-3 py-4'}`}>
-          <div className={`bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/40 ${open ? 'h-9 w-9' : 'h-14 w-14'}`}>
-            <Library className={`text-primary-foreground transition-all duration-300 ${open ? 'h-5 w-5' : 'h-8 w-8'}`} />
-          </div>
+      <SidebarHeader className="border-b border-border px-4 py-3">
+        <div className={`flex items-center justify-between transition-all duration-300`}>
           {open && (
-            <div className="flex-1 animate-fade-in">
-              <h2 className="text-sm font-bold text-foreground uppercase tracking-tight">
-                Recursos
-              </h2>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
-                Médicos
-              </p>
-            </div>
+            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide animate-fade-in">
+              Menu
+            </h2>
           )}
         </div>
       </SidebarHeader>
@@ -127,25 +107,37 @@ export function AppSidebar() {
           <div key={section.title}>
             {/* Direct link item (without subitems) */}
             {section.link && (
-              <SidebarGroup className="p-0">
-                <SidebarGroupLabel 
-                  className={`group/label cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 rounded-lg ${open ? 'h-14 mx-2 gap-4 mb-1' : 'h-[72px] mx-0 justify-center gap-0 my-1'}`}
-                  onClick={() => navigate(section.link)}
-                >
-                  <div className={`${section.bgColor} rounded-xl flex items-center justify-center transition-all duration-300 group-hover/label:scale-105 flex-shrink-0 ${open ? 'h-9 w-9 group-hover/label:shadow-md' : 'h-14 w-14 group-hover/label:shadow-xl group-hover/label:shadow-primary/30'}`}>
-                    <section.icon className={`${section.color} transition-all duration-300 ${open ? 'h-4 w-4' : 'h-8 w-8'}`} />
-                  </div>
-                  {open && (
-                    <div className="flex-1 ml-1 animate-fade-in">
-                      <span className="text-xs font-bold text-foreground uppercase tracking-tight block">
-                        {section.title}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">
-                        Histórico de registros
-                      </span>
-                    </div>
-                  )}
-                </SidebarGroupLabel>
+              <SidebarGroup className="py-0 my-0">
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => handleItemClick(section.link)}
+                      className={cn(
+                        "transition-all duration-200 hover:bg-accent",
+                        open ? "justify-start px-4 py-3 h-auto" : "justify-center py-4 px-0 h-auto",
+                        "border-b border-border"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "flex items-center transition-all duration-200",
+                          open ? "gap-3" : "flex-col gap-1"
+                        )}
+                      >
+                        <section.icon className={cn(
+                          "text-foreground transition-all duration-200",
+                          open ? "h-5 w-5" : "h-6 w-6"
+                        )} />
+                        <span className={cn(
+                          "text-xs font-medium uppercase tracking-wide text-foreground transition-all",
+                          !open && "text-[10px]"
+                        )}>
+                          {section.title}
+                        </span>
+                      </div>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
               </SidebarGroup>
             )}
 
@@ -155,25 +147,34 @@ export function AppSidebar() {
               defaultOpen={false}
               className="group/collapsible"
             >
-              <SidebarGroup className="p-0">
-                <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className={`group/label cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 rounded-lg ${open ? 'h-14 mx-2 gap-4 mb-1' : 'h-[72px] mx-0 justify-center gap-0 my-1'}`}>
-                    <div className={`${section.bgColor} rounded-xl flex items-center justify-center transition-all duration-300 group-hover/label:scale-105 flex-shrink-0 ${open ? 'h-9 w-9 group-hover/label:shadow-md' : 'h-14 w-14 group-hover/label:shadow-xl group-hover/label:shadow-primary/30'}`}>
-                      <section.icon className={`${section.color} transition-all duration-300 ${open ? 'h-4 w-4' : 'h-8 w-8'}`} />
-                    </div>
-                    {open && (
-                      <>
-                        <div className="flex-1 ml-1 animate-fade-in">
-                          <span className="text-xs font-bold text-foreground uppercase tracking-tight block">
+              <SidebarGroup className="py-0 my-0">
+                <CollapsibleTrigger className="w-full">
+                  <SidebarGroupLabel className={cn(
+                    "transition-all duration-200 hover:bg-accent cursor-pointer",
+                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-4 px-0 h-auto",
+                    "border-b border-border"
+                  )}>
+                    <div className={cn(
+                      "flex items-center transition-all duration-200",
+                      open ? "gap-3 w-full" : "flex-col gap-1"
+                    )}>
+                      <section.icon className={cn(
+                        "text-foreground transition-all duration-200",
+                        open ? "h-5 w-5" : "h-6 w-6"
+                      )} />
+                      {open ? (
+                        <>
+                          <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
                             {section.title}
                           </span>
-                          <span className="text-[10px] text-muted-foreground">
-                            {section.items.length} itens
-                          </span>
-                        </div>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]/collapsible:rotate-180 mr-1 flex-shrink-0" />
-                      </>
-                    )}
+                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                        </>
+                      ) : (
+                        <span className="text-[10px] font-medium uppercase tracking-wide text-foreground">
+                          {section.title}
+                        </span>
+                      )}
+                    </div>
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
@@ -190,7 +191,10 @@ export function AppSidebar() {
                               tooltip={itemName}
                               onClick={() => handleItemClick(item)}
                             >
-                              <div className={`rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 ${open ? 'h-2 w-2 ml-1' : 'h-3.5 w-3.5'}`} />
+                              <div className={cn(
+                                "rounded-full bg-primary/20 transition-all duration-200 group-hover/item:scale-150 flex-shrink-0",
+                                open ? "h-2 w-2 ml-1" : "h-3.5 w-3.5"
+                              )} />
                               {open && (
                                 <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
                                   {itemName}
