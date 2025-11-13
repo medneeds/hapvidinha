@@ -62,6 +62,16 @@ const Index = () => {
     });
   };
 
+  const handleDeletePatient = (patientId: string) => {
+    const patient = patients.find(p => p.id === patientId);
+    setPatients((prev) => prev.filter(p => p.id !== patientId));
+    toast({
+      title: "Leito deletado",
+      description: `O leito ${patient?.bedNumber} foi removido com sucesso.`,
+      variant: "destructive",
+    });
+  };
+
   const handlePrint = () => {
     setPrintingSector(null);
     setTimeout(() => window.print(), 100);
@@ -149,6 +159,7 @@ const Index = () => {
               sector="red" 
               patients={redPatients} 
               onUpdatePatient={handleUpdatePatient}
+              onDeletePatient={handleDeletePatient}
               expandedForPrint={printingSector === "red"}
               onPrintSector={() => handlePrintSector("red")}
               onAddExtraBed={() => handleAddExtraBed("red")}
@@ -159,6 +170,7 @@ const Index = () => {
               sector="yellow" 
               patients={yellowPatients} 
               onUpdatePatient={handleUpdatePatient}
+              onDeletePatient={handleDeletePatient}
               expandedForPrint={printingSector === "yellow"}
               onPrintSector={() => handlePrintSector("yellow")}
               onAddExtraBed={() => handleAddExtraBed("yellow")}
@@ -169,6 +181,7 @@ const Index = () => {
               sector="blue" 
               patients={bluePatients} 
               onUpdatePatient={handleUpdatePatient}
+              onDeletePatient={handleDeletePatient}
               expandedForPrint={printingSector === "blue"}
               onPrintSector={() => handlePrintSector("blue")}
               onAddExtraBed={() => handleAddExtraBed("blue")}

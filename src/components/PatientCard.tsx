@@ -3,13 +3,14 @@ import { Patient } from "@/types/patient";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 
 interface PatientCardProps {
   patient: Patient;
   onUpdate: (updatedPatient: Patient) => void;
+  onDelete?: (patientId: string) => void;
   expandedForPrint?: boolean;
 }
 
@@ -31,7 +32,7 @@ const sectorConfig = {
   }
 };
 
-export function PatientCard({ patient, onUpdate, expandedForPrint = false }: PatientCardProps) {
+export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = false }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
@@ -151,6 +152,21 @@ export function PatientCard({ patient, onUpdate, expandedForPrint = false }: Pat
             >
               <Edit className="h-3.5 w-3.5" />
             </Button>
+            {onDelete && (
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm('Tem certeza que deseja deletar este leito?')) {
+                    onDelete(patient.id);
+                  }
+                }}
+                className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-all"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
             <button 
               className="flex-shrink-0 p-1.5 hover:bg-accent/50 rounded-md transition-colors"
               onClick={() => setIsExpanded(!isExpanded)}

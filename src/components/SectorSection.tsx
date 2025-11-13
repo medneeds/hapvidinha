@@ -9,6 +9,7 @@ interface SectorSectionProps {
   sector: SectorType;
   patients: Patient[];
   onUpdatePatient: (patient: Patient) => void;
+  onDeletePatient?: (patientId: string) => void;
   expandedForPrint?: boolean;
   onPrintSector?: () => void;
   onAddExtraBed?: () => void;
@@ -35,7 +36,7 @@ const sectorInfo = {
   }
 };
 
-export function SectorSection({ sector, patients, onUpdatePatient, expandedForPrint = false, onPrintSector, onAddExtraBed }: SectorSectionProps) {
+export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, expandedForPrint = false, onPrintSector, onAddExtraBed }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const [isOpen, setIsOpen] = useState(true);
 
@@ -99,6 +100,7 @@ export function SectorSection({ sector, patients, onUpdatePatient, expandedForPr
               key={patient.id} 
               patient={patient} 
               onUpdate={onUpdatePatient}
+              onDelete={onDeletePatient}
               expandedForPrint={expandedForPrint}
             />
           ))
