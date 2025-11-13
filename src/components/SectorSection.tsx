@@ -1,6 +1,6 @@
 import { Patient, SectorType } from "@/types/patient";
 import { PatientCard } from "./PatientCard";
-import { Activity, Printer, Plus, ChevronDown } from "lucide-react";
+import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
@@ -87,8 +87,17 @@ function SortablePatientCard(props: SortablePatientCardProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <PatientCard {...props} />
+    <div ref={setNodeRef} style={style} className="flex items-center gap-2">
+      <button
+        className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-4 w-4 text-muted-foreground" />
+      </button>
+      <div className="flex-1">
+        <PatientCard {...props} />
+      </div>
     </div>
   );
 }

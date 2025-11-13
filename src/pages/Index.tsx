@@ -3,7 +3,7 @@ import { SectorSection } from "@/components/SectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -74,8 +74,17 @@ function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <PatientCard {...props} />
+    <div ref={setNodeRef} style={style} className="flex items-center gap-2">
+      <button
+        className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-4 w-4 text-muted-foreground" />
+      </button>
+      <div className="flex-1">
+        <PatientCard {...props} />
+      </div>
     </div>
   );
 }
