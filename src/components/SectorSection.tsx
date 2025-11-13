@@ -177,7 +177,7 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
         </div>
       </div>
 
-      <CollapsibleContent className="space-y-1.5 print:grid print:grid-cols-2 print:gap-x-2 print:gap-y-0.5">
+      <CollapsibleContent className="space-y-1.5 print:space-y-0.5">
         {displayPatients.length === 0 ? (
           <div className={`text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50 ${printOnlySelected ? 'print:hidden' : ''}`}>
             <p>Nenhum paciente neste setor</p>

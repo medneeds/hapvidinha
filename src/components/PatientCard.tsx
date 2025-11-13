@@ -107,7 +107,7 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
         )}>
           <div className={cn(
             "flex items-center justify-between gap-3",
-            !expandedForPrint && "print:flex-col print:items-start print:gap-0.5"
+            !expandedForPrint && "print:flex print:flex-row print:items-center print:gap-1 print:justify-between print:w-full"
           )}>
             {selectionMode && onToggleSelection && (
               <div className="flex items-center justify-center print:hidden flex-shrink-0">
@@ -120,16 +120,16 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
             )}
             <div className={cn(
               "flex-1 grid grid-cols-1 md:grid-cols-7 gap-2 items-start",
-              !expandedForPrint && "print:flex print:flex-col print:gap-0.5 print:w-full"
+              !expandedForPrint && "print:flex print:flex-row print:gap-2 print:items-center print:w-full print:justify-between"
             )}>
               {/* Leito */}
               <div className={cn(
                 "flex flex-col",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5"
+                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-shrink-0"
               )}>
                 <span className={cn(
                   "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px]"
+                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
                 )}>Leito:</span>
                 <Badge className={cn("w-fit text-xs py-0 px-2", config.badgeColor, !expandedForPrint && "print:text-[8px] print:py-0 print:px-1")}>
                   {patient.bedNumber}
@@ -139,17 +139,17 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
               {/* Nome e Idade */}
               <div className={cn(
                 "flex flex-col md:col-span-2",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5"
+                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1 print:min-w-0"
               )}>
                 <span className={cn(
                   "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px]"
+                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
                 )}>Paciente:</span>
-                <div className={cn(!expandedForPrint && "print:flex print:items-center print:gap-0.5", "group/name relative")}>
+                <div className={cn(!expandedForPrint && "print:flex print:items-center print:gap-0.5 print:truncate", "group/name relative")}>
                   <div className="flex items-center gap-1">
                     <p className={cn(
                       "font-semibold text-sm text-foreground leading-tight uppercase",
-                      !expandedForPrint && "print:text-[8.5px] print:inline print:leading-none"
+                      !expandedForPrint && "print:text-[8.5px] print:inline print:leading-none print:truncate"
                     )}>{patient.name}</p>
                     <Button
                       size="icon"
@@ -171,11 +171,11 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
               {/* Hipóteses Diagnósticas */}
               <div className={cn(
                 "flex flex-col md:col-span-2",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5"
+                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1"
               )}>
                 <span className={cn(
                   "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px]"
+                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
                 )}>Diagnósticos:</span>
                 <div className="flex flex-wrap gap-1 print:gap-0.5">
                   {patient.diagnoses.map((diagnosis, idx) => (
@@ -192,15 +192,15 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
               {/* Pendências */}
               <div className={cn(
                 "flex flex-col md:col-span-2",
-                !expandedForPrint && "print:flex-row print:items-start print:gap-0.5"
+                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1"
               )}>
                 <span className={cn(
                   "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px]"
+                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
                 )}>Pendências:</span>
                 <ul className={cn(
                   "text-xs space-y-0 uppercase",
-                  !expandedForPrint && "print:text-[7.5px] print:inline"
+                  !expandedForPrint && "print:text-[7.5px] print:inline print:truncate"
                 )}>
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
                     <li key={idx} className={cn(

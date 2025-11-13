@@ -187,41 +187,41 @@ All colors MUST be HSL.
     margin-bottom: 1.5mm !important;
   }
   
-  /* Layout em grid para pacientes - 2 colunas para melhor aproveitamento */
+  /* Layout em linha única para pacientes - aproveitar largura total */
   .print\:grid {
-    display: grid !important;
+    display: block !important;
   }
   
   .print\:grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: none !important;
   }
   
   .print\:gap-x-2 {
-    column-gap: 2mm !important;
+    column-gap: 0 !important;
   }
   
   .print\:gap-y-0\.5 {
-    row-gap: 1mm !important;
+    row-gap: 0 !important;
   }
   
   .print\:w-full {
     width: 100% !important;
   }
   
-  /* Cards de pacientes organizados verticalmente dentro de cada coluna */
+  /* Cards de pacientes em linha horizontal */
   .print\:flex-col {
-    flex-direction: column !important;
+    flex-direction: row !important;
   }
   
   .print\:gap-0\.5 {
     gap: 0.5mm !important;
   }
   
-  /* Cards de pacientes mais compactos */
+  /* Cards de pacientes mais compactos ocupando linha inteira */
   .print\:break-inside-avoid {
     page-break-inside: avoid;
     break-inside: avoid;
-    margin-bottom: 0 !important;
+    margin-bottom: 0.5mm !important;
     width: 100%;
   }
   
@@ -233,9 +233,21 @@ All colors MUST be HSL.
     align-items: flex-start !important;
   }
   
+  .print\:items-center {
+    align-items: center !important;
+  }
+  
   /* Layout em linha otimizado */
   .print\:flex-row {
     flex-direction: row !important;
+  }
+  
+  .print\:flex {
+    display: flex !important;
+  }
+  
+  .print\:justify-between {
+    justify-content: space-between !important;
   }
   
   .print\:flex {
