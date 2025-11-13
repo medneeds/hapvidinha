@@ -4,9 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface PatientCardProps {
   patient: Patient;
@@ -45,6 +46,24 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
+  const { toast } = useToast();
+
+  const handleCopyName = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(patient.name);
+      toast({
+        title: "Nome copiado",
+        description: `"${patient.name}" foi copiado para a área de transferência.`,
+      });
+    } catch (err) {
+      toast({
+        title: "Erro ao copiar",
+        description: "Não foi possível copiar o nome.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const checkboxColor = {
     red: "data-[state=checked]:bg-critical data-[state=checked]:border-critical",
@@ -104,11 +123,22 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
                   "text-[10px] font-medium text-muted-foreground mb-0.5",
                   !expandedForPrint && "print:mb-0 print:text-[8px]"
                 )}>Paciente:</span>
-                <div className={cn(!expandedForPrint && "print:flex print:items-center print:gap-1")}>
-                  <p className={cn(
-                    "font-semibold text-sm text-foreground leading-tight uppercase",
-                    !expandedForPrint && "print:text-[9px] print:inline"
-                  )}>{patient.name}</p>
+                <div className={cn(!expandedForPrint && "print:flex print:items-center print:gap-1", "group/name relative")}>
+                  <div className="flex items-center gap-1">
+                    <p className={cn(
+                      "font-semibold text-sm text-foreground leading-tight uppercase",
+                      !expandedForPrint && "print:text-[9px] print:inline"
+                    )}>{patient.name}</p>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={handleCopyName}
+                      className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary"
+                      title="Copiar nome"
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
                   <p className={cn(
                     "text-xs text-muted-foreground",
                     !expandedForPrint && "print:text-[8px] print:inline"
