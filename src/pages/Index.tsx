@@ -3,7 +3,7 @@ import { SectorSection } from "@/components/SectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Plus, StickyNote, Edit, List, X, FileText } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "hospital_patients_data";
@@ -46,6 +47,8 @@ const Index = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [newChecklistItem, setNewChecklistItem] = useState("");
+  const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(true);
+  const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(true);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
@@ -410,57 +413,82 @@ const Index = () => {
 
               {/* Pacientes Fora das Alas Section */}
               <div className="mt-6 print:hidden">
-                <Card className="border-2 border-muted-foreground/20">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
-                        <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                        Pacientes Fora das Alas
-                      </CardTitle>
-                      <Button
-                        size="sm"
-                        onClick={() => handleAddExtraBed("outside")}
-                        className="h-8 px-3 text-xs"
-                      >
-                        <Plus className="h-3.5 w-3.5 mr-1" />
-                        Adicionar
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {outsidePatients.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-4">
-                        Nenhum paciente fora das alas
-                      </p>
-                    ) : (
-                      <div className="space-y-2">
-                        {outsidePatients.map((patient) => (
-                          <PatientCard
-                            key={patient.id}
-                            patient={patient}
-                            onUpdate={handleUpdatePatient}
-                            onDelete={handleDeletePatient}
-                            selectionMode={selectionMode}
-                            isSelected={selectedPatients.has(patient.id)}
-                            onToggleSelection={handleToggleSelection}
-                          />
-                        ))}
+                <Collapsible open={isOutsideSectionOpen} onOpenChange={setIsOutsideSectionOpen}>
+                  <Card className="border-2 border-muted-foreground/20">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <CollapsibleTrigger asChild>
+                          <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                            <ChevronDown className={`h-5 w-5 transition-transform ${isOutsideSectionOpen ? '' : '-rotate-90'}`} />
+                            <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
+                              <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                              Pacientes Fora das Alas
+                            </CardTitle>
+                          </button>
+                        </CollapsibleTrigger>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => handleAddExtraBed("outside")}
+                            className="h-8 px-3 text-xs"
+                          >
+                            <Plus className="h-3.5 w-3.5 mr-1" />
+                            Adicionar
+                          </Button>
+                          <div className="flex items-center gap-2 bg-muted/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50">
+                            <Activity className="h-4 w-4 text-primary" />
+                            <div>
+                              <p className="text-[10px] text-muted-foreground">Total</p>
+                              <p className="text-base font-bold text-foreground">{outsidePatients.length}</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
+                    </CardHeader>
+                    <CollapsibleContent>
+                      <CardContent className="space-y-2">
+                        {outsidePatients.length === 0 ? (
+                          <p className="text-sm text-muted-foreground text-center py-4">
+                            Nenhum paciente fora das alas
+                          </p>
+                        ) : (
+                          <div className="space-y-2">
+                            {outsidePatients.map((patient) => (
+                              <PatientCard
+                                key={patient.id}
+                                patient={patient}
+                                onUpdate={handleUpdatePatient}
+                                onDelete={handleDeletePatient}
+                                selectionMode={selectionMode}
+                                isSelected={selectedPatients.has(patient.id)}
+                                onToggleSelection={handleToggleSelection}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </CollapsibleContent>
+                  </Card>
+                </Collapsible>
               </div>
 
               {/* Anotações e Lembretes Section */}
               <div className="mt-6 print:hidden">
-                <Card className="border-2 border-muted-foreground/20">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
-                      <StickyNote className="h-4 w-4 sm:h-5 sm:w-5" />
-                      Anotações e Lembretes
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                <Collapsible open={isNotesSectionOpen} onOpenChange={setIsNotesSectionOpen}>
+                  <Card className="border-2 border-muted-foreground/20">
+                    <CardHeader className="pb-3">
+                      <CollapsibleTrigger asChild>
+                        <button className="flex items-center gap-2 hover:opacity-80 transition-opacity w-full">
+                          <ChevronDown className={`h-5 w-5 transition-transform ${isNotesSectionOpen ? '' : '-rotate-90'}`} />
+                          <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
+                            <StickyNote className="h-4 w-4 sm:h-5 sm:w-5" />
+                            Anotações e Lembretes
+                          </CardTitle>
+                        </button>
+                      </CollapsibleTrigger>
+                    </CardHeader>
+                    <CollapsibleContent>
+                      <CardContent>
                     <Tabs defaultValue="text" className="w-full">
                       <TabsList className="grid w-full grid-cols-2 mb-4">
                         <TabsTrigger value="text" className="flex items-center gap-2">
@@ -549,8 +577,10 @@ const Index = () => {
                         </p>
                       </TabsContent>
                     </Tabs>
-                  </CardContent>
-                </Card>
+                      </CardContent>
+                    </CollapsibleContent>
+                  </Card>
+                </Collapsible>
               </div>
             </div>
           </main>
