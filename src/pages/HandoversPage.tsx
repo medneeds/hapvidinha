@@ -72,7 +72,7 @@ export default function HandoversPage() {
   const fetchHandovers = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('shift_handovers')
         .select('*')
         .order('created_at', { ascending: false });
@@ -96,7 +96,7 @@ export default function HandoversPage() {
     if (!handoverToDelete) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('shift_handovers')
         .delete()
         .eq('id', handoverToDelete);

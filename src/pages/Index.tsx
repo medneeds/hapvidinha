@@ -456,12 +456,12 @@ const Index = () => {
                   <ThemeToggle />
                   <Button
                     variant="default"
-                    size="icon"
                     onClick={() => setHandoverDialogOpen(true)}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-primary hover:bg-primary/90"
+                    className="print:hidden bg-primary hover:bg-primary/90 gap-2"
                     title="Registrar Passagem de Plantão"
                   >
-                    <ClipboardCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <ClipboardCheck className="h-4 w-4" />
+                    <span className="hidden sm:inline uppercase tracking-wide font-semibold">Registrar Passagem</span>
                   </Button>
                   <Button
                     variant="outline"
