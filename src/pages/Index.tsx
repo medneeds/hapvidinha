@@ -436,9 +436,8 @@ const Index = () => {
                           <Plus className="h-3.5 w-3.5" />
                         </Button>
                         <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50">
-                          <Activity className="h-4 w-4 text-primary" />
                           <div>
-                            <p className="text-[10px] text-muted-foreground">Pacientes</p>
+                            <p className="text-[10px] text-muted-foreground uppercase">Pacientes</p>
                             <p className="text-base font-bold text-foreground">{outsidePatients.length}</p>
                           </div>
                         </div>

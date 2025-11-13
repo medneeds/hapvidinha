@@ -87,9 +87,8 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
               </Button>
             )}
             <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50 print:px-2 print:py-1">
-              <Activity className="h-4 w-4 text-primary" />
               <div>
-                <p className="text-[10px] text-muted-foreground">Leitos</p>
+                <p className="text-[10px] text-muted-foreground uppercase">Leitos</p>
                 <p className="text-base font-bold text-foreground">{patients.length}</p>
               </div>
             </div>
