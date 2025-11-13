@@ -6,6 +6,7 @@ import {
   BookOpen,
   Library,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -58,9 +59,10 @@ const menuItems = [
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
     items: [
-      "PADRÃO DE INTERNAÇÃO",
-      "HISTÓRIA CLÍNICA",
-      "REVISÃO DE SISTEMAS",
+      { name: "BLOCO DE NOTAS", link: "/notes" },
+      { name: "PADRÃO DE INTERNAÇÃO", link: null },
+      { name: "HISTÓRIA CLÍNICA", link: null },
+      { name: "REVISÃO DE SISTEMAS", link: null },
     ],
   },
   {
@@ -79,6 +81,13 @@ const menuItems = [
 
 export function AppSidebar() {
   const { open } = useSidebar();
+  const navigate = useNavigate();
+
+  const handleItemClick = (item: string | { name: string; link: string | null }) => {
+    if (typeof item === 'object' && item.link) {
+      navigate(item.link);
+    }
+  };
 
   return (
     <Sidebar 
@@ -134,21 +143,27 @@ export function AppSidebar() {
                 <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                   <SidebarGroupContent className="px-2">
                     <SidebarMenu>
-                      {section.items.map((item, itemIndex) => (
-                        <SidebarMenuItem key={item}>
-                          <SidebarMenuButton
-                            className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg mb-1 hover:shadow-sm hover:translate-x-1 gap-3"
-                            tooltip={item}
-                          >
-                            <div className={`h-2 w-2 rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 ml-1`} />
-                            {open && (
-                              <span className="flex-1 text-left font-medium ml-1">
-                                {item}
-                              </span>
-                            )}
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))}
+                      {section.items.map((item, itemIndex) => {
+                        const itemName = typeof item === 'string' ? item : item.name;
+                        const itemKey = typeof item === 'string' ? item : item.name;
+                        
+                        return (
+                          <SidebarMenuItem key={itemKey}>
+                            <SidebarMenuButton
+                              className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg mb-1 hover:shadow-sm hover:translate-x-1 gap-3 cursor-pointer"
+                              tooltip={itemName}
+                              onClick={() => handleItemClick(item)}
+                            >
+                              <div className={`h-2 w-2 rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 ml-1`} />
+                              {open && (
+                                <span className="flex-1 text-left font-medium ml-1">
+                                  {itemName}
+                                </span>
+                              )}
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
                     </SidebarMenu>
                   </SidebarGroupContent>
                 </CollapsibleContent>
