@@ -21,8 +21,8 @@ interface SectorSectionProps {
 
 const sectorInfo = {
   red: {
-    title: "Sala Vermelha",
-    subtitle: "Cuidados Especiais",
+    title: "Cuidados Especiais",
+    subtitle: "Sala Vermelha",
     icon: "🔴",
     gradientClass: "bg-gradient-critical"
   },
