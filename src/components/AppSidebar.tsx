@@ -82,15 +82,15 @@ export function AppSidebar() {
   return (
     <Sidebar 
       collapsible="icon" 
-      className="border-r border-border/50 bg-gradient-to-b from-card via-card/95 to-card/90 backdrop-blur-xl"
+      className="border-r border-border/50 bg-gradient-to-b from-card via-card/95 to-card/90 backdrop-blur-xl transition-all duration-300"
     >
       <SidebarHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
-        <div className="flex items-center gap-4 px-3 py-4">
-          <div className="h-9 w-9 bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 transition-transform hover:scale-105">
-            <Library className="h-5 w-5 text-primary-foreground" />
+        <div className={`flex items-center gap-4 px-3 py-4 transition-all duration-300 ${!open ? 'justify-center' : ''}`}>
+          <div className={`bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-110 hover:shadow-primary/50 ${open ? 'h-9 w-9' : 'h-10 w-10'}`}>
+            <Library className={`text-primary-foreground transition-all duration-300 ${open ? 'h-5 w-5' : 'h-6 w-6'}`} />
           </div>
           {open && (
-            <div className="flex-1">
+            <div className="flex-1 animate-fade-in">
               <h2 className="text-sm font-bold text-foreground uppercase tracking-tight">
                 Recursos
               </h2>
@@ -111,13 +111,13 @@ export function AppSidebar() {
             >
               <SidebarGroup className="p-0">
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className={`group/label h-14 cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 mx-2 rounded-lg mb-1 gap-4`}>
-                    <div className={`h-9 w-9 ${section.bgColor} rounded-lg flex items-center justify-center transition-all duration-300 group-hover/label:scale-110 group-hover/label:shadow-md flex-shrink-0`}>
-                      <section.icon className={`h-4 w-4 ${section.color}`} />
+                  <SidebarGroupLabel className={`group/label cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 rounded-lg mb-1 gap-4 ${open ? 'h-14 mx-2' : 'h-12 mx-1 justify-center'}`}>
+                    <div className={`${section.bgColor} rounded-lg flex items-center justify-center transition-all duration-300 group-hover/label:scale-110 group-hover/label:shadow-lg flex-shrink-0 ${open ? 'h-9 w-9 group-hover/label:shadow-md' : 'h-10 w-10 group-hover/label:shadow-xl'}`}>
+                      <section.icon className={`${section.color} transition-all duration-300 ${open ? 'h-4 w-4' : 'h-5 w-5'}`} />
                     </div>
                     {open && (
                       <>
-                        <div className="flex-1 ml-1">
+                        <div className="flex-1 ml-1 animate-fade-in">
                           <span className="text-xs font-bold text-foreground uppercase tracking-tight block">
                             {section.title}
                           </span>
@@ -140,13 +140,13 @@ export function AppSidebar() {
                         return (
                           <SidebarMenuItem key={itemKey}>
                             <SidebarMenuButton
-                              className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg mb-1 hover:shadow-sm hover:translate-x-1 gap-3 cursor-pointer"
+                              className={`group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg mb-1 hover:shadow-sm gap-3 cursor-pointer ${open ? 'hover:translate-x-1' : 'justify-center'}`}
                               tooltip={itemName}
                               onClick={() => handleItemClick(item)}
                             >
-                              <div className={`h-2 w-2 rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 ml-1`} />
+                              <div className={`rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 ${open ? 'h-2 w-2 ml-1' : 'h-2.5 w-2.5'}`} />
                               {open && (
-                                <span className="flex-1 text-left font-medium ml-1">
+                                <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
                                   {itemName}
                                 </span>
                               )}
@@ -159,8 +159,8 @@ export function AppSidebar() {
                 </CollapsibleContent>
               </SidebarGroup>
             </Collapsible>
-            {index < menuItems.length - 1 && open && (
-              <div className="mx-4 my-2 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            {index < menuItems.length - 1 && (
+              <div className={`my-2 h-px bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${open ? 'mx-4' : 'mx-2'}`} />
             )}
           </div>
         ))}
