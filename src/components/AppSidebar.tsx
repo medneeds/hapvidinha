@@ -5,6 +5,7 @@ import {
   ClipboardList,
   BookOpen,
   Library,
+  LogOut,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -26,6 +27,8 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 const menuItems = [
   {
@@ -72,6 +75,7 @@ const menuItems = [
 export function AppSidebar() {
   const { open } = useSidebar();
   const navigate = useNavigate();
+  const { signOut, user } = useAuth();
 
   const handleItemClick = (item: string | { name: string; link: string | null }) => {
     if (typeof item === 'object' && item.link) {
@@ -165,6 +169,29 @@ export function AppSidebar() {
           </div>
         ))}
       </SidebarContent>
+
+      {/* Logout Button */}
+      <div className={`border-t border-border/50 transition-all duration-300 ${open ? 'p-2' : 'p-3'}`}>
+        <Button
+          variant="ghost"
+          onClick={signOut}
+          className={`w-full transition-all duration-300 hover:bg-destructive/10 hover:text-destructive hover:border-l-2 hover:border-l-destructive rounded-lg ${open ? 'justify-start gap-3 h-12' : 'justify-center h-12'}`}
+        >
+          <div className="bg-destructive/10 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 flex-shrink-0 h-9 w-9">
+            <LogOut className={`text-destructive transition-all duration-300 ${open ? 'h-4 w-4' : 'h-5 w-5'}`} />
+          </div>
+          {open && (
+            <div className="flex-1 text-left animate-fade-in">
+              <span className="text-xs font-bold uppercase tracking-tight block">
+                Sair
+              </span>
+              <span className="text-[10px] text-muted-foreground">
+                {user?.user_metadata?.username || user?.email?.split('@')[0]}
+              </span>
+            </div>
+          )}
+        </Button>
+      </div>
     </Sidebar>
   );
 }
