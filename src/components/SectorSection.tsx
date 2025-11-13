@@ -42,9 +42,9 @@ export function SectorSection({ sector, patients, onUpdatePatient, expandedForPr
           <div>
             <div className="flex items-center gap-2 mb-0.5">
               <span className="text-xl print:text-base">{info.icon}</span>
-              <h2 className="text-xl font-bold text-foreground print:text-base">{info.title}</h2>
+              <h2 className="text-xl font-bold text-foreground print:text-base uppercase">{info.title}</h2>
             </div>
-            <p className="text-xs text-muted-foreground print:hidden">{info.subtitle}</p>
+            <p className="text-xs text-muted-foreground print:hidden uppercase">{info.subtitle}</p>
           </div>
           <div className="flex items-center gap-2">
             {onPrintSector && (

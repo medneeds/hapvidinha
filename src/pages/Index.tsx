@@ -53,8 +53,8 @@ const Index = () => {
                 <Activity className="h-6 w-6 text-primary-foreground print:h-4 print:w-4" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground print:text-xl">Mapa de Pacientes</h1>
-                <p className="text-sm text-muted-foreground print:text-xs">Sistema de Controle Hospitalar</p>
+                <h1 className="text-2xl font-bold text-foreground print:text-xl uppercase">Mapa de Pacientes</h1>
+                <p className="text-sm text-muted-foreground print:text-xs uppercase">Sistema de Controle Hospitalar</p>
               </div>
             </div>
 

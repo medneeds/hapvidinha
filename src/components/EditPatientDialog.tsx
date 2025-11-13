@@ -29,7 +29,19 @@ export function EditPatientDialog({
   const [formData, setFormData] = useState(patient);
 
   const handleSave = () => {
-    onSave(formData);
+    // Garantir que todos os campos de texto estejam em uppercase
+    const uppercaseData = {
+      ...formData,
+      name: formData.name.toUpperCase(),
+      bedNumber: formData.bedNumber.toUpperCase(),
+      diagnoses: formData.diagnoses.map(d => d.toUpperCase()),
+      medicalHistory: formData.medicalHistory.map(m => m.toUpperCase()),
+      relevantExams: formData.relevantExams.map(e => e.toUpperCase()),
+      pendencies: formData.pendencies.map(p => p.toUpperCase()),
+      schedule: formData.schedule.map(s => s.toUpperCase()),
+      admissionHistory: formData.admissionHistory.toUpperCase(),
+    };
+    onSave(uppercaseData);
     onOpenChange(false);
   };
 
@@ -114,9 +126,9 @@ export function EditPatientDialog({
           <div key={idx} className="flex gap-1.5">
             <Input
               value={item}
-              onChange={(e) => updateItem(field, idx, e.target.value)}
+              onChange={(e) => updateItem(field, idx, e.target.value.toUpperCase())}
               placeholder={`${label} ${idx + 1}`}
-              className="h-9 text-sm"
+              className="h-9 text-sm uppercase"
             />
             <Button
               type="button"
@@ -169,8 +181,8 @@ export function EditPatientDialog({
               </div>
               <Input
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="h-9"
+                onChange={(e) => setFormData({ ...formData, name: e.target.value.toUpperCase() })}
+                className="h-9 uppercase"
               />
             </div>
 
@@ -215,9 +227,9 @@ export function EditPatientDialog({
               <Input
                 value={formData.bedNumber}
                 onChange={(e) =>
-                  setFormData({ ...formData, bedNumber: e.target.value })
+                  setFormData({ ...formData, bedNumber: e.target.value.toUpperCase() })
                 }
-                className="h-9"
+                className="h-9 uppercase"
               />
             </div>
 
@@ -284,10 +296,10 @@ export function EditPatientDialog({
             <Textarea
               value={formData.admissionHistory}
               onChange={(e) =>
-                setFormData({ ...formData, admissionHistory: e.target.value })
+                setFormData({ ...formData, admissionHistory: e.target.value.toUpperCase() })
               }
               rows={5}
-              className="text-sm resize-none"
+              className="text-sm resize-none uppercase"
             />
           </div>
         </div>

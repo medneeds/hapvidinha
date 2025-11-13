@@ -76,7 +76,7 @@ export function PatientCard({ patient, onUpdate, expandedForPrint = false }: Pat
                 )}>Paciente:</span>
                 <div className={cn(!expandedForPrint && "print:flex print:items-center print:gap-1")}>
                   <p className={cn(
-                    "font-semibold text-sm text-foreground leading-tight",
+                    "font-semibold text-sm text-foreground leading-tight uppercase",
                     !expandedForPrint && "print:text-[9px] print:inline"
                   )}>{patient.name}</p>
                   <p className={cn(
@@ -98,7 +98,7 @@ export function PatientCard({ patient, onUpdate, expandedForPrint = false }: Pat
                 <div className="flex flex-wrap gap-1">
                   {patient.diagnoses.map((diagnosis, idx) => (
                     <Badge key={idx} variant="secondary" className={cn(
-                      "text-[10px] py-0 px-1.5",
+                      "text-[10px] py-0 px-1.5 uppercase",
                       !expandedForPrint && "print:text-[8px] print:py-0 print:px-1"
                     )}>
                       {diagnosis}
@@ -117,7 +117,7 @@ export function PatientCard({ patient, onUpdate, expandedForPrint = false }: Pat
                   !expandedForPrint && "print:mb-0 print:text-[8px]"
                 )}>Pendências:</span>
                 <ul className={cn(
-                  "text-xs space-y-0",
+                  "text-xs space-y-0 uppercase",
                   !expandedForPrint && "print:text-[8px] print:inline"
                 )}>
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
@@ -179,8 +179,8 @@ export function PatientCard({ patient, onUpdate, expandedForPrint = false }: Pat
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Antecedentes */}
             <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground">Antecedentes Mórbidos</h4>
-              <ul className="space-y-0">
+              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase">Antecedentes Mórbidos</h4>
+              <ul className="space-y-0 uppercase">
                 {patient.medicalHistory.map((history, idx) => (
                   <li key={idx} className="text-xs text-foreground leading-tight">• {history}</li>
                 ))}
@@ -189,8 +189,8 @@ export function PatientCard({ patient, onUpdate, expandedForPrint = false }: Pat
 
             {/* Exames Relevantes */}
             <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground">Exames Relevantes</h4>
-              <ul className="space-y-0">
+              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase">Exames Relevantes</h4>
+              <ul className="space-y-0 uppercase">
                 {patient.relevantExams.map((exam, idx) => (
                   <li key={idx} className="text-xs text-foreground leading-tight">• {exam}</li>
                 ))}
@@ -199,11 +199,11 @@ export function PatientCard({ patient, onUpdate, expandedForPrint = false }: Pat
 
             {/* Programação */}
             <div>
-              <h4 className="font-semibold text-xs mb-1 flex items-center gap-1 text-foreground">
+              <h4 className="font-semibold text-xs mb-1 flex items-center gap-1 text-foreground uppercase">
                 <Clock className="h-3 w-3" />
                 Programação
               </h4>
-              <ul className="space-y-0">
+              <ul className="space-y-0 uppercase">
                 {patient.schedule.map((item, idx) => (
                   <li key={idx} className="text-xs text-foreground leading-tight">• {item}</li>
                 ))}
@@ -212,8 +212,8 @@ export function PatientCard({ patient, onUpdate, expandedForPrint = false }: Pat
 
             {/* Todas as Pendências */}
             <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground">Todas as Pendências</h4>
-              <ul className="space-y-0">
+              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase">Todas as Pendências</h4>
+              <ul className="space-y-0 uppercase">
                 {patient.pendencies.map((pendency, idx) => (
                   <li key={idx} className="text-xs text-foreground leading-tight">• {pendency}</li>
                 ))}
@@ -223,8 +223,8 @@ export function PatientCard({ patient, onUpdate, expandedForPrint = false }: Pat
 
           {/* História Admissional */}
           <div className="pt-2 border-t border-border/50">
-            <h4 className="font-semibold text-xs mb-1 text-foreground">História Admissional / Anamnese</h4>
-            <p className="text-xs leading-snug text-foreground whitespace-pre-wrap">
+            <h4 className="font-semibold text-xs mb-1 text-foreground uppercase">História Admissional / Anamnese</h4>
+            <p className="text-xs leading-snug text-foreground whitespace-pre-wrap uppercase">
               {patient.admissionHistory}
             </p>
           </div>
