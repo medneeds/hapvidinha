@@ -7,6 +7,7 @@ import {
   Library,
   LogOut,
   ClipboardCheck,
+  LayoutDashboard,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -32,6 +33,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
+  {
+    title: "MAPA DE PACIENTES",
+    icon: LayoutDashboard,
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
+    link: "/",
+  },
   {
     title: "PASSAGENS",
     icon: ClipboardCheck,
