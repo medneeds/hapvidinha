@@ -17,6 +17,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const STORAGE_KEY = "hospital_patients_data";
 const HISTORY_KEY = "hospital_patients_history";
@@ -27,6 +44,39 @@ interface ChecklistItem {
   id: string;
   text: string;
   completed: boolean;
+}
+
+// Helper component for draggable patient cards
+interface SortableOutsidePatientCardProps {
+  patient: Patient;
+  onUpdate: (patient: Patient) => void;
+  onDelete?: (patientId: string) => void;
+  selectionMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelection?: (patientId: string) => void;
+}
+
+function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props.patient.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <PatientCard {...props} />
+    </div>
+  );
 }
 
 const Index = () => {
@@ -55,6 +105,26 @@ const Index = () => {
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
+
+  // Sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEndOutside = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = outsidePatients.findIndex((p) => p.id === active.id);
+      const newIndex = outsidePatients.findIndex((p) => p.id === over.id);
+      
+      const reorderedPatients = arrayMove(outsidePatients, oldIndex, newIndex);
+      handleReorderPatients("outside", reorderedPatients);
+    }
+  };
 
   // Persist patients data to localStorage
   useEffect(() => {
@@ -197,6 +267,20 @@ const Index = () => {
   const handleToggleSelectionMode = () => {
     setSelectionMode(!selectionMode);
     setSelectedPatients(new Set());
+  };
+
+  const handleReorderPatients = (sector: Patient['sector'], reorderedPatients: Patient[]) => {
+    saveToHistory(patients);
+    
+    // Manter pacientes de outros setores e substituir os do setor reordenado
+    const otherSectorPatients = patients.filter(p => p.sector !== sector);
+    const newPatients = [...otherSectorPatients, ...reorderedPatients];
+    
+    setPatients(newPatients);
+    toast({
+      title: "Ordem atualizada",
+      description: "A ordem dos pacientes foi reorganizada.",
+    });
   };
 
   const handleUndo = () => {
@@ -378,6 +462,7 @@ const Index = () => {
                   selectedPatients={selectedPatients}
                   onToggleSelection={handleToggleSelection}
                   printOnlySelected={printingSector === "selected"}
+                  onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
                 />
               </div>
               <div className={printingSector && printingSector !== "yellow" && printingSector !== "selected" ? "print:hidden" : ""}>
@@ -393,6 +478,7 @@ const Index = () => {
                   selectedPatients={selectedPatients}
                   onToggleSelection={handleToggleSelection}
                   printOnlySelected={printingSector === "selected"}
+                  onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
                 />
               </div>
               <div className={printingSector && printingSector !== "blue" && printingSector !== "selected" ? "print:hidden" : ""}>
@@ -408,6 +494,7 @@ const Index = () => {
                   selectedPatients={selectedPatients}
                   onToggleSelection={handleToggleSelection}
                   printOnlySelected={printingSector === "selected"}
+                  onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
                 />
               </div>
 
@@ -451,19 +538,28 @@ const Index = () => {
                           Nenhum paciente fora das alas
                         </p>
                       ) : (
-                        <div className="space-y-2">
-                          {outsidePatients.map((patient) => (
-                            <PatientCard
-                              key={patient.id}
-                              patient={patient}
-                              onUpdate={handleUpdatePatient}
-                              onDelete={handleDeletePatient}
-                              selectionMode={selectionMode}
-                              isSelected={selectedPatients.has(patient.id)}
-                              onToggleSelection={handleToggleSelection}
-                            />
-                          ))}
-                        </div>
+                        <DndContext
+                          sensors={sensors}
+                          collisionDetection={closestCenter}
+                          onDragEnd={handleDragEndOutside}
+                        >
+                          <SortableContext
+                            items={outsidePatients.map(p => p.id)}
+                            strategy={verticalListSortingStrategy}
+                          >
+                            {outsidePatients.map((patient) => (
+                              <SortableOutsidePatientCard
+                                key={patient.id}
+                                patient={patient}
+                                onUpdate={handleUpdatePatient}
+                                onDelete={handleDeletePatient}
+                                selectionMode={selectionMode}
+                                isSelected={selectedPatients.has(patient.id)}
+                                onToggleSelection={handleToggleSelection}
+                              />
+                            ))}
+                          </SortableContext>
+                        </DndContext>
                       )}
                     </div>
                   </CollapsibleContent>

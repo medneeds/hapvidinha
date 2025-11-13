@@ -4,6 +4,23 @@ import { Activity, Printer, Plus, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface SectorSectionProps {
   sector: SectorType;
@@ -17,6 +34,7 @@ interface SectorSectionProps {
   selectedPatients?: Set<string>;
   onToggleSelection?: (patientId: string) => void;
   printOnlySelected?: boolean;
+  onReorderPatients?: (patients: Patient[]) => void;
 }
 
 const sectorInfo = {
@@ -40,13 +58,65 @@ const sectorInfo = {
   }
 };
 
-export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, expandedForPrint = false, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection, printOnlySelected = false }: SectorSectionProps) {
+interface SortablePatientCardProps {
+  patient: Patient;
+  onUpdate: (patient: Patient) => void;
+  onDelete?: (patientId: string) => void;
+  expandedForPrint?: boolean;
+  selectionMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelection?: (patientId: string) => void;
+}
+
+function SortablePatientCard(props: SortablePatientCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props.patient.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <PatientCard {...props} />
+    </div>
+  );
+}
+
+export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, expandedForPrint = false, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection, printOnlySelected = false, onReorderPatients }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const [isOpen, setIsOpen] = useState(true);
   
   const displayPatients = printOnlySelected 
     ? patients.filter(p => selectedPatients.has(p.id))
     : patients;
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id && onReorderPatients) {
+      const oldIndex = displayPatients.findIndex((p) => p.id === active.id);
+      const newIndex = displayPatients.findIndex((p) => p.id === over.id);
+      
+      const reorderedPatients = arrayMove(displayPatients, oldIndex, newIndex);
+      onReorderPatients(reorderedPatients);
+    }
+  };
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-1 print:break-inside-avoid">
@@ -102,18 +172,29 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
             <p>Nenhum paciente neste setor</p>
           </div>
         ) : (
-          displayPatients.map((patient) => (
-            <PatientCard 
-              key={patient.id} 
-              patient={patient} 
-              onUpdate={onUpdatePatient}
-              onDelete={onDeletePatient}
-              expandedForPrint={expandedForPrint}
-              selectionMode={selectionMode}
-              isSelected={selectedPatients.has(patient.id)}
-              onToggleSelection={onToggleSelection}
-            />
-          ))
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={displayPatients.map(p => p.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {displayPatients.map((patient) => (
+                <SortablePatientCard
+                  key={patient.id}
+                  patient={patient}
+                  onUpdate={onUpdatePatient}
+                  onDelete={onDeletePatient}
+                  expandedForPrint={expandedForPrint}
+                  selectionMode={selectionMode}
+                  isSelected={selectedPatients.has(patient.id)}
+                  onToggleSelection={onToggleSelection}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
         )}
       </CollapsibleContent>
     </Collapsible>
