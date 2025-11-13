@@ -241,4 +241,74 @@ All colors MUST be HSL.
   .bg-gradient-to-r {
     background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important;
   }
+  
+  /* Otimizações para impressão A4 */
+  @page {
+    size: A4;
+    margin: 10mm 12mm;
+  }
+  
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  /* Evitar quebras de página inadequadas */
+  .print\:break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Evitar elementos órfãos/viúvos */
+  p, li, div {
+    orphans: 3;
+    widows: 3;
+  }
+  
+  /* Otimizar espaçamento para caber em uma página */
+  .print\:space-y-1 > * + * {
+    margin-top: 1mm !important;
+  }
+  
+  .print\:space-y-2 > * + * {
+    margin-top: 2mm !important;
+  }
+  
+  /* Garantir que seções não quebrem no meio */
+  section, article, .sector-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  /* Compactar ainda mais quando necessário */
+  @media print {
+    .print\:text-\[8px\] {
+      font-size: 8px !important;
+      line-height: 1.2 !important;
+    }
+    
+    .print\:text-\[9px\] {
+      font-size: 9px !important;
+      line-height: 1.2 !important;
+    }
+    
+    /* Reduzir espaçamentos para caber melhor */
+    .print\:py-0 {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+    
+    .print\:py-0\.5 {
+      padding-top: 0.5mm !important;
+      padding-bottom: 0.5mm !important;
+    }
+    
+    .print\:mb-0 {
+      margin-bottom: 0 !important;
+    }
+    
+    .print\:mt-0 {
+      margin-top: 0 !important;
+    }
+  }
 }

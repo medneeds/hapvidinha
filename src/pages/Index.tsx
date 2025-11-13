@@ -11,6 +11,16 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -115,6 +125,8 @@ const Index = () => {
   const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(true);
   const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(true);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
+  const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
+  const [showPrintDialog, setShowPrintDialog] = useState(false);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
@@ -364,8 +376,17 @@ const Index = () => {
   };
 
   const handlePrint = () => {
+    setShowPrintDialog(true);
+  };
+
+  const handlePrintWithMode = (mode: 'compact' | 'detailed') => {
+    setPrintMode(mode);
     setPrintingSector(null);
-    setTimeout(() => window.print(), 100);
+    setShowPrintDialog(false);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setPrintMode(null), 500);
+    }, 100);
   };
 
   const handlePrintSector = (sector: string) => {
@@ -526,7 +547,7 @@ const Index = () => {
                   patients={redPatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
-                  expandedForPrint={printingSector === "red" || printingSector === "selected"}
+                  expandedForPrint={printMode === 'detailed' || printingSector === "red" || printingSector === "selected"}
                   onPrintSector={() => handlePrintSector("red")}
                   onAddExtraBed={() => handleAddExtraBed("red")}
                   selectionMode={selectionMode}
@@ -543,7 +564,7 @@ const Index = () => {
                   patients={yellowPatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
-                  expandedForPrint={printingSector === "yellow" || printingSector === "selected"}
+                  expandedForPrint={printMode === 'detailed' || printingSector === "yellow" || printingSector === "selected"}
                   onPrintSector={() => handlePrintSector("yellow")}
                   onAddExtraBed={() => handleAddExtraBed("yellow")}
                   selectionMode={selectionMode}
@@ -560,7 +581,7 @@ const Index = () => {
                   patients={bluePatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
-                  expandedForPrint={printingSector === "blue" || printingSector === "selected"}
+                  expandedForPrint={printMode === 'detailed' || printingSector === "blue" || printingSector === "selected"}
                   onPrintSector={() => handlePrintSector("blue")}
                   onAddExtraBed={() => handleAddExtraBed("blue")}
                   selectionMode={selectionMode}
@@ -764,6 +785,65 @@ const Index = () => {
           </footer>
         </div>
       </div>
+
+      {/* Print Options Dialog */}
+      <AlertDialog open={showPrintDialog} onOpenChange={setShowPrintDialog}>
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold uppercase">Opções de Impressão</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm">
+              Escolha o formato de impressão desejado. O sistema otimizará automaticamente para o tamanho A4.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="grid gap-3 py-4">
+            <Button
+              variant="outline"
+              className="w-full justify-start h-auto py-4 px-4 hover:bg-primary/10 hover:border-primary"
+              onClick={() => handlePrintWithMode('compact')}
+            >
+              <div className="text-left">
+                <div className="font-semibold text-base uppercase mb-1">Modelo Retraído</div>
+                <div className="text-xs text-muted-foreground">
+                  Visualização compacta - Todos os pacientes em formato resumido, ideal para visão geral rápida
+                </div>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start h-auto py-4 px-4 hover:bg-primary/10 hover:border-primary"
+              onClick={() => handlePrintWithMode('detailed')}
+            >
+              <div className="text-left">
+                <div className="font-semibold text-base uppercase mb-1">Modelo Detalhado</div>
+                <div className="text-xs text-muted-foreground">
+                  Visualização expandida - Todas as informações completas dos pacientes incluindo histórico e exames
+                </div>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start h-auto py-4 px-4 hover:bg-primary/10 hover:border-primary"
+              onClick={() => {
+                setShowPrintDialog(false);
+                toast({
+                  title: "Impressão por seção",
+                  description: "Use os botões de impressão em cada seção individual para imprimir por ala.",
+                });
+              }}
+            >
+              <div className="text-left">
+                <div className="font-semibold text-base uppercase mb-1">Por Seção Individual</div>
+                <div className="text-xs text-muted-foreground">
+                  Use os botões de impressão em cada seção (Vermelha, Amarela, Azul) para imprimir separadamente
+                </div>
+              </div>
+            </Button>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="uppercase">Cancelar</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   );
 };
