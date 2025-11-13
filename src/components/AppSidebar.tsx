@@ -6,6 +6,7 @@ import {
   BookOpen,
   Library,
   LogOut,
+  ClipboardCheck,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -31,6 +32,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
+  {
+    title: "PASSAGENS",
+    icon: ClipboardCheck,
+    color: "text-primary",
+    bgColor: "bg-primary/10",
+    link: "/handovers",
+  },
   {
     title: "CÓDIGOS",
     icon: FileSearch,
@@ -109,6 +117,32 @@ export function AppSidebar() {
       <SidebarContent className={`gap-0 transition-all duration-300 ${open ? 'py-2' : 'py-4'}`}>
         {menuItems.map((section, index) => (
           <div key={section.title}>
+            {/* Direct link item (without subitems) */}
+            {section.link && (
+              <SidebarGroup className="p-0">
+                <SidebarGroupLabel 
+                  className={`group/label cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 rounded-lg ${open ? 'h-14 mx-2 gap-4 mb-1' : 'h-[72px] mx-0 justify-center gap-0 my-1'}`}
+                  onClick={() => navigate(section.link)}
+                >
+                  <div className={`${section.bgColor} rounded-xl flex items-center justify-center transition-all duration-300 group-hover/label:scale-105 flex-shrink-0 ${open ? 'h-9 w-9 group-hover/label:shadow-md' : 'h-14 w-14 group-hover/label:shadow-xl group-hover/label:shadow-primary/30'}`}>
+                    <section.icon className={`${section.color} transition-all duration-300 ${open ? 'h-4 w-4' : 'h-8 w-8'}`} />
+                  </div>
+                  {open && (
+                    <div className="flex-1 ml-1 animate-fade-in">
+                      <span className="text-xs font-bold text-foreground uppercase tracking-tight block">
+                        {section.title}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        Histórico de registros
+                      </span>
+                    </div>
+                  )}
+                </SidebarGroupLabel>
+              </SidebarGroup>
+            )}
+
+            {/* Collapsible section (with subitems) */}
+            {section.items && (
             <Collapsible
               defaultOpen={false}
               className="group/collapsible"
@@ -163,6 +197,7 @@ export function AppSidebar() {
                 </CollapsibleContent>
               </SidebarGroup>
             </Collapsible>
+            )}
             {index < menuItems.length - 1 && (
               <div className={`h-px bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${open ? 'my-3 mx-4' : 'my-4 mx-2'}`} />
             )}
