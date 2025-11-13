@@ -1,6 +1,6 @@
 import {
   FileSearch,
-  Activity,
+  Users,
   BookOpen,
   LogOut,
   ClipboardCheck,
@@ -64,7 +64,7 @@ const menuItems = [
   },
   {
     title: "PACIENTES",
-    icon: Activity,
+    icon: Users,
     items: [
       { name: "BLOCO DE NOTAS", link: "/resources" },
       { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
