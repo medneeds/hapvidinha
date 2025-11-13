@@ -1,16 +1,56 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { FileText, Download, Copy, Trash2, FileInput, ArrowLeft } from "lucide-react";
+import { FileText, Download, Copy, Trash2, FileInput, ArrowLeft, Save, FolderOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { internmentTemplate } from "@/data/internmentTemplate";
 import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+interface SavedTemplate {
+  id: string;
+  name: string;
+  content: string;
+  createdAt: string;
+}
 
 const NotesPage = () => {
   const [notes, setNotes] = useState("");
+  const [savedTemplates, setSavedTemplates] = useState<SavedTemplate[]>([]);
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [templateName, setTemplateName] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const stored = localStorage.getItem("customTemplates");
+    if (stored) {
+      setSavedTemplates(JSON.parse(stored));
+    }
+  }, []);
+
+  const saveTemplatesToStorage = (templates: SavedTemplate[]) => {
+    localStorage.setItem("customTemplates", JSON.stringify(templates));
+    setSavedTemplates(templates);
+  };
 
   const handleImportTemplate = () => {
     setNotes(internmentTemplate);
@@ -65,6 +105,64 @@ const NotesPage = () => {
     setNotes(e.target.value.toUpperCase());
   };
 
+  const handleOpenSaveDialog = () => {
+    if (!notes.trim()) {
+      toast({
+        title: "ERRO",
+        description: "NÃO HÁ CONTEÚDO PARA SALVAR",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsSaveDialogOpen(true);
+  };
+
+  const handleSaveTemplate = () => {
+    if (!templateName.trim()) {
+      toast({
+        title: "ERRO",
+        description: "DIGITE UM NOME PARA O MODELO",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newTemplate: SavedTemplate = {
+      id: Date.now().toString(),
+      name: templateName.toUpperCase(),
+      content: notes,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedTemplates = [...savedTemplates, newTemplate];
+    saveTemplatesToStorage(updatedTemplates);
+
+    toast({
+      title: "MODELO SALVO",
+      description: `MODELO "${templateName.toUpperCase()}" SALVO COM SUCESSO`,
+    });
+
+    setTemplateName("");
+    setIsSaveDialogOpen(false);
+  };
+
+  const handleLoadTemplate = (template: SavedTemplate) => {
+    setNotes(template.content);
+    toast({
+      title: "MODELO CARREGADO",
+      description: `MODELO "${template.name}" CARREGADO COM SUCESSO`,
+    });
+  };
+
+  const handleDeleteTemplate = (templateId: string) => {
+    const updatedTemplates = savedTemplates.filter(t => t.id !== templateId);
+    saveTemplatesToStorage(updatedTemplates);
+    toast({
+      title: "MODELO EXCLUÍDO",
+      description: "MODELO REMOVIDO COM SUCESSO",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -104,6 +202,59 @@ const NotesPage = () => {
               <FileInput className="h-4 w-4" />
               IMPORTAR MODELO PADRÃO
             </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleOpenSaveDialog}
+              disabled={!notes}
+              className="gap-2 hover:bg-purple-500/10 hover:text-purple-600 hover:border-purple-500/50 transition-all uppercase"
+            >
+              <Save className="h-4 w-4" />
+              SALVAR COMO MODELO
+            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={savedTemplates.length === 0}
+                  className="gap-2 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/50 transition-all uppercase"
+                >
+                  <FolderOpen className="h-4 w-4" />
+                  MEUS MODELOS ({savedTemplates.length})
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuLabel className="uppercase">MODELOS SALVOS</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {savedTemplates.map((template) => (
+                  <DropdownMenuItem
+                    key={template.id}
+                    className="flex items-center justify-between group uppercase"
+                  >
+                    <button
+                      onClick={() => handleLoadTemplate(template)}
+                      className="flex-1 text-left uppercase"
+                    >
+                      {template.name}
+                    </button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTemplate(template.id);
+                      }}
+                      className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -159,6 +310,57 @@ const NotesPage = () => {
             </div>
           </div>
         </Card>
+
+        {/* Save Template Dialog */}
+        <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="uppercase">SALVAR MODELO</DialogTitle>
+              <DialogDescription className="uppercase">
+                DIGITE UM NOME PARA ESTE MODELO
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="template-name" className="uppercase">
+                  NOME DO MODELO
+                </Label>
+                <Input
+                  id="template-name"
+                  value={templateName}
+                  onChange={(e) => setTemplateName(e.target.value.toUpperCase())}
+                  placeholder="EX: MODELO CARDIOLOGIA"
+                  className="uppercase"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSaveTemplate();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsSaveDialogOpen(false);
+                  setTemplateName("");
+                }}
+                className="uppercase"
+              >
+                CANCELAR
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSaveTemplate}
+                className="uppercase"
+              >
+                SALVAR MODELO
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
