@@ -145,26 +145,39 @@ export function EditPatientDialog({
     </div>
   );
 
+  const sectorLabel = patient.sector === 'outside' ? 'Fora das Alas' : 
+                        patient.sector === 'red' ? 'Sala Vermelha' :
+                        patient.sector === 'yellow' ? 'Observação Amarela' : 'Observação Azul';
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle>Editar Paciente - Leito {patient.bedNumber}</DialogTitle>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogHeader className="flex-shrink-0">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <DialogTitle className="text-base sm:text-lg truncate">
+                Editar Paciente - Leito {patient.bedNumber}
+              </DialogTitle>
+              <p className="text-xs text-muted-foreground mt-1">
+                {sectorLabel}
+              </p>
+            </div>
             <Button
               type="button"
               variant="destructive"
               size="sm"
               onClick={clearAllFields}
+              className="flex-shrink-0 h-8 px-3"
             >
               Limpar Tudo
             </Button>
           </div>
         </DialogHeader>
 
-        <div className="space-y-3 py-3">
-          {/* Informações Básicas em Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-muted/30 rounded-lg">
+        <div className="flex-1 overflow-y-auto px-1 -mx-1">
+          <div className="space-y-3 py-3">
+            {/* Informações Básicas em Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-muted/30 rounded-lg">
             {/* Nome */}
             <div className="space-y-1.5 md:col-span-2">
               <div className="flex items-center justify-between">
@@ -302,9 +315,10 @@ export function EditPatientDialog({
               className="text-sm resize-none uppercase"
             />
           </div>
+          </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-3 border-t sticky bottom-0 bg-background">
+        <div className="flex justify-end gap-2 pt-3 border-t flex-shrink-0 bg-background/95 backdrop-blur-sm">
           <Button variant="outline" onClick={() => onOpenChange(false)} className="h-9">
             Cancelar
           </Button>
