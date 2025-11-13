@@ -50,6 +50,36 @@ export type Database = {
         }
         Relationships: []
       }
+      medical_codes: {
+        Row: {
+          category: string
+          code: string
+          created_at: string
+          id: string
+          name: string
+          system_description: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          system_description: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          system_description?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

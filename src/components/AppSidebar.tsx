@@ -34,10 +34,10 @@ const menuItems = [
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
     items: [
-      "EXAMES",
-      "PROCEDIMENTOS",
-      "MATERIAIS",
-      "MEDICAÇÕES",
+      { name: "EXAMES", link: "/codigos?category=exames" },
+      { name: "PROCEDIMENTOS", link: "/codigos?category=procedimentos" },
+      { name: "MATERIAIS", link: "/codigos?category=materiais" },
+      { name: "MEDICAÇÕES", link: "/codigos?category=medicacoes" },
     ],
   },
   {
