@@ -17,7 +17,12 @@ interface RegisterHandoverDialogProps {
 
 export function RegisterHandoverDialog({ open, onOpenChange, patients }: RegisterHandoverDialogProps) {
   const [notes, setNotes] = useState("");
-  const [shiftType, setShiftType] = useState<string>("DIURNO");
+  const [shiftType, setShiftType] = useState<string>("MATUTINO");
+  const [handoverTo, setHandoverTo] = useState("");
+  const [handoverDatetime, setHandoverDatetime] = useState(() => {
+    const now = new Date();
+    return now.toISOString().slice(0, 16);
+  });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -71,17 +76,21 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
           total_patients: totalPatients,
           occupied_beds: occupiedBeds,
           shift_type: shiftType,
+          handover_to: handoverTo.trim() || null,
+          handover_datetime: new Date(handoverDatetime).toISOString(),
         });
 
       if (error) throw error;
 
       toast({
         title: "Passagem registrada!",
-        description: `Registro salvo com sucesso às ${new Date().toLocaleTimeString('pt-BR')}`,
+        description: `Registro salvo com sucesso às ${new Date(handoverDatetime).toLocaleTimeString('pt-BR')}`,
       });
 
       setNotes("");
-      setShiftType("DIURNO");
+      setShiftType("MATUTINO");
+      setHandoverTo("");
+      setHandoverDatetime(new Date().toISOString().slice(0, 16));
       onOpenChange(false);
     } catch (error) {
       console.error("Erro ao registrar passagem:", error);
@@ -109,6 +118,21 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
         </DialogHeader>
         
         <div className="space-y-4 py-4">
+          {/* Data e Hora */}
+          <div className="space-y-2">
+            <Label htmlFor="handover-datetime" className="uppercase text-sm font-semibold">
+              Data e Hora da Passagem *
+            </Label>
+            <input
+              id="handover-datetime"
+              type="datetime-local"
+              value={handoverDatetime}
+              onChange={(e) => setHandoverDatetime(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 uppercase"
+              required
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
             <div>
               <p className="text-sm text-muted-foreground uppercase">Leitos Ocupados</p>
@@ -121,24 +145,39 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="shift-type" className="uppercase text-xs font-semibold">
-              Tipo de Plantão
+            <Label htmlFor="shift-type" className="uppercase text-sm font-semibold">
+              Tipo de Plantão *
             </Label>
             <Select value={shiftType} onValueChange={setShiftType}>
-              <SelectTrigger id="shift-type">
+              <SelectTrigger id="shift-type" className="uppercase">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="DIURNO">DIURNO</SelectItem>
-                <SelectItem value="NOTURNO">NOTURNO</SelectItem>
-                <SelectItem value="OUTRO">OUTRO</SelectItem>
+                <SelectItem value="MATUTINO" className="uppercase">MATUTINO</SelectItem>
+                <SelectItem value="VESPERTINO" className="uppercase">VESPERTINO</SelectItem>
+                <SelectItem value="NOTURNO" className="uppercase">NOTURNO</SelectItem>
+                <SelectItem value="OUTRO" className="uppercase">OUTRO</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes" className="uppercase text-xs font-semibold">
-              Observações (Opcional)
+            <Label htmlFor="handover-to" className="uppercase text-sm font-semibold">
+              Passagem Para (Médico) - Opcional
+            </Label>
+            <input
+              id="handover-to"
+              type="text"
+              value={handoverTo}
+              onChange={(e) => setHandoverTo(e.target.value.toUpperCase())}
+              placeholder="NOME DO MÉDICO"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 uppercase"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="notes" className="uppercase text-sm font-semibold">
+              Observações - Opcional
             </Label>
             <Textarea
               id="notes"

@@ -54,6 +54,8 @@ interface HandoverRecord {
   total_patients: number;
   occupied_beds: number;
   shift_type: string | null;
+  handover_to: string | null;
+  handover_datetime: string;
 }
 
 export default function HandoversPage() {
@@ -133,6 +135,18 @@ export default function HandoversPage() {
     });
   };
 
+  const formatHandoverDatetime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
   const getSectorLabel = (sector: string) => {
     const labels: Record<string, string> = {
       red: "SALA VERMELHA",
@@ -144,7 +158,8 @@ export default function HandoversPage() {
   };
 
   const getShiftTypeBadgeColor = (shiftType: string | null) => {
-    if (shiftType === "DIURNO") return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+    if (shiftType === "MATUTINO") return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+    if (shiftType === "VESPERTINO") return "bg-orange-500/10 text-orange-500 border-orange-500/20";
     if (shiftType === "NOTURNO") return "bg-blue-500/10 text-blue-500 border-blue-500/20";
     return "bg-muted text-muted-foreground";
   };
@@ -222,11 +237,19 @@ export default function HandoversPage() {
                           <div className="flex-1 space-y-2">
                             <div className="flex items-center gap-2 flex-wrap">
                               <CardTitle className="text-base font-bold uppercase">
-                                {formatDate(handover.created_at)}
+                                {formatHandoverDatetime(handover.handover_datetime)}
                               </CardTitle>
+                            </div>
+
+                            <div className="flex items-center gap-2 flex-wrap">
                               {handover.shift_type && (
                                 <Badge className={getShiftTypeBadgeColor(handover.shift_type)}>
                                   {handover.shift_type}
+                                </Badge>
+                              )}
+                              {handover.handover_to && (
+                                <Badge variant="outline" className="uppercase text-xs">
+                                  → {handover.handover_to}
                                 </Badge>
                               )}
                             </div>
