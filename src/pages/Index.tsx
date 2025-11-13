@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2 } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -10,14 +10,38 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 
+const STORAGE_KEY = "hospital_patients_data";
+const HISTORY_KEY = "hospital_patients_history";
+
 const Index = () => {
-  const [patients, setPatients] = useState<Patient[]>(mockPatients);
+  const [patients, setPatients] = useState<Patient[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : mockPatients;
+  });
+  const [history, setHistory] = useState<Patient[][]>(() => {
+    const saved = localStorage.getItem(HISTORY_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
+
+  // Persist patients data to localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+  }, [patients]);
+
+  // Persist history to localStorage
+  useEffect(() => {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  }, [history]);
+
+  const saveToHistory = (currentPatients: Patient[]) => {
+    setHistory(prev => [...prev.slice(-9), currentPatients]); // Keep last 10 states
+  };
   
   const filterPatients = (sectorPatients: Patient[]) => {
     if (!showOnlyOccupied) return sectorPatients;
@@ -32,6 +56,7 @@ const Index = () => {
   const criticalPatients = redPatients.length;
 
   const handleUpdatePatient = (updatedPatient: Patient) => {
+    saveToHistory(patients);
     setPatients((prev) =>
       prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
     );
@@ -42,6 +67,7 @@ const Index = () => {
   };
 
   const handleAddExtraBed = (sector: Patient['sector']) => {
+    saveToHistory(patients);
     const sectorPrefix = sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : 'Z';
     const sectorPatients = patients.filter(p => p.sector === sector);
     const extraBedNumber = sectorPatients.length + 1;
@@ -69,6 +95,7 @@ const Index = () => {
   };
 
   const handleDeletePatient = (patientId: string) => {
+    saveToHistory(patients);
     const patient = patients.find(p => p.id === patientId);
     setPatients((prev) => prev.filter(p => p.id !== patientId));
     toast({
@@ -94,6 +121,7 @@ const Index = () => {
     if (selectedPatients.size === 0) return;
     
     if (window.confirm(`Tem certeza que deseja deletar ${selectedPatients.size} leito(s) selecionado(s)?`)) {
+      saveToHistory(patients);
       setPatients((prev) => prev.filter(p => !selectedPatients.has(p.id)));
       toast({
         title: "Leitos deletados",
@@ -108,6 +136,25 @@ const Index = () => {
   const handleToggleSelectionMode = () => {
     setSelectionMode(!selectionMode);
     setSelectedPatients(new Set());
+  };
+
+  const handleUndo = () => {
+    if (history.length === 0) {
+      toast({
+        title: "Nenhuma ação para desfazer",
+        description: "Não há histórico de ações disponível.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const previousState = history[history.length - 1];
+    setPatients(previousState);
+    setHistory(prev => prev.slice(0, -1));
+    toast({
+      title: "Ação desfeita",
+      description: "A última ação foi desfeita com sucesso.",
+    });
   };
 
   const handlePrint = () => {
@@ -157,6 +204,16 @@ const Index = () => {
 
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
                   <ThemeToggle />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleUndo}
+                    disabled={history.length === 0}
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                    title="Desfazer última ação"
+                  >
+                    <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </Button>
                   <Button
                     variant="outline"
                     size="icon"
