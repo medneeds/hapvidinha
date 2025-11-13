@@ -87,7 +87,7 @@ function SortablePatientCard(props: SortablePatientCardProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-2">
+    <div ref={setNodeRef} style={style} className="flex items-center gap-2 print:block print:w-full">
       <button
         className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden"
         {...attributes}
@@ -95,7 +95,7 @@ function SortablePatientCard(props: SortablePatientCardProps) {
       >
         <GripVertical className="h-4 w-4 text-muted-foreground" />
       </button>
-      <div className="flex-1">
+      <div className="flex-1 print:w-full">
         <PatientCard {...props} />
       </div>
     </div>
@@ -177,7 +177,7 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
         </div>
       </div>
 
-      <CollapsibleContent className="space-y-1.5 print:space-y-0.5 print:block">
+      <CollapsibleContent className="space-y-1.5 print:grid print:grid-cols-2 print:gap-x-2 print:gap-y-0.5">
         {displayPatients.length === 0 ? (
           <div className={`text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50 ${printOnlySelected ? 'print:hidden' : ''}`}>
             <p>Nenhum paciente neste setor</p>

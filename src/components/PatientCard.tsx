@@ -97,17 +97,17 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
   return (
     <>
       <Card className={cn(
-        "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0", 
+        "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
         config.color,
         isSelected && "ring-2 ring-primary"
       )}>
         <div className={cn(
           "p-2.5",
-          !expandedForPrint && "print:p-0.5 print:py-0"
+          !expandedForPrint && "print:p-0.5 print:py-0.5"
         )}>
           <div className={cn(
             "flex items-center justify-between gap-3",
-            !expandedForPrint && "print:flex-row print:items-center print:gap-1"
+            !expandedForPrint && "print:flex-col print:items-start print:gap-0.5"
           )}>
             {selectionMode && onToggleSelection && (
               <div className="flex items-center justify-center print:hidden flex-shrink-0">
@@ -120,7 +120,7 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
             )}
             <div className={cn(
               "flex-1 grid grid-cols-1 md:grid-cols-7 gap-2 items-start",
-              !expandedForPrint && "print:flex print:flex-row print:gap-2 print:items-center print:flex-wrap"
+              !expandedForPrint && "print:flex print:flex-col print:gap-0.5 print:w-full"
             )}>
               {/* Leito */}
               <div className={cn(

@@ -187,11 +187,50 @@ All colors MUST be HSL.
     margin-bottom: 1.5mm !important;
   }
   
+  /* Layout em grid para pacientes - 2 colunas para melhor aproveitamento */
+  .print\:grid {
+    display: grid !important;
+  }
+  
+  .print\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .print\:gap-x-2 {
+    column-gap: 2mm !important;
+  }
+  
+  .print\:gap-y-0\.5 {
+    row-gap: 1mm !important;
+  }
+  
+  .print\:w-full {
+    width: 100% !important;
+  }
+  
+  /* Cards de pacientes organizados verticalmente dentro de cada coluna */
+  .print\:flex-col {
+    flex-direction: column !important;
+  }
+  
+  .print\:gap-0\.5 {
+    gap: 0.5mm !important;
+  }
+  
   /* Cards de pacientes mais compactos */
   .print\:break-inside-avoid {
     page-break-inside: avoid;
     break-inside: avoid;
-    margin-bottom: 1mm !important;
+    margin-bottom: 0 !important;
+    width: 100%;
+  }
+  
+  .print\:block {
+    display: block !important;
+  }
+  
+  .print\:items-start {
+    align-items: flex-start !important;
   }
   
   /* Layout em linha otimizado */
