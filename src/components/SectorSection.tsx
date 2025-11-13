@@ -130,16 +130,16 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
   };
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-1 print:break-inside-avoid">
-      <div className={`${info.gradientClass} rounded-xl p-3 border border-border/50 shadow-md print:p-2 print:mb-1 transition-all duration-200 h-[72px] flex items-center`}>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
+      <div className={`${info.gradientClass} rounded-xl p-3 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 h-[72px] print:h-auto flex items-center`}>
         <div className="flex items-center justify-between w-full">
           <CollapsibleTrigger asChild>
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
               <div className="text-left">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-lg print:text-base">{info.icon}</span>
-                  <h2 className="text-lg font-bold text-foreground print:text-base uppercase">{info.title}</h2>
+                <div className="flex items-center gap-2 mb-0.5 print:mb-0 print:gap-1">
+                  <span className="text-lg print:text-sm">{info.icon}</span>
+                  <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">{info.title}</h2>
                 </div>
                 <p className="text-xs text-muted-foreground print:hidden uppercase">{info.subtitle}</p>
               </div>
@@ -167,17 +167,17 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
                 <Printer className="h-3.5 w-3.5" />
               </Button>
             )}
-            <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50 print:px-2 print:py-1">
+            <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50 print:px-1 print:py-0.5 print:border-border/30">
               <div>
-                <p className="text-[10px] text-muted-foreground uppercase">Leitos</p>
-                <p className="text-base font-bold text-foreground">{patients.length}</p>
+                <p className="text-[10px] text-muted-foreground uppercase print:text-[8px]">Leitos</p>
+                <p className="text-base font-bold text-foreground print:text-[10px]">{patients.length}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <CollapsibleContent className="space-y-1.5 print:space-y-1 print:block">
+      <CollapsibleContent className="space-y-1.5 print:space-y-0.5 print:block">
         {displayPatients.length === 0 ? (
           <div className={`text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50 ${printOnlySelected ? 'print:hidden' : ''}`}>
             <p>Nenhum paciente neste setor</p>

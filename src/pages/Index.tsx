@@ -414,18 +414,18 @@ const Index = () => {
         
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <header className="border-b border-border/30 bg-gradient-card backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b-2 print:shadow-none">
-            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-            <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-2">
+          <header className="border-b border-border/30 bg-gradient-card backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5">
+            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent print:hidden"></div>
+            <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   <SidebarTrigger className="print:hidden flex-shrink-0" />
-                  <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gradient-primary rounded-lg flex items-center justify-center print:h-8 print:w-8 shadow-glow transition-transform hover:scale-105 duration-200 flex-shrink-0">
-                    <ClipboardList className="h-4 w-4 sm:h-6 sm:w-6 text-primary-foreground print:h-4 print:w-4" />
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gradient-primary rounded-lg flex items-center justify-center print:h-5 print:w-5 shadow-glow transition-transform hover:scale-105 duration-200 flex-shrink-0 print:rounded-md">
+                    <ClipboardList className="h-4 w-4 sm:h-6 sm:w-6 text-primary-foreground print:h-3 print:w-3" />
                   </div>
                   <div className="min-w-0">
-                    <h1 className="text-sm sm:text-2xl font-bold text-foreground print:text-xl uppercase tracking-tight truncate">Mapa de Pacientes</h1>
-                    <p className="text-[10px] sm:text-sm text-muted-foreground print:text-xs uppercase tracking-wide hidden sm:block">Sistema de Controle Hospitalar</p>
+                    <h1 className="text-sm sm:text-2xl font-bold text-foreground print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes</h1>
+                    <p className="text-[10px] sm:text-sm text-muted-foreground print:hidden uppercase tracking-wide hidden sm:block">Sistema de Controle Hospitalar</p>
                   </div>
                 </div>
 
@@ -539,8 +539,8 @@ const Index = () => {
           </header>
 
           {/* Main Content */}
-          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-2">
-            <div className="space-y-3 sm:space-y-4 print:space-y-2">
+          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1">
+            <div className="space-y-3 sm:space-y-4 print:space-y-1">
               <div className={printingSector && printingSector !== "red" && printingSector !== "selected" ? "print:hidden" : ""}>
                 <SectorSection 
                   sector="red" 
