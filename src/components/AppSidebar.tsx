@@ -64,10 +64,7 @@ const menuItems = [
       { name: "PADRÃO DE INTERNAÇÃO", link: null },
       { name: "HISTÓRIA CLÍNICA", link: null },
       { name: "REVISÃO DE SISTEMAS", link: null },
-      "PADRÃO CARDIOVASCULAR",
-      "PADRÃO RESPIRATÓRIO",
-      "PADRÃO NEUROLÓGICO",
-      "PADRÃO ABDOMINAL",
+      "PADRÕES DE EXAME FÍSICO",
     ],
   },
 ];
