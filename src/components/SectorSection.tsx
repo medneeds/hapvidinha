@@ -16,6 +16,7 @@ interface SectorSectionProps {
   selectionMode?: boolean;
   selectedPatients?: Set<string>;
   onToggleSelection?: (patientId: string) => void;
+  printOnlySelected?: boolean;
 }
 
 const sectorInfo = {
@@ -39,9 +40,13 @@ const sectorInfo = {
   }
 };
 
-export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, expandedForPrint = false, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection }: SectorSectionProps) {
+export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, expandedForPrint = false, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection, printOnlySelected = false }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const [isOpen, setIsOpen] = useState(true);
+  
+  const displayPatients = printOnlySelected 
+    ? patients.filter(p => selectedPatients.has(p.id))
+    : patients;
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-1 print:break-inside-avoid">
@@ -93,12 +98,12 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
       </div>
 
       <CollapsibleContent className="space-y-1.5 print:space-y-1 print:block">
-        {patients.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
+        {displayPatients.length === 0 ? (
+          <div className={`text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50 ${printOnlySelected ? 'print:hidden' : ''}`}>
             <p>Nenhum paciente neste setor</p>
           </div>
         ) : (
-          patients.map((patient) => (
+          displayPatients.map((patient) => (
             <PatientCard 
               key={patient.id} 
               patient={patient} 

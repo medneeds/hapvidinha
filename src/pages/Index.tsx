@@ -123,6 +123,16 @@ const Index = () => {
     }, 100);
   };
 
+  const handlePrintSelected = () => {
+    if (selectedPatients.size === 0) return;
+    
+    setPrintingSector("selected");
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setPrintingSector(null), 500);
+    }, 100);
+  };
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -166,15 +176,26 @@ const Index = () => {
                     <CheckSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                   {selectionMode && selectedPatients.size > 0 && (
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={handleDeleteSelected}
-                      className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
-                      title={`Deletar ${selectedPatients.size} selecionado(s)`}
-                    >
-                      <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    </Button>
+                    <>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handlePrintSelected}
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                        title={`Imprimir ${selectedPatients.size} selecionado(s)`}
+                      >
+                        <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={handleDeleteSelected}
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                        title={`Deletar ${selectedPatients.size} selecionado(s)`}
+                      >
+                        <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      </Button>
+                    </>
                   )}
                   <Button
                     variant="outline"
@@ -226,46 +247,49 @@ const Index = () => {
           {/* Main Content */}
           <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-2">
             <div className="space-y-3 sm:space-y-4 print:space-y-2">
-              <div className={printingSector && printingSector !== "red" ? "print:hidden" : ""}>
+              <div className={printingSector && printingSector !== "red" && printingSector !== "selected" ? "print:hidden" : ""}>
                 <SectorSection 
                   sector="red" 
                   patients={redPatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
-                  expandedForPrint={printingSector === "red"}
+                  expandedForPrint={printingSector === "red" || printingSector === "selected"}
                   onPrintSector={() => handlePrintSector("red")}
                   onAddExtraBed={() => handleAddExtraBed("red")}
                   selectionMode={selectionMode}
                   selectedPatients={selectedPatients}
                   onToggleSelection={handleToggleSelection}
+                  printOnlySelected={printingSector === "selected"}
                 />
               </div>
-              <div className={printingSector && printingSector !== "yellow" ? "print:hidden" : ""}>
+              <div className={printingSector && printingSector !== "yellow" && printingSector !== "selected" ? "print:hidden" : ""}>
                 <SectorSection 
                   sector="yellow" 
                   patients={yellowPatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
-                  expandedForPrint={printingSector === "yellow"}
+                  expandedForPrint={printingSector === "yellow" || printingSector === "selected"}
                   onPrintSector={() => handlePrintSector("yellow")}
                   onAddExtraBed={() => handleAddExtraBed("yellow")}
                   selectionMode={selectionMode}
                   selectedPatients={selectedPatients}
                   onToggleSelection={handleToggleSelection}
+                  printOnlySelected={printingSector === "selected"}
                 />
               </div>
-              <div className={printingSector && printingSector !== "blue" ? "print:hidden" : ""}>
+              <div className={printingSector && printingSector !== "blue" && printingSector !== "selected" ? "print:hidden" : ""}>
                 <SectorSection 
                   sector="blue" 
                   patients={bluePatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
-                  expandedForPrint={printingSector === "blue"}
+                  expandedForPrint={printingSector === "blue" || printingSector === "selected"}
                   onPrintSector={() => handlePrintSector("blue")}
                   onAddExtraBed={() => handleAddExtraBed("blue")}
                   selectionMode={selectionMode}
                   selectedPatients={selectedPatients}
                   onToggleSelection={handleToggleSelection}
+                  printOnlySelected={printingSector === "selected"}
                 />
               </div>
             </div>
