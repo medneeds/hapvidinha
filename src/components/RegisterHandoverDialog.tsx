@@ -76,7 +76,7 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
           total_patients: totalPatients,
           occupied_beds: occupiedBeds,
           shift_type: shiftType,
-          handover_to: handoverTo.trim() || null,
+          handover_to: handoverTo.trim().toUpperCase() || null,
           handover_datetime: new Date(handoverDatetime).toISOString(),
         });
 
