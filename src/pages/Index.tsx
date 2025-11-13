@@ -11,6 +11,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -127,6 +128,8 @@ const Index = () => {
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
   const [showPrintDialog, setShowPrintDialog] = useState(false);
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
+  const [previewMode, setPreviewMode] = useState<'compact' | 'detailed'>('compact');
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
@@ -377,6 +380,24 @@ const Index = () => {
 
   const handlePrint = () => {
     setShowPrintDialog(true);
+  };
+
+  const handlePreviewPrint = (mode: 'compact' | 'detailed') => {
+    setPreviewMode(mode);
+    setShowPrintDialog(false);
+    setShowPrintPreview(true);
+    setPrintMode(mode);
+    setPrintingSector(null);
+  };
+
+  const handleConfirmPrint = () => {
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => {
+        setShowPrintPreview(false);
+        setPrintMode(null);
+      }, 500);
+    }, 100);
   };
 
   const handlePrintWithMode = (mode: 'compact' | 'detailed') => {
@@ -792,58 +813,144 @@ const Index = () => {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-lg font-bold uppercase">Opções de Impressão</AlertDialogTitle>
             <AlertDialogDescription className="text-sm">
-              Escolha o formato de impressão desejado. O sistema otimizará automaticamente para o tamanho A4.
+              Escolha o formato e visualize antes de imprimir. O sistema otimizará automaticamente para o tamanho A4.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="grid gap-2 py-3">
-            <Button
-              variant="outline"
-              className="w-full justify-start h-auto py-3 px-3 hover:bg-primary/10 hover:border-primary"
-              onClick={() => handlePrintWithMode('compact')}
-            >
-              <div className="text-left w-full">
-                <div className="font-semibold text-sm uppercase mb-0.5">Modelo Retraído</div>
-                <div className="text-xs text-muted-foreground leading-tight">
-                  Visualização compacta - Todos os pacientes em formato resumido
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                className="w-full justify-center h-auto py-3 px-2 hover:bg-primary/10 hover:border-primary"
+                onClick={() => handlePreviewPrint('compact')}
+              >
+                <div className="text-center w-full">
+                  <div className="font-semibold text-sm uppercase mb-0.5">📄 Retraído</div>
+                  <div className="text-[10px] text-muted-foreground leading-tight">
+                    Pré-visualizar compacto
+                  </div>
                 </div>
-              </div>
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start h-auto py-3 px-3 hover:bg-primary/10 hover:border-primary"
-              onClick={() => handlePrintWithMode('detailed')}
-            >
-              <div className="text-left w-full">
-                <div className="font-semibold text-sm uppercase mb-0.5">Modelo Detalhado</div>
-                <div className="text-xs text-muted-foreground leading-tight">
-                  Visualização expandida com todas as informações completas
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-center h-auto py-3 px-2 hover:bg-primary/10 hover:border-primary"
+                onClick={() => handlePreviewPrint('detailed')}
+              >
+                <div className="text-center w-full">
+                  <div className="font-semibold text-sm uppercase mb-0.5">📋 Detalhado</div>
+                  <div className="text-[10px] text-muted-foreground leading-tight">
+                    Pré-visualizar expandido
+                  </div>
                 </div>
+              </Button>
+            </div>
+            <div className="pt-2 border-t">
+              <p className="text-xs text-muted-foreground mb-2 uppercase">Ou imprimir diretamente:</p>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => handlePrintWithMode('compact')}
+                >
+                  Retraído
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => handlePrintWithMode('detailed')}
+                >
+                  Detalhado
+                </Button>
               </div>
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start h-auto py-3 px-3 hover:bg-primary/10 hover:border-primary"
-              onClick={() => {
-                setShowPrintDialog(false);
-                toast({
-                  title: "Impressão por seção",
-                  description: "Use os botões de impressão em cada seção individual para imprimir por ala.",
-                });
-              }}
-            >
-              <div className="text-left w-full">
-                <div className="font-semibold text-sm uppercase mb-0.5">Por Seção Individual</div>
-                <div className="text-xs text-muted-foreground leading-tight">
-                  Use os botões nas seções para imprimir cada ala separadamente
-                </div>
-              </div>
-            </Button>
+            </div>
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel className="uppercase text-sm">Cancelar</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Print Preview Dialog */}
+      <Dialog open={showPrintPreview} onOpenChange={setShowPrintPreview}>
+        <DialogContent className="max-w-6xl h-[90vh] print:hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold uppercase">
+              Pré-visualização - Modelo {previewMode === 'compact' ? 'Retraído' : 'Detalhado'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-auto border rounded-lg bg-white p-4" style={{ 
+            boxShadow: '0 0 0 1px #e5e7eb inset',
+            WebkitOverflowScrolling: 'touch'
+          }}>
+            <div className="max-w-[210mm] mx-auto bg-white" style={{
+              minHeight: '297mm',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            }}>
+              {/* Preview Content - Same as print layout */}
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                  <div className="h-6 w-6 bg-gradient-primary rounded-md flex items-center justify-center">
+                    <ClipboardList className="h-3 w-3 text-primary-foreground" />
+                  </div>
+                  <h1 className="text-sm font-bold uppercase">Mapa de Pacientes</h1>
+                </div>
+                
+                <div className="space-y-1">
+                  {/* Red Sector */}
+                  {redPatients.length > 0 && (
+                    <SectorSection 
+                      sector="red" 
+                      patients={redPatients} 
+                      onUpdatePatient={handleUpdatePatient}
+                      expandedForPrint={previewMode === 'detailed'}
+                      onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
+                    />
+                  )}
+                  
+                  {/* Yellow Sector */}
+                  {yellowPatients.length > 0 && (
+                    <SectorSection 
+                      sector="yellow" 
+                      patients={yellowPatients} 
+                      onUpdatePatient={handleUpdatePatient}
+                      expandedForPrint={previewMode === 'detailed'}
+                      onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
+                    />
+                  )}
+                  
+                  {/* Blue Sector */}
+                  {bluePatients.length > 0 && (
+                    <SectorSection 
+                      sector="blue" 
+                      patients={bluePatients} 
+                      onUpdatePatient={handleUpdatePatient}
+                      expandedForPrint={previewMode === 'detailed'}
+                      onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowPrintPreview(false)}
+              className="uppercase"
+            >
+              Voltar
+            </Button>
+            <Button
+              onClick={handleConfirmPrint}
+              className="uppercase"
+            >
+              <Printer className="h-4 w-4 mr-2" />
+              Imprimir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>
   );
 };
