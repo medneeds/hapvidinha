@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { FileText, Download, Copy, Trash2, FileInput, ArrowLeft, Save, FolderOpen } from "lucide-react";
+import { FileText, Download, Copy, Trash2, FileInput, ArrowLeft, Save, FolderOpen, Database } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { internmentTemplate } from "@/data/internmentTemplate";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SavedTemplate {
   id: string;
@@ -32,11 +33,22 @@ interface SavedTemplate {
   createdAt: string;
 }
 
+interface InternmentRequest {
+  id: string;
+  title: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
 const NotesPage = () => {
   const [notes, setNotes] = useState("");
   const [savedTemplates, setSavedTemplates] = useState<SavedTemplate[]>([]);
+  const [internmentRequests, setInternmentRequests] = useState<InternmentRequest[]>([]);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [isSaveDbDialogOpen, setIsSaveDbDialogOpen] = useState(false);
   const [templateName, setTemplateName] = useState("");
+  const [dbRequestTitle, setDbRequestTitle] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -45,7 +57,22 @@ const NotesPage = () => {
     if (stored) {
       setSavedTemplates(JSON.parse(stored));
     }
+    loadInternmentRequests();
   }, []);
+
+  const loadInternmentRequests = async () => {
+    const { data, error } = await supabase
+      .from("internment_requests")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Erro ao carregar solicitações:", error);
+      return;
+    }
+
+    setInternmentRequests(data || []);
+  };
 
   const saveTemplatesToStorage = (templates: SavedTemplate[]) => {
     localStorage.setItem("customTemplates", JSON.stringify(templates));
@@ -163,6 +190,87 @@ const NotesPage = () => {
     });
   };
 
+  const handleOpenSaveDbDialog = () => {
+    if (!notes.trim()) {
+      toast({
+        title: "ERRO",
+        description: "NÃO HÁ CONTEÚDO PARA SALVAR",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsSaveDbDialogOpen(true);
+  };
+
+  const handleSaveToDatabase = async () => {
+    if (!dbRequestTitle.trim()) {
+      toast({
+        title: "ERRO",
+        description: "DIGITE UM TÍTULO PARA A SOLICITAÇÃO",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from("internment_requests")
+      .insert({
+        title: dbRequestTitle.toUpperCase(),
+        content: notes,
+      });
+
+    if (error) {
+      toast({
+        title: "ERRO",
+        description: "NÃO FOI POSSÍVEL SALVAR A SOLICITAÇÃO",
+        variant: "destructive",
+      });
+      console.error("Erro ao salvar:", error);
+      return;
+    }
+
+    toast({
+      title: "SALVO NO BANCO",
+      description: `SOLICITAÇÃO "${dbRequestTitle.toUpperCase()}" SALVA COM SUCESSO`,
+    });
+
+    setDbRequestTitle("");
+    setIsSaveDbDialogOpen(false);
+    loadInternmentRequests();
+  };
+
+  const handleLoadFromDatabase = (request: InternmentRequest) => {
+    setNotes(request.content);
+    toast({
+      title: "SOLICITAÇÃO CARREGADA",
+      description: `"${request.title}" CARREGADA COM SUCESSO`,
+    });
+  };
+
+  const handleDeleteFromDatabase = async (requestId: string) => {
+    const { error } = await supabase
+      .from("internment_requests")
+      .delete()
+      .eq("id", requestId);
+
+    if (error) {
+      toast({
+        title: "ERRO",
+        description: "NÃO FOI POSSÍVEL EXCLUIR A SOLICITAÇÃO",
+        variant: "destructive",
+      });
+      console.error("Erro ao excluir:", error);
+      return;
+    }
+
+    toast({
+      title: "SOLICITAÇÃO EXCLUÍDA",
+      description: "SOLICITAÇÃO REMOVIDA DO BANCO COM SUCESSO",
+    });
+
+    loadInternmentRequests();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -214,6 +322,17 @@ const NotesPage = () => {
               SALVAR COMO MODELO
             </Button>
 
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleOpenSaveDbDialog}
+              disabled={!notes}
+              className="gap-2 hover:bg-cyan-500/10 hover:text-cyan-600 hover:border-cyan-500/50 transition-all uppercase"
+            >
+              <Database className="h-4 w-4" />
+              SALVAR NO BANCO
+            </Button>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -246,6 +365,48 @@ const NotesPage = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteTemplate(template.id);
+                      }}
+                      className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={internmentRequests.length === 0}
+                  className="gap-2 hover:bg-cyan-500/10 hover:text-cyan-600 hover:border-cyan-500/50 transition-all uppercase"
+                >
+                  <Database className="h-4 w-4" />
+                  BANCO DE SOLICITAÇÕES ({internmentRequests.length})
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuLabel className="uppercase">SOLICITAÇÕES SALVAS</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {internmentRequests.map((request) => (
+                  <DropdownMenuItem
+                    key={request.id}
+                    className="flex items-center justify-between group uppercase"
+                  >
+                    <button
+                      onClick={() => handleLoadFromDatabase(request)}
+                      className="flex-1 text-left uppercase truncate"
+                    >
+                      {request.title}
+                    </button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteFromDatabase(request.id);
                       }}
                       className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
                     >
@@ -357,6 +518,57 @@ const NotesPage = () => {
                 className="uppercase"
               >
                 SALVAR MODELO
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Save to Database Dialog */}
+        <Dialog open={isSaveDbDialogOpen} onOpenChange={setIsSaveDbDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="uppercase">SALVAR NO BANCO DE SOLICITAÇÕES</DialogTitle>
+              <DialogDescription className="uppercase">
+                DIGITE UM TÍTULO PARA ESTA SOLICITAÇÃO DE INTERNAÇÃO
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="request-title" className="uppercase">
+                  TÍTULO DA SOLICITAÇÃO
+                </Label>
+                <Input
+                  id="request-title"
+                  value={dbRequestTitle}
+                  onChange={(e) => setDbRequestTitle(e.target.value.toUpperCase())}
+                  placeholder="EX: INTERNAÇÃO CARDIOLOGIA - PACIENTE 123"
+                  className="uppercase"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSaveToDatabase();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsSaveDbDialogOpen(false);
+                  setDbRequestTitle("");
+                }}
+                className="uppercase"
+              >
+                CANCELAR
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSaveToDatabase}
+                className="uppercase"
+              >
+                SALVAR NO BANCO
               </Button>
             </DialogFooter>
           </DialogContent>
