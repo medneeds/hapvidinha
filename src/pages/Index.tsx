@@ -1,17 +1,21 @@
 import { useState, useEffect } from "react";
 import { SectorSection } from "@/components/SectorSection";
+import { PatientCard } from "@/components/PatientCard";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Plus, StickyNote, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
 const STORAGE_KEY = "hospital_patients_data";
 const HISTORY_KEY = "hospital_patients_history";
+const NOTES_KEY = "hospital_notes";
 
 const Index = () => {
   const [patients, setPatients] = useState<Patient[]>(() => {
@@ -21,6 +25,10 @@ const Index = () => {
   const [history, setHistory] = useState<Patient[][]>(() => {
     const saved = localStorage.getItem(HISTORY_KEY);
     return saved ? JSON.parse(saved) : [];
+  });
+  const [notes, setNotes] = useState<string>(() => {
+    const saved = localStorage.getItem(NOTES_KEY);
+    return saved || "";
   });
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
@@ -39,6 +47,11 @@ const Index = () => {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   }, [history]);
 
+  // Persist notes to localStorage
+  useEffect(() => {
+    localStorage.setItem(NOTES_KEY, notes);
+  }, [notes]);
+
   const saveToHistory = (currentPatients: Patient[]) => {
     setHistory(prev => [...prev.slice(-9), currentPatients]); // Keep last 10 states
   };
@@ -51,6 +64,7 @@ const Index = () => {
   const redPatients = filterPatients(patients.filter((p) => p.sector === "red"));
   const yellowPatients = filterPatients(patients.filter((p) => p.sector === "yellow"));
   const bluePatients = filterPatients(patients.filter((p) => p.sector === "blue"));
+  const outsidePatients = filterPatients(patients.filter((p) => p.sector === "outside"));
 
   const totalPatients = patients.length;
   const criticalPatients = redPatients.length;
@@ -68,7 +82,7 @@ const Index = () => {
 
   const handleAddExtraBed = (sector: Patient['sector']) => {
     saveToHistory(patients);
-    const sectorPrefix = sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : 'Z';
+    const sectorPrefix = sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : sector === 'blue' ? 'Z' : 'F';
     const sectorPatients = patients.filter(p => p.sector === sector);
     const extraBedNumber = sectorPatients.length + 1;
     
@@ -89,7 +103,7 @@ const Index = () => {
 
     setPatients((prev) => [...prev, newPatient]);
     toast({
-      title: "Leito extra adicionado",
+      title: sector === "outside" ? "Paciente fora de ala adicionado" : "Leito extra adicionado",
       description: `Leito ${newPatient.bedNumber} criado com sucesso.`,
     });
   };
@@ -348,6 +362,71 @@ const Index = () => {
                   onToggleSelection={handleToggleSelection}
                   printOnlySelected={printingSector === "selected"}
                 />
+              </div>
+
+              {/* Outside Patients and Notes Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mt-6 print:hidden">
+                {/* Pacientes Fora das Alas */}
+                <Card className="border-2 border-muted-foreground/20">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
+                        <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                        Pacientes Fora das Alas
+                      </CardTitle>
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddExtraBed("outside")}
+                        className="h-8 px-3 text-xs"
+                      >
+                        <Plus className="h-3.5 w-3.5 mr-1" />
+                        Adicionar
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {outsidePatients.length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        Nenhum paciente fora das alas
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {outsidePatients.map((patient) => (
+                          <PatientCard
+                            key={patient.id}
+                            patient={patient}
+                            onUpdate={handleUpdatePatient}
+                            onDelete={handleDeletePatient}
+                            selectionMode={selectionMode}
+                            isSelected={selectedPatients.has(patient.id)}
+                            onToggleSelection={handleToggleSelection}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Anotações e Lembretes */}
+                <Card className="border-2 border-muted-foreground/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
+                      <StickyNote className="h-4 w-4 sm:h-5 sm:w-5" />
+                      Anotações e Lembretes
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Textarea
+                      placeholder="Digite aqui suas anotações e lembretes importantes..."
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value.toUpperCase())}
+                      className="min-h-[200px] resize-none uppercase font-mono text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {notes.length} caracteres
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </main>

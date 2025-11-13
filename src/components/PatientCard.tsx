@@ -33,6 +33,11 @@ const sectorConfig = {
     label: "Observação Azul",
     color: "bg-stable/10 border-stable/30 text-stable-foreground",
     badgeColor: "bg-stable text-stable-foreground hover:bg-stable/90"
+  },
+  outside: {
+    label: "Fora das Alas",
+    color: "bg-muted/50 border-muted-foreground/30 text-foreground",
+    badgeColor: "bg-muted-foreground text-background hover:bg-muted-foreground/90"
   }
 };
 
@@ -44,7 +49,8 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
   const checkboxColor = {
     red: "data-[state=checked]:bg-critical data-[state=checked]:border-critical",
     yellow: "data-[state=checked]:bg-warning data-[state=checked]:border-warning",
-    blue: "data-[state=checked]:bg-stable data-[state=checked]:border-stable"
+    blue: "data-[state=checked]:bg-stable data-[state=checked]:border-stable",
+    outside: "data-[state=checked]:bg-muted-foreground data-[state=checked]:border-muted-foreground"
   }[patient.sector];
 
   return (

@@ -1,4 +1,4 @@
-export type SectorType = 'red' | 'yellow' | 'blue';
+export type SectorType = 'red' | 'yellow' | 'blue' | 'outside';
 
 export interface Patient {
   id: string;
