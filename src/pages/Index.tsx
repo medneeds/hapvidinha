@@ -3,7 +3,7 @@ import { SectorSection } from "@/components/SectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -37,6 +37,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 const STORAGE_KEY = "hospital_patients_data";
 const HISTORY_KEY = "hospital_patients_history";
+const REDO_HISTORY_KEY = "hospital_patients_redo_history";
 const NOTES_KEY = "hospital_notes";
 const CHECKLIST_KEY = "hospital_checklist";
 
@@ -98,6 +99,10 @@ const Index = () => {
     const saved = localStorage.getItem(HISTORY_KEY);
     return saved ? JSON.parse(saved) : [];
   });
+  const [redoHistory, setRedoHistory] = useState<Patient[][]>(() => {
+    const saved = localStorage.getItem(REDO_HISTORY_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
   const [notes, setNotes] = useState<string>(() => {
     const saved = localStorage.getItem(NOTES_KEY);
     return saved || "";
@@ -146,6 +151,11 @@ const Index = () => {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   }, [history]);
 
+  // Persist redo history to localStorage
+  useEffect(() => {
+    localStorage.setItem(REDO_HISTORY_KEY, JSON.stringify(redoHistory));
+  }, [redoHistory]);
+
   // Persist notes to localStorage
   useEffect(() => {
     localStorage.setItem(NOTES_KEY, notes);
@@ -158,6 +168,7 @@ const Index = () => {
 
   const saveToHistory = (currentPatients: Patient[]) => {
     setHistory(prev => [...prev.slice(-9), currentPatients]); // Keep last 10 states
+    setRedoHistory([]); // Clear redo history when new action is performed
   };
 
   const handleAddChecklistItem = () => {
@@ -323,11 +334,32 @@ const Index = () => {
     }
 
     const previousState = history[history.length - 1];
+    setRedoHistory(prev => [...prev, patients]); // Save current state to redo history
     setPatients(previousState);
     setHistory(prev => prev.slice(0, -1));
     toast({
       title: "Ação desfeita",
       description: "A última ação foi desfeita com sucesso.",
+    });
+  };
+
+  const handleRedo = () => {
+    if (redoHistory.length === 0) {
+      toast({
+        title: "Nenhuma ação para refazer",
+        description: "Não há histórico de ações desfeitas disponível.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const nextState = redoHistory[redoHistory.length - 1];
+    setHistory(prev => [...prev, patients]); // Save current state to undo history
+    setPatients(nextState);
+    setRedoHistory(prev => prev.slice(0, -1));
+    toast({
+      title: "Ação refeita",
+      description: "A ação foi refeita com sucesso.",
     });
   };
 
@@ -387,6 +419,16 @@ const Index = () => {
                     title="Desfazer última ação"
                   >
                     <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleRedo}
+                    disabled={redoHistory.length === 0}
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                    title="Refazer ação"
+                  >
+                    <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                   <Button
                     variant="outline"
