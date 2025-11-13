@@ -59,25 +59,34 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-glow border-border/50">
-        <CardHeader className="text-center space-y-4">
-          <div className="mx-auto bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl h-16 w-16 flex items-center justify-center shadow-lg shadow-primary/30">
-            <Stethoscope className="h-8 w-8 text-primary-foreground" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-primary/10 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
+      </div>
+
+      <Card className="w-full max-w-md backdrop-blur-sm bg-card/95 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-border/50 relative z-10 animate-in fade-in-50 slide-in-from-bottom-4 duration-700">
+        <CardHeader className="text-center space-y-6 pb-8">
+          <div className="mx-auto relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/80 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+            <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 rounded-2xl h-20 w-20 flex items-center justify-center shadow-lg shadow-primary/30 transform group-hover:scale-105 transition-transform">
+              <Stethoscope className="h-10 w-10 text-primary-foreground" />
+            </div>
           </div>
-          <div>
-            <CardTitle className="text-2xl font-bold uppercase tracking-tight">
+          <div className="space-y-2">
+            <CardTitle className="text-3xl font-bold uppercase tracking-tight bg-gradient-to-br from-foreground to-foreground/80 bg-clip-text">
               Plataforma Médica
             </CardTitle>
-            <CardDescription className="uppercase text-xs tracking-wide mt-2">
+            <CardDescription className="uppercase text-xs tracking-widest font-medium text-muted-foreground/80">
               Sistema de Controle de Leitos
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+        <CardContent className="pb-8">
+          <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="login-username" className="uppercase text-xs font-semibold">
+              <Label htmlFor="login-username" className="uppercase text-xs font-semibold tracking-wide text-foreground/90">
                 Login
               </Label>
               <Input
@@ -86,12 +95,12 @@ export default function AuthPage() {
                 placeholder="USUÁRIO"
                 value={loginData.username}
                 onChange={(e) => setLoginData({ ...loginData, username: e.target.value.toUpperCase() })}
-                className="uppercase"
+                className="uppercase h-11 bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="login-password" className="uppercase text-xs font-semibold">
+              <Label htmlFor="login-password" className="uppercase text-xs font-semibold tracking-wide text-foreground/90">
                 Senha
               </Label>
               <Input
@@ -100,10 +109,15 @@ export default function AuthPage() {
                 placeholder="••••••••"
                 value={loginData.password}
                 onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                className="h-11 bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all"
                 required
               />
             </div>
-            <Button type="submit" className="w-full uppercase" disabled={loading}>
+            <Button 
+              type="submit" 
+              className="w-full uppercase h-11 font-semibold tracking-wide shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all" 
+              disabled={loading}
+            >
               {loading ? "ENTRANDO..." : "ENTRAR"}
             </Button>
           </form>
