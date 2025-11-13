@@ -13,6 +13,9 @@ interface SectorSectionProps {
   expandedForPrint?: boolean;
   onPrintSector?: () => void;
   onAddExtraBed?: () => void;
+  selectionMode?: boolean;
+  selectedPatients?: Set<string>;
+  onToggleSelection?: (patientId: string) => void;
 }
 
 const sectorInfo = {
@@ -36,7 +39,7 @@ const sectorInfo = {
   }
 };
 
-export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, expandedForPrint = false, onPrintSector, onAddExtraBed }: SectorSectionProps) {
+export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, expandedForPrint = false, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const [isOpen, setIsOpen] = useState(true);
 
@@ -102,6 +105,9 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
               onUpdate={onUpdatePatient}
               onDelete={onDeletePatient}
               expandedForPrint={expandedForPrint}
+              selectionMode={selectionMode}
+              isSelected={selectedPatients.has(patient.id)}
+              onToggleSelection={onToggleSelection}
             />
           ))
         )}

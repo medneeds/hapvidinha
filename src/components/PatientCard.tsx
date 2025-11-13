@@ -3,6 +3,7 @@ import { Patient } from "@/types/patient";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -12,6 +13,9 @@ interface PatientCardProps {
   onUpdate: (updatedPatient: Patient) => void;
   onDelete?: (patientId: string) => void;
   expandedForPrint?: boolean;
+  selectionMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelection?: (patientId: string) => void;
 }
 
 const sectorConfig = {
@@ -32,14 +36,18 @@ const sectorConfig = {
   }
 };
 
-export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = false }: PatientCardProps) {
+export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = false, selectionMode = false, isSelected = false, onToggleSelection }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
 
   return (
     <>
-      <Card className={cn("overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid", config.color)}>
+      <Card className={cn(
+        "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid", 
+        config.color,
+        isSelected && "ring-2 ring-primary"
+      )}>
         <div className={cn(
           "p-2.5",
           !expandedForPrint && "print:p-1 print:py-0.5"
@@ -48,6 +56,15 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
             "flex items-start justify-between gap-3",
             !expandedForPrint && "print:flex-row print:items-center print:gap-2"
           )}>
+            {selectionMode && onToggleSelection && (
+              <div className="flex items-center print:hidden pt-1">
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={() => onToggleSelection(patient.id)}
+                  className="h-5 w-5"
+                />
+              </div>
+            )}
             <div className={cn(
               "flex-1 grid grid-cols-1 md:grid-cols-7 gap-2 items-start",
               !expandedForPrint && "print:flex print:flex-row print:gap-3 print:items-center print:flex-wrap"
@@ -140,44 +157,46 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
             </div>
 
           {/* Action Buttons */}
-          <div className="flex-shrink-0 flex gap-1 print:hidden">
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsEditDialogOpen(true);
-              }}
-              className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-all duration-200"
-            >
-              <Edit className="h-3.5 w-3.5" />
-            </Button>
-            {onDelete && (
+          {!selectionMode && (
+            <div className="flex-shrink-0 flex gap-1 print:hidden">
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (window.confirm('Tem certeza que deseja deletar este leito?')) {
-                    onDelete(patient.id);
-                  }
+                  setIsEditDialogOpen(true);
                 }}
-                className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
+                className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-all duration-200"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Edit className="h-3.5 w-3.5" />
               </Button>
-            )}
-            <button 
-              className="flex-shrink-0 p-1.5 hover:bg-accent/50 rounded-md transition-all duration-200"
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              {isExpanded ? (
-                <ChevronUp className="h-4 w-4 text-foreground" />
-              ) : (
-                <ChevronDown className="h-4 w-4 text-foreground" />
+              {onDelete && (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (window.confirm('Tem certeza que deseja deletar este leito?')) {
+                      onDelete(patient.id);
+                    }
+                  }}
+                  className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
               )}
-            </button>
-          </div>
+              <button 
+                className="flex-shrink-0 p-1.5 hover:bg-accent/50 rounded-md transition-all duration-200"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                {isExpanded ? (
+                  <ChevronUp className="h-4 w-4 text-foreground" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-foreground" />
+                )}
+              </button>
+            </div>
+          )}
         </div>
         </div>
 

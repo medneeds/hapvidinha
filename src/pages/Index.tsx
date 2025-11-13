@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -14,6 +14,8 @@ const Index = () => {
   const [patients, setPatients] = useState<Patient[]>(mockPatients);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
   
@@ -76,6 +78,38 @@ const Index = () => {
     });
   };
 
+  const handleToggleSelection = (patientId: string) => {
+    setSelectedPatients(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(patientId)) {
+        newSet.delete(patientId);
+      } else {
+        newSet.add(patientId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedPatients.size === 0) return;
+    
+    if (window.confirm(`Tem certeza que deseja deletar ${selectedPatients.size} leito(s) selecionado(s)?`)) {
+      setPatients((prev) => prev.filter(p => !selectedPatients.has(p.id)));
+      toast({
+        title: "Leitos deletados",
+        description: `${selectedPatients.size} leito(s) removido(s) com sucesso.`,
+        variant: "destructive",
+      });
+      setSelectedPatients(new Set());
+      setSelectionMode(false);
+    }
+  };
+
+  const handleToggleSelectionMode = () => {
+    setSelectionMode(!selectionMode);
+    setSelectedPatients(new Set());
+  };
+
   const handlePrint = () => {
     setPrintingSector(null);
     setTimeout(() => window.print(), 100);
@@ -122,6 +156,26 @@ const Index = () => {
                   >
                     {showOnlyOccupied ? <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
                   </Button>
+                  <Button
+                    variant={selectionMode ? "default" : "outline"}
+                    size="icon"
+                    onClick={handleToggleSelectionMode}
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                    title="Modo de seleção múltipla"
+                  >
+                    <CheckSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </Button>
+                  {selectionMode && selectedPatients.size > 0 && (
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={handleDeleteSelected}
+                      className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                      title={`Deletar ${selectedPatients.size} selecionado(s)`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="icon"
@@ -181,6 +235,9 @@ const Index = () => {
                   expandedForPrint={printingSector === "red"}
                   onPrintSector={() => handlePrintSector("red")}
                   onAddExtraBed={() => handleAddExtraBed("red")}
+                  selectionMode={selectionMode}
+                  selectedPatients={selectedPatients}
+                  onToggleSelection={handleToggleSelection}
                 />
               </div>
               <div className={printingSector && printingSector !== "yellow" ? "print:hidden" : ""}>
@@ -192,6 +249,9 @@ const Index = () => {
                   expandedForPrint={printingSector === "yellow"}
                   onPrintSector={() => handlePrintSector("yellow")}
                   onAddExtraBed={() => handleAddExtraBed("yellow")}
+                  selectionMode={selectionMode}
+                  selectedPatients={selectedPatients}
+                  onToggleSelection={handleToggleSelection}
                 />
               </div>
               <div className={printingSector && printingSector !== "blue" ? "print:hidden" : ""}>
@@ -203,6 +263,9 @@ const Index = () => {
                   expandedForPrint={printingSector === "blue"}
                   onPrintSector={() => handlePrintSector("blue")}
                   onAddExtraBed={() => handleAddExtraBed("blue")}
+                  selectionMode={selectionMode}
+                  selectedPatients={selectedPatients}
+                  onToggleSelection={handleToggleSelection}
                 />
               </div>
             </div>
