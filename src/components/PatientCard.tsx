@@ -172,7 +172,7 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
                   e.stopPropagation();
                   setIsEditDialogOpen(true);
                 }}
-                className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                className="h-8 w-8 text-foreground hover:bg-primary/10 hover:text-primary transition-all duration-200"
               >
                 <Edit className="h-3.5 w-3.5" />
               </Button>
@@ -186,7 +186,7 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
                       onDelete(patient.id);
                     }
                   }}
-                  className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
+                  className="h-8 w-8 text-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
