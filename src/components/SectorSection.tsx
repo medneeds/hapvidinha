@@ -20,19 +20,19 @@ const sectorInfo = {
     title: "Sala Vermelha",
     subtitle: "Cuidados Especiais",
     icon: "🔴",
-    gradientClass: "from-critical/20 to-critical/5"
+    gradientClass: "bg-gradient-critical"
   },
   yellow: {
     title: "Observação Amarela",
     subtitle: "Em monitorização",
     icon: "🟡",
-    gradientClass: "from-warning/20 to-warning/5"
+    gradientClass: "bg-gradient-warning"
   },
   blue: {
     title: "Observação Azul",
     subtitle: "Sem monitorização",
     icon: "🔵",
-    gradientClass: "from-stable/20 to-stable/5"
+    gradientClass: "bg-gradient-stable"
   }
 };
 
@@ -42,7 +42,7 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-1 print:break-inside-avoid">
-      <div className={`bg-gradient-to-r ${info.gradientClass} rounded-xl p-3 border border-border/50 print:p-2 print:mb-1`}>
+      <div className={`${info.gradientClass} rounded-xl p-3 border border-border/50 shadow-md print:p-2 print:mb-1 transition-all duration-200`}>
         <div className="flex items-center justify-between">
           <CollapsibleTrigger asChild>
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none">

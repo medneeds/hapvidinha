@@ -39,7 +39,7 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
 
   return (
     <>
-      <Card className={cn("overflow-hidden transition-all hover:shadow-md print:shadow-none print:break-inside-avoid", config.color)}>
+      <Card className={cn("overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid", config.color)}>
         <div className={cn(
           "p-2.5",
           !expandedForPrint && "print:p-1 print:py-0.5"
@@ -148,7 +148,7 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
                 e.stopPropagation();
                 setIsEditDialogOpen(true);
               }}
-              className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-all"
+              className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-all duration-200"
             >
               <Edit className="h-3.5 w-3.5" />
             </Button>
@@ -162,13 +162,13 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
                     onDelete(patient.id);
                   }
                 }}
-                className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-all"
+                className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             )}
             <button 
-              className="flex-shrink-0 p-1.5 hover:bg-accent/50 rounded-md transition-colors"
+              className="flex-shrink-0 p-1.5 hover:bg-accent/50 rounded-md transition-all duration-200"
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded ? (

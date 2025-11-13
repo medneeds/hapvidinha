@@ -94,13 +94,13 @@ const Index = () => {
         
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <header className="border-b border-border/30 bg-gradient-to-b from-card/95 via-card/90 to-card/80 backdrop-blur-xl sticky top-0 z-10 shadow-lg shadow-primary/5 print:static print:border-b-2 print:shadow-none">
+          <header className="border-b border-border/30 bg-gradient-card backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b-2 print:shadow-none">
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
             <div className="container mx-auto px-4 py-3 print:py-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <SidebarTrigger className="print:hidden" />
-                  <div className="h-10 w-10 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center print:h-8 print:w-8 shadow-lg shadow-primary/30 transition-transform hover:scale-105">
+                  <div className="h-10 w-10 bg-gradient-primary rounded-lg flex items-center justify-center print:h-8 print:w-8 shadow-glow transition-transform hover:scale-105 duration-200">
                     <ClipboardList className="h-6 w-6 text-primary-foreground print:h-4 print:w-4" />
                   </div>
                   <div>
