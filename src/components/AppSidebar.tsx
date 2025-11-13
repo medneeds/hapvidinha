@@ -89,9 +89,9 @@ export function AppSidebar() {
       className="border-r border-border/50 bg-gradient-to-b from-card via-card/95 to-card/90 backdrop-blur-xl transition-all duration-300"
     >
       <SidebarHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
-        <div className={`flex items-center transition-all duration-300 ${!open ? 'justify-center px-0 py-6' : 'gap-4 px-3 py-4'}`}>
-          <div className={`bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-110 hover:shadow-primary/50 ${open ? 'h-9 w-9' : 'h-12 w-12'}`}>
-            <Library className={`text-primary-foreground transition-all duration-300 ${open ? 'h-5 w-5' : 'h-7 w-7'}`} />
+        <div className={`flex items-center transition-all duration-300 ${!open ? 'justify-center px-0 py-7' : 'gap-4 px-3 py-4'}`}>
+          <div className={`bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/40 ${open ? 'h-9 w-9' : 'h-14 w-14'}`}>
+            <Library className={`text-primary-foreground transition-all duration-300 ${open ? 'h-5 w-5' : 'h-8 w-8'}`} />
           </div>
           {open && (
             <div className="flex-1 animate-fade-in">
@@ -106,7 +106,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className={`gap-0 transition-all duration-300 ${open ? 'py-2' : 'py-4'}`}>
+      <SidebarContent className={`gap-0 transition-all duration-300 ${open ? 'py-2' : 'py-5'}`}>
         {menuItems.map((section, index) => (
           <div key={section.title}>
             <Collapsible
@@ -115,9 +115,9 @@ export function AppSidebar() {
             >
               <SidebarGroup className="p-0">
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className={`group/label cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 rounded-lg mb-1 ${open ? 'h-14 mx-2 gap-4' : 'h-16 mx-0 justify-center gap-0 my-1'}`}>
-                    <div className={`${section.bgColor} rounded-lg flex items-center justify-center transition-all duration-300 group-hover/label:scale-110 flex-shrink-0 ${open ? 'h-9 w-9 group-hover/label:shadow-md' : 'h-12 w-12 group-hover/label:shadow-xl group-hover/label:shadow-primary/20'}`}>
-                      <section.icon className={`${section.color} transition-all duration-300 ${open ? 'h-4 w-4' : 'h-6 w-6'}`} />
+                  <SidebarGroupLabel className={`group/label cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 rounded-lg ${open ? 'h-14 mx-2 gap-4 mb-1' : 'h-[70px] mx-0 justify-center gap-0 my-2'}`}>
+                    <div className={`${section.bgColor} rounded-xl flex items-center justify-center transition-all duration-300 group-hover/label:scale-105 flex-shrink-0 ${open ? 'h-9 w-9 group-hover/label:shadow-md' : 'h-14 w-14 group-hover/label:shadow-xl group-hover/label:shadow-primary/30'}`}>
+                      <section.icon className={`${section.color} transition-all duration-300 ${open ? 'h-4 w-4' : 'h-8 w-8'}`} />
                     </div>
                     {open && (
                       <>
@@ -144,11 +144,11 @@ export function AppSidebar() {
                         return (
                           <SidebarMenuItem key={itemKey}>
                             <SidebarMenuButton
-                              className={`group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg mb-1 hover:shadow-sm cursor-pointer ${open ? 'gap-3 hover:translate-x-1' : 'justify-center gap-0 h-11 my-0.5'}`}
+                              className={`group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer ${open ? 'gap-3 hover:translate-x-1 mb-1' : 'justify-center gap-0 h-12 my-1'}`}
                               tooltip={itemName}
                               onClick={() => handleItemClick(item)}
                             >
-                              <div className={`rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 ${open ? 'h-2 w-2 ml-1' : 'h-3 w-3'}`} />
+                              <div className={`rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 ${open ? 'h-2 w-2 ml-1' : 'h-3.5 w-3.5'}`} />
                               {open && (
                                 <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
                                   {itemName}
@@ -164,21 +164,21 @@ export function AppSidebar() {
               </SidebarGroup>
             </Collapsible>
             {index < menuItems.length - 1 && (
-              <div className={`my-3 h-px bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${open ? 'mx-4' : 'mx-3'}`} />
+              <div className={`h-px bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${open ? 'my-3 mx-4' : 'my-4 mx-2'}`} />
             )}
           </div>
         ))}
       </SidebarContent>
 
       {/* Logout Button */}
-      <div className={`border-t border-border/50 transition-all duration-300 ${open ? 'p-2' : 'p-3 py-4'}`}>
+      <div className={`border-t border-border/50 transition-all duration-300 ${open ? 'p-2' : 'p-3 py-5'}`}>
         <Button
           variant="ghost"
           onClick={signOut}
-          className={`w-full transition-all duration-300 hover:bg-destructive/10 hover:text-destructive hover:border-l-2 hover:border-l-destructive rounded-lg ${open ? 'justify-start gap-3 h-12' : 'justify-center h-14'}`}
+          className={`w-full transition-all duration-300 hover:bg-destructive/10 hover:text-destructive hover:border-l-2 hover:border-l-destructive rounded-xl ${open ? 'justify-start gap-3 h-12' : 'justify-center h-16'}`}
         >
-          <div className={`bg-destructive/10 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 flex-shrink-0 ${open ? 'h-9 w-9' : 'h-12 w-12'}`}>
-            <LogOut className={`text-destructive transition-all duration-300 ${open ? 'h-4 w-4' : 'h-6 w-6'}`} />
+          <div className={`bg-destructive/10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-destructive/20 flex-shrink-0 ${open ? 'h-9 w-9' : 'h-14 w-14'}`}>
+            <LogOut className={`text-destructive transition-all duration-300 ${open ? 'h-4 w-4' : 'h-7 w-7'}`} />
           </div>
           {open && (
             <div className="flex-1 text-left animate-fade-in">
