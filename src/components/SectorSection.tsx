@@ -57,8 +57,8 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
               <div className="text-left">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-xl print:text-base">{info.icon}</span>
-                  <h2 className="text-xl font-bold text-foreground print:text-base uppercase">{info.title}</h2>
+                  <span className="text-lg print:text-base">{info.icon}</span>
+                  <h2 className="text-lg font-bold text-foreground print:text-base uppercase">{info.title}</h2>
                 </div>
                 <p className="text-xs text-muted-foreground print:hidden uppercase">{info.subtitle}</p>
               </div>

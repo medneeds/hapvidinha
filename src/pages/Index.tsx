@@ -414,81 +414,81 @@ const Index = () => {
               {/* Pacientes Fora das Alas Section */}
               <div className="mt-6 print:hidden">
                 <Collapsible open={isOutsideSectionOpen} onOpenChange={setIsOutsideSectionOpen}>
-                  <Card className="border-2 border-muted-foreground/20">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <CollapsibleTrigger asChild>
-                          <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                            <ChevronDown className={`h-5 w-5 transition-transform ${isOutsideSectionOpen ? '' : '-rotate-90'}`} />
-                            <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
-                              <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                              Pacientes Fora das Alas
-                            </CardTitle>
-                          </button>
-                        </CollapsibleTrigger>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => handleAddExtraBed("outside")}
-                            className="h-8 px-3 text-xs"
-                          >
-                            <Plus className="h-3.5 w-3.5 mr-1" />
-                            Adicionar
-                          </Button>
-                          <div className="flex items-center gap-2 bg-muted/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50">
-                            <Activity className="h-4 w-4 text-primary" />
-                            <div>
-                              <p className="text-[10px] text-muted-foreground">Total</p>
-                              <p className="text-base font-bold text-foreground">{outsidePatients.length}</p>
-                            </div>
+                  <div className="bg-gradient-card rounded-xl p-3 border border-border/50 shadow-md transition-all duration-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <CollapsibleTrigger asChild>
+                        <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                          <ChevronDown className={`h-5 w-5 transition-transform ${isOutsideSectionOpen ? '' : '-rotate-90'}`} />
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">📍</span>
+                            <h2 className="text-lg font-bold text-foreground uppercase">Pacientes Fora das Alas</h2>
+                          </div>
+                        </button>
+                      </CollapsibleTrigger>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleAddExtraBed("outside")}
+                          className="h-8 w-8"
+                          title="Adicionar paciente"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                        </Button>
+                        <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50">
+                          <Activity className="h-4 w-4 text-primary" />
+                          <div>
+                            <p className="text-[10px] text-muted-foreground">Pacientes</p>
+                            <p className="text-base font-bold text-foreground">{outsidePatients.length}</p>
                           </div>
                         </div>
                       </div>
-                    </CardHeader>
-                    <CollapsibleContent>
-                      <CardContent className="space-y-2">
-                        {outsidePatients.length === 0 ? (
-                          <p className="text-sm text-muted-foreground text-center py-4">
-                            Nenhum paciente fora das alas
-                          </p>
-                        ) : (
-                          <div className="space-y-2">
-                            {outsidePatients.map((patient) => (
-                              <PatientCard
-                                key={patient.id}
-                                patient={patient}
-                                onUpdate={handleUpdatePatient}
-                                onDelete={handleDeletePatient}
-                                selectionMode={selectionMode}
-                                isSelected={selectedPatients.has(patient.id)}
-                                onToggleSelection={handleToggleSelection}
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </CardContent>
-                    </CollapsibleContent>
-                  </Card>
+                    </div>
+                  </div>
+                  <CollapsibleContent>
+                    <div className="space-y-2 mt-3">
+                      {outsidePatients.length === 0 ? (
+                        <p className="text-sm text-muted-foreground text-center py-4">
+                          Nenhum paciente fora das alas
+                        </p>
+                      ) : (
+                        <div className="space-y-2">
+                          {outsidePatients.map((patient) => (
+                            <PatientCard
+                              key={patient.id}
+                              patient={patient}
+                              onUpdate={handleUpdatePatient}
+                              onDelete={handleDeletePatient}
+                              selectionMode={selectionMode}
+                              isSelected={selectedPatients.has(patient.id)}
+                              onToggleSelection={handleToggleSelection}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </CollapsibleContent>
                 </Collapsible>
               </div>
 
               {/* Anotações e Lembretes Section */}
               <div className="mt-6 print:hidden">
                 <Collapsible open={isNotesSectionOpen} onOpenChange={setIsNotesSectionOpen}>
-                  <Card className="border-2 border-muted-foreground/20">
-                    <CardHeader className="pb-3">
+                  <div className="bg-gradient-card rounded-xl p-3 border border-border/50 shadow-md transition-all duration-200">
+                    <div className="flex items-center justify-between mb-3">
                       <CollapsibleTrigger asChild>
-                        <button className="flex items-center gap-2 hover:opacity-80 transition-opacity w-full">
+                        <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                           <ChevronDown className={`h-5 w-5 transition-transform ${isNotesSectionOpen ? '' : '-rotate-90'}`} />
-                          <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
-                            <StickyNote className="h-4 w-4 sm:h-5 sm:w-5" />
-                            Anotações e Lembretes
-                          </CardTitle>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">📝</span>
+                            <h2 className="text-lg font-bold text-foreground uppercase">Anotações e Lembretes</h2>
+                          </div>
                         </button>
                       </CollapsibleTrigger>
-                    </CardHeader>
-                    <CollapsibleContent>
-                      <CardContent>
+                    </div>
+                  </div>
+                  <CollapsibleContent>
+                    <div className="mt-3">
                     <Tabs defaultValue="text" className="w-full">
                       <TabsList className="grid w-full grid-cols-2 mb-4">
                         <TabsTrigger value="text" className="flex items-center gap-2">
@@ -577,9 +577,8 @@ const Index = () => {
                         </p>
                       </TabsContent>
                     </Tabs>
-                      </CardContent>
-                    </CollapsibleContent>
-                  </Card>
+                    </div>
+                  </CollapsibleContent>
                 </Collapsible>
               </div>
             </div>
