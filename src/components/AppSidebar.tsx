@@ -86,7 +86,7 @@ export function AppSidebar() {
   return (
     <Sidebar 
       collapsible="icon" 
-      className="border-r border-border/50 bg-gradient-to-b from-card via-card/95 to-card/90 backdrop-blur-xl transition-all duration-300 data-[state=collapsed]:w-20"
+      className="border-r border-border/50 bg-gradient-to-b from-card via-card/95 to-card/90 backdrop-blur-xl transition-all duration-300 data-[state=collapsed]:w-[100px]"
     >
       <SidebarHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
         <div className={`flex items-center transition-all duration-300 ${!open ? 'justify-center px-0 py-7' : 'gap-4 px-3 py-4'}`}>
