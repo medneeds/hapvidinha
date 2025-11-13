@@ -240,6 +240,20 @@ All colors MUST be HSL.
     margin-top: 0 !important;
   }
   
+  /* Evitar quebra de página dentro de seções e cards */
+  .bg-gradient-card, [class*="rounded-xl"] {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Cards de setor completos sem quebra */
+  .space-y-3 > div, .space-y-4 > div {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    orphans: 3;
+    widows: 3;
+  }
+  
   /* Layout em linha única para pacientes - aproveitar largura total */
   .print\:grid {
     display: block !important;
@@ -451,7 +465,22 @@ All colors MUST be HSL.
   
   /* Garantir que seções não quebrem no meio */
   section, article, .sector-section {
-    break-inside: avoid;
-    page-break-inside: avoid;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Cada seção de setor como unidade indivisível */
+  [class*="space-y"] > div[class*="bg-gradient-card"] {
+    page-break-before: auto !important;
+    page-break-after: auto !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    orphans: 4;
+    widows: 4;
+  }
+  
+  /* Manter cabeçalho e conteúdo de seção juntos */
+  [class*="rounded-xl"] > div {
+    page-break-after: avoid !important;
   }
 }
