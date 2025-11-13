@@ -3,13 +3,14 @@ import { SectorSection } from "@/components/SectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
@@ -133,6 +134,7 @@ const Index = () => {
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
+  const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
 
@@ -452,6 +454,15 @@ const Index = () => {
 
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
                   <ThemeToggle />
+                  <Button
+                    variant="default"
+                    size="icon"
+                    onClick={() => setHandoverDialogOpen(true)}
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-primary hover:bg-primary/90"
+                    title="Registrar Passagem de Plantão"
+                  >
+                    <ClipboardCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </Button>
                   <Button
                     variant="outline"
                     size="icon"
@@ -951,6 +962,13 @@ const Index = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Register Handover Dialog */}
+      <RegisterHandoverDialog
+        open={handoverDialogOpen}
+        onOpenChange={setHandoverDialogOpen}
+        patients={patients}
+      />
     </SidebarProvider>
   );
 };

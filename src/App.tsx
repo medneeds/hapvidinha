@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ResourcesPage from "./pages/ResourcesPage";
 import MedicalCodesPage from "./pages/MedicalCodesPage";
+import HandoversPage from "./pages/HandoversPage";
 import AuthPage from "./pages/AuthPage";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,14 @@ const App = () => (
           element={
             <ProtectedRoute>
               <MedicalCodesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/handovers"
+          element={
+            <ProtectedRoute>
+              <HandoversPage />
             </ProtectedRoute>
           }
         />
