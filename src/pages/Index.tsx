@@ -137,8 +137,17 @@ const Index = () => {
               <div className="flex items-center gap-2 bg-muted px-3 py-1.5 rounded-lg print:hidden">
                 <Clock className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="text-[10px] text-muted-foreground">Atualizado</p>
-                  <p className="text-xs font-medium text-foreground">
+                  <p className="text-[10px] text-muted-foreground uppercase">Atualizado</p>
+                  <p className="text-xs font-bold text-foreground uppercase">
+                    {new Date().toLocaleDateString("pt-BR", {
+                      weekday: "short",
+                    })}{" "}
+                    {new Date().toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                    })}
+                  </p>
+                  <p className="text-[10px] font-medium text-foreground">
                     {new Date().toLocaleTimeString("pt-BR", {
                       hour: "2-digit",
                       minute: "2-digit",
