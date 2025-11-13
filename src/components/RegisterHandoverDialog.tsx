@@ -62,7 +62,7 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
         }
       };
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('shift_handovers')
         .insert({
           created_by: user.id,
