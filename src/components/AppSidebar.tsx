@@ -4,7 +4,7 @@ import {
   FileSearch,
   ClipboardList,
   BookOpen,
-  Activity,
+  Library,
 } from "lucide-react";
 import {
   Sidebar,
@@ -87,7 +87,7 @@ export function AppSidebar() {
       <SidebarHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
         <div className="flex items-center gap-4 px-3 py-4">
           <div className="h-9 w-9 bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 transition-transform hover:scale-105">
-            <Activity className="h-5 w-5 text-primary-foreground" />
+            <Library className="h-5 w-5 text-primary-foreground" />
           </div>
           {open && (
             <div className="flex-1">
@@ -112,7 +112,7 @@ export function AppSidebar() {
               <SidebarGroup className="p-0">
                 <CollapsibleTrigger asChild>
                   <SidebarGroupLabel className={`group/label h-14 cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 mx-2 rounded-lg mb-1 gap-4`}>
-                    <div className={`h-9 w-9 ${section.bgColor} rounded-lg flex items-center justify-center transition-all duration-300 group-hover/label:scale-110 group-hover/label:shadow-md`}>
+                    <div className={`h-9 w-9 ${section.bgColor} rounded-lg flex items-center justify-center transition-all duration-300 group-hover/label:scale-110 group-hover/label:shadow-md flex-shrink-0`}>
                       <section.icon className={`h-4 w-4 ${section.color}`} />
                     </div>
                     {open && (
@@ -125,7 +125,7 @@ export function AppSidebar() {
                             {section.items.length} itens
                           </span>
                         </div>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]/collapsible:rotate-180 mr-1" />
+                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]/collapsible:rotate-180 mr-1 flex-shrink-0" />
                       </>
                     )}
                   </SidebarGroupLabel>
