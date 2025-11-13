@@ -246,8 +246,38 @@ All colors MUST be HSL.
     display: flex !important;
   }
   
-  .print\:justify-between {
-    justify-content: space-between !important;
+  .print\:flex-1 {
+    flex: 1 !important;
+  }
+  
+  .print\:flex-shrink-0 {
+    flex-shrink: 0 !important;
+  }
+  
+  .print\:min-w-0 {
+    min-width: 0 !important;
+  }
+  
+  .print\:truncate {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  
+  .print\:pl-9 {
+    padding-left: 9mm !important;
+  }
+  
+  .print\:mb-0\.5 {
+    margin-bottom: 0.5mm !important;
+  }
+  
+  .print\:last\:after\:content-\[\'\'\] {
+    content: '' !important;
+  }
+  
+  .print\:font-bold {
+    font-weight: 700 !important;
   }
   
   .print\:flex {

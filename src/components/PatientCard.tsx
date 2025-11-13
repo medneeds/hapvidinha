@@ -97,7 +97,7 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
   return (
     <>
       <Card className={cn(
-        "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
+        "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0.5 print:w-full", 
         config.color,
         isSelected && "ring-2 ring-primary"
       )}>
@@ -107,7 +107,7 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
         )}>
           <div className={cn(
             "flex items-center justify-between gap-3",
-            !expandedForPrint && "print:flex print:flex-row print:items-center print:gap-1 print:justify-between print:w-full"
+            !expandedForPrint && "print:block"
           )}>
             {selectionMode && onToggleSelection && (
               <div className="flex items-center justify-center print:hidden flex-shrink-0">
@@ -120,102 +120,100 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
             )}
             <div className={cn(
               "flex-1 grid grid-cols-1 md:grid-cols-7 gap-2 items-start",
-              !expandedForPrint && "print:flex print:flex-row print:gap-2 print:items-center print:w-full print:justify-between"
+              !expandedForPrint && "print:flex print:flex-col print:gap-0 print:w-full"
             )}>
-              {/* Leito */}
+              {/* Linha 1: Leito + Nome + Diagnóstico */}
               <div className={cn(
-                "flex flex-col",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-shrink-0"
+                "contents md:contents",
+                !expandedForPrint && "print:flex print:flex-row print:items-center print:gap-2 print:w-full print:mb-0.5"
               )}>
-                <span className={cn(
-                  "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
-                )}>Leito:</span>
-                <Badge className={cn("w-fit text-xs py-0 px-2", config.badgeColor, !expandedForPrint && "print:text-[8px] print:py-0 print:px-1")}>
-                  {patient.bedNumber}
-                </Badge>
-              </div>
+                {/* Leito */}
+                <div className={cn(
+                  "flex flex-col",
+                  !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-shrink-0"
+                )}>
+                  <span className={cn(
+                    "text-[10px] font-medium text-muted-foreground mb-0.5",
+                    !expandedForPrint && "print:hidden"
+                  )}>Leito:</span>
+                  <Badge className={cn("w-fit text-xs py-0 px-2", config.badgeColor, !expandedForPrint && "print:text-[8px] print:py-0 print:px-1")}>
+                    {patient.bedNumber}
+                  </Badge>
+                </div>
 
-              {/* Nome e Idade */}
-              <div className={cn(
-                "flex flex-col md:col-span-2",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1 print:min-w-0"
-              )}>
-                <span className={cn(
-                  "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
-                )}>Paciente:</span>
-                <div className={cn(!expandedForPrint && "print:flex print:items-center print:gap-0.5 print:truncate", "group/name relative")}>
-                  <div className="flex items-center gap-1">
+                {/* Nome e Idade */}
+                <div className={cn(
+                  "flex flex-col md:col-span-2",
+                  !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1 print:min-w-0"
+                )}>
+                  <span className={cn(
+                    "text-[10px] font-medium text-muted-foreground mb-0.5",
+                    !expandedForPrint && "print:hidden"
+                  )}>Paciente:</span>
+                  <div className={cn(!expandedForPrint && "print:flex print:items-center print:gap-0.5 print:truncate", "group/name relative")}>
+                    <div className="flex items-center gap-1">
+                      <p className={cn(
+                        "font-semibold text-sm text-foreground leading-tight uppercase",
+                        !expandedForPrint && "print:text-[8.5px] print:inline print:leading-none print:truncate print:font-bold"
+                      )}>{patient.name}</p>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={handleCopyName}
+                        className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary"
+                        title="Copiar nome"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
                     <p className={cn(
-                      "font-semibold text-sm text-foreground leading-tight uppercase",
-                      !expandedForPrint && "print:text-[8.5px] print:inline print:leading-none print:truncate"
-                    )}>{patient.name}</p>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={handleCopyName}
-                      className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary"
-                      title="Copiar nome"
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
+                      "text-xs text-muted-foreground",
+                      !expandedForPrint && "print:text-[7.5px] print:inline"
+                    )}>({patient.age}a)</p>
                   </div>
-                  <p className={cn(
-                    "text-xs text-muted-foreground",
-                    !expandedForPrint && "print:text-[7.5px] print:inline"
-                  )}>({patient.age}a)</p>
+                </div>
+
+                {/* Hipóteses Diagnósticas */}
+                <div className={cn(
+                  "flex flex-col md:col-span-2",
+                  !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1"
+                )}>
+                  <span className={cn(
+                    "text-[10px] font-medium text-muted-foreground mb-0.5",
+                    !expandedForPrint && "print:hidden"
+                  )}>Diagnósticos:</span>
+                  <div className="flex flex-wrap gap-1 print:gap-0.5">
+                    {patient.diagnoses.map((diagnosis, idx) => (
+                      <Badge key={idx} variant="secondary" className={cn(
+                        "text-[10px] py-0 px-1.5 uppercase",
+                        !expandedForPrint && "print:text-[7.5px] print:py-0 print:px-0.5"
+                      )}>
+                        {diagnosis}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Hipóteses Diagnósticas */}
+              {/* Linha 2: Pendências e Programações */}
               <div className={cn(
-                "flex flex-col md:col-span-2",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1"
+                "flex flex-col md:col-span-7",
+                !expandedForPrint && "print:flex print:flex-row print:items-start print:gap-1 print:w-full print:pl-9"
               )}>
                 <span className={cn(
                   "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
-                )}>Diagnósticos:</span>
-                <div className="flex flex-wrap gap-1 print:gap-0.5">
-                  {patient.diagnoses.map((diagnosis, idx) => (
-                    <Badge key={idx} variant="secondary" className={cn(
-                      "text-[10px] py-0 px-1.5 uppercase",
-                      !expandedForPrint && "print:text-[7.5px] print:py-0 print:px-0.5"
-                    )}>
-                      {diagnosis}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Pendências */}
-              <div className={cn(
-                "flex flex-col md:col-span-2",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1"
-              )}>
-                <span className={cn(
-                  "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
+                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:flex-shrink-0"
                 )}>Pendências:</span>
                 <ul className={cn(
                   "text-xs space-y-0 uppercase",
-                  !expandedForPrint && "print:text-[7.5px] print:inline print:truncate"
+                  !expandedForPrint && "print:text-[7.5px] print:inline print:flex-1"
                 )}>
-                  {patient.pendencies.slice(0, 2).map((pendency, idx) => (
+                  {patient.pendencies.map((pendency, idx) => (
                     <li key={idx} className={cn(
-                      "text-foreground truncate leading-tight",
-                      !expandedForPrint && "print:inline print:after:content-[';_'] print:leading-none"
+                      "text-foreground leading-tight",
+                      !expandedForPrint && "print:inline print:after:content-[';_'] print:leading-none print:last:after:content-['']"
                     )}>• {pendency}</li>
                   ))}
-                  {patient.pendencies.length > 2 && (
-                    <li className={cn(
-                      "text-muted-foreground text-[10px]",
-                      !expandedForPrint && "print:text-[7px] print:inline"
-                    )}>
-                      +{patient.pendencies.length - 2} mais
-                    </li>
-                  )}
                 </ul>
               </div>
             </div>
