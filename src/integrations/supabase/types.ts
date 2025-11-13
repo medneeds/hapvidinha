@@ -19,6 +19,10 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          patient_age: number | null
+          patient_name: string
+          patient_record: string | null
+          patient_sex: string | null
           title: string
           updated_at: string
         }
@@ -26,6 +30,10 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          patient_age?: number | null
+          patient_name: string
+          patient_record?: string | null
+          patient_sex?: string | null
           title: string
           updated_at?: string
         }
@@ -33,6 +41,10 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          patient_age?: number | null
+          patient_name?: string
+          patient_record?: string | null
+          patient_sex?: string | null
           title?: string
           updated_at?: string
         }

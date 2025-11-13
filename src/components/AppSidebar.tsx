@@ -59,7 +59,8 @@ const menuItems = [
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
     items: [
-      { name: "BLOCO DE NOTAS", link: "/notes" },
+      { name: "BLOCO DE NOTAS", link: "/resources" },
+      { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
       { name: "PADRÃO DE INTERNAÇÃO", link: null },
       { name: "HISTÓRIA CLÍNICA", link: null },
       { name: "REVISÃO DE SISTEMAS", link: null },
