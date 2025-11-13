@@ -4,10 +4,18 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface PatientCardProps {
   patient: Patient;
@@ -17,6 +25,7 @@ interface PatientCardProps {
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
+  onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
 }
 
 const sectorConfig = {
@@ -42,7 +51,14 @@ const sectorConfig = {
   }
 };
 
-export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = false, selectionMode = false, isSelected = false, onToggleSelection }: PatientCardProps) {
+const sectorLabels = {
+  red: "Cuidados Especiais",
+  yellow: "Observação Amarela",
+  blue: "Observação Azul",
+  outside: "Fora das Alas"
+};
+
+export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = false, selectionMode = false, isSelected = false, onToggleSelection, onTransfer }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
@@ -62,6 +78,12 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
         description: "Não foi possível copiar o nome.",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleTransfer = (newSector: Patient['sector']) => {
+    if (onTransfer && newSector !== patient.sector) {
+      onTransfer(patient.id, newSector);
     }
   };
 
@@ -212,6 +234,38 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
               >
                 <Edit className="h-3.5 w-3.5" />
               </Button>
+              {onTransfer && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={(e) => e.stopPropagation()}
+                      className="h-8 w-8 text-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+                      title="Transferir para outra ala"
+                    >
+                      <ArrowRightLeft className="h-3.5 w-3.5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Transferir para</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
+                      sector !== patient.sector && (
+                        <DropdownMenuItem
+                          key={sector}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTransfer(sector);
+                          }}
+                        >
+                          {sectorLabels[sector]}
+                        </DropdownMenuItem>
+                      )
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
               {onDelete && (
                 <Button
                   size="icon"

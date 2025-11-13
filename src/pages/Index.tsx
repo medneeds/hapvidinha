@@ -54,6 +54,7 @@ interface SortableOutsidePatientCardProps {
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
+  onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
 }
 
 function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
@@ -283,6 +284,25 @@ const Index = () => {
     });
   };
 
+  const handleTransferPatient = (patientId: string, newSector: Patient['sector']) => {
+    saveToHistory(patients);
+    
+    const patient = patients.find(p => p.id === patientId);
+    if (!patient) return;
+
+    const updatedPatient = { ...patient, sector: newSector };
+    setPatients(prev => prev.map(p => p.id === patientId ? updatedPatient : p));
+    
+    toast({
+      title: "Paciente transferido",
+      description: `${patient.name} foi transferido para ${
+        newSector === 'red' ? 'Cuidados Especiais' :
+        newSector === 'yellow' ? 'Observação Amarela' :
+        newSector === 'blue' ? 'Observação Azul' : 'Fora das Alas'
+      }.`,
+    });
+  };
+
   const handleUndo = () => {
     if (history.length === 0) {
       toast({
@@ -463,6 +483,7 @@ const Index = () => {
                   onToggleSelection={handleToggleSelection}
                   printOnlySelected={printingSector === "selected"}
                   onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
+                  onTransfer={handleTransferPatient}
                 />
               </div>
               <div className={printingSector && printingSector !== "yellow" && printingSector !== "selected" ? "print:hidden" : ""}>
@@ -479,6 +500,7 @@ const Index = () => {
                   onToggleSelection={handleToggleSelection}
                   printOnlySelected={printingSector === "selected"}
                   onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
+                  onTransfer={handleTransferPatient}
                 />
               </div>
               <div className={printingSector && printingSector !== "blue" && printingSector !== "selected" ? "print:hidden" : ""}>
@@ -495,6 +517,7 @@ const Index = () => {
                   onToggleSelection={handleToggleSelection}
                   printOnlySelected={printingSector === "selected"}
                   onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
+                  onTransfer={handleTransferPatient}
                 />
               </div>
 
@@ -556,6 +579,7 @@ const Index = () => {
                                 selectionMode={selectionMode}
                                 isSelected={selectedPatients.has(patient.id)}
                                 onToggleSelection={handleToggleSelection}
+                                onTransfer={handleTransferPatient}
                               />
                             ))}
                           </SortableContext>
