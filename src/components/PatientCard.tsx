@@ -41,6 +41,12 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
 
+  const checkboxColor = {
+    red: "data-[state=checked]:bg-critical data-[state=checked]:border-critical",
+    yellow: "data-[state=checked]:bg-warning data-[state=checked]:border-warning",
+    blue: "data-[state=checked]:bg-stable data-[state=checked]:border-stable"
+  }[patient.sector];
+
   return (
     <>
       <Card className={cn(
@@ -53,15 +59,15 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
           !expandedForPrint && "print:p-1 print:py-0.5"
         )}>
           <div className={cn(
-            "flex items-start justify-between gap-3",
+            "flex items-center justify-between gap-3",
             !expandedForPrint && "print:flex-row print:items-center print:gap-2"
           )}>
             {selectionMode && onToggleSelection && (
-              <div className="flex items-center print:hidden pt-1">
+              <div className="flex items-center justify-center print:hidden flex-shrink-0">
                 <Checkbox
                   checked={isSelected}
                   onCheckedChange={() => onToggleSelection(patient.id)}
-                  className="h-5 w-5"
+                  className={cn("h-5 w-5", checkboxColor)}
                 />
               </div>
             )}
