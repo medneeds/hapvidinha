@@ -85,8 +85,8 @@ export function AppSidebar() {
       className="border-r border-border/50 bg-gradient-to-b from-card via-card/95 to-card/90 backdrop-blur-xl transition-all duration-300"
     >
       <SidebarHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
-        <div className={`flex items-center gap-4 px-3 py-4 transition-all duration-300 ${!open ? 'justify-center' : ''}`}>
-          <div className={`bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-110 hover:shadow-primary/50 ${open ? 'h-9 w-9' : 'h-10 w-10'}`}>
+        <div className={`flex items-center transition-all duration-300 ${!open ? 'justify-center px-2 py-5' : 'gap-4 px-3 py-4'}`}>
+          <div className={`bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 transition-all duration-300 hover:scale-110 hover:shadow-primary/50 ${open ? 'h-9 w-9' : 'h-11 w-11'}`}>
             <Library className={`text-primary-foreground transition-all duration-300 ${open ? 'h-5 w-5' : 'h-6 w-6'}`} />
           </div>
           {open && (
@@ -102,7 +102,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="gap-0 py-2">
+      <SidebarContent className={`gap-0 transition-all duration-300 ${open ? 'py-2' : 'py-3'}`}>
         {menuItems.map((section, index) => (
           <div key={section.title}>
             <Collapsible
@@ -111,8 +111,8 @@ export function AppSidebar() {
             >
               <SidebarGroup className="p-0">
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className={`group/label cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 rounded-lg mb-1 gap-4 ${open ? 'h-14 mx-2' : 'h-12 mx-1 justify-center'}`}>
-                    <div className={`${section.bgColor} rounded-lg flex items-center justify-center transition-all duration-300 group-hover/label:scale-110 group-hover/label:shadow-lg flex-shrink-0 ${open ? 'h-9 w-9 group-hover/label:shadow-md' : 'h-10 w-10 group-hover/label:shadow-xl'}`}>
+                  <SidebarGroupLabel className={`group/label cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 rounded-lg mb-1 ${open ? 'h-14 mx-2 gap-4' : 'h-14 mx-0 justify-center gap-0'}`}>
+                    <div className={`${section.bgColor} rounded-lg flex items-center justify-center transition-all duration-300 group-hover/label:scale-110 flex-shrink-0 ${open ? 'h-9 w-9 group-hover/label:shadow-md' : 'h-11 w-11 group-hover/label:shadow-xl group-hover/label:shadow-primary/20'}`}>
                       <section.icon className={`${section.color} transition-all duration-300 ${open ? 'h-4 w-4' : 'h-5 w-5'}`} />
                     </div>
                     {open && (
@@ -131,7 +131,7 @@ export function AppSidebar() {
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-                  <SidebarGroupContent className="px-2">
+                  <SidebarGroupContent className={open ? 'px-2' : 'px-0'}>
                     <SidebarMenu>
                       {section.items.map((item, itemIndex) => {
                         const itemName = typeof item === 'string' ? item : item.name;
@@ -140,11 +140,11 @@ export function AppSidebar() {
                         return (
                           <SidebarMenuItem key={itemKey}>
                             <SidebarMenuButton
-                              className={`group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg mb-1 hover:shadow-sm gap-3 cursor-pointer ${open ? 'hover:translate-x-1' : 'justify-center'}`}
+                              className={`group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg mb-1 hover:shadow-sm cursor-pointer ${open ? 'gap-3 hover:translate-x-1' : 'justify-center gap-0 h-10'}`}
                               tooltip={itemName}
                               onClick={() => handleItemClick(item)}
                             >
-                              <div className={`rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 ${open ? 'h-2 w-2 ml-1' : 'h-2.5 w-2.5'}`} />
+                              <div className={`rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 ${open ? 'h-2 w-2 ml-1' : 'h-2.5 w-2.5'}`} />
                               {open && (
                                 <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
                                   {itemName}
@@ -160,7 +160,7 @@ export function AppSidebar() {
               </SidebarGroup>
             </Collapsible>
             {index < menuItems.length - 1 && (
-              <div className={`my-2 h-px bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${open ? 'mx-4' : 'mx-2'}`} />
+              <div className={`my-3 h-px bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${open ? 'mx-4' : 'mx-3'}`} />
             )}
           </div>
         ))}
