@@ -414,8 +414,8 @@ const Index = () => {
               {/* Pacientes Fora das Alas Section */}
               <div className="mt-6 print:hidden">
                 <Collapsible open={isOutsideSectionOpen} onOpenChange={setIsOutsideSectionOpen}>
-                  <div className="bg-gradient-card rounded-xl p-3 border border-border/50 shadow-md transition-all duration-200">
-                    <div className="flex items-center justify-between mb-3">
+                  <div className="bg-gradient-card rounded-xl p-3 border border-border/50 shadow-md transition-all duration-200 h-[72px] flex items-center">
+                    <div className="flex items-center justify-between w-full">
                       <CollapsibleTrigger asChild>
                         <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                           <ChevronDown className={`h-5 w-5 transition-transform ${isOutsideSectionOpen ? '' : '-rotate-90'}`} />
@@ -474,8 +474,8 @@ const Index = () => {
               {/* Anotações e Lembretes Section */}
               <div className="mt-6 print:hidden">
                 <Collapsible open={isNotesSectionOpen} onOpenChange={setIsNotesSectionOpen}>
-                  <div className="bg-gradient-card rounded-xl p-3 border border-border/50 shadow-md transition-all duration-200">
-                    <div className="flex items-center justify-between mb-3">
+                  <div className="bg-gradient-card rounded-xl p-3 border border-border/50 shadow-md transition-all duration-200 h-[72px] flex items-center">
+                    <div className="flex items-center justify-between w-full">
                       <CollapsibleTrigger asChild>
                         <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                           <ChevronDown className={`h-5 w-5 transition-transform ${isNotesSectionOpen ? '' : '-rotate-90'}`} />

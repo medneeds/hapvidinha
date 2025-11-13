@@ -50,8 +50,8 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-1 print:break-inside-avoid">
-      <div className={`${info.gradientClass} rounded-xl p-3 border border-border/50 shadow-md print:p-2 print:mb-1 transition-all duration-200`}>
-        <div className="flex items-center justify-between">
+      <div className={`${info.gradientClass} rounded-xl p-3 border border-border/50 shadow-md print:p-2 print:mb-1 transition-all duration-200 h-[72px] flex items-center`}>
+        <div className="flex items-center justify-between w-full">
           <CollapsibleTrigger asChild>
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
