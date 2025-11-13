@@ -28,26 +28,28 @@ import { Badge } from "@/components/ui/badge";
 
 const menuItems = [
   {
-    title: "EXAME FÍSICO",
-    icon: Stethoscope,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
-    items: [
-      "PADRÃO CARDIOVASCULAR",
-      "PADRÃO RESPIRATÓRIO",
-      "PADRÃO NEUROLÓGICO",
-      "PADRÃO ABDOMINAL",
-    ],
-  },
-  {
-    title: "CÓDIGOS DE EXAMES",
+    title: "CÓDIGOS",
     icon: FileSearch,
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
     items: [
-      "EXAMES LABORATORIAIS",
-      "EXAMES DE IMAGEM",
+      "EXAMES",
       "PROCEDIMENTOS",
+      "MATERIAIS",
+      "MEDICAÇÕES",
+    ],
+  },
+  {
+    title: "PROTOCOLOS",
+    icon: BookOpen,
+    color: "text-amber-500",
+    bgColor: "bg-amber-500/10",
+    items: [
+      "SEPSE",
+      "IAM",
+      "AVC",
+      "TRAUMA",
+      "INTOXICAÇÕES",
     ],
   },
   {
@@ -62,16 +64,15 @@ const menuItems = [
     ],
   },
   {
-    title: "PROTOCOLOS",
-    icon: BookOpen,
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/10",
+    title: "EXAME FÍSICO",
+    icon: Stethoscope,
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
     items: [
-      "SEPSE",
-      "IAM",
-      "AVC",
-      "TRAUMA",
-      "INTOXICAÇÕES",
+      "PADRÃO CARDIOVASCULAR",
+      "PADRÃO RESPIRATÓRIO",
+      "PADRÃO NEUROLÓGICO",
+      "PADRÃO ABDOMINAL",
     ],
   },
 ];
