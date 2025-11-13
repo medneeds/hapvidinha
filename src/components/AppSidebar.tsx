@@ -5,6 +5,7 @@ import {
   LogOut,
   ClipboardCheck,
   LayoutDashboard,
+  LayoutGrid,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -93,9 +94,13 @@ export function AppSidebar() {
       className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
     >
       <SidebarHeader className="border-b border-border px-4 py-3">
-        <div className={`flex items-center justify-between transition-all duration-300`}>
+        <div className={`flex items-center justify-center transition-all duration-300`}>
+          <LayoutGrid className={cn(
+            "text-foreground transition-all duration-300",
+            open ? "h-5 w-5" : "h-6 w-6"
+          )} />
           {open && (
-            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide animate-fade-in">
+            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide animate-fade-in ml-3">
               Menu
             </h2>
           )}
@@ -151,7 +156,7 @@ export function AppSidebar() {
                 <CollapsibleTrigger className="w-full">
                   <SidebarGroupLabel className={cn(
                     "transition-all duration-200 hover:bg-accent cursor-pointer",
-                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-4 px-0 h-auto",
+                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-4 px-0 h-auto flex-col",
                     "border-b border-border"
                   )}>
                     <div className={cn(
@@ -177,36 +182,33 @@ export function AppSidebar() {
                     </div>
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
-                <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-                  <SidebarGroupContent className={open ? 'px-2' : 'px-0'}>
-                    <SidebarMenu>
-                      {section.items.map((item, itemIndex) => {
-                        const itemName = typeof item === 'string' ? item : item.name;
-                        const itemKey = typeof item === 'string' ? item : item.name;
-                        
-                        return (
-                          <SidebarMenuItem key={itemKey}>
-                            <SidebarMenuButton
-                              className={`group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer ${open ? 'gap-3 hover:translate-x-1 mb-1' : 'justify-center gap-0 h-12 my-0.5'}`}
-                              tooltip={itemName}
-                              onClick={() => handleItemClick(item)}
-                            >
-                              <div className={cn(
-                                "rounded-full bg-primary/20 transition-all duration-200 group-hover/item:scale-150 flex-shrink-0",
-                                open ? "h-2 w-2 ml-1" : "h-3.5 w-3.5"
-                              )} />
-                              {open && (
+                {open && (
+                  <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                    <SidebarGroupContent className="px-2">
+                      <SidebarMenu>
+                        {section.items.map((item, itemIndex) => {
+                          const itemName = typeof item === 'string' ? item : item.name;
+                          const itemKey = typeof item === 'string' ? item : item.name;
+                          
+                          return (
+                            <SidebarMenuItem key={itemKey}>
+                              <SidebarMenuButton
+                                className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 hover:translate-x-1 mb-1"
+                                tooltip={itemName}
+                                onClick={() => handleItemClick(item)}
+                              >
+                                <div className="rounded-full bg-primary/20 transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 h-2 w-2 ml-1" />
                                 <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
                                   {itemName}
                                 </span>
-                              )}
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        );
-                      })}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </CollapsibleContent>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          );
+                        })}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </CollapsibleContent>
+                )}
               </SidebarGroup>
             </Collapsible>
             )}
