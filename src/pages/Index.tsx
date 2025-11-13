@@ -3,7 +3,7 @@ import { SectorSection } from "@/components/SectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Plus, StickyNote, Edit } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Plus, StickyNote, Edit, List, X, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -12,10 +12,21 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "hospital_patients_data";
 const HISTORY_KEY = "hospital_patients_history";
 const NOTES_KEY = "hospital_notes";
+const CHECKLIST_KEY = "hospital_checklist";
+
+interface ChecklistItem {
+  id: string;
+  text: string;
+  completed: boolean;
+}
 
 const Index = () => {
   const [patients, setPatients] = useState<Patient[]>(() => {
@@ -30,6 +41,11 @@ const Index = () => {
     const saved = localStorage.getItem(NOTES_KEY);
     return saved || "";
   });
+  const [checklist, setChecklist] = useState<ChecklistItem[]>(() => {
+    const saved = localStorage.getItem(CHECKLIST_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [newChecklistItem, setNewChecklistItem] = useState("");
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
@@ -52,8 +68,36 @@ const Index = () => {
     localStorage.setItem(NOTES_KEY, notes);
   }, [notes]);
 
+  // Persist checklist to localStorage
+  useEffect(() => {
+    localStorage.setItem(CHECKLIST_KEY, JSON.stringify(checklist));
+  }, [checklist]);
+
   const saveToHistory = (currentPatients: Patient[]) => {
     setHistory(prev => [...prev.slice(-9), currentPatients]); // Keep last 10 states
+  };
+
+  const handleAddChecklistItem = () => {
+    if (!newChecklistItem.trim()) return;
+    
+    const newItem: ChecklistItem = {
+      id: `checklist-${Date.now()}`,
+      text: newChecklistItem.toUpperCase(),
+      completed: false
+    };
+    
+    setChecklist(prev => [...prev, newItem]);
+    setNewChecklistItem("");
+  };
+
+  const handleToggleChecklistItem = (id: string) => {
+    setChecklist(prev => prev.map(item => 
+      item.id === id ? { ...item, completed: !item.completed } : item
+    ));
+  };
+
+  const handleRemoveChecklistItem = (id: string) => {
+    setChecklist(prev => prev.filter(item => item.id !== id));
   };
   
   const filterPatients = (sectorPatients: Patient[]) => {
@@ -364,9 +408,8 @@ const Index = () => {
                 />
               </div>
 
-              {/* Outside Patients and Notes Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mt-6 print:hidden">
-                {/* Pacientes Fora das Alas */}
+              {/* Pacientes Fora das Alas Section */}
+              <div className="mt-6 print:hidden">
                 <Card className="border-2 border-muted-foreground/20">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
@@ -406,8 +449,10 @@ const Index = () => {
                     )}
                   </CardContent>
                 </Card>
+              </div>
 
-                {/* Anotações e Lembretes */}
+              {/* Anotações e Lembretes Section */}
+              <div className="mt-6 print:hidden">
                 <Card className="border-2 border-muted-foreground/20">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-base sm:text-lg font-bold uppercase flex items-center gap-2">
@@ -416,15 +461,94 @@ const Index = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Textarea
-                      placeholder="Digite aqui suas anotações e lembretes importantes..."
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value.toUpperCase())}
-                      className="min-h-[200px] resize-none uppercase font-mono text-sm"
-                    />
-                    <p className="text-xs text-muted-foreground mt-2">
-                      {notes.length} caracteres
-                    </p>
+                    <Tabs defaultValue="text" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2 mb-4">
+                        <TabsTrigger value="text" className="flex items-center gap-2">
+                          <FileText className="h-4 w-4" />
+                          Texto Livre
+                        </TabsTrigger>
+                        <TabsTrigger value="checklist" className="flex items-center gap-2">
+                          <List className="h-4 w-4" />
+                          Checklist
+                        </TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="text" className="space-y-2">
+                        <Textarea
+                          placeholder="DIGITE AQUI SUAS ANOTAÇÕES E LEMBRETES IMPORTANTES..."
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value.toUpperCase())}
+                          className="min-h-[250px] resize-none uppercase font-mono text-sm"
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          {notes.length} caracteres
+                        </p>
+                      </TabsContent>
+                      
+                      <TabsContent value="checklist" className="space-y-3">
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="ADICIONAR NOVO ITEM..."
+                            value={newChecklistItem}
+                            onChange={(e) => setNewChecklistItem(e.target.value.toUpperCase())}
+                            onKeyPress={(e) => {
+                              if (e.key === "Enter") {
+                                handleAddChecklistItem();
+                              }
+                            }}
+                            className="uppercase text-sm"
+                          />
+                          <Button
+                            size="sm"
+                            onClick={handleAddChecklistItem}
+                            disabled={!newChecklistItem.trim()}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        
+                        <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                          {checklist.length === 0 ? (
+                            <p className="text-sm text-muted-foreground text-center py-8">
+                              NENHUM ITEM NA CHECKLIST
+                            </p>
+                          ) : (
+                            checklist.map((item) => (
+                              <div
+                                key={item.id}
+                                className="flex items-center gap-2 p-2 bg-muted/30 rounded-md border border-border group"
+                              >
+                                <Checkbox
+                                  checked={item.completed}
+                                  onCheckedChange={() => handleToggleChecklistItem(item.id)}
+                                  className="flex-shrink-0"
+                                />
+                                <span
+                                  className={cn(
+                                    "flex-1 text-sm uppercase",
+                                    item.completed && "line-through text-muted-foreground"
+                                  )}
+                                >
+                                  {item.text}
+                                </span>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => handleRemoveChecklistItem(item.id)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                        
+                        <p className="text-xs text-muted-foreground">
+                          {checklist.filter(item => item.completed).length} de {checklist.length} itens completos
+                        </p>
+                      </TabsContent>
+                    </Tabs>
                   </CardContent>
                 </Card>
               </div>
