@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -92,8 +92,8 @@ const Index = () => {
         <div className="container mx-auto px-4 py-3 print:py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center print:h-8 print:w-8">
-                <Activity className="h-6 w-6 text-primary-foreground print:h-4 print:w-4" />
+              <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center print:h-8 print:w-8 shadow-md">
+                <ClipboardList className="h-6 w-6 text-primary-foreground print:h-4 print:w-4" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground print:text-xl uppercase">Mapa de Pacientes</h1>
