@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, ArrowLeft, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Table,
   TableBody,
@@ -40,6 +41,8 @@ const categoryLabels = {
 
 export default function MedicalCodesPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { signOut, user, role } = useAuth();
   const category = (searchParams.get("category") || "EXAMES").toUpperCase();
   const [codes, setCodes] = useState<MedicalCode[]>([]);
   const [filteredCodes, setFilteredCodes] = useState<MedicalCode[]>([]);
@@ -165,13 +168,43 @@ export default function MedicalCodesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground uppercase tracking-tight mb-2">
-            {categoryLabels[category as keyof typeof categoryLabels]}
-          </h1>
-          <p className="text-sm text-muted-foreground uppercase tracking-wide">
-            Códigos e Descritivos do Sistema
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => navigate("/")}
+              className="hover:bg-primary hover:text-primary-foreground transition-all"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground uppercase tracking-tight mb-2">
+                {categoryLabels[category as keyof typeof categoryLabels]}
+              </h1>
+              <p className="text-sm text-muted-foreground uppercase tracking-wide">
+                Códigos e Descritivos do Sistema
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-xs font-semibold text-foreground uppercase tracking-tight">
+                {user?.email}
+              </p>
+              <p className="text-[10px] text-muted-foreground uppercase">
+                {role === 'admin' ? 'Administrador' : 'Médico'}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={signOut}
+              title="Sair"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         <div className="flex gap-4 mb-6">

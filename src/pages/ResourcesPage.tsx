@@ -1,34 +1,56 @@
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import NotesTab from "@/components/resources/NotesTab";
 import InternmentBankTab from "@/components/resources/InternmentBankTab";
 
 const ResourcesPage = () => {
   const navigate = useNavigate();
+  const { signOut, user, role } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => navigate("/")}
-            className="hover:bg-primary hover:text-primary-foreground transition-all"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground uppercase tracking-tight">
-              RECURSOS MÉDICOS
-            </h1>
-            <p className="text-sm text-muted-foreground uppercase">
-              DOCUMENTAÇÃO E BANCO DE SOLICITAÇÕES
-            </p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => navigate("/")}
+              className="hover:bg-primary hover:text-primary-foreground transition-all"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground uppercase tracking-tight">
+                RECURSOS MÉDICOS
+              </h1>
+              <p className="text-sm text-muted-foreground uppercase">
+                DOCUMENTAÇÃO E BANCO DE SOLICITAÇÕES
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-xs font-semibold text-foreground uppercase tracking-tight">
+                {user?.email}
+              </p>
+              <p className="text-[10px] text-muted-foreground uppercase">
+                {role === 'admin' ? 'Administrador' : 'Médico'}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={signOut}
+              title="Sair"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </div>
 

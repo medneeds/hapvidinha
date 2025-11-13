@@ -2,18 +2,20 @@ import { useState } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [patients, setPatients] = useState<Patient[]>(mockPatients);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const { toast } = useToast();
+  const { signOut, user, role } = useAuth();
   
   const filterPatients = (sectorPatients: Patient[]) => {
     if (!showOnlyOccupied) return sectorPatients;
@@ -141,6 +143,25 @@ const Index = () => {
                       <p className="text-[10px] text-muted-foreground">Críticos</p>
                       <p className="text-base font-bold text-critical">{criticalPatients}</p>
                     </div>
+                  </div>
+                  <div className="h-8 w-px bg-border mx-2 print:hidden" />
+                  <div className="flex items-center gap-3 print:hidden">
+                    <div className="text-right">
+                      <p className="text-xs font-semibold text-foreground uppercase tracking-tight">
+                        {user?.email}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground uppercase">
+                        {role === 'admin' ? 'Administrador' : 'Médico'}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={signOut}
+                      title="Sair"
+                    >
+                      <LogOut className="h-4 w-4" />
+                    </Button>
                   </div>
                   <div className="flex items-center gap-2 bg-muted px-3 py-1.5 rounded-lg print:hidden">
                     <Clock className="h-4 w-4 text-primary" />
