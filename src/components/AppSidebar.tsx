@@ -54,7 +54,7 @@ const menuItems = [
     ],
   },
   {
-    title: "ANAMNESE",
+    title: "PACIENTES",
     icon: ClipboardList,
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
@@ -64,14 +64,6 @@ const menuItems = [
       { name: "PADRÃO DE INTERNAÇÃO", link: null },
       { name: "HISTÓRIA CLÍNICA", link: null },
       { name: "REVISÃO DE SISTEMAS", link: null },
-    ],
-  },
-  {
-    title: "EXAME FÍSICO",
-    icon: Stethoscope,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
-    items: [
       "PADRÃO CARDIOVASCULAR",
       "PADRÃO RESPIRATÓRIO",
       "PADRÃO NEUROLÓGICO",
