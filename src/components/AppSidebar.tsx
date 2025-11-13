@@ -85,7 +85,7 @@ export function AppSidebar() {
       className="border-r border-border/50 bg-gradient-to-b from-card via-card/95 to-card/90 backdrop-blur-xl"
     >
       <SidebarHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
-        <div className="flex items-center gap-3 px-3 py-4">
+        <div className="flex items-center gap-4 px-3 py-4">
           <div className="h-9 w-9 bg-gradient-to-br from-primary via-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 transition-transform hover:scale-105">
             <Activity className="h-5 w-5 text-primary-foreground" />
           </div>
@@ -111,13 +111,13 @@ export function AppSidebar() {
             >
               <SidebarGroup className="p-0">
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className={`group/label h-14 cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 mx-2 rounded-lg mb-1`}>
+                  <SidebarGroupLabel className={`group/label h-14 cursor-pointer transition-all duration-300 hover:${section.bgColor} hover:border-l-2 hover:border-l-primary/50 mx-2 rounded-lg mb-1 gap-4`}>
                     <div className={`h-9 w-9 ${section.bgColor} rounded-lg flex items-center justify-center transition-all duration-300 group-hover/label:scale-110 group-hover/label:shadow-md`}>
                       <section.icon className={`h-4 w-4 ${section.color}`} />
                     </div>
                     {open && (
                       <>
-                        <div className="flex-1">
+                        <div className="flex-1 ml-1">
                           <span className="text-xs font-bold text-foreground uppercase tracking-tight block">
                             {section.title}
                           </span>
@@ -125,7 +125,7 @@ export function AppSidebar() {
                             {section.items.length} itens
                           </span>
                         </div>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]/collapsible:rotate-180" />
+                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]/collapsible:rotate-180 mr-1" />
                       </>
                     )}
                   </SidebarGroupLabel>
@@ -136,12 +136,12 @@ export function AppSidebar() {
                       {section.items.map((item, itemIndex) => (
                         <SidebarMenuItem key={item}>
                           <SidebarMenuButton
-                            className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg mb-1 hover:shadow-sm hover:translate-x-1"
+                            className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg mb-1 hover:shadow-sm hover:translate-x-1 gap-3"
                             tooltip={item}
                           >
-                            <div className={`h-2 w-2 rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150`} />
+                            <div className={`h-2 w-2 rounded-full ${section.bgColor} ${section.color} transition-all duration-200 group-hover/item:scale-150 ml-1`} />
                             {open && (
-                              <span className="flex-1 text-left font-medium">
+                              <span className="flex-1 text-left font-medium ml-1">
                                 {item}
                               </span>
                             )}
