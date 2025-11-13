@@ -153,6 +153,15 @@ All colors MUST be HSL.
     margin: 8mm 10mm;
   }
   
+  @page:first {
+    margin-top: 8mm !important;
+  }
+  
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  
   * {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
@@ -162,9 +171,39 @@ All colors MUST be HSL.
   body {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
     font-size: 10px;
+  }
+  
+  /* Eliminar primeira página em branco */
+  body > div {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Ocultar sidebar e ajustar layout principal */
+  aside, [data-sidebar] {
+    display: none !important;
+  }
+  
+  .flex.min-h-screen {
+    display: block !important;
+    min-height: auto !important;
+  }
+  
+  .flex-1.flex.flex-col {
+    display: block !important;
+  }
+  
+  header, main, section, div {
+    page-break-before: auto !important;
+    break-before: auto !important;
+  }
+  
+  main:first-child, section:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
   
   .container {
@@ -175,16 +214,30 @@ All colors MUST be HSL.
   /* Cabeçalho compacto */
   header {
     margin-bottom: 2mm !important;
+    margin-top: 0 !important;
     padding: 2mm 0 !important;
+    position: static !important;
+    page-break-after: avoid !important;
   }
   
   main {
     padding: 0 !important;
+    margin-top: 0 !important;
+    page-break-before: avoid !important;
   }
   
   /* Espaçamento ultra-compacto entre seções */
   section, .space-y-3, .space-y-4 {
     margin-bottom: 1.5mm !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Garantir que primeira seção não tenha quebra antes */
+  section:first-of-type, div:first-of-type {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    margin-top: 0 !important;
   }
   
   /* Layout em linha única para pacientes - aproveitar largura total */
