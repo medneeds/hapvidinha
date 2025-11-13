@@ -788,41 +788,41 @@ const Index = () => {
 
       {/* Print Options Dialog */}
       <AlertDialog open={showPrintDialog} onOpenChange={setShowPrintDialog}>
-        <AlertDialogContent className="sm:max-w-md">
+        <AlertDialogContent className="max-w-lg print:hidden">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold uppercase">Opções de Impressão</AlertDialogTitle>
+            <AlertDialogTitle className="text-lg font-bold uppercase">Opções de Impressão</AlertDialogTitle>
             <AlertDialogDescription className="text-sm">
               Escolha o formato de impressão desejado. O sistema otimizará automaticamente para o tamanho A4.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="grid gap-3 py-4">
+          <div className="grid gap-2 py-3">
             <Button
               variant="outline"
-              className="w-full justify-start h-auto py-4 px-4 hover:bg-primary/10 hover:border-primary"
+              className="w-full justify-start h-auto py-3 px-3 hover:bg-primary/10 hover:border-primary"
               onClick={() => handlePrintWithMode('compact')}
             >
-              <div className="text-left">
-                <div className="font-semibold text-base uppercase mb-1">Modelo Retraído</div>
-                <div className="text-xs text-muted-foreground">
-                  Visualização compacta - Todos os pacientes em formato resumido, ideal para visão geral rápida
+              <div className="text-left w-full">
+                <div className="font-semibold text-sm uppercase mb-0.5">Modelo Retraído</div>
+                <div className="text-xs text-muted-foreground leading-tight">
+                  Visualização compacta - Todos os pacientes em formato resumido
                 </div>
               </div>
             </Button>
             <Button
               variant="outline"
-              className="w-full justify-start h-auto py-4 px-4 hover:bg-primary/10 hover:border-primary"
+              className="w-full justify-start h-auto py-3 px-3 hover:bg-primary/10 hover:border-primary"
               onClick={() => handlePrintWithMode('detailed')}
             >
-              <div className="text-left">
-                <div className="font-semibold text-base uppercase mb-1">Modelo Detalhado</div>
-                <div className="text-xs text-muted-foreground">
-                  Visualização expandida - Todas as informações completas dos pacientes incluindo histórico e exames
+              <div className="text-left w-full">
+                <div className="font-semibold text-sm uppercase mb-0.5">Modelo Detalhado</div>
+                <div className="text-xs text-muted-foreground leading-tight">
+                  Visualização expandida com todas as informações completas
                 </div>
               </div>
             </Button>
             <Button
               variant="outline"
-              className="w-full justify-start h-auto py-4 px-4 hover:bg-primary/10 hover:border-primary"
+              className="w-full justify-start h-auto py-3 px-3 hover:bg-primary/10 hover:border-primary"
               onClick={() => {
                 setShowPrintDialog(false);
                 toast({
@@ -831,16 +831,16 @@ const Index = () => {
                 });
               }}
             >
-              <div className="text-left">
-                <div className="font-semibold text-base uppercase mb-1">Por Seção Individual</div>
-                <div className="text-xs text-muted-foreground">
-                  Use os botões de impressão em cada seção (Vermelha, Amarela, Azul) para imprimir separadamente
+              <div className="text-left w-full">
+                <div className="font-semibold text-sm uppercase mb-0.5">Por Seção Individual</div>
+                <div className="text-xs text-muted-foreground leading-tight">
+                  Use os botões nas seções para imprimir cada ala separadamente
                 </div>
               </div>
             </Button>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel className="uppercase">Cancelar</AlertDialogCancel>
+            <AlertDialogCancel className="uppercase text-sm">Cancelar</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
