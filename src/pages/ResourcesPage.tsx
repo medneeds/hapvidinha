@@ -37,7 +37,7 @@ const ResourcesPage = () => {
           <div className="flex items-center gap-3">
             <div className="text-right">
               <p className="text-xs font-semibold text-foreground uppercase tracking-tight">
-                {user?.email}
+                {user?.user_metadata?.username || user?.email?.split('@')[0]}
               </p>
               <p className="text-[10px] text-muted-foreground uppercase">
                 {role === 'admin' ? 'Administrador' : 'Médico'}

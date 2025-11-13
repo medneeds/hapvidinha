@@ -10,7 +10,7 @@ import { Stethoscope } from "lucide-react";
 import { z } from "zod";
 
 const loginSchema = z.object({
-  email: z.string().trim().min(1, { message: "LOGIN OBRIGATÓRIO" }).max(255),
+  username: z.string().trim().min(1, { message: "LOGIN OBRIGATÓRIO" }).max(50),
   password: z.string().min(1, { message: "SENHA OBRIGATÓRIA" }),
 });
 
@@ -20,7 +20,7 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   
   const [loginData, setLoginData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -36,7 +36,7 @@ export default function AuthPage() {
 
     try {
       const validated = loginSchema.parse(loginData);
-      const { error } = await signIn(validated.email, validated.password);
+      const { error } = await signIn(validated.username, validated.password);
 
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
@@ -77,15 +77,15 @@ export default function AuthPage() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="login-email" className="uppercase text-xs font-semibold">
+              <Label htmlFor="login-username" className="uppercase text-xs font-semibold">
                 Login
               </Label>
               <Input
-                id="login-email"
+                id="login-username"
                 type="text"
-                placeholder="LOGIN"
-                value={loginData.email}
-                onChange={(e) => setLoginData({ ...loginData, email: e.target.value.toUpperCase() })}
+                placeholder="USUÁRIO"
+                value={loginData.username}
+                onChange={(e) => setLoginData({ ...loginData, username: e.target.value.toUpperCase() })}
                 className="uppercase"
                 required
               />

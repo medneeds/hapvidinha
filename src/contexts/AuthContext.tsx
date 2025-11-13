@@ -10,8 +10,8 @@ interface AuthContextType {
   session: Session | null;
   role: UserRole;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
+  signIn: (username: string, password: string) => Promise<{ error: any }>;
+  signUp: (username: string, password: string, fullName: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -82,9 +82,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (username: string, password: string) => {
+    // Converter username para formato de email interno para Supabase
+    const internalEmail = `${username.toLowerCase()}@sistema.local`;
+    
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: internalEmail,
       password,
     });
     
@@ -95,16 +98,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (username: string, password: string, fullName: string) => {
     const redirectUrl = `${window.location.origin}/`;
+    const internalEmail = `${username.toLowerCase()}@sistema.local`;
     
     const { error } = await supabase.auth.signUp({
-      email,
+      email: internalEmail,
       password,
       options: {
         emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName,
+          username: username,
         },
       },
     });
