@@ -98,18 +98,75 @@ const Index = () => {
           {/* Header */}
           <header className="border-b border-border/30 bg-gradient-card backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b-2 print:shadow-none">
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-            <div className="container mx-auto px-4 py-3 print:py-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <SidebarTrigger className="print:hidden" />
-                  <div className="h-10 w-10 bg-gradient-primary rounded-lg flex items-center justify-center print:h-8 print:w-8 shadow-glow transition-transform hover:scale-105 duration-200">
-                    <ClipboardList className="h-6 w-6 text-primary-foreground print:h-4 print:w-4" />
+            <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                  <SidebarTrigger className="print:hidden flex-shrink-0" />
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gradient-primary rounded-lg flex items-center justify-center print:h-8 print:w-8 shadow-glow transition-transform hover:scale-105 duration-200 flex-shrink-0">
+                    <ClipboardList className="h-4 w-4 sm:h-6 sm:w-6 text-primary-foreground print:h-4 print:w-4" />
                   </div>
-                  <div>
-                    <h1 className="text-2xl font-bold text-foreground print:text-xl uppercase tracking-tight">Mapa de Pacientes</h1>
-                    <p className="text-sm text-muted-foreground print:text-xs uppercase tracking-wide">Sistema de Controle Hospitalar</p>
+                  <div className="min-w-0">
+                    <h1 className="text-sm sm:text-2xl font-bold text-foreground print:text-xl uppercase tracking-tight truncate">Mapa de Pacientes</h1>
+                    <p className="text-[10px] sm:text-sm text-muted-foreground print:text-xs uppercase tracking-wide hidden sm:block">Sistema de Controle Hospitalar</p>
                   </div>
                 </div>
+
+                <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
+                  <ThemeToggle />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                    title={showOnlyOccupied ? "Mostrar todos os leitos" : "Mostrar apenas ocupados"}
+                  >
+                    {showOnlyOccupied ? <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handlePrint}
+                    className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10"
+                  >
+                    <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </Button>
+                  <div className="hidden md:flex items-center gap-2 bg-muted px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg print:px-2 print:py-1">
+                    <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+                    <div>
+                      <p className="text-[9px] sm:text-[10px] text-muted-foreground">Total</p>
+                      <p className="text-sm sm:text-base font-bold text-foreground">{totalPatients}</p>
+                    </div>
+                  </div>
+                  <div className="hidden md:flex items-center gap-2 bg-critical/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-critical/20 print:px-2 print:py-1">
+                    <Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-critical" />
+                    <div>
+                      <p className="text-[9px] sm:text-[10px] text-muted-foreground">Críticos</p>
+                      <p className="text-sm sm:text-base font-bold text-critical">{criticalPatients}</p>
+                    </div>
+                  </div>
+                  <div className="h-6 sm:h-8 w-px bg-border mx-1 sm:mx-2 print:hidden hidden lg:block" />
+                  <div className="hidden lg:flex items-center gap-2 sm:gap-3 print:hidden">
+                    <div className="text-right">
+                      <p className="text-[10px] sm:text-xs font-semibold text-foreground uppercase tracking-tight">
+                        {user?.user_metadata?.username || user?.email?.split('@')[0]}
+                      </p>
+                      <p className="text-[9px] sm:text-[10px] text-muted-foreground uppercase">
+                        {role === 'admin' ? 'Administrador' : 'Médico'}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={signOut}
+                      title="Sair"
+                      className="h-8 w-8 sm:h-10 sm:w-10"
+                    >
+                      <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
                 <div className="flex gap-3 print:gap-2">
                   <ThemeToggle />
@@ -190,8 +247,8 @@ const Index = () => {
           </header>
 
           {/* Main Content */}
-          <main className="container mx-auto px-4 py-6 print:py-2">
-            <div className="space-y-4 print:space-y-2">
+          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-2">
+            <div className="space-y-3 sm:space-y-4 print:space-y-2">
               <div className={printingSector && printingSector !== "red" ? "print:hidden" : ""}>
                 <SectorSection 
                   sector="red" 
