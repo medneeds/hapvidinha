@@ -1,7 +1,9 @@
 import { Patient, SectorType } from "@/types/patient";
 import { PatientCard } from "./PatientCard";
-import { Activity, Printer } from "lucide-react";
+import { Activity, Printer, Plus, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useState } from "react";
 
 interface SectorSectionProps {
   sector: SectorType;
@@ -9,6 +11,7 @@ interface SectorSectionProps {
   onUpdatePatient: (patient: Patient) => void;
   expandedForPrint?: boolean;
   onPrintSector?: () => void;
+  onAddExtraBed?: () => void;
 }
 
 const sectorInfo = {
@@ -32,21 +35,38 @@ const sectorInfo = {
   }
 };
 
-export function SectorSection({ sector, patients, onUpdatePatient, expandedForPrint = false, onPrintSector }: SectorSectionProps) {
+export function SectorSection({ sector, patients, onUpdatePatient, expandedForPrint = false, onPrintSector, onAddExtraBed }: SectorSectionProps) {
   const info = sectorInfo[sector];
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <section className="space-y-2 print:space-y-1 print:break-inside-avoid">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-1 print:break-inside-avoid">
       <div className={`bg-gradient-to-r ${info.gradientClass} rounded-xl p-3 border border-border/50 print:p-2 print:mb-1`}>
         <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-xl print:text-base">{info.icon}</span>
-              <h2 className="text-xl font-bold text-foreground print:text-base uppercase">{info.title}</h2>
-            </div>
-            <p className="text-xs text-muted-foreground print:hidden uppercase">{info.subtitle}</p>
-          </div>
+          <CollapsibleTrigger asChild>
+            <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none">
+              <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
+              <div className="text-left">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-xl print:text-base">{info.icon}</span>
+                  <h2 className="text-xl font-bold text-foreground print:text-base uppercase">{info.title}</h2>
+                </div>
+                <p className="text-xs text-muted-foreground print:hidden uppercase">{info.subtitle}</p>
+              </div>
+            </button>
+          </CollapsibleTrigger>
           <div className="flex items-center gap-2">
+            {onAddExtraBed && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={onAddExtraBed}
+                className="h-8 w-8 print:hidden"
+                title="Adicionar leito extra"
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
+            )}
             {onPrintSector && (
               <Button
                 variant="outline"
@@ -68,7 +88,7 @@ export function SectorSection({ sector, patients, onUpdatePatient, expandedForPr
         </div>
       </div>
 
-      <div className="space-y-1.5 print:space-y-1">
+      <CollapsibleContent className="space-y-1.5 print:space-y-1 print:block">
         {patients.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
             <p>Nenhum paciente neste setor</p>
@@ -83,7 +103,7 @@ export function SectorSection({ sector, patients, onUpdatePatient, expandedForPr
             />
           ))
         )}
-      </div>
-    </section>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }

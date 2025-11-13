@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -10,11 +10,17 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 const Index = () => {
   const [patients, setPatients] = useState<Patient[]>(mockPatients);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
+  const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const { toast } = useToast();
   
-  const redPatients = patients.filter((p) => p.sector === "red");
-  const yellowPatients = patients.filter((p) => p.sector === "yellow");
-  const bluePatients = patients.filter((p) => p.sector === "blue");
+  const filterPatients = (sectorPatients: Patient[]) => {
+    if (!showOnlyOccupied) return sectorPatients;
+    return sectorPatients.filter(p => p.name.trim() !== "");
+  };
+
+  const redPatients = filterPatients(patients.filter((p) => p.sector === "red"));
+  const yellowPatients = filterPatients(patients.filter((p) => p.sector === "yellow"));
+  const bluePatients = filterPatients(patients.filter((p) => p.sector === "blue"));
 
   const totalPatients = patients.length;
   const criticalPatients = redPatients.length;
@@ -26,6 +32,33 @@ const Index = () => {
     toast({
       title: "Paciente atualizado",
       description: `Os dados do paciente ${updatedPatient.name} foram atualizados com sucesso.`,
+    });
+  };
+
+  const handleAddExtraBed = (sector: Patient['sector']) => {
+    const sectorPrefix = sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : 'Z';
+    const sectorPatients = patients.filter(p => p.sector === sector);
+    const extraBedNumber = sectorPatients.length + 1;
+    
+    const newPatient: Patient = {
+      id: `${sector}-extra-${Date.now()}`,
+      bedNumber: `${sectorPrefix}${String(extraBedNumber).padStart(2, '0')}`,
+      name: "",
+      age: 0,
+      sector: sector,
+      diagnoses: [],
+      medicalHistory: [],
+      relevantExams: [],
+      pendencies: [],
+      schedule: [],
+      admissionHistory: "",
+      admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' ')
+    };
+
+    setPatients((prev) => [...prev, newPatient]);
+    toast({
+      title: "Leito extra adicionado",
+      description: `Leito ${newPatient.bedNumber} criado com sucesso.`,
     });
   };
 
@@ -60,6 +93,15 @@ const Index = () => {
 
             <div className="flex gap-3 print:gap-2">
               <ThemeToggle />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}
+                className="print:hidden"
+                title={showOnlyOccupied ? "Mostrar todos os leitos" : "Mostrar apenas ocupados"}
+              >
+                {showOnlyOccupied ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+              </Button>
               <Button
                 variant="outline"
                 size="icon"
@@ -109,6 +151,7 @@ const Index = () => {
               onUpdatePatient={handleUpdatePatient}
               expandedForPrint={printingSector === "red"}
               onPrintSector={() => handlePrintSector("red")}
+              onAddExtraBed={() => handleAddExtraBed("red")}
             />
           </div>
           <div className={printingSector && printingSector !== "yellow" ? "print:hidden" : ""}>
@@ -118,6 +161,7 @@ const Index = () => {
               onUpdatePatient={handleUpdatePatient}
               expandedForPrint={printingSector === "yellow"}
               onPrintSector={() => handlePrintSector("yellow")}
+              onAddExtraBed={() => handleAddExtraBed("yellow")}
             />
           </div>
           <div className={printingSector && printingSector !== "blue" ? "print:hidden" : ""}>
@@ -127,6 +171,7 @@ const Index = () => {
               onUpdatePatient={handleUpdatePatient}
               expandedForPrint={printingSector === "blue"}
               onPrintSector={() => handlePrintSector("blue")}
+              onAddExtraBed={() => handleAddExtraBed("blue")}
             />
           </div>
         </div>
