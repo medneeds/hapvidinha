@@ -168,6 +168,35 @@ All colors MUST be HSL.
     break-inside: avoid;
   }
   
+  /* Layout compacto em linha para impressão geral */
+  .print\:flex-row {
+    flex-direction: row !important;
+  }
+  
+  .print\:flex {
+    display: flex !important;
+  }
+  
+  .print\:items-center {
+    align-items: center !important;
+  }
+  
+  .print\:gap-2 {
+    gap: 2mm !important;
+  }
+  
+  .print\:gap-3 {
+    gap: 3mm !important;
+  }
+  
+  .print\:inline {
+    display: inline !important;
+  }
+  
+  .print\:after\:content-\[\'\;\\_\'\] {
+    content: '; ' !important;
+  }
+  
   /* Evitar que conteúdo fique colado nas bordas */
   .print\:px-2 {
     padding-left: 2mm !important;

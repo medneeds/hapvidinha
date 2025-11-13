@@ -66,47 +66,66 @@ export function EditPatientDialog({
     }
   };
 
+  const clearAllFields = () => {
+    setFormData({
+      ...patient,
+      name: "",
+      age: 0,
+      diagnoses: [],
+      medicalHistory: [],
+      relevantExams: [],
+      pendencies: [],
+      schedule: [],
+      admissionHistory: "",
+      admissionDate: new Date().toISOString().slice(0, 16).replace("T", " "),
+    });
+  };
+
   const renderArrayField = (
     field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">,
     label: string
   ) => (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <Label>{label}</Label>
-        <div className="flex gap-2">
+        <Label className="text-sm font-semibold">{label}</Label>
+        <div className="flex gap-1">
           <Button
             type="button"
             size="sm"
             variant="outline"
             onClick={() => addItem(field)}
+            className="h-7 px-2 text-xs"
           >
-            Adicionar
+            + Adicionar
           </Button>
           <Button
             type="button"
             size="sm"
             variant="ghost"
             onClick={() => clearField(field)}
+            className="h-7 px-2 text-xs"
           >
             Limpar
           </Button>
         </div>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {formData[field].map((item, idx) => (
-          <div key={idx} className="flex gap-2">
+          <div key={idx} className="flex gap-1.5">
             <Input
               value={item}
               onChange={(e) => updateItem(field, idx, e.target.value)}
               placeholder={`${label} ${idx + 1}`}
+              className="h-9 text-sm"
             />
             <Button
               type="button"
               size="icon"
               variant="ghost"
               onClick={() => removeItem(field, idx)}
+              className="h-9 w-9 flex-shrink-0"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </Button>
           </div>
         ))}
@@ -116,98 +135,148 @@ export function EditPatientDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Editar Paciente - Leito {patient.bedNumber}</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle>Editar Paciente - Leito {patient.bedNumber}</DialogTitle>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={clearAllFields}
+            >
+              Limpar Tudo
+            </Button>
+          </div>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {/* Nome */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label>Nome</Label>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={() => clearField("name")}
-              >
-                Limpar
-              </Button>
+        <div className="space-y-3 py-3">
+          {/* Informações Básicas em Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-muted/30 rounded-lg">
+            {/* Nome */}
+            <div className="space-y-1.5 md:col-span-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold">Nome</Label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => clearField("name")}
+                  className="h-6 px-2 text-xs"
+                >
+                  Limpar
+                </Button>
+              </div>
+              <Input
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="h-9"
+              />
             </div>
-            <Input
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
+
+            {/* Idade */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold">Idade</Label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setFormData({ ...formData, age: 0 })}
+                  className="h-6 px-2 text-xs"
+                >
+                  Limpar
+                </Button>
+              </div>
+              <Input
+                type="number"
+                value={formData.age}
+                onChange={(e) =>
+                  setFormData({ ...formData, age: parseInt(e.target.value) || 0 })
+                }
+                className="h-9"
+              />
+            </div>
+
+            {/* Leito */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold">Número do Leito</Label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => clearField("bedNumber")}
+                  className="h-6 px-2 text-xs"
+                >
+                  Limpar
+                </Button>
+              </div>
+              <Input
+                value={formData.bedNumber}
+                onChange={(e) =>
+                  setFormData({ ...formData, bedNumber: e.target.value })
+                }
+                className="h-9"
+              />
+            </div>
+
+            {/* Data de Admissão */}
+            <div className="space-y-1.5 md:col-span-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold">Data/Hora de Admissão</Label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => clearField("admissionDate")}
+                  className="h-6 px-2 text-xs"
+                >
+                  Limpar
+                </Button>
+              </div>
+              <Input
+                type="datetime-local"
+                value={formData.admissionDate.replace(" ", "T")}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    admissionDate: e.target.value.replace("T", " "),
+                  })
+                }
+                className="h-9"
+              />
+            </div>
           </div>
 
-          {/* Idade */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label>Idade</Label>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={() => setFormData({ ...formData, age: 0 })}
-              >
-                Limpar
-              </Button>
-            </div>
-            <Input
-              type="number"
-              value={formData.age}
-              onChange={(e) =>
-                setFormData({ ...formData, age: parseInt(e.target.value) || 0 })
-              }
-            />
+          {/* Campos de Array em Grid Duplo */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Diagnósticos */}
+            {renderArrayField("diagnoses", "Hipóteses Diagnósticas")}
+
+            {/* Antecedentes */}
+            {renderArrayField("medicalHistory", "Antecedentes Mórbidos")}
+
+            {/* Exames */}
+            {renderArrayField("relevantExams", "Exames Relevantes")}
+
+            {/* Pendências */}
+            {renderArrayField("pendencies", "Pendências")}
           </div>
 
-          {/* Leito */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label>Número do Leito</Label>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={() => clearField("bedNumber")}
-              >
-                Limpar
-              </Button>
-            </div>
-            <Input
-              value={formData.bedNumber}
-              onChange={(e) =>
-                setFormData({ ...formData, bedNumber: e.target.value })
-              }
-            />
-          </div>
-
-          {/* Diagnósticos */}
-          {renderArrayField("diagnoses", "Hipóteses Diagnósticas")}
-
-          {/* Antecedentes */}
-          {renderArrayField("medicalHistory", "Antecedentes Mórbidos")}
-
-          {/* Exames */}
-          {renderArrayField("relevantExams", "Exames Relevantes")}
-
-          {/* Pendências */}
-          {renderArrayField("pendencies", "Pendências")}
-
-          {/* Programação */}
+          {/* Programação - largura completa */}
           {renderArrayField("schedule", "Programação")}
 
           {/* História Admissional */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label>História Admissional / Anamnese</Label>
+              <Label className="text-sm font-semibold">História Admissional / Anamnese</Label>
               <Button
                 type="button"
                 size="sm"
                 variant="ghost"
                 onClick={() => clearField("admissionHistory")}
+                className="h-6 px-2 text-xs"
               >
                 Limpar
               </Button>
@@ -217,41 +286,17 @@ export function EditPatientDialog({
               onChange={(e) =>
                 setFormData({ ...formData, admissionHistory: e.target.value })
               }
-              rows={6}
-            />
-          </div>
-
-          {/* Data de Admissão */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label>Data/Hora de Admissão</Label>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={() => clearField("admissionDate")}
-              >
-                Limpar
-              </Button>
-            </div>
-            <Input
-              type="datetime-local"
-              value={formData.admissionDate.replace(" ", "T")}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  admissionDate: e.target.value.replace("T", " "),
-                })
-              }
+              rows={5}
+              className="text-sm resize-none"
             />
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-4 border-t">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <div className="flex justify-end gap-2 pt-3 border-t sticky bottom-0 bg-background">
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="h-9">
             Cancelar
           </Button>
-          <Button onClick={handleSave}>Salvar Alterações</Button>
+          <Button onClick={handleSave} className="h-9">Salvar Alterações</Button>
         </div>
       </DialogContent>
     </Dialog>

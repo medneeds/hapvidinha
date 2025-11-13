@@ -20,13 +20,13 @@ const sectorInfo = {
   },
   yellow: {
     title: "Observação Amarela",
-    subtitle: "Média Complexidade",
+    subtitle: "Em monitorização",
     icon: "🟡",
     gradientClass: "from-warning/20 to-warning/5"
   },
   blue: {
     title: "Observação Azul",
-    subtitle: "Baixa Complexidade",
+    subtitle: "Sem monitorização",
     icon: "🔵",
     gradientClass: "from-stable/20 to-stable/5"
   }
