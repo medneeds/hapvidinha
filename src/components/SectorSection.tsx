@@ -159,7 +159,13 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
               <Checkbox
                 checked={allPatientsSelected}
                 onCheckedChange={handleSelectAllSection}
-                className="h-5 w-5 border-2"
+                className={`h-5 w-5 border-2 ${
+                  sector === 'red' 
+                    ? 'border-critical data-[state=checked]:bg-critical data-[state=checked]:border-critical' 
+                    : sector === 'yellow' 
+                    ? 'border-warning data-[state=checked]:bg-warning data-[state=checked]:border-warning' 
+                    : 'border-stable data-[state=checked]:bg-stable data-[state=checked]:border-stable'
+                }`}
                 aria-label={`Selecionar todos os pacientes de ${info.title}`}
               />
             </div>
