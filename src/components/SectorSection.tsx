@@ -104,7 +104,7 @@ function SortablePatientCard(props: SortablePatientCardProps) {
 
 export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, expandedForPrint = false, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection, printOnlySelected = false, onReorderPatients, onTransfer }: SectorSectionProps) {
   const info = sectorInfo[sector];
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(patients.length > 0);
   
   const displayPatients = printOnlySelected 
     ? patients.filter(p => selectedPatients.has(p.id))
