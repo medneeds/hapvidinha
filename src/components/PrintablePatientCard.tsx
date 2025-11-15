@@ -49,7 +49,7 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
         <>
           {patient.medicalHistory.length > 0 && (
             <div style={{ color: '#374151', marginBottom: '8px' }}>
-              <strong>História:</strong> {patient.medicalHistory.join(', ')}
+              <strong>Antecedentes:</strong> {patient.medicalHistory.join(', ')}
             </div>
           )}
           {patient.relevantExams.length > 0 && (
