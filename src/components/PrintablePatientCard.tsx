@@ -35,13 +35,13 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
       
       {patient.diagnoses.length > 0 && (
         <div style={{ color: '#374151', marginBottom: isCompact ? '4px' : '8px', fontSize: isCompact ? '8.5pt' : '10pt' }}>
-          <strong>Diagnóstico:</strong> {patient.diagnoses.join(', ')}
+          <strong>Hipóteses Diagnósticas:</strong> {patient.diagnoses.join(', ')}
         </div>
       )}
       
       {patient.pendencies.length > 0 && (
         <div style={{ color: '#374151', marginBottom: '0', fontSize: isCompact ? '8.5pt' : '10pt' }}>
-          <strong>Pendências:</strong> {patient.pendencies.join(', ')}
+          <strong>Pendências e Programações:</strong> {patient.pendencies.join(', ')}
         </div>
       )}
       

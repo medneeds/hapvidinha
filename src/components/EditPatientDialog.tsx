@@ -285,8 +285,8 @@ export function EditPatientDialog({
             {/* Exames */}
             {renderArrayField("relevantExams", "Exames Relevantes")}
 
-            {/* Pendências */}
-            {renderArrayField("pendencies", "Pendências")}
+            {/* Pendências e Programações */}
+            {renderArrayField("pendencies", "Pendências e Programações")}
           </div>
 
           {/* Programação - largura completa */}
