@@ -28,13 +28,11 @@ interface SectorSectionProps {
   patients: Patient[];
   onUpdatePatient: (patient: Patient) => void;
   onDeletePatient?: (patientId: string) => void;
-  expandedForPrint?: boolean;
   onPrintSector?: () => void;
   onAddExtraBed?: () => void;
   selectionMode?: boolean;
   selectedPatients?: Set<string>;
   onToggleSelection?: (patientId: string) => void;
-  printOnlySelected?: boolean;
   onReorderPatients?: (patients: Patient[]) => void;
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
 }
@@ -64,7 +62,6 @@ interface SortablePatientCardProps {
   patient: Patient;
   onUpdate: (patient: Patient) => void;
   onDelete?: (patientId: string) => void;
-  expandedForPrint?: boolean;
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
@@ -103,13 +100,11 @@ function SortablePatientCard(props: SortablePatientCardProps) {
   );
 }
 
-export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, expandedForPrint = false, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection, printOnlySelected = false, onReorderPatients, onTransfer }: SectorSectionProps) {
+export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection, onReorderPatients, onTransfer }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const [isOpen, setIsOpen] = useState(patients.length > 0);
   
-  const displayPatients = printOnlySelected 
-    ? patients.filter(p => selectedPatients.has(p.id))
-    : patients;
+  const displayPatients = patients;
 
   // Check if all patients in this section are selected
   const allPatientsSelected = patients.length > 0 && patients.every(p => selectedPatients.has(p.id));
@@ -216,7 +211,7 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
 
       <CollapsibleContent className="space-y-1.5 print:space-y-0.5">
         {displayPatients.length === 0 ? (
-          <div className={`text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50 ${printOnlySelected ? 'print:hidden' : ''}`}>
+          <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
             <p>Nenhum paciente neste setor</p>
           </div>
         ) : (
@@ -235,7 +230,6 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
                   patient={patient}
                   onUpdate={onUpdatePatient}
                   onDelete={onDeletePatient}
-                  expandedForPrint={expandedForPrint}
                   selectionMode={selectionMode}
                   isSelected={selectedPatients.has(patient.id)}
                   onToggleSelection={onToggleSelection}
