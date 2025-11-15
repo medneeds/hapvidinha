@@ -107,6 +107,9 @@ export function AppSidebar() {
       ref={sidebarRef}
       collapsible="icon" 
       className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
+      onClick={() => {
+        if (!open) setOpen(true);
+      }}
     >
       <SidebarHeader className="border-b border-[#013ba6]/30 px-4 py-4 bg-[#013ba6]">
         <div className="flex items-center justify-center">
