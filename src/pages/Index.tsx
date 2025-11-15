@@ -377,6 +377,16 @@ const Index = () => {
     }, 100);
   };
 
+  const handlePrintCompact = () => {
+    // Imprime direto no modo compacto
+    setPrintMode('compact');
+    setPrintingSector(null);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setPrintMode(null), 500);
+    }, 100);
+  };
+
   const handlePrintSector = (sector: string) => {
     // Usa modo detalhado para impressão de setor
     setPrintMode('detailed');
@@ -511,8 +521,18 @@ const Index = () => {
                   <Button
                     variant="outline"
                     size="icon"
+                    onClick={handlePrintCompact}
+                    className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                    title="Impressão compacta"
+                  >
+                    <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
                     onClick={handlePrint}
                     className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                    title="Impressão detalhada"
                   >
                     <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>

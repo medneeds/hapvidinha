@@ -20,10 +20,12 @@ export function PrintableSectorSection({
 }: PrintableSectorSectionProps) {
   if (patients.length === 0) return null;
   
+  const isCompact = mode === 'compact';
+  
   return (
     <div 
       style={{ 
-        marginBottom: '24px',
+        marginBottom: isCompact ? '16px' : '24px',
         pageBreakInside: 'avoid',
         breakInside: 'avoid'
       }}
@@ -32,14 +34,14 @@ export function PrintableSectorSection({
         style={{ 
           backgroundColor: bgColor,
           borderLeft: `4px solid ${borderColor}`,
-          padding: '12px',
-          marginBottom: '12px',
+          padding: isCompact ? '8px' : '12px',
+          marginBottom: isCompact ? '8px' : '12px',
           pageBreakAfter: 'avoid',
           breakAfter: 'avoid'
         }}
       >
         <h2 style={{ 
-          fontSize: '12pt', 
+          fontSize: isCompact ? '11pt' : '12pt', 
           fontWeight: 'bold', 
           textTransform: 'uppercase',
           color: textColor,

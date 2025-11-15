@@ -18,12 +18,14 @@ export function PrintLayout({
   isPreview = false 
 }: PrintLayoutProps) {
 
+  const isCompact = mode === 'compact';
+
   const containerStyle: React.CSSProperties = {
     maxWidth: isPreview ? '210mm' : 'none',
     margin: isPreview ? '0 auto' : '0',
-    padding: '20mm 15mm',
-    fontSize: '11pt',
-    lineHeight: '1.4',
+    padding: isCompact ? '15mm 12mm' : '20mm 15mm',
+    fontSize: isCompact ? '10pt' : '11pt',
+    lineHeight: isCompact ? '1.3' : '1.4',
     backgroundColor: '#ffffff',
     minHeight: '297mm',
     boxShadow: isPreview ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none'
@@ -36,23 +38,23 @@ export function PrintLayout({
         display: 'flex', 
         alignItems: 'center', 
         gap: '8px', 
-        marginBottom: '16px', 
-        paddingBottom: '8px', 
+        marginBottom: isCompact ? '12px' : '16px', 
+        paddingBottom: isCompact ? '6px' : '8px', 
         borderBottom: '2px solid #d1d5db' 
       }}>
         <div style={{ 
-          height: '32px', 
-          width: '32px', 
+          height: isCompact ? '28px' : '32px', 
+          width: isCompact ? '28px' : '32px', 
           background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
           borderRadius: '4px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
         }}>
-          <ClipboardList style={{ height: '16px', width: '16px', color: '#ffffff' }} />
+          <ClipboardList style={{ height: isCompact ? '14px' : '16px', width: isCompact ? '14px' : '16px', color: '#ffffff' }} />
         </div>
         <h1 style={{ 
-          fontSize: '20pt', 
+          fontSize: isCompact ? '18pt' : '20pt', 
           fontWeight: 'bold', 
           textTransform: 'uppercase',
           margin: 0,
@@ -64,10 +66,10 @@ export function PrintLayout({
       
       {/* Metadata */}
       <div style={{ 
-        fontSize: '10pt', 
+        fontSize: isCompact ? '9pt' : '10pt', 
         color: '#4b5563', 
-        marginBottom: '16px', 
-        paddingBottom: '8px', 
+        marginBottom: isCompact ? '12px' : '16px', 
+        paddingBottom: isCompact ? '6px' : '8px', 
         borderBottom: '1px solid #e5e7eb' 
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -107,11 +109,11 @@ export function PrintLayout({
       
       {/* Footer */}
       <div style={{ 
-        fontSize: '10pt', 
+        fontSize: isCompact ? '9pt' : '10pt', 
         textAlign: 'center', 
         color: '#6b7280', 
-        marginTop: '24px', 
-        paddingTop: '16px', 
+        marginTop: isCompact ? '16px' : '24px', 
+        paddingTop: isCompact ? '12px' : '16px', 
         borderTop: '1px solid #e5e7eb' 
       }}>
         Sistema de Gestão Hospitalar - Documento gerado automaticamente
