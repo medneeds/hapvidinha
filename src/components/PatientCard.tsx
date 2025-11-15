@@ -152,9 +152,9 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
                 </div>
               </div>
 
-              {/* Pendências e Programações */}
+              {/* Atualizações */}
               <div className="flex flex-col md:col-span-2">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Pendências e Programações:</span>
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Atualizações:</span>
                 <ul className="text-xs space-y-0 uppercase">
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
                     <li key={idx} className="text-foreground truncate leading-tight">• {pendency}</li>
@@ -286,9 +286,9 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
               </ul>
             </div>
 
-            {/* Todas as Pendências e Programações */}
+            {/* Atualizações */}
             <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Pendências e Programações</h4>
+              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Atualizações</h4>
               <ul className="space-y-0 uppercase">
                 {patient.pendencies.map((pendency, idx) => (
                   <li key={idx} className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight">• {pendency}</li>

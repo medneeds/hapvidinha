@@ -41,7 +41,7 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
       
       {patient.pendencies.length > 0 && (
         <div style={{ color: '#374151', marginBottom: '0', fontSize: isCompact ? '8.5pt' : '10pt' }}>
-          <strong>Pendências e Programações:</strong> {patient.pendencies.join(', ')}
+          <strong>Atualizações:</strong> {patient.pendencies.join(', ')}
         </div>
       )}
       
