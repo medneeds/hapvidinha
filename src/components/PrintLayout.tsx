@@ -25,6 +25,7 @@ export function PrintLayout({
     maxWidth: isPreview ? '210mm' : 'none',
     margin: isPreview ? '0 auto' : '0',
     padding: isCompact ? '15mm 12mm' : '20mm 15mm',
+    paddingTop: isCompact ? '20mm' : '25mm',
     fontSize: isCompact ? '10pt' : '11pt',
     lineHeight: isCompact ? '1.3' : '1.4',
     backgroundColor: '#ffffff',
