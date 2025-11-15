@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
-import hapvidaLogo from "@/assets/hapvida-logo.jpg";
+import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
 import {
   Sidebar,
   SidebarContent,
@@ -111,19 +111,19 @@ export function AppSidebar() {
         if (!open) setOpen(true);
       }}
     >
-      <SidebarHeader className="border-b border-[#013ba6]/30 px-4 py-4 bg-[#013ba6]">
+      <SidebarHeader className="border-b border-[#013ba6]/30 px-3 py-3 bg-[#013ba6]">
         <div className="flex items-center justify-center">
           {open ? (
             <img 
               src={hapvidaLogo} 
-              alt="Hapvida Logo" 
-              className="h-16 w-auto object-contain animate-fade-in"
+              alt="Hapvida NotreDame Intermédica" 
+              className="w-full h-auto max-h-14 object-contain animate-fade-in"
             />
           ) : (
             <img 
               src={hapvidaLogo} 
               alt="Hapvida" 
-              className="h-10 w-10 object-contain"
+              className="w-12 h-12 object-contain object-left"
             />
           )}
         </div>
