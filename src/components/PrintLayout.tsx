@@ -1,5 +1,6 @@
 import { Patient } from "@/types/patient";
 import { ClipboardList } from "lucide-react";
+import { PrintableSectorSection } from "./PrintableSectorSection";
 
 interface PrintLayoutProps {
   redPatients: Patient[];
@@ -16,107 +17,6 @@ export function PrintLayout({
   mode,
   isPreview = false 
 }: PrintLayoutProps) {
-  const renderPatientCard = (patient: Patient) => {
-    if (!patient.name) return null;
-    
-    return (
-      <div 
-        key={patient.id} 
-        style={{ 
-          border: '1px solid #d1d5db',
-          borderRadius: '4px',
-          padding: '12px',
-          marginBottom: '12px',
-          backgroundColor: '#ffffff',
-          fontSize: '10pt',
-          pageBreakInside: 'avoid',
-          breakInside: 'avoid'
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-          <span style={{ fontWeight: 'bold', fontSize: '11pt', color: '#000000' }}>
-            {patient.bedNumber} - {patient.name}
-          </span>
-          {patient.age > 0 && (
-            <span style={{ color: '#4b5563', fontSize: '11pt' }}>{patient.age}a</span>
-          )}
-        </div>
-        {patient.diagnoses.length > 0 && (
-          <div style={{ color: '#374151', marginBottom: '8px' }}>
-            <strong>Diagnóstico:</strong> {patient.diagnoses.join(', ')}
-          </div>
-        )}
-        {mode === 'detailed' && (
-          <>
-            {patient.medicalHistory.length > 0 && (
-              <div style={{ color: '#374151', marginBottom: '8px' }}>
-                <strong>História:</strong> {patient.medicalHistory.join(', ')}
-              </div>
-            )}
-            {patient.relevantExams.length > 0 && (
-              <div style={{ color: '#374151', marginBottom: '8px' }}>
-                <strong>Exames:</strong> {patient.relevantExams.join(', ')}
-              </div>
-            )}
-            {patient.pendencies.length > 0 && (
-              <div style={{ color: '#374151', marginBottom: '8px' }}>
-                <strong>Pendências:</strong> {patient.pendencies.join(', ')}
-              </div>
-            )}
-            {patient.schedule.length > 0 && (
-              <div style={{ color: '#374151', marginBottom: '8px' }}>
-                <strong>Agenda:</strong> {patient.schedule.join(', ')}
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    );
-  };
-
-  const renderSector = (
-    patients: Patient[], 
-    sectorName: string, 
-    bgColor: string,
-    borderColor: string,
-    textColor: string
-  ) => {
-    if (patients.length === 0) return null;
-    
-    return (
-      <div 
-        style={{ 
-          marginBottom: '24px',
-          pageBreakInside: 'avoid',
-          breakInside: 'avoid'
-        }}
-      >
-        <div 
-          style={{ 
-            backgroundColor: bgColor,
-            borderLeft: `4px solid ${borderColor}`,
-            padding: '12px',
-            marginBottom: '12px',
-            pageBreakAfter: 'avoid',
-            breakAfter: 'avoid'
-          }}
-        >
-          <h2 style={{ 
-            fontSize: '12pt', 
-            fontWeight: 'bold', 
-            textTransform: 'uppercase',
-            color: textColor,
-            margin: 0
-          }}>
-            {sectorName} ({patients.length})
-          </h2>
-        </div>
-        <div>
-          {patients.map(renderPatientCard)}
-        </div>
-      </div>
-    );
-  };
 
   const containerStyle: React.CSSProperties = {
     maxWidth: isPreview ? '210mm' : 'none',
@@ -179,9 +79,30 @@ export function PrintLayout({
       
       {/* Sectors */}
       <div>
-        {renderSector(redPatients, 'Ala Vermelha', '#fef2f2', '#ef4444', '#b91c1c')}
-        {renderSector(yellowPatients, 'Ala Amarela', '#fefce8', '#eab308', '#a16207')}
-        {renderSector(bluePatients, 'Ala Azul', '#eff6ff', '#3b82f6', '#1d4ed8')}
+        <PrintableSectorSection
+          patients={redPatients}
+          sectorName="Ala Vermelha"
+          bgColor="#fef2f2"
+          borderColor="#ef4444"
+          textColor="#b91c1c"
+          mode={mode}
+        />
+        <PrintableSectorSection
+          patients={yellowPatients}
+          sectorName="Ala Amarela"
+          bgColor="#fefce8"
+          borderColor="#eab308"
+          textColor="#a16207"
+          mode={mode}
+        />
+        <PrintableSectorSection
+          patients={bluePatients}
+          sectorName="Ala Azul"
+          bgColor="#eff6ff"
+          borderColor="#3b82f6"
+          textColor="#1d4ed8"
+          mode={mode}
+        />
       </div>
       
       {/* Footer */}
