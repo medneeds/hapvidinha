@@ -62,7 +62,7 @@ export function PrintLayout({
             margin: 0,
             color: '#000000'
           }}>
-            Mapa de Pacientes
+            Mapa de Paciente, Hospital Guararapes
           </h1>
         </div>
         <img 
@@ -124,7 +124,7 @@ export function PrintLayout({
         paddingTop: isCompact ? '12px' : '16px', 
         borderTop: '1px solid #e5e7eb' 
       }}>
-        Sistema de Gestão Hospitalar - Documento gerado automaticamente
+        Urgência e Emergência - Documento gerado automaticamente
       </div>
     </div>
   );

@@ -196,7 +196,7 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
         paddingTop: '16px', 
         borderTop: '1px solid #e5e7eb' 
       }}>
-        Sistema de Gestão Hospitalar - Documento gerado automaticamente
+        Urgência e Emergência - Documento gerado automaticamente
       </div>
     </div>
   );
