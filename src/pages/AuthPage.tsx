@@ -121,41 +121,43 @@ export default function AuthPage() {
         </div>
 
         {/* Login Card with enhanced glass morphism */}
-        <div className="bg-white/98 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/30 p-8 border border-white/30 relative overflow-hidden animate-in fade-in-0 zoom-in-95 duration-1000 delay-500">
+        <div className="bg-white backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/30 p-10 border border-white/40 relative overflow-hidden animate-in fade-in-0 zoom-in-95 duration-1000 delay-500">
           {/* Shimmer effect */}
-          <div className="absolute inset-0 opacity-30 pointer-events-none">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
+          <div className="absolute inset-0 opacity-20 pointer-events-none">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#013ba6]/10 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
           </div>
-          <div className="mb-8 relative z-10">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] flex items-center justify-center shadow-lg shadow-[#013ba6]/40 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <LogIn className="h-6 w-6 text-white relative z-10 transform group-hover:scale-110 transition-transform duration-300" />
+          <div className="mb-10 relative z-10">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] flex items-center justify-center shadow-lg shadow-[#013ba6]/50 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <LogIn className="h-7 w-7 text-white relative z-10 transform group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-300" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-center text-gray-900 mb-1 tracking-tight">
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-2 tracking-tight">
               Bem-vindo de volta
             </h2>
-            <p className="text-sm text-center text-gray-600 uppercase tracking-wide font-medium">
+            <p className="text-sm text-center text-gray-600 uppercase tracking-widest font-semibold">
               Acesse sua conta
             </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5 relative z-10">
-            <div className="space-y-2 group">
+          <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+            <div className="space-y-3 group">
               <Label 
                 htmlFor="login-username" 
-                className="text-sm font-semibold text-gray-700 uppercase tracking-wide flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                className="text-xs font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
               >
-                <User className="h-4 w-4 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
-                Login
+                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                  <User className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                </div>
+                Usuário
               </Label>
               <div className="relative">
                 <Input
                   id="login-username"
                   type="text"
                   placeholder="Digite seu usuário"
-                  className="h-12 bg-gray-50/50 border-2 border-gray-200 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-gray-300 hover:bg-white pl-4 hover:shadow-md focus:shadow-lg focus:bg-white"
+                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-5 text-base font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white"
                   value={loginData.username}
                   onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
                   disabled={loading}
@@ -164,12 +166,14 @@ export default function AuthPage() {
               </div>
             </div>
 
-            <div className="space-y-2 group">
+            <div className="space-y-3 group">
               <Label 
                 htmlFor="login-password" 
-                className="text-sm font-semibold text-gray-700 uppercase tracking-wide flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                className="text-xs font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
               >
-                <Lock className="h-4 w-4 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                  <Lock className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                </div>
                 Senha
               </Label>
               <div className="relative">
@@ -177,7 +181,7 @@ export default function AuthPage() {
                   id="login-password"
                   type="password"
                   placeholder="Digite sua senha"
-                  className="h-12 bg-gray-50/50 border-2 border-gray-200 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-gray-300 hover:bg-white pl-4 hover:shadow-md focus:shadow-lg focus:bg-white"
+                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-5 text-base font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white"
                   value={loginData.password}
                   onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
                   disabled={loading}
@@ -189,28 +193,30 @@ export default function AuthPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-13 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold uppercase tracking-wider rounded-xl shadow-xl shadow-[#013ba6]/40 transition-all duration-300 hover:shadow-2xl hover:shadow-[#013ba6]/50 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mt-6 relative overflow-hidden group"
+              className="w-full h-14 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-base uppercase tracking-widest rounded-2xl shadow-xl shadow-[#013ba6]/40 transition-all duration-300 hover:shadow-2xl hover:shadow-[#013ba6]/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mt-8 relative overflow-hidden group"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               {loading ? (
-                <div className="flex items-center gap-2 relative z-10">
+                <div className="flex items-center gap-3 relative z-10">
                   <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Entrando...
+                  <span>Entrando...</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 relative z-10">
+                <div className="flex items-center gap-3 relative z-10">
                   <LogIn className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                  Entrar
+                  <span>Entrar no Sistema</span>
                 </div>
               )}
             </Button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-gray-200 relative z-10">
-            <p className="text-xs text-center text-gray-500 flex items-center justify-center gap-2">
-              <Lock className="h-3 w-3" />
-              Sistema de gestão hospitalar protegido
-            </p>
+          <div className="mt-8 pt-8 border-t-2 border-gray-200 relative z-10">
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-500 font-medium">
+              <div className="h-6 w-6 rounded-lg bg-gray-100 flex items-center justify-center">
+                <Lock className="h-3 w-3 text-gray-600" />
+              </div>
+              <span className="uppercase tracking-wide">Conexão segura e criptografada</span>
+            </div>
           </div>
         </div>
 
