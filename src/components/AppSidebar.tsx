@@ -129,7 +129,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className={`gap-0 transition-all duration-300 ${open ? 'py-2' : 'py-4'}`}>
+      <SidebarContent className={`gap-0 transition-all duration-300 ${open ? 'py-2' : 'py-3'}`}>
         {menuItems.map((section, index) => (
           <div key={section.title}>
             {/* Direct link item (without subitems) */}
@@ -140,28 +140,22 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       onClick={() => handleItemClick(section.link)}
                       className={cn(
-                        "transition-all duration-200 hover:bg-accent",
-                        open ? "justify-start px-4 py-3 h-auto" : "justify-center py-4 px-0 h-auto",
-                        "border-b border-border"
+                        "transition-all duration-200 hover:bg-accent/80 hover:scale-105",
+                        open ? "justify-start px-4 py-3 h-auto" : "justify-center py-3 px-0 h-14 w-full",
+                        "border-b border-border/50"
                       )}
+                      title={!open ? section.title : undefined}
                     >
-                      <div
-                        className={cn(
-                          "flex items-center transition-all duration-200",
-                          open ? "gap-3" : "flex-col gap-1"
-                        )}
-                      >
-                        <section.icon className={cn(
-                          "text-foreground transition-all duration-200",
-                          open ? "h-5 w-5" : "h-6 w-6"
-                        )} />
-                        <span className={cn(
-                          "text-xs font-medium uppercase tracking-wide text-foreground transition-all",
-                          !open && "text-[10px]"
-                        )}>
-                          {section.title}
-                        </span>
-                      </div>
+                      {!open ? (
+                        <section.icon className="h-6 w-6 text-foreground transition-all duration-200" />
+                      ) : (
+                        <div className="flex items-center gap-3">
+                          <section.icon className="h-5 w-5 text-foreground transition-all duration-200" />
+                          <span className="text-xs font-medium uppercase tracking-wide text-foreground">
+                            {section.title}
+                          </span>
+                        </div>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -177,31 +171,23 @@ export function AppSidebar() {
               <SidebarGroup className="py-0 my-0">
                 <CollapsibleTrigger className="w-full">
                   <SidebarGroupLabel className={cn(
-                    "transition-all duration-200 hover:bg-accent cursor-pointer",
-                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-4 px-0 h-auto flex-col",
-                    "border-b border-border"
-                  )}>
-                    <div className={cn(
-                      "flex items-center transition-all duration-200",
-                      open ? "gap-3 w-full" : "flex-col gap-1"
-                    )}>
-                      <section.icon className={cn(
-                        "text-foreground transition-all duration-200",
-                        open ? "h-5 w-5" : "h-6 w-6"
-                      )} />
-                      {open ? (
-                        <>
-                          <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
-                            {section.title}
-                          </span>
-                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
-                        </>
-                      ) : (
-                        <span className="text-[10px] font-medium uppercase tracking-wide text-foreground">
+                    "transition-all duration-200 hover:bg-accent/80 hover:scale-105 cursor-pointer",
+                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-3 px-0 h-14 w-full flex-col gap-0",
+                    "border-b border-border/50"
+                  )}
+                  title={!open ? section.title : undefined}
+                  >
+                    {!open ? (
+                      <section.icon className="h-6 w-6 text-foreground transition-all duration-200" />
+                    ) : (
+                      <div className="flex items-center gap-3 w-full">
+                        <section.icon className="h-5 w-5 text-foreground transition-all duration-200" />
+                        <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
                           {section.title}
                         </span>
-                      )}
-                    </div>
+                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                      </div>
+                    )}
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
                 {open && (
@@ -246,20 +232,27 @@ export function AppSidebar() {
         <Button
           variant="ghost"
           onClick={signOut}
-          className={`w-full transition-all duration-300 hover:bg-destructive/10 hover:text-destructive hover:border-l-2 hover:border-l-destructive rounded-xl ${open ? 'justify-start gap-3 h-12' : 'justify-center h-16'}`}
+          className={`w-full transition-all duration-300 hover:bg-destructive/10 hover:text-destructive rounded-xl ${open ? 'justify-start gap-3 h-12' : 'justify-center h-14'}`}
+          title={!open ? 'Sair' : undefined}
         >
-          <div className={`bg-destructive/10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-destructive/20 flex-shrink-0 ${open ? 'h-9 w-9' : 'h-14 w-14'}`}>
-            <LogOut className={`text-destructive transition-all duration-300 ${open ? 'h-4 w-4' : 'h-7 w-7'}`} />
-          </div>
-          {open && (
-            <div className="flex-1 text-left animate-fade-in">
-              <span className="text-xs font-bold uppercase tracking-tight block">
-                Sair
-              </span>
-              <span className="text-[10px] text-muted-foreground">
-                {user?.user_metadata?.username || user?.email?.split('@')[0]}
-              </span>
+          {!open ? (
+            <div className="bg-destructive/10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 h-12 w-12">
+              <LogOut className="text-destructive h-6 w-6" />
             </div>
+          ) : (
+            <>
+              <div className="bg-destructive/10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105 h-9 w-9 flex-shrink-0">
+                <LogOut className="text-destructive h-4 w-4" />
+              </div>
+              <div className="flex-1 text-left animate-fade-in">
+                <span className="text-xs font-bold uppercase tracking-tight block">
+                  Sair
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  {user?.user_metadata?.username || user?.email?.split('@')[0]}
+                </span>
+              </div>
+            </>
           )}
         </Button>
       </div>
