@@ -111,7 +111,7 @@ export function AppSidebar() {
         if (!open) setOpen(true);
       }}
     >
-      <SidebarHeader className="border-b border-[#013ba6]/30 px-3 py-3 bg-[#013ba6]">
+      <SidebarHeader className="border-b border-border/30 px-3 py-3 bg-white">
         <div className="flex items-center justify-center">
           {open ? (
             <img 
