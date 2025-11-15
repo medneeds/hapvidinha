@@ -35,6 +35,7 @@ interface SectorSectionProps {
   onToggleSelection?: (patientId: string) => void;
   onReorderPatients?: (patients: Patient[]) => void;
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
+  onPrintPatient?: (patientId: string) => void;
 }
 
 const sectorInfo = {
@@ -66,6 +67,7 @@ interface SortablePatientCardProps {
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
+  onPrintPatient?: (patientId: string) => void;
 }
 
 function SortablePatientCard(props: SortablePatientCardProps) {
@@ -100,7 +102,7 @@ function SortablePatientCard(props: SortablePatientCardProps) {
   );
 }
 
-export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection, onReorderPatients, onTransfer }: SectorSectionProps) {
+export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection, onReorderPatients, onTransfer, onPrintPatient }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const [isOpen, setIsOpen] = useState(patients.length > 0);
   
@@ -234,6 +236,7 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
                   isSelected={selectedPatients.has(patient.id)}
                   onToggleSelection={onToggleSelection}
                   onTransfer={onTransfer}
+                  onPrintPatient={onPrintPatient}
                 />
               ))}
             </SortableContext>

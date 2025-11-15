@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { useToast } from "@/hooks/use-toast";
@@ -25,6 +25,7 @@ interface PatientCardProps {
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
+  onPrintPatient?: (patientId: string) => void;
 }
 
 const sectorConfig = {
@@ -57,7 +58,7 @@ const sectorLabels = {
   outside: "Fora das Alas"
 };
 
-export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer }: PatientCardProps) {
+export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
@@ -213,6 +214,20 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
+              )}
+              {onPrintPatient && (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPrintPatient(patient.id);
+                  }}
+                  className="h-8 w-8 text-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+                  title="Imprimir caso completo"
+                >
+                  <Printer className="h-3.5 w-3.5" />
+                </Button>
               )}
               {onDelete && (
                 <Button

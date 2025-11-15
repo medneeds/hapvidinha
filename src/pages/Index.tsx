@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
+import { PrintPatientLayout } from "@/components/PrintPatientLayout";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
 import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck } from "lucide-react";
@@ -118,6 +119,7 @@ const Index = () => {
   const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(true);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
+  const [printingPatientId, setPrintingPatientId] = useState<string | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
@@ -415,6 +417,16 @@ const Index = () => {
     }, 100);
   };
 
+  const handlePrintPatient = (patientId: string) => {
+    setPrintingPatientId(patientId);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => {
+        setPrintingPatientId(null);
+      }, 500);
+    }, 100);
+  };
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-background">
@@ -432,6 +444,16 @@ const Index = () => {
             />
           </div>
         )}
+
+        {/* Print individual patient layout */}
+        {printingPatientId && (() => {
+          const patient = patients.find(p => p.id === printingPatientId);
+          return patient ? (
+            <div className="print-layout-container">
+              <PrintPatientLayout patient={patient} />
+            </div>
+          ) : null;
+        })()}
         
         <div className={`flex-1 flex flex-col min-w-0 ${printMode ? 'print-hide' : ''}`}>
           {/* Header */}
@@ -575,6 +597,7 @@ const Index = () => {
                   onToggleSelection={handleToggleSelection}
                   onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
                   onTransfer={handleTransferPatient}
+                  onPrintPatient={handlePrintPatient}
                 />
               </div>
               <div>
@@ -590,6 +613,7 @@ const Index = () => {
                   onToggleSelection={handleToggleSelection}
                   onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
                   onTransfer={handleTransferPatient}
+                  onPrintPatient={handlePrintPatient}
                 />
               </div>
               <div>
@@ -605,6 +629,7 @@ const Index = () => {
                   onToggleSelection={handleToggleSelection}
                   onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
                   onTransfer={handleTransferPatient}
+                  onPrintPatient={handlePrintPatient}
                 />
               </div>
 
