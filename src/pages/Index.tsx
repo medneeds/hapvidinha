@@ -538,13 +538,6 @@ const Index = () => {
                       <p className="text-sm sm:text-base font-bold text-foreground">{totalPatients}</p>
                     </div>
                   </div>
-                  <div className="hidden md:flex items-center gap-2 bg-critical/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-critical/20 print:px-2 print:py-1">
-                    <Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-critical" />
-                    <div>
-                      <p className="text-[9px] sm:text-[10px] text-muted-foreground">Críticos</p>
-                      <p className="text-sm sm:text-base font-bold text-critical">{criticalPatients}</p>
-                    </div>
-                  </div>
                   <div className="h-6 sm:h-8 w-px bg-border mx-1 sm:mx-2 print:hidden hidden lg:block" />
                   <div className="hidden lg:flex items-center gap-2 sm:gap-3 print:hidden">
                     <div className="text-right">
