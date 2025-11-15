@@ -233,7 +233,7 @@ const InternmentBankTab = () => {
   return (
     <div className="space-y-4">
       {/* Header with Actions */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex items-center justify-between flex-wrap gap-4 print:hidden">
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/30">
             <Database className="h-6 w-6 text-white" />
@@ -257,8 +257,17 @@ const InternmentBankTab = () => {
         </Button>
       </div>
 
+      {/* Print Title - Only visible when printing */}
+      <div className="hidden print:block mb-6">
+        <h1 className="text-2xl font-bold uppercase text-center">BANCO DE SOLICITAÇÕES DE INTERNAÇÃO</h1>
+        <p className="text-sm text-center mt-2">
+          Total de Registros: {filteredRequests.length} | Data: {new Date().toLocaleDateString('pt-BR')}
+        </p>
+        <hr className="my-4 border-t-2 border-gray-300" />
+      </div>
+
       {/* Filters */}
-      <Card className="p-4">
+      <Card className="p-4 print:hidden">
         <div className="flex items-center gap-3 mb-3">
           <Search className="h-4 w-4 text-muted-foreground" />
           <h3 className="text-sm font-semibold uppercase">FILTROS DE BUSCA</h3>
@@ -291,7 +300,7 @@ const InternmentBankTab = () => {
       </Card>
 
       {/* Table */}
-      <Card>
+      <Card className="print:border-0 print:shadow-none">
         <Table>
           <TableHeader>
             <TableRow>
@@ -299,7 +308,7 @@ const InternmentBankTab = () => {
               <TableHead className="uppercase">IDADE</TableHead>
               <TableHead className="uppercase">TÍTULO</TableHead>
               <TableHead className="uppercase">DATA</TableHead>
-              <TableHead className="uppercase text-right">AÇÕES</TableHead>
+              <TableHead className="uppercase text-right print:hidden">AÇÕES</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -324,7 +333,7 @@ const InternmentBankTab = () => {
                   <TableCell className="uppercase text-xs">
                     {formatDate(request.created_at)}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right print:hidden">
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="outline"
