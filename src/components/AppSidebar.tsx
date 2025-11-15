@@ -147,14 +147,14 @@ export function AppSidebar() {
                       title={!open ? section.title : undefined}
                     >
                       {!open ? (
-                        <section.icon className="h-6 w-6 text-foreground transition-all duration-200" />
+                        <section.icon className="h-6 w-6 text-primary transition-all duration-200" />
                       ) : (
-                        <div className="flex items-center gap-3">
-                          <section.icon className="h-5 w-5 text-foreground transition-all duration-200" />
+                        <>
+                          <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
                           <span className="text-xs font-medium uppercase tracking-wide text-foreground">
                             {section.title}
                           </span>
-                        </div>
+                        </>
                       )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -172,16 +172,16 @@ export function AppSidebar() {
                 <CollapsibleTrigger className="w-full">
                   <SidebarGroupLabel className={cn(
                     "transition-all duration-200 hover:bg-accent/80 hover:scale-105 cursor-pointer",
-                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-3 px-0 h-14 w-full flex-col gap-0",
+                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-3 px-0 h-14 w-full",
                     "border-b border-border/50"
                   )}
                   title={!open ? section.title : undefined}
                   >
                     {!open ? (
-                      <section.icon className="h-6 w-6 text-foreground transition-all duration-200" />
+                      <section.icon className="h-6 w-6 text-primary transition-all duration-200" />
                     ) : (
                       <div className="flex items-center gap-3 w-full">
-                        <section.icon className="h-5 w-5 text-foreground transition-all duration-200" />
+                        <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
                         <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
                           {section.title}
                         </span>
