@@ -874,63 +874,167 @@ const Index = () => {
 
       {/* Print Preview Dialog */}
       <Dialog open={showPrintPreview} onOpenChange={setShowPrintPreview}>
-        <DialogContent className="max-w-6xl h-[90vh] print:hidden flex flex-col">
+        <DialogContent className="max-w-[95vw] w-[900px] h-[90vh] print:hidden flex flex-col">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold uppercase">
               Pré-visualização - Modelo {previewMode === 'compact' ? 'Retraído' : 'Detalhado'}
             </DialogTitle>
           </DialogHeader>
-          <div className="flex-1 overflow-auto border rounded-lg bg-white p-4" style={{ 
-            boxShadow: '0 0 0 1px #e5e7eb inset',
-            WebkitOverflowScrolling: 'touch'
-          }}>
-            <div className="max-w-[210mm] mx-auto bg-white" style={{
+          <div className="flex-1 overflow-auto border rounded-lg bg-gray-100 p-6">
+            {/* A4 Paper simulation */}
+            <div className="max-w-[210mm] mx-auto bg-white shadow-lg" style={{
               minHeight: '297mm',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              padding: '20mm 15mm',
+              fontSize: '11pt',
+              lineHeight: '1.4'
             }}>
-              {/* Preview Content - Same as print layout */}
-              <div className="p-4">
-                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
-                  <div className="h-6 w-6 bg-gradient-primary rounded-md flex items-center justify-center">
-                    <ClipboardList className="h-3 w-3 text-primary-foreground" />
+              {/* Simulate print header */}
+              <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-gray-300">
+                <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded flex items-center justify-center">
+                  <ClipboardList className="h-4 w-4 text-white" />
+                </div>
+                <h1 className="text-xl font-bold uppercase">Mapa de Pacientes</h1>
+              </div>
+              
+              {/* Print metadata */}
+              <div className="text-xs text-gray-600 mb-4 pb-2 border-b border-gray-200">
+                <div className="flex justify-between">
+                  <span>Data: {new Date().toLocaleDateString('pt-BR')}</span>
+                  <span>Hora: {new Date().toLocaleTimeString('pt-BR')}</span>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                {/* Red Sector */}
+                {redPatients.length > 0 && (
+                  <div className="break-inside-avoid">
+                    <div className="bg-red-50 border-l-4 border-red-500 p-2 mb-2">
+                      <h2 className="text-sm font-bold uppercase text-red-700">Ala Vermelha ({redPatients.length})</h2>
+                    </div>
+                    <div className="space-y-2">
+                      {redPatients.map(patient => (
+                        <div key={patient.id} className="border border-gray-200 rounded p-2 text-xs break-inside-avoid">
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="font-bold">{patient.bedNumber} - {patient.name || 'VAGO'}</span>
+                            {patient.age > 0 && <span className="text-gray-600">{patient.age}a</span>}
+                          </div>
+                          {patient.name && (
+                            <>
+                              {patient.diagnoses.length > 0 && (
+                                <div className="text-gray-700">
+                                  <strong>Diagnóstico:</strong> {patient.diagnoses.join(', ')}
+                                </div>
+                              )}
+                              {previewMode === 'detailed' && (
+                                <>
+                                  {patient.medicalHistory.length > 0 && (
+                                    <div className="text-gray-700 mt-1">
+                                      <strong>História:</strong> {patient.medicalHistory.join(', ')}
+                                    </div>
+                                  )}
+                                  {patient.pendencies.length > 0 && (
+                                    <div className="text-gray-700 mt-1">
+                                      <strong>Pendências:</strong> {patient.pendencies.join(', ')}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <h1 className="text-sm font-bold uppercase">Mapa de Pacientes</h1>
-                </div>
+                )}
                 
-                <div className="space-y-1">
-                  {/* Red Sector */}
-                  {redPatients.length > 0 && (
-                    <SectorSection 
-                      sector="red" 
-                      patients={redPatients} 
-                      onUpdatePatient={handleUpdatePatient}
-                      expandedForPrint={previewMode === 'detailed'}
-                      onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
-                    />
-                  )}
-                  
-                  {/* Yellow Sector */}
-                  {yellowPatients.length > 0 && (
-                    <SectorSection 
-                      sector="yellow" 
-                      patients={yellowPatients} 
-                      onUpdatePatient={handleUpdatePatient}
-                      expandedForPrint={previewMode === 'detailed'}
-                      onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
-                    />
-                  )}
-                  
-                  {/* Blue Sector */}
-                  {bluePatients.length > 0 && (
-                    <SectorSection 
-                      sector="blue" 
-                      patients={bluePatients} 
-                      onUpdatePatient={handleUpdatePatient}
-                      expandedForPrint={previewMode === 'detailed'}
-                      onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
-                    />
-                  )}
-                </div>
+                {/* Yellow Sector */}
+                {yellowPatients.length > 0 && (
+                  <div className="break-inside-avoid">
+                    <div className="bg-yellow-50 border-l-4 border-yellow-500 p-2 mb-2">
+                      <h2 className="text-sm font-bold uppercase text-yellow-700">Ala Amarela ({yellowPatients.length})</h2>
+                    </div>
+                    <div className="space-y-2">
+                      {yellowPatients.map(patient => (
+                        <div key={patient.id} className="border border-gray-200 rounded p-2 text-xs break-inside-avoid">
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="font-bold">{patient.bedNumber} - {patient.name || 'VAGO'}</span>
+                            {patient.age > 0 && <span className="text-gray-600">{patient.age}a</span>}
+                          </div>
+                          {patient.name && (
+                            <>
+                              {patient.diagnoses.length > 0 && (
+                                <div className="text-gray-700">
+                                  <strong>Diagnóstico:</strong> {patient.diagnoses.join(', ')}
+                                </div>
+                              )}
+                              {previewMode === 'detailed' && (
+                                <>
+                                  {patient.medicalHistory.length > 0 && (
+                                    <div className="text-gray-700 mt-1">
+                                      <strong>História:</strong> {patient.medicalHistory.join(', ')}
+                                    </div>
+                                  )}
+                                  {patient.pendencies.length > 0 && (
+                                    <div className="text-gray-700 mt-1">
+                                      <strong>Pendências:</strong> {patient.pendencies.join(', ')}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Blue Sector */}
+                {bluePatients.length > 0 && (
+                  <div className="break-inside-avoid">
+                    <div className="bg-blue-50 border-l-4 border-blue-500 p-2 mb-2">
+                      <h2 className="text-sm font-bold uppercase text-blue-700">Ala Azul ({bluePatients.length})</h2>
+                    </div>
+                    <div className="space-y-2">
+                      {bluePatients.map(patient => (
+                        <div key={patient.id} className="border border-gray-200 rounded p-2 text-xs break-inside-avoid">
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="font-bold">{patient.bedNumber} - {patient.name || 'VAGO'}</span>
+                            {patient.age > 0 && <span className="text-gray-600">{patient.age}a</span>}
+                          </div>
+                          {patient.name && (
+                            <>
+                              {patient.diagnoses.length > 0 && (
+                                <div className="text-gray-700">
+                                  <strong>Diagnóstico:</strong> {patient.diagnoses.join(', ')}
+                                </div>
+                              )}
+                              {previewMode === 'detailed' && (
+                                <>
+                                  {patient.medicalHistory.length > 0 && (
+                                    <div className="text-gray-700 mt-1">
+                                      <strong>História:</strong> {patient.medicalHistory.join(', ')}
+                                    </div>
+                                  )}
+                                  {patient.pendencies.length > 0 && (
+                                    <div className="text-gray-700 mt-1">
+                                      <strong>Pendências:</strong> {patient.pendencies.join(', ')}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Footer */}
+              <div className="text-xs text-center text-gray-500 mt-6 pt-4 border-t border-gray-200">
+                Sistema de Gestão Hospitalar - Documento gerado automaticamente
               </div>
             </div>
           </div>
