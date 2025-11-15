@@ -171,8 +171,8 @@ export function AppSidebar() {
               <SidebarGroup className="py-0 my-0">
                 <CollapsibleTrigger className="w-full">
                   <SidebarGroupLabel className={cn(
-                    "transition-all duration-200 hover:bg-accent/80 hover:scale-105 cursor-pointer",
-                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-3 px-0 h-14 w-full",
+                    "transition-all duration-200 hover:bg-accent/80 hover:scale-105 cursor-pointer !opacity-100",
+                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-3 px-0 h-14 w-full !mt-0",
                     "border-b border-border/50"
                   )}
                   title={!open ? section.title : undefined}
