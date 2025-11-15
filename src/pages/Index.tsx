@@ -479,15 +479,6 @@ const Index = () => {
                     <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                   <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
-                    title={showOnlyOccupied ? "Mostrar todos os leitos" : "Mostrar apenas ocupados"}
-                  >
-                    {showOnlyOccupied ? <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
-                  </Button>
-                  <Button
                     variant={selectionMode ? "default" : "outline"}
                     size="icon"
                     onClick={handleToggleSelectionMode}
