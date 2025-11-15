@@ -910,7 +910,10 @@ const Index = () => {
           <DialogFooter className="gap-2">
             <Button
               variant="outline"
-              onClick={() => setShowPrintPreview(false)}
+              onClick={() => {
+                setShowPrintPreview(false);
+                setPreviewMode(null);
+              }}
               className="uppercase"
             >
               Voltar

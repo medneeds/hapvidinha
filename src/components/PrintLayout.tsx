@@ -23,7 +23,11 @@ export function PrintLayout({
       <div 
         key={patient.id} 
         className="border border-gray-300 rounded p-2 text-xs break-inside-avoid mb-2"
-        style={{ pageBreakInside: 'avoid' }}
+        style={{ 
+          pageBreakInside: 'avoid',
+          backgroundColor: 'white',
+          border: '1px solid #d1d5db'
+        }}
       >
         <div className="flex justify-between items-start mb-1">
           <span className="font-bold">{patient.bedNumber} - {patient.name}</span>
@@ -96,7 +100,13 @@ export function PrintLayout({
         padding: '20mm 15mm',
         fontSize: '11pt',
         lineHeight: '1.4'
-      } : {}}
+      } : {
+        backgroundColor: 'white',
+        padding: '0',
+        fontSize: '11pt',
+        lineHeight: '1.4',
+        color: '#000000'
+      }}
     >
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-gray-300">
