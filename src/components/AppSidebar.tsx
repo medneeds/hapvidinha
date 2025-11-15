@@ -46,15 +46,15 @@ const menuItems = [
   {
     title: "MAPA",
     icon: LayoutDashboard,
-    items: [
-      { name: "VISUALIZAR MAPA", link: "/" },
-      { name: "REGISTRAR PASSAGEM", link: null, action: "openHandover" },
-    ],
+    link: "/",
   },
   {
     title: "PASSAGENS",
     icon: ClipboardCheck,
-    link: "/handovers",
+    items: [
+      { name: "REGISTRAR PASSAGEM", link: null, action: "openHandover" },
+      { name: "HISTÓRICO DE PASSAGENS", link: "/handovers" },
+    ],
   },
   {
     title: "CÓDIGOS",
