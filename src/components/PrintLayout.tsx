@@ -22,11 +22,9 @@ export function PrintLayout({
     return (
       <div 
         key={patient.id} 
-        className="border border-gray-300 rounded p-2 text-xs break-inside-avoid mb-2"
+        className="border border-gray-300 rounded p-2 text-xs break-inside-avoid mb-2 bg-white"
         style={{ 
-          pageBreakInside: 'avoid',
-          backgroundColor: 'white',
-          border: '1px solid #d1d5db'
+          pageBreakInside: 'avoid'
         }}
       >
         <div className="flex justify-between items-start mb-1">
@@ -94,18 +92,17 @@ export function PrintLayout({
 
   return (
     <div 
-      className={isPreview ? "max-w-[210mm] mx-auto bg-white shadow-lg" : "bg-white"}
+      className={isPreview ? "max-w-[210mm] mx-auto bg-white shadow-lg" : ""}
       style={isPreview ? {
         minHeight: '297mm',
         padding: '20mm 15mm',
         fontSize: '11pt',
-        lineHeight: '1.4'
+        lineHeight: '1.4',
+        backgroundColor: 'white'
       } : {
         backgroundColor: 'white',
-        padding: '0',
         fontSize: '11pt',
-        lineHeight: '1.4',
-        color: '#000000'
+        lineHeight: '1.4'
       }}
     >
       {/* Header */}

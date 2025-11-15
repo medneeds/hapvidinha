@@ -125,7 +125,6 @@
   * {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
-    color: #000000 !important;
   }
   
   body {
@@ -134,7 +133,6 @@
     font-size: 11pt;
     line-height: 1.4;
     background: white !important;
-    color: #000000 !important;
   }
   
   /* Hide sidebar */
@@ -157,16 +155,61 @@
     background: white !important;
   }
   
-  /* Force all backgrounds to white */
-  .bg-white,
-  div,
-  section {
-    background: white !important;
+  /* Keep sector colors visible */
+  .bg-red-50 {
+    background-color: #fef2f2 !important;
   }
   
-  /* Force all text to black */
-  h1, h2, h3, h4, h5, h6, p, span, div, td, th {
-    color: #000000 !important;
+  .bg-yellow-50 {
+    background-color: #fefce8 !important;
+  }
+  
+  .bg-blue-50 {
+    background-color: #eff6ff !important;
+  }
+  
+  .border-red-500 {
+    border-color: #ef4444 !important;
+  }
+  
+  .border-yellow-500 {
+    border-color: #eab308 !important;
+  }
+  
+  .border-blue-500 {
+    border-color: #3b82f6 !important;
+  }
+  
+  .text-red-700 {
+    color: #b91c1c !important;
+  }
+  
+  .text-yellow-700 {
+    color: #a16207 !important;
+  }
+  
+  .text-blue-700 {
+    color: #1d4ed8 !important;
+  }
+  
+  .text-gray-600 {
+    color: #4b5563 !important;
+  }
+  
+  .text-gray-700 {
+    color: #374151 !important;
+  }
+  
+  .text-gray-500 {
+    color: #6b7280 !important;
+  }
+  
+  .border-gray-300 {
+    border-color: #d1d5db !important;
+  }
+  
+  .border-gray-200 {
+    border-color: #e5e7eb !important;
   }
   
   /* Resources tabs print optimization */
