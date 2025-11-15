@@ -35,7 +35,7 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
       
       {patient.diagnoses.length > 0 && (
         <div style={{ color: '#374151', marginBottom: isCompact ? '4px' : '8px', fontSize: isCompact ? '8.5pt' : '10pt' }}>
-          <strong>Hipóteses Diagnósticas:</strong> {patient.diagnoses.join(', ')}
+          <strong>HD:</strong> {patient.diagnoses.join(', ')}
         </div>
       )}
       
