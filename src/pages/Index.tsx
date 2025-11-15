@@ -443,9 +443,6 @@ const Index = () => {
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:bg-white/10" />
-                  <div className="h-8 w-8 sm:h-10 sm:w-10 bg-white/10 rounded-lg flex items-center justify-center print:h-5 print:w-5 shadow-glow transition-transform hover:scale-105 duration-200 flex-shrink-0 print:rounded-md">
-                    <ClipboardList className="h-4 w-4 sm:h-6 sm:w-6 text-white print:h-3 print:w-3" />
-                  </div>
                   <div className="min-w-0">
                     <h1 className="text-sm sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes</h1>
                     <p className="text-[10px] sm:text-sm text-white/80 print:hidden uppercase tracking-wide hidden sm:block">Sistema de Controle Hospitalar</p>
