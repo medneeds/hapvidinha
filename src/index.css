@@ -483,4 +483,36 @@ All colors MUST be HSL.
   [class*="rounded-xl"] > div {
     page-break-after: avoid !important;
   }
+
+  /* Optimize print for resources tabs */
+  textarea {
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+    color: black !important;
+    font-family: monospace !important;
+    padding: 1rem !important;
+  }
+
+  table {
+    font-size: 9pt !important;
+    width: 100% !important;
+  }
+
+  th {
+    background-color: #f3f4f6 !important;
+    font-weight: bold !important;
+    padding: 8px !important;
+    border: 1px solid #d1d5db !important;
+  }
+
+  td {
+    padding: 6px 8px !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* Ensure content fits on page */
+  .space-y-4 {
+    gap: 0.5rem !important;
+  }
 }

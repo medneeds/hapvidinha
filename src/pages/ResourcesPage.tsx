@@ -12,10 +12,10 @@ const ResourcesPage = () => {
   const { signOut, user, role } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6 print:p-4 print:bg-white">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between print:hidden">
           <div className="flex items-center gap-4">
             <Button
               variant="outline"
@@ -56,7 +56,7 @@ const ResourcesPage = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="notes" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-md grid-cols-2 print:hidden">
             <TabsTrigger value="notes" className="uppercase">
               BLOCO DE NOTAS
             </TabsTrigger>

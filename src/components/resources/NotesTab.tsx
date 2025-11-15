@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Download, Copy, Trash2, FileInput, Save, FolderOpen } from "lucide-react";
+import { Download, Copy, Trash2, FileInput, Save, FolderOpen, Printer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { internmentTemplate } from "@/data/internmentTemplate";
 import {
@@ -91,6 +91,14 @@ const NotesTab = () => {
     });
   };
 
+  const handlePrint = () => {
+    window.print();
+    toast({
+      title: "IMPRESSÃO INICIADA",
+      description: "PREPARANDO DOCUMENTO PARA IMPRESSÃO",
+    });
+  };
+
   const handleClear = () => {
     setNotes("");
     toast({
@@ -163,7 +171,7 @@ const NotesTab = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between print:hidden">
         <div className="flex items-center gap-2 flex-wrap">
           <Button
             variant="outline"
@@ -184,6 +192,17 @@ const NotesTab = () => {
           >
             <Save className="h-4 w-4" />
             SALVAR COMO MODELO
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePrint}
+            disabled={!notes}
+            className="gap-2 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/50 transition-all uppercase"
+          >
+            <Printer className="h-4 w-4" />
+            IMPRIMIR
           </Button>
 
           <DropdownMenu>
@@ -230,16 +249,25 @@ const NotesTab = () => {
         </div>
       </div>
 
-      <Card className="p-6 shadow-xl border-2">
-        <div className="space-y-4">
+      {/* Print Title - Only visible when printing */}
+      <div className="hidden print:block mb-6">
+        <h1 className="text-2xl font-bold uppercase text-center">ANOTAÇÕES MÉDICAS</h1>
+        <p className="text-sm text-center mt-2">
+          Data: {new Date().toLocaleDateString('pt-BR')} - {new Date().toLocaleTimeString('pt-BR')}
+        </p>
+        <hr className="my-4 border-t-2 border-gray-300" />
+      </div>
+
+      <Card className="p-6 shadow-xl border-2 print:border-0 print:shadow-none print:p-0">
+        <div className="space-y-4 print:space-y-0">
           <Textarea
             value={notes}
             onChange={handleChange}
             placeholder="DIGITE SUA ANAMNESE AQUI OU IMPORTE O MODELO PADRÃO..."
-            className="min-h-[600px] font-mono text-sm resize-none focus:ring-2 focus:ring-emerald-500 transition-all uppercase"
+            className="min-h-[600px] font-mono text-sm resize-none focus:ring-2 focus:ring-emerald-500 transition-all uppercase print:min-h-0 print:border-0 print:focus:ring-0 print:p-0"
           />
           
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between print:hidden">
             <div className="text-xs text-muted-foreground uppercase">
               {notes.length} CARACTERES
             </div>
