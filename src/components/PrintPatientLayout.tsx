@@ -16,6 +16,7 @@ const sectorLabels = {
 export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
   const containerStyle: React.CSSProperties = {
     padding: '20mm 15mm',
+    paddingTop: '25mm',
     fontSize: '11pt',
     lineHeight: '1.4',
     backgroundColor: '#ffffff',
