@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { 
   ClipboardList, 
   Clock, 
@@ -64,9 +65,13 @@ export default function HandoversPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [handoverToDelete, setHandoverToDelete] = useState<string | null>(null);
+  const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
   const { toast } = useToast();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  // Mock patients data for dialog - you can replace with actual data
+  const mockPatients: Patient[] = [];
 
   useEffect(() => {
     fetchHandovers();
@@ -180,7 +185,7 @@ export default function HandoversPage() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-gradient-to-br from-background via-background to-muted/20">
-        <AppSidebar />
+        <AppSidebar onOpenHandover={() => setHandoverDialogOpen(true)} />
         <div className="flex-1 flex flex-col">
           {/* Header */}
           <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-gradient-to-r from-background/95 via-background/98 to-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 print:hidden">
@@ -382,6 +387,13 @@ export default function HandoversPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Register Handover Dialog */}
+      <RegisterHandoverDialog
+        open={handoverDialogOpen}
+        onOpenChange={setHandoverDialogOpen}
+        patients={mockPatients}
+      />
     </SidebarProvider>
   );
 }
