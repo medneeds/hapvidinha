@@ -457,7 +457,7 @@ const Index = () => {
                   <Button
                     variant="default"
                     onClick={() => setHandoverDialogOpen(true)}
-                    className="print:hidden bg-white text-[#013ba6] hover:bg-white/90 gap-2"
+                    className="print:hidden bg-white text-[#013ba6] hover:bg-white/90 gap-2 shadow-md"
                     title="Registrar Passagem de Plantão"
                   >
                     <ClipboardCheck className="h-4 w-4" />
@@ -468,7 +468,7 @@ const Index = () => {
                     size="icon"
                     onClick={handleUndo}
                     disabled={history.length === 0}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
                     title="Desfazer última ação"
                   >
                     <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -478,7 +478,7 @@ const Index = () => {
                     size="icon"
                     onClick={handleRedo}
                     disabled={redoHistory.length === 0}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
                     title="Refazer ação"
                   >
                     <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -487,7 +487,7 @@ const Index = () => {
                     variant="outline"
                     size="icon"
                     onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
                     title={showOnlyOccupied ? "Mostrar todos os leitos" : "Mostrar apenas ocupados"}
                   >
                     {showOnlyOccupied ? <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
@@ -496,7 +496,7 @@ const Index = () => {
                     variant={selectionMode ? "default" : "outline"}
                     size="icon"
                     onClick={handleToggleSelectionMode}
-                    className={`print:hidden h-8 w-8 sm:h-10 sm:w-10 ${selectionMode ? 'bg-white text-[#013ba6]' : 'border-white/30 text-white hover:bg-white/10 hover:text-white'}`}
+                    className={`print:hidden h-8 w-8 sm:h-10 sm:w-10 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
                     title="Modo de seleção múltipla"
                   >
                     <CheckSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -507,7 +507,7 @@ const Index = () => {
                         variant="outline"
                         size="icon"
                         onClick={handlePrintSelected}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
                         title={`Imprimir ${selectedPatients.size} selecionado(s)`}
                       >
                         <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -516,7 +516,7 @@ const Index = () => {
                         variant="destructive"
                         size="icon"
                         onClick={handleDeleteSelected}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-red-600 text-white hover:bg-red-700 border-0"
                         title={`Deletar ${selectedPatients.size} selecionado(s)`}
                       >
                         <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -527,7 +527,7 @@ const Index = () => {
                     variant="outline"
                     size="icon"
                     onClick={handlePrint}
-                    className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
+                    className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
                   >
                     <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
@@ -553,7 +553,7 @@ const Index = () => {
                       size="icon"
                       onClick={signOut}
                       title="Sair"
-                      className="h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
+                      className="h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
                     >
                       <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </Button>
