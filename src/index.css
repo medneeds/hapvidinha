@@ -109,6 +109,11 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Hide print layout on screen */
+  .print-layout-container {
+    display: none;
+  }
 }
 
 @media print {
@@ -129,22 +134,26 @@
     line-height: 1.4;
   }
   
-  body > div > div > div:not(.hidden.print\:block) {
+  /* Hide sidebar */
+  aside,
+  [data-sidebar] {
     display: none !important;
   }
   
-  .hidden.print\:block {
+  /* Hide main content when printing */
+  .print-hide {
+    display: none !important;
+  }
+  
+  /* Show only print layout */
+  .print-layout-container {
     display: block !important;
-  }
-  
-  .print\:hidden {
-    display: none !important;
-  }
-  
-  .print\:w-full {
     width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   
+  /* Resources tabs print optimization */
   textarea {
     border: none !important;
     box-shadow: none !important;
@@ -175,3 +184,5 @@
     gap: 0.5rem !important;
   }
 }
+
+
