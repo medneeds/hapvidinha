@@ -142,7 +142,7 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
 
               {/* Hipóteses Diagnósticas */}
               <div className="flex flex-col md:col-span-2">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Diagnósticos:</span>
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses Diagnósticas:</span>
                 <div className="flex flex-wrap gap-1 print:gap-0.5">
                   {patient.diagnoses.map((diagnosis, idx) => (
                     <Badge key={idx} variant="secondary" className="text-[10px] py-0 px-1.5 uppercase">
@@ -152,9 +152,9 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
                 </div>
               </div>
 
-              {/* Pendências */}
+              {/* Pendências e Programações */}
               <div className="flex flex-col md:col-span-2">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Pendências:</span>
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Pendências e Programações:</span>
                 <ul className="text-xs space-y-0 uppercase">
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
                     <li key={idx} className="text-foreground truncate leading-tight">• {pendency}</li>
@@ -286,9 +286,9 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
               </ul>
             </div>
 
-            {/* Todas as Pendências */}
+            {/* Todas as Pendências e Programações */}
             <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Todas as Pendências</h4>
+              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Pendências e Programações</h4>
               <ul className="space-y-0 uppercase">
                 {patient.pendencies.map((pendency, idx) => (
                   <li key={idx} className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight">• {pendency}</li>
