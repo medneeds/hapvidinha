@@ -442,7 +442,7 @@ const Index = () => {
         
         {/* Print-only layout - Hidden on screen, visible only when printing */}
         {printMode && (
-          <div className="hidden print:block print:w-full">
+          <div className="print-layout-container">
             <PrintLayout 
               redPatients={redPatients}
               yellowPatients={yellowPatients}
@@ -453,7 +453,7 @@ const Index = () => {
           </div>
         )}
         
-        <div className={`flex-1 flex flex-col min-w-0 ${printMode ? 'print:hidden' : ''}`}>
+        <div className={`flex-1 flex flex-col min-w-0 ${printMode ? 'print-hide' : ''}`}>
           {/* Header */}
           <header className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5">
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
