@@ -101,7 +101,7 @@ export function AppSidebar() {
           )} />
           {open && (
             <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide animate-fade-in ml-3">
-              Menu
+              PAINEL
             </h2>
           )}
         </div>

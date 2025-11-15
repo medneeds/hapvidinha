@@ -107,6 +107,48 @@ export type Database = {
         }
         Relationships: []
       }
+      shift_handovers: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          handover_datetime: string
+          handover_from: string | null
+          handover_to: string | null
+          id: string
+          notes: string | null
+          occupied_beds: number
+          shift_type: string | null
+          snapshot_data: Json
+          total_patients: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          handover_datetime?: string
+          handover_from?: string | null
+          handover_to?: string | null
+          id?: string
+          notes?: string | null
+          occupied_beds?: number
+          shift_type?: string | null
+          snapshot_data: Json
+          total_patients?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          handover_datetime?: string
+          handover_from?: string | null
+          handover_to?: string | null
+          id?: string
+          notes?: string | null
+          occupied_beds?: number
+          shift_type?: string | null
+          snapshot_data?: Json
+          total_patients?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
