@@ -21,7 +21,6 @@ interface PatientCardProps {
   patient: Patient;
   onUpdate: (updatedPatient: Patient) => void;
   onDelete?: (patientId: string) => void;
-  expandedForPrint?: boolean;
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
@@ -58,7 +57,7 @@ const sectorLabels = {
   outside: "Fora das Alas"
 };
 
-export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = false, selectionMode = false, isSelected = false, onToggleSelection, onTransfer }: PatientCardProps) {
+export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
@@ -101,14 +100,8 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
         config.color,
         isSelected && "ring-2 ring-primary"
       )}>
-        <div className={cn(
-          "p-2.5",
-          !expandedForPrint && "print:p-0.5 print:py-0.5"
-        )}>
-          <div className={cn(
-            "flex items-center justify-between gap-3",
-            !expandedForPrint && "print:flex print:flex-row print:items-center print:gap-1 print:justify-between print:w-full"
-          )}>
+        <div className="p-2.5">
+          <div className="flex items-center justify-between gap-3">
             {selectionMode && onToggleSelection && (
               <div className="flex items-center justify-center print:hidden flex-shrink-0">
                 <Checkbox
@@ -118,39 +111,21 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
                 />
               </div>
             )}
-            <div className={cn(
-              "flex-1 grid grid-cols-1 md:grid-cols-7 gap-2 items-start",
-              !expandedForPrint && "print:flex print:flex-row print:gap-2 print:items-center print:w-full print:justify-between"
-            )}>
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-7 gap-2 items-start">
               {/* Leito */}
-              <div className={cn(
-                "flex flex-col",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-shrink-0"
-              )}>
-                <span className={cn(
-                  "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
-                )}>Leito:</span>
-                <Badge className={cn("w-fit text-xs py-0 px-2", config.badgeColor, !expandedForPrint && "print:text-[8px] print:py-0 print:px-1")}>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Leito:</span>
+                <Badge className={cn("w-fit text-xs py-0 px-2", config.badgeColor)}>
                   {patient.bedNumber}
                 </Badge>
               </div>
 
               {/* Nome e Idade */}
-              <div className={cn(
-                "flex flex-col md:col-span-2",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1 print:min-w-0"
-              )}>
-                <span className={cn(
-                  "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
-                )}>Paciente:</span>
-                <div className={cn(!expandedForPrint && "print:flex print:items-center print:gap-0.5 print:truncate", "group/name relative")}>
+              <div className="flex flex-col md:col-span-2">
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente:</span>
+                <div className="group/name relative">
                   <div className="flex items-center gap-1">
-                    <p className={cn(
-                      "font-semibold text-sm text-foreground leading-tight uppercase",
-                      !expandedForPrint && "print:text-[8.5px] print:inline print:leading-none print:truncate"
-                    )}>{patient.name}</p>
+                    <p className="font-semibold text-sm text-foreground leading-tight uppercase">{patient.name}</p>
                     <Button
                       size="icon"
                       variant="ghost"
@@ -161,28 +136,16 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
                       <Copy className="h-3 w-3" />
                     </Button>
                   </div>
-                  <p className={cn(
-                    "text-xs text-muted-foreground",
-                    !expandedForPrint && "print:text-[7.5px] print:inline"
-                  )}>({patient.age}a)</p>
+                  <p className="text-xs text-muted-foreground">({patient.age}a)</p>
                 </div>
               </div>
 
               {/* Hipóteses Diagnósticas */}
-              <div className={cn(
-                "flex flex-col md:col-span-2",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1"
-              )}>
-                <span className={cn(
-                  "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
-                )}>Diagnósticos:</span>
+              <div className="flex flex-col md:col-span-2">
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Diagnósticos:</span>
                 <div className="flex flex-wrap gap-1 print:gap-0.5">
                   {patient.diagnoses.map((diagnosis, idx) => (
-                    <Badge key={idx} variant="secondary" className={cn(
-                      "text-[10px] py-0 px-1.5 uppercase",
-                      !expandedForPrint && "print:text-[7.5px] print:py-0 print:px-0.5"
-                    )}>
+                    <Badge key={idx} variant="secondary" className="text-[10px] py-0 px-1.5 uppercase">
                       {diagnosis}
                     </Badge>
                   ))}
@@ -190,29 +153,14 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
               </div>
 
               {/* Pendências */}
-              <div className={cn(
-                "flex flex-col md:col-span-2",
-                !expandedForPrint && "print:flex-row print:items-center print:gap-0.5 print:flex-1"
-              )}>
-                <span className={cn(
-                  "text-[10px] font-medium text-muted-foreground mb-0.5",
-                  !expandedForPrint && "print:mb-0 print:text-[7.5px] print:hidden"
-                )}>Pendências:</span>
-                <ul className={cn(
-                  "text-xs space-y-0 uppercase",
-                  !expandedForPrint && "print:text-[7.5px] print:inline print:truncate"
-                )}>
+              <div className="flex flex-col md:col-span-2">
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Pendências:</span>
+                <ul className="text-xs space-y-0 uppercase">
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
-                    <li key={idx} className={cn(
-                      "text-foreground truncate leading-tight",
-                      !expandedForPrint && "print:inline print:after:content-[';_'] print:leading-none"
-                    )}>• {pendency}</li>
+                    <li key={idx} className="text-foreground truncate leading-tight">• {pendency}</li>
                   ))}
                   {patient.pendencies.length > 2 && (
-                    <li className={cn(
-                      "text-muted-foreground text-[10px]",
-                      !expandedForPrint && "print:text-[7px] print:inline"
-                    )}>
+                    <li className="text-muted-foreground text-[10px]">
                       +{patient.pendencies.length - 2} mais
                     </li>
                   )}
@@ -298,10 +246,7 @@ export function PatientCard({ patient, onUpdate, onDelete, expandedForPrint = fa
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className={cn(
-          "px-2.5 pb-2.5 space-y-2 border-t border-border/50 pt-2 bg-card/50",
-          !expandedForPrint && "print:hidden"
-        )}>
+        <div className="px-2.5 pb-2.5 space-y-2 border-t border-border/50 pt-2 bg-card/50">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground print:text-[8px] print:gap-1">
             <Calendar className="h-3 w-3 print:h-2 print:w-2" />
             <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>

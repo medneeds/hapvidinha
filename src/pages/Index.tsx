@@ -418,20 +418,33 @@ const Index = () => {
   };
 
   const handlePrintSector = (sector: string) => {
+    // Define o modo de impressão como compact para setores individuais
+    const sectorPatients = sector === "red" ? redPatients : sector === "yellow" ? yellowPatients : bluePatients;
+    
+    // Usa PrintLayout para consistência
+    setPrintMode('compact');
     setPrintingSector(sector);
     setTimeout(() => {
       window.print();
-      setTimeout(() => setPrintingSector(null), 500);
+      setTimeout(() => {
+        setPrintMode(null);
+        setPrintingSector(null);
+      }, 500);
     }, 100);
   };
 
   const handlePrintSelected = () => {
     if (selectedPatients.size === 0) return;
     
+    // Usa PrintLayout para consistência
+    setPrintMode('compact');
     setPrintingSector("selected");
     setTimeout(() => {
       window.print();
-      setTimeout(() => setPrintingSector(null), 500);
+      setTimeout(() => {
+        setPrintMode(null);
+        setPrintingSector(null);
+      }, 500);
     }, 100);
   };
 
@@ -444,9 +457,9 @@ const Index = () => {
         {printMode && (
           <div className="print-layout-container">
             <PrintLayout 
-              redPatients={redPatients}
-              yellowPatients={yellowPatients}
-              bluePatients={bluePatients}
+              redPatients={printingSector === "red" ? redPatients : printingSector === "selected" ? redPatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : redPatients}
+              yellowPatients={printingSector === "yellow" ? yellowPatients : printingSector === "selected" ? yellowPatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : yellowPatients}
+              bluePatients={printingSector === "blue" ? bluePatients : printingSector === "selected" ? bluePatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : bluePatients}
               mode={printMode}
               isPreview={false}
             />
@@ -581,53 +594,47 @@ const Index = () => {
           {/* Main Content */}
           <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
-              <div className={printingSector && printingSector !== "red" && printingSector !== "selected" ? "print:hidden" : ""}>
+              <div>
                 <SectorSection 
                   sector="red" 
                   patients={redPatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
-                  expandedForPrint={printMode === 'detailed' || printingSector === "red" || printingSector === "selected"}
                   onPrintSector={() => handlePrintSector("red")}
                   onAddExtraBed={() => handleAddExtraBed("red")}
                   selectionMode={selectionMode}
                   selectedPatients={selectedPatients}
                   onToggleSelection={handleToggleSelection}
-                  printOnlySelected={printingSector === "selected"}
                   onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
                   onTransfer={handleTransferPatient}
                 />
               </div>
-              <div className={printingSector && printingSector !== "yellow" && printingSector !== "selected" ? "print:hidden" : ""}>
+              <div>
                 <SectorSection 
                   sector="yellow" 
                   patients={yellowPatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
-                  expandedForPrint={printMode === 'detailed' || printingSector === "yellow" || printingSector === "selected"}
                   onPrintSector={() => handlePrintSector("yellow")}
                   onAddExtraBed={() => handleAddExtraBed("yellow")}
                   selectionMode={selectionMode}
                   selectedPatients={selectedPatients}
                   onToggleSelection={handleToggleSelection}
-                  printOnlySelected={printingSector === "selected"}
                   onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
                   onTransfer={handleTransferPatient}
                 />
               </div>
-              <div className={printingSector && printingSector !== "blue" && printingSector !== "selected" ? "print:hidden" : ""}>
+              <div>
                 <SectorSection 
                   sector="blue" 
                   patients={bluePatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
-                  expandedForPrint={printMode === 'detailed' || printingSector === "blue" || printingSector === "selected"}
                   onPrintSector={() => handlePrintSector("blue")}
                   onAddExtraBed={() => handleAddExtraBed("blue")}
                   selectionMode={selectionMode}
                   selectedPatients={selectedPatients}
                   onToggleSelection={handleToggleSelection}
-                  printOnlySelected={printingSector === "selected"}
                   onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
                   onTransfer={handleTransferPatient}
                 />
