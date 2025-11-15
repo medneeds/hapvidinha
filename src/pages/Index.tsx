@@ -430,7 +430,7 @@ const Index = () => {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-background">
-        <AppSidebar />
+        <AppSidebar onOpenHandover={() => setHandoverDialogOpen(true)} />
         
         {/* Print-only layout - Hidden on screen, visible only when printing */}
         {printMode && (
@@ -471,15 +471,6 @@ const Index = () => {
 
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
                   <ThemeToggle />
-                  <Button
-                    variant="default"
-                    onClick={() => setHandoverDialogOpen(true)}
-                    className="print:hidden bg-white text-[#013ba6] hover:bg-white/90 gap-2 shadow-md"
-                    title="Registrar Passagem de Plantão"
-                  >
-                    <ClipboardCheck className="h-4 w-4" />
-                    <span className="hidden sm:inline uppercase tracking-wide font-semibold">Registrar Passagem</span>
-                  </Button>
                   <Button
                     variant="outline"
                     size="icon"

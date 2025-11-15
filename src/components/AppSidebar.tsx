@@ -46,7 +46,10 @@ const menuItems = [
   {
     title: "MAPA",
     icon: LayoutDashboard,
-    link: "/",
+    items: [
+      { name: "VISUALIZAR MAPA", link: "/" },
+      { name: "REGISTRAR PASSAGEM", link: null, action: "openHandover" },
+    ],
   },
   {
     title: "PASSAGENS",
@@ -88,7 +91,7 @@ const menuItems = [
   },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ onOpenHandover }: { onOpenHandover?: () => void }) {
   const { open, setOpen, state } = useSidebar();
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
@@ -96,11 +99,18 @@ export function AppSidebar() {
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
 
-  const handleItemClick = (item: string | { name: string; link: string | null }) => {
-    if (typeof item === 'object' && item.link) {
-      navigate(item.link);
-      if (isMobile) {
-        setOpen(false);
+  const handleItemClick = (item: string | { name: string; link: string | null; action?: string }) => {
+    if (typeof item === 'object') {
+      if (item.action === 'openHandover' && onOpenHandover) {
+        onOpenHandover();
+        if (isMobile) {
+          setOpen(false);
+        }
+      } else if (item.link) {
+        navigate(item.link);
+        if (isMobile) {
+          setOpen(false);
+        }
       }
     }
   };
@@ -134,7 +144,7 @@ export function AppSidebar() {
         {menuItems.map((section, index) => (
           <div key={section.title}>
             {/* Direct link item (without subitems) */}
-            {section.link && (
+            {section.link && !section.items && (
               <SidebarGroup className="py-0 my-0">
                 <SidebarMenu>
                   <SidebarMenuItem>
@@ -159,7 +169,7 @@ export function AppSidebar() {
             {/* Collapsible section (with subitems) */}
             {section.items && (
             <Collapsible
-              defaultOpen={false}
+              defaultOpen={section.title === "MAPA"}
               className="group/collapsible"
             >
               <SidebarGroup className="py-0 my-0">
