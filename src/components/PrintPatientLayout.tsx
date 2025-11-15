@@ -1,5 +1,6 @@
 import { Patient } from "@/types/patient";
 import { ClipboardList } from "lucide-react";
+import hapvidaFullLogo from "@/assets/hapvida-notredame-full-logo.png";
 
 interface PrintPatientLayoutProps {
   patient: Patient;
@@ -28,31 +29,38 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
-        gap: '8px', 
+        justifyContent: 'space-between',
         marginBottom: '16px', 
         paddingBottom: '8px', 
         borderBottom: '2px solid #d1d5db' 
       }}>
-        <div style={{ 
-          height: '32px', 
-          width: '32px', 
-          background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
-          borderRadius: '4px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <ClipboardList style={{ height: '16px', width: '16px', color: '#ffffff' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ 
+            height: '32px', 
+            width: '32px', 
+            background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <ClipboardList style={{ height: '16px', width: '16px', color: '#ffffff' }} />
+          </div>
+          <h1 style={{ 
+            fontSize: '20pt', 
+            fontWeight: 'bold', 
+            textTransform: 'uppercase',
+            margin: 0,
+            color: '#000000'
+          }}>
+            Caso Completo - {patient.bedNumber}
+          </h1>
         </div>
-        <h1 style={{ 
-          fontSize: '20pt', 
-          fontWeight: 'bold', 
-          textTransform: 'uppercase',
-          margin: 0,
-          color: '#000000'
-        }}>
-          Caso Completo - {patient.bedNumber}
-        </h1>
+        <img 
+          src={hapvidaFullLogo} 
+          alt="Hapvida NotreDame Intermédica" 
+          style={{ height: '45px', width: 'auto' }}
+        />
       </div>
       
       {/* Metadata */}
