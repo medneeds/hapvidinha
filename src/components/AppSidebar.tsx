@@ -6,6 +6,7 @@ import {
   ClipboardCheck,
   LayoutDashboard,
   LayoutGrid,
+  User,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
@@ -20,6 +21,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarHeader,
+  SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
@@ -222,26 +224,37 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
 
-      {/* Logout Button */}
-      <div className="border-t border-border/50 p-2">
-        <Button
-          variant="ghost"
-          onClick={signOut}
-          className="w-full transition-all duration-300 hover:bg-destructive/10 hover:text-destructive rounded-xl justify-start gap-3 h-12"
-        >
-          <div className="bg-destructive/10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105 h-9 w-9 flex-shrink-0">
-            <LogOut className="text-destructive h-4 w-4" />
-          </div>
-          <div className="flex-1 text-left animate-fade-in">
-            <span className="text-xs font-bold uppercase tracking-tight block">
-              Sair
-            </span>
-            <span className="text-[10px] text-muted-foreground">
-              {user?.user_metadata?.username || user?.email?.split('@')[0]}
-            </span>
-          </div>
-        </Button>
-      </div>
+      <SidebarFooter className="border-t border-border/50 p-3 bg-muted/30">
+        <div className={cn(
+          "flex items-center gap-3 rounded-xl p-2 transition-all duration-200",
+          isCollapsed ? "justify-center" : "bg-card/50"
+        )}>
+          {!isCollapsed && (
+            <>
+              <div className="bg-primary/10 rounded-full flex items-center justify-center h-9 w-9 flex-shrink-0">
+                <User className="text-primary h-4 w-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold truncate">
+                  {user?.user_metadata?.username || user?.email?.split('@')[0]}
+                </p>
+                <p className="text-[10px] text-muted-foreground truncate">
+                  {user?.email}
+                </p>
+              </div>
+            </>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={signOut}
+            className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-all duration-200 flex-shrink-0"
+            title="Sair"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
+      </SidebarFooter>
     </>
   );
 
