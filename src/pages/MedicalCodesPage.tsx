@@ -82,7 +82,9 @@ export default function MedicalCodesPage() {
 
     if (error) {
       toast.error("Erro ao carregar códigos");
-      console.error(error);
+      if (import.meta.env.DEV) {
+        console.error(error);
+      }
       return;
     }
 
@@ -117,7 +119,9 @@ export default function MedicalCodesPage() {
 
       if (error) {
         toast.error("ERRO AO ATUALIZAR CÓDIGO");
-        console.error(error);
+        if (import.meta.env.DEV) {
+          console.error(error);
+        }
         return;
       }
 
@@ -127,7 +131,9 @@ export default function MedicalCodesPage() {
 
       if (error) {
         toast.error("ERRO AO CRIAR CÓDIGO");
-        console.error(error);
+        if (import.meta.env.DEV) {
+          console.error(error);
+        }
         return;
       }
 
@@ -152,7 +158,9 @@ export default function MedicalCodesPage() {
 
     if (error) {
       toast.error("ERRO AO DELETAR CÓDIGO");
-      console.error(error);
+      if (import.meta.env.DEV) {
+        console.error(error);
+      }
       return;
     }
 

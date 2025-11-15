@@ -69,13 +69,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single();
 
       if (error) {
-        console.error("Error fetching user role:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error fetching user role:", error);
+        }
         setRole("medico"); // Default role
       } else {
         setRole(data?.role as UserRole);
       }
     } catch (error) {
-      console.error("Error fetching user role:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error fetching user role:", error);
+      }
       setRole("medico");
     } finally {
       setLoading(false);

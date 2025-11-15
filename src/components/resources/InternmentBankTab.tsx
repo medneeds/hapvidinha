@@ -78,7 +78,9 @@ const InternmentBankTab = () => {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Erro ao carregar solicitações:", error);
+      if (import.meta.env.DEV) {
+        console.error("Erro ao carregar solicitações:", error);
+      }
       toast({
         title: "ERRO",
         description: "NÃO FOI POSSÍVEL CARREGAR AS SOLICITAÇÕES",
@@ -172,7 +174,9 @@ const InternmentBankTab = () => {
       });
 
     if (error) {
-      console.error("Erro ao salvar:", error);
+      if (import.meta.env.DEV) {
+        console.error("Erro ao salvar:", error);
+      }
       toast({
         title: "ERRO",
         description: "NÃO FOI POSSÍVEL SALVAR A SOLICITAÇÃO",
@@ -202,7 +206,9 @@ const InternmentBankTab = () => {
       .eq("id", id);
 
     if (error) {
-      console.error("Erro ao excluir:", error);
+      if (import.meta.env.DEV) {
+        console.error("Erro ao excluir:", error);
+      }
       toast({
         title: "ERRO",
         description: "NÃO FOI POSSÍVEL EXCLUIR A SOLICITAÇÃO",
