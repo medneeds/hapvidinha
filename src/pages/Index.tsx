@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { PatientCard } from "@/components/PatientCard";
+import { PrintLayout } from "@/components/PrintLayout";
 import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
 import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck } from "lucide-react";
@@ -388,16 +389,20 @@ const Index = () => {
     setPreviewMode(mode);
     setShowPrintDialog(false);
     setShowPrintPreview(true);
-    setPrintMode(mode);
+    setPrintMode(null);
     setPrintingSector(null);
   };
 
   const handleConfirmPrint = () => {
+    setShowPrintPreview(false);
+    setPrintMode(previewMode);
+    setPrintingSector(null);
+    
     setTimeout(() => {
       window.print();
       setTimeout(() => {
-        setShowPrintPreview(false);
         setPrintMode(null);
+        setPreviewMode(null);
       }, 500);
     }, 100);
   };
@@ -435,7 +440,20 @@ const Index = () => {
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
         
-        <div className="flex-1 flex flex-col min-w-0">
+        {/* Print-only layout - Hidden on screen, visible only when printing */}
+        {printMode && (
+          <div className="hidden print:block print:w-full">
+            <PrintLayout 
+              redPatients={redPatients}
+              yellowPatients={yellowPatients}
+              bluePatients={bluePatients}
+              mode={printMode}
+              isPreview={false}
+            />
+          </div>
+        )}
+        
+        <div className={`flex-1 flex flex-col min-w-0 ${printMode ? 'print:hidden' : ''}`}>
           {/* Header */}
           <header className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5">
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
@@ -881,162 +899,13 @@ const Index = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="flex-1 overflow-auto border rounded-lg bg-gray-100 p-6">
-            {/* A4 Paper simulation */}
-            <div className="max-w-[210mm] mx-auto bg-white shadow-lg" style={{
-              minHeight: '297mm',
-              padding: '20mm 15mm',
-              fontSize: '11pt',
-              lineHeight: '1.4'
-            }}>
-              {/* Simulate print header */}
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-gray-300">
-                <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded flex items-center justify-center">
-                  <ClipboardList className="h-4 w-4 text-white" />
-                </div>
-                <h1 className="text-xl font-bold uppercase">Mapa de Pacientes</h1>
-              </div>
-              
-              {/* Print metadata */}
-              <div className="text-xs text-gray-600 mb-4 pb-2 border-b border-gray-200">
-                <div className="flex justify-between">
-                  <span>Data: {new Date().toLocaleDateString('pt-BR')}</span>
-                  <span>Hora: {new Date().toLocaleTimeString('pt-BR')}</span>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                {/* Red Sector */}
-                {redPatients.length > 0 && (
-                  <div className="break-inside-avoid">
-                    <div className="bg-red-50 border-l-4 border-red-500 p-2 mb-2">
-                      <h2 className="text-sm font-bold uppercase text-red-700">Ala Vermelha ({redPatients.length})</h2>
-                    </div>
-                    <div className="space-y-2">
-                      {redPatients.map(patient => (
-                        <div key={patient.id} className="border border-gray-200 rounded p-2 text-xs break-inside-avoid">
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="font-bold">{patient.bedNumber} - {patient.name || 'VAGO'}</span>
-                            {patient.age > 0 && <span className="text-gray-600">{patient.age}a</span>}
-                          </div>
-                          {patient.name && (
-                            <>
-                              {patient.diagnoses.length > 0 && (
-                                <div className="text-gray-700">
-                                  <strong>Diagnóstico:</strong> {patient.diagnoses.join(', ')}
-                                </div>
-                              )}
-                              {previewMode === 'detailed' && (
-                                <>
-                                  {patient.medicalHistory.length > 0 && (
-                                    <div className="text-gray-700 mt-1">
-                                      <strong>História:</strong> {patient.medicalHistory.join(', ')}
-                                    </div>
-                                  )}
-                                  {patient.pendencies.length > 0 && (
-                                    <div className="text-gray-700 mt-1">
-                                      <strong>Pendências:</strong> {patient.pendencies.join(', ')}
-                                    </div>
-                                  )}
-                                </>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Yellow Sector */}
-                {yellowPatients.length > 0 && (
-                  <div className="break-inside-avoid">
-                    <div className="bg-yellow-50 border-l-4 border-yellow-500 p-2 mb-2">
-                      <h2 className="text-sm font-bold uppercase text-yellow-700">Ala Amarela ({yellowPatients.length})</h2>
-                    </div>
-                    <div className="space-y-2">
-                      {yellowPatients.map(patient => (
-                        <div key={patient.id} className="border border-gray-200 rounded p-2 text-xs break-inside-avoid">
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="font-bold">{patient.bedNumber} - {patient.name || 'VAGO'}</span>
-                            {patient.age > 0 && <span className="text-gray-600">{patient.age}a</span>}
-                          </div>
-                          {patient.name && (
-                            <>
-                              {patient.diagnoses.length > 0 && (
-                                <div className="text-gray-700">
-                                  <strong>Diagnóstico:</strong> {patient.diagnoses.join(', ')}
-                                </div>
-                              )}
-                              {previewMode === 'detailed' && (
-                                <>
-                                  {patient.medicalHistory.length > 0 && (
-                                    <div className="text-gray-700 mt-1">
-                                      <strong>História:</strong> {patient.medicalHistory.join(', ')}
-                                    </div>
-                                  )}
-                                  {patient.pendencies.length > 0 && (
-                                    <div className="text-gray-700 mt-1">
-                                      <strong>Pendências:</strong> {patient.pendencies.join(', ')}
-                                    </div>
-                                  )}
-                                </>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Blue Sector */}
-                {bluePatients.length > 0 && (
-                  <div className="break-inside-avoid">
-                    <div className="bg-blue-50 border-l-4 border-blue-500 p-2 mb-2">
-                      <h2 className="text-sm font-bold uppercase text-blue-700">Ala Azul ({bluePatients.length})</h2>
-                    </div>
-                    <div className="space-y-2">
-                      {bluePatients.map(patient => (
-                        <div key={patient.id} className="border border-gray-200 rounded p-2 text-xs break-inside-avoid">
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="font-bold">{patient.bedNumber} - {patient.name || 'VAGO'}</span>
-                            {patient.age > 0 && <span className="text-gray-600">{patient.age}a</span>}
-                          </div>
-                          {patient.name && (
-                            <>
-                              {patient.diagnoses.length > 0 && (
-                                <div className="text-gray-700">
-                                  <strong>Diagnóstico:</strong> {patient.diagnoses.join(', ')}
-                                </div>
-                              )}
-                              {previewMode === 'detailed' && (
-                                <>
-                                  {patient.medicalHistory.length > 0 && (
-                                    <div className="text-gray-700 mt-1">
-                                      <strong>História:</strong> {patient.medicalHistory.join(', ')}
-                                    </div>
-                                  )}
-                                  {patient.pendencies.length > 0 && (
-                                    <div className="text-gray-700 mt-1">
-                                      <strong>Pendências:</strong> {patient.pendencies.join(', ')}
-                                    </div>
-                                  )}
-                                </>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              {/* Footer */}
-              <div className="text-xs text-center text-gray-500 mt-6 pt-4 border-t border-gray-200">
-                Sistema de Gestão Hospitalar - Documento gerado automaticamente
-              </div>
-            </div>
+            <PrintLayout 
+              redPatients={redPatients}
+              yellowPatients={yellowPatients}
+              bluePatients={bluePatients}
+              mode={previewMode || 'compact'}
+              isPreview={true}
+            />
           </div>
           <DialogFooter className="gap-2">
             <Button
