@@ -119,22 +119,18 @@
 @media print {
   @page {
     size: A4 portrait;
-    margin: 20mm 15mm;
+    margin: 0;
   }
   
   * {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
-    opacity: 1 !important;
   }
   
   body {
-    margin: 0;
-    padding: 0;
-    font-size: 11pt;
-    line-height: 1.4;
+    margin: 0 !important;
+    padding: 0 !important;
     background: #ffffff !important;
-    opacity: 1 !important;
   }
   
   /* Hide sidebar */
@@ -148,73 +144,17 @@
     display: none !important;
   }
   
-  /* Show only print layout */
+  /* Show only print layout - SEM sobrescrever estilos inline */
   .print-layout-container {
     display: block !important;
     width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    margin: 0 auto !important;
     background: #ffffff !important;
-    opacity: 1 !important;
   }
   
-  /* Force opaque backgrounds */
-  .print-layout-container * {
-    opacity: 1 !important;
-  }
+  /* NÃO sobrescrever padding, fontSize, lineHeight - vem do componente */
   
-  .print-layout-container .bg-white {
-    background-color: #ffffff !important;
-    opacity: 1 !important;
-  }
-  
-  /* Better page break control */
-  .break-inside-avoid {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-  }
-  
-  /* Patient cards spacing and borders */
-  .print-layout-container .border {
-    border: 1px solid #d1d5db !important;
-  }
-  
-  .print-layout-container .rounded {
-    border-radius: 4px !important;
-  }
-  
-  .print-layout-container .mb-3 {
-    margin-bottom: 12px !important;
-  }
-  
-  .print-layout-container .mb-6 {
-    margin-bottom: 24px !important;
-  }
-  
-  .print-layout-container .p-3 {
-    padding: 12px !important;
-  }
-  
-  /* Sector headers */
-  .print-layout-container h2 {
-    break-after: avoid !important;
-    page-break-after: avoid !important;
-  }
-  
-  /* Text sizing */
-  .print-layout-container .text-xs {
-    font-size: 10pt !important;
-  }
-  
-  .print-layout-container .text-sm {
-    font-size: 11pt !important;
-  }
-  
-  .print-layout-container .text-base {
-    font-size: 12pt !important;
-  }
-  
-  /* Keep sector colors visible */
+  /* Cores dos setores - manter visíveis */
   .bg-red-50 {
     background-color: #fef2f2 !important;
   }
@@ -251,24 +191,10 @@
     color: #1d4ed8 !important;
   }
   
-  .text-gray-600 {
-    color: #4b5563 !important;
-  }
-  
-  .text-gray-700 {
-    color: #374151 !important;
-  }
-  
-  .text-gray-500 {
-    color: #6b7280 !important;
-  }
-  
-  .border-gray-300 {
-    border-color: #d1d5db !important;
-  }
-  
-  .border-gray-200 {
-    border-color: #e5e7eb !important;
+  /* Quebra de página */
+  .break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
   
   /* Resources tabs print optimization */

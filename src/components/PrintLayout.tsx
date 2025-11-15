@@ -106,22 +106,19 @@ export function PrintLayout({
     );
   };
 
+  // Estilos IDÊNTICOS para preview e impressão
+  const containerStyle = {
+    padding: '20mm 15mm',
+    fontSize: '11pt',
+    lineHeight: '1.4',
+    backgroundColor: '#ffffff',
+    minHeight: '297mm'
+  };
+
   return (
     <div 
-      className={isPreview ? "max-w-[210mm] mx-auto bg-white shadow-lg" : ""}
-      style={isPreview ? {
-        minHeight: '297mm',
-        padding: '20mm 15mm',
-        fontSize: '11pt',
-        lineHeight: '1.4',
-        backgroundColor: '#ffffff',
-        opacity: 1
-      } : {
-        backgroundColor: '#ffffff',
-        fontSize: '11pt',
-        lineHeight: '1.4',
-        opacity: 1
-      }}
+      className={isPreview ? "max-w-[210mm] mx-auto shadow-lg" : ""}
+      style={containerStyle}
     >
       {/* Header */}
       <div className="flex items-center gap-2 mb-4 pb-2 border-b-2 border-gray-300">
