@@ -125,6 +125,7 @@
   * {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+    opacity: 1 !important;
   }
   
   body {
@@ -132,7 +133,8 @@
     padding: 0;
     font-size: 11pt;
     line-height: 1.4;
-    background: white !important;
+    background: #ffffff !important;
+    opacity: 1 !important;
   }
   
   /* Hide sidebar */
@@ -152,7 +154,18 @@
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    background: white !important;
+    background: #ffffff !important;
+    opacity: 1 !important;
+  }
+  
+  /* Force opaque backgrounds */
+  .print-layout-container * {
+    opacity: 1 !important;
+  }
+  
+  .print-layout-container .bg-white {
+    background-color: #ffffff !important;
+    opacity: 1 !important;
   }
   
   /* Better page break control */
