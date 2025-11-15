@@ -22,39 +22,42 @@ export function PrintLayout({
     return (
       <div 
         key={patient.id} 
-        className="border border-gray-300 rounded p-2 text-xs break-inside-avoid mb-2 bg-white"
+        className="border border-gray-300 rounded p-3 text-xs break-inside-avoid mb-3 bg-white"
         style={{ 
-          pageBreakInside: 'avoid'
+          pageBreakInside: 'avoid',
+          marginBottom: '8px',
+          padding: '12px',
+          border: '1px solid #d1d5db'
         }}
       >
-        <div className="flex justify-between items-start mb-1">
-          <span className="font-bold">{patient.bedNumber} - {patient.name}</span>
-          {patient.age > 0 && <span className="text-gray-600">{patient.age}a</span>}
+        <div className="flex justify-between items-start mb-2">
+          <span className="font-bold text-sm">{patient.bedNumber} - {patient.name}</span>
+          {patient.age > 0 && <span className="text-gray-600 text-sm">{patient.age}a</span>}
         </div>
         {patient.diagnoses.length > 0 && (
-          <div className="text-gray-700 mb-1">
+          <div className="text-gray-700 mb-2">
             <strong>Diagnóstico:</strong> {patient.diagnoses.join(', ')}
           </div>
         )}
         {mode === 'detailed' && (
           <>
             {patient.medicalHistory.length > 0 && (
-              <div className="text-gray-700 mb-1">
+              <div className="text-gray-700 mb-2">
                 <strong>História:</strong> {patient.medicalHistory.join(', ')}
               </div>
             )}
             {patient.relevantExams.length > 0 && (
-              <div className="text-gray-700 mb-1">
+              <div className="text-gray-700 mb-2">
                 <strong>Exames:</strong> {patient.relevantExams.join(', ')}
               </div>
             )}
             {patient.pendencies.length > 0 && (
-              <div className="text-gray-700 mb-1">
+              <div className="text-gray-700 mb-2">
                 <strong>Pendências:</strong> {patient.pendencies.join(', ')}
               </div>
             )}
             {patient.schedule.length > 0 && (
-              <div className="text-gray-700 mb-1">
+              <div className="text-gray-700 mb-2">
                 <strong>Agenda:</strong> {patient.schedule.join(', ')}
               </div>
             )}
@@ -74,16 +77,27 @@ export function PrintLayout({
     if (patients.length === 0) return null;
     
     return (
-      <div className="break-inside-avoid mb-3" style={{ pageBreakInside: 'avoid' }}>
+      <div 
+        className="break-inside-avoid mb-6" 
+        style={{ 
+          pageBreakInside: 'avoid',
+          pageBreakAfter: 'avoid',
+          marginBottom: '24px'
+        }}
+      >
         <div 
-          className={`${bgColor} border-l-4 ${borderColor} p-2 mb-2`}
-          style={{ pageBreakAfter: 'avoid' }}
+          className={`${bgColor} border-l-4 ${borderColor} p-3 mb-3`}
+          style={{ 
+            pageBreakAfter: 'avoid',
+            padding: '12px',
+            marginBottom: '12px'
+          }}
         >
-          <h2 className={`text-sm font-bold uppercase ${textColor}`}>
+          <h2 className={`text-base font-bold uppercase ${textColor}`}>
             {sectorName} ({patients.length})
           </h2>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-2">
           {patients.map(renderPatientCard)}
         </div>
       </div>
