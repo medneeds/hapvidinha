@@ -1,6 +1,7 @@
 import { Patient } from "@/types/patient";
 import { ClipboardList } from "lucide-react";
 import { PrintableSectorSection } from "./PrintableSectorSection";
+import hapvidaFullLogo from "@/assets/hapvida-notredame-full-logo.png";
 
 interface PrintLayoutProps {
   redPatients: Patient[];
@@ -37,31 +38,38 @@ export function PrintLayout({
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
-        gap: '8px', 
+        justifyContent: 'space-between',
         marginBottom: isCompact ? '12px' : '16px', 
         paddingBottom: isCompact ? '6px' : '8px', 
         borderBottom: '2px solid #d1d5db' 
       }}>
-        <div style={{ 
-          height: isCompact ? '28px' : '32px', 
-          width: isCompact ? '28px' : '32px', 
-          background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
-          borderRadius: '4px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <ClipboardList style={{ height: isCompact ? '14px' : '16px', width: isCompact ? '14px' : '16px', color: '#ffffff' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ 
+            height: isCompact ? '28px' : '32px', 
+            width: isCompact ? '28px' : '32px', 
+            background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <ClipboardList style={{ height: isCompact ? '14px' : '16px', width: isCompact ? '14px' : '16px', color: '#ffffff' }} />
+          </div>
+          <h1 style={{ 
+            fontSize: isCompact ? '18pt' : '20pt', 
+            fontWeight: 'bold', 
+            textTransform: 'uppercase',
+            margin: 0,
+            color: '#000000'
+          }}>
+            Mapa de Pacientes
+          </h1>
         </div>
-        <h1 style={{ 
-          fontSize: isCompact ? '18pt' : '20pt', 
-          fontWeight: 'bold', 
-          textTransform: 'uppercase',
-          margin: 0,
-          color: '#000000'
-        }}>
-          Mapa de Pacientes
-        </h1>
+        <img 
+          src={hapvidaFullLogo} 
+          alt="Hapvida NotreDame Intermédica" 
+          style={{ height: isCompact ? '35px' : '45px', width: 'auto' }}
+        />
       </div>
       
       {/* Metadata */}
