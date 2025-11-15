@@ -123,8 +123,8 @@
   }
   
   * {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
   }
   
   body {
@@ -135,7 +135,10 @@
   
   /* Hide sidebar */
   aside,
-  [data-sidebar] {
+  [data-sidebar],
+  header,
+  footer,
+  nav {
     display: none !important;
   }
   
@@ -144,91 +147,14 @@
     display: none !important;
   }
   
-  /* Show only print layout - SEM sobrescrever estilos inline */
+  /* Show only print layout */
   .print-layout-container {
     display: block !important;
     width: 100% !important;
-    margin: 0 auto !important;
-    background: #ffffff !important;
-  }
-  
-  /* NÃO sobrescrever padding, fontSize, lineHeight - vem do componente */
-  
-  /* Cores dos setores - manter visíveis */
-  .bg-red-50 {
-    background-color: #fef2f2 !important;
-  }
-  
-  .bg-yellow-50 {
-    background-color: #fefce8 !important;
-  }
-  
-  .bg-blue-50 {
-    background-color: #eff6ff !important;
-  }
-  
-  .border-red-500 {
-    border-color: #ef4444 !important;
-  }
-  
-  .border-yellow-500 {
-    border-color: #eab308 !important;
-  }
-  
-  .border-blue-500 {
-    border-color: #3b82f6 !important;
-  }
-  
-  .text-red-700 {
-    color: #b91c1c !important;
-  }
-  
-  .text-yellow-700 {
-    color: #a16207 !important;
-  }
-  
-  .text-blue-700 {
-    color: #1d4ed8 !important;
-  }
-  
-  /* Quebra de página */
-  .break-inside-avoid {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-  }
-  
-  /* Resources tabs print optimization */
-  textarea {
-    border: none !important;
-    box-shadow: none !important;
-    background: white !important;
-    color: black !important;
-    font-family: monospace !important;
-    padding: 1rem !important;
-  }
-
-  table {
-    font-size: 9pt !important;
-    width: 100% !important;
-  }
-
-  th {
-    background-color: #f3f4f6 !important;
-    font-weight: bold !important;
-    padding: 8px !important;
-    border: 1px solid #d1d5db !important;
-    color: #000000 !important;
-  }
-
-  td {
-    padding: 6px 8px !important;
-    border: 1px solid #e5e7eb !important;
-    color: #000000 !important;
-  }
-
-  .space-y-4 {
-    gap: 0.5rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 }
+
 
 
