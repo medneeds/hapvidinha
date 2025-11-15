@@ -20,47 +20,58 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
     lineHeight: '1.4',
     backgroundColor: '#ffffff',
     minHeight: '297mm',
-    color: '#000000'
+    color: '#000000',
+    position: 'relative'
   };
 
   return (
     <div style={containerStyle}>
+      {/* Logo as watermark */}
+      <img 
+        src={hapvidaFullLogo} 
+        alt="Hapvida NotreDame Intermédica" 
+        style={{ 
+          position: 'absolute',
+          top: '10mm',
+          right: '10mm',
+          height: '50px',
+          width: 'auto',
+          opacity: 0.4,
+          zIndex: 0
+        }}
+      />
+      
       {/* Header */}
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
-        justifyContent: 'space-between',
+        gap: '8px', 
         marginBottom: '16px', 
         paddingBottom: '8px', 
-        borderBottom: '2px solid #d1d5db' 
+        borderBottom: '2px solid #d1d5db',
+        position: 'relative',
+        zIndex: 1
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ 
-            height: '32px', 
-            width: '32px', 
-            background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
-            borderRadius: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <ClipboardList style={{ height: '16px', width: '16px', color: '#ffffff' }} />
-          </div>
-          <h1 style={{ 
-            fontSize: '20pt', 
-            fontWeight: 'bold', 
-            textTransform: 'uppercase',
-            margin: 0,
-            color: '#000000'
-          }}>
-            Caso Completo - {patient.bedNumber}
-          </h1>
+        <div style={{ 
+          height: '32px', 
+          width: '32px', 
+          background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+          borderRadius: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <ClipboardList style={{ height: '16px', width: '16px', color: '#ffffff' }} />
         </div>
-        <img 
-          src={hapvidaFullLogo} 
-          alt="Hapvida NotreDame Intermédica" 
-          style={{ height: '45px', width: 'auto' }}
-        />
+        <h1 style={{ 
+          fontSize: '20pt', 
+          fontWeight: 'bold', 
+          textTransform: 'uppercase',
+          margin: 0,
+          color: '#000000'
+        }}>
+          Caso Completo - {patient.bedNumber}
+        </h1>
       </div>
       
       {/* Metadata */}

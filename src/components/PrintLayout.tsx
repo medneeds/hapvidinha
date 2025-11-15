@@ -34,42 +34,52 @@ export function PrintLayout({
 
   return (
     <div style={containerStyle}>
+      {/* Logo as watermark */}
+      <img 
+        src={hapvidaFullLogo} 
+        alt="Hapvida NotreDame Intermédica" 
+        style={{ 
+          position: 'absolute',
+          top: '10mm',
+          right: '10mm',
+          height: isCompact ? '40px' : '50px',
+          width: 'auto',
+          opacity: 0.4,
+          zIndex: 0
+        }}
+      />
+      
       {/* Header */}
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
-        justifyContent: 'space-between',
+        gap: '8px', 
         marginBottom: isCompact ? '12px' : '16px', 
         paddingBottom: isCompact ? '6px' : '8px', 
-        borderBottom: '2px solid #d1d5db' 
+        borderBottom: '2px solid #d1d5db',
+        position: 'relative',
+        zIndex: 1
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ 
-            height: isCompact ? '28px' : '32px', 
-            width: isCompact ? '28px' : '32px', 
-            background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
-            borderRadius: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <ClipboardList style={{ height: isCompact ? '14px' : '16px', width: isCompact ? '14px' : '16px', color: '#ffffff' }} />
-          </div>
-          <h1 style={{ 
-            fontSize: isCompact ? '18pt' : '20pt', 
-            fontWeight: 'bold', 
-            textTransform: 'uppercase',
-            margin: 0,
-            color: '#000000'
-          }}>
-            Mapa de Pacientes - Hospital Guarás
-          </h1>
+        <div style={{ 
+          height: isCompact ? '28px' : '32px', 
+          width: isCompact ? '28px' : '32px', 
+          background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+          borderRadius: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <ClipboardList style={{ height: isCompact ? '14px' : '16px', width: isCompact ? '14px' : '16px', color: '#ffffff' }} />
         </div>
-        <img 
-          src={hapvidaFullLogo} 
-          alt="Hapvida NotreDame Intermédica" 
-          style={{ height: isCompact ? '35px' : '45px', width: 'auto' }}
-        />
+        <h1 style={{ 
+          fontSize: isCompact ? '18pt' : '20pt', 
+          fontWeight: 'bold', 
+          textTransform: 'uppercase',
+          margin: 0,
+          color: '#000000'
+        }}>
+          Mapa de Pacientes - Hospital Guarás
+        </h1>
       </div>
       
       {/* Metadata */}
