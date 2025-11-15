@@ -437,18 +437,18 @@ const Index = () => {
         
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <header className="border-b border-border/30 bg-gradient-card backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5">
-            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent print:hidden"></div>
+          <header className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5">
+            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
             <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                  <SidebarTrigger className="print:hidden flex-shrink-0" />
-                  <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gradient-primary rounded-lg flex items-center justify-center print:h-5 print:w-5 shadow-glow transition-transform hover:scale-105 duration-200 flex-shrink-0 print:rounded-md">
-                    <ClipboardList className="h-4 w-4 sm:h-6 sm:w-6 text-primary-foreground print:h-3 print:w-3" />
+                  <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:bg-white/10" />
+                  <div className="h-8 w-8 sm:h-10 sm:w-10 bg-white/10 rounded-lg flex items-center justify-center print:h-5 print:w-5 shadow-glow transition-transform hover:scale-105 duration-200 flex-shrink-0 print:rounded-md">
+                    <ClipboardList className="h-4 w-4 sm:h-6 sm:w-6 text-white print:h-3 print:w-3" />
                   </div>
                   <div className="min-w-0">
-                    <h1 className="text-sm sm:text-2xl font-bold text-foreground print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes</h1>
-                    <p className="text-[10px] sm:text-sm text-muted-foreground print:hidden uppercase tracking-wide hidden sm:block">Sistema de Controle Hospitalar</p>
+                    <h1 className="text-sm sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes</h1>
+                    <p className="text-[10px] sm:text-sm text-white/80 print:hidden uppercase tracking-wide hidden sm:block">Sistema de Controle Hospitalar</p>
                   </div>
                 </div>
 
@@ -457,7 +457,7 @@ const Index = () => {
                   <Button
                     variant="default"
                     onClick={() => setHandoverDialogOpen(true)}
-                    className="print:hidden bg-primary hover:bg-primary/90 gap-2"
+                    className="print:hidden bg-white text-[#013ba6] hover:bg-white/90 gap-2"
                     title="Registrar Passagem de Plantão"
                   >
                     <ClipboardCheck className="h-4 w-4" />
@@ -468,7 +468,7 @@ const Index = () => {
                     size="icon"
                     onClick={handleUndo}
                     disabled={history.length === 0}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
                     title="Desfazer última ação"
                   >
                     <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -478,7 +478,7 @@ const Index = () => {
                     size="icon"
                     onClick={handleRedo}
                     disabled={redoHistory.length === 0}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
                     title="Refazer ação"
                   >
                     <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -487,7 +487,7 @@ const Index = () => {
                     variant="outline"
                     size="icon"
                     onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
                     title={showOnlyOccupied ? "Mostrar todos os leitos" : "Mostrar apenas ocupados"}
                   >
                     {showOnlyOccupied ? <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <EyeOff className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
@@ -496,7 +496,7 @@ const Index = () => {
                     variant={selectionMode ? "default" : "outline"}
                     size="icon"
                     onClick={handleToggleSelectionMode}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                    className={`print:hidden h-8 w-8 sm:h-10 sm:w-10 ${selectionMode ? 'bg-white text-[#013ba6]' : 'border-white/30 text-white hover:bg-white/10 hover:text-white'}`}
                     title="Modo de seleção múltipla"
                   >
                     <CheckSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -507,7 +507,7 @@ const Index = () => {
                         variant="outline"
                         size="icon"
                         onClick={handlePrintSelected}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10"
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
                         title={`Imprimir ${selectedPatients.size} selecionado(s)`}
                       >
                         <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -527,24 +527,24 @@ const Index = () => {
                     variant="outline"
                     size="icon"
                     onClick={handlePrint}
-                    className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10"
+                    className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
                   >
                     <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
-                  <div className="hidden md:flex items-center gap-2 bg-muted px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg print:px-2 print:py-1">
-                    <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+                  <div className="hidden md:flex items-center gap-2 bg-white/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg print:px-2 print:py-1 backdrop-blur-sm border border-white/20">
+                    <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
                     <div>
-                      <p className="text-[9px] sm:text-[10px] text-muted-foreground">Total</p>
-                      <p className="text-sm sm:text-base font-bold text-foreground">{totalPatients}</p>
+                      <p className="text-[9px] sm:text-[10px] text-white/80">Total</p>
+                      <p className="text-sm sm:text-base font-bold text-white">{totalPatients}</p>
                     </div>
                   </div>
-                  <div className="h-6 sm:h-8 w-px bg-border mx-1 sm:mx-2 print:hidden hidden lg:block" />
+                  <div className="h-6 sm:h-8 w-px bg-white/20 mx-1 sm:mx-2 print:hidden hidden lg:block" />
                   <div className="hidden lg:flex items-center gap-2 sm:gap-3 print:hidden">
                     <div className="text-right">
-                      <p className="text-[10px] sm:text-xs font-semibold text-foreground uppercase tracking-tight">
+                      <p className="text-[10px] sm:text-xs font-semibold text-white uppercase tracking-tight">
                         {user?.user_metadata?.username || user?.email?.split('@')[0]}
                       </p>
-                      <p className="text-[9px] sm:text-[10px] text-muted-foreground uppercase">
+                      <p className="text-[9px] sm:text-[10px] text-white/80 uppercase">
                         {role === 'admin' ? 'Administrador' : 'Médico'}
                       </p>
                     </div>
@@ -553,7 +553,7 @@ const Index = () => {
                       size="icon"
                       onClick={signOut}
                       title="Sair"
-                      className="h-8 w-8 sm:h-10 sm:w-10"
+                      className="h-8 w-8 sm:h-10 sm:w-10 border-white/30 text-white hover:bg-white/10 hover:text-white"
                     >
                       <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </Button>

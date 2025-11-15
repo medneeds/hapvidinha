@@ -108,19 +108,19 @@ export function AppSidebar() {
       collapsible="icon" 
       className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
     >
-      <SidebarHeader className="border-b border-[#013ba6]/30 px-4 py-3 bg-[#013ba6]">
+      <SidebarHeader className="border-b border-[#013ba6]/30 px-4 py-4 bg-[#013ba6]">
         <div className="flex items-center justify-center">
           {open ? (
             <img 
               src={hapvidaLogo} 
               alt="Hapvida Logo" 
-              className="h-12 w-auto object-contain animate-fade-in"
+              className="h-16 w-auto object-contain animate-fade-in"
             />
           ) : (
             <img 
               src={hapvidaLogo} 
               alt="Hapvida" 
-              className="h-8 w-8 object-contain"
+              className="h-10 w-10 object-contain"
             />
           )}
         </div>
