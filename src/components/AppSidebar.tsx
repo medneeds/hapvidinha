@@ -93,14 +93,10 @@ export function AppSidebar() {
       collapsible="icon" 
       className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
     >
-      <SidebarHeader className="border-b border-border px-4 py-3">
-        <div className={`flex items-center justify-center transition-all duration-300`}>
-          <LayoutGrid className={cn(
-            "text-foreground transition-all duration-300",
-            open ? "h-5 w-5" : "h-6 w-6"
-          )} />
+      <SidebarHeader className="border-b border-primary/20 px-4 py-4 bg-gradient-to-r from-primary/5 to-transparent">
+        <div className="flex items-center justify-center">
           {open && (
-            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide animate-fade-in ml-3">
+            <h2 className="text-base font-bold text-primary uppercase tracking-wider animate-fade-in">
               PAINEL
             </h2>
           )}
