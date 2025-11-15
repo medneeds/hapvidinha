@@ -155,6 +155,52 @@
     background: white !important;
   }
   
+  /* Better page break control */
+  .break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Patient cards spacing and borders */
+  .print-layout-container .border {
+    border: 1px solid #d1d5db !important;
+  }
+  
+  .print-layout-container .rounded {
+    border-radius: 4px !important;
+  }
+  
+  .print-layout-container .mb-3 {
+    margin-bottom: 12px !important;
+  }
+  
+  .print-layout-container .mb-6 {
+    margin-bottom: 24px !important;
+  }
+  
+  .print-layout-container .p-3 {
+    padding: 12px !important;
+  }
+  
+  /* Sector headers */
+  .print-layout-container h2 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+  
+  /* Text sizing */
+  .print-layout-container .text-xs {
+    font-size: 10pt !important;
+  }
+  
+  .print-layout-container .text-sm {
+    font-size: 11pt !important;
+  }
+  
+  .print-layout-container .text-base {
+    font-size: 12pt !important;
+  }
+  
   /* Keep sector colors visible */
   .bg-red-50 {
     background-color: #fef2f2 !important;
