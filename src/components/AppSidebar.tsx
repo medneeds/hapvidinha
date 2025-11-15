@@ -87,11 +87,12 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { open, setOpen } = useSidebar();
+  const { open, setOpen, state } = useSidebar();
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const isCollapsed = state === "collapsed";
 
   const handleItemClick = (item: string | { name: string; link: string | null }) => {
     if (typeof item === 'object' && item.link) {
@@ -162,17 +163,27 @@ export function AppSidebar() {
               <SidebarGroup className="py-0 my-0">
                 <CollapsibleTrigger className="w-full">
                   <SidebarGroupLabel className={cn(
-                    "transition-all duration-200 hover:bg-accent/80 hover:scale-105 cursor-pointer !opacity-100",
-                    "justify-between px-4 py-3 h-auto",
-                    "border-b border-border/50"
+                    "transition-all duration-200 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
+                    isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3 hover:scale-105",
+                    "h-auto border-b border-border/50"
                   )}
                   >
-                    <div className="flex items-center gap-3 w-full">
-                      <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
-                      <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
-                        {section.title}
-                      </span>
-                      <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                    <div className={cn(
+                      "flex items-center w-full",
+                      isCollapsed ? "justify-center" : "gap-3"
+                    )}>
+                      <section.icon className={cn(
+                        "text-primary transition-all duration-200",
+                        isCollapsed ? "h-5 w-5" : "h-5 w-5"
+                      )} />
+                      {!isCollapsed && (
+                        <>
+                          <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
+                            {section.title}
+                          </span>
+                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                        </>
+                      )}
                     </div>
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
