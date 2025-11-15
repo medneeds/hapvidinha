@@ -32,11 +32,11 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
         alt="Hapvida NotreDame Intermédica" 
         style={{ 
           position: 'absolute',
-          top: '10mm',
+          top: '5mm',
           right: '10mm',
-          height: '50px',
+          height: '45px',
           width: 'auto',
-          opacity: 0.4,
+          opacity: 0.35,
           zIndex: 0
         }}
       />
