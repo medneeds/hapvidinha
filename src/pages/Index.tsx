@@ -898,7 +898,7 @@ const Index = () => {
               Pré-visualização - Modelo {previewMode === 'compact' ? 'Retraído' : 'Detalhado'}
             </DialogTitle>
           </DialogHeader>
-          <div className="flex-1 overflow-auto border rounded-lg bg-gray-100 p-6">
+          <div className="flex-1 overflow-auto border rounded-lg bg-white p-6">
             <PrintLayout 
               redPatients={redPatients}
               yellowPatients={yellowPatients}
