@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
+import hapvidaLogo from "@/assets/hapvida-logo.jpg";
 import {
   Sidebar,
   SidebarContent,
@@ -107,12 +108,20 @@ export function AppSidebar() {
       collapsible="icon" 
       className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
     >
-      <SidebarHeader className="border-b border-primary/20 px-4 py-4 bg-gradient-to-r from-primary/5 to-transparent">
+      <SidebarHeader className="border-b border-primary/20 px-4 py-3 bg-gradient-to-r from-primary/5 to-transparent">
         <div className="flex items-center justify-center">
-          {open && (
-            <h2 className="text-base font-bold text-primary uppercase tracking-wider animate-fade-in">
-              PAINEL
-            </h2>
+          {open ? (
+            <img 
+              src={hapvidaLogo} 
+              alt="Hapvida Logo" 
+              className="h-12 w-auto object-contain animate-fade-in"
+            />
+          ) : (
+            <img 
+              src={hapvidaLogo} 
+              alt="Hapvida" 
+              className="h-8 w-8 object-contain"
+            />
           )}
         </div>
       </SidebarHeader>
