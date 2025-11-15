@@ -23,6 +23,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -32,6 +38,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const menuItems = [
   {
@@ -84,10 +91,14 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   const handleItemClick = (item: string | { name: string; link: string | null }) => {
     if (typeof item === 'object' && item.link) {
       navigate(item.link);
+      if (isMobile) {
+        setOpen(false);
+      }
     }
   };
 
@@ -98,38 +109,25 @@ export function AppSidebar() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    if (!isMobile) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open, setOpen]);
+  }, [open, setOpen, isMobile]);
 
-  return (
-    <Sidebar 
-      ref={sidebarRef}
-      collapsible="icon" 
-      className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
-      onClick={() => {
-        if (!open) setOpen(true);
-      }}
-    >
+  const sidebarContent = (
+    <>
       <SidebarHeader className="border-b border-border/30 px-3 py-3 bg-white">
         <div className="flex items-center justify-center">
-          {open ? (
-            <img 
-              src={hapvidaLogo} 
-              alt="Hapvida NotreDame Intermédica" 
-              className="w-full h-auto max-h-14 object-contain animate-fade-in"
-            />
-          ) : (
-            <img 
-              src={hapvidaLogo} 
-              alt="Hapvida" 
-              className="w-12 h-12 object-contain object-left"
-            />
-          )}
+          <img 
+            src={hapvidaLogo} 
+            alt="Hapvida NotreDame Intermédica" 
+            className="w-full h-auto max-h-14 object-contain animate-fade-in"
+          />
         </div>
       </SidebarHeader>
 
-      <SidebarContent className={`gap-0 transition-all duration-300 ${open ? 'py-2' : 'py-3'}`}>
+      <SidebarContent className="gap-0 py-2">
         {menuItems.map((section, index) => (
           <div key={section.title}>
             {/* Direct link item (without subitems) */}
@@ -141,21 +139,14 @@ export function AppSidebar() {
                       onClick={() => handleItemClick(section.link)}
                       className={cn(
                         "transition-all duration-200 hover:bg-accent/80 hover:scale-105",
-                        open ? "justify-start px-4 py-3 h-auto" : "justify-center py-3 px-0 h-14 w-full",
+                        "justify-start px-4 py-3 h-auto",
                         "border-b border-border/50"
                       )}
-                      title={!open ? section.title : undefined}
                     >
-                      {!open ? (
-                        <section.icon className="h-6 w-6 text-primary transition-all duration-200" />
-                      ) : (
-                        <>
-                          <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
-                          <span className="text-xs font-medium uppercase tracking-wide text-foreground">
-                            {section.title}
-                          </span>
-                        </>
-                      )}
+                      <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
+                      <span className="text-xs font-medium uppercase tracking-wide text-foreground">
+                        {section.title}
+                      </span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -172,90 +163,97 @@ export function AppSidebar() {
                 <CollapsibleTrigger className="w-full">
                   <SidebarGroupLabel className={cn(
                     "transition-all duration-200 hover:bg-accent/80 hover:scale-105 cursor-pointer !opacity-100",
-                    open ? "justify-between px-4 py-3 h-auto" : "justify-center py-3 px-0 h-14 w-full !mt-0",
+                    "justify-between px-4 py-3 h-auto",
                     "border-b border-border/50"
                   )}
-                  title={!open ? section.title : undefined}
                   >
-                    {!open ? (
-                      <section.icon className="h-6 w-6 text-primary transition-all duration-200" />
-                    ) : (
-                      <div className="flex items-center gap-3 w-full">
-                        <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
-                        <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
-                          {section.title}
-                        </span>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
-                      </div>
-                    )}
+                    <div className="flex items-center gap-3 w-full">
+                      <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
+                      <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
+                        {section.title}
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                    </div>
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
-                {open && (
-                  <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-                    <SidebarGroupContent className="px-2">
-                      <SidebarMenu>
-                        {section.items.map((item, itemIndex) => {
-                          const itemName = typeof item === 'string' ? item : item.name;
-                          const itemKey = typeof item === 'string' ? item : item.name;
-                          
-                          return (
-                            <SidebarMenuItem key={itemKey}>
-                              <SidebarMenuButton
-                                className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 hover:translate-x-1 mb-1"
-                                tooltip={itemName}
-                                onClick={() => handleItemClick(item)}
-                              >
-                                <div className="rounded-full bg-primary/20 transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 h-2 w-2 ml-1" />
-                                <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
-                                  {itemName}
-                                </span>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          );
-                        })}
-                      </SidebarMenu>
-                    </SidebarGroupContent>
-                  </CollapsibleContent>
-                )}
+                <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                  <SidebarGroupContent className="px-2">
+                    <SidebarMenu>
+                      {section.items.map((item, itemIndex) => {
+                        const itemName = typeof item === 'string' ? item : item.name;
+                        const itemKey = typeof item === 'string' ? item : item.name;
+                        
+                        return (
+                          <SidebarMenuItem key={itemKey}>
+                            <SidebarMenuButton
+                              className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 hover:translate-x-1 mb-1"
+                              tooltip={itemName}
+                              onClick={() => handleItemClick(item)}
+                            >
+                              <div className="rounded-full bg-primary/20 transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 h-2 w-2 ml-1" />
+                              <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
+                                {itemName}
+                              </span>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </CollapsibleContent>
               </SidebarGroup>
             </Collapsible>
             )}
             {index < menuItems.length - 1 && (
-              <div className={`h-px bg-gradient-to-r from-transparent via-border to-transparent transition-all duration-300 ${open ? 'my-3 mx-4' : 'my-4 mx-2'}`} />
+              <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-3 mx-4" />
             )}
           </div>
         ))}
       </SidebarContent>
 
       {/* Logout Button */}
-      <div className={`border-t border-border/50 transition-all duration-300 ${open ? 'p-2' : 'p-3 py-4'}`}>
+      <div className="border-t border-border/50 p-2">
         <Button
           variant="ghost"
           onClick={signOut}
-          className={`w-full transition-all duration-300 hover:bg-destructive/10 hover:text-destructive rounded-xl ${open ? 'justify-start gap-3 h-12' : 'justify-center h-14'}`}
-          title={!open ? 'Sair' : undefined}
+          className="w-full transition-all duration-300 hover:bg-destructive/10 hover:text-destructive rounded-xl justify-start gap-3 h-12"
         >
-          {!open ? (
-            <div className="bg-destructive/10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 h-12 w-12">
-              <LogOut className="text-destructive h-6 w-6" />
-            </div>
-          ) : (
-            <>
-              <div className="bg-destructive/10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105 h-9 w-9 flex-shrink-0">
-                <LogOut className="text-destructive h-4 w-4" />
-              </div>
-              <div className="flex-1 text-left animate-fade-in">
-                <span className="text-xs font-bold uppercase tracking-tight block">
-                  Sair
-                </span>
-                <span className="text-[10px] text-muted-foreground">
-                  {user?.user_metadata?.username || user?.email?.split('@')[0]}
-                </span>
-              </div>
-            </>
-          )}
+          <div className="bg-destructive/10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105 h-9 w-9 flex-shrink-0">
+            <LogOut className="text-destructive h-4 w-4" />
+          </div>
+          <div className="flex-1 text-left animate-fade-in">
+            <span className="text-xs font-bold uppercase tracking-tight block">
+              Sair
+            </span>
+            <span className="text-[10px] text-muted-foreground">
+              {user?.user_metadata?.username || user?.email?.split('@')[0]}
+            </span>
+          </div>
         </Button>
       </div>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerContent className="max-h-[85vh]">
+          {sidebarContent}
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  return (
+    <Sidebar 
+      ref={sidebarRef}
+      collapsible="icon" 
+      className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
+      onClick={() => {
+        if (!open) setOpen(true);
+      }}
+    >
+      {sidebarContent}
     </Sidebar>
   );
 }
