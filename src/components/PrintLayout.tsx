@@ -62,7 +62,7 @@ export function PrintLayout({
             margin: 0,
             color: '#000000'
           }}>
-            Mapa de Paciente, Hospital Guararapes
+            Mapa de Pacientes - Hospital Guarás
           </h1>
         </div>
         <img 
