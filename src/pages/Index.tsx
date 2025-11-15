@@ -13,17 +13,6 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -129,9 +118,6 @@ const Index = () => {
   const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(true);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
-  const [showPrintDialog, setShowPrintDialog] = useState(false);
-  const [showPrintPreview, setShowPrintPreview] = useState(false);
-  const [previewMode, setPreviewMode] = useState<'compact' | 'detailed'>('compact');
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
@@ -382,35 +368,9 @@ const Index = () => {
   };
 
   const handlePrint = () => {
-    setShowPrintDialog(true);
-  };
-
-  const handlePreviewPrint = (mode: 'compact' | 'detailed') => {
-    setPreviewMode(mode);
-    setShowPrintDialog(false);
-    setShowPrintPreview(true);
-    setPrintMode(null);
+    // Imprime direto no modo detalhado
+    setPrintMode('detailed');
     setPrintingSector(null);
-  };
-
-  const handleConfirmPrint = () => {
-    setShowPrintPreview(false);
-    setPrintMode(previewMode);
-    setPrintingSector(null);
-    
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => {
-        setPrintMode(null);
-        setPreviewMode(null);
-      }, 500);
-    }, 100);
-  };
-
-  const handlePrintWithMode = (mode: 'compact' | 'detailed') => {
-    setPrintMode(mode);
-    setPrintingSector(null);
-    setShowPrintDialog(false);
     setTimeout(() => {
       window.print();
       setTimeout(() => setPrintMode(null), 500);
@@ -418,11 +378,8 @@ const Index = () => {
   };
 
   const handlePrintSector = (sector: string) => {
-    // Define o modo de impressão como compact para setores individuais
-    const sectorPatients = sector === "red" ? redPatients : sector === "yellow" ? yellowPatients : bluePatients;
-    
-    // Usa PrintLayout para consistência
-    setPrintMode('compact');
+    // Usa modo detalhado para impressão de setor
+    setPrintMode('detailed');
     setPrintingSector(sector);
     setTimeout(() => {
       window.print();
@@ -436,8 +393,8 @@ const Index = () => {
   const handlePrintSelected = () => {
     if (selectedPatients.size === 0) return;
     
-    // Usa PrintLayout para consistência
-    setPrintMode('compact');
+    // Usa modo detalhado para impressão
+    setPrintMode('detailed');
     setPrintingSector("selected");
     setTimeout(() => {
       window.print();
@@ -832,109 +789,6 @@ const Index = () => {
           </footer>
         </div>
       </div>
-
-      {/* Print Options Dialog */}
-      <AlertDialog open={showPrintDialog} onOpenChange={setShowPrintDialog}>
-        <AlertDialogContent className="max-w-lg print:hidden">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-lg font-bold uppercase">Opções de Impressão</AlertDialogTitle>
-            <AlertDialogDescription className="text-sm">
-              Escolha o formato e visualize antes de imprimir. O sistema otimizará automaticamente para o tamanho A4.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="grid gap-2 py-3">
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="outline"
-                className="w-full justify-center h-auto py-3 px-2 hover:bg-primary/10 hover:border-primary"
-                onClick={() => handlePreviewPrint('compact')}
-              >
-                <div className="text-center w-full">
-                  <div className="font-semibold text-sm uppercase mb-0.5">📄 Retraído</div>
-                  <div className="text-[10px] text-muted-foreground leading-tight">
-                    Pré-visualizar compacto
-                  </div>
-                </div>
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-center h-auto py-3 px-2 hover:bg-primary/10 hover:border-primary"
-                onClick={() => handlePreviewPrint('detailed')}
-              >
-                <div className="text-center w-full">
-                  <div className="font-semibold text-sm uppercase mb-0.5">📋 Detalhado</div>
-                  <div className="text-[10px] text-muted-foreground leading-tight">
-                    Pré-visualizar expandido
-                  </div>
-                </div>
-              </Button>
-            </div>
-            <div className="pt-2 border-t">
-              <p className="text-xs text-muted-foreground mb-2 uppercase">Ou imprimir diretamente:</p>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => handlePrintWithMode('compact')}
-                >
-                  Retraído
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => handlePrintWithMode('detailed')}
-                >
-                  Detalhado
-                </Button>
-              </div>
-            </div>
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="uppercase text-sm">Cancelar</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Print Preview Dialog */}
-      <Dialog open={showPrintPreview} onOpenChange={setShowPrintPreview}>
-        <DialogContent className="max-w-[95vw] w-[900px] h-[90vh] print:hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-bold uppercase">
-              Pré-visualização - Modelo {previewMode === 'compact' ? 'Retraído' : 'Detalhado'}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex-1 overflow-auto border rounded-lg bg-white p-6">
-            <PrintLayout 
-              redPatients={redPatients}
-              yellowPatients={yellowPatients}
-              bluePatients={bluePatients}
-              mode={previewMode || 'compact'}
-              isPreview={true}
-            />
-          </div>
-          <DialogFooter className="gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowPrintPreview(false);
-                setPreviewMode(null);
-              }}
-              className="uppercase"
-            >
-              Voltar
-            </Button>
-            <Button
-              onClick={handleConfirmPrint}
-              className="uppercase"
-            >
-              <Printer className="h-4 w-4 mr-2" />
-              Imprimir
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Register Handover Dialog */}
       <RegisterHandoverDialog
