@@ -40,11 +40,11 @@ export function PrintLayout({
         alt="Hapvida NotreDame Intermédica" 
         style={{ 
           position: 'absolute',
-          top: '10mm',
+          top: '5mm',
           right: '10mm',
-          height: isCompact ? '40px' : '50px',
+          height: isCompact ? '35px' : '45px',
           width: 'auto',
-          opacity: 0.4,
+          opacity: 0.35,
           zIndex: 0
         }}
       />
