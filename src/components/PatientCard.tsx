@@ -140,9 +140,9 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
                 </div>
               </div>
 
-              {/* Hipóteses Diagnósticas */}
+              {/* HD */}
               <div className="flex flex-col md:col-span-2">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses Diagnósticas:</span>
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">HD:</span>
                 <div className="flex flex-wrap gap-1 print:gap-0.5">
                   {patient.diagnoses.map((diagnosis, idx) => (
                     <Badge key={idx} variant="secondary" className="text-[10px] py-0 px-1.5 uppercase">
