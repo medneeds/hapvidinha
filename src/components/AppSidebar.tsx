@@ -8,6 +8,7 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -78,9 +79,10 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, setOpen } = useSidebar();
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   const handleItemClick = (item: string | { name: string; link: string | null }) => {
     if (typeof item === 'object' && item.link) {
@@ -88,8 +90,20 @@ export function AppSidebar() {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (open && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [open, setOpen]);
+
   return (
     <Sidebar 
+      ref={sidebarRef}
       collapsible="icon" 
       className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
     >
