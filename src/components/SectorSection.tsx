@@ -3,6 +3,7 @@ import { PatientCard } from "./PatientCard";
 import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import {
   DndContext,
@@ -110,6 +111,26 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
     ? patients.filter(p => selectedPatients.has(p.id))
     : patients;
 
+  // Check if all patients in this section are selected
+  const allPatientsSelected = patients.length > 0 && patients.every(p => selectedPatients.has(p.id));
+  const somePatientsSelected = patients.some(p => selectedPatients.has(p.id));
+
+  const handleSelectAllSection = () => {
+    if (!onToggleSelection) return;
+    
+    if (allPatientsSelected) {
+      // Deselect all patients in this section
+      patients.forEach(p => onToggleSelection(p.id));
+    } else {
+      // Select all patients in this section
+      patients.forEach(p => {
+        if (!selectedPatients.has(p.id)) {
+          onToggleSelection(p.id);
+        }
+      });
+    }
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -132,9 +153,19 @@ export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatie
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
       <div className={`${info.gradientClass} rounded-xl p-3 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 h-[72px] print:h-auto flex items-center`}>
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full gap-3">
+          {selectionMode && patients.length > 0 && (
+            <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
+              <Checkbox
+                checked={allPatientsSelected}
+                onCheckedChange={handleSelectAllSection}
+                className="h-5 w-5 border-2"
+                aria-label={`Selecionar todos os pacientes de ${info.title}`}
+              />
+            </div>
+          )}
           <CollapsibleTrigger asChild>
-            <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none">
+            <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
               <div className="text-left">
                 <div className="flex items-center gap-2 mb-0.5 print:mb-0 print:gap-1">
