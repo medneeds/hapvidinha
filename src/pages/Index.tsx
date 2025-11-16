@@ -3,7 +3,6 @@ import { SectorSection } from "@/components/SectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
-import { mockPatients } from "@/data/mockPatients";
 import { Patient } from "@/types/patient";
 import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { usePatients } from "@/hooks/usePatients";
 import {
   DndContext,
   closestCenter,
@@ -94,10 +94,9 @@ function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
 }
 
 const Index = () => {
-  const [patients, setPatients] = useState<Patient[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : mockPatients;
-  });
+  // Use real database patients
+  const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient } = usePatients();
+  const [patients, setPatients] = useState<Patient[]>(dbPatients);
   const [history, setHistory] = useState<Patient[][]>(() => {
     const saved = localStorage.getItem(HISTORY_KEY);
     return saved ? JSON.parse(saved) : [];
@@ -151,6 +150,13 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
   }, [patients]);
+
+  // Sync database patients to local state
+  useEffect(() => {
+    if (dbPatients.length > 0) {
+      setPatients(dbPatients);
+    }
+  }, [dbPatients]);
 
   // Persist history to localStorage
   useEffect(() => {
@@ -213,15 +219,21 @@ const Index = () => {
   const totalPatients = patients.length;
   const criticalPatients = redPatients.length;
 
-  const handleUpdatePatient = (updatedPatient: Patient) => {
+  const handleUpdatePatient = async (updatedPatient: Patient) => {
     saveToHistory(patients);
-    setPatients((prev) =>
-      prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
-    );
-    toast({
-      title: "Paciente atualizado",
-      description: `Os dados do paciente ${updatedPatient.name} foram atualizados com sucesso.`,
-    });
+    
+    try {
+      // Update in database
+      await dbUpdatePatient(updatedPatient.id, updatedPatient);
+      
+      // Update local state (will be synced by realtime)
+      setPatients((prev) =>
+        prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
+      );
+    } catch (error) {
+      // Error toast already shown in dbUpdatePatient
+      console.error("Failed to update patient:", error);
+    }
   };
 
   const handleAddExtraBed = (sector: Patient['sector']) => {

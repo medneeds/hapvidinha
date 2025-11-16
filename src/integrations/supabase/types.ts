@@ -83,6 +83,60 @@ export type Database = {
         }
         Relationships: []
       }
+      patients: {
+        Row: {
+          admission_date: string | null
+          admission_history: string | null
+          age: number | null
+          bed_number: string
+          created_at: string
+          created_by: string | null
+          diagnoses: string | null
+          id: string
+          medical_history: string | null
+          name: string
+          pendencies: string | null
+          relevant_exams: string | null
+          schedule: string | null
+          sector: string
+          updated_at: string
+        }
+        Insert: {
+          admission_date?: string | null
+          admission_history?: string | null
+          age?: number | null
+          bed_number: string
+          created_at?: string
+          created_by?: string | null
+          diagnoses?: string | null
+          id?: string
+          medical_history?: string | null
+          name?: string
+          pendencies?: string | null
+          relevant_exams?: string | null
+          schedule?: string | null
+          sector: string
+          updated_at?: string
+        }
+        Update: {
+          admission_date?: string | null
+          admission_history?: string | null
+          age?: number | null
+          bed_number?: string
+          created_at?: string
+          created_by?: string | null
+          diagnoses?: string | null
+          id?: string
+          medical_history?: string | null
+          name?: string
+          pendencies?: string | null
+          relevant_exams?: string | null
+          schedule?: string | null
+          sector?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
