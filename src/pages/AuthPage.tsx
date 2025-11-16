@@ -133,12 +133,9 @@ export default function AuthPage() {
                 <LogIn className="h-7 w-7 text-white relative z-10 transform group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-300" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-2 tracking-tight">
-              Bem-vindo de volta
-            </h2>
-            <p className="text-sm text-center text-gray-600 uppercase tracking-widest font-semibold">
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-2 tracking-tight uppercase tracking-widest">
               Acesse sua conta
-            </p>
+            </h2>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6 relative z-10">
