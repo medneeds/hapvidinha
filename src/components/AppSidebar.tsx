@@ -100,6 +100,16 @@ export function AppSidebar({ onOpenHandover }: { onOpenHandover?: () => void }) 
   const isCollapsed = state === "collapsed";
 
   const handleItemClick = (item: string | { name: string; link: string | null; action?: string }) => {
+    // Handle direct string links (like from section.link)
+    if (typeof item === 'string') {
+      navigate(item);
+      if (isMobile) {
+        setOpen(false);
+      }
+      return;
+    }
+    
+    // Handle object items
     if (typeof item === 'object') {
       if (item.action === 'openHandover' && onOpenHandover) {
         onOpenHandover();
