@@ -52,7 +52,7 @@ const menuItems = [
     title: "PASSAGENS",
     icon: ClipboardCheck,
     items: [
-      { name: "REGISTRAR PASSAGEM", link: null, action: "openHandover" },
+      { name: "INICIAR NOVA PASSAGEM", link: null, action: "openHandover" },
       { name: "HISTÓRICO DE PASSAGENS", link: "/handovers" },
     ],
   },
