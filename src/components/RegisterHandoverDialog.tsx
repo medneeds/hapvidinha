@@ -8,6 +8,7 @@ import { ClipboardCheck, Loader2 } from "lucide-react";
 import { Patient } from "@/types/patient";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 interface RegisterHandoverDialogProps {
   open: boolean;
@@ -29,6 +30,26 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
 
   const occupiedBeds = patients.filter(p => p.name.trim() !== "").length;
   const totalPatients = patients.length;
+
+  const handleTranscription = (data: {
+    summary: string;
+    clinicalStatus: string;
+    pendingProcedures: string;
+    relevantObservations: string;
+  }) => {
+    // Combine all transcribed data into notes
+    const combinedNotes = [
+      data.summary,
+      data.clinicalStatus && `STATUS CLÍNICO: ${data.clinicalStatus}`,
+      data.pendingProcedures && `PENDÊNCIAS: ${data.pendingProcedures}`,
+      data.relevantObservations && `OBSERVAÇÕES: ${data.relevantObservations}`,
+    ]
+      .filter(Boolean)
+      .join('\n\n')
+      .toUpperCase();
+    
+    setNotes(combinedNotes);
+  };
 
   const handleRegister = async () => {
     setIsLoading(true);
@@ -193,14 +214,17 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes" className="uppercase text-sm font-semibold">
-              Observações - Opcional
-            </Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="notes" className="uppercase text-sm font-semibold">
+                Observações - Opcional
+              </Label>
+              <VoiceRecorder onTranscriptionComplete={handleTranscription} />
+            </div>
             <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value.toUpperCase())}
-              placeholder="ADICIONE OBSERVAÇÕES SOBRE ESTA PASSAGEM..."
+              placeholder="ADICIONE OBSERVAÇÕES SOBRE ESTA PASSAGEM OU USE O BOTÃO DE VOZ..."
               className="min-h-[100px] resize-none uppercase"
             />
           </div>
