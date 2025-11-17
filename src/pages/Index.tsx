@@ -686,20 +686,20 @@ const Index = () => {
                         <Button
                           variant="outline"
                           size="icon"
-                          onClick={() => handlePrintSector("outside")}
-                          className="h-8 w-8"
-                          title="Imprimir seção"
-                        >
-                          <Printer className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
                           onClick={() => handleAddExtraBed("outside")}
                           className="h-8 w-8"
                           title="Adicionar paciente"
                         >
                           <Plus className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handlePrintSector("outside")}
+                          className="h-8 w-8"
+                          title="Imprimir seção"
+                        >
+                          <Printer className="h-3.5 w-3.5" />
                         </Button>
                         <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50">
                           <div>
