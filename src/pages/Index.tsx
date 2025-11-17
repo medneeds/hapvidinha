@@ -366,18 +366,31 @@ const Index = () => {
     if (selectedPatients.size === 0) return;
     
     saveToHistory(patients);
+    const selectedCount = selectedPatients.size;
+    const selectedPatientsList = Array.from(selectedPatients);
     
     try {
-      // Delete all selected patients from database
-      for (const patientId of selectedPatients) {
-        await dbDeletePatient(patientId);
-      }
+      // Delete all selected patients from database in parallel (without individual toasts)
+      await Promise.all(
+        selectedPatientsList.map(patientId => dbDeletePatient(patientId, false))
+      );
+      
+      toast({
+        title: "Pacientes excluídos",
+        description: `${selectedCount} leito(s) removido(s) com sucesso.`,
+        variant: "destructive",
+      });
       
       setSelectedPatients(new Set());
       setSelectionMode(false);
       setIsDeleteSelectedDialogOpen(false);
     } catch (error) {
       console.error("Failed to delete selected patients:", error);
+      toast({
+        title: "Erro ao excluir",
+        description: "Não foi possível excluir alguns pacientes.",
+        variant: "destructive",
+      });
     }
   };
 
