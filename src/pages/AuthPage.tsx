@@ -23,6 +23,7 @@ export default function AuthPage() {
     username: "",
     password: "",
   });
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -36,7 +37,7 @@ export default function AuthPage() {
 
     try {
       const validated = loginSchema.parse(loginData);
-      const { error } = await signIn(validated.username, validated.password);
+      const { error } = await signIn(validated.username, validated.password, isAdminLogin ? "admin" : "medico");
 
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
@@ -45,7 +46,7 @@ export default function AuthPage() {
           toast.error("ERRO AO FAZER LOGIN: " + error.message.toUpperCase());
         }
       } else {
-        toast.success("LOGIN REALIZADO COM SUCESSO");
+        toast.success(isAdminLogin ? "LOGIN ADMINISTRADOR REALIZADO" : "LOGIN REALIZADO COM SUCESSO");
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -184,6 +185,36 @@ export default function AuthPage() {
                   disabled={loading}
                   autoComplete="current-password"
                 />
+              </div>
+            </div>
+
+            {/* Admin Login Toggle */}
+            <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-xl hover:border-orange-300 transition-all duration-300 hover:shadow-md group">
+              <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-orange-100 group-hover:bg-orange-200 transition-colors duration-200">
+                <Lock className="h-5 w-5 text-orange-600" />
+              </div>
+              <div className="flex-1">
+                <label 
+                  htmlFor="admin-toggle" 
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  <input
+                    id="admin-toggle"
+                    type="checkbox"
+                    checked={isAdminLogin}
+                    onChange={(e) => setIsAdminLogin(e.target.checked)}
+                    disabled={loading}
+                    className="h-5 w-5 rounded border-2 border-orange-300 text-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                  <div className="flex-1">
+                    <div className="text-sm font-bold text-orange-900 uppercase tracking-wide">
+                      Login como Administrador
+                    </div>
+                    <div className="text-xs text-orange-600 mt-0.5">
+                      Acesso total para gerenciar códigos e protocolos
+                    </div>
+                  </div>
+                </label>
               </div>
             </div>
 

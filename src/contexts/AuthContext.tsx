@@ -10,8 +10,8 @@ interface AuthContextType {
   session: Session | null;
   role: UserRole;
   loading: boolean;
-  signIn: (username: string, password: string) => Promise<{ error: any }>;
-  signUp: (username: string, password: string, fullName: string) => Promise<{ error: any }>;
+  signIn: (username: string, password: string, desiredRole?: "admin" | "medico") => Promise<{ error: any }>;
+  signUp: (username: string, password: string, fullName: string, role?: "admin" | "medico") => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -86,14 +86,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signIn = async (username: string, password: string) => {
+  const signIn = async (username: string, password: string, desiredRole?: "admin" | "medico") => {
     // Converter username para formato de email interno para Supabase
     const internalEmail = `${username.toLowerCase()}@sistema.local`;
     
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: internalEmail,
       password,
     });
+    
+    if (!error && data.user && desiredRole) {
+      // Atualizar ou criar papel do usuário
+      try {
+        const { data: existingRole } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", data.user.id)
+          .single();
+        
+        if (existingRole) {
+          // Atualizar papel existente
+          await supabase
+            .from("user_roles")
+            .update({ role: desiredRole })
+            .eq("user_id", data.user.id);
+        } else {
+          // Criar novo papel
+          await supabase
+            .from("user_roles")
+            .insert({ user_id: data.user.id, role: desiredRole });
+        }
+        
+        // Atualizar estado local do papel
+        setRole(desiredRole);
+      } catch (roleError) {
+        if (import.meta.env.DEV) {
+          console.error("Erro ao atribuir papel:", roleError);
+        }
+      }
+    }
     
     if (!error) {
       navigate("/");
@@ -102,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signUp = async (username: string, password: string, fullName: string) => {
+  const signUp = async (username: string, password: string, fullName: string, role: "admin" | "medico" = "medico") => {
     const redirectUrl = `${window.location.origin}/`;
     const internalEmail = `${username.toLowerCase()}@sistema.local`;
     
@@ -114,6 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: {
           full_name: fullName,
           username: username,
+          role: role, // Passar papel nos metadados para o trigger usar
         },
       },
     });
