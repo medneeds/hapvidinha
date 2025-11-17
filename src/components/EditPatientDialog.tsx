@@ -101,6 +101,34 @@ export function EditPatientDialog({
     });
   };
 
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">,
+    index: number
+  ) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const isLastItem = index === formData[field].length - 1;
+      const currentValue = formData[field][index].trim();
+      
+      // Se for o último item e tiver conteúdo, adiciona um novo campo
+      if (isLastItem && currentValue) {
+        addItem(field);
+        // Foca no novo campo após um pequeno delay para garantir que ele foi criado
+        setTimeout(() => {
+          const inputs = document.querySelectorAll(`input[placeholder^="${field}"]`);
+          const nextInput = inputs[inputs.length - 1] as HTMLInputElement;
+          if (nextInput) nextInput.focus();
+        }, 50);
+      } else if (!isLastItem) {
+        // Se não for o último, foca no próximo campo existente
+        const inputs = document.querySelectorAll(`input[placeholder^="${field}"]`);
+        const nextInput = inputs[index + 1] as HTMLInputElement;
+        if (nextInput) nextInput.focus();
+      }
+    }
+  };
+
   const renderArrayField = (
     field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">,
     label: string
@@ -135,6 +163,7 @@ export function EditPatientDialog({
             <Input
               value={item}
               onChange={(e) => updateItem(field, idx, e.target.value.toUpperCase())}
+              onKeyDown={(e) => handleKeyDown(e, field, idx)}
               placeholder={`${label} ${idx + 1}`}
               className="h-9 text-sm uppercase"
             />
