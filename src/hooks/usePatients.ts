@@ -192,13 +192,74 @@ export function usePatients() {
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
           table: 'patients'
         },
         (payload) => {
-          console.log('Realtime update:', payload);
-          fetchPatients(); // Refetch all patients on any change
+          console.log('Realtime INSERT:', payload);
+          const newRecord = payload.new as any;
+          const newPatient: Patient = {
+            id: newRecord.id,
+            bedNumber: newRecord.bed_number,
+            name: newRecord.name || '',
+            age: newRecord.age || 0,
+            sector: newRecord.sector as 'red' | 'yellow' | 'blue' | 'outside',
+            diagnoses: newRecord.diagnoses ? newRecord.diagnoses.split('\n').filter(Boolean) : [],
+            medicalHistory: newRecord.medical_history ? newRecord.medical_history.split('\n').filter(Boolean) : [],
+            relevantExams: newRecord.relevant_exams ? newRecord.relevant_exams.split('\n').filter(Boolean) : [],
+            pendencies: newRecord.pendencies ? newRecord.pendencies.split('\n').filter(Boolean) : [],
+            schedule: newRecord.schedule ? newRecord.schedule.split('\n').filter(Boolean) : [],
+            admissionHistory: newRecord.admission_history || '',
+            admissionDate: newRecord.admission_date || '',
+          };
+          setPatients(prev => {
+            // Check if patient already exists (avoid duplicates)
+            if (prev.some(p => p.id === newPatient.id)) {
+              return prev;
+            }
+            return [...prev, newPatient].sort((a, b) => a.bedNumber.localeCompare(b.bedNumber));
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'patients'
+        },
+        (payload) => {
+          console.log('Realtime UPDATE:', payload);
+          const updatedRecord = payload.new as any;
+          const updatedPatient: Patient = {
+            id: updatedRecord.id,
+            bedNumber: updatedRecord.bed_number,
+            name: updatedRecord.name || '',
+            age: updatedRecord.age || 0,
+            sector: updatedRecord.sector as 'red' | 'yellow' | 'blue' | 'outside',
+            diagnoses: updatedRecord.diagnoses ? updatedRecord.diagnoses.split('\n').filter(Boolean) : [],
+            medicalHistory: updatedRecord.medical_history ? updatedRecord.medical_history.split('\n').filter(Boolean) : [],
+            relevantExams: updatedRecord.relevant_exams ? updatedRecord.relevant_exams.split('\n').filter(Boolean) : [],
+            pendencies: updatedRecord.pendencies ? updatedRecord.pendencies.split('\n').filter(Boolean) : [],
+            schedule: updatedRecord.schedule ? updatedRecord.schedule.split('\n').filter(Boolean) : [],
+            admissionHistory: updatedRecord.admission_history || '',
+            admissionDate: updatedRecord.admission_date || '',
+          };
+          setPatients(prev => prev.map(p => p.id === updatedPatient.id ? updatedPatient : p));
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'patients'
+        },
+        (payload) => {
+          console.log('Realtime DELETE:', payload);
+          const deletedId = (payload.old as any).id;
+          setPatients(prev => prev.filter(p => p.id !== deletedId));
         }
       )
       .subscribe();
