@@ -153,15 +153,26 @@ export function usePatients() {
 
   const deletePatient = async (patientId: string, options = { showToast: true, updateLocalState: true }) => {
     try {
+      console.log('Deleting patient:', patientId);
+      
       const { error } = await supabase
         .from('patients')
         .delete()
         .eq('id', patientId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase delete error:', error);
+        throw error;
+      }
+
+      console.log('Patient deleted successfully from database');
 
       if (options.updateLocalState) {
-        setPatients(prev => prev.filter(p => p.id !== patientId));
+        setPatients(prev => {
+          const filtered = prev.filter(p => p.id !== patientId);
+          console.log('Local state updated, patients count:', filtered.length);
+          return filtered;
+        });
       }
 
       if (options.showToast) {
