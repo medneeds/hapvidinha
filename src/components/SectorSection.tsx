@@ -36,6 +36,8 @@ interface SectorSectionProps {
   onReorderPatients?: (patients: Patient[]) => void;
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
   onPrintPatient?: (patientId: string) => void;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const sectorInfo = {
@@ -102,9 +104,28 @@ function SortablePatientCard(props: SortablePatientCardProps) {
   );
 }
 
-export function SectorSection({ sector, patients, onUpdatePatient, onDeletePatient, onPrintSector, onAddExtraBed, selectionMode = false, selectedPatients = new Set(), onToggleSelection, onReorderPatients, onTransfer, onPrintPatient }: SectorSectionProps) {
+export function SectorSection({ 
+  sector, 
+  patients, 
+  onUpdatePatient, 
+  onDeletePatient, 
+  onPrintSector, 
+  onAddExtraBed, 
+  selectionMode = false, 
+  selectedPatients = new Set(), 
+  onToggleSelection, 
+  onReorderPatients, 
+  onTransfer, 
+  onPrintPatient,
+  isOpen: controlledIsOpen,
+  onOpenChange
+}: SectorSectionProps) {
   const info = sectorInfo[sector];
-  const [isOpen, setIsOpen] = useState(patients.length > 0);
+  const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
+  
+  // Use controlled state if provided, otherwise use internal state
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  const setIsOpen = onOpenChange || setInternalIsOpen;
   
   const displayPatients = patients;
 
