@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Patient } from "@/types/patient";
 import {
   Dialog,
@@ -28,6 +28,13 @@ export function EditPatientDialog({
 }: EditPatientDialogProps) {
   const [formData, setFormData] = useState(patient);
 
+  // Reset form data when patient changes or dialog opens
+  useEffect(() => {
+    if (open) {
+      setFormData(patient);
+    }
+  }, [open, patient]);
+
   const handleSave = () => {
     // Garantir que todos os campos de texto estejam em uppercase
     const uppercaseData = {
@@ -41,6 +48,7 @@ export function EditPatientDialog({
       schedule: formData.schedule.map(s => s.toUpperCase()),
       admissionHistory: formData.admissionHistory.toUpperCase(),
     };
+    console.log('Saving patient data:', uppercaseData);
     onSave(uppercaseData);
     onOpenChange(false);
   };

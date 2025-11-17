@@ -49,6 +49,7 @@ export function usePatients() {
     try {
       const dbUpdates: any = {};
       
+      if (updates.bedNumber !== undefined) dbUpdates.bed_number = updates.bedNumber;
       if (updates.name !== undefined) dbUpdates.name = updates.name;
       if (updates.age !== undefined) dbUpdates.age = updates.age;
       if (updates.sector !== undefined) dbUpdates.sector = updates.sector;
@@ -60,12 +61,17 @@ export function usePatients() {
       if (updates.admissionHistory !== undefined) dbUpdates.admission_history = updates.admissionHistory;
       if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate;
 
+      console.log('Updating patient:', patientId, 'with data:', dbUpdates);
+
       const { error } = await supabase
         .from('patients')
         .update(dbUpdates)
         .eq('id', patientId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase update error:', error);
+        throw error;
+      }
 
       // Update local state
       setPatients(prev => prev.map(p => 
