@@ -114,17 +114,25 @@ export function EditPatientDialog({
       // Se for o último item e tiver conteúdo, adiciona um novo campo
       if (isLastItem && currentValue) {
         addItem(field);
-        // Foca no novo campo após um pequeno delay para garantir que ele foi criado
-        setTimeout(() => {
-          const inputs = document.querySelectorAll(`input[placeholder^="${field}"]`);
-          const nextInput = inputs[inputs.length - 1] as HTMLInputElement;
-          if (nextInput) nextInput.focus();
-        }, 50);
+        // Foca no novo campo após garantir que o DOM foi atualizado
+        requestAnimationFrame(() => {
+          const container = e.currentTarget.closest('.space-y-1\\.5');
+          if (container) {
+            const inputs = container.querySelectorAll('input');
+            const lastInput = inputs[inputs.length - 1] as HTMLInputElement;
+            if (lastInput) {
+              lastInput.focus();
+            }
+          }
+        });
       } else if (!isLastItem) {
         // Se não for o último, foca no próximo campo existente
-        const inputs = document.querySelectorAll(`input[placeholder^="${field}"]`);
-        const nextInput = inputs[index + 1] as HTMLInputElement;
-        if (nextInput) nextInput.focus();
+        const container = e.currentTarget.closest('.space-y-1\\.5');
+        if (container) {
+          const inputs = container.querySelectorAll('input');
+          const nextInput = inputs[index + 1] as HTMLInputElement;
+          if (nextInput) nextInput.focus();
+        }
       }
     }
   };
