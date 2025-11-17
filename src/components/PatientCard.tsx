@@ -73,6 +73,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const config = sectorConfig[patient.sector];
   const { toast } = useToast();
 
@@ -109,9 +110,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   return (
     <>
       <Card className={cn(
-        "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
+        "overflow-hidden transition-all duration-300 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
         config.color,
-        isSelected && "ring-2 ring-primary"
+        isSelected && "ring-2 ring-primary",
+        isDeleting ? "animate-[slide-out-left_0.3s_ease-out_forwards]" : "animate-[slide-in-left_0.3s_ease-out]"
       )}>
         <div className="p-2.5">
           <div className="flex items-center justify-between gap-3">
@@ -353,21 +355,26 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               onClick={() => {
                 if (onDelete) {
                   const deletedPatient = { ...patient };
-                  onDelete(patient.id);
-                  toast({
-                    title: "Paciente excluído",
-                    description: `Leito ${patient.bedNumber} - ${patient.name} foi removido.`,
-                    action: onUndelete ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onUndelete(deletedPatient)}
-                        className="ml-auto"
-                      >
-                        Desfazer
-                      </Button>
-                    ) : undefined,
-                  });
+                  setIsDeleting(true);
+                  
+                  // Wait for animation to complete before actually deleting
+                  setTimeout(() => {
+                    onDelete(patient.id);
+                    toast({
+                      title: "Paciente excluído",
+                      description: `Leito ${patient.bedNumber} - ${patient.name} foi removido.`,
+                      action: onUndelete ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onUndelete(deletedPatient)}
+                          className="ml-auto"
+                        >
+                          Desfazer
+                        </Button>
+                      ) : undefined,
+                    });
+                  }, 300);
                 }
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
