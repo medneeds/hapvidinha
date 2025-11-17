@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Patient } from "@/types/patient";
 import {
   Dialog,
@@ -27,13 +27,27 @@ export function EditPatientDialog({
   onSave,
 }: EditPatientDialogProps) {
   const [formData, setFormData] = useState(patient);
+  const [focusField, setFocusField] = useState<{field: string, index: number} | null>(null);
+  const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
 
   // Reset form data when patient changes or dialog opens
   useEffect(() => {
     if (open) {
       setFormData(patient);
+      inputRefs.current = {};
     }
   }, [open, patient]);
+
+  // Handle focus when focusField changes
+  useEffect(() => {
+    if (focusField) {
+      const inputs = inputRefs.current[focusField.field];
+      if (inputs && inputs[focusField.index]) {
+        inputs[focusField.index].focus();
+        setFocusField(null);
+      }
+    }
+  }, [focusField, formData]);
 
   const handleSave = () => {
     // Garantir que todos os campos de texto estejam em uppercase
@@ -54,10 +68,13 @@ export function EditPatientDialog({
   };
 
   const addItem = (field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">) => {
+    const newArray = [...formData[field], ""];
     setFormData({
       ...formData,
-      [field]: [...formData[field], ""],
+      [field]: newArray,
     });
+    // Set focus to the new last item
+    setFocusField({ field, index: newArray.length - 1 });
   };
 
   const updateItem = (
@@ -114,25 +131,9 @@ export function EditPatientDialog({
       // Se for o último item e tiver conteúdo, adiciona um novo campo
       if (isLastItem && currentValue) {
         addItem(field);
-        // Foca no novo campo após garantir que o DOM foi atualizado
-        requestAnimationFrame(() => {
-          const container = e.currentTarget.closest('.space-y-1\\.5');
-          if (container) {
-            const inputs = container.querySelectorAll('input');
-            const lastInput = inputs[inputs.length - 1] as HTMLInputElement;
-            if (lastInput) {
-              lastInput.focus();
-            }
-          }
-        });
       } else if (!isLastItem) {
         // Se não for o último, foca no próximo campo existente
-        const container = e.currentTarget.closest('.space-y-1\\.5');
-        if (container) {
-          const inputs = container.querySelectorAll('input');
-          const nextInput = inputs[index + 1] as HTMLInputElement;
-          if (nextInput) nextInput.focus();
-        }
+        setFocusField({ field, index: index + 1 });
       }
     }
   };
@@ -169,6 +170,14 @@ export function EditPatientDialog({
         {formData[field].map((item, idx) => (
           <div key={idx} className="flex gap-1.5">
             <Input
+              ref={(el) => {
+                if (el) {
+                  if (!inputRefs.current[field]) {
+                    inputRefs.current[field] = [];
+                  }
+                  inputRefs.current[field][idx] = el;
+                }
+              }}
               value={item}
               onChange={(e) => updateItem(field, idx, e.target.value.toUpperCase())}
               onKeyDown={(e) => handleKeyDown(e, field, idx)}
