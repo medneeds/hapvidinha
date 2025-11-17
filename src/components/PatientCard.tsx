@@ -170,92 +170,90 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
             </div>
 
           {/* Action Buttons */}
-          {!selectionMode && (
-            <div className="flex-shrink-0 flex gap-1 print:hidden">
+          <div className="flex-shrink-0 flex gap-1 print:hidden">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditDialogOpen(true);
+              }}
+              className="h-8 w-8 text-foreground hover:bg-primary/10 hover:text-primary transition-all duration-200"
+            >
+              <Edit className="h-3.5 w-3.5" />
+            </Button>
+            {onTransfer && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={(e) => e.stopPropagation()}
+                    className="h-8 w-8 text-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+                    title="Transferir para outra ala"
+                  >
+                    <ArrowRightLeft className="h-3.5 w-3.5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Transferir para</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
+                    sector !== patient.sector && (
+                      <DropdownMenuItem
+                        key={sector}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTransfer(sector);
+                        }}
+                      >
+                        {sectorLabels[sector]}
+                      </DropdownMenuItem>
+                    )
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            {onPrintPatient && (
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setIsEditDialogOpen(true);
+                  onPrintPatient(patient.id);
                 }}
-                className="h-8 w-8 text-foreground hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                className="h-8 w-8 text-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+                title="Imprimir caso completo"
               >
-                <Edit className="h-3.5 w-3.5" />
+                <Printer className="h-3.5 w-3.5" />
               </Button>
-              {onTransfer && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={(e) => e.stopPropagation()}
-                      className="h-8 w-8 text-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
-                      title="Transferir para outra ala"
-                    >
-                      <ArrowRightLeft className="h-3.5 w-3.5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Transferir para</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
-                      sector !== patient.sector && (
-                        <DropdownMenuItem
-                          key={sector}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleTransfer(sector);
-                          }}
-                        >
-                          {sectorLabels[sector]}
-                        </DropdownMenuItem>
-                      )
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-              {onPrintPatient && (
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onPrintPatient(patient.id);
-                  }}
-                  className="h-8 w-8 text-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
-                  title="Imprimir caso completo"
-                >
-                  <Printer className="h-3.5 w-3.5" />
-                </Button>
-              )}
-              {onDelete && (
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (window.confirm('Tem certeza que deseja deletar este leito?')) {
-                      onDelete(patient.id);
-                    }
-                  }}
-                  className="h-8 w-8 text-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
-                >
+            )}
+            {onDelete && (
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm('Tem certeza que deseja deletar este leito?')) {
+                    onDelete(patient.id);
+                  }
+                }}
+                className="h-8 w-8 text-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
+              >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
+            )}
+            <button 
+              className="flex-shrink-0 p-1.5 hover:bg-accent/50 rounded-md transition-all duration-200"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4 text-foreground" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-foreground" />
               )}
-              <button 
-                className="flex-shrink-0 p-1.5 hover:bg-accent/50 rounded-md transition-all duration-200"
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
-                {isExpanded ? (
-                  <ChevronUp className="h-4 w-4 text-foreground" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 text-foreground" />
-                )}
-              </button>
-            </div>
-          )}
+            </button>
+          </div>
         </div>
         </div>
 
