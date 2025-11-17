@@ -476,6 +476,7 @@ const Index = () => {
               redPatients={printingSector === "red" ? redPatients : printingSector === "selected" ? redPatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : redPatients}
               yellowPatients={printingSector === "yellow" ? yellowPatients : printingSector === "selected" ? yellowPatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : yellowPatients}
               bluePatients={printingSector === "blue" ? bluePatients : printingSector === "selected" ? bluePatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : bluePatients}
+              outsidePatients={printingSector === "outside" ? outsidePatients : printingSector === "selected" ? outsidePatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : outsidePatients}
               mode={printMode}
               isPreview={false}
             />
@@ -682,6 +683,15 @@ const Index = () => {
                         </button>
                       </CollapsibleTrigger>
                       <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handlePrintSector("outside")}
+                          className="h-8 w-8"
+                          title="Imprimir seção"
+                        >
+                          <Printer className="h-3.5 w-3.5" />
+                        </Button>
                         <Button
                           variant="outline"
                           size="icon"
