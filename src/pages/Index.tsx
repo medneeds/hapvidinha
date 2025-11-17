@@ -370,15 +370,19 @@ const Index = () => {
     const selectedPatientsList = Array.from(selectedPatients);
     
     try {
-      // Delete all selected patients from database in parallel (without individual toasts)
+      // Delete all selected patients from database in parallel (without toasts or local state updates)
       await Promise.all(
-        selectedPatientsList.map(patientId => dbDeletePatient(patientId, false))
+        selectedPatientsList.map(patientId => 
+          dbDeletePatient(patientId, { showToast: false, updateLocalState: false })
+        )
       );
+      
+      // Update local state once after all deletions
+      setPatients(prev => prev.filter(p => !selectedPatients.has(p.id)));
       
       toast({
         title: "Pacientes excluídos",
         description: `${selectedCount} leito(s) removido(s) com sucesso.`,
-        variant: "destructive",
       });
       
       setSelectedPatients(new Set());
