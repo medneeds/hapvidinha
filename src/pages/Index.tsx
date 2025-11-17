@@ -114,8 +114,11 @@ const Index = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [newChecklistItem, setNewChecklistItem] = useState("");
-  const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(true);
-  const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(true);
+  const [isRedSectionOpen, setIsRedSectionOpen] = useState(false);
+  const [isYellowSectionOpen, setIsYellowSectionOpen] = useState(false);
+  const [isBlueSectionOpen, setIsBlueSectionOpen] = useState(false);
+  const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(false);
+  const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(false);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
   const [printingPatientId, setPrintingPatientId] = useState<string | null>(null);
@@ -177,6 +180,28 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem(CHECKLIST_KEY, JSON.stringify(checklist));
   }, [checklist]);
+
+  // Smart auto-collapse sections when empty
+  useEffect(() => {
+    const red = patients.filter((p) => p.sector === "red");
+    const yellow = patients.filter((p) => p.sector === "yellow");
+    const blue = patients.filter((p) => p.sector === "blue");
+    const outside = patients.filter((p) => p.sector === "outside");
+    
+    // Only auto-close if completely empty (no patients or all patients have empty names)
+    const hasRedData = red.some(p => p.name.trim() !== "");
+    const hasYellowData = yellow.some(p => p.name.trim() !== "");
+    const hasBlueData = blue.some(p => p.name.trim() !== "");
+    const hasOutsideData = outside.some(p => p.name.trim() !== "");
+    const hasNotesData = notes.trim() !== "" || checklist.length > 0;
+    
+    // Keep open if has data, close if empty - but don't interfere with manual toggling
+    setIsRedSectionOpen(prev => hasRedData ? true : false);
+    setIsYellowSectionOpen(prev => hasYellowData ? true : false);
+    setIsBlueSectionOpen(prev => hasBlueData ? true : false);
+    setIsOutsideSectionOpen(prev => hasOutsideData ? true : false);
+    setIsNotesSectionOpen(prev => hasNotesData ? true : false);
+  }, [patients, notes, checklist]);
 
   const saveToHistory = (currentPatients: Patient[]) => {
     setHistory(prev => [...prev.slice(-9), currentPatients]); // Keep last 10 states
@@ -601,6 +626,8 @@ const Index = () => {
                   onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
                   onTransfer={handleTransferPatient}
                   onPrintPatient={handlePrintPatient}
+                  isOpen={isRedSectionOpen}
+                  onOpenChange={setIsRedSectionOpen}
                 />
               </div>
               <div>
@@ -617,6 +644,8 @@ const Index = () => {
                   onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
                   onTransfer={handleTransferPatient}
                   onPrintPatient={handlePrintPatient}
+                  isOpen={isYellowSectionOpen}
+                  onOpenChange={setIsYellowSectionOpen}
                 />
               </div>
               <div>
@@ -633,6 +662,8 @@ const Index = () => {
                   onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
                   onTransfer={handleTransferPatient}
                   onPrintPatient={handlePrintPatient}
+                  isOpen={isBlueSectionOpen}
+                  onOpenChange={setIsBlueSectionOpen}
                 />
               </div>
 
