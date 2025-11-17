@@ -134,7 +134,7 @@ export default function AuthPage() {
                 <LogIn className="h-7 w-7 text-white relative z-10 transform group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-300" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-2 tracking-tight uppercase tracking-widest">
+            <h2 className="text-2xl font-bold text-center text-gray-900 mb-2 tracking-tight">
               Acesse sua conta
             </h2>
           </div>
@@ -143,7 +143,7 @@ export default function AuthPage() {
             <div className="space-y-3 group">
               <Label 
                 htmlFor="login-username" 
-                className="text-xs font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
+                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
               >
                 <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
                   <User className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
@@ -167,7 +167,7 @@ export default function AuthPage() {
             <div className="space-y-3 group">
               <Label 
                 htmlFor="login-password" 
-                className="text-xs font-bold text-gray-900 uppercase tracking-widest flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
+                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
               >
                 <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
                   <Lock className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
@@ -207,7 +207,7 @@ export default function AuthPage() {
                     className="h-5 w-5 rounded border-2 border-orange-300 text-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-bold text-orange-900 uppercase tracking-wide">
+                    <div className="text-sm font-bold text-orange-900">
                       Login como Administrador
                     </div>
                     <div className="text-xs text-orange-600 mt-0.5">
@@ -221,7 +221,7 @@ export default function AuthPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-base uppercase tracking-widest rounded-2xl shadow-xl shadow-[#013ba6]/40 transition-all duration-300 hover:shadow-2xl hover:shadow-[#013ba6]/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mt-8 relative overflow-hidden group"
+              className="w-full h-14 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-base rounded-2xl shadow-xl shadow-[#013ba6]/40 transition-all duration-300 hover:shadow-2xl hover:shadow-[#013ba6]/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mt-8 relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               {loading ? (
@@ -243,7 +243,7 @@ export default function AuthPage() {
               <div className="h-6 w-6 rounded-lg bg-gray-100 flex items-center justify-center">
                 <Lock className="h-3 w-3 text-gray-600" />
               </div>
-              <span className="uppercase tracking-wide">Conexão segura e criptografada</span>
+              <span className="tracking-wide">Conexão segura e criptografada</span>
             </div>
           </div>
         </div>
