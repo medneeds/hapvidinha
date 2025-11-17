@@ -183,26 +183,26 @@ const Index = () => {
     localStorage.setItem(CHECKLIST_KEY, JSON.stringify(checklist));
   }, [checklist]);
 
-  // Smart auto-collapse sections when empty
+  // Smart auto-open sections when they have data (but don't auto-close)
   useEffect(() => {
     const red = patients.filter((p) => p.sector === "red");
     const yellow = patients.filter((p) => p.sector === "yellow");
     const blue = patients.filter((p) => p.sector === "blue");
     const outside = patients.filter((p) => p.sector === "outside");
     
-    // Only auto-close if completely empty (no patients or all patients have empty names)
+    // Check if sections have any patient with data
     const hasRedData = red.some(p => p.name.trim() !== "");
     const hasYellowData = yellow.some(p => p.name.trim() !== "");
     const hasBlueData = blue.some(p => p.name.trim() !== "");
     const hasOutsideData = outside.some(p => p.name.trim() !== "");
     const hasNotesData = notes.trim() !== "" || checklist.length > 0;
     
-    // Keep open if has data, close if empty - but don't interfere with manual toggling
-    setIsRedSectionOpen(prev => hasRedData ? true : false);
-    setIsYellowSectionOpen(prev => hasYellowData ? true : false);
-    setIsBlueSectionOpen(prev => hasBlueData ? true : false);
-    setIsOutsideSectionOpen(prev => hasOutsideData ? true : false);
-    setIsNotesSectionOpen(prev => hasNotesData ? true : false);
+    // Only open sections when they have data, never force close
+    if (hasRedData) setIsRedSectionOpen(true);
+    if (hasYellowData) setIsYellowSectionOpen(true);
+    if (hasBlueData) setIsBlueSectionOpen(true);
+    if (hasOutsideData) setIsOutsideSectionOpen(true);
+    if (hasNotesData) setIsNotesSectionOpen(true);
   }, [patients, notes, checklist]);
 
   const saveToHistory = (currentPatients: Patient[]) => {
