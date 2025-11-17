@@ -285,6 +285,12 @@ const Index = () => {
 
     try {
       await dbCreatePatient(newPatientData);
+      
+      // Expandir automaticamente a seção correspondente
+      if (sector === 'red') setIsRedSectionOpen(true);
+      else if (sector === 'yellow') setIsYellowSectionOpen(true);
+      else if (sector === 'blue') setIsBlueSectionOpen(true);
+      else if (sector === 'outside') setIsOutsideSectionOpen(true);
     } catch (error) {
       console.error("Failed to create patient:", error);
     }
