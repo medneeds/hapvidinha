@@ -93,6 +93,90 @@ export function usePatients() {
     }
   };
 
+  const createPatient = async (patient: Omit<Patient, 'id'>) => {
+    try {
+      const dbData = {
+        bed_number: patient.bedNumber,
+        name: patient.name,
+        age: patient.age,
+        sector: patient.sector,
+        diagnoses: patient.diagnoses.join('\n'),
+        medical_history: patient.medicalHistory.join('\n'),
+        relevant_exams: patient.relevantExams.join('\n'),
+        pendencies: patient.pendencies.join('\n'),
+        schedule: patient.schedule.join('\n'),
+        admission_history: patient.admissionHistory,
+        admission_date: patient.admissionDate,
+      };
+
+      const { data, error } = await supabase
+        .from('patients')
+        .insert(dbData)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newPatient: Patient = {
+        id: data.id,
+        bedNumber: data.bed_number,
+        name: data.name || '',
+        age: data.age || 0,
+        sector: data.sector as 'red' | 'yellow' | 'blue' | 'outside',
+        diagnoses: data.diagnoses ? data.diagnoses.split('\n').filter(Boolean) : [],
+        medicalHistory: data.medical_history ? data.medical_history.split('\n').filter(Boolean) : [],
+        relevantExams: data.relevant_exams ? data.relevant_exams.split('\n').filter(Boolean) : [],
+        pendencies: data.pendencies ? data.pendencies.split('\n').filter(Boolean) : [],
+        schedule: data.schedule ? data.schedule.split('\n').filter(Boolean) : [],
+        admissionHistory: data.admission_history || '',
+        admissionDate: data.admission_date || '',
+      };
+
+      setPatients(prev => [...prev, newPatient]);
+
+      toast({
+        title: "Leito criado",
+        description: `Leito ${newPatient.bedNumber} adicionado com sucesso.`,
+      });
+
+      return newPatient;
+    } catch (error) {
+      console.error('Error creating patient:', error);
+      toast({
+        title: "Erro ao criar leito",
+        description: "Não foi possível adicionar o leito.",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const deletePatient = async (patientId: string) => {
+    try {
+      const { error } = await supabase
+        .from('patients')
+        .delete()
+        .eq('id', patientId);
+
+      if (error) throw error;
+
+      setPatients(prev => prev.filter(p => p.id !== patientId));
+
+      toast({
+        title: "Leito deletado",
+        description: "O leito foi removido com sucesso.",
+      });
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      toast({
+        title: "Erro ao deletar",
+        description: "Não foi possível remover o leito.",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
   useEffect(() => {
     fetchPatients();
 
@@ -122,6 +206,8 @@ export function usePatients() {
     patients,
     isLoading,
     updatePatient,
+    createPatient,
+    deletePatient,
     refetch: fetchPatients,
   };
 }

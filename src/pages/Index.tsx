@@ -97,7 +97,7 @@ function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
 
 const Index = () => {
   // Use real database patients
-  const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient } = usePatients();
+  const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient } = usePatients();
   const [patients, setPatients] = useState<Patient[]>(dbPatients);
   const [history, setHistory] = useState<Patient[][]>(() => {
     const saved = localStorage.getItem(HISTORY_KEY);
@@ -263,14 +263,13 @@ const Index = () => {
     }
   };
 
-  const handleAddExtraBed = (sector: Patient['sector']) => {
+  const handleAddExtraBed = async (sector: Patient['sector']) => {
     saveToHistory(patients);
     const sectorPrefix = sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : sector === 'blue' ? 'Z' : 'F';
     const sectorPatients = patients.filter(p => p.sector === sector);
     const extraBedNumber = sectorPatients.length + 1;
     
-    const newPatient: Patient = {
-      id: `${sector}-extra-${Date.now()}`,
+    const newPatientData = {
       bedNumber: `${sectorPrefix}${String(extraBedNumber).padStart(2, '0')}`,
       name: "",
       age: 0,
@@ -284,26 +283,49 @@ const Index = () => {
       admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' ')
     };
 
-    setPatients((prev) => [...prev, newPatient]);
-    toast({
-      title: sector === "outside" ? "Paciente fora de ala adicionado" : "Leito extra adicionado",
-      description: `Leito ${newPatient.bedNumber} criado com sucesso.`,
-    });
+    try {
+      await dbCreatePatient(newPatientData);
+    } catch (error) {
+      console.error("Failed to create patient:", error);
+    }
   };
 
-  const handleDeletePatient = (patientId: string) => {
+  const handleDeletePatient = async (patientId: string) => {
     saveToHistory(patients);
-    const patient = patients.find(p => p.id === patientId);
-    setPatients((prev) => prev.filter(p => p.id !== patientId));
-    // Toast is now handled in PatientCard with undo button
+    try {
+      await dbDeletePatient(patientId);
+    } catch (error) {
+      console.error("Failed to delete patient:", error);
+    }
   };
 
-  const handleUndeletePatient = (patient: Patient) => {
-    setPatients((prev) => [...prev, patient]);
-    toast({
-      title: "Exclusão desfeita",
-      description: `Leito ${patient.bedNumber} - ${patient.name} foi restaurado.`,
-    });
+  const handleUndeletePatient = async (patient: Patient) => {
+    try {
+      await dbCreatePatient({
+        bedNumber: patient.bedNumber,
+        name: patient.name,
+        age: patient.age,
+        sector: patient.sector,
+        diagnoses: patient.diagnoses,
+        medicalHistory: patient.medicalHistory,
+        relevantExams: patient.relevantExams,
+        pendencies: patient.pendencies,
+        schedule: patient.schedule,
+        admissionHistory: patient.admissionHistory,
+        admissionDate: patient.admissionDate,
+      });
+      toast({
+        title: "Exclusão desfeita",
+        description: `Leito ${patient.bedNumber} - ${patient.name} foi restaurado.`,
+      });
+    } catch (error) {
+      console.error("Failed to restore patient:", error);
+      toast({
+        title: "Erro ao restaurar",
+        description: "Não foi possível restaurar o leito.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleToggleSelection = (patientId: string) => {
