@@ -18,6 +18,16 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { usePatients } from "@/hooks/usePatients";
 import {
@@ -127,6 +137,7 @@ const Index = () => {
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
+  const [isDeleteSelectedDialogOpen, setIsDeleteSelectedDialogOpen] = useState(false);
   const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
@@ -348,17 +359,25 @@ const Index = () => {
 
   const handleDeleteSelected = () => {
     if (selectedPatients.size === 0) return;
+    setIsDeleteSelectedDialogOpen(true);
+  };
+
+  const confirmDeleteSelected = async () => {
+    if (selectedPatients.size === 0) return;
     
-    if (window.confirm(`Tem certeza que deseja deletar ${selectedPatients.size} leito(s) selecionado(s)?`)) {
-      saveToHistory(patients);
-      setPatients((prev) => prev.filter(p => !selectedPatients.has(p.id)));
-      toast({
-        title: "Leitos deletados",
-        description: `${selectedPatients.size} leito(s) removido(s) com sucesso.`,
-        variant: "destructive",
-      });
+    saveToHistory(patients);
+    
+    try {
+      // Delete all selected patients from database
+      for (const patientId of selectedPatients) {
+        await dbDeletePatient(patientId);
+      }
+      
       setSelectedPatients(new Set());
       setSelectionMode(false);
+      setIsDeleteSelectedDialogOpen(false);
+    } catch (error) {
+      console.error("Failed to delete selected patients:", error);
     }
   };
 
@@ -915,6 +934,28 @@ const Index = () => {
         onOpenChange={setHandoverDialogOpen}
         patients={patients}
       />
+
+      {/* Delete Multiple Patients Confirmation Dialog */}
+      <AlertDialog open={isDeleteSelectedDialogOpen} onOpenChange={setIsDeleteSelectedDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão Múltipla</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir <strong>{selectedPatients.size} leito(s)</strong> selecionado(s)?
+              Esta ação não poderá ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteSelected}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir Todos
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   );
 };
