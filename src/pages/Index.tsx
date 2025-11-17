@@ -55,6 +55,7 @@ interface SortableOutsidePatientCardProps {
   patient: Patient;
   onUpdate: (patient: Patient) => void;
   onDelete?: (patientId: string) => void;
+  onUndelete?: (patient: Patient) => void;
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
@@ -294,10 +295,14 @@ const Index = () => {
     saveToHistory(patients);
     const patient = patients.find(p => p.id === patientId);
     setPatients((prev) => prev.filter(p => p.id !== patientId));
+    // Toast is now handled in PatientCard with undo button
+  };
+
+  const handleUndeletePatient = (patient: Patient) => {
+    setPatients((prev) => [...prev, patient]);
     toast({
-      title: "Leito deletado",
-      description: `O leito ${patient?.bedNumber} foi removido com sucesso.`,
-      variant: "destructive",
+      title: "Exclusão desfeita",
+      description: `Leito ${patient.bedNumber} - ${patient.name} foi restaurado.`,
     });
   };
 
@@ -620,6 +625,7 @@ const Index = () => {
                   patients={redPatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
+                  onUndeletePatient={handleUndeletePatient}
                   onPrintSector={() => handlePrintSector("red")}
                   onAddExtraBed={() => handleAddExtraBed("red")}
                   selectionMode={selectionMode}
@@ -638,6 +644,7 @@ const Index = () => {
                   patients={yellowPatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
+                  onUndeletePatient={handleUndeletePatient}
                   onPrintSector={() => handlePrintSector("yellow")}
                   onAddExtraBed={() => handleAddExtraBed("yellow")}
                   selectionMode={selectionMode}
@@ -656,6 +663,7 @@ const Index = () => {
                   patients={bluePatients} 
                   onUpdatePatient={handleUpdatePatient}
                   onDeletePatient={handleDeletePatient}
+                  onUndeletePatient={handleUndeletePatient}
                   onPrintSector={() => handlePrintSector("blue")}
                   onAddExtraBed={() => handleAddExtraBed("blue")}
                   selectionMode={selectionMode}
@@ -733,6 +741,7 @@ const Index = () => {
                                 patient={patient}
                                 onUpdate={handleUpdatePatient}
                                 onDelete={handleDeletePatient}
+                                onUndelete={handleUndeletePatient}
                                 selectionMode={selectionMode}
                                 isSelected={selectedPatients.has(patient.id)}
                                 onToggleSelection={handleToggleSelection}

@@ -31,6 +31,7 @@ interface PatientCardProps {
   patient: Patient;
   onUpdate: (updatedPatient: Patient) => void;
   onDelete?: (patientId: string) => void;
+  onUndelete?: (patient: Patient) => void;
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
@@ -68,7 +69,7 @@ const sectorLabels = {
   outside: "Fora das Alas"
 };
 
-export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient }: PatientCardProps) {
+export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -351,7 +352,22 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
             <AlertDialogAction
               onClick={() => {
                 if (onDelete) {
+                  const deletedPatient = { ...patient };
                   onDelete(patient.id);
+                  toast({
+                    title: "Paciente excluído",
+                    description: `Leito ${patient.bedNumber} - ${patient.name} foi removido.`,
+                    action: onUndelete ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onUndelete(deletedPatient)}
+                        className="ml-auto"
+                      >
+                        Desfazer
+                      </Button>
+                    ) : undefined,
+                  });
                 }
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
