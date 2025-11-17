@@ -59,6 +59,7 @@ interface SortableOutsidePatientCardProps {
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
+  onPrintPatient?: (patientId: string) => void;
 }
 
 function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
@@ -736,6 +737,7 @@ const Index = () => {
                                 isSelected={selectedPatients.has(patient.id)}
                                 onToggleSelection={handleToggleSelection}
                                 onTransfer={handleTransferPatient}
+                                onPrintPatient={handlePrintPatient}
                               />
                             ))}
                           </SortableContext>
