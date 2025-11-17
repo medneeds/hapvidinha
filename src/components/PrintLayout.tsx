@@ -7,6 +7,7 @@ interface PrintLayoutProps {
   redPatients: Patient[];
   yellowPatients: Patient[];
   bluePatients: Patient[];
+  outsidePatients: Patient[];
   mode: 'compact' | 'detailed';
   isPreview?: boolean;
 }
@@ -14,7 +15,8 @@ interface PrintLayoutProps {
 export function PrintLayout({ 
   redPatients, 
   yellowPatients, 
-  bluePatients, 
+  bluePatients,
+  outsidePatients, 
   mode,
   isPreview = false 
 }: PrintLayoutProps) {
@@ -122,6 +124,14 @@ export function PrintLayout({
           bgColor="#eff6ff"
           borderColor="#3b82f6"
           textColor="#1d4ed8"
+          mode={mode}
+        />
+        <PrintableSectorSection
+          patients={outsidePatients}
+          sectorName="Fora das Alas"
+          bgColor="#fef3f2"
+          borderColor="#f97316"
+          textColor="#c2410c"
           mode={mode}
         />
       </div>
