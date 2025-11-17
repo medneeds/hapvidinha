@@ -16,6 +16,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface PatientCardProps {
   patient: Patient;
@@ -61,6 +71,7 @@ const sectorLabels = {
 export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const config = sectorConfig[patient.sector];
   const { toast } = useToast();
 
@@ -234,14 +245,12 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
                 variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (window.confirm('Tem certeza que deseja deletar este leito?')) {
-                    onDelete(patient.id);
-                  }
+                  setIsDeleteDialogOpen(true);
                 }}
                 className="h-8 w-8 text-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
               >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
             )}
             <button 
               className="flex-shrink-0 p-1.5 hover:bg-accent/50 rounded-md transition-all duration-200"
@@ -327,6 +336,31 @@ export function PatientCard({ patient, onUpdate, onDelete, selectionMode = false
         onOpenChange={setIsEditDialogOpen}
         onSave={onUpdate}
       />
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o leito <strong>{patient.bedNumber}</strong> do paciente <strong>{patient.name}</strong>?
+              Esta ação não poderá ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (onDelete) {
+                  onDelete(patient.id);
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
