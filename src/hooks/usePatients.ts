@@ -151,7 +151,7 @@ export function usePatients() {
     }
   };
 
-  const deletePatient = async (patientId: string, showToast = true) => {
+  const deletePatient = async (patientId: string, options = { showToast: true, updateLocalState: true }) => {
     try {
       const { error } = await supabase
         .from('patients')
@@ -160,9 +160,11 @@ export function usePatients() {
 
       if (error) throw error;
 
-      setPatients(prev => prev.filter(p => p.id !== patientId));
+      if (options.updateLocalState) {
+        setPatients(prev => prev.filter(p => p.id !== patientId));
+      }
 
-      if (showToast) {
+      if (options.showToast) {
         toast({
           title: "Leito deletado",
           description: "O leito foi removido com sucesso.",
@@ -170,7 +172,7 @@ export function usePatients() {
       }
     } catch (error) {
       console.error('Error deleting patient:', error);
-      if (showToast) {
+      if (options.showToast) {
         toast({
           title: "Erro ao deletar",
           description: "Não foi possível remover o leito.",
