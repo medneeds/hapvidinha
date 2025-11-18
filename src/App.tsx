@@ -12,6 +12,7 @@ import HandoversPage from "./pages/HandoversPage";
 import VersionsPage from "./pages/VersionsPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import SepsisProtocolPage from "./pages/SepsisProtocolPage";
+import TomografiasPage from "./pages/TomografiasPage";
 import AuthPage from "./pages/AuthPage";
 
 const queryClient = new QueryClient();
@@ -76,6 +77,14 @@ const App = () => (
           element={
             <ProtectedRoute>
               <SepsisProtocolPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documents/tomografias"
+          element={
+            <ProtectedRoute>
+              <TomografiasPage />
             </ProtectedRoute>
           }
         />
