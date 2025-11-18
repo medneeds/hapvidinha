@@ -57,15 +57,7 @@ const menuItems = [
   {
     title: "DOCUMENTOS",
     icon: FolderOpen,
-    items: [
-      { name: "PROTOCOLO SEPSE", link: "/sepsis-protocol" },
-      { name: "TOMOGRAFIAS", link: "/documents/tomografias" },
-      { name: "LISTAS OPME", link: "/documents/opme" },
-      { name: "HEMODERIVADOS", link: "/documents/hemoderivados" },
-      { name: "REGULAÇÕES SUS", link: "/documents/regulacoes" },
-      { name: "ALTO CUSTO", link: "/documents/alto-custo" },
-      { name: "SADT", link: "/documents/sadt" },
-    ],
+    link: "/documents",
   },
   {
     title: "PASSAGENS",
