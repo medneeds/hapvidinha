@@ -23,25 +23,33 @@ export default function HemoderivadosPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+      <div className="max-w-2xl w-full space-y-8">
+        <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" onClick={() => navigate("/documents")}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-2xl font-bold">HEMODERIVADOS</h1>
         </div>
 
-        <div className="bg-card border rounded-lg divide-y">
-          {documents.map((doc) => (
-            <div key={doc.file} className="p-4 flex items-center justify-between hover:bg-accent/50 transition-colors">
-              <span className="font-medium">{doc.title}</span>
-              <Button onClick={() => handleDownload(doc.file)} size="sm">
-                <Download className="mr-2 h-4 w-4" />
-                DOWNLOAD
+        <div className="bg-card border rounded-lg p-8 space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-semibold">Hemoderivados</h2>
+          </div>
+
+          <div className="grid gap-4">
+            {documents.map((doc) => (
+              <Button 
+                key={doc.file}
+                size="lg"
+                className="w-full h-16 text-lg"
+                onClick={() => handleDownload(doc.file)}
+              >
+                <Download className="mr-2 h-5 w-5" />
+                {doc.title}
               </Button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
