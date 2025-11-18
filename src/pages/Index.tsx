@@ -12,6 +12,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
+import { SepsisProtocolDialog } from "@/components/SepsisProtocolDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -140,6 +141,7 @@ const Index = () => {
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
   const [isDeleteSelectedDialogOpen, setIsDeleteSelectedDialogOpen] = useState(false);
   const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
+  const [sepsisProtocolDialogOpen, setSepsisProtocolDialogOpen] = useState(false);
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
   const { saveVersion } = usePatientVersions();
@@ -547,7 +549,10 @@ const Index = () => {
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-background">
-        <AppSidebar onOpenHandover={() => setHandoverDialogOpen(true)} />
+        <AppSidebar 
+          onOpenHandover={() => setHandoverDialogOpen(true)} 
+          onOpenSepsisProtocol={() => setSepsisProtocolDialogOpen(true)}
+        />
         
         {/* Print-only layout - Hidden on screen, visible only when printing */}
         {printMode && (
@@ -969,6 +974,12 @@ const Index = () => {
         open={handoverDialogOpen}
         onOpenChange={setHandoverDialogOpen}
         patients={patients}
+      />
+
+      {/* Sepsis Protocol Dialog */}
+      <SepsisProtocolDialog
+        open={sepsisProtocolDialogOpen}
+        onOpenChange={setSepsisProtocolDialogOpen}
       />
 
       {/* Delete Multiple Patients Confirmation Dialog */}
