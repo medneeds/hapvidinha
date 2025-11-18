@@ -137,7 +137,8 @@ export default function SepsisProtocolPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6 print:p-0">
+    <div className="container mx-auto p-6 space-y-4 print:p-8 print:space-y-3">
+      {/* Botões de ação - escondidos na impressão */}
       <div className="flex items-center justify-between print:hidden">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
@@ -157,484 +158,508 @@ export default function SepsisProtocolPage() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>DADOS DO PACIENTE</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>NOME COMPLETO DO PACIENTE *</Label>
-              <Input
-                value={formData.patient_name}
-                onChange={(e) => setFormData({ ...formData, patient_name: e.target.value.toUpperCase() })}
-                placeholder="NOME DO PACIENTE"
-              />
-            </div>
-            <div>
-              <Label>DATA DE NASCIMENTO</Label>
-              <Input
-                type="date"
-                value={formData.birth_date}
-                onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label>ATENDIMENTO</Label>
-              <Input
-                value={formData.attendance_number}
-                onChange={(e) => setFormData({ ...formData, attendance_number: e.target.value.toUpperCase() })}
-                placeholder="NÚMERO DO ATENDIMENTO"
-              />
-            </div>
-            <div>
-              <Label>HOSPITAL</Label>
-              <Input
-                value={formData.hospital}
-                onChange={(e) => setFormData({ ...formData, hospital: e.target.value.toUpperCase() })}
-              />
-            </div>
+      {/* Cabeçalho do formulário */}
+      <div className="space-y-2">
+        <div className="grid grid-cols-[1fr,auto,auto,auto] gap-2 text-sm">
+          <div className="flex gap-2">
+            <span className="font-medium">NOME COMPLETO DO PACIENTE:</span>
+            <Input
+              value={formData.patient_name}
+              onChange={(e) => setFormData({ ...formData, patient_name: e.target.value.toUpperCase() })}
+              className="flex-1 h-7 print:border-0 print:border-b print:rounded-none"
+            />
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>RESPONSÁVEL PELA ABERTURA</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label>NOME</Label>
-              <Input
-                value={formData.responsible_name}
-                onChange={(e) => setFormData({ ...formData, responsible_name: e.target.value.toUpperCase() })}
-                placeholder="NOME DO RESPONSÁVEL"
-              />
-            </div>
-            <div>
-              <Label>DATA</Label>
-              <Input
-                type="date"
-                value={formData.opening_date}
-                onChange={(e) => setFormData({ ...formData, opening_date: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label>HORA</Label>
-              <Input
-                type="time"
-                value={formData.opening_time}
-                onChange={(e) => setFormData({ ...formData, opening_time: e.target.value })}
-              />
-            </div>
+          <div className="flex gap-1 items-center whitespace-nowrap">
+            <span className="font-medium">DATA NASCIMENTO:</span>
+            <Input
+              type="date"
+              value={formData.birth_date}
+              onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+              className="w-32 h-7 print:border-0 print:border-b print:rounded-none"
+            />
           </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>CRITÉRIOS DE SIRS</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sirs_temp_high"
-                checked={formData.sirs_temp_high}
-                onCheckedChange={(checked) => setFormData({ ...formData, sirs_temp_high: checked as boolean })}
-              />
-              <Label htmlFor="sirs_temp_high">T.AX. &gt; 38,3°</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sirs_temp_low"
-                checked={formData.sirs_temp_low}
-                onCheckedChange={(checked) => setFormData({ ...formData, sirs_temp_low: checked as boolean })}
-              />
-              <Label htmlFor="sirs_temp_low">T.AX. &lt; 36,0°</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sirs_heart_rate"
-                checked={formData.sirs_heart_rate}
-                onCheckedChange={(checked) => setFormData({ ...formData, sirs_heart_rate: checked as boolean })}
-              />
-              <Label htmlFor="sirs_heart_rate">FC &gt; 90 BPM</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sirs_respiratory_rate"
-                checked={formData.sirs_respiratory_rate}
-                onCheckedChange={(checked) => setFormData({ ...formData, sirs_respiratory_rate: checked as boolean })}
-              />
-              <Label htmlFor="sirs_respiratory_rate">FR &gt; 20 RPM</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sirs_leukocytosis"
-                checked={formData.sirs_leukocytosis}
-                onCheckedChange={(checked) => setFormData({ ...formData, sirs_leukocytosis: checked as boolean })}
-              />
-              <Label htmlFor="sirs_leukocytosis">LEUCOCITOSE &gt; 12000/mm³</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sirs_leukopenia"
-                checked={formData.sirs_leukopenia}
-                onCheckedChange={(checked) => setFormData({ ...formData, sirs_leukopenia: checked as boolean })}
-              />
-              <Label htmlFor="sirs_leukopenia">LEUCOPENIA &lt; 4000/mm³</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sirs_young_cells"
-                checked={formData.sirs_young_cells}
-                onCheckedChange={(checked) => setFormData({ ...formData, sirs_young_cells: checked as boolean })}
-              />
-              <Label htmlFor="sirs_young_cells">&gt; 10% DE CÉLULAS JOVENS</Label>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>CRITÉRIOS DE DISFUNÇÃO ORGÂNICA</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="dysfunction_hypotension"
-                checked={formData.dysfunction_hypotension}
-                onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_hypotension: checked as boolean })}
-              />
-              <Label htmlFor="dysfunction_hypotension" className="text-xs">HIPOTENSÃO (PAS &lt; 90 mmHg)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="dysfunction_oliguria"
-                checked={formData.dysfunction_oliguria}
-                onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_oliguria: checked as boolean })}
-              />
-              <Label htmlFor="dysfunction_oliguria" className="text-xs">OLIGÚRIA (≤ 0,5 mL/kg/h)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="dysfunction_pao2"
-                checked={formData.dysfunction_pao2}
-                onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_pao2: checked as boolean })}
-              />
-              <Label htmlFor="dysfunction_pao2" className="text-xs">PaO2/FiO2 &lt; 300</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="dysfunction_platelets"
-                checked={formData.dysfunction_platelets}
-                onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_platelets: checked as boolean })}
-              />
-              <Label htmlFor="dysfunction_platelets" className="text-xs">PLAQUETAS &lt; 100.000/mm³</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="dysfunction_acidosis"
-                checked={formData.dysfunction_acidosis}
-                onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_acidosis: checked as boolean })}
-              />
-              <Label htmlFor="dysfunction_acidosis" className="text-xs">ACIDOSE METABÓLICA</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="dysfunction_consciousness"
-                checked={formData.dysfunction_consciousness}
-                onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_consciousness: checked as boolean })}
-              />
-              <Label htmlFor="dysfunction_consciousness" className="text-xs">REBAIXAMENTO DE CONSCIÊNCIA</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="dysfunction_bilirubin"
-                checked={formData.dysfunction_bilirubin}
-                onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_bilirubin: checked as boolean })}
-              />
-              <Label htmlFor="dysfunction_bilirubin" className="text-xs">AUMENTO DE BILIRRUBINAS</Label>
-            </div>
-          </CardContent>
-        </Card>
+          <div className="flex gap-1 items-center whitespace-nowrap">
+            <span className="font-medium">ATENDIMENTO:</span>
+            <Input
+              value={formData.attendance_number}
+              onChange={(e) => setFormData({ ...formData, attendance_number: e.target.value.toUpperCase() })}
+              className="w-32 h-7 print:border-0 print:border-b print:rounded-none"
+            />
+          </div>
+          <div className="flex gap-1 items-center whitespace-nowrap">
+            <span className="font-medium">HOSPITAL:</span>
+            <Input
+              value={formData.hospital}
+              onChange={(e) => setFormData({ ...formData, hospital: e.target.value.toUpperCase() })}
+              className="w-48 h-7 print:border-0 print:border-b print:rounded-none"
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-[1fr,auto,auto] gap-2 text-sm">
+          <div className="flex gap-2">
+            <span className="font-medium">RESPONSÁVEL PELA ABERTURA DA FICHA:</span>
+            <Input
+              value={formData.responsible_name}
+              onChange={(e) => setFormData({ ...formData, responsible_name: e.target.value.toUpperCase() })}
+              className="flex-1 h-7 print:border-0 print:border-b print:rounded-none"
+            />
+          </div>
+          <div className="flex gap-1 items-center whitespace-nowrap">
+            <span className="font-medium">DATA:</span>
+            <Input
+              type="date"
+              value={formData.opening_date}
+              onChange={(e) => setFormData({ ...formData, opening_date: e.target.value })}
+              className="w-32 h-7 print:border-0 print:border-b print:rounded-none"
+            />
+          </div>
+          <div className="flex gap-1 items-center whitespace-nowrap">
+            <span className="font-medium">HORA:</span>
+            <Input
+              type="time"
+              value={formData.opening_time}
+              onChange={(e) => setFormData({ ...formData, opening_time: e.target.value })}
+              className="w-24 h-7 print:border-0 print:border-b print:rounded-none"
+            />
+          </div>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>HÁ SUSPEITA OU CONFIRMAÇÃO DE INFECÇÃO?</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <RadioGroup 
-            value={formData.has_infection === null ? "" : formData.has_infection.toString()} 
-            onValueChange={(value) => setFormData({ ...formData, has_infection: value === "true" })}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="true" id="infection_yes" />
-              <Label htmlFor="infection_yes">SIM</Label>
+      {/* Título principal */}
+      <div className="text-center py-2 print:py-1">
+        <h2 className="text-xl font-bold print:text-lg">GERENCIAMENTO DO PROTOCOLO DE SEPSE ADULTO</h2>
+      </div>
+
+      {/* Tabela de critérios SIRS e Disfunção */}
+      <div className="border rounded-lg print:rounded-none overflow-hidden">
+        <div className="text-xs italic px-3 py-1 bg-muted">
+          Marque com um X as opções dos critérios de alerta para SIRS.
+        </div>
+        <div className="grid grid-cols-2 divide-x">
+          {/* Coluna SIRS */}
+          <div className="p-3">
+            <h3 className="font-bold text-sm mb-2">CRITÉRIOS SINAIS DE SIRS</h3>
+            <div className="space-y-1.5">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="sirs_temp_high"
+                  checked={formData.sirs_temp_high}
+                  onCheckedChange={(checked) => setFormData({ ...formData, sirs_temp_high: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="sirs_temp_high" className="text-xs">T.AX. &gt; 38,3°</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="sirs_temp_low"
+                  checked={formData.sirs_temp_low}
+                  onCheckedChange={(checked) => setFormData({ ...formData, sirs_temp_low: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="sirs_temp_low" className="text-xs">T.AX. &lt; 36,0°</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="sirs_heart_rate"
+                  checked={formData.sirs_heart_rate}
+                  onCheckedChange={(checked) => setFormData({ ...formData, sirs_heart_rate: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="sirs_heart_rate" className="text-xs">FC &gt; 90 BPM</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="sirs_respiratory_rate"
+                  checked={formData.sirs_respiratory_rate}
+                  onCheckedChange={(checked) => setFormData({ ...formData, sirs_respiratory_rate: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="sirs_respiratory_rate" className="text-xs">FR &gt; 20 RPM</Label>
+              </div>
+              <div className="text-xs font-semibold mt-2">SE EXAMES DISPONÍVEIS</div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="sirs_leukocytosis"
+                  checked={formData.sirs_leukocytosis}
+                  onCheckedChange={(checked) => setFormData({ ...formData, sirs_leukocytosis: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="sirs_leukocytosis" className="text-xs">LEUCOCITOSE &gt; 12000/mm³</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="sirs_leukopenia"
+                  checked={formData.sirs_leukopenia}
+                  onCheckedChange={(checked) => setFormData({ ...formData, sirs_leukopenia: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="sirs_leukopenia" className="text-xs">LEUCOPENIA &lt; 4000/mm³</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="sirs_young_cells"
+                  checked={formData.sirs_young_cells}
+                  onCheckedChange={(checked) => setFormData({ ...formData, sirs_young_cells: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="sirs_young_cells" className="text-xs">&gt; 10% DE CÉLULAS JOVENS</Label>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="false" id="infection_no" />
-              <Label htmlFor="infection_no">NÃO - EXCLUIR DO PROTOCOLO</Label>
+          </div>
+
+          {/* Coluna Disfunção */}
+          <div className="p-3">
+            <h3 className="font-bold text-sm mb-2">CRITÉRIOS DE DISFUNÇÃO ORGÂNICA</h3>
+            <div className="space-y-1.5">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="dysfunction_hypotension"
+                  checked={formData.dysfunction_hypotension}
+                  onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_hypotension: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="dysfunction_hypotension" className="text-xs">HIPOTENSÃO (PAS &lt; 90 mmHg ou PAM &lt; 65 mmHg ou queda de PA &gt; 40 mmHg)</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="dysfunction_oliguria"
+                  checked={formData.dysfunction_oliguria}
+                  onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_oliguria: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="dysfunction_oliguria" className="text-xs">OLIGÚRIA (≤ 0,5 mL/kg/h) ou elevação da creatinina (&gt; 2 mg/dL)</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="dysfunction_pao2"
+                  checked={formData.dysfunction_pao2}
+                  onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_pao2: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="dysfunction_pao2" className="text-xs">Relação PaO2/FiO2 &lt; 300 ou necessidade de O2 para manter SpO2 &gt; 90%</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="dysfunction_platelets"
+                  checked={formData.dysfunction_platelets}
+                  onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_platelets: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="dysfunction_platelets" className="text-xs">Contagem de plaquetas &lt; 100.000/mm³ ou redução de 50% nos últimos 3 dias</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="dysfunction_acidosis"
+                  checked={formData.dysfunction_acidosis}
+                  onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_acidosis: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="dysfunction_acidosis" className="text-xs">Acidose metabólica inexplicável: déficit de bases ≤ 5,0 mEq/L e lactato acima do valor de referência</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="dysfunction_consciousness"
+                  checked={formData.dysfunction_consciousness}
+                  onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_consciousness: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="dysfunction_consciousness" className="text-xs">Rebaixamento do nível de consciência, agitação, delirium</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="dysfunction_bilirubin"
+                  checked={formData.dysfunction_bilirubin}
+                  onCheckedChange={(checked) => setFormData({ ...formData, dysfunction_bilirubin: checked as boolean })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="dysfunction_bilirubin" className="text-xs">Aumento significativo de bilirrubinas (&gt; 2x o valor de referência)</Label>
+              </div>
             </div>
-          </RadioGroup>
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Texto orientador */}
+      <div className="text-xs italic px-2">
+        Pelo menos dois critérios de SIRS e/ou critério de disfunção orgânica.<br/>
+        Realizar a abertura do protocolo de sepse e comunicar ao médico imediatamente.
+      </div>
+
+      {/* Pergunta sobre infecção */}
+      <div className="border rounded-lg print:rounded-none p-3">
+        <div className="font-bold text-sm mb-2">HÁ SUSPEITA OU CONFIRMAÇÃO DA PRESENÇA DE INFECÇÃO?</div>
+        <RadioGroup 
+          value={formData.has_infection === null ? "" : formData.has_infection.toString()} 
+          onValueChange={(value) => setFormData({ ...formData, has_infection: value === "true" })}
+          className="flex gap-8"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="false" id="infection_no" />
+            <Label htmlFor="infection_no" className="text-sm font-semibold cursor-pointer">NÃO - EXCLUIR DO PROTOCOLO</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="true" id="infection_yes" />
+            <Label htmlFor="infection_yes" className="text-sm font-semibold cursor-pointer">SIM</Label>
+          </div>
+        </RadioGroup>
+      </div>
 
       {formData.has_infection && (
         <>
-          <Card>
-            <CardHeader>
-              <CardTitle>COLETAS E ANTIBIÓTICO</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>HEMOCULTURA - DATA</Label>
-                  <Input
-                    type="date"
-                    value={formData.blood_culture_date}
-                    onChange={(e) => setFormData({ ...formData, blood_culture_date: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>HEMOCULTURA - HORA</Label>
-                  <Input
-                    type="time"
-                    value={formData.blood_culture_time}
-                    onChange={(e) => setFormData({ ...formData, blood_culture_time: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>LACTATO - DATA</Label>
-                  <Input
-                    type="date"
-                    value={formData.lactate_date}
-                    onChange={(e) => setFormData({ ...formData, lactate_date: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>LACTATO - HORA</Label>
-                  <Input
-                    type="time"
-                    value={formData.lactate_time}
-                    onChange={(e) => setFormData({ ...formData, lactate_time: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>ANTIBIÓTICO PRESCRIÇÃO - DATA</Label>
-                  <Input
-                    type="date"
-                    value={formData.antibiotic_prescription_date}
-                    onChange={(e) => setFormData({ ...formData, antibiotic_prescription_date: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>ANTIBIÓTICO PRESCRIÇÃO - HORA</Label>
-                  <Input
-                    type="time"
-                    value={formData.antibiotic_prescription_time}
-                    onChange={(e) => setFormData({ ...formData, antibiotic_prescription_time: e.target.value })}
-                  />
-                </div>
+          {/* Coletas */}
+          <div className="border rounded-lg print:rounded-none p-3 space-y-2">
+            <div className="font-bold text-sm">SOLICITAR E COLETAR PACOTE SEPSE 1 HORA</div>
+            
+            <div className="grid grid-cols-3 gap-3 text-xs">
+              <div className="flex gap-1 items-center">
+                <span className="font-medium">COLETA HEMOCULTURA: DATA</span>
+                <Input
+                  type="date"
+                  value={formData.blood_culture_date}
+                  onChange={(e) => setFormData({ ...formData, blood_culture_date: e.target.value })}
+                  className="h-7 print:border-0 print:border-b print:rounded-none"
+                />
+                <span className="font-medium">ÀS</span>
+                <Input
+                  type="time"
+                  value={formData.blood_culture_time}
+                  onChange={(e) => setFormData({ ...formData, blood_culture_time: e.target.value })}
+                  className="h-7 w-20 print:border-0 print:border-b print:rounded-none"
+                />
               </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>FOCO INFECCIOSO</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
+              <div className="flex gap-1 items-center">
+                <span className="font-medium">COLETA LACTATO: DATA</span>
+                <Input
+                  type="date"
+                  value={formData.lactate_date}
+                  onChange={(e) => setFormData({ ...formData, lactate_date: e.target.value })}
+                  className="h-7 print:border-0 print:border-b print:rounded-none"
+                />
+                <span className="font-medium">ÀS</span>
+                <Input
+                  type="time"
+                  value={formData.lactate_time}
+                  onChange={(e) => setFormData({ ...formData, lactate_time: e.target.value })}
+                  className="h-7 w-20 print:border-0 print:border-b print:rounded-none"
+                />
+              </div>
+
+              <div className="flex gap-1 items-center">
+                <span className="font-medium">ANTIBIÓTICO PRESCRIÇÃO: DATA</span>
+                <Input
+                  type="date"
+                  value={formData.antibiotic_prescription_date}
+                  onChange={(e) => setFormData({ ...formData, antibiotic_prescription_date: e.target.value })}
+                  className="h-7 print:border-0 print:border-b print:rounded-none"
+                />
+                <span className="font-medium">ÀS</span>
+                <Input
+                  type="time"
+                  value={formData.antibiotic_prescription_time}
+                  onChange={(e) => setFormData({ ...formData, antibiotic_prescription_time: e.target.value })}
+                  className="h-7 w-20 print:border-0 print:border-b print:rounded-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Foco infeccioso */}
+          <div className="border rounded-lg print:rounded-none p-3">
+            <div className="font-bold text-sm mb-2">DEFINIR FOCO INFECCIOSO E PRESCREVER ANTIBIOTICOTERAPIA</div>
+            <div className="flex flex-wrap gap-4 text-xs">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="focus_pulmonary"
                   checked={formData.focus_pulmonary}
                   onCheckedChange={(checked) => setFormData({ ...formData, focus_pulmonary: checked as boolean })}
+                  className="h-4 w-4"
                 />
-                <Label htmlFor="focus_pulmonary">PULMONAR</Label>
+                <Label htmlFor="focus_pulmonary">( ) PULMONAR</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="focus_urinary"
                   checked={formData.focus_urinary}
                   onCheckedChange={(checked) => setFormData({ ...formData, focus_urinary: checked as boolean })}
+                  className="h-4 w-4"
                 />
-                <Label htmlFor="focus_urinary">URINÁRIO</Label>
+                <Label htmlFor="focus_urinary">( ) URINÁRIO</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="focus_abdominal"
                   checked={formData.focus_abdominal}
                   onCheckedChange={(checked) => setFormData({ ...formData, focus_abdominal: checked as boolean })}
+                  className="h-4 w-4"
                 />
-                <Label htmlFor="focus_abdominal">ABDOMINAL</Label>
+                <Label htmlFor="focus_abdominal">( ) ABDOMINAL</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="focus_skin"
                   checked={formData.focus_skin}
                   onCheckedChange={(checked) => setFormData({ ...formData, focus_skin: checked as boolean })}
+                  className="h-4 w-4"
                 />
-                <Label htmlFor="focus_skin">CUTÂNEO</Label>
+                <Label htmlFor="focus_skin">( ) CUTÂNEO</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="focus_neurological"
                   checked={formData.focus_neurological}
                   onCheckedChange={(checked) => setFormData({ ...formData, focus_neurological: checked as boolean })}
+                  className="h-4 w-4"
                 />
-                <Label htmlFor="focus_neurological">NEUROLÓGICO</Label>
+                <Label htmlFor="focus_neurological">( ) NEUROLÓGICO</Label>
               </div>
-              <div>
-                <Label>OUTROS</Label>
+              <div className="flex gap-1 items-center">
+                <span>OUTROS:</span>
                 <Input
                   value={formData.focus_other}
                   onChange={(e) => setFormData({ ...formData, focus_other: e.target.value.toUpperCase() })}
-                  placeholder="ESPECIFICAR OUTRO FOCO"
+                  className="h-7 w-48 print:border-0 print:border-b print:rounded-none"
                 />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>HÁ DISFUNÇÃO ORGÂNICA APÓS O RESULTADO DO PACOTE SEPSE?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RadioGroup 
-                value={formData.has_organic_dysfunction === null ? "" : formData.has_organic_dysfunction.toString()} 
-                onValueChange={(value) => setFormData({ ...formData, has_organic_dysfunction: value === "true" })}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="true" id="dysfunction_yes" />
-                  <Label htmlFor="dysfunction_yes">SIM</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="false" id="dysfunction_no" />
-                  <Label htmlFor="dysfunction_no">NÃO - EXCLUIR PROTOCOLO DE SEPSE</Label>
-                </div>
-              </RadioGroup>
-            </CardContent>
-          </Card>
+          {/* Disfunção orgânica após pacote */}
+          <div className="border rounded-lg print:rounded-none p-3">
+            <div className="font-bold text-sm mb-2">HÁ DISFUNÇÃO ORGÂNICA APÓS O RESULTADO DO PACOTE SEPSE?</div>
+            <RadioGroup 
+              value={formData.has_organic_dysfunction === null ? "" : formData.has_organic_dysfunction.toString()} 
+              onValueChange={(value) => setFormData({ ...formData, has_organic_dysfunction: value === "true" })}
+              className="flex gap-8"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="false" id="dysfunction_no" />
+                <Label htmlFor="dysfunction_no" className="text-sm font-semibold cursor-pointer">NÃO - EXCLUIR PROTOCOLO DE SEPSE</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="true" id="dysfunction_yes" />
+                <Label htmlFor="dysfunction_yes" className="text-sm font-semibold cursor-pointer">SIM</Label>
+              </div>
+            </RadioGroup>
+          </div>
 
           {formData.has_organic_dysfunction && (
             <>
-              <Card>
-                <CardHeader>
-                  <CardTitle>REPOSIÇÃO VOLÊMICA</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label>PESO (KG)</Label>
-                      <Input
-                        type="number"
-                        step="0.1"
-                        value={formData.patient_weight}
-                        onChange={(e) => setFormData({ ...formData, patient_weight: e.target.value })}
-                        placeholder="PESO DO PACIENTE"
-                      />
-                    </div>
-                    <div>
-                      <Label>VOLUME ADMINISTRADO (ML)</Label>
-                      <Input
-                        type="number"
-                        value={formData.volume_administered}
-                        onChange={(e) => setFormData({ ...formData, volume_administered: e.target.value })}
-                        placeholder="VOLUME"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Instruções de conduta */}
+              <div className="border rounded-lg print:rounded-none p-3 text-xs space-y-1">
+                <div>* Realizar reposição volêmica com 30 mL/kg de cristaloides e ajustar conforme janelas de perfusão (diurese, débito urinário e tempo de enchimento capilar)</div>
+                <div>* Monitorar o paciente de 1 em 1 hora.</div>
+                <div>* Monitorar débito urinário de 1 em 1 hora, passagem de sonda caso haja necessidade.</div>
+                <div>* Caso PAM estiver &lt; 65 mmHG, iniciar terapia com vasopressor indicado noradrenalina.</div>
+                <div>* Providenciar passagem de acesso central.</div>
+                <div>* Coleta de segunda amostra do lactado.</div>
+              </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>DESTINO E DESFECHO</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label>DESTINO</Label>
-                    <RadioGroup value={formData.destination} onValueChange={(value) => setFormData({ ...formData, destination: value })}>
+              {/* Reposição volêmica */}
+              <div className="border rounded-lg print:rounded-none p-3">
+                <div className="font-bold text-sm mb-2">REPOSIÇÃO VOLÊMICA</div>
+                <div className="flex gap-4 text-xs">
+                  <div className="flex gap-1 items-center">
+                    <span className="font-medium">PESO:</span>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      value={formData.patient_weight}
+                      onChange={(e) => setFormData({ ...formData, patient_weight: e.target.value })}
+                      className="h-7 w-20 print:border-0 print:border-b print:rounded-none"
+                    />
+                  </div>
+                  <div className="flex gap-1 items-center">
+                    <span className="font-medium">VOLUME ADMINISTRADO:</span>
+                    <Input
+                      type="number"
+                      value={formData.volume_administered}
+                      onChange={(e) => setFormData({ ...formData, volume_administered: e.target.value })}
+                      className="h-7 w-24 print:border-0 print:border-b print:rounded-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Destino */}
+              <div className="border rounded-lg print:rounded-none p-3">
+                <div className="font-bold text-sm mb-2">DEFINIR O DESTINO DO PACIENTE PARA UTI OU UNIDADE DE INTERNAÇÃO</div>
+                <div className="space-y-2">
+                  <div className="flex gap-4 items-center text-xs">
+                    <span className="font-medium">DESTINO:</span>
+                    <RadioGroup 
+                      value={formData.destination} 
+                      onValueChange={(value) => setFormData({ ...formData, destination: value })}
+                      className="flex gap-4"
+                    >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="UTI" id="dest_uti" />
-                        <Label htmlFor="dest_uti">UTI</Label>
+                        <Label htmlFor="dest_uti" className="cursor-pointer">( ) UTI</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="Internação" id="dest_intern" />
-                        <Label htmlFor="dest_intern">INTERNAÇÃO</Label>
+                        <Label htmlFor="dest_intern" className="cursor-pointer">( ) INTERNAÇÃO</Label>
                       </div>
                     </RadioGroup>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label>DATA</Label>
+                    <div className="flex gap-1 items-center ml-auto">
+                      <span className="font-medium">DATA:</span>
                       <Input
                         type="date"
                         value={formData.destination_date}
                         onChange={(e) => setFormData({ ...formData, destination_date: e.target.value })}
+                        className="h-7 w-32 print:border-0 print:border-b print:rounded-none"
                       />
-                    </div>
-                    <div>
-                      <Label>HORA</Label>
+                      <span className="font-medium">ÀS:</span>
                       <Input
                         type="time"
                         value={formData.destination_time}
                         onChange={(e) => setFormData({ ...formData, destination_time: e.target.value })}
+                        className="h-7 w-20 print:border-0 print:border-b print:rounded-none"
                       />
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  <div>
-                    <Label>DESFECHO</Label>
-                    <RadioGroup value={formData.outcome} onValueChange={(value) => setFormData({ ...formData, outcome: value })}>
+              {/* Desfecho */}
+              <div className="border rounded-lg print:rounded-none p-3">
+                <div className="space-y-2">
+                  <div className="flex gap-4 items-center text-xs">
+                    <span className="font-medium">DESFECHO:</span>
+                    <RadioGroup 
+                      value={formData.outcome} 
+                      onValueChange={(value) => setFormData({ ...formData, outcome: value })}
+                      className="flex gap-4"
+                    >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="Alta" id="outcome_alta" />
-                        <Label htmlFor="outcome_alta">ALTA</Label>
+                        <Label htmlFor="outcome_alta" className="cursor-pointer">( ) ALTA</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="Óbito" id="outcome_obito" />
-                        <Label htmlFor="outcome_obito">ÓBITO</Label>
+                        <Label htmlFor="outcome_obito" className="cursor-pointer">( ) ÓBITO</Label>
                       </div>
                     </RadioGroup>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label>DATA</Label>
+                    <div className="flex gap-1 items-center ml-auto">
+                      <span className="font-medium">DATA:</span>
                       <Input
                         type="date"
                         value={formData.outcome_date}
                         onChange={(e) => setFormData({ ...formData, outcome_date: e.target.value })}
+                        className="h-7 w-32 print:border-0 print:border-b print:rounded-none"
                       />
-                    </div>
-                    <div>
-                      <Label>HORA</Label>
+                      <span className="font-medium">ÀS:</span>
                       <Input
                         type="time"
                         value={formData.outcome_time}
                         onChange={(e) => setFormData({ ...formData, outcome_time: e.target.value })}
+                        className="h-7 w-20 print:border-0 print:border-b print:rounded-none"
                       />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>OBSERVAÇÕES</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value.toUpperCase() })}
-                    placeholder="OBSERVAÇÕES ADICIONAIS"
-                    rows={4}
-                  />
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </>
           )}
         </>
