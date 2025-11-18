@@ -1,5 +1,4 @@
 import { 
-  ArrowLeft, 
   FileText, 
   Flame, 
   Scan, 
@@ -8,7 +7,8 @@ import {
   FileCheck, 
   DollarSign,
   ClipboardList,
-  Search
+  Search,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -93,29 +93,19 @@ export default function DocumentsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="bg-gradient-to-br from-background via-background to-muted/20">
       <div className="container mx-auto p-6 md:p-8 space-y-8 max-w-7xl">
         {/* Header */}
-        <div className="flex items-start gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/")}
-            className="shrink-0 hover-scale mt-1"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              DOCUMENTOS
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Central de documentos médicos institucionais
-            </p>
-            <Badge variant="secondary" className="mt-2">
-              {documents.length} categorias disponíveis
-            </Badge>
-          </div>
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            DOCUMENTOS
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Central de documentos médicos institucionais
+          </p>
+          <Badge variant="secondary" className="mt-2">
+            {documents.length} categorias disponíveis
+          </Badge>
         </div>
 
         {/* Search Bar */}
@@ -178,7 +168,7 @@ export default function DocumentsPage() {
                     >
                       <div className="flex items-center justify-between">
                         <span>Acessar documentos</span>
-                        <ArrowLeft className="h-4 w-4 rotate-180 group-hover:translate-x-1 transition-transform" />
+                        <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </Button>
                   </div>
