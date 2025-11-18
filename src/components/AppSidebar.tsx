@@ -110,11 +110,9 @@ const menuItems = [
 ];
 
 export function AppSidebar({ 
-  onOpenHandover, 
-  onOpenSepsisProtocol 
+  onOpenHandover
 }: { 
   onOpenHandover?: () => void;
-  onOpenSepsisProtocol?: () => void;
 }) {
   const { open, setOpen, state } = useSidebar();
   const navigate = useNavigate();
@@ -140,8 +138,8 @@ export function AppSidebar({
         if (isMobile) {
           setOpen(false);
         }
-      } else if (item.action === 'openSepsisProtocol' && onOpenSepsisProtocol) {
-        onOpenSepsisProtocol();
+      } else if (item.action === 'openSepsisProtocol') {
+        navigate('/sepsis-protocol');
         if (isMobile) {
           setOpen(false);
         }
