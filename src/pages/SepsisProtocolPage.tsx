@@ -1,17 +1,13 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Save, Printer } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Save, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { usePatients } from "@/hooks/usePatients";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function SepsisProtocolPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const patientId = searchParams.get("patientId");
-  const { patients } = usePatients();
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -62,24 +58,12 @@ export default function SepsisProtocolPage() {
     notes: "",
   });
 
-  useEffect(() => {
-    if (patientId) {
-      const patient = patients.find(p => p.id === patientId);
-      if (patient) {
-        setFormData(prev => ({
-          ...prev,
-          patient_name: patient.name || "",
-          birth_date: patient.admissionDate ? new Date(patient.admissionDate).toISOString().split('T')[0] : "",
-        }));
-      }
-    }
-  }, [patientId, patients]);
 
   const handleSave = async () => {
     try {
       const { error } = await supabase.from("sepsis_protocols").insert({
         ...formData,
-        patient_id: patientId || null,
+        patient_id: null,
         created_by: user?.id,
         birth_date: formData.birth_date || null,
         patient_weight: formData.patient_weight ? parseFloat(formData.patient_weight) : null,
@@ -92,8 +76,6 @@ export default function SepsisProtocolPage() {
         title: "Protocolo salvo",
         description: "Protocolo de sepse salvo com sucesso",
       });
-      
-      navigate("/");
     } catch (error) {
       console.error("Error saving sepsis protocol:", error);
       toast({
@@ -104,7 +86,7 @@ export default function SepsisProtocolPage() {
     }
   };
 
-  const handlePrint = () => {
+  const handleDownload = () => {
     window.print();
   };
 
@@ -122,9 +104,9 @@ export default function SepsisProtocolPage() {
             <Save className="mr-2 h-4 w-4" />
             SALVAR
           </Button>
-          <Button variant="outline" onClick={handlePrint}>
-            <Printer className="mr-2 h-4 w-4" />
-            IMPRIMIR
+          <Button variant="outline" onClick={handleDownload}>
+            <Download className="mr-2 h-4 w-4" />
+            DOWNLOAD
           </Button>
         </div>
       </div>
