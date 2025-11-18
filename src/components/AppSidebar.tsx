@@ -58,10 +58,10 @@ const menuItems = [
     title: "DOCUMENTOS",
     icon: FolderOpen,
     items: [
-      { name: "PROTOCOLO SEPSE", link: null, action: "openSepsisProtocol" },
-      { name: "TOMOGRAFIAS", link: null },
+      { name: "PROTOCOLO SEPSE", link: "/sepsis-protocol" },
+      { name: "TOMOGRAFIAS", link: "/documents/tomografias" },
       { name: "LISTAS OPME", link: null },
-      { name: "HEMODERIVADOS", link: null },
+      { name: "HEMODERIVADOS", link: "/documents/hemoderivados" },
       { name: "REGULAÇÕES SUS", link: null },
       { name: "ALTO CUSTO", link: null },
     ],
