@@ -17,6 +17,7 @@ import HemoderivadosPage from "./pages/HemoderivadosPage";
 import RegulacoesPage from "./pages/RegulacoesPage";
 import OpmePage from "./pages/OpmePage";
 import AltoCustoPage from "./pages/AltoCustoPage";
+import SadtPage from "./pages/SadtPage";
 import AuthPage from "./pages/AuthPage";
 
 const queryClient = new QueryClient();
@@ -121,6 +122,14 @@ const App = () => (
           element={
             <ProtectedRoute>
               <AltoCustoPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documents/sadt"
+          element={
+            <ProtectedRoute>
+              <SadtPage />
             </ProtectedRoute>
           }
         />

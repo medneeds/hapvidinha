@@ -64,6 +64,7 @@ const menuItems = [
       { name: "HEMODERIVADOS", link: "/documents/hemoderivados" },
       { name: "REGULAÇÕES SUS", link: "/documents/regulacoes" },
       { name: "ALTO CUSTO", link: "/documents/alto-custo" },
+      { name: "SADT", link: "/documents/sadt" },
     ],
   },
   {

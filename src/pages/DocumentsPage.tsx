@@ -12,6 +12,7 @@ export default function DocumentsPage() {
     { id: "hemoderivados", title: "Hemoderivados", route: "/documents/hemoderivados" },
     { id: "regulacoes", title: "Regulações SUS", route: "/documents/regulacoes" },
     { id: "alto-custo", title: "Alto Custo", route: "/documents/alto-custo" },
+    { id: "sadt", title: "SADT", route: "/documents/sadt" },
   ];
 
   return (
