@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 
 export default function TomografiasPage() {
   const navigate = useNavigate();
@@ -19,7 +18,7 @@ export default function TomografiasPage() {
     { title: "FICHA DE ACOMPANHAMENTO - TC", file: "ficha-acompanhamento-tc.pdf" },
   ];
 
-  const handleDownload = (fileName: string, title: string) => {
+  const handleDownload = (fileName: string) => {
     const link = document.createElement('a');
     link.href = `/documents/tomografias/${fileName}`;
     link.download = fileName;
@@ -38,17 +37,15 @@ export default function TomografiasPage() {
           <h1 className="text-2xl font-bold">TOMOGRAFIAS</h1>
         </div>
 
-        <div className="grid gap-4">
+        <div className="bg-card border rounded-lg divide-y">
           {documents.map((doc) => (
-            <Card key={doc.file} className="p-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">{doc.title}</h3>
-                <Button onClick={() => handleDownload(doc.file, doc.title)}>
-                  <Download className="mr-2 h-4 w-4" />
-                  DOWNLOAD
-                </Button>
-              </div>
-            </Card>
+            <div key={doc.file} className="p-4 flex items-center justify-between hover:bg-accent/50 transition-colors">
+              <span className="font-medium">{doc.title}</span>
+              <Button onClick={() => handleDownload(doc.file)} size="sm">
+                <Download className="mr-2 h-4 w-4" />
+                DOWNLOAD
+              </Button>
+            </div>
           ))}
         </div>
       </div>
