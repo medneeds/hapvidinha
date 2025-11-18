@@ -60,7 +60,7 @@ const menuItems = [
     items: [
       { name: "PROTOCOLO SEPSE", link: "/sepsis-protocol" },
       { name: "TOMOGRAFIAS", link: "/documents/tomografias" },
-      { name: "LISTAS OPME", link: null },
+      { name: "LISTAS OPME", link: "/documents/opme" },
       { name: "HEMODERIVADOS", link: "/documents/hemoderivados" },
       { name: "REGULAÇÕES SUS", link: "/documents/regulacoes" },
       { name: "ALTO CUSTO", link: null },

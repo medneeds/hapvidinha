@@ -1,0 +1,57 @@
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export default function OpmePage() {
+  const navigate = useNavigate();
+
+  const documents = [
+    { title: "IMPLANTE DE DUPLO-J", file: "implante-duplo-j.odt" },
+    { title: "GASTROSTOMIA ENDOSCÓPICA", file: "gastrostomia-endoscopica.doc" },
+    { title: "ANGIOGRAFIA CEREBRAL", file: "angiografia-cerebral.doc" },
+    { title: "ANGIOGRAFIA", file: "angiografia.doc" },
+    { title: "ATC CATE", file: "atc-cate.doc" },
+    { title: "BUCOMAXILO", file: "bucomaxilo.doc" },
+    { title: "CATETERISMO", file: "cateterismo.doc" },
+    { title: "CPRE", file: "cpre.doc" },
+    { title: "HSD", file: "hsd.doc" },
+  ];
+
+  const handleDownload = (fileName: string) => {
+    const link = document.createElement('a');
+    link.href = `/documents/opme/${fileName}`;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+      <div className="max-w-2xl w-full space-y-8">
+        <div className="flex items-center gap-4 mb-8">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/documents")}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-2xl font-bold">LISTAS OPME</h1>
+        </div>
+
+        <div className="bg-card border rounded-lg p-8 space-y-6">
+          <div className="grid gap-4">
+            {documents.map((doc) => (
+              <Button 
+                key={doc.file}
+                size="lg"
+                className="w-full h-16 text-lg"
+                onClick={() => handleDownload(doc.file)}
+              >
+                <Download className="mr-2 h-5 w-5" />
+                {doc.title}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
