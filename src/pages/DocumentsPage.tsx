@@ -1,10 +1,19 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
 export default function DocumentsPage() {
   const navigate = useNavigate();
+
+  const documents = [
+    { id: "sepse", title: "Protocolo SEPSE", route: "/sepsis-protocol" },
+    { id: "tomografias", title: "Tomografias", route: "/documents/tomografias" },
+    { id: "opme", title: "Listas OPME", route: "/documents/opme" },
+    { id: "hemoderivados", title: "Hemoderivados", route: "/documents/hemoderivados" },
+    { id: "regulacoes", title: "Regulações SUS", route: "/documents/regulacoes" },
+    { id: "alto-custo", title: "Alto Custo", route: "/documents/alto-custo" },
+  ];
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -18,26 +27,34 @@ export default function DocumentsPage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold mb-2">Documentos</h1>
+          <h1 className="text-3xl font-bold mb-2">DOCUMENTOS</h1>
           <p className="text-muted-foreground">
-            Gerencie documentos médicos e arquivos
+            Documentos médicos institucionais
           </p>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Área de Documentos</CardTitle>
-          <CardDescription>
-            Esta seção está em desenvolvimento
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Funcionalidades de gerenciamento de documentos serão adicionadas aqui.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {documents.map((doc) => (
+          <Card 
+            key={doc.id}
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => navigate(doc.route)}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                {doc.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full">
+                Acessar Documento
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
