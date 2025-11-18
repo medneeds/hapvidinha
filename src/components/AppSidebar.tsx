@@ -57,7 +57,14 @@ const menuItems = [
   {
     title: "DOCUMENTOS",
     icon: FolderOpen,
-    link: "/documents",
+    items: [
+      { name: "PROTOCOLO SEPSE", link: null },
+      { name: "TOMOGRAFIAS", link: null },
+      { name: "LISTAS OPME", link: null },
+      { name: "HEMODERIVADOS", link: null },
+      { name: "REGULAÇÕES SUS", link: null },
+      { name: "ALTO CUSTO", link: null },
+    ],
   },
   {
     title: "PASSAGENS",
