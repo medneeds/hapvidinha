@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   LayoutGrid,
   User,
+  FolderOpen,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
@@ -52,6 +53,11 @@ const menuItems = [
     title: "VERSÕES",
     icon: LayoutGrid,
     link: "/versions",
+  },
+  {
+    title: "DOCUMENTOS",
+    icon: FolderOpen,
+    link: "/documents",
   },
   {
     title: "PASSAGENS",

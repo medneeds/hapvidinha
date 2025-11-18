@@ -10,6 +10,7 @@ import ResourcesPage from "./pages/ResourcesPage";
 import MedicalCodesPage from "./pages/MedicalCodesPage";
 import HandoversPage from "./pages/HandoversPage";
 import VersionsPage from "./pages/VersionsPage";
+import DocumentsPage from "./pages/DocumentsPage";
 import AuthPage from "./pages/AuthPage";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,14 @@ const App = () => (
           element={
             <ProtectedRoute>
               <VersionsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documents"
+          element={
+            <ProtectedRoute>
+              <DocumentsPage />
             </ProtectedRoute>
           }
         />
