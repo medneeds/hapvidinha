@@ -6,7 +6,8 @@ export default function SadtPage() {
   const navigate = useNavigate();
 
   const documents = [
-    { file: "hapvida-guia-sp-sadt.pdf", title: "Guia SP-SADT Hapvida" },
+    { file: "hapvida-guia-sp-sadt.pdf", title: "Guia SP-SADT Hapvida - Formato Retrato" },
+    { file: "hapvida-guia-sp-sadt-paisagem.pdf", title: "Guia SP-SADT Hapvida - Formato Paisagem" },
   ];
 
   const handleDownload = (fileName: string) => {
