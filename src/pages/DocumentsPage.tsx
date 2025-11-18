@@ -38,8 +38,7 @@ export default function DocumentsPage() {
         {documents.map((doc) => (
           <Card 
             key={doc.id}
-            className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => navigate(doc.route)}
+            className="hover:shadow-lg transition-shadow"
           >
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -48,7 +47,11 @@ export default function DocumentsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" className="w-full">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => navigate(doc.route)}
+              >
                 Acessar Documento
               </Button>
             </CardContent>
