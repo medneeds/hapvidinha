@@ -16,6 +16,7 @@ import TomografiasPage from "./pages/TomografiasPage";
 import HemoderivadosPage from "./pages/HemoderivadosPage";
 import RegulacoesPage from "./pages/RegulacoesPage";
 import OpmePage from "./pages/OpmePage";
+import AltoCustoPage from "./pages/AltoCustoPage";
 import AuthPage from "./pages/AuthPage";
 
 const queryClient = new QueryClient();
@@ -112,6 +113,14 @@ const App = () => (
           element={
             <ProtectedRoute>
               <OpmePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documents/alto-custo"
+          element={
+            <ProtectedRoute>
+              <AltoCustoPage />
             </ProtectedRoute>
           }
         />

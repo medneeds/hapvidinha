@@ -63,7 +63,7 @@ const menuItems = [
       { name: "LISTAS OPME", link: "/documents/opme" },
       { name: "HEMODERIVADOS", link: "/documents/hemoderivados" },
       { name: "REGULAÇÕES SUS", link: "/documents/regulacoes" },
-      { name: "ALTO CUSTO", link: null },
+      { name: "ALTO CUSTO", link: "/documents/alto-custo" },
     ],
   },
   {
