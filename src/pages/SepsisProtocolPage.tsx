@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, Printer, ExternalLink } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function SepsisProtocolPage() {
@@ -13,19 +13,6 @@ export default function SepsisProtocolPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
-
-  const handlePrint = () => {
-    const printWindow = window.open(pdfUrl, '_blank');
-    if (printWindow) {
-      printWindow.addEventListener('load', () => {
-        printWindow.print();
-      });
-    }
-  };
-
-  const handleOpenInNew = () => {
-    window.open(pdfUrl, '_blank');
   };
 
   return (
@@ -48,27 +35,7 @@ export default function SepsisProtocolPage() {
 
           <div className="grid gap-4">
             <Button 
-              size="lg" 
-              className="w-full h-16 text-lg"
-              onClick={handleOpenInNew}
-            >
-              <ExternalLink className="mr-2 h-5 w-5" />
-              ABRIR DOCUMENTO
-            </Button>
-
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="w-full h-16 text-lg"
-              onClick={handlePrint}
-            >
-              <Printer className="mr-2 h-5 w-5" />
-              IMPRIMIR
-            </Button>
-
-            <Button 
               size="lg"
-              variant="outline"
               className="w-full h-16 text-lg"
               onClick={handleDownload}
             >
