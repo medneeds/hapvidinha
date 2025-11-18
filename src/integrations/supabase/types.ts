@@ -83,6 +83,30 @@ export type Database = {
         }
         Relationships: []
       }
+      patient_versions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          snapshot_data: Json
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description: string
+          id?: string
+          snapshot_data: Json
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          snapshot_data?: Json
+        }
+        Relationships: []
+      }
       patients: {
         Row: {
           admission_date: string | null

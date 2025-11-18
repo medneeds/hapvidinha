@@ -49,6 +49,11 @@ const menuItems = [
     link: "/",
   },
   {
+    title: "VERSÕES",
+    icon: LayoutGrid,
+    link: "/versions",
+  },
+  {
     title: "PASSAGENS",
     icon: ClipboardCheck,
     items: [
