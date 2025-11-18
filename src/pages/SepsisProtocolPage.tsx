@@ -29,36 +29,54 @@ export default function SepsisProtocolPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex items-center justify-between p-4 border-b bg-background sticky top-0 z-10">
-        <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+      <div className="max-w-2xl w-full space-y-8">
+        <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-xl font-bold">PROTOCOLO SEPSE ADULTO</h1>
+          <h1 className="text-2xl font-bold">PROTOCOLO SEPSE ADULTO</h1>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleOpenInNew}>
-            <ExternalLink className="mr-2 h-4 w-4" />
-            ABRIR
-          </Button>
-          <Button variant="outline" onClick={handlePrint}>
-            <Printer className="mr-2 h-4 w-4" />
-            IMPRIMIR
-          </Button>
-          <Button onClick={handleDownload}>
-            <Download className="mr-2 h-4 w-4" />
-            DOWNLOAD
-          </Button>
-        </div>
-      </div>
 
-      <div className="w-full h-[calc(100vh-73px)]">
-        <iframe
-          src={pdfUrl}
-          className="w-full h-full border-0"
-          title="Protocolo SEPSE Adulto"
-        />
+        <div className="bg-card border rounded-lg p-8 space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-semibold">Documento Disponível</h2>
+            <p className="text-muted-foreground">
+              Escolha uma das opções abaixo para acessar o protocolo
+            </p>
+          </div>
+
+          <div className="grid gap-4">
+            <Button 
+              size="lg" 
+              className="w-full h-16 text-lg"
+              onClick={handleOpenInNew}
+            >
+              <ExternalLink className="mr-2 h-5 w-5" />
+              ABRIR DOCUMENTO
+            </Button>
+
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="w-full h-16 text-lg"
+              onClick={handlePrint}
+            >
+              <Printer className="mr-2 h-5 w-5" />
+              IMPRIMIR
+            </Button>
+
+            <Button 
+              size="lg"
+              variant="outline"
+              className="w-full h-16 text-lg"
+              onClick={handleDownload}
+            >
+              <Download className="mr-2 h-5 w-5" />
+              DOWNLOAD PDF
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
