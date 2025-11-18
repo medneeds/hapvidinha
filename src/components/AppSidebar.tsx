@@ -5,7 +5,7 @@ import {
   LogOut,
   ClipboardCheck,
   LayoutDashboard,
-  LayoutGrid,
+  History,
   User,
   FolderOpen,
 } from "lucide-react";
@@ -51,7 +51,7 @@ const menuItems = [
   },
   {
     title: "VERSÕES",
-    icon: LayoutGrid,
+    icon: History,
     link: "/versions",
   },
   {
