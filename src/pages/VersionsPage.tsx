@@ -3,7 +3,9 @@ import { usePatientVersions } from "@/hooks/usePatientVersions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Clock, RotateCcw, Trash2, ArrowLeft } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Clock, RotateCcw, Trash2, ArrowLeft, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { usePatients } from "@/hooks/usePatients";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +19,8 @@ export default function VersionsPage() {
   const { toast } = useToast();
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [previewVersion, setPreviewVersion] = useState<typeof versions[0] | null>(null);
 
   useEffect(() => {
     fetchVersions();
@@ -25,6 +29,11 @@ export default function VersionsPage() {
   const handleRestore = (versionId: string) => {
     setSelectedVersion(versionId);
     setRestoreDialogOpen(true);
+  };
+
+  const handlePreview = (version: typeof versions[0]) => {
+    setPreviewVersion(version);
+    setPreviewDialogOpen(true);
   };
 
   const confirmRestore = async () => {
@@ -128,6 +137,14 @@ export default function VersionsPage() {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => handlePreview(version)}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Prévia
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleRestore(version.id)}
                     >
                       <RotateCcw className="h-4 w-4 mr-2" />
@@ -164,6 +181,66 @@ export default function VersionsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Prévia da Versão</DialogTitle>
+            <DialogDescription>
+              {previewVersion?.description} • {previewVersion?.snapshot_data.length} pacientes
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            {previewVersion?.snapshot_data.map((patient, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        LEITO {patient.bedNumber} - {patient.name}
+                        {patient.age && <span className="text-sm text-muted-foreground">({patient.age} ANOS)</span>}
+                      </CardTitle>
+                      <Badge variant="outline">{patient.sector}</Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {patient.diagnoses && (
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground mb-1">HIPÓTESES DIAGNÓSTICAS:</p>
+                      <p className="text-sm">{patient.diagnoses}</p>
+                    </div>
+                  )}
+                  {patient.medicalHistory && (
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground mb-1">ANTECEDENTES:</p>
+                      <p className="text-sm">{patient.medicalHistory}</p>
+                    </div>
+                  )}
+                  {patient.relevantExams && (
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground mb-1">EXAMES RELEVANTES:</p>
+                      <p className="text-sm">{patient.relevantExams}</p>
+                    </div>
+                  )}
+                  {patient.pendencies && (
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground mb-1">PENDÊNCIAS:</p>
+                      <p className="text-sm">{patient.pendencies}</p>
+                    </div>
+                  )}
+                  {patient.schedule && (
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground mb-1">PROGRAMAÇÃO:</p>
+                      <p className="text-sm">{patient.schedule}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
