@@ -42,7 +42,10 @@ export default function DocumentsPage() {
             </div>
             <Button 
               className="w-full"
-              onClick={() => navigate(doc.route)}
+              onClick={() => {
+                console.log('Navegando para:', doc.route);
+                navigate(doc.route);
+              }}
             >
               ACESSAR
             </Button>
