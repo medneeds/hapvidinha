@@ -14,6 +14,7 @@ import DocumentsPage from "./pages/DocumentsPage";
 import SepsisProtocolPage from "./pages/SepsisProtocolPage";
 import TomografiasPage from "./pages/TomografiasPage";
 import HemoderivadosPage from "./pages/HemoderivadosPage";
+import RegulacoesPage from "./pages/RegulacoesPage";
 import AuthPage from "./pages/AuthPage";
 
 const queryClient = new QueryClient();
@@ -94,6 +95,14 @@ const App = () => (
           element={
             <ProtectedRoute>
               <HemoderivadosPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documents/regulacoes"
+          element={
+            <ProtectedRoute>
+              <RegulacoesPage />
             </ProtectedRoute>
           }
         />
