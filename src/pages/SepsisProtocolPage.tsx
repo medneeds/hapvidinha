@@ -87,12 +87,7 @@ export default function SepsisProtocolPage() {
   };
 
   const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = '/documents/protocolo-sepse-adulto.pdf';
-    link.download = 'PROTOCOLO_SEPSE_ADULTO.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.print();
   };
 
   return (
