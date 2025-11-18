@@ -62,7 +62,7 @@ const menuItems = [
       { name: "TOMOGRAFIAS", link: "/documents/tomografias" },
       { name: "LISTAS OPME", link: null },
       { name: "HEMODERIVADOS", link: "/documents/hemoderivados" },
-      { name: "REGULAÇÕES SUS", link: null },
+      { name: "REGULAÇÕES SUS", link: "/documents/regulacoes" },
       { name: "ALTO CUSTO", link: null },
     ],
   },
