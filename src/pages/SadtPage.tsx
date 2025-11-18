@@ -6,7 +6,7 @@ export default function SadtPage() {
   const navigate = useNavigate();
 
   const documents = [
-    // Adicionar documentos aqui
+    { file: "hapvida-guia-sp-sadt.pdf", title: "Guia SP-SADT Hapvida" },
   ];
 
   const handleDownload = (fileName: string) => {
