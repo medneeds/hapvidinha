@@ -38,10 +38,6 @@ export default function TomografiasPage() {
         </div>
 
         <div className="bg-card border rounded-lg p-8 space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-semibold">Tomografias</h2>
-          </div>
-
           <div className="grid gap-4">
             {documents.map((doc) => (
               <Button 
