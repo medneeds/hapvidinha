@@ -4,7 +4,7 @@ import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { usePatients } from "@/hooks/usePatients";
+import { usePatientVersions } from "@/hooks/usePatientVersions";
 import {
   DndContext,
   closestCenter,
@@ -141,6 +142,7 @@ const Index = () => {
   const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
+  const { saveVersion } = usePatientVersions();
 
   // Sensors for drag and drop
   const sensors = useSensors(
@@ -476,6 +478,14 @@ const Index = () => {
     });
   };
 
+  const handleSaveVersion = async () => {
+    try {
+      await saveVersion(patients);
+    } catch (error) {
+      console.error('Failed to save version:', error);
+    }
+  };
+
   const handlePrint = () => {
     // Imprime direto no modo detalhado
     setPrintMode('detailed');
@@ -598,6 +608,15 @@ const Index = () => {
                     title="Refazer ação"
                   >
                     <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleSaveVersion}
+                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                    title="Salvar versão"
+                  >
+                    <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
                   <Button
                     variant={selectionMode ? "default" : "outline"}
