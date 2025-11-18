@@ -15,6 +15,12 @@ export default function OpmePage() {
     { title: "CATETERISMO", file: "cateterismo.doc" },
     { title: "CPRE", file: "cpre.doc" },
     { title: "HSD", file: "hsd.doc" },
+    { title: "REVISÃO DE DVP", file: "revisao-dvp.doc" },
+    { title: "TROMBECTOMIA MECÂNICA", file: "trombectomia-mecanica.doc" },
+    { title: "IMPLANTE DE PERMCATH", file: "implante-permcath.odt" },
+    { title: "OSTEOTOMIAS ALVÉOLO-PALATINAS", file: "osteotomias-alveolo-palatinas.doc" },
+    { title: "PUNÇÃO GUIADA POR TC", file: "puncao-guiada-tc.doc" },
+    { title: "PUNÇÃO LÍQUOR", file: "puncao-liquor.doc" },
   ];
 
   const handleDownload = (fileName: string) => {
