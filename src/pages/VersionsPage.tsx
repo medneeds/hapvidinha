@@ -3,7 +3,7 @@ import { usePatientVersions } from "@/hooks/usePatientVersions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Clock, RotateCcw, Trash2 } from "lucide-react";
+import { Clock, RotateCcw, Trash2, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { usePatients } from "@/hooks/usePatients";
 import { useNavigate } from "react-router-dom";
@@ -85,11 +85,21 @@ export default function VersionsPage() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Versões Salvas</h1>
-        <p className="text-muted-foreground">
-          Histórico de versões do mapa de pacientes
-        </p>
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/")}
+          className="shrink-0"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Versões Salvas</h1>
+          <p className="text-muted-foreground">
+            Histórico de versões do mapa de pacientes
+          </p>
+        </div>
       </div>
 
       {versions.length === 0 ? (
