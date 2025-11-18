@@ -185,6 +185,176 @@ export type Database = {
         }
         Relationships: []
       }
+      sepsis_protocols: {
+        Row: {
+          antibiotic_prescription_date: string | null
+          antibiotic_prescription_time: string | null
+          attendance_number: string | null
+          birth_date: string | null
+          blood_culture_date: string | null
+          blood_culture_time: string | null
+          created_at: string
+          created_by: string | null
+          destination: string | null
+          destination_date: string | null
+          destination_time: string | null
+          dysfunction_acidosis: boolean | null
+          dysfunction_bilirubin: boolean | null
+          dysfunction_consciousness: boolean | null
+          dysfunction_excluded_date: string | null
+          dysfunction_hypotension: boolean | null
+          dysfunction_oliguria: boolean | null
+          dysfunction_pao2: boolean | null
+          dysfunction_platelets: boolean | null
+          focus_abdominal: boolean | null
+          focus_neurological: boolean | null
+          focus_other: string | null
+          focus_pulmonary: boolean | null
+          focus_skin: boolean | null
+          focus_urinary: boolean | null
+          has_infection: boolean | null
+          has_organic_dysfunction: boolean | null
+          hospital: string | null
+          id: string
+          infection_excluded_date: string | null
+          lactate_date: string | null
+          lactate_time: string | null
+          notes: string | null
+          opening_date: string | null
+          opening_time: string | null
+          outcome: string | null
+          outcome_date: string | null
+          outcome_time: string | null
+          patient_id: string | null
+          patient_name: string
+          patient_weight: number | null
+          responsible_name: string | null
+          sirs_heart_rate: boolean | null
+          sirs_leukocytosis: boolean | null
+          sirs_leukopenia: boolean | null
+          sirs_respiratory_rate: boolean | null
+          sirs_temp_high: boolean | null
+          sirs_temp_low: boolean | null
+          sirs_young_cells: boolean | null
+          updated_at: string
+          volume_administered: number | null
+        }
+        Insert: {
+          antibiotic_prescription_date?: string | null
+          antibiotic_prescription_time?: string | null
+          attendance_number?: string | null
+          birth_date?: string | null
+          blood_culture_date?: string | null
+          blood_culture_time?: string | null
+          created_at?: string
+          created_by?: string | null
+          destination?: string | null
+          destination_date?: string | null
+          destination_time?: string | null
+          dysfunction_acidosis?: boolean | null
+          dysfunction_bilirubin?: boolean | null
+          dysfunction_consciousness?: boolean | null
+          dysfunction_excluded_date?: string | null
+          dysfunction_hypotension?: boolean | null
+          dysfunction_oliguria?: boolean | null
+          dysfunction_pao2?: boolean | null
+          dysfunction_platelets?: boolean | null
+          focus_abdominal?: boolean | null
+          focus_neurological?: boolean | null
+          focus_other?: string | null
+          focus_pulmonary?: boolean | null
+          focus_skin?: boolean | null
+          focus_urinary?: boolean | null
+          has_infection?: boolean | null
+          has_organic_dysfunction?: boolean | null
+          hospital?: string | null
+          id?: string
+          infection_excluded_date?: string | null
+          lactate_date?: string | null
+          lactate_time?: string | null
+          notes?: string | null
+          opening_date?: string | null
+          opening_time?: string | null
+          outcome?: string | null
+          outcome_date?: string | null
+          outcome_time?: string | null
+          patient_id?: string | null
+          patient_name: string
+          patient_weight?: number | null
+          responsible_name?: string | null
+          sirs_heart_rate?: boolean | null
+          sirs_leukocytosis?: boolean | null
+          sirs_leukopenia?: boolean | null
+          sirs_respiratory_rate?: boolean | null
+          sirs_temp_high?: boolean | null
+          sirs_temp_low?: boolean | null
+          sirs_young_cells?: boolean | null
+          updated_at?: string
+          volume_administered?: number | null
+        }
+        Update: {
+          antibiotic_prescription_date?: string | null
+          antibiotic_prescription_time?: string | null
+          attendance_number?: string | null
+          birth_date?: string | null
+          blood_culture_date?: string | null
+          blood_culture_time?: string | null
+          created_at?: string
+          created_by?: string | null
+          destination?: string | null
+          destination_date?: string | null
+          destination_time?: string | null
+          dysfunction_acidosis?: boolean | null
+          dysfunction_bilirubin?: boolean | null
+          dysfunction_consciousness?: boolean | null
+          dysfunction_excluded_date?: string | null
+          dysfunction_hypotension?: boolean | null
+          dysfunction_oliguria?: boolean | null
+          dysfunction_pao2?: boolean | null
+          dysfunction_platelets?: boolean | null
+          focus_abdominal?: boolean | null
+          focus_neurological?: boolean | null
+          focus_other?: string | null
+          focus_pulmonary?: boolean | null
+          focus_skin?: boolean | null
+          focus_urinary?: boolean | null
+          has_infection?: boolean | null
+          has_organic_dysfunction?: boolean | null
+          hospital?: string | null
+          id?: string
+          infection_excluded_date?: string | null
+          lactate_date?: string | null
+          lactate_time?: string | null
+          notes?: string | null
+          opening_date?: string | null
+          opening_time?: string | null
+          outcome?: string | null
+          outcome_date?: string | null
+          outcome_time?: string | null
+          patient_id?: string | null
+          patient_name?: string
+          patient_weight?: number | null
+          responsible_name?: string | null
+          sirs_heart_rate?: boolean | null
+          sirs_leukocytosis?: boolean | null
+          sirs_leukopenia?: boolean | null
+          sirs_respiratory_rate?: boolean | null
+          sirs_temp_high?: boolean | null
+          sirs_temp_low?: boolean | null
+          sirs_young_cells?: boolean | null
+          updated_at?: string
+          volume_administered?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sepsis_protocols_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shift_handovers: {
         Row: {
           created_at: string

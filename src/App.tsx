@@ -11,6 +11,7 @@ import MedicalCodesPage from "./pages/MedicalCodesPage";
 import HandoversPage from "./pages/HandoversPage";
 import VersionsPage from "./pages/VersionsPage";
 import DocumentsPage from "./pages/DocumentsPage";
+import SepsisProtocolPage from "./pages/SepsisProtocolPage";
 import AuthPage from "./pages/AuthPage";
 
 const queryClient = new QueryClient();
@@ -67,6 +68,14 @@ const App = () => (
           element={
             <ProtectedRoute>
               <DocumentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sepsis-protocol"
+          element={
+            <ProtectedRoute>
+              <SepsisProtocolPage />
             </ProtectedRoute>
           }
         />

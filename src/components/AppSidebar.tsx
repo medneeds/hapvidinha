@@ -58,7 +58,7 @@ const menuItems = [
     title: "DOCUMENTOS",
     icon: FolderOpen,
     items: [
-      { name: "PROTOCOLO SEPSE", link: null },
+      { name: "PROTOCOLO SEPSE", link: null, action: "openSepsisProtocol" },
       { name: "TOMOGRAFIAS", link: null },
       { name: "LISTAS OPME", link: null },
       { name: "HEMODERIVADOS", link: null },
@@ -109,7 +109,13 @@ const menuItems = [
   },
 ];
 
-export function AppSidebar({ onOpenHandover }: { onOpenHandover?: () => void }) {
+export function AppSidebar({ 
+  onOpenHandover, 
+  onOpenSepsisProtocol 
+}: { 
+  onOpenHandover?: () => void;
+  onOpenSepsisProtocol?: () => void;
+}) {
   const { open, setOpen, state } = useSidebar();
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
@@ -131,6 +137,11 @@ export function AppSidebar({ onOpenHandover }: { onOpenHandover?: () => void }) 
     if (typeof item === 'object') {
       if (item.action === 'openHandover' && onOpenHandover) {
         onOpenHandover();
+        if (isMobile) {
+          setOpen(false);
+        }
+      } else if (item.action === 'openSepsisProtocol' && onOpenSepsisProtocol) {
+        onOpenSepsisProtocol();
         if (isMobile) {
           setOpen(false);
         }
