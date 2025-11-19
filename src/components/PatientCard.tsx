@@ -579,25 +579,41 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{idx + 1}.</span>
                           <span className="break-words">{pendency}</span>
                         </span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeArrayItem("pendencies", idx);
-                          }}
-                          className="opacity-0 group-hover/item:opacity-100 hover:text-destructive flex-shrink-0"
-                        >
-                          <X className="h-2.5 w-2.5" />
-                        </button>
+                        <div className="flex items-center gap-0.5 flex-shrink-0">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeArrayItem("pendencies", idx);
+                            }}
+                            className="opacity-0 group-hover/item:opacity-100 hover:text-destructive"
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </button>
+                          {idx === patient.pendencies.length - 1 && editingField !== "pendencies" && (
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startEditing("pendencies", "", -2);
+                              }}
+                              className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden p-0"
+                              title="Adicionar Programação/Pendência"
+                            >
+                              <span className="text-xs">+</span>
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     )
                   ))}
                   
-                  {editingField !== "pendencies" && (
+                  {patient.pendencies.length === 0 && editingField !== "pendencies" && (
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={() => startEditing("pendencies", "", -2)}
-                      className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden ml-5"
+                      className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
                       title="Adicionar Programação/Pendência"
                     >
                       <span className="text-xs">+</span>
