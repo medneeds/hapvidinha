@@ -412,39 +412,42 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* Hipóteses / Diagnósticos */}
-              <div className="flex flex-col md:col-span-3">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
-                <div className="flex flex-wrap gap-1 print:gap-0.5 items-center">
-                  {patient.diagnoses.map((diagnosis, idx) => (
-                    editingField === "diagnoses" && editingArrayIndex === idx ? (
-                      <div key={idx} className="flex items-center gap-1 w-full mb-1">
-                        <Input
-                          ref={inputRef}
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value.toUpperCase())}
-                          onKeyDown={handleKeyDown}
-                          onBlur={saveInlineEdit}
-                          className="h-6 text-[11px] min-w-[400px] flex-1 uppercase text-foreground font-medium"
-                        />
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={saveInlineEdit}
-                          className="h-6 w-6 text-green-600 hover:bg-green-100 flex-shrink-0"
-                        >
-                          <Check className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={cancelEditing}
-                          className="h-6 w-6 text-red-600 hover:bg-red-100 flex-shrink-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ) : (
+            {/* Hipóteses / Diagnósticos */}
+            <div className="flex flex-col md:col-span-3 relative">
+              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
+              <div className="flex flex-wrap gap-1 print:gap-0.5 items-center">
+                {patient.diagnoses.map((diagnosis, idx) => (
+                  editingField === "diagnoses" && editingArrayIndex === idx ? (
+                    <div key={idx} className="absolute z-50 top-0 left-0 right-0 flex items-center gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
+                      <Input
+                        ref={inputRef}
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                        onKeyDown={handleKeyDown}
+                        onBlur={saveInlineEdit}
+                        className="h-7 text-xs flex-1 uppercase text-foreground font-medium bg-background"
+                      />
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={saveInlineEdit}
+                        className="h-7 w-7 text-green-600 hover:bg-green-100 flex-shrink-0"
+                      >
+                        <Check className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={cancelEditing}
+                        className="h-7 w-7 text-red-600 hover:bg-red-100 flex-shrink-0"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  ) : null
+                ))}
+                {patient.diagnoses.map((diagnosis, idx) => (
+                  editingField === "diagnoses" && editingArrayIndex === idx ? null : (
                       <Badge 
                         key={idx} 
                         variant="secondary" 
@@ -520,48 +523,51 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* Programações / Pendências - mais espaço */}
-              <div className="flex flex-col md:col-span-5">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
-                <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
-                  {patient.pendencies.map((pendency, idx) => (
-                    editingField === "pendencies" && editingArrayIndex === idx ? (
-                      <div key={idx} className="flex items-start gap-1 w-full mb-1">
-                        <span className="text-[11px] font-semibold text-muted-foreground w-5 flex-shrink-0 pt-1.5">{idx + 1}.</span>
-                        <textarea
-                          ref={inputRef as any}
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value.toUpperCase())}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              saveInlineEdit();
-                            } else if (e.key === 'Escape') {
-                              cancelEditing();
-                            }
-                          }}
-                          onBlur={saveInlineEdit}
-                          className="min-h-[40px] text-[11px] min-w-[400px] flex-1 uppercase text-foreground font-medium resize-y border rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary"
-                          rows={2}
-                        />
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={saveInlineEdit}
-                          className="h-6 w-6 text-green-600 hover:bg-green-100 flex-shrink-0"
-                        >
-                          <Check className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={cancelEditing}
-                          className="h-6 w-6 text-red-600 hover:bg-red-100 flex-shrink-0"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ) : (
+            {/* Programações / Pendências - mais espaço */}
+            <div className="flex flex-col md:col-span-5 relative">
+              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
+              <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
+                {patient.pendencies.map((pendency, idx) => (
+                  editingField === "pendencies" && editingArrayIndex === idx ? (
+                    <div key={idx} className="absolute z-50 top-0 left-0 right-0 flex items-start gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
+                      <span className="text-xs font-semibold text-muted-foreground w-5 flex-shrink-0 pt-2">{idx + 1}.</span>
+                      <textarea
+                        ref={inputRef as any}
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            saveInlineEdit();
+                          } else if (e.key === 'Escape') {
+                            cancelEditing();
+                          }
+                        }}
+                        onBlur={saveInlineEdit}
+                        className="min-h-[60px] text-xs flex-1 uppercase text-foreground font-medium resize-y border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                        rows={3}
+                      />
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={saveInlineEdit}
+                        className="h-7 w-7 text-green-600 hover:bg-green-100 flex-shrink-0"
+                      >
+                        <Check className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={cancelEditing}
+                        className="h-7 w-7 text-red-600 hover:bg-red-100 flex-shrink-0"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  ) : null
+                ))}
+                {patient.pendencies.map((pendency, idx) => (
+                  editingField === "pendencies" && editingArrayIndex === idx ? null : (
                       <div 
                         key={idx} 
                         className="text-[10px] text-foreground leading-snug uppercase group/item cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5"
