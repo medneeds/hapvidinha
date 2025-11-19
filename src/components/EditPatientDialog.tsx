@@ -52,17 +52,23 @@ export function EditPatientDialog({
   }, [focusField, formData]);
 
   const handleSave = () => {
+    // Sincronizar estado local do admissionHistory antes de salvar
+    const finalFormData = {
+      ...formData,
+      admissionHistory: admissionHistoryLocal
+    };
+    
     // Garantir que todos os campos de texto estejam em uppercase
     const uppercaseData = {
-      ...formData,
-      name: formData.name.toUpperCase(),
-      bedNumber: formData.bedNumber.toUpperCase(),
-      diagnoses: formData.diagnoses.map(d => d.toUpperCase()),
-      medicalHistory: formData.medicalHistory.map(m => m.toUpperCase()),
-      relevantExams: formData.relevantExams.map(e => e.toUpperCase()),
-      pendencies: formData.pendencies.map(p => p.toUpperCase()),
-      schedule: formData.schedule.map(s => s.toUpperCase()),
-      admissionHistory: formData.admissionHistory.toUpperCase(),
+      ...finalFormData,
+      name: finalFormData.name.toUpperCase(),
+      bedNumber: finalFormData.bedNumber.toUpperCase(),
+      diagnoses: finalFormData.diagnoses.map(d => d.toUpperCase()),
+      medicalHistory: finalFormData.medicalHistory.map(m => m.toUpperCase()),
+      relevantExams: finalFormData.relevantExams.map(e => e.toUpperCase()),
+      pendencies: finalFormData.pendencies.map(p => p.toUpperCase()),
+      schedule: finalFormData.schedule.map(s => s.toUpperCase()),
+      admissionHistory: finalFormData.admissionHistory.toUpperCase(),
     };
     console.log('Saving patient data:', uppercaseData);
     onSave(uppercaseData);
