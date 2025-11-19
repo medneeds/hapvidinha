@@ -232,10 +232,10 @@ export function EditPatientDialog({
           <div className="space-y-3 py-3">
             {/* Informações Básicas em Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-muted/30 rounded-lg">
-            {/* Nome */}
+            {/* Paciente - Nome */}
             <div className="space-y-1.5 md:col-span-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold">Nome</Label>
+                <Label className="text-sm font-semibold">Paciente</Label>
                 <Button
                   type="button"
                   size="sm"
@@ -280,7 +280,7 @@ export function EditPatientDialog({
             {/* Leito */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold">Número do Leito</Label>
+                <Label className="text-sm font-semibold">Leito</Label>
                 <Button
                   type="button"
                   size="sm"
