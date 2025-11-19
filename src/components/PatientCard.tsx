@@ -285,7 +285,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     } else if (editingField === "diagnoses") {
       if (editingArrayIndex === -2) {
         // Adding new
-        updatedPatient.diagnoses = [...patient.diagnoses, editValue.toUpperCase()];
+        if (editValue.trim()) {
+          updatedPatient.diagnoses = [...patient.diagnoses, editValue.toUpperCase()];
+        }
       } else {
         // Editing existing
         updatedPatient.diagnoses = patient.diagnoses.map((d, i) => 
@@ -295,7 +297,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     } else if (editingField === "pendencies") {
       if (editingArrayIndex === -2) {
         // Adding new
-        updatedPatient.pendencies = [...patient.pendencies, editValue.toUpperCase()];
+        if (editValue.trim()) {
+          updatedPatient.pendencies = [...patient.pendencies, editValue.toUpperCase()];
+        }
       } else {
         // Editing existing
         updatedPatient.pendencies = patient.pendencies.map((p, i) => 
@@ -312,6 +316,27 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     toast({
       title: "Campo atualizado",
       description: "As alterações foram salvas com sucesso.",
+    });
+  };
+
+  const saveAndContinueAdding = () => {
+    if (!editingField || !editValue.trim()) return;
+
+    const updatedPatient = { ...patient };
+    
+    if (editingField === "diagnoses") {
+      updatedPatient.diagnoses = [...patient.diagnoses, editValue.toUpperCase()];
+    } else if (editingField === "pendencies") {
+      updatedPatient.pendencies = [...patient.pendencies, editValue.toUpperCase()];
+    }
+
+    onUpdate(updatedPatient);
+    setEditValue("");
+    // Mantém editingField e editingArrayIndex para continuar adicionando
+    
+    toast({
+      title: "Item adicionado",
+      description: "Continue adicionando mais itens ou pressione Escape para finalizar.",
     });
   };
 
@@ -364,7 +389,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      saveInlineEdit();
+      e.preventDefault();
+      // Se está adicionando novo item (editingArrayIndex === -2), continua adicionando
+      if (editingArrayIndex === -2 && (editingField === "diagnoses" || editingField === "pendencies")) {
+        saveAndContinueAdding();
+      } else {
+        saveInlineEdit();
+      }
     } else if (e.key === "Escape") {
       cancelEditing();
     }
