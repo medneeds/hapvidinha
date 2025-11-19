@@ -308,7 +308,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 />
               </div>
             )}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-1.5 items-start">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-1 items-start">
               {/* Leito - ultra compacto */}
               <div className="flex flex-col md:col-span-1">
                 <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
@@ -317,7 +317,102 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </Badge>
               </div>
 
-              {/* Nome e Idade - mais espaço para nome completo */}
+              {/* Nome e Idade */}
+              <div className="flex flex-col md:col-span-2">
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
+                <div className="group/name relative">
+                  <div className="flex items-start gap-1">
+                    <div className="flex-1 min-w-0">
+                      {editingField === "name" ? (
+                        <div className="flex items-center gap-1">
+                          <Input
+                            ref={inputRef}
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onKeyDown={handleKeyDown}
+                            className="h-6 text-sm font-semibold uppercase"
+                          />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-6 w-6 text-green-600 hover:bg-green-100"
+                          >
+                            <Check className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-6 w-6 text-red-600 hover:bg-red-100"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <p 
+                          className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                          onClick={() => startEditing("name", patient.name)}
+                          title="Clique para editar"
+                        >
+                          {patient.name}
+                        </p>
+                      )}
+                      
+                      {editingField === "age" ? (
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <Input
+                            ref={inputRef}
+                            type="number"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            className="h-5 text-[11px] w-16"
+                          />
+                          <span className="text-[11px] text-muted-foreground">anos</span>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-5 w-5 text-green-600 hover:bg-green-100"
+                          >
+                            <Check className="h-2.5 w-2.5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-5 w-5 text-red-600 hover:bg-red-100"
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <p 
+                          className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 w-fit"
+                          onClick={() => startEditing("age", patient.age.toString())}
+                          title="Clique para editar"
+                        >
+                          {patient.age} anos
+                        </p>
+                      )}
+                    </div>
+                    {!editingField && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={handleCopyName}
+                        className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0"
+                        title="Copiar nome"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* HD */}
               <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
@@ -507,8 +602,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* Programações / Pendências - mais espaço */}
-              <div className="flex flex-col md:col-span-5">
+              {/* Programações / Pendências - espaço máximo */}
+              <div className="flex flex-col md:col-span-6">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
                 <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                   {editingField === "pendencies" && editingArrayIndex === -2 ? (
