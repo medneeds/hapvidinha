@@ -541,7 +541,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </div>
                   ) : null}
                   
-                  {patient.pendencies.slice(0, 2).map((pendency, idx) => (
+                  {patient.pendencies.map((pendency, idx) => (
                     editingField === "pendencies" && editingArrayIndex === idx ? (
                       <div key={idx} className="flex items-center gap-1">
                         <span className="text-[10px] font-semibold text-muted-foreground w-4 flex-shrink-0">{idx + 1}.</span>
@@ -591,12 +591,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       </div>
                     )
                   ))}
-                  
-                  {patient.pendencies.length > 2 && editingField !== "pendencies" && (
-                    <div className="text-muted-foreground text-[10px] pl-5">
-                      +{patient.pendencies.length - 2} mais
-                    </div>
-                  )}
                   
                   {editingField !== "pendencies" && (
                     <Button
