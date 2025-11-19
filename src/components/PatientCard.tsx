@@ -460,13 +460,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               {/* Leito */}
               <div className="flex flex-col md:col-span-1 flex-shrink-0 min-w-0">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                <Badge variant="outline" className={cn(config.badgeColor, "text-base font-bold text-center whitespace-nowrap px-1.5 py-0.5 print:text-xs")}>
+                <Badge variant="outline" className={cn(config.badgeColor, "text-sm font-bold text-center whitespace-nowrap px-1.5 py-0.5 print:text-xs")}>
                   {patient.bedNumber}
                 </Badge>
               </div>
 
               {/* Paciente */}
-              <div className="flex flex-col md:col-span-2 min-w-0 relative">
+              <div className="flex flex-col md:col-span-3 min-w-0 relative">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 
                 {/* Edit popup for name */}
