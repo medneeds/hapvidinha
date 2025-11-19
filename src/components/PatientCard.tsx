@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, X, GripVertical, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { useToast } from "@/hooks/use-toast";
@@ -126,8 +126,112 @@ function SortablePendencyItem({ id, index, pendency }: SortablePendencyItemProps
         <GripVertical className="h-3 w-3 text-muted-foreground flex-shrink-0" />
       </div>
       <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
-      <span className="flex-1">{pendency}</span>
+      <span className="uppercase break-words flex-1">{pendency}</span>
     </li>
+  );
+}
+
+// Sortable pendency item for collapsed view
+interface SortableCollapsedPendencyProps {
+  id: string;
+  index: number;
+  pendency: string;
+  onEdit: (index: number) => void;
+  onRemove: (index: number) => void;
+  onAdd: () => void;
+  isLast: boolean;
+  isEditing: boolean;
+}
+
+function SortableCollapsedPendency({ 
+  id, 
+  index, 
+  pendency, 
+  onEdit, 
+  onRemove, 
+  onAdd, 
+  isLast,
+  isEditing 
+}: SortableCollapsedPendencyProps) {
+  const [isDragStarting, setIsDragStarting] = useState(false);
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const handleTextClick = () => {
+    if (!isDragStarting) {
+      onEdit(index);
+    }
+  };
+
+  const handleDragStart = () => {
+    setIsDragStarting(true);
+  };
+
+  const handleDragEnd = () => {
+    setTimeout(() => setIsDragStarting(false), 100);
+  };
+
+  return (
+    <div 
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
+        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50"
+      )}
+    >
+      <div className="flex items-start gap-1 flex-1" onClick={handleTextClick}>
+        <div
+          className="cursor-grab active:cursor-grabbing print:hidden flex-shrink-0 mt-0.5"
+          onClick={(e) => e.stopPropagation()}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-2.5 w-2.5 text-muted-foreground" />
+        </div>
+        <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
+        <span className="break-words cursor-pointer">{pendency}</span>
+      </div>
+      <div className="flex items-center gap-0.5 flex-shrink-0">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove(index);
+          }}
+          className="opacity-0 group-hover/item:opacity-100 hover:text-destructive"
+        >
+          <X className="h-2.5 w-2.5" />
+        </button>
+        {isLast && !isEditing && (
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAdd();
+            }}
+            className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden p-0"
+            title="Adicionar Programação/Pendência"
+          >
+            <span className="text-xs">+</span>
+          </Button>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -140,6 +244,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [editValue, setEditValue] = useState("");
   const [editingArrayIndex, setEditingArrayIndex] = useState<number>(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const config = sectorConfig[patient.sector];
   const { toast } = useToast();
 
@@ -147,6 +252,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     if (editingField && inputRef.current) {
       inputRef.current.focus();
       inputRef.current.select();
+    }
+    if (editingField && textareaRef.current) {
+      textareaRef.current.focus();
+      textareaRef.current.select();
     }
   }, [editingField]);
 
@@ -187,6 +296,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
   const saveInlineEdit = () => {
     if (!editingField) return;
+    if (!editValue.trim() && editingArrayIndex !== -2) {
+      cancelEditing();
+      return;
+    }
 
     const updatedPatient = { ...patient };
     
@@ -196,20 +309,20 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       updatedPatient.age = parseInt(editValue) || patient.age;
     } else if (editingField === "diagnoses") {
       if (editingArrayIndex === -2) {
-        // Adding new
-        updatedPatient.diagnoses = [...patient.diagnoses, editValue.toUpperCase()];
+        if (editValue.trim()) {
+          updatedPatient.diagnoses = [...patient.diagnoses, editValue.toUpperCase()];
+        }
       } else {
-        // Editing existing
         updatedPatient.diagnoses = patient.diagnoses.map((d, i) => 
           i === editingArrayIndex ? editValue.toUpperCase() : d
         );
       }
     } else if (editingField === "pendencies") {
       if (editingArrayIndex === -2) {
-        // Adding new
-        updatedPatient.pendencies = [...patient.pendencies, editValue.toUpperCase()];
+        if (editValue.trim()) {
+          updatedPatient.pendencies = [...patient.pendencies, editValue.toUpperCase()];
+        }
       } else {
-        // Editing existing
         updatedPatient.pendencies = patient.pendencies.map((p, i) => 
           i === editingArrayIndex ? editValue.toUpperCase() : p
         );
@@ -244,11 +357,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   };
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    }),
+    useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -258,460 +367,424 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = patient.pendencies.findIndex((_, i) => `pendency-${i}` === active.id);
-      const newIndex = patient.pendencies.findIndex((_, i) => `pendency-${i}` === over.id);
+      const oldIndex = parseInt(active.id.toString().split('-')[1] || active.id.toString().split('-')[2]);
+      const newIndex = parseInt(over.id.toString().split('-')[1] || over.id.toString().split('-')[2]);
 
-      const updatedPatient = {
+      const newPendencies = arrayMove(patient.pendencies, oldIndex, newIndex);
+      onUpdate({
         ...patient,
-        pendencies: arrayMove(patient.pendencies, oldIndex, newIndex),
-      };
+        pendencies: newPendencies,
+      });
 
-      onUpdate(updatedPatient);
       toast({
         title: "Ordem atualizada",
-        description: "A ordem das programações foi reorganizada.",
+        description: "A ordem das pendências foi reorganizada.",
       });
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter' && !(e.target instanceof HTMLTextAreaElement && e.shiftKey)) {
+      e.preventDefault();
       saveInlineEdit();
-    } else if (e.key === "Escape") {
+    } else if (e.key === 'Escape') {
       cancelEditing();
     }
   };
 
-  const checkboxColor = {
-    red: "border-critical data-[state=checked]:bg-critical data-[state=checked]:border-critical",
-    yellow: "border-warning data-[state=checked]:bg-warning data-[state=checked]:border-warning",
-    blue: "border-stable data-[state=checked]:bg-stable data-[state=checked]:border-stable",
-    outside: "border-muted-foreground data-[state=checked]:bg-muted-foreground data-[state=checked]:border-muted-foreground"
-  }[patient.sector];
+  const confirmDelete = () => {
+    setIsDeleteDialogOpen(false);
+    setIsDeleting(true);
+    
+    setTimeout(() => {
+      if (onDelete) {
+        onDelete(patient.id);
+        
+        toast({
+          title: "Paciente excluído",
+          description: "O paciente foi removido com sucesso.",
+          action: onUndelete ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                onUndelete(patient);
+                toast({
+                  title: "Paciente restaurado",
+                  description: "O paciente foi restaurado com sucesso.",
+                });
+              }}
+            >
+              Desfazer
+            </Button>
+          ) : undefined,
+        });
+      }
+    }, 300);
+  };
+
+  if (isDeleting) {
+    return null;
+  }
 
   return (
     <>
+      {/* Backdrop when editing */}
+      {editingField && !isExpanded && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-40 print:hidden"
+          onClick={cancelEditing}
+        />
+      )}
+
       <Card className={cn(
-        "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
+        "hover:shadow-md transition-all duration-200 overflow-visible",
         config.color,
-        isSelected && "ring-2 ring-primary",
-        isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]"
+        selectionMode && isSelected && "ring-2 ring-primary ring-offset-2"
       )}>
-        <div className="p-2 print:p-1.5">
-          <div className="flex items-start justify-between gap-2 print:gap-1">
-            {selectionMode && onToggleSelection && (
-              <div className="flex items-center justify-center print:hidden flex-shrink-0">
-                <Checkbox
-                  checked={isSelected}
-                  onCheckedChange={() => onToggleSelection(patient.id)}
-                  className={cn("h-5 w-5", checkboxColor)}
-                />
-              </div>
-            )}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-1.5 items-start">
-              {/* Leito - ultra compacto */}
-              <div className="flex flex-col md:col-span-1">
-                <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                <Badge className={cn("w-fit text-[10px] py-0 px-1 font-bold leading-tight", config.badgeColor)}>
+        <div className="p-2.5 print:p-1.5">
+        <div className="flex items-start gap-2 md:gap-3 print:gap-1.5">
+          {/* Checkbox */}
+          {selectionMode && (
+            <div className="flex items-center pt-1.5 print:hidden">
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={() => onToggleSelection?.(patient.id)}
+                className="h-4 w-4"
+              />
+            </div>
+          )}
+
+          {/* Main Content Grid */}
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 print:gap-1 items-start min-w-0">
+              {/* Leito */}
+              <div className="flex flex-col md:col-span-1 flex-shrink-0 min-w-0">
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Leito</span>
+                <Badge variant="outline" className={cn(config.badgeColor, "text-base font-bold text-center whitespace-nowrap px-1.5 py-0.5 print:text-xs")}>
                   {patient.bedNumber}
                 </Badge>
               </div>
 
-              {/* Nome e Idade - mais espaço para nome completo */}
-              <div className="flex flex-col md:col-span-3">
+              {/* Paciente */}
+              <div className="flex flex-col md:col-span-2 min-w-0 relative">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
-                <div className="group/name relative">
-                  <div className="flex items-start gap-1.5">
-                    <div className="flex-1 min-w-0">
-                      {editingField === "name" ? (
-                        <div className="flex items-center gap-1">
-                          <Input
-                            ref={inputRef}
-                            value={editValue}
-                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
-                            onKeyDown={handleKeyDown}
-                            className="h-6 text-sm font-semibold uppercase"
-                          />
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={saveInlineEdit}
-                            className="h-6 w-6 text-green-600 hover:bg-green-100"
-                          >
-                            <Check className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={cancelEditing}
-                            className="h-6 w-6 text-red-600 hover:bg-red-100"
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <p 
-                          className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
-                          onClick={() => startEditing("name", patient.name)}
-                          title="Clique para editar"
-                        >
-                          {patient.name}
-                        </p>
-                      )}
-                      
-                      {editingField === "age" ? (
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <Input
-                            ref={inputRef}
-                            type="number"
-                            value={editValue}
-                            onChange={(e) => setEditValue(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            className="h-5 text-[11px] w-16"
-                          />
-                          <span className="text-[11px] text-muted-foreground">anos</span>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={saveInlineEdit}
-                            className="h-5 w-5 text-green-600 hover:bg-green-100"
-                          >
-                            <Check className="h-2.5 w-2.5" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={cancelEditing}
-                            className="h-5 w-5 text-red-600 hover:bg-red-100"
-                          >
-                            <X className="h-2.5 w-2.5" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <p 
-                          className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 w-fit"
-                          onClick={() => startEditing("age", patient.age.toString())}
-                          title="Clique para editar"
-                        >
-                          {patient.age} anos
-                        </p>
-                      )}
+                
+                {/* Edit popup for name */}
+                {editingField === "name" && (
+                  <div className="absolute z-50 top-0 left-0 right-0 bg-card border-2 border-primary rounded-lg p-3 shadow-xl min-w-[280px]">
+                    <div className="space-y-2">
+                      <label className="text-xs font-medium text-muted-foreground block">Nome do Paciente</label>
+                      <Input
+                        ref={inputRef}
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                        onKeyDown={handleKeyDown}
+                        className="h-9 text-sm uppercase text-foreground font-medium"
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <Button size="sm" variant="outline" onClick={cancelEditing}>Cancelar</Button>
+                        <Button size="sm" onClick={saveInlineEdit} className="bg-primary">Salvar</Button>
+                      </div>
                     </div>
-                    {!editingField && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={handleCopyName}
-                        className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0"
-                        title="Copiar nome"
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                    )}
                   </div>
+                )}
+                
+                {/* Edit popup for age */}
+                {editingField === "age" && (
+                  <div className="absolute z-50 top-0 left-0 right-0 bg-card border-2 border-primary rounded-lg p-3 shadow-xl min-w-[200px]">
+                    <div className="space-y-2">
+                      <label className="text-xs font-medium text-muted-foreground block">Idade</label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          ref={inputRef}
+                          type="number"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onKeyDown={handleKeyDown}
+                          className="h-9 text-sm w-20"
+                        />
+                        <span className="text-sm text-muted-foreground">anos</span>
+                      </div>
+                      <div className="flex gap-2 justify-end">
+                        <Button size="sm" variant="outline" onClick={cancelEditing}>Cancelar</Button>
+                        <Button size="sm" onClick={saveInlineEdit} className="bg-primary">Salvar</Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex items-start gap-1 group/name min-w-0">
+                  <div className="flex-1 min-w-0">
+                    <p 
+                      className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                      onClick={() => startEditing("name", patient.name)}
+                      title="Clique para editar"
+                    >
+                      {patient.name}
+                    </p>
+                    <p 
+                      className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 w-fit"
+                      onClick={() => startEditing("age", patient.age.toString())}
+                      title="Clique para editar"
+                    >
+                      {patient.age} anos
+                    </p>
+                  </div>
+                  {!editingField && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={handleCopyName}
+                      className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0"
+                      title="Copiar nome"
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  )}
                 </div>
               </div>
 
             {/* Hipóteses / Diagnósticos */}
             <div className="flex flex-col md:col-span-3 relative">
               <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
+              
+              {/* Edit popup for diagnosis */}
+              {editingField === "diagnoses" && editingArrayIndex >= 0 && (
+                <div className="absolute z-50 top-0 left-0 right-0 bg-card border-2 border-primary rounded-lg p-3 shadow-xl min-w-[320px]">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">Editar Hipótese/Diagnóstico</label>
+                    <Input
+                      ref={inputRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                      onKeyDown={handleKeyDown}
+                      className="h-9 text-sm uppercase text-foreground font-medium"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button size="sm" variant="outline" onClick={cancelEditing}>Cancelar</Button>
+                      <Button size="sm" onClick={saveInlineEdit} className="bg-primary">Salvar</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Add popup for diagnosis */}
+              {editingField === "diagnoses" && editingArrayIndex === -2 && (
+                <div className="absolute z-50 top-0 left-0 right-0 bg-card border-2 border-primary rounded-lg p-3 shadow-xl min-w-[320px]">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">Nova Hipótese/Diagnóstico</label>
+                    <Input
+                      ref={inputRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                      onKeyDown={handleKeyDown}
+                      className="h-9 text-sm uppercase text-foreground"
+                      placeholder="DIGITE A NOVA HIPÓTESE"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button size="sm" variant="outline" onClick={cancelEditing}>Cancelar</Button>
+                      <Button size="sm" onClick={saveInlineEdit} className="bg-primary">Adicionar</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div className="flex flex-wrap gap-1 print:gap-0.5 items-center">
                 {patient.diagnoses.map((diagnosis, idx) => (
-                  editingField === "diagnoses" && editingArrayIndex === idx ? (
-                    <div key={idx} className="absolute z-50 top-0 left-0 right-0 flex items-center gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
-                      <Input
-                        ref={inputRef}
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
-                        onKeyDown={handleKeyDown}
-                        onBlur={saveInlineEdit}
-                        className="h-7 text-xs flex-1 uppercase text-foreground font-medium bg-background"
-                      />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={saveInlineEdit}
-                        className="h-7 w-7 text-green-600 hover:bg-green-100 flex-shrink-0"
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={cancelEditing}
-                        className="h-7 w-7 text-red-600 hover:bg-red-100 flex-shrink-0"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  ) : null
-                ))}
-                {patient.diagnoses.map((diagnosis, idx) => (
-                  editingField === "diagnoses" && editingArrayIndex === idx ? null : (
-                      <Badge 
-                        key={idx} 
-                        variant="secondary" 
-                        className="text-[10px] py-0 px-1.5 uppercase group/badge cursor-pointer hover:bg-secondary/80"
-                        onClick={() => startEditing("diagnoses", diagnosis, idx)}
-                      >
-                        {diagnosis}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeArrayItem("diagnoses", idx);
-                          }}
-                          className="ml-1 opacity-0 group-hover/badge:opacity-100 hover:text-destructive"
-                        >
-                          <X className="h-2 w-2" />
-                        </button>
-                        {idx === patient.diagnoses.length - 1 && editingField !== "diagnoses" && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              startEditing("diagnoses", "", -2);
-                            }}
-                            className="ml-1 text-muted-foreground hover:text-primary print:hidden"
-                            title="Adicionar Hipótese/Diagnóstico"
-                          >
-                            <span className="text-xs">+</span>
-                          </button>
-                        )}
-                      </Badge>
-                    )
-                  ))}
-                  
-                  {editingField === "diagnoses" && editingArrayIndex === -2 ? (
-                    <div className="flex items-center gap-1 w-full">
-                      <Input
-                        ref={inputRef}
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
-                        onKeyDown={handleKeyDown}
-                        className="h-5 text-[10px] uppercase text-foreground flex-1"
-                        placeholder="NOVA HIPÓTESE"
-                      />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={saveInlineEdit}
-                        className="h-5 w-5 text-green-600 hover:bg-green-100"
-                      >
-                        <Check className="h-2.5 w-2.5" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={cancelEditing}
-                        className="h-5 w-5 text-red-600 hover:bg-red-100"
-                      >
-                        <X className="h-2.5 w-2.5" />
-                      </Button>
-                    </div>
-                  ) : null}
-                  
-                  {patient.diagnoses.length === 0 && editingField !== "diagnoses" && (
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => startEditing("diagnoses", "", -2)}
-                      className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
-                      title="Adicionar Hipótese/Diagnóstico"
+                  <Badge
+                    key={idx}
+                    variant="secondary"
+                    className="text-[10px] py-0 px-1.5 uppercase cursor-pointer hover:bg-accent group/badge print:text-[7.5px] print:px-1 print:py-0"
+                    onClick={() => startEditing("diagnoses", diagnosis, idx)}
+                  >
+                    <span className="break-words">{diagnosis}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeArrayItem("diagnoses", idx);
+                      }}
+                      className="ml-1 opacity-0 group-hover/badge:opacity-100 hover:text-destructive print:hidden"
                     >
-                      <span className="text-xs">+</span>
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-            {/* Programações / Pendências - mais espaço */}
-            <div className="flex flex-col md:col-span-5 relative">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
-              <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
-                {patient.pendencies.map((pendency, idx) => (
-                  editingField === "pendencies" && editingArrayIndex === idx ? (
-                    <div key={idx} className="absolute z-50 top-0 left-0 right-0 flex items-start gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
-                      <span className="text-xs font-semibold text-muted-foreground w-5 flex-shrink-0 pt-2">{idx + 1}.</span>
-                      <textarea
-                        ref={inputRef as any}
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            saveInlineEdit();
-                          } else if (e.key === 'Escape') {
-                            cancelEditing();
-                          }
+                      <X className="h-2.5 w-2.5" />
+                    </button>
+                    {idx === patient.diagnoses.length - 1 && editingField !== "diagnoses" && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditing("diagnoses", "", -2);
                         }}
-                        onBlur={saveInlineEdit}
-                        className="min-h-[60px] text-xs flex-1 uppercase text-foreground font-medium resize-y border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
-                        rows={3}
-                      />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={saveInlineEdit}
-                        className="h-7 w-7 text-green-600 hover:bg-green-100 flex-shrink-0"
+                        className="ml-1 text-muted-foreground hover:text-primary print:hidden"
+                        title="Adicionar Hipótese/Diagnóstico"
                       >
-                        <Check className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={cancelEditing}
-                        className="h-7 w-7 text-red-600 hover:bg-red-100 flex-shrink-0"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  ) : null
+                        <span className="text-xs">+</span>
+                      </button>
+                    )}
+                  </Badge>
                 ))}
-                {patient.pendencies.map((pendency, idx) => (
-                  editingField === "pendencies" && editingArrayIndex === idx ? null : (
-                      <div 
-                        key={idx} 
-                        className="text-[10px] text-foreground leading-snug uppercase group/item cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5"
-                        onClick={() => startEditing("pendencies", pendency, idx)}
-                      >
-                        <span className="break-words flex items-start gap-1 flex-1">
-                          <span className="font-semibold text-muted-foreground flex-shrink-0">{idx + 1}.</span>
-                          <span className="break-words">{pendency}</span>
-                        </span>
-                        <div className="flex items-center gap-0.5 flex-shrink-0">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeArrayItem("pendencies", idx);
-                            }}
-                            className="opacity-0 group-hover/item:opacity-100 hover:text-destructive"
-                          >
-                            <X className="h-2.5 w-2.5" />
-                          </button>
-                          {idx === patient.pendencies.length - 1 && editingField !== "pendencies" && (
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                startEditing("pendencies", "", -2);
-                              }}
-                              className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden p-0"
-                              title="Adicionar Programação/Pendência"
-                            >
-                              <span className="text-xs">+</span>
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  ))}
-                  
-                  {editingField === "pendencies" && editingArrayIndex === -2 ? (
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] font-semibold text-muted-foreground w-4 flex-shrink-0">{patient.pendencies.length + 1}.</span>
-                      <Input
-                        ref={inputRef}
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
-                        onKeyDown={handleKeyDown}
-                        className="h-5 text-[10px] uppercase text-foreground flex-1"
-                        placeholder="NOVA PENDÊNCIA"
-                      />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={saveInlineEdit}
-                        className="h-5 w-5 text-green-600 hover:bg-green-100 flex-shrink-0"
-                      >
-                        <Check className="h-2.5 w-2.5" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={cancelEditing}
-                        className="h-5 w-5 text-red-600 hover:bg-red-100 flex-shrink-0"
-                      >
-                        <X className="h-2.5 w-2.5" />
-                      </Button>
-                    </div>
-                  ) : null}
-                  
-                  {patient.pendencies.length === 0 && editingField !== "pendencies" && (
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => startEditing("pendencies", "", -2)}
-                      className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
-                      title="Adicionar Programação/Pendência"
-                    >
-                      <span className="text-xs">+</span>
-                    </Button>
-                  )}
-                </div>
+                
+                {patient.diagnoses.length === 0 && editingField !== "diagnoses" && (
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => startEditing("diagnoses", "", -2)}
+                    className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                    title="Adicionar Hipótese/Diagnóstico"
+                  >
+                    <span className="text-xs">+</span>
+                  </Button>
+                )}
               </div>
             </div>
 
-          {/* Action Menu - Compact */}
-          <div className="flex-shrink-0 flex gap-1 print:hidden items-start">
+            {/* Programações / Pendências */}
+            <div className="flex flex-col md:col-span-5 relative">
+              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
+              
+              {/* Edit popup for pendency */}
+              {editingField === "pendencies" && editingArrayIndex >= 0 && (
+                <div className="absolute z-50 top-0 left-0 right-0 bg-card border-2 border-primary rounded-lg p-3 shadow-xl min-w-[400px]">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">Editar Pendência #{editingArrayIndex + 1}</label>
+                    <textarea
+                      ref={textareaRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          saveInlineEdit();
+                        } else if (e.key === 'Escape') {
+                          cancelEditing();
+                        }
+                      }}
+                      className="w-full min-h-[80px] text-sm uppercase text-foreground font-medium resize-y border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                      rows={3}
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button size="sm" variant="outline" onClick={cancelEditing}>Cancelar</Button>
+                      <Button size="sm" onClick={saveInlineEdit} className="bg-primary">Salvar</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Add popup for pendency */}
+              {editingField === "pendencies" && editingArrayIndex === -2 && (
+                <div className="absolute z-50 top-0 left-0 right-0 bg-card border-2 border-primary rounded-lg p-3 shadow-xl min-w-[400px]">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">Nova Programação/Pendência</label>
+                    <textarea
+                      ref={textareaRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          saveInlineEdit();
+                        } else if (e.key === 'Escape') {
+                          cancelEditing();
+                        }
+                      }}
+                      className="w-full min-h-[80px] text-sm uppercase text-foreground resize-y border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                      placeholder="DIGITE A NOVA PENDÊNCIA"
+                      rows={3}
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button size="sm" variant="outline" onClick={cancelEditing}>Cancelar</Button>
+                      <Button size="sm" onClick={saveInlineEdit} className="bg-primary">Adicionar</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={patient.pendencies.map((_, idx) => `pendency-collapsed-${idx}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
+                    {patient.pendencies.map((pendency, idx) => (
+                      <SortableCollapsedPendency
+                        key={`pendency-collapsed-${idx}`}
+                        id={`pendency-collapsed-${idx}`}
+                        index={idx}
+                        pendency={pendency}
+                        onEdit={(index) => startEditing("pendencies", patient.pendencies[index], index)}
+                        onRemove={(index) => removeArrayItem("pendencies", index)}
+                        onAdd={() => startEditing("pendencies", "", -2)}
+                        isLast={idx === patient.pendencies.length - 1}
+                        isEditing={editingField === "pendencies"}
+                      />
+                    ))}
+                    
+                    {patient.pendencies.length === 0 && editingField !== "pendencies" && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => startEditing("pendencies", "", -2)}
+                        className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                        title="Adicionar Programação/Pendência"
+                      >
+                        <span className="text-xs">+</span>
+                      </Button>
+                    )}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-start gap-1 flex-shrink-0 print:hidden">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-7 w-7 text-foreground hover:bg-accent hover:text-accent-foreground"
-                  title="Ações"
+                  className="h-6 w-6 hover:bg-accent"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <MoreVertical className="h-4 w-4" />
+                  <MoreVertical className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsEditDialogOpen(true);
-                  }}
-                >
+                <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
                   <Edit className="h-3.5 w-3.5 mr-2" />
-                  Edição Avançada
+                  Editar Detalhes
                 </DropdownMenuItem>
+                {onPrintPatient && (
+                  <DropdownMenuItem onClick={() => onPrintPatient(patient.id)}>
+                    <Printer className="h-3.5 w-3.5 mr-2" />
+                    Imprimir Paciente
+                  </DropdownMenuItem>
+                )}
                 {onTransfer && (
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuLabel className="text-xs">Transferir para</DropdownMenuLabel>
-                    {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
-                      sector !== patient.sector && (
-                        <DropdownMenuItem
-                          key={sector}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleTransfer(sector);
-                          }}
+                    {(Object.keys(sectorLabels) as Array<keyof typeof sectorLabels>)
+                      .filter(key => key !== patient.sector)
+                      .map((key) => (
+                        <DropdownMenuItem 
+                          key={key}
+                          onClick={() => handleTransfer(key)}
                         >
                           <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
-                          {sectorLabels[sector]}
+                          {sectorLabels[key]}
                         </DropdownMenuItem>
-                      )
-                    ))}
-                  </>
-                )}
-                {onPrintPatient && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onPrintPatient(patient.id);
-                      }}
-                    >
-                      <Printer className="h-3.5 w-3.5 mr-2" />
-                      Imprimir Caso
-                    </DropdownMenuItem>
+                      ))}
                   </>
                 )}
                 {onDelete && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
+                    <DropdownMenuItem 
                       onClick={(e) => {
                         e.stopPropagation();
                         setIsDeleteDialogOpen(true);
@@ -749,7 +822,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 print:gap-1 print:grid-cols-2">
-            {/* Antecedentes */}
             <div>
               <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Antecedentes Mórbidos</h4>
               <ul className="space-y-0 uppercase">
@@ -759,7 +831,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </ul>
             </div>
 
-            {/* Exames Relevantes */}
             <div>
               <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Exames Relevantes</h4>
               <ul className="space-y-0 uppercase">
@@ -769,7 +840,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </ul>
             </div>
 
-            {/* Programação */}
             <div>
               <h4 className="font-semibold text-xs mb-1 flex items-center gap-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">
                 <Clock className="h-3 w-3 print:h-2 print:w-2" />
@@ -782,7 +852,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </ul>
             </div>
 
-            {/* Programações / Pendências */}
             <div>
               <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Programações / Pendências</h4>
               <DndContext
@@ -809,68 +878,44 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             </div>
           </div>
 
-          {/* História Admissional */}
-          <div className="pt-2 border-t border-border/50 print:pt-1">
-            <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">História Admissional / Anamnese</h4>
-            <p className="text-xs leading-snug text-foreground whitespace-pre-wrap uppercase print:text-[7.5px] print:leading-tight">
-              {patient.admissionHistory}
-            </p>
-          </div>
+          {patient.admissionHistory && (
+            <div className="pt-2 border-t border-border/50">
+              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">História Admissional</h4>
+              <p className="text-xs text-foreground leading-snug whitespace-pre-line uppercase print:text-[7.5px] print:leading-snug">
+                {patient.admissionHistory}
+              </p>
+            </div>
+          )}
         </div>
       )}
-      </Card>
+    </Card>
 
-      <EditPatientDialog
-        patient={patient}
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        onSave={onUpdate}
-      />
+    <EditPatientDialog
+      patient={patient}
+      open={isEditDialogOpen}
+      onOpenChange={setIsEditDialogOpen}
+      onSave={(updatedPatient) => {
+        onUpdate(updatedPatient);
+        setIsEditDialogOpen(false);
+      }}
+    />
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir o leito <strong>{patient.bedNumber}</strong> do paciente <strong>{patient.name}</strong>?
-              Esta ação não poderá ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (onDelete) {
-                  const deletedPatient = { ...patient };
-                  setIsDeleting(true);
-                  
-                  // Wait for animation to complete before actually deleting
-                  setTimeout(() => {
-                    onDelete(patient.id);
-                    toast({
-                      title: "Paciente excluído",
-                      description: `Leito ${patient.bedNumber} - ${patient.name} foi removido.`,
-                      action: onUndelete ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => onUndelete(deletedPatient)}
-                          className="ml-auto"
-                        >
-                          Desfazer
-                        </Button>
-                      ) : undefined,
-                    });
-                  }, 300);
-                }
-              }}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Excluir
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+    <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+          <AlertDialogDescription>
+            Tem certeza que deseja excluir o paciente <strong>{patient.name}</strong>? Esta ação pode ser desfeita.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">
+            Excluir
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     </>
   );
 }
