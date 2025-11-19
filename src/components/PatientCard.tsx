@@ -5,10 +5,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DndContext,
   closestCenter,
@@ -367,6 +373,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [editingArrayIndex, setEditingArrayIndex] = useState<number>(-1);
+  const [expandedSection, setExpandedSection] = useState<'diagnoses' | 'exams' | 'pendencies' | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const config = sectorConfig[patient.sector];
   const { toast } = useToast();
@@ -709,7 +716,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Hipóteses / Diagnósticos */}
             <div className="flex flex-col md:col-span-2 relative">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
+              <div className="flex items-center gap-1 mb-0.5">
+                <span className="text-[10px] font-medium text-muted-foreground">Hipóteses / Diagnósticos</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setExpandedSection('diagnoses')}
+                  className="h-4 w-4 p-0 text-muted-foreground hover:text-primary print:hidden"
+                  title="Visualizar expandido"
+                >
+                  <Maximize2 className="h-3 w-3" />
+                </Button>
+              </div>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -793,7 +811,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Exames Complementares */}
             <div className="flex flex-col md:col-span-2 relative">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Exames Complementares</span>
+              <div className="flex items-center gap-1 mb-0.5">
+                <span className="text-[10px] font-medium text-muted-foreground">Exames Complementares</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setExpandedSection('exams')}
+                  className="h-4 w-4 p-0 text-muted-foreground hover:text-primary print:hidden"
+                  title="Visualizar expandido"
+                >
+                  <Maximize2 className="h-3 w-3" />
+                </Button>
+              </div>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -885,7 +914,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Programações / Pendências - mais espaço */}
             <div className="flex flex-col md:col-span-5 relative">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
+              <div className="flex items-center gap-1 mb-0.5">
+                <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setExpandedSection('pendencies')}
+                  className="h-4 w-4 p-0 text-muted-foreground hover:text-primary print:hidden"
+                  title="Visualizar expandido"
+                >
+                  <Maximize2 className="h-3 w-3" />
+                </Button>
+              </div>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -1228,6 +1268,93 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Dialog expandido para Hipóteses / Diagnósticos */}
+      <Dialog open={expandedSection === 'diagnoses'} onOpenChange={() => setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Badge className={config.badgeColor}>Leito {patient.bedNumber}</Badge>
+              <span className="text-lg">Hipóteses / Diagnósticos</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 mt-4">
+            <div className="text-sm font-semibold text-muted-foreground mb-2">
+              Paciente: {patient.name} ({patient.age} anos)
+            </div>
+            {patient.diagnoses.length > 0 ? (
+              <ol className="space-y-3 list-none">
+                {patient.diagnoses.map((diagnosis, idx) => (
+                  <li key={idx} className="text-base text-foreground leading-relaxed uppercase bg-accent/30 p-3 rounded-md">
+                    <span className="font-bold text-primary mr-2">{idx + 1}.</span>
+                    {diagnosis}
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="text-muted-foreground italic text-center py-8">Nenhuma hipótese/diagnóstico registrado</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog expandido para Exames Complementares */}
+      <Dialog open={expandedSection === 'exams'} onOpenChange={() => setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Badge className={config.badgeColor}>Leito {patient.bedNumber}</Badge>
+              <span className="text-lg">Exames Complementares</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 mt-4">
+            <div className="text-sm font-semibold text-muted-foreground mb-2">
+              Paciente: {patient.name} ({patient.age} anos)
+            </div>
+            {patient.relevantExams.length > 0 ? (
+              <ol className="space-y-3 list-none">
+                {patient.relevantExams.map((exam, idx) => (
+                  <li key={idx} className="text-base text-foreground leading-relaxed uppercase bg-accent/30 p-3 rounded-md">
+                    <span className="font-bold text-primary mr-2">{idx + 1}.</span>
+                    {exam}
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="text-muted-foreground italic text-center py-8">Nenhum exame complementar registrado</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog expandido para Programações / Pendências */}
+      <Dialog open={expandedSection === 'pendencies'} onOpenChange={() => setExpandedSection(null)}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Badge className={config.badgeColor}>Leito {patient.bedNumber}</Badge>
+              <span className="text-lg">Programações / Pendências</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 mt-4">
+            <div className="text-sm font-semibold text-muted-foreground mb-2">
+              Paciente: {patient.name} ({patient.age} anos)
+            </div>
+            {patient.pendencies.length > 0 ? (
+              <ol className="space-y-3 list-none">
+                {patient.pendencies.map((pendency, idx) => (
+                  <li key={idx} className="text-base text-foreground leading-relaxed uppercase bg-accent/30 p-3 rounded-md">
+                    <span className="font-bold text-primary mr-2">{idx + 1}.</span>
+                    {pendency}
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="text-muted-foreground italic text-center py-8">Nenhuma programação/pendência registrada</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
