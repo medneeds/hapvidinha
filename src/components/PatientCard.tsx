@@ -457,16 +457,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
           {/* Main Content Grid */}
           <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 print:gap-1 items-start min-w-0">
-              {/* Leito */}
-              <div className="flex flex-col md:col-span-1 flex-shrink-0 min-w-0">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                <Badge variant="outline" className={cn(config.badgeColor, "text-sm font-bold text-center whitespace-nowrap px-1.5 py-0.5 print:text-xs")}>
+              {/* Leito - Minimizado */}
+              <div className="flex flex-col md:col-span-1 flex-shrink-0 min-w-0 justify-center">
+                <Badge variant="outline" className={cn(config.badgeColor, "text-xs font-bold text-center whitespace-nowrap px-1 py-0.5 print:text-xs")}>
                   {patient.bedNumber}
                 </Badge>
               </div>
 
-              {/* Paciente */}
-              <div className="flex flex-col md:col-span-3 min-w-0 relative">
+              {/* Paciente - Priorizado */}
+              <div className="flex flex-col md:col-span-4 min-w-0 relative">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 
                 {/* Edit popup for name */}
@@ -544,8 +543,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-            {/* Hipóteses / Diagnósticos */}
-            <div className="flex flex-col md:col-span-3 relative">
+            {/* Hipóteses / Diagnósticos - Compacto */}
+            <div className="flex flex-col md:col-span-2 relative">
               <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
               
               {/* Edit popup for diagnosis */}
@@ -636,7 +635,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
             </div>
 
-            {/* Programações / Pendências */}
+            {/* Programações / Pendências - Prioridade Máxima */}
             <div className="flex flex-col md:col-span-5 relative">
               <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
               
