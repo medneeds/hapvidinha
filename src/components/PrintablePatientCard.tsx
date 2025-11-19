@@ -27,7 +27,7 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
       >
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: '60px 1fr 1fr 2fr',
+          gridTemplateColumns: '60px 1fr 1fr 1fr 2fr',
           gap: '8px',
           alignItems: 'start'
         }}>
@@ -81,6 +81,24 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
                 ))
               ) : (
                 <span style={{ fontSize: '7pt', color: '#9ca3af' }}>-</span>
+              )}
+            </div>
+          </div>
+
+          {/* Exames Complementares */}
+          <div>
+            <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>
+              Exames Complementares
+            </div>
+            <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
+              {patient.relevantExams.length > 0 ? (
+                patient.relevantExams.map((exam, idx) => (
+                  <div key={idx} style={{ marginBottom: '1px' }}>
+                    <span style={{ fontWeight: 'bold', color: '#6b7280' }}>{idx + 1}.</span> {exam}
+                  </div>
+                ))
+              ) : (
+                <span style={{ color: '#9ca3af' }}>-</span>
               )}
             </div>
           </div>

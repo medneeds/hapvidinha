@@ -434,6 +434,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           i === editingArrayIndex ? editValue.toUpperCase() : d
         );
       }
+    } else if (editingField === "relevantExams") {
+      if (editingArrayIndex === -2) {
+        // Adding new
+        if (editValue.trim()) {
+          updatedPatient.relevantExams = [...patient.relevantExams, editValue.toUpperCase()];
+        }
+      } else {
+        // Editing existing
+        updatedPatient.relevantExams = patient.relevantExams.map((e, i) => 
+          i === editingArrayIndex ? editValue.toUpperCase() : e
+        );
+      }
     } else if (editingField === "pendencies") {
       if (editingArrayIndex === -2) {
         // Adding new
@@ -466,6 +478,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     
     if (editingField === "diagnoses") {
       updatedPatient.diagnoses = [...patient.diagnoses, editValue.toUpperCase()];
+    } else if (editingField === "relevantExams") {
+      updatedPatient.relevantExams = [...patient.relevantExams, editValue.toUpperCase()];
     } else if (editingField === "pendencies") {
       updatedPatient.pendencies = [...patient.pendencies, editValue.toUpperCase()];
     }
@@ -480,11 +494,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     });
   };
 
-  const removeArrayItem = (field: "diagnoses" | "pendencies", index: number) => {
+  const removeArrayItem = (field: "diagnoses" | "relevantExams" | "pendencies", index: number) => {
     const updatedPatient = { ...patient };
     
     if (field === "diagnoses") {
       updatedPatient.diagnoses = patient.diagnoses.filter((_, i) => i !== index);
+    } else if (field === "relevantExams") {
+      updatedPatient.relevantExams = patient.relevantExams.filter((_, i) => i !== index);
     } else if (field === "pendencies") {
       updatedPatient.pendencies = patient.pendencies.filter((_, i) => i !== index);
     }
@@ -597,7 +613,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
               {/* Nome e Idade - mais espaço para nome completo */}
-              <div className="flex flex-col md:col-span-3">
+              <div className="flex flex-col md:col-span-2">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-start gap-1.5">
@@ -692,7 +708,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
             {/* Hipóteses / Diagnósticos */}
-            <div className="flex flex-col md:col-span-3 relative">
+            <div className="flex flex-col md:col-span-2 relative">
               <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
               <DndContext
                 sensors={sensors}
@@ -768,6 +784,98 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     onClick={() => startEditing("diagnoses", "", -2)}
                     className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
                     title="Adicionar Hipótese/Diagnóstico"
+                  >
+                    <span className="text-xs">+</span>
+                  </Button>
+                )}
+              </DndContext>
+            </div>
+
+            {/* Exames Complementares */}
+            <div className="flex flex-col md:col-span-2 relative">
+              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Exames Complementares</span>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={(event: DragEndEvent) => {
+                  const { active, over } = event;
+                  if (over && active.id !== over.id) {
+                    const oldIndex = patient.relevantExams.findIndex((_, i) => `exam-${i}` === active.id);
+                    const newIndex = patient.relevantExams.findIndex((_, i) => `exam-${i}` === over.id);
+                    const reordered = arrayMove(patient.relevantExams, oldIndex, newIndex);
+                    onUpdate({ ...patient, relevantExams: reordered });
+                  }
+                }}
+              >
+                <SortableContext
+                  items={patient.relevantExams.map((_, i) => `exam-${i}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                    {patient.relevantExams.map((exam, idx) => (
+                      <SortableDiagnosisItemCollapsed
+                        key={`exam-${idx}`}
+                        id={`exam-${idx}`}
+                        index={idx}
+                        diagnosis={exam}
+                        isEditing={editingField === "relevantExams" && editingArrayIndex === idx}
+                        editValue={editValue}
+                        onEdit={() => startEditing("relevantExams", exam, idx)}
+                        onSave={saveInlineEdit}
+                        onCancel={cancelEditing}
+                        onRemove={() => removeArrayItem("relevantExams", idx)}
+                        onAddNew={() => startEditing("relevantExams", "", -2)}
+                        onEditValueChange={(val) => setEditValue(val.toUpperCase())}
+                        onKeyDown={handleKeyDown}
+                        inputRef={inputRef}
+                        isLast={idx === patient.relevantExams.length - 1}
+                      />
+                    ))}
+                  </ol>
+                </SortableContext>
+
+                {editingField === "relevantExams" && editingArrayIndex === -2 ? (
+                  <li className="text-[10px] text-foreground leading-snug uppercase rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
+                    <div className="flex-shrink-0 w-3" />
+                    <div className="flex items-center gap-1 flex-1">
+                      <span className="font-semibold text-muted-foreground flex-shrink-0">{patient.relevantExams.length + 1}.</span>
+                      <Input
+                        ref={inputRef}
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                        onKeyDown={handleKeyDown}
+                        className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                        placeholder="NOVO EXAME"
+                      />
+                    </div>
+                    <div className="flex items-center gap-0.5 flex-shrink-0">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={saveInlineEdit}
+                        className="h-4 w-4 text-green-600 hover:bg-green-100 p-0"
+                      >
+                        <Check className="h-2.5 w-2.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={cancelEditing}
+                        className="h-4 w-4 text-red-600 hover:bg-red-100 p-0"
+                      >
+                        <X className="h-2.5 w-2.5" />
+                      </Button>
+                    </div>
+                  </li>
+                ) : null}
+                
+                {patient.relevantExams.length === 0 && editingField !== "relevantExams" && (
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => startEditing("relevantExams", "", -2)}
+                    className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                    title="Adicionar Exame Complementar"
                   >
                     <span className="text-xs">+</span>
                   </Button>
