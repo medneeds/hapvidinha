@@ -722,10 +722,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   size="icon"
                   variant="ghost"
                   onClick={() => setExpandedSection('diagnoses')}
-                  className="h-4 w-4 p-0 text-muted-foreground hover:text-primary print:hidden"
+                  className="h-3 w-3 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                   title="Visualizar expandido"
                 >
-                  <Maximize2 className="h-3 w-3" />
+                  <Maximize2 className="h-2 w-2" />
                 </Button>
               </div>
               <DndContext
@@ -817,10 +817,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   size="icon"
                   variant="ghost"
                   onClick={() => setExpandedSection('exams')}
-                  className="h-4 w-4 p-0 text-muted-foreground hover:text-primary print:hidden"
+                  className="h-3 w-3 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                   title="Visualizar expandido"
                 >
-                  <Maximize2 className="h-3 w-3" />
+                  <Maximize2 className="h-2 w-2" />
                 </Button>
               </div>
               <DndContext
@@ -920,10 +920,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   size="icon"
                   variant="ghost"
                   onClick={() => setExpandedSection('pendencies')}
-                  className="h-4 w-4 p-0 text-muted-foreground hover:text-primary print:hidden"
+                  className="h-3 w-3 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                   title="Visualizar expandido"
                 >
-                  <Maximize2 className="h-3 w-3" />
+                  <Maximize2 className="h-2 w-2" />
                 </Button>
               </div>
               <DndContext
