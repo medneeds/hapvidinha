@@ -572,12 +572,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     ) : (
                       <div 
                         key={idx} 
-                        className="text-xs text-foreground leading-tight uppercase group/item cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 flex items-center justify-between"
+                        className="text-xs text-foreground leading-tight uppercase group/item cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 flex items-start justify-between gap-1"
                         onClick={() => startEditing("pendencies", pendency, idx)}
                       >
-                        <span className="truncate flex items-center gap-1">
-                          <span className="font-semibold text-muted-foreground">{idx + 1}.</span>
-                          {pendency}
+                        <span className="break-words flex items-start gap-1 flex-1">
+                          <span className="font-semibold text-muted-foreground flex-shrink-0">{idx + 1}.</span>
+                          <span className="break-words">{pendency}</span>
                         </span>
                         <button
                           onClick={(e) => {
