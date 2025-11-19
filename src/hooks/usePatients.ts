@@ -132,7 +132,7 @@ export function usePatients() {
         admissionDate: data.admission_date || '',
       };
 
-      setPatients(prev => [...prev, newPatient]);
+      // Don't add to local state - let realtime subscription handle it to avoid duplicates
 
       toast({
         title: "Leito criado",
