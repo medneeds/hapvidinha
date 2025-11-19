@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Patient } from "@/types/patient";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { useToast } from "@/hooks/use-toast";
@@ -74,8 +75,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
   const config = sectorConfig[patient.sector];
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (editingField && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [editingField]);
 
   const handleCopyName = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -97,6 +108,45 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const handleTransfer = (newSector: Patient['sector']) => {
     if (onTransfer && newSector !== patient.sector) {
       onTransfer(patient.id, newSector);
+    }
+  };
+
+  const startEditing = (field: string, currentValue: string) => {
+    setEditingField(field);
+    setEditValue(currentValue);
+  };
+
+  const cancelEditing = () => {
+    setEditingField(null);
+    setEditValue("");
+  };
+
+  const saveInlineEdit = () => {
+    if (!editingField) return;
+
+    const updatedPatient = { ...patient };
+    
+    if (editingField === "name") {
+      updatedPatient.name = editValue.toUpperCase();
+    } else if (editingField === "age") {
+      updatedPatient.age = parseInt(editValue) || patient.age;
+    }
+
+    onUpdate(updatedPatient);
+    setEditingField(null);
+    setEditValue("");
+    
+    toast({
+      title: "Campo atualizado",
+      description: "As alterações foram salvas com sucesso.",
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      saveInlineEdit();
+    } else if (e.key === "Escape") {
+      cancelEditing();
     }
   };
 
@@ -141,18 +191,91 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <div className="group/name relative">
                   <div className="flex items-start gap-1.5">
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-foreground leading-tight uppercase break-words">{patient.name}</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">{patient.age} anos</p>
+                      {editingField === "name" ? (
+                        <div className="flex items-center gap-1">
+                          <Input
+                            ref={inputRef}
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onKeyDown={handleKeyDown}
+                            className="h-6 text-sm font-semibold uppercase"
+                          />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-6 w-6 text-green-600 hover:bg-green-100"
+                          >
+                            <Check className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-6 w-6 text-red-600 hover:bg-red-100"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <p 
+                          className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                          onClick={() => startEditing("name", patient.name)}
+                          title="Clique para editar"
+                        >
+                          {patient.name}
+                        </p>
+                      )}
+                      
+                      {editingField === "age" ? (
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <Input
+                            ref={inputRef}
+                            type="number"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            className="h-5 text-[11px] w-16"
+                          />
+                          <span className="text-[11px] text-muted-foreground">anos</span>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-5 w-5 text-green-600 hover:bg-green-100"
+                          >
+                            <Check className="h-2.5 w-2.5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-5 w-5 text-red-600 hover:bg-red-100"
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <p 
+                          className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 w-fit"
+                          onClick={() => startEditing("age", patient.age.toString())}
+                          title="Clique para editar"
+                        >
+                          {patient.age} anos
+                        </p>
+                      )}
                     </div>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={handleCopyName}
-                      className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0"
-                      title="Copiar nome"
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
+                    {!editingField && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={handleCopyName}
+                        className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0"
+                        title="Copiar nome"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
