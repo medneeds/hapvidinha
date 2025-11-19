@@ -162,7 +162,7 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
         {/* Pendencies */}
         {patient.pendencies.length > 0 && (
           <div style={{ marginBottom: '16px' }}>
-            <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#000000', marginBottom: '8px' }}>Atualizações</div>
+            <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#000000', marginBottom: '8px' }}>Programações / Pendências</div>
             <ul style={{ margin: 0, paddingLeft: '20px' }}>
               {patient.pendencies.map((pendency, idx) => (
                 <li key={idx} style={{ fontSize: '11pt', color: '#374151', marginBottom: '4px' }}>{pendency}</li>
