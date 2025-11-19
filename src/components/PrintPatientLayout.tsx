@@ -171,18 +171,6 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
           </div>
         )}
 
-        {/* Schedule */}
-        {patient.schedule.length > 0 && (
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#000000', marginBottom: '8px' }}>Programação</div>
-            <ul style={{ margin: 0, paddingLeft: '20px' }}>
-              {patient.schedule.map((item, idx) => (
-                <li key={idx} style={{ fontSize: '11pt', color: '#374151', marginBottom: '4px' }}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         {/* Admission History */}
         {patient.admissionHistory && (
           <div style={{ marginBottom: '16px' }}>
