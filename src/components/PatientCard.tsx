@@ -464,6 +464,98 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </Badge>
               </div>
 
+            {/* Hipóteses / Diagnósticos - Compacto */}
+            <div className="flex flex-col md:col-span-2 relative">
+              <span className="text-[9px] font-medium text-muted-foreground mb-0.5">HD</span>
+              
+              {/* Edit popup for diagnosis */}
+              {editingField === "diagnoses" && editingArrayIndex >= 0 && (
+                <div className="absolute z-50 top-0 left-0 right-0 bg-card border-2 border-primary rounded-lg p-3 shadow-xl min-w-[320px]">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">Editar Hipótese/Diagnóstico</label>
+                    <Input
+                      ref={inputRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                      onKeyDown={handleKeyDown}
+                      className="h-9 text-sm uppercase text-foreground font-medium"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button size="sm" variant="outline" onClick={cancelEditing}>Cancelar</Button>
+                      <Button size="sm" onClick={saveInlineEdit} className="bg-primary">Salvar</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Add popup for diagnosis */}
+              {editingField === "diagnoses" && editingArrayIndex === -2 && (
+                <div className="absolute z-50 top-0 left-0 right-0 bg-card border-2 border-primary rounded-lg p-3 shadow-xl min-w-[320px]">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground block">Nova Hipótese/Diagnóstico</label>
+                    <Input
+                      ref={inputRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                      onKeyDown={handleKeyDown}
+                      className="h-9 text-sm uppercase text-foreground"
+                      placeholder="DIGITE A NOVA HIPÓTESE"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button size="sm" variant="outline" onClick={cancelEditing}>Cancelar</Button>
+                      <Button size="sm" onClick={saveInlineEdit} className="bg-primary">Adicionar</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex flex-wrap gap-1 print:gap-0.5 items-center">
+                {patient.diagnoses.map((diagnosis, idx) => (
+                  <Badge
+                    key={idx}
+                    variant="secondary"
+                    className="text-[10px] py-0 px-1.5 uppercase cursor-pointer hover:bg-accent group/badge print:text-[7.5px] print:px-1 print:py-0"
+                    onClick={() => startEditing("diagnoses", diagnosis, idx)}
+                  >
+                    <span className="break-words">{diagnosis}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeArrayItem("diagnoses", idx);
+                      }}
+                      className="ml-1 opacity-0 group-hover/badge:opacity-100 hover:text-destructive print:hidden"
+                    >
+                      <X className="h-2.5 w-2.5" />
+                    </button>
+                    {idx === patient.diagnoses.length - 1 && editingField !== "diagnoses" && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditing("diagnoses", "", -2);
+                        }}
+                        className="ml-1 text-muted-foreground hover:text-primary print:hidden"
+                        title="Adicionar Hipótese/Diagnóstico"
+                      >
+                        <span className="text-xs">+</span>
+                      </button>
+                    )}
+                  </Badge>
+                ))}
+                
+                {patient.diagnoses.length === 0 && editingField !== "diagnoses" && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => startEditing("diagnoses", "", -2)}
+                    className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                    title="Adicionar Hipótese/Diagnóstico"
+                  >
+                    <span className="text-xs">+</span>
+                  </Button>
+                )}
+              </div>
+            </div>
+
               {/* Paciente - Priorizado */}
               <div className="flex flex-col md:col-span-4 min-w-0 relative">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
@@ -542,10 +634,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   )}
                 </div>
               </div>
-
-            {/* Hipóteses / Diagnósticos - Compacto */}
-            <div className="flex flex-col md:col-span-2 relative">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
               
               {/* Edit popup for diagnosis */}
               {editingField === "diagnoses" && editingArrayIndex >= 0 && (
@@ -809,7 +897,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               )}
             </button>
           </div>
-        </div>
         </div>
 
       {/* Expanded Content */}
