@@ -415,7 +415,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               {/* Hipóteses / Diagnósticos */}
               <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
-                <div className="flex flex-wrap gap-1 print:gap-0.5">
+                <div className="flex flex-wrap gap-1 print:gap-0.5 items-center">
                   {editingField === "diagnoses" && editingArrayIndex === -2 ? (
                     <div className="flex items-center gap-1">
                       <Input
@@ -489,11 +489,23 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           <X className="h-2 w-2" />
                         </button>
+                        {idx === patient.diagnoses.length - 1 && editingField !== "diagnoses" && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              startEditing("diagnoses", "", -2);
+                            }}
+                            className="ml-1 text-muted-foreground hover:text-primary print:hidden"
+                            title="Adicionar Hipótese/Diagnóstico"
+                          >
+                            <span className="text-xs">+</span>
+                          </button>
+                        )}
                       </Badge>
                     )
                   ))}
                   
-                  {editingField !== "diagnoses" && (
+                  {patient.diagnoses.length === 0 && editingField !== "diagnoses" && (
                     <Button
                       size="icon"
                       variant="ghost"
