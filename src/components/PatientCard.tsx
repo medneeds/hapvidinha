@@ -219,6 +219,136 @@ function SortablePendencyItemCollapsed({
   );
 }
 
+interface SortableDiagnosisItemCollapsedProps {
+  id: string;
+  index: number;
+  diagnosis: string;
+  isEditing: boolean;
+  editValue: string;
+  onEdit: () => void;
+  onSave: () => void;
+  onCancel: () => void;
+  onRemove: () => void;
+  onAddNew: () => void;
+  onEditValueChange: (value: string) => void;
+  onKeyDown: (e: React.KeyboardEvent) => void;
+  inputRef: React.RefObject<HTMLInputElement>;
+  isLast: boolean;
+}
+
+function SortableDiagnosisItemCollapsed({ 
+  id, 
+  index, 
+  diagnosis,
+  isEditing,
+  editValue,
+  onEdit, 
+  onSave,
+  onCancel,
+  onRemove, 
+  isLast, 
+  onAddNew,
+  onEditValueChange,
+  onKeyDown,
+  inputRef
+}: SortableDiagnosisItemCollapsedProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  if (isEditing) {
+    return (
+      <div className="absolute z-50 top-0 left-0 right-0 flex items-center gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
+        <Input
+          ref={inputRef}
+          value={editValue}
+          onChange={(e) => onEditValueChange(e.target.value)}
+          onKeyDown={onKeyDown}
+          className="h-7 text-xs uppercase text-foreground flex-1"
+        />
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={onSave}
+          className="h-7 w-7 text-green-600 hover:bg-green-100 flex-shrink-0"
+        >
+          <Check className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={onCancel}
+          className="h-7 w-7 text-red-600 hover:bg-red-100 flex-shrink-0"
+        >
+          <X className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
+        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50"
+      )}
+    >
+      <div
+        className="cursor-grab active:cursor-grabbing print:hidden flex-shrink-0"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-3 w-3 text-muted-foreground" />
+      </div>
+      <span 
+        className="break-words flex items-start gap-1 flex-1 cursor-pointer"
+        onClick={onEdit}
+      >
+        <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
+        <span className="break-words">{diagnosis}</span>
+      </span>
+      <div className="flex items-center gap-0.5 flex-shrink-0">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="opacity-0 group-hover/item:opacity-100 hover:text-destructive"
+        >
+          <X className="h-2.5 w-2.5" />
+        </button>
+        {isLast && (
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddNew();
+            }}
+            className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden p-0"
+            title="Adicionar Hipótese/Diagnóstico"
+          >
+            <span className="text-xs">+</span>
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -387,6 +517,26 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }
   };
 
+  const handleDragEndDiagnoses = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = patient.diagnoses.findIndex((_, i) => `diagnosis-${i}` === active.id);
+      const newIndex = patient.diagnoses.findIndex((_, i) => `diagnosis-${i}` === over.id);
+
+      const updatedPatient = {
+        ...patient,
+        diagnoses: arrayMove(patient.diagnoses, oldIndex, newIndex),
+      };
+
+      onUpdate(updatedPatient);
+      toast({
+        title: "Ordem atualizada",
+        description: "A ordem das hipóteses foi reorganizada.",
+      });
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -534,114 +684,80 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Hipóteses / Diagnósticos */}
             <div className="flex flex-col md:col-span-3 relative">
               <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
-              <div className="flex flex-wrap gap-1 print:gap-0.5 items-center">
-                {patient.diagnoses.map((diagnosis, idx) => (
-                  editingField === "diagnoses" && editingArrayIndex === idx ? (
-                    <div key={idx} className="absolute z-50 top-0 left-0 right-0 flex items-center gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
-                      <Input
-                        ref={inputRef}
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEndDiagnoses}
+              >
+                <SortableContext
+                  items={patient.diagnoses.map((_, i) => `diagnosis-${i}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                    {patient.diagnoses.map((diagnosis, idx) => (
+                      <SortableDiagnosisItemCollapsed
+                        key={`diagnosis-${idx}`}
+                        id={`diagnosis-${idx}`}
+                        index={idx}
+                        diagnosis={diagnosis}
+                        isEditing={editingField === "diagnoses" && editingArrayIndex === idx}
+                        editValue={editValue}
+                        onEdit={() => startEditing("diagnoses", diagnosis, idx)}
+                        onSave={saveInlineEdit}
+                        onCancel={cancelEditing}
+                        onRemove={() => removeArrayItem("diagnoses", idx)}
+                        onAddNew={() => startEditing("diagnoses", "", -2)}
+                        onEditValueChange={(val) => setEditValue(val.toUpperCase())}
                         onKeyDown={handleKeyDown}
-                        onBlur={saveInlineEdit}
-                        className="h-7 text-xs flex-1 uppercase text-foreground font-medium bg-background"
+                        inputRef={inputRef}
+                        isLast={idx === patient.diagnoses.length - 1}
                       />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={saveInlineEdit}
-                        className="h-7 w-7 text-green-600 hover:bg-green-100 flex-shrink-0"
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={cancelEditing}
-                        className="h-7 w-7 text-red-600 hover:bg-red-100 flex-shrink-0"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  ) : null
-                ))}
-                {patient.diagnoses.map((diagnosis, idx) => (
-                  editingField === "diagnoses" && editingArrayIndex === idx ? null : (
-                      <Badge 
-                        key={idx} 
-                        variant="secondary" 
-                        className="text-[10px] py-0 px-1.5 uppercase group/badge cursor-pointer hover:bg-secondary/80"
-                        onClick={() => startEditing("diagnoses", diagnosis, idx)}
-                      >
-                        {diagnosis}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeArrayItem("diagnoses", idx);
-                          }}
-                          className="ml-1 opacity-0 group-hover/badge:opacity-100 hover:text-destructive"
-                        >
-                          <X className="h-2 w-2" />
-                        </button>
-                        {idx === patient.diagnoses.length - 1 && editingField !== "diagnoses" && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              startEditing("diagnoses", "", -2);
-                            }}
-                            className="ml-1 text-muted-foreground hover:text-primary print:hidden"
-                            title="Adicionar Hipótese/Diagnóstico"
-                          >
-                            <span className="text-xs">+</span>
-                          </button>
-                        )}
-                      </Badge>
-                    )
-                  ))}
-                  
-                  {editingField === "diagnoses" && editingArrayIndex === -2 ? (
-                    <div className="absolute z-50 top-0 left-0 right-0 flex items-center gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
-                      <Input
-                        ref={inputRef}
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
-                        onKeyDown={handleKeyDown}
-                        onBlur={saveInlineEdit}
-                        className="h-7 text-xs uppercase text-foreground flex-1"
-                        placeholder="NOVA HIPÓTESE"
-                      />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={saveInlineEdit}
-                        className="h-5 w-5 text-green-600 hover:bg-green-100"
-                      >
-                        <Check className="h-2.5 w-2.5" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={cancelEditing}
-                        className="h-5 w-5 text-red-600 hover:bg-red-100"
-                      >
-                        <X className="h-2.5 w-2.5" />
-                      </Button>
-                    </div>
-                  ) : null}
-                  
-                  {patient.diagnoses.length === 0 && editingField !== "diagnoses" && (
+                    ))}
+                  </ol>
+                </SortableContext>
+
+                {editingField === "diagnoses" && editingArrayIndex === -2 ? (
+                  <div className="absolute z-50 top-0 left-0 right-0 flex items-center gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
+                    <Input
+                      ref={inputRef}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                      onKeyDown={handleKeyDown}
+                      className="h-7 text-xs uppercase text-foreground flex-1"
+                      placeholder="NOVA HIPÓTESE"
+                    />
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={() => startEditing("diagnoses", "", -2)}
-                      className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
-                      title="Adicionar Hipótese/Diagnóstico"
+                      onClick={saveInlineEdit}
+                      className="h-7 w-7 text-green-600 hover:bg-green-100 flex-shrink-0"
                     >
-                      <span className="text-xs">+</span>
+                      <Check className="h-3.5 w-3.5" />
                     </Button>
-                  )}
-                </div>
-              </div>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={cancelEditing}
+                      className="h-7 w-7 text-red-600 hover:bg-red-100 flex-shrink-0"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ) : null}
+                
+                {patient.diagnoses.length === 0 && editingField !== "diagnoses" && (
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => startEditing("diagnoses", "", -2)}
+                    className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                    title="Adicionar Hipótese/Diagnóstico"
+                  >
+                    <span className="text-xs">+</span>
+                  </Button>
+                )}
+              </DndContext>
+            </div>
 
             {/* Programações / Pendências - mais espaço */}
             <div className="flex flex-col md:col-span-5 relative">
