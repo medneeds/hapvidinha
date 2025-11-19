@@ -135,13 +135,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </Badge>
               </div>
 
-              {/* Nome e Idade - mais espaço */}
-              <div className="flex flex-col md:col-span-3">
+              {/* Nome e Idade - mais espaço para nome completo */}
+              <div className="flex flex-col md:col-span-4">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-start gap-1.5">
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-foreground leading-tight uppercase truncate">{patient.name}</p>
+                      <p className="font-semibold text-sm text-foreground leading-tight uppercase break-words">{patient.name}</p>
                       <p className="text-[11px] text-muted-foreground mt-0.5">{patient.age} anos</p>
                     </div>
                     <Button
@@ -157,7 +157,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* HD - mais espaço */}
+              {/* HD */}
               <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">HD</span>
                 <div className="flex flex-wrap gap-1 print:gap-0.5">
@@ -169,8 +169,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* Programações / Pendências - mais espaço */}
-              <div className="flex flex-col md:col-span-5">
+              {/* Programações / Pendências */}
+              <div className="flex flex-col md:col-span-4">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
                 <ul className="text-xs space-y-0 uppercase">
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
