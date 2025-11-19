@@ -330,8 +330,8 @@ export function EditPatientDialog({
 
           {/* Campos de Array em Grid Duplo */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Diagnósticos */}
-            {renderArrayField("diagnoses", "Hipóteses Diagnósticas")}
+            {/* Hipóteses / Diagnósticos */}
+            {renderArrayField("diagnoses", "Hipóteses / Diagnósticos")}
 
             {/* Antecedentes */}
             {renderArrayField("medicalHistory", "Antecedentes Mórbidos")}
