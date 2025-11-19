@@ -308,7 +308,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 />
               </div>
             )}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 items-start">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-1.5 items-start">
               {/* Leito - ultra compacto */}
               <div className="flex flex-col md:col-span-1">
                 <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
@@ -318,7 +318,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
               {/* Nome e Idade - mais espaço para nome completo */}
-              <div className="flex flex-col md:col-span-4">
+              <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-start gap-1.5">
@@ -508,7 +508,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
               {/* Programações / Pendências - mais espaço */}
-              <div className="flex flex-col md:col-span-4">
+              <div className="flex flex-col md:col-span-5">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
                 <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                   {editingField === "pendencies" && editingArrayIndex === -2 ? (
