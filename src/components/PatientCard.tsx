@@ -443,7 +443,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           onClick={() => startEditing("name", patient.name)}
                           title="Clique para editar"
                         >
-                          {patient.name}
+                          {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
                         </p>
                       )}
                       
@@ -481,7 +481,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           onClick={() => startEditing("age", patient.age.toString())}
                           title="Clique para editar"
                         >
-                          {patient.age} anos
+                          {patient.age > 0 ? `${patient.age} anos` : <span className="italic">Clique para adicionar idade</span>}
                         </p>
                       )}
                     </div>
@@ -569,13 +569,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   ))}
                   
                   {editingField === "diagnoses" && editingArrayIndex === -2 ? (
-                    <div className="flex items-center gap-1 w-full">
+                    <div className="absolute z-50 top-0 left-0 right-0 flex items-center gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
                       <Input
                         ref={inputRef}
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                         onKeyDown={handleKeyDown}
-                        className="h-5 text-[10px] uppercase text-foreground flex-1"
+                        onBlur={saveInlineEdit}
+                        className="h-7 text-xs uppercase text-foreground flex-1"
                         placeholder="NOVA HIPÓTESE"
                       />
                       <Button
