@@ -418,19 +418,20 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <div className="flex flex-wrap gap-1 print:gap-0.5 items-center">
                   {patient.diagnoses.map((diagnosis, idx) => (
                     editingField === "diagnoses" && editingArrayIndex === idx ? (
-                      <div key={idx} className="flex items-center gap-1">
+                      <div key={idx} className="flex items-center gap-1 w-full">
                         <Input
                           ref={inputRef}
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                           onKeyDown={handleKeyDown}
-                          className="h-5 text-[10px] w-24 uppercase text-foreground"
+                          onBlur={saveInlineEdit}
+                          className="h-5 text-[10px] min-w-[200px] flex-1 uppercase text-foreground"
                         />
                         <Button
                           size="icon"
                           variant="ghost"
                           onClick={saveInlineEdit}
-                          className="h-5 w-5 text-green-600 hover:bg-green-100"
+                          className="h-5 w-5 text-green-600 hover:bg-green-100 flex-shrink-0"
                         >
                           <Check className="h-2.5 w-2.5" />
                         </Button>
@@ -438,7 +439,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           size="icon"
                           variant="ghost"
                           onClick={cancelEditing}
-                          className="h-5 w-5 text-red-600 hover:bg-red-100"
+                          className="h-5 w-5 text-red-600 hover:bg-red-100 flex-shrink-0"
                         >
                           <X className="h-2.5 w-2.5" />
                         </Button>
@@ -525,14 +526,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                   {patient.pendencies.map((pendency, idx) => (
                     editingField === "pendencies" && editingArrayIndex === idx ? (
-                      <div key={idx} className="flex items-center gap-1">
+                      <div key={idx} className="flex items-center gap-1 w-full">
                         <span className="text-[10px] font-semibold text-muted-foreground w-4 flex-shrink-0">{idx + 1}.</span>
                         <Input
                           ref={inputRef}
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                           onKeyDown={handleKeyDown}
-                          className="h-5 text-[10px] uppercase text-foreground"
+                          onBlur={saveInlineEdit}
+                          className="h-5 text-[10px] min-w-[200px] flex-1 uppercase text-foreground"
                         />
                         <Button
                           size="icon"
