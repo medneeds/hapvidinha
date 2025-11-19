@@ -5,10 +5,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { useToast } from "@/hooks/use-toast";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -69,6 +86,43 @@ const sectorLabels = {
   blue: "Observação Azul",
   outside: "Fora das Alas"
 };
+
+interface SortablePendencyItemProps {
+  id: string;
+  index: number;
+  pendency: string;
+}
+
+function SortablePendencyItem({ id, index, pendency }: SortablePendencyItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight flex items-center gap-2 cursor-move hover:bg-accent/30 rounded px-1 -mx-1 py-0.5"
+      {...attributes}
+      {...listeners}
+    >
+      <GripVertical className="h-3 w-3 text-muted-foreground flex-shrink-0 print:hidden" />
+      <span className="font-semibold text-muted-foreground">{index + 1}.</span>
+      <span className="flex-1">{pendency}</span>
+    </li>
+  );
+}
 
 export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -180,6 +234,33 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       title: "Item removido",
       description: "O item foi removido com sucesso.",
     });
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = patient.pendencies.findIndex((_, i) => `pendency-${i}` === active.id);
+      const newIndex = patient.pendencies.findIndex((_, i) => `pendency-${i}` === over.id);
+
+      const updatedPatient = {
+        ...patient,
+        pendencies: arrayMove(patient.pendencies, oldIndex, newIndex),
+      };
+
+      onUpdate(updatedPatient);
+      toast({
+        title: "Ordem atualizada",
+        description: "A ordem das programações foi reorganizada.",
+      });
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -421,6 +502,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <div className="space-y-0.5">
                   {editingField === "pendencies" && editingArrayIndex === -2 ? (
                     <div className="flex items-center gap-1">
+                      <span className="text-[10px] font-semibold text-muted-foreground w-4 flex-shrink-0">{patient.pendencies.length + 1}.</span>
                       <Input
                         ref={inputRef}
                         value={editValue}
@@ -451,6 +533,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
                     editingField === "pendencies" && editingArrayIndex === idx ? (
                       <div key={idx} className="flex items-center gap-1">
+                        <span className="text-[10px] font-semibold text-muted-foreground w-4 flex-shrink-0">{idx + 1}.</span>
                         <Input
                           ref={inputRef}
                           value={editValue}
@@ -481,7 +564,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         className="text-xs text-foreground leading-tight uppercase group/item cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 flex items-center justify-between"
                         onClick={() => startEditing("pendencies", pendency, idx)}
                       >
-                        <span className="truncate">• {pendency}</span>
+                        <span className="truncate flex items-center gap-1">
+                          <span className="font-semibold text-muted-foreground">{idx + 1}.</span>
+                          {pendency}
+                        </span>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -496,7 +582,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   ))}
                   
                   {patient.pendencies.length > 2 && editingField !== "pendencies" && (
-                    <div className="text-muted-foreground text-[10px]">
+                    <div className="text-muted-foreground text-[10px] pl-5">
                       +{patient.pendencies.length - 2} mais
                     </div>
                   )}
@@ -506,7 +592,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       size="icon"
                       variant="ghost"
                       onClick={() => startEditing("pendencies", "", -2)}
-                      className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                      className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden ml-5"
                       title="Adicionar Programação/Pendência"
                     >
                       <span className="text-xs">+</span>
@@ -647,11 +733,27 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Programações / Pendências */}
             <div>
               <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Programações / Pendências</h4>
-              <ul className="space-y-0 uppercase">
-                {patient.pendencies.map((pendency, idx) => (
-                  <li key={idx} className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight">• {pendency}</li>
-                ))}
-              </ul>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={patient.pendencies.map((_, idx) => `pendency-${idx}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <ul className="space-y-1 uppercase">
+                    {patient.pendencies.map((pendency, idx) => (
+                      <SortablePendencyItem
+                        key={`pendency-${idx}`}
+                        id={`pendency-${idx}`}
+                        index={idx}
+                        pendency={pendency}
+                      />
+                    ))}
+                  </ul>
+                </SortableContext>
+              </DndContext>
             </div>
           </div>
 
