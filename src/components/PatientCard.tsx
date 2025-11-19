@@ -126,11 +126,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 />
               </div>
             )}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-7 gap-2 items-start">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-8 gap-2 items-start">
               {/* Leito */}
               <div className="flex flex-col">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Leito:</span>
-                <Badge className={cn("w-fit text-xs py-0 px-2", config.badgeColor)}>
+                <Badge className={cn("w-fit text-[11px] py-0 px-1.5 font-semibold", config.badgeColor)}>
                   {patient.bedNumber}
                 </Badge>
               </div>
@@ -139,19 +139,21 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <div className="flex flex-col md:col-span-2">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente:</span>
                 <div className="group/name relative">
-                  <div className="flex items-center gap-1">
-                    <p className="font-semibold text-sm text-foreground leading-tight uppercase">{patient.name}</p>
+                  <div className="flex items-center gap-1.5">
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm text-foreground leading-tight uppercase">{patient.name}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{patient.age} anos</p>
+                    </div>
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={handleCopyName}
-                      className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary"
+                      className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0"
                       title="Copiar nome"
                     >
                       <Copy className="h-3 w-3" />
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">({patient.age}a)</p>
                 </div>
               </div>
 
@@ -168,7 +170,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
               {/* Programações / Pendências */}
-              <div className="flex flex-col md:col-span-2">
+              <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências:</span>
                 <ul className="text-xs space-y-0 uppercase">
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
