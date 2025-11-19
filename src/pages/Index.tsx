@@ -765,7 +765,7 @@ const Index = () => {
               {/* Pacientes Fora das Alas Section */}
               <div className="mt-6 print:hidden">
                 <Collapsible open={isOutsideSectionOpen} onOpenChange={setIsOutsideSectionOpen}>
-                  <div className="bg-gradient-card rounded-xl p-3 border border-border/50 shadow-md transition-all duration-200 h-[72px] flex items-center">
+                  <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
                     <div className="flex items-center justify-between w-full">
                       <CollapsibleTrigger asChild>
                         <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -795,11 +795,8 @@ const Index = () => {
                         >
                           <Printer className="h-3.5 w-3.5" />
                         </Button>
-                        <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50">
-                          <div>
-                            <p className="text-[10px] text-muted-foreground uppercase">Pacientes</p>
-                            <p className="text-base font-bold text-foreground">{outsidePatients.length}</p>
-                          </div>
+                        <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
+                          <p className="text-base font-bold text-foreground">{outsidePatients.length}</p>
                         </div>
                       </div>
                     </div>
@@ -845,7 +842,7 @@ const Index = () => {
               {/* Anotações e Lembretes Section */}
               <div className="mt-6 print:hidden">
                 <Collapsible open={isNotesSectionOpen} onOpenChange={setIsNotesSectionOpen}>
-                  <div className="bg-gradient-card rounded-xl p-3 border border-border/50 shadow-md transition-all duration-200 h-[72px] flex items-center">
+                  <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
                     <div className="flex items-center justify-between w-full">
                       <CollapsibleTrigger asChild>
                         <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">

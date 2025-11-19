@@ -173,7 +173,7 @@ export function SectorSection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
-      <div className={`${info.gradientClass} rounded-xl p-2.5 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[56px] print:h-auto flex items-center`}>
+      <div className={`${info.gradientClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center`}>
         <div className="flex items-center justify-between w-full gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
@@ -222,11 +222,8 @@ export function SectorSection({
                 <Printer className="h-3.5 w-3.5" />
               </Button>
             )}
-            <div className="flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/50 print:px-1 print:py-0.5 print:border-border/30">
-              <div>
-                <p className="text-[10px] text-muted-foreground uppercase print:text-[8px]">Leitos</p>
-                <p className="text-base font-bold text-foreground print:text-[10px]">{patients.length}</p>
-              </div>
+            <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:w-6">
+              <p className="text-base font-bold text-foreground print:text-[10px]">{patients.length}</p>
             </div>
           </div>
         </div>
