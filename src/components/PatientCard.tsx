@@ -77,6 +77,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [isDeleting, setIsDeleting] = useState(false);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [editingArrayIndex, setEditingArrayIndex] = useState<number>(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const config = sectorConfig[patient.sector];
   const { toast } = useToast();
@@ -111,14 +112,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }
   };
 
-  const startEditing = (field: string, currentValue: string) => {
+  const startEditing = (field: string, currentValue: string, index: number = -1) => {
     setEditingField(field);
     setEditValue(currentValue);
+    setEditingArrayIndex(index);
   };
 
   const cancelEditing = () => {
     setEditingField(null);
     setEditValue("");
+    setEditingArrayIndex(-1);
   };
 
   const saveInlineEdit = () => {
@@ -130,15 +133,52 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       updatedPatient.name = editValue.toUpperCase();
     } else if (editingField === "age") {
       updatedPatient.age = parseInt(editValue) || patient.age;
+    } else if (editingField === "diagnoses") {
+      if (editingArrayIndex === -1) {
+        // Adding new
+        updatedPatient.diagnoses = [...patient.diagnoses, editValue.toUpperCase()];
+      } else {
+        // Editing existing
+        updatedPatient.diagnoses = patient.diagnoses.map((d, i) => 
+          i === editingArrayIndex ? editValue.toUpperCase() : d
+        );
+      }
+    } else if (editingField === "pendencies") {
+      if (editingArrayIndex === -1) {
+        // Adding new
+        updatedPatient.pendencies = [...patient.pendencies, editValue.toUpperCase()];
+      } else {
+        // Editing existing
+        updatedPatient.pendencies = patient.pendencies.map((p, i) => 
+          i === editingArrayIndex ? editValue.toUpperCase() : p
+        );
+      }
     }
 
     onUpdate(updatedPatient);
     setEditingField(null);
     setEditValue("");
+    setEditingArrayIndex(-1);
     
     toast({
       title: "Campo atualizado",
       description: "As alterações foram salvas com sucesso.",
+    });
+  };
+
+  const removeArrayItem = (field: "diagnoses" | "pendencies", index: number) => {
+    const updatedPatient = { ...patient };
+    
+    if (field === "diagnoses") {
+      updatedPatient.diagnoses = patient.diagnoses.filter((_, i) => i !== index);
+    } else if (field === "pendencies") {
+      updatedPatient.pendencies = patient.pendencies.filter((_, i) => i !== index);
+    }
+
+    onUpdate(updatedPatient);
+    toast({
+      title: "Item removido",
+      description: "O item foi removido com sucesso.",
     });
   };
 
@@ -284,27 +324,195 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">HD</span>
                 <div className="flex flex-wrap gap-1 print:gap-0.5">
+                  {editingField === "diagnoses" && editingArrayIndex === -2 ? (
+                    <div className="flex items-center gap-1">
+                      <Input
+                        ref={inputRef}
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                        onKeyDown={handleKeyDown}
+                        className="h-5 text-[10px] w-24 uppercase"
+                        placeholder="NOVO HD"
+                      />
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={saveInlineEdit}
+                        className="h-5 w-5 text-green-600 hover:bg-green-100"
+                      >
+                        <Check className="h-2.5 w-2.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={cancelEditing}
+                        className="h-5 w-5 text-red-600 hover:bg-red-100"
+                      >
+                        <X className="h-2.5 w-2.5" />
+                      </Button>
+                    </div>
+                  ) : null}
+                  
                   {patient.diagnoses.map((diagnosis, idx) => (
-                    <Badge key={idx} variant="secondary" className="text-[10px] py-0 px-1.5 uppercase">
-                      {diagnosis}
-                    </Badge>
+                    editingField === "diagnoses" && editingArrayIndex === idx ? (
+                      <div key={idx} className="flex items-center gap-1">
+                        <Input
+                          ref={inputRef}
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                          onKeyDown={handleKeyDown}
+                          className="h-5 text-[10px] w-24 uppercase"
+                        />
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={saveInlineEdit}
+                          className="h-5 w-5 text-green-600 hover:bg-green-100"
+                        >
+                          <Check className="h-2.5 w-2.5" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={cancelEditing}
+                          className="h-5 w-5 text-red-600 hover:bg-red-100"
+                        >
+                          <X className="h-2.5 w-2.5" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Badge 
+                        key={idx} 
+                        variant="secondary" 
+                        className="text-[10px] py-0 px-1.5 uppercase group/badge cursor-pointer hover:bg-secondary/80"
+                        onClick={() => startEditing("diagnoses", diagnosis, idx)}
+                      >
+                        {diagnosis}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeArrayItem("diagnoses", idx);
+                          }}
+                          className="ml-1 opacity-0 group-hover/badge:opacity-100 hover:text-destructive"
+                        >
+                          <X className="h-2 w-2" />
+                        </button>
+                      </Badge>
+                    )
                   ))}
+                  
+                  {editingField !== "diagnoses" && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => startEditing("diagnoses", "", -2)}
+                      className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                      title="Adicionar HD"
+                    >
+                      <span className="text-xs">+</span>
+                    </Button>
+                  )}
                 </div>
               </div>
 
               {/* Programações / Pendências */}
               <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
-                <ul className="text-xs space-y-0 uppercase">
+                <div className="space-y-0.5">
+                  {editingField === "pendencies" && editingArrayIndex === -2 ? (
+                    <div className="flex items-center gap-1">
+                      <Input
+                        ref={inputRef}
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                        onKeyDown={handleKeyDown}
+                        className="h-5 text-[10px] uppercase"
+                        placeholder="NOVA PENDÊNCIA"
+                      />
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={saveInlineEdit}
+                        className="h-5 w-5 text-green-600 hover:bg-green-100 flex-shrink-0"
+                      >
+                        <Check className="h-2.5 w-2.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={cancelEditing}
+                        className="h-5 w-5 text-red-600 hover:bg-red-100 flex-shrink-0"
+                      >
+                        <X className="h-2.5 w-2.5" />
+                      </Button>
+                    </div>
+                  ) : null}
+                  
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
-                    <li key={idx} className="text-foreground truncate leading-tight">• {pendency}</li>
+                    editingField === "pendencies" && editingArrayIndex === idx ? (
+                      <div key={idx} className="flex items-center gap-1">
+                        <Input
+                          ref={inputRef}
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                          onKeyDown={handleKeyDown}
+                          className="h-5 text-[10px] uppercase"
+                        />
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={saveInlineEdit}
+                          className="h-5 w-5 text-green-600 hover:bg-green-100 flex-shrink-0"
+                        >
+                          <Check className="h-2.5 w-2.5" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={cancelEditing}
+                          className="h-5 w-5 text-red-600 hover:bg-red-100 flex-shrink-0"
+                        >
+                          <X className="h-2.5 w-2.5" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div 
+                        key={idx} 
+                        className="text-xs text-foreground leading-tight uppercase group/item cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 flex items-center justify-between"
+                        onClick={() => startEditing("pendencies", pendency, idx)}
+                      >
+                        <span className="truncate">• {pendency}</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeArrayItem("pendencies", idx);
+                          }}
+                          className="ml-1 opacity-0 group-hover/item:opacity-100 hover:text-destructive flex-shrink-0"
+                        >
+                          <X className="h-2.5 w-2.5" />
+                        </button>
+                      </div>
+                    )
                   ))}
-                  {patient.pendencies.length > 2 && (
-                    <li className="text-muted-foreground text-[10px]">
+                  
+                  {patient.pendencies.length > 2 && editingField !== "pendencies" && (
+                    <div className="text-muted-foreground text-[10px]">
                       +{patient.pendencies.length - 2} mais
-                    </li>
+                    </div>
                   )}
-                </ul>
+                  
+                  {editingField !== "pendencies" && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => startEditing("pendencies", "", -2)}
+                      className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                      title="Adicionar Programação/Pendência"
+                    >
+                      <span className="text-xs">+</span>
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
 
