@@ -173,7 +173,7 @@ export function SectorSection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
-      <div className={`${info.gradientClass} rounded-xl p-3 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 h-[72px] print:h-auto flex items-center`}>
+      <div className={`${info.gradientClass} rounded-xl p-2.5 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[56px] print:h-auto flex items-center`}>
         <div className="flex items-center justify-between w-full gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
@@ -194,12 +194,9 @@ export function SectorSection({
           <CollapsibleTrigger asChild>
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
-              <div className="text-left">
-                <div className="flex items-center gap-2 mb-0.5 print:mb-0 print:gap-1">
-                  <span className="text-lg print:text-sm">{info.icon}</span>
-                  <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">{info.title}</h2>
-                </div>
-                <p className="text-xs text-muted-foreground print:hidden uppercase">{info.subtitle}</p>
+              <div className="flex items-center gap-2 print:gap-1">
+                <span className="text-lg print:text-sm">{info.icon}</span>
+                <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">{info.title}</h2>
               </div>
             </button>
           </CollapsibleTrigger>
