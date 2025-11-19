@@ -136,7 +136,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
               {/* Nome e Idade - mais espaço para nome completo */}
-              <div className="flex flex-col md:col-span-4">
+              <div className="flex flex-col md:col-span-5">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-start gap-1.5">
@@ -170,7 +170,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
               {/* Programações / Pendências */}
-              <div className="flex flex-col md:col-span-4">
+              <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
                 <ul className="text-xs space-y-0 uppercase">
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
