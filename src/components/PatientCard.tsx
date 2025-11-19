@@ -127,10 +127,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
             )}
             <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 items-start">
-              {/* Leito - mais compacto */}
+              {/* Leito - ultra compacto */}
               <div className="flex flex-col md:col-span-1">
                 <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                <Badge className={cn("w-fit text-[10px] py-0.5 px-1 font-bold min-w-[2rem] justify-center", config.badgeColor)}>
+                <Badge className={cn("w-fit text-[10px] py-0 px-1 font-bold leading-tight", config.badgeColor)}>
                   {patient.bedNumber}
                 </Badge>
               </div>
