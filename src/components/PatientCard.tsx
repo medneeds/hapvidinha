@@ -722,10 +722,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   size="icon"
                   variant="ghost"
                   onClick={() => setExpandedSection('diagnoses')}
-                  className="h-2.5 w-2.5 p-0 text-muted-foreground/30 hover:text-primary opacity-30 hover:opacity-100 transition-opacity print:hidden"
+                  className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                   title="Visualizar expandido"
                 >
-                  <Maximize2 className="h-1.5 w-1.5" />
+                  <Maximize2 className="h-[9px] w-[9px]" />
                 </Button>
               </div>
               <DndContext
@@ -817,10 +817,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   size="icon"
                   variant="ghost"
                   onClick={() => setExpandedSection('exams')}
-                  className="h-2.5 w-2.5 p-0 text-muted-foreground/30 hover:text-primary opacity-30 hover:opacity-100 transition-opacity print:hidden"
+                  className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                   title="Visualizar expandido"
                 >
-                  <Maximize2 className="h-1.5 w-1.5" />
+                  <Maximize2 className="h-[9px] w-[9px]" />
                 </Button>
               </div>
               <DndContext
@@ -920,10 +920,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   size="icon"
                   variant="ghost"
                   onClick={() => setExpandedSection('pendencies')}
-                  className="h-2.5 w-2.5 p-0 text-muted-foreground/30 hover:text-primary opacity-30 hover:opacity-100 transition-opacity print:hidden"
+                  className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                   title="Visualizar expandido"
                 >
-                  <Maximize2 className="h-1.5 w-1.5" />
+                  <Maximize2 className="h-[9px] w-[9px]" />
                 </Button>
               </div>
               <DndContext
