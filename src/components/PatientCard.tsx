@@ -297,8 +297,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         isSelected && "ring-2 ring-primary",
         isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]"
       )}>
-        <div className="p-2.5">
-          <div className="flex items-center justify-between gap-3">
+        <div className="p-2 print:p-1.5">
+          <div className="flex items-start justify-between gap-2 print:gap-1">
             {selectionMode && onToggleSelection && (
               <div className="flex items-center justify-center print:hidden flex-shrink-0">
                 <Checkbox
@@ -510,7 +510,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               {/* Programações / Pendências */}
               <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
-                <div className="space-y-0.5">
+                <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                   {editingField === "pendencies" && editingArrayIndex === -2 ? (
                     <div className="flex items-center gap-1">
                       <span className="text-[10px] font-semibold text-muted-foreground w-4 flex-shrink-0">{patient.pendencies.length + 1}.</span>
@@ -572,7 +572,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     ) : (
                       <div 
                         key={idx} 
-                        className="text-xs text-foreground leading-tight uppercase group/item cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 flex items-start justify-between gap-1"
+                        className="text-[10px] text-foreground leading-snug uppercase group/item cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5"
                         onClick={() => startEditing("pendencies", pendency, idx)}
                       >
                         <span className="break-words flex items-start gap-1 flex-1">
@@ -584,7 +584,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             e.stopPropagation();
                             removeArrayItem("pendencies", idx);
                           }}
-                          className="ml-1 opacity-0 group-hover/item:opacity-100 hover:text-destructive flex-shrink-0"
+                          className="opacity-0 group-hover/item:opacity-100 hover:text-destructive flex-shrink-0"
                         >
                           <X className="h-2.5 w-2.5" />
                         </button>
