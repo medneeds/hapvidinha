@@ -412,9 +412,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* HD */}
+              {/* Hipóteses / Diagnósticos */}
               <div className="flex flex-col md:col-span-3">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">HD</span>
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
                 <div className="flex flex-wrap gap-1 print:gap-0.5">
                   {editingField === "diagnoses" && editingArrayIndex === -2 ? (
                     <div className="flex items-center gap-1">
@@ -424,7 +424,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                         onKeyDown={handleKeyDown}
                         className="h-5 text-[10px] w-24 uppercase"
-                        placeholder="NOVO HD"
+                        placeholder="NOVA HIPÓTESE"
                       />
                       <Button
                         size="icon"
@@ -499,7 +499,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       variant="ghost"
                       onClick={() => startEditing("diagnoses", "", -2)}
                       className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
-                      title="Adicionar HD"
+                      title="Adicionar Hipótese/Diagnóstico"
                     >
                       <span className="text-xs">+</span>
                     </Button>
