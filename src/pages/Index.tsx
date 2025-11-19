@@ -280,7 +280,14 @@ const Index = () => {
     saveToHistory(patients);
     const sectorPrefix = sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : sector === 'blue' ? 'Z' : 'F';
     const sectorPatients = patients.filter(p => p.sector === sector);
-    const extraBedNumber = sectorPatients.length + 1;
+    
+    // Encontrar o maior número de leito existente neste setor
+    const bedNumbers = sectorPatients
+      .map(p => parseInt(p.bedNumber.substring(1)))
+      .filter(n => !isNaN(n));
+    
+    const maxBedNumber = bedNumbers.length > 0 ? Math.max(...bedNumbers) : 0;
+    const extraBedNumber = maxBedNumber + 1;
     
     const newPatientData = {
       bedNumber: `${sectorPrefix}${String(extraBedNumber).padStart(2, '0')}`,
