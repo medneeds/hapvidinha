@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { useToast } from "@/hooks/use-toast";
@@ -318,7 +318,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
               {/* Nome e Idade - mais espaço para nome completo */}
-              <div className="flex flex-col md:col-span-5">
+              <div className="flex flex-col md:col-span-4">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-start gap-1.5">
@@ -507,8 +507,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* Programações / Pendências */}
-              <div className="flex flex-col md:col-span-3">
+              {/* Programações / Pendências - mais espaço */}
+              <div className="flex flex-col md:col-span-4">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
                 <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                   {editingField === "pendencies" && editingArrayIndex === -2 ? (
@@ -607,80 +607,83 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
             </div>
 
-          {/* Action Buttons */}
-          <div className="flex-shrink-0 flex gap-1 print:hidden">
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsEditDialogOpen(true);
-              }}
-              className="h-8 w-8 text-foreground hover:bg-primary/10 hover:text-primary transition-all duration-200"
-            >
-              <Edit className="h-3.5 w-3.5" />
-            </Button>
-            {onTransfer && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={(e) => e.stopPropagation()}
-                    className="h-8 w-8 text-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
-                    title="Transferir para outra ala"
-                  >
-                    <ArrowRightLeft className="h-3.5 w-3.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Transferir para</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
-                    sector !== patient.sector && (
-                      <DropdownMenuItem
-                        key={sector}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleTransfer(sector);
-                        }}
-                      >
-                        {sectorLabels[sector]}
-                      </DropdownMenuItem>
-                    )
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-            {onPrintPatient && (
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPrintPatient(patient.id);
-                }}
-                className="h-8 w-8 text-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
-                title="Imprimir caso completo"
-              >
-                <Printer className="h-3.5 w-3.5" />
-              </Button>
-            )}
-            {onDelete && (
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsDeleteDialogOpen(true);
-                }}
-                className="h-8 w-8 text-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
-            )}
+          {/* Action Menu - Compact */}
+          <div className="flex-shrink-0 flex gap-1 print:hidden items-start">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 text-foreground hover:bg-accent hover:text-accent-foreground"
+                  title="Ações"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditDialogOpen(true);
+                  }}
+                >
+                  <Edit className="h-3.5 w-3.5 mr-2" />
+                  Edição Avançada
+                </DropdownMenuItem>
+                {onTransfer && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel className="text-xs">Transferir para</DropdownMenuLabel>
+                    {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
+                      sector !== patient.sector && (
+                        <DropdownMenuItem
+                          key={sector}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTransfer(sector);
+                          }}
+                        >
+                          <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
+                          {sectorLabels[sector]}
+                        </DropdownMenuItem>
+                      )
+                    ))}
+                  </>
+                )}
+                {onPrintPatient && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onPrintPatient(patient.id);
+                      }}
+                    >
+                      <Printer className="h-3.5 w-3.5 mr-2" />
+                      Imprimir Caso
+                    </DropdownMenuItem>
+                  </>
+                )}
+                {onDelete && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsDeleteDialogOpen(true);
+                      }}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="h-3.5 w-3.5 mr-2" />
+                      Excluir Paciente
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <button 
-              className="flex-shrink-0 p-1.5 hover:bg-accent/50 rounded-md transition-all duration-200"
+              className="flex-shrink-0 p-1 hover:bg-accent/50 rounded-md transition-all duration-200"
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded ? (
