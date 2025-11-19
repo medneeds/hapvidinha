@@ -113,12 +113,19 @@ function SortablePendencyItem({ id, index, pendency }: SortablePendencyItemProps
     <li
       ref={setNodeRef}
       style={style}
-      className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight flex items-center gap-2 cursor-move hover:bg-accent/30 rounded px-1 -mx-1 py-0.5"
-      {...attributes}
-      {...listeners}
+      className={cn(
+        "text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight flex items-center gap-2 rounded px-1 -mx-1 py-1",
+        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/30"
+      )}
     >
-      <GripVertical className="h-3 w-3 text-muted-foreground flex-shrink-0 print:hidden" />
-      <span className="font-semibold text-muted-foreground">{index + 1}.</span>
+      <div
+        className="cursor-grab active:cursor-grabbing print:hidden"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+      </div>
+      <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
       <span className="flex-1">{pendency}</span>
     </li>
   );
@@ -237,7 +244,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   };
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
