@@ -1271,28 +1271,38 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
       {/* Dialog expandido para Hipóteses / Diagnósticos */}
       <Dialog open={expandedSection === 'diagnoses'} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="flex items-center gap-3">
               <Badge className={config.badgeColor}>Leito {patient.bedNumber}</Badge>
-              <span className="text-lg">Hipóteses / Diagnósticos</span>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold">Hipóteses / Diagnósticos</span>
+                <span className="text-sm font-normal text-muted-foreground mt-1">
+                  {patient.name} • {patient.age} anos
+                </span>
+              </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-2 mt-4">
-            <div className="text-sm font-semibold text-muted-foreground mb-2">
-              Paciente: {patient.name} ({patient.age} anos)
-            </div>
+          <div className="mt-6">
             {patient.diagnoses.length > 0 ? (
-              <ol className="space-y-3 list-none">
+              <ol className="space-y-4 list-none">
                 {patient.diagnoses.map((diagnosis, idx) => (
-                  <li key={idx} className="text-base text-foreground leading-relaxed uppercase bg-accent/30 p-3 rounded-md">
-                    <span className="font-bold text-primary mr-2">{idx + 1}.</span>
-                    {diagnosis}
+                  <li key={idx} className="flex gap-3 items-start">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
+                      {idx + 1}
+                    </span>
+                    <div className="flex-1 bg-accent/20 hover:bg-accent/30 transition-colors p-4 rounded-lg border border-border/50">
+                      <p className="text-base text-foreground leading-relaxed uppercase break-words">
+                        {diagnosis}
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ol>
             ) : (
-              <p className="text-muted-foreground italic text-center py-8">Nenhuma hipótese/diagnóstico registrado</p>
+              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                <p className="text-lg italic">Nenhuma hipótese/diagnóstico registrado</p>
+              </div>
             )}
           </div>
         </DialogContent>
@@ -1300,28 +1310,38 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
       {/* Dialog expandido para Exames Complementares */}
       <Dialog open={expandedSection === 'exams'} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="flex items-center gap-3">
               <Badge className={config.badgeColor}>Leito {patient.bedNumber}</Badge>
-              <span className="text-lg">Exames Complementares</span>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold">Exames Complementares</span>
+                <span className="text-sm font-normal text-muted-foreground mt-1">
+                  {patient.name} • {patient.age} anos
+                </span>
+              </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-2 mt-4">
-            <div className="text-sm font-semibold text-muted-foreground mb-2">
-              Paciente: {patient.name} ({patient.age} anos)
-            </div>
+          <div className="mt-6">
             {patient.relevantExams.length > 0 ? (
-              <ol className="space-y-3 list-none">
+              <ol className="space-y-4 list-none">
                 {patient.relevantExams.map((exam, idx) => (
-                  <li key={idx} className="text-base text-foreground leading-relaxed uppercase bg-accent/30 p-3 rounded-md">
-                    <span className="font-bold text-primary mr-2">{idx + 1}.</span>
-                    {exam}
+                  <li key={idx} className="flex gap-3 items-start">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
+                      {idx + 1}
+                    </span>
+                    <div className="flex-1 bg-accent/20 hover:bg-accent/30 transition-colors p-4 rounded-lg border border-border/50">
+                      <p className="text-base text-foreground leading-relaxed uppercase break-words">
+                        {exam}
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ol>
             ) : (
-              <p className="text-muted-foreground italic text-center py-8">Nenhum exame complementar registrado</p>
+              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                <p className="text-lg italic">Nenhum exame complementar registrado</p>
+              </div>
             )}
           </div>
         </DialogContent>
@@ -1329,28 +1349,38 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
       {/* Dialog expandido para Programações / Pendências */}
       <Dialog open={expandedSection === 'pendencies'} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="flex items-center gap-3">
               <Badge className={config.badgeColor}>Leito {patient.bedNumber}</Badge>
-              <span className="text-lg">Programações / Pendências</span>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold">Programações / Pendências</span>
+                <span className="text-sm font-normal text-muted-foreground mt-1">
+                  {patient.name} • {patient.age} anos
+                </span>
+              </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-2 mt-4">
-            <div className="text-sm font-semibold text-muted-foreground mb-2">
-              Paciente: {patient.name} ({patient.age} anos)
-            </div>
+          <div className="mt-6">
             {patient.pendencies.length > 0 ? (
-              <ol className="space-y-3 list-none">
+              <ol className="space-y-4 list-none">
                 {patient.pendencies.map((pendency, idx) => (
-                  <li key={idx} className="text-base text-foreground leading-relaxed uppercase bg-accent/30 p-3 rounded-md">
-                    <span className="font-bold text-primary mr-2">{idx + 1}.</span>
-                    {pendency}
+                  <li key={idx} className="flex gap-3 items-start">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
+                      {idx + 1}
+                    </span>
+                    <div className="flex-1 bg-accent/20 hover:bg-accent/30 transition-colors p-4 rounded-lg border border-border/50">
+                      <p className="text-base text-foreground leading-relaxed uppercase break-words">
+                        {pendency}
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ol>
             ) : (
-              <p className="text-muted-foreground italic text-center py-8">Nenhuma programação/pendência registrada</p>
+              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+                <p className="text-lg italic">Nenhuma programação/pendência registrada</p>
+              </div>
             )}
           </div>
         </DialogContent>
