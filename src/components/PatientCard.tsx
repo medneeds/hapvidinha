@@ -248,6 +248,27 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const config = sectorConfig[patient.sector];
   const { toast } = useToast();
 
+  // Column widths state (percentages)
+  const [columnWidths, setColumnWidths] = useState(() => {
+    const saved = localStorage.getItem('patient-card-column-widths');
+    return saved ? JSON.parse(saved) : {
+      leito: 8.33, // 1/12
+      paciente: 25, // 3/12
+      hd: 25, // 3/12
+      pendencies: 41.67 // 5/12
+    };
+  });
+  
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizingColumn, setResizingColumn] = useState<string | null>(null);
+  const resizeStartX = useRef(0);
+  const resizeStartWidths = useRef({ leito: 0, paciente: 0, hd: 0, pendencies: 0 });
+
+  // Save column widths to localStorage
+  useEffect(() => {
+    localStorage.setItem('patient-card-column-widths', JSON.stringify(columnWidths));
+  }, [columnWidths]);
+
   useEffect(() => {
     if (editingField && inputRef.current) {
       inputRef.current.focus();
@@ -423,6 +444,64 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }, 300);
   };
 
+  // Column resize handlers
+  const handleResizeStart = (e: React.MouseEvent, column: string) => {
+    e.preventDefault();
+    setIsResizing(true);
+    setResizingColumn(column);
+    resizeStartX.current = e.clientX;
+    resizeStartWidths.current = { ...columnWidths };
+  };
+
+  useEffect(() => {
+    const handleResizeMove = (e: MouseEvent) => {
+      if (!isResizing || !resizingColumn) return;
+
+      const deltaX = e.clientX - resizeStartX.current;
+      const containerWidth = 100; // percentage based
+      const deltaPercent = (deltaX / window.innerWidth) * 100;
+
+      const newWidths = { ...resizeStartWidths.current };
+      
+      // Adjust the current column and the next column
+      if (resizingColumn === 'leito') {
+        const newLeito = Math.max(5, Math.min(20, newWidths.leito + deltaPercent));
+        const diff = newLeito - newWidths.leito;
+        newWidths.leito = newLeito;
+        newWidths.paciente = Math.max(10, newWidths.paciente - diff);
+      } else if (resizingColumn === 'paciente') {
+        const newPaciente = Math.max(10, Math.min(40, newWidths.paciente + deltaPercent));
+        const diff = newPaciente - newWidths.paciente;
+        newWidths.paciente = newPaciente;
+        newWidths.hd = Math.max(10, newWidths.hd - diff);
+      } else if (resizingColumn === 'hd') {
+        const newHD = Math.max(10, Math.min(40, newWidths.hd + deltaPercent));
+        const diff = newHD - newWidths.hd;
+        newWidths.hd = newHD;
+        newWidths.pendencies = Math.max(20, newWidths.pendencies - diff);
+      }
+
+      setColumnWidths(newWidths);
+    };
+
+    const handleResizeEnd = () => {
+      setIsResizing(false);
+      setResizingColumn(null);
+      document.body.style.cursor = '';
+    };
+
+    if (isResizing) {
+      document.body.style.cursor = 'col-resize';
+      document.addEventListener('mousemove', handleResizeMove);
+      document.addEventListener('mouseup', handleResizeEnd);
+      return () => {
+        document.body.style.cursor = '';
+        document.removeEventListener('mousemove', handleResizeMove);
+        document.removeEventListener('mouseup', handleResizeEnd);
+      };
+    }
+  }, [isResizing, resizingColumn, columnWidths]);
+
   if (isDeleting) {
     return null;
   }
@@ -440,7 +519,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       <Card className={cn(
         "hover:shadow-md transition-all duration-200 overflow-visible",
         config.color,
-        selectionMode && isSelected && "ring-2 ring-primary ring-offset-2"
+        selectionMode && isSelected && "ring-2 ring-primary ring-offset-2",
+        isResizing && "select-none"
       )}>
         <div className="p-2.5 print:p-1.5">
         <div className="flex items-start gap-2 md:gap-3 print:gap-1.5">
@@ -456,17 +536,30 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           )}
 
           {/* Main Content Grid */}
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 print:gap-1 items-start min-w-0">
+          <div className="flex-1 flex gap-0 print:gap-1 items-start min-w-0">
               {/* Leito */}
-              <div className="flex flex-col md:col-span-1 flex-shrink-0 min-w-0">
+              <div className="flex flex-col flex-shrink-0 min-w-0 relative px-2" style={{ width: `${columnWidths.leito}%` }}>
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Leito</span>
                 <Badge variant="outline" className={cn(config.badgeColor, "text-sm font-bold text-center whitespace-nowrap px-1.5 py-0.5 print:text-xs")}>
                   {patient.bedNumber}
                 </Badge>
+                
+                {/* Resizer */}
+                <div
+                  className={cn(
+                    "absolute top-0 right-0 w-1 h-full cursor-col-resize print:hidden transition-all",
+                    isResizing && resizingColumn === 'leito' 
+                      ? "bg-primary w-2" 
+                      : "bg-border/30 hover:bg-primary/70 hover:w-1.5"
+                  )}
+                  onMouseDown={(e) => handleResizeStart(e, 'leito')}
+                >
+                  <div className="absolute inset-y-0 -left-2 -right-2" />
+                </div>
               </div>
 
               {/* Paciente */}
-              <div className="flex flex-col md:col-span-3 min-w-0 relative">
+              <div className="flex flex-col min-w-0 relative px-2" style={{ width: `${columnWidths.paciente}%` }}>
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 
                 {/* Edit popup for name */}
@@ -542,10 +635,23 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </Button>
                   )}
                 </div>
+                
+                {/* Resizer */}
+                <div
+                  className={cn(
+                    "absolute top-0 right-0 w-1 h-full cursor-col-resize print:hidden transition-all",
+                    isResizing && resizingColumn === 'paciente' 
+                      ? "bg-primary w-2" 
+                      : "bg-border/30 hover:bg-primary/70 hover:w-1.5"
+                  )}
+                  onMouseDown={(e) => handleResizeStart(e, 'paciente')}
+                >
+                  <div className="absolute inset-y-0 -left-2 -right-2" />
+                </div>
               </div>
 
             {/* Hipóteses / Diagnósticos */}
-            <div className="flex flex-col md:col-span-3 relative">
+            <div className="flex flex-col relative px-2" style={{ width: `${columnWidths.hd}%` }}>
               <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
               
               {/* Edit popup for diagnosis */}
@@ -634,10 +740,23 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </Button>
                 )}
               </div>
+              
+              {/* Resizer */}
+              <div
+                className={cn(
+                  "absolute top-0 right-0 w-1 h-full cursor-col-resize print:hidden transition-all",
+                  isResizing && resizingColumn === 'hd' 
+                    ? "bg-primary w-2" 
+                    : "bg-border/30 hover:bg-primary/70 hover:w-1.5"
+                )}
+                onMouseDown={(e) => handleResizeStart(e, 'hd')}
+              >
+                <div className="absolute inset-y-0 -left-2 -right-2" />
+              </div>
             </div>
 
             {/* Programações / Pendências */}
-            <div className="flex flex-col md:col-span-5 relative">
+            <div className="flex flex-col relative px-2" style={{ width: `${columnWidths.pendencies}%` }}>
               <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
               
               {/* Edit popup for pendency */}
