@@ -126,22 +126,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 />
               </div>
             )}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-8 gap-2 items-start">
-              {/* Leito */}
-              <div className="flex flex-col">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Leito:</span>
-                <Badge className={cn("w-fit text-[11px] py-0 px-1.5 font-semibold", config.badgeColor)}>
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 items-start">
+              {/* Leito - mais compacto */}
+              <div className="flex flex-col md:col-span-1">
+                <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
+                <Badge className={cn("w-fit text-[10px] py-0.5 px-1 font-bold min-w-[2rem] justify-center", config.badgeColor)}>
                   {patient.bedNumber}
                 </Badge>
               </div>
 
-              {/* Nome e Idade */}
-              <div className="flex flex-col md:col-span-2">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente:</span>
+              {/* Nome e Idade - mais espaço */}
+              <div className="flex flex-col md:col-span-3">
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-center gap-1.5">
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm text-foreground leading-tight uppercase">{patient.name}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-foreground leading-tight uppercase truncate">{patient.name}</p>
                       <p className="text-[11px] text-muted-foreground mt-0.5">{patient.age} anos</p>
                     </div>
                     <Button
@@ -157,9 +157,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* HD */}
-              <div className="flex flex-col md:col-span-2">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">HD:</span>
+              {/* HD - mais espaço */}
+              <div className="flex flex-col md:col-span-3">
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">HD</span>
                 <div className="flex flex-wrap gap-1 print:gap-0.5">
                   {patient.diagnoses.map((diagnosis, idx) => (
                     <Badge key={idx} variant="secondary" className="text-[10px] py-0 px-1.5 uppercase">
@@ -169,9 +169,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* Programações / Pendências */}
-              <div className="flex flex-col md:col-span-3">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências:</span>
+              {/* Programações / Pendências - mais espaço */}
+              <div className="flex flex-col md:col-span-5">
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
                 <ul className="text-xs space-y-0 uppercase">
                   {patient.pendencies.slice(0, 2).map((pendency, idx) => (
                     <li key={idx} className="text-foreground truncate leading-tight">• {pendency}</li>
