@@ -725,7 +725,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                   title="Visualizar expandido"
                 >
-                  <Maximize2 className="h-[5px] w-[5px]" />
+                  <Maximize2 className="h-[2.5px] w-[2.5px]" />
                 </Button>
               </div>
               <DndContext
@@ -820,7 +820,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                   title="Visualizar expandido"
                 >
-                  <Maximize2 className="h-[5px] w-[5px]" />
+                  <Maximize2 className="h-[2.5px] w-[2.5px]" />
                 </Button>
               </div>
               <DndContext
@@ -923,7 +923,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                   title="Visualizar expandido"
                 >
-                  <Maximize2 className="h-[5px] w-[5px]" />
+                  <Maximize2 className="h-[2.5px] w-[2.5px]" />
                 </Button>
               </div>
               <DndContext
