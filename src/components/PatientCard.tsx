@@ -1155,19 +1155,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </ul>
             </div>
 
-            {/* Programação */}
-            <div>
-              <h4 className="font-semibold text-xs mb-1 flex items-center gap-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">
-                <Clock className="h-3 w-3 print:h-2 print:w-2" />
-                Programação
-              </h4>
-              <ul className="space-y-0 uppercase">
-                {patient.schedule.map((item, idx) => (
-                  <li key={idx} className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight">• {item}</li>
-                ))}
-              </ul>
-            </div>
-
             {/* Programações / Pendências */}
             <div>
               <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Programações / Pendências</h4>

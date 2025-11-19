@@ -351,9 +351,6 @@ export function EditPatientDialog({
             {renderArrayField("pendencies", "Programações / Pendências")}
           </div>
 
-          {/* Programação - largura completa */}
-          {renderArrayField("schedule", "Programação")}
-
           {/* História Admissional */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
