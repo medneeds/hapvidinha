@@ -131,6 +131,94 @@ function SortablePendencyItem({ id, index, pendency }: SortablePendencyItemProps
   );
 }
 
+interface SortablePendencyItemCollapsedProps {
+  id: string;
+  index: number;
+  pendency: string;
+  onEdit: () => void;
+  onRemove: () => void;
+  isLast: boolean;
+  onAddNew: () => void;
+  editingField: string | null;
+}
+
+function SortablePendencyItemCollapsed({ 
+  id, 
+  index, 
+  pendency, 
+  onEdit, 
+  onRemove, 
+  isLast, 
+  onAddNew,
+  editingField 
+}: SortablePendencyItemCollapsedProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div 
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
+        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50"
+      )}
+    >
+      <div
+        className="cursor-grab active:cursor-grabbing print:hidden flex-shrink-0"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-3 w-3 text-muted-foreground" />
+      </div>
+      <span 
+        className="break-words flex items-start gap-1 flex-1 cursor-pointer"
+        onClick={onEdit}
+      >
+        <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
+        <span className="break-words">{pendency}</span>
+      </span>
+      <div className="flex items-center gap-0.5 flex-shrink-0">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="opacity-0 group-hover/item:opacity-100 hover:text-destructive"
+        >
+          <X className="h-2.5 w-2.5" />
+        </button>
+        {isLast && editingField !== "pendencies" && (
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddNew();
+            }}
+            className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden p-0"
+            title="Adicionar Programação/Pendência"
+          >
+            <span className="text-xs">+</span>
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -526,85 +614,71 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Programações / Pendências - mais espaço */}
             <div className="flex flex-col md:col-span-5 relative">
               <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
-              <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
-                {patient.pendencies.map((pendency, idx) => (
-                  editingField === "pendencies" && editingArrayIndex === idx ? (
-                    <div key={idx} className="absolute z-50 top-0 left-0 right-0 flex items-start gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
-                      <span className="text-xs font-semibold text-muted-foreground w-5 flex-shrink-0 pt-2">{idx + 1}.</span>
-                      <textarea
-                        ref={inputRef as any}
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            saveInlineEdit();
-                          } else if (e.key === 'Escape') {
-                            cancelEditing();
-                          }
-                        }}
-                        onBlur={saveInlineEdit}
-                        className="min-h-[60px] text-xs flex-1 uppercase text-foreground font-medium resize-y border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
-                        rows={3}
-                      />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={saveInlineEdit}
-                        className="h-7 w-7 text-green-600 hover:bg-green-100 flex-shrink-0"
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={cancelEditing}
-                        className="h-7 w-7 text-red-600 hover:bg-red-100 flex-shrink-0"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  ) : null
-                ))}
-                {patient.pendencies.map((pendency, idx) => (
-                  editingField === "pendencies" && editingArrayIndex === idx ? null : (
-                      <div 
-                        key={idx} 
-                        className="text-[10px] text-foreground leading-snug uppercase group/item cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5"
-                        onClick={() => startEditing("pendencies", pendency, idx)}
-                      >
-                        <span className="break-words flex items-start gap-1 flex-1">
-                          <span className="font-semibold text-muted-foreground flex-shrink-0">{idx + 1}.</span>
-                          <span className="break-words">{pendency}</span>
-                        </span>
-                        <div className="flex items-center gap-0.5 flex-shrink-0">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeArrayItem("pendencies", idx);
-                            }}
-                            className="opacity-0 group-hover/item:opacity-100 hover:text-destructive"
-                          >
-                            <X className="h-2.5 w-2.5" />
-                          </button>
-                          {idx === patient.pendencies.length - 1 && editingField !== "pendencies" && (
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                startEditing("pendencies", "", -2);
-                              }}
-                              className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden p-0"
-                              title="Adicionar Programação/Pendência"
-                            >
-                              <span className="text-xs">+</span>
-                            </Button>
-                          )}
-                        </div>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
+                  {patient.pendencies.map((pendency, idx) => (
+                    editingField === "pendencies" && editingArrayIndex === idx ? (
+                      <div key={idx} className="absolute z-50 top-0 left-0 right-0 flex items-start gap-1 bg-background border-2 border-primary rounded-md p-2 shadow-lg">
+                        <span className="text-xs font-semibold text-muted-foreground w-5 flex-shrink-0 pt-2">{idx + 1}.</span>
+                        <textarea
+                          ref={inputRef as any}
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              saveInlineEdit();
+                            } else if (e.key === 'Escape') {
+                              cancelEditing();
+                            }
+                          }}
+                          onBlur={saveInlineEdit}
+                          className="min-h-[60px] text-xs flex-1 uppercase text-foreground font-medium resize-y border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                          rows={3}
+                        />
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={saveInlineEdit}
+                          className="h-7 w-7 text-green-600 hover:bg-green-100 flex-shrink-0"
+                        >
+                          <Check className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={cancelEditing}
+                          className="h-7 w-7 text-red-600 hover:bg-red-100 flex-shrink-0"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
                       </div>
-                    )
+                    ) : null
                   ))}
+                  <SortableContext
+                    items={patient.pendencies.map((_, i) => `pendency-${i}`)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {patient.pendencies.map((pendency, idx) => (
+                      editingField === "pendencies" && editingArrayIndex === idx ? null : (
+                        <SortablePendencyItemCollapsed
+                          key={`pendency-${idx}`}
+                          id={`pendency-${idx}`}
+                          index={idx}
+                          pendency={pendency}
+                          onEdit={() => startEditing("pendencies", pendency, idx)}
+                          onRemove={() => removeArrayItem("pendencies", idx)}
+                          isLast={idx === patient.pendencies.length - 1}
+                          onAddNew={() => startEditing("pendencies", "", -2)}
+                          editingField={editingField}
+                        />
+                      )
+                    ))}
+                  </SortableContext>
                   
                   {editingField === "pendencies" && editingArrayIndex === -2 ? (
                     <div className="flex items-center gap-1">
@@ -648,7 +722,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </Button>
                   )}
                 </div>
-              </div>
+              </DndContext>
+            </div>
             </div>
 
           {/* Action Menu - Compact */}
@@ -737,7 +812,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               )}
             </button>
           </div>
-        </div>
+          </div>
         </div>
 
       {/* Expanded Content */}
