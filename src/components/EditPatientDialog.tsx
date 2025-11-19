@@ -28,12 +28,14 @@ export function EditPatientDialog({
 }: EditPatientDialogProps) {
   const [formData, setFormData] = useState(patient);
   const [focusField, setFocusField] = useState<{field: string, index: number} | null>(null);
+  const [admissionHistoryLocal, setAdmissionHistoryLocal] = useState("");
   const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
 
   // Reset form data when patient changes or dialog opens
   useEffect(() => {
     if (open) {
       setFormData(patient);
+      setAdmissionHistoryLocal(patient.admissionHistory);
       inputRefs.current = {};
     }
   }, [open, patient]);
@@ -354,17 +356,19 @@ export function EditPatientDialog({
                 type="button"
                 size="sm"
                 variant="ghost"
-                onClick={() => clearField("admissionHistory")}
+                onClick={() => {
+                  setAdmissionHistoryLocal("");
+                  setFormData({ ...formData, admissionHistory: "" });
+                }}
                 className="h-6 px-2 text-xs"
               >
                 Limpar
               </Button>
             </div>
             <Textarea
-              value={formData.admissionHistory}
-              onChange={(e) =>
-                setFormData({ ...formData, admissionHistory: e.target.value.toUpperCase() })
-              }
+              value={admissionHistoryLocal}
+              onChange={(e) => setAdmissionHistoryLocal(e.target.value.toUpperCase())}
+              onBlur={(e) => setFormData({ ...formData, admissionHistory: e.target.value.toUpperCase() })}
               rows={5}
               className="text-sm resize-none uppercase"
             />
