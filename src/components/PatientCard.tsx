@@ -825,9 +825,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </DndContext>
             </div>
 
-            {/* Antecedentes Mórbidos */}
-            <div className="flex flex-col md:col-span-2 relative">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Antecedentes Mórbidos</span>
+            {/* Antecedentes */}
+            <div className="flex flex-col md:col-span-3 relative">
+              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Antecedentes</span>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -917,10 +917,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </DndContext>
             </div>
 
-            {/* Exames Complementares */}
-            <div className="flex flex-col md:col-span-2 relative">
+            {/* Exames */}
+            <div className="flex flex-col md:col-span-3 relative">
               <div className="flex items-center gap-1 mb-0.5">
-                <span className="text-[10px] font-medium text-muted-foreground">Exames Complementares</span>
+                <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -1020,8 +1020,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </DndContext>
             </div>
 
-            {/* Programações / Pendências - mais espaço */}
-            <div className="flex flex-col md:col-span-7 relative">
+            {/* Programações / Pendências */}
+            <div className="flex flex-col md:col-span-5 relative">
               <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
               <DndContext
                 sensors={sensors}
@@ -1245,7 +1245,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 print:gap-1 print:grid-cols-2">
             {/* Antecedentes */}
             <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Antecedentes Mórbidos</h4>
+              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Antecedentes</h4>
               <ul className="space-y-0 uppercase">
                 {patient.medicalHistory.map((history, idx) => (
                   <li key={idx} className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight">• {history}</li>
@@ -1253,9 +1253,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </ul>
             </div>
 
-            {/* Exames Relevantes */}
+            {/* Exames */}
             <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Exames Relevantes</h4>
+              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Exames</h4>
               <ul className="space-y-0 uppercase">
                 {patient.relevantExams.map((exam, idx) => (
                   <li key={idx} className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight">• {exam}</li>
@@ -1420,7 +1420,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             </div>
             <div className="mt-3 pt-3 border-t">
               <h3 className="text-lg font-semibold text-primary uppercase">
-                Exames Complementares
+                Exames
               </h3>
             </div>
           </DialogHeader>
