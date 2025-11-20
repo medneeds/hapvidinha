@@ -131,6 +131,41 @@
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
+    position: relative;
+  }
+  
+  /* Marca d'água - Logo HapMap à esquerda */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 1cm;
+    left: 1cm;
+    width: 120px;
+    height: 40px;
+    background-image: url('/hapvida-logo.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left center;
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  /* Marca d'água - Logo Hapvida Notre Dame à direita */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 1cm;
+    right: 1cm;
+    width: 180px;
+    height: 40px;
+    background-image: url('/hapvida-notredame-full-logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right center;
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
   }
   
   /* Hide sidebar */
@@ -167,6 +202,8 @@
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    position: relative;
+    z-index: 1;
   }
 }
 
