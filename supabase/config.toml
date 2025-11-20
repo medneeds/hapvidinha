@@ -2,3 +2,6 @@ project_id = "hsonasdmcklteggrpafd"
 
 [functions.transcribe-audio]
 verify_jwt = false
+
+[functions.get-cid-code]
+verify_jwt = false
