@@ -302,8 +302,13 @@ export function AppSidebar({
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerContent className="max-h-[85vh]">
-          {sidebarContent}
+        <DrawerContent className="max-h-[80vh] pb-safe">
+          <DrawerHeader className="border-b pb-2">
+            <DrawerTitle className="text-center">Menu de Navegação</DrawerTitle>
+          </DrawerHeader>
+          <div className="overflow-y-auto flex-1">
+            {sidebarContent}
+          </div>
         </DrawerContent>
       </Drawer>
     );

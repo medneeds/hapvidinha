@@ -4,7 +4,7 @@ import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -31,6 +31,14 @@ import {
 import { cn } from "@/lib/utils";
 import { usePatients } from "@/hooks/usePatients";
 import { usePatientVersions } from "@/hooks/usePatientVersions";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import {
   DndContext,
   closestCenter,
@@ -143,6 +151,7 @@ const Index = () => {
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
   const { saveVersion } = usePatientVersions();
+  const isMobile = useIsMobile();
 
   // Sensors for drag and drop
   const sensors = useSensors(
@@ -597,105 +606,185 @@ const Index = () => {
                 </div>
 
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
-                  <ThemeToggle />
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleUndo}
-                    disabled={history.length === 0}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
-                    title="Desfazer última ação"
-                  >
-                    <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleRedo}
-                    disabled={redoHistory.length === 0}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
-                    title="Refazer ação"
-                  >
-                    <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleSaveVersion}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
-                    title="Salvar versão"
-                  >
-                    <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Button>
-                  <Button
-                    variant={selectionMode ? "default" : "outline"}
-                    size="icon"
-                    onClick={handleToggleSelectionMode}
-                    className={`print:hidden h-8 w-8 sm:h-10 sm:w-10 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
-                    title="Modo de seleção múltipla"
-                  >
-                    <CheckSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Button>
-                  {selectionMode && selectedPatients.size > 0 && (
+                  {/* Mobile: Show only essential buttons + dropdown menu */}
+                  {isMobile ? (
                     <>
+                      <Button
+                        variant={selectionMode ? "default" : "outline"}
+                        size="icon"
+                        onClick={handleToggleSelectionMode}
+                        className={`print:hidden h-9 w-9 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
+                        title="Modo de seleção"
+                      >
+                        <CheckSquare className="h-4 w-4" />
+                      </Button>
+                      {selectionMode && selectedPatients.size > 0 && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={handlePrintSelected}
+                            className="print:hidden h-9 w-9 bg-gradient-to-br from-critical via-warning to-stable text-white border-0"
+                            title={`Imprimir ${selectedPatients.size}`}
+                          >
+                            <Printer className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={handleDeleteSelected}
+                            className="print:hidden h-9 w-9 bg-red-600 text-white hover:bg-red-700 border-0"
+                            title={`Deletar ${selectedPatients.size}`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="print:hidden h-9 w-9 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 bg-background z-50">
+                          <DropdownMenuItem onClick={handleUndo} disabled={history.length === 0}>
+                            <Undo className="mr-2 h-4 w-4" />
+                            Desfazer
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={handleRedo} disabled={redoHistory.length === 0}>
+                            <Redo className="mr-2 h-4 w-4" />
+                            Refazer
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={handleSaveVersion}>
+                            <Save className="mr-2 h-4 w-4" />
+                            Salvar Versão
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={handlePrintCompact}>
+                            <Printer className="mr-2 h-4 w-4" />
+                            Imprimir Mapa
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}>
+                            {showOnlyOccupied ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
+                            {showOnlyOccupied ? "Mostrar Vazios" : "Ocultar Vazios"}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={signOut} className="text-red-600">
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Sair
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </>
+                  ) : (
+                    /* Desktop: Show all buttons as before */
+                    <>
+                      <ThemeToggle />
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={handlePrintSelected}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
-                        title={`Imprimir ${selectedPatients.size} selecionado(s)`}
+                        onClick={handleUndo}
+                        disabled={history.length === 0}
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
+                        title="Desfazer última ação"
+                      >
+                        <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handleRedo}
+                        disabled={redoHistory.length === 0}
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
+                        title="Refazer ação"
+                      >
+                        <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handleSaveVersion}
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        title="Salvar versão"
+                      >
+                        <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      </Button>
+                      <Button
+                        variant={selectionMode ? "default" : "outline"}
+                        size="icon"
+                        onClick={handleToggleSelectionMode}
+                        className={`print:hidden h-8 w-8 sm:h-10 sm:w-10 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
+                        title="Modo de seleção múltipla"
+                      >
+                        <CheckSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      </Button>
+                      {selectionMode && selectedPatients.size > 0 && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={handlePrintSelected}
+                            className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
+                            title={`Imprimir ${selectedPatients.size} selecionado(s)`}
+                          >
+                            <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={handleDeleteSelected}
+                            className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-red-600 text-white hover:bg-red-700 border-0"
+                            title={`Deletar ${selectedPatients.size} selecionado(s)`}
+                          >
+                            <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          </Button>
+                        </>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handlePrintCompact}
+                        className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
+                        title="Imprimir"
                       >
                         <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        onClick={handleDeleteSelected}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-red-600 text-white hover:bg-red-700 border-0"
-                        title={`Deletar ${selectedPatients.size} selecionado(s)`}
-                      >
-                        <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      </Button>
+                      <div className="hidden md:flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all hover:scale-[1.02]">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-md bg-white/10 border border-white/20">
+                          <Users className="h-4 w-4 text-white" />
+                        </div>
+                        <div className="flex flex-col justify-center">
+                          <p className="text-[9px] text-white/70 uppercase leading-none tracking-wide font-medium">Total</p>
+                          <p className="text-lg font-bold text-white leading-tight mt-0.5">{totalPatients}</p>
+                        </div>
+                      </div>
+                      <div className="h-6 sm:h-8 w-px bg-white/20 mx-1 sm:mx-2 print:hidden hidden lg:block" />
+                      <div className="hidden lg:flex items-center gap-2 sm:gap-3 print:hidden">
+                        <div className="text-right">
+                          <p className="text-[10px] sm:text-xs font-semibold text-white uppercase tracking-tight">
+                            {user?.user_metadata?.username || user?.email?.split('@')[0]}
+                          </p>
+                          <p className="text-[9px] sm:text-[10px] text-white/80 uppercase">
+                            {role === 'admin' ? 'Administrador' : 'Médico'}
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={signOut}
+                          title="Sair"
+                          className="h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        >
+                          <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        </Button>
+                      </div>
                     </>
                   )}
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handlePrintCompact}
-                    className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
-                    title="Imprimir"
-                  >
-                    <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Button>
-                  <div className="hidden md:flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all hover:scale-[1.02]">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-md bg-white/10 border border-white/20">
-                      <Users className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="flex flex-col justify-center">
-                      <p className="text-[9px] text-white/70 uppercase leading-none tracking-wide font-medium">Total</p>
-                      <p className="text-lg font-bold text-white leading-tight mt-0.5">{totalPatients}</p>
-                    </div>
-                  </div>
-                  <div className="h-6 sm:h-8 w-px bg-white/20 mx-1 sm:mx-2 print:hidden hidden lg:block" />
-                  <div className="hidden lg:flex items-center gap-2 sm:gap-3 print:hidden">
-                    <div className="text-right">
-                      <p className="text-[10px] sm:text-xs font-semibold text-white uppercase tracking-tight">
-                        {user?.user_metadata?.username || user?.email?.split('@')[0]}
-                      </p>
-                      <p className="text-[9px] sm:text-[10px] text-white/80 uppercase">
-                        {role === 'admin' ? 'Administrador' : 'Médico'}
-                      </p>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={signOut}
-                      title="Sair"
-                      className="h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
-                    >
-                      <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    </Button>
-                  </div>
                 </div>
               </div>
             </div>
