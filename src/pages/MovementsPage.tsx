@@ -20,6 +20,7 @@ interface PatientMovement {
   movement_type: "ALTA" | "ÓBITO" | "TRANSFERÊNCIA";
   destination: string | null;
   notes: string | null;
+  responsible_doctor: string | null;
   created_at: string;
   patient_snapshot: any;
 }
@@ -224,14 +225,20 @@ export default function MovementsPage() {
                       <CardContent className="space-y-3">
                         {movement.destination && (
                           <div className="flex items-start gap-2">
-                            <span className="text-sm font-medium text-muted-foreground min-w-[80px]">Destino:</span>
-                            <span className="text-sm font-medium">{movement.destination}</span>
+                            <span className="text-sm font-medium text-muted-foreground min-w-[120px]">Destino:</span>
+                            <span className="text-sm font-medium uppercase">{movement.destination}</span>
+                          </div>
+                        )}
+                        {movement.responsible_doctor && (
+                          <div className="flex items-start gap-2">
+                            <span className="text-sm font-medium text-muted-foreground min-w-[120px]">Médico Resp.:</span>
+                            <span className="text-sm font-medium uppercase">{movement.responsible_doctor}</span>
                           </div>
                         )}
                         {movement.notes && (
                           <div className="flex items-start gap-2">
-                            <span className="text-sm font-medium text-muted-foreground min-w-[80px]">Observações:</span>
-                            <span className="text-sm">{movement.notes}</span>
+                            <span className="text-sm font-medium text-muted-foreground min-w-[120px]">Observações:</span>
+                            <span className="text-sm uppercase">{movement.notes}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2 border-t">
