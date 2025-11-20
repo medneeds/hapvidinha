@@ -132,10 +132,8 @@ export default function IAPage() {
   const streamChat = async (userMessage: string, file?: File) => {
     setIsLoading(true);
     
-    const newMessages: Message[] = [...messages, { role: "user", content: userMessage || "Extraia e formate este exame:" }];
-    setMessages(newMessages);
-    
     let fileContent = null;
+    let finalUserMessage = userMessage || "Extraia e formate este exame:";
 
     // Processar arquivo se houver
     if (file) {
@@ -143,7 +141,7 @@ export default function IAPage() {
         if (file.type.includes("pdf")) {
           // Extrair texto do PDF
           const pdfText = await extractTextFromPDF(file);
-          userMessage = pdfText;
+          finalUserMessage = pdfText;
         } else if (file.type.includes("image")) {
           // Converter imagem para base64
           const reader = new FileReader();
@@ -155,11 +153,13 @@ export default function IAPage() {
       } catch (error) {
         console.error("Erro ao processar arquivo:", error);
         toast.error("Erro ao processar arquivo");
-        setMessages(messages);
         setIsLoading(false);
         return;
       }
     }
+
+    const newMessages: Message[] = [...messages, { role: "user", content: finalUserMessage }];
+    setMessages(newMessages);
     
     try {
       const response = await fetch(
@@ -171,7 +171,7 @@ export default function IAPage() {
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({ 
-            messages: fileContent ? newMessages : newMessages,
+            messages: newMessages,
             fileContent 
           }),
         }
