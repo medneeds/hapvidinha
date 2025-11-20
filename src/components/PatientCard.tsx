@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
+import { PatientMovementDialog } from "./PatientMovementDialog";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -370,6 +371,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [movementDialogOpen, setMovementDialogOpen] = useState(false);
+  const [movementType, setMovementType] = useState<"ALTA" | "ÓBITO" | "TRANSFERÊNCIA" | null>(null);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [editingArrayIndex, setEditingArrayIndex] = useState<number>(-1);
@@ -1193,7 +1196,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 {onTransfer && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuLabel className="text-xs">Transferir para</DropdownMenuLabel>
+                    <DropdownMenuLabel className="text-xs">Realocar para</DropdownMenuLabel>
                     {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
                       sector !== patient.sector && (
                         <DropdownMenuItem
@@ -1210,6 +1213,38 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     ))}
                   </>
                 )}
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs">Movimentações</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMovementType("TRANSFERÊNCIA");
+                    setMovementDialogOpen(true);
+                  }}
+                >
+                  <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
+                  Transferir
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMovementType("ALTA");
+                    setMovementDialogOpen(true);
+                  }}
+                >
+                  <TrendingUp className="h-3.5 w-3.5 mr-2" />
+                  Alta
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMovementType("ÓBITO");
+                    setMovementDialogOpen(true);
+                  }}
+                >
+                  <Heart className="h-3.5 w-3.5 mr-2" />
+                  Óbito
+                </DropdownMenuItem>
                 {onPrintPatient && (
                   <>
                     <DropdownMenuSeparator />
@@ -1280,6 +1315,21 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         onSave={onUpdate}
+      />
+
+      <PatientMovementDialog
+        patient={patient}
+        movementType={movementType}
+        isOpen={movementDialogOpen}
+        onClose={() => {
+          setMovementDialogOpen(false);
+          setMovementType(null);
+        }}
+        onSuccess={() => {
+          if (onDelete) {
+            onDelete(patient.id);
+          }
+        }}
       />
 
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

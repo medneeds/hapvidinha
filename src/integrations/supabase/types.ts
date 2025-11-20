@@ -83,6 +83,45 @@ export type Database = {
         }
         Relationships: []
       }
+      patient_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          destination: string | null
+          id: string
+          movement_type: string
+          notes: string | null
+          patient_bed: string | null
+          patient_id: string | null
+          patient_name: string
+          patient_sector: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          destination?: string | null
+          id?: string
+          movement_type: string
+          notes?: string | null
+          patient_bed?: string | null
+          patient_id?: string | null
+          patient_name: string
+          patient_sector?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          destination?: string | null
+          id?: string
+          movement_type?: string
+          notes?: string | null
+          patient_bed?: string | null
+          patient_id?: string | null
+          patient_name?: string
+          patient_sector?: string | null
+        }
+        Relationships: []
+      }
       patient_versions: {
         Row: {
           created_at: string
