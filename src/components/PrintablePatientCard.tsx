@@ -3,9 +3,10 @@ import { Patient } from "@/types/patient";
 interface PrintablePatientCardProps {
   patient: Patient;
   mode: 'compact' | 'detailed';
+  bedColor?: string;
 }
 
-export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProps) {
+export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: PrintablePatientCardProps) {
   if (!patient.name) return null;
   
   const isCompact = mode === 'compact';
@@ -35,7 +36,7 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
           <div>
             <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>Leito</div>
             <div style={{ 
-              background: 'linear-gradient(135deg, #ef4444, #eab308, #3b82f6)',
+              backgroundColor: bedColor,
               color: '#ffffff',
               padding: '2px 6px',
               borderRadius: '3px',

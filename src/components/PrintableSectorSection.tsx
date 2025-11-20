@@ -56,6 +56,7 @@ export function PrintableSectorSection({
             key={patient.id} 
             patient={patient} 
             mode={mode}
+            bedColor={borderColor}
           />
         ))}
       </div>
