@@ -440,10 +440,30 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
       if (data?.cidCode) {
         const diagnosisWithCid = `${diagnosis} (${data.cidCode})`;
-        const updatedDiagnoses = patient.diagnoses.map((d, i) => 
-          i === index ? diagnosisWithCid : d
-        );
-        onUpdate({ ...patient, diagnoses: updatedDiagnoses });
+        
+        // Se estiver em modo de edição, atualiza o valor de edição e salva automaticamente
+        if (editingField === "diagnoses" && editingArrayIndex === index) {
+          setEditValue(diagnosisWithCid);
+          
+          // Salva automaticamente
+          const updatedPatient = { ...patient };
+          updatedPatient.diagnoses = patient.diagnoses.map((d, i) => 
+            i === index ? diagnosisWithCid : d
+          );
+          onUpdate(updatedPatient);
+          
+          // Cancela o modo de edição
+          setEditingField(null);
+          setEditValue("");
+          setEditingArrayIndex(-1);
+        } else {
+          // Caso não esteja em edição, atualiza diretamente
+          const updatedDiagnoses = patient.diagnoses.map((d, i) => 
+            i === index ? diagnosisWithCid : d
+          );
+          onUpdate({ ...patient, diagnoses: updatedDiagnoses });
+        }
+        
         toast.success(`CID ${data.cidCode} adicionado`);
       }
     } catch (error) {
