@@ -13,6 +13,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
+import { supabase } from "@/integrations/supabase/client";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -304,11 +305,16 @@ const Index = () => {
   const handleAddExtraBed = async (sector: Patient['sector']) => {
     saveToHistory(patients);
     const sectorPrefix = sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : sector === 'blue' ? 'Z' : 'F';
-    const sectorPatients = patients.filter(p => p.sector === sector);
     
-    // Encontrar o maior número de leito existente neste setor
-    const bedNumbers = sectorPatients
-      .map(p => parseInt(p.bedNumber.substring(1)))
+    // Buscar todos os pacientes deste setor do banco de dados para garantir unicidade
+    const { data: allSectorPatients } = await supabase
+      .from('patients')
+      .select('bed_number')
+      .eq('sector', sector)
+      .eq('department', currentDepartment);
+    
+    const bedNumbers = (allSectorPatients || [])
+      .map(p => parseInt(p.bed_number.substring(1)))
       .filter(n => !isNaN(n));
     
     const maxBedNumber = bedNumbers.length > 0 ? Math.max(...bedNumbers) : 0;
