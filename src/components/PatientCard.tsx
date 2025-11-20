@@ -373,7 +373,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [editingArrayIndex, setEditingArrayIndex] = useState<number>(-1);
-  const [expandedSection, setExpandedSection] = useState<'diagnoses' | 'exams' | null>(null);
+  const [expandedSection, setExpandedSection] = useState<'diagnoses' | 'exams' | 'medicalHistory' | 'pendencies' | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const config = sectorConfig[patient.sector];
   const { toast } = useToast();
@@ -827,7 +827,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Antecedentes */}
             <div className="flex flex-col md:col-span-3 relative">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Antecedentes</span>
+              <div className="flex items-center gap-1 mb-0.5">
+                <span className="text-[10px] font-medium text-muted-foreground">Antecedentes</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setExpandedSection('medicalHistory')}
+                  className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
+                  title="Visualizar expandido"
+                >
+                  <Maximize2 className="h-[2.5px] w-[2.5px]" />
+                </Button>
+              </div>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -1022,7 +1033,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Programações / Pendências */}
             <div className="flex flex-col md:col-span-5 relative">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
+              <div className="flex items-center gap-1 mb-0.5">
+                <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setExpandedSection('pendencies')}
+                  className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
+                  title="Visualizar expandido"
+                >
+                  <Maximize2 className="h-[2.5px] w-[2.5px]" />
+                </Button>
+              </div>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -1443,6 +1465,102 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
                 <p className="text-lg italic">Nenhum exame complementar registrado</p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog expandido para Antecedentes */}
+      <Dialog open={expandedSection === 'medicalHistory'} onOpenChange={() => setExpandedSection(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader className="border-b pb-4 flex-shrink-0">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Badge className={cn(config.badgeColor, "text-base px-3 py-1")}>
+                  Leito {patient.bedNumber}
+                </Badge>
+                <div className="flex flex-col">
+                  <span className="text-2xl font-bold uppercase">{patient.name}</span>
+                  <span className="text-sm text-muted-foreground mt-0.5">
+                    {patient.age} anos
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t">
+              <h3 className="text-lg font-semibold text-primary uppercase">
+                Antecedentes
+              </h3>
+            </div>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto py-6 pr-2">
+            {patient.medicalHistory.length > 0 ? (
+              <div className="space-y-4">
+                {patient.medicalHistory.map((history, idx) => (
+                  <div key={idx} className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-sm">
+                      {idx + 1}
+                    </div>
+                    <div className="flex-1 bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <p className="text-base text-foreground leading-relaxed uppercase">
+                        {history}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                <p className="text-lg italic">Nenhum antecedente registrado</p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog expandido para Programações / Pendências */}
+      <Dialog open={expandedSection === 'pendencies'} onOpenChange={() => setExpandedSection(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader className="border-b pb-4 flex-shrink-0">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Badge className={cn(config.badgeColor, "text-base px-3 py-1")}>
+                  Leito {patient.bedNumber}
+                </Badge>
+                <div className="flex flex-col">
+                  <span className="text-2xl font-bold uppercase">{patient.name}</span>
+                  <span className="text-sm text-muted-foreground mt-0.5">
+                    {patient.age} anos
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t">
+              <h3 className="text-lg font-semibold text-primary uppercase">
+                Programações / Pendências
+              </h3>
+            </div>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto py-6 pr-2">
+            {patient.pendencies.length > 0 ? (
+              <div className="space-y-4">
+                {patient.pendencies.map((pendency, idx) => (
+                  <div key={idx} className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-sm">
+                      {idx + 1}
+                    </div>
+                    <div className="flex-1 bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <p className="text-base text-foreground leading-relaxed uppercase">
+                        {pendency}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                <p className="text-lg italic">Nenhuma programação ou pendência registrada</p>
               </div>
             )}
           </div>
