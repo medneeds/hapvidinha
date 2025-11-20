@@ -21,6 +21,7 @@ import AltoCustoPage from "./pages/AltoCustoPage";
 import SadtPage from "./pages/SadtPage";
 import MovementsPage from "./pages/MovementsPage";
 import AuthPage from "./pages/AuthPage";
+import IAPage from "./pages/IAPage";
 
 const queryClient = new QueryClient();
 
@@ -142,6 +143,14 @@ const App = () => (
           element={
             <ProtectedRoute>
               <MovementsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ia"
+          element={
+            <ProtectedRoute>
+              <IAPage />
             </ProtectedRoute>
           }
         />
