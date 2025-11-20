@@ -1377,192 +1377,512 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
       {/* Dialog expandido para Hipóteses / Diagnósticos */}
       <Dialog open={expandedSection === 'diagnoses'} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader className="border-b pb-4 flex-shrink-0">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col bg-gradient-to-br from-background via-background to-accent/5 border-2">
+          <DialogHeader className="border-b border-border/50 pb-5 flex-shrink-0 bg-gradient-to-r from-primary/5 to-transparent -m-6 p-6 mb-0">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Badge className={cn(config.badgeColor, "text-base px-3 py-1")}>
-                  Leito {patient.bedNumber}
-                </Badge>
+              <div className="flex items-center gap-4">
+                <div className={cn(
+                  "w-14 h-14 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg",
+                  config.badgeColor
+                )}>
+                  {patient.bedNumber}
+                </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold uppercase">{patient.name}</span>
-                  <span className="text-sm text-muted-foreground mt-0.5">
+                  <span className="text-2xl font-bold uppercase tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    {patient.name}
+                  </span>
+                  <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     {patient.age} anos
                   </span>
                 </div>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t">
-              <h3 className="text-lg font-semibold text-primary uppercase">
+            <div className="mt-4 pt-4 border-t border-border/30">
+              <h3 className="text-xl font-bold text-primary uppercase tracking-wide flex items-center gap-2">
+                <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
                 Hipóteses / Diagnósticos
               </h3>
             </div>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto py-6 pr-2">
+          <div className="flex-1 overflow-y-auto py-6 pr-2 px-6">
             {patient.diagnoses.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {patient.diagnoses.map((diagnosis, idx) => (
-                  <div key={idx} className="flex gap-4 items-start group">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-sm">
+                  <div 
+                    key={idx} 
+                    className="flex gap-4 items-start group animate-fade-in hover-scale"
+                    style={{ animationDelay: `${idx * 50}ms` }}
+                  >
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center font-bold text-lg shadow-lg group-hover:shadow-xl transition-all">
                       {idx + 1}
                     </div>
-                    <div className="flex-1 bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
-                      <p className="text-base text-foreground leading-relaxed uppercase">
-                        {diagnosis}
-                      </p>
+                    <div className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all group-hover:bg-card">
+                      {editingField === "diagnoses" && editingArrayIndex === idx ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            ref={inputRef}
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                saveInlineEdit();
+                              } else if (e.key === 'Escape') {
+                                cancelEditing();
+                              }
+                            }}
+                            className="text-base uppercase font-medium bg-background/50 border-primary/50"
+                            autoFocus
+                          />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-9 w-9 text-green-600 hover:bg-green-100 hover:text-green-700 flex-shrink-0"
+                          >
+                            <Check className="h-5 w-5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-9 w-9 text-red-600 hover:bg-red-100 hover:text-red-700 flex-shrink-0"
+                          >
+                            <X className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-base text-foreground leading-relaxed uppercase font-medium flex-1">
+                            {diagnosis}
+                          </p>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => startEditing("diagnoses", diagnosis, idx)}
+                              className="h-8 w-8 text-primary hover:bg-primary/10"
+                              title="Editar"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => removeArrayItem("diagnoses", idx)}
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              title="Remover"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                <p className="text-lg italic">Nenhuma hipótese ou diagnóstico registrado</p>
+                <div className="w-20 h-20 rounded-full bg-muted/30 flex items-center justify-center mb-4">
+                  <span className="text-4xl">📋</span>
+                </div>
+                <p className="text-lg font-medium">Nenhuma hipótese ou diagnóstico registrado</p>
+                <p className="text-sm mt-2">Adicione a primeira hipótese diagnóstica</p>
               </div>
             )}
+            <Button
+              onClick={() => startEditing("diagnoses", "", patient.diagnoses.length)}
+              className="mt-4 w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md hover:shadow-lg transition-all"
+              size="lg"
+            >
+              <span className="text-lg mr-2">+</span>
+              Adicionar Nova Hipótese / Diagnóstico
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Dialog expandido para Exames Complementares */}
+      {/* Dialog expandido para Exames */}
       <Dialog open={expandedSection === 'exams'} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader className="border-b pb-4 flex-shrink-0">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col bg-gradient-to-br from-background via-background to-accent/5 border-2">
+          <DialogHeader className="border-b border-border/50 pb-5 flex-shrink-0 bg-gradient-to-r from-primary/5 to-transparent -m-6 p-6 mb-0">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Badge className={cn(config.badgeColor, "text-base px-3 py-1")}>
-                  Leito {patient.bedNumber}
-                </Badge>
+              <div className="flex items-center gap-4">
+                <div className={cn(
+                  "w-14 h-14 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg",
+                  config.badgeColor
+                )}>
+                  {patient.bedNumber}
+                </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold uppercase">{patient.name}</span>
-                  <span className="text-sm text-muted-foreground mt-0.5">
+                  <span className="text-2xl font-bold uppercase tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    {patient.name}
+                  </span>
+                  <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     {patient.age} anos
                   </span>
                 </div>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t">
-              <h3 className="text-lg font-semibold text-primary uppercase">
+            <div className="mt-4 pt-4 border-t border-border/30">
+              <h3 className="text-xl font-bold text-primary uppercase tracking-wide flex items-center gap-2">
+                <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
                 Exames
               </h3>
             </div>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto py-6 pr-2">
+          <div className="flex-1 overflow-y-auto py-6 pr-2 px-6">
             {patient.relevantExams.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {patient.relevantExams.map((exam, idx) => (
-                  <div key={idx} className="flex gap-4 items-start group">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-sm">
+                  <div 
+                    key={idx} 
+                    className="flex gap-4 items-start group animate-fade-in hover-scale"
+                    style={{ animationDelay: `${idx * 50}ms` }}
+                  >
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center font-bold text-lg shadow-lg group-hover:shadow-xl transition-all">
                       {idx + 1}
                     </div>
-                    <div className="flex-1 bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
-                      <p className="text-base text-foreground leading-relaxed uppercase">
-                        {exam}
-                      </p>
+                    <div className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all group-hover:bg-card">
+                      {editingField === "relevantExams" && editingArrayIndex === idx ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            ref={inputRef}
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                saveInlineEdit();
+                              } else if (e.key === 'Escape') {
+                                cancelEditing();
+                              }
+                            }}
+                            className="text-base uppercase font-medium bg-background/50 border-primary/50"
+                            autoFocus
+                          />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-9 w-9 text-green-600 hover:bg-green-100 hover:text-green-700 flex-shrink-0"
+                          >
+                            <Check className="h-5 w-5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-9 w-9 text-red-600 hover:bg-red-100 hover:text-red-700 flex-shrink-0"
+                          >
+                            <X className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-base text-foreground leading-relaxed uppercase font-medium flex-1">
+                            {exam}
+                          </p>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => startEditing("relevantExams", exam, idx)}
+                              className="h-8 w-8 text-primary hover:bg-primary/10"
+                              title="Editar"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => removeArrayItem("relevantExams", idx)}
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              title="Remover"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                <p className="text-lg italic">Nenhum exame complementar registrado</p>
+                <div className="w-20 h-20 rounded-full bg-muted/30 flex items-center justify-center mb-4">
+                  <span className="text-4xl">🔬</span>
+                </div>
+                <p className="text-lg font-medium">Nenhum exame registrado</p>
+                <p className="text-sm mt-2">Adicione o primeiro exame complementar</p>
               </div>
             )}
+            <Button
+              onClick={() => startEditing("relevantExams", "", patient.relevantExams.length)}
+              className="mt-4 w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md hover:shadow-lg transition-all"
+              size="lg"
+            >
+              <span className="text-lg mr-2">+</span>
+              Adicionar Novo Exame
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Dialog expandido para Antecedentes */}
       <Dialog open={expandedSection === 'medicalHistory'} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader className="border-b pb-4 flex-shrink-0">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col bg-gradient-to-br from-background via-background to-accent/5 border-2">
+          <DialogHeader className="border-b border-border/50 pb-5 flex-shrink-0 bg-gradient-to-r from-primary/5 to-transparent -m-6 p-6 mb-0">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Badge className={cn(config.badgeColor, "text-base px-3 py-1")}>
-                  Leito {patient.bedNumber}
-                </Badge>
+              <div className="flex items-center gap-4">
+                <div className={cn(
+                  "w-14 h-14 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg",
+                  config.badgeColor
+                )}>
+                  {patient.bedNumber}
+                </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold uppercase">{patient.name}</span>
-                  <span className="text-sm text-muted-foreground mt-0.5">
+                  <span className="text-2xl font-bold uppercase tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    {patient.name}
+                  </span>
+                  <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     {patient.age} anos
                   </span>
                 </div>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t">
-              <h3 className="text-lg font-semibold text-primary uppercase">
+            <div className="mt-4 pt-4 border-t border-border/30">
+              <h3 className="text-xl font-bold text-primary uppercase tracking-wide flex items-center gap-2">
+                <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
                 Antecedentes
               </h3>
             </div>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto py-6 pr-2">
+          <div className="flex-1 overflow-y-auto py-6 pr-2 px-6">
             {patient.medicalHistory.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {patient.medicalHistory.map((history, idx) => (
-                  <div key={idx} className="flex gap-4 items-start group">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-sm">
+                  <div 
+                    key={idx} 
+                    className="flex gap-4 items-start group animate-fade-in hover-scale"
+                    style={{ animationDelay: `${idx * 50}ms` }}
+                  >
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center font-bold text-lg shadow-lg group-hover:shadow-xl transition-all">
                       {idx + 1}
                     </div>
-                    <div className="flex-1 bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
-                      <p className="text-base text-foreground leading-relaxed uppercase">
-                        {history}
-                      </p>
+                    <div className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all group-hover:bg-card">
+                      {editingField === "medicalHistory" && editingArrayIndex === idx ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            ref={inputRef}
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                saveInlineEdit();
+                              } else if (e.key === 'Escape') {
+                                cancelEditing();
+                              }
+                            }}
+                            className="text-base uppercase font-medium bg-background/50 border-primary/50"
+                            autoFocus
+                          />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-9 w-9 text-green-600 hover:bg-green-100 hover:text-green-700 flex-shrink-0"
+                          >
+                            <Check className="h-5 w-5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-9 w-9 text-red-600 hover:bg-red-100 hover:text-red-700 flex-shrink-0"
+                          >
+                            <X className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-base text-foreground leading-relaxed uppercase font-medium flex-1">
+                            {history}
+                          </p>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => startEditing("medicalHistory", history, idx)}
+                              className="h-8 w-8 text-primary hover:bg-primary/10"
+                              title="Editar"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => removeArrayItem("medicalHistory", idx)}
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              title="Remover"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                <p className="text-lg italic">Nenhum antecedente registrado</p>
+                <div className="w-20 h-20 rounded-full bg-muted/30 flex items-center justify-center mb-4">
+                  <span className="text-4xl">📋</span>
+                </div>
+                <p className="text-lg font-medium">Nenhum antecedente registrado</p>
+                <p className="text-sm mt-2">Adicione o primeiro antecedente mórbido</p>
               </div>
             )}
+            <Button
+              onClick={() => startEditing("medicalHistory", "", patient.medicalHistory.length)}
+              className="mt-4 w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md hover:shadow-lg transition-all"
+              size="lg"
+            >
+              <span className="text-lg mr-2">+</span>
+              Adicionar Novo Antecedente
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Dialog expandido para Programações / Pendências */}
       <Dialog open={expandedSection === 'pendencies'} onOpenChange={() => setExpandedSection(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader className="border-b pb-4 flex-shrink-0">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col bg-gradient-to-br from-background via-background to-accent/5 border-2">
+          <DialogHeader className="border-b border-border/50 pb-5 flex-shrink-0 bg-gradient-to-r from-primary/5 to-transparent -m-6 p-6 mb-0">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Badge className={cn(config.badgeColor, "text-base px-3 py-1")}>
-                  Leito {patient.bedNumber}
-                </Badge>
+              <div className="flex items-center gap-4">
+                <div className={cn(
+                  "w-14 h-14 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg",
+                  config.badgeColor
+                )}>
+                  {patient.bedNumber}
+                </div>
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold uppercase">{patient.name}</span>
-                  <span className="text-sm text-muted-foreground mt-0.5">
+                  <span className="text-2xl font-bold uppercase tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    {patient.name}
+                  </span>
+                  <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     {patient.age} anos
                   </span>
                 </div>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t">
-              <h3 className="text-lg font-semibold text-primary uppercase">
+            <div className="mt-4 pt-4 border-t border-border/30">
+              <h3 className="text-xl font-bold text-primary uppercase tracking-wide flex items-center gap-2">
+                <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
                 Programações / Pendências
               </h3>
             </div>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto py-6 pr-2">
+          <div className="flex-1 overflow-y-auto py-6 pr-2 px-6">
             {patient.pendencies.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {patient.pendencies.map((pendency, idx) => (
-                  <div key={idx} className="flex gap-4 items-start group">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-sm">
+                  <div 
+                    key={idx} 
+                    className="flex gap-4 items-start group animate-fade-in hover-scale"
+                    style={{ animationDelay: `${idx * 50}ms` }}
+                  >
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center font-bold text-lg shadow-lg group-hover:shadow-xl transition-all">
                       {idx + 1}
                     </div>
-                    <div className="flex-1 bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
-                      <p className="text-base text-foreground leading-relaxed uppercase">
-                        {pendency}
-                      </p>
+                    <div className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all group-hover:bg-card">
+                      {editingField === "pendencies" && editingArrayIndex === idx ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            ref={inputRef}
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                saveInlineEdit();
+                              } else if (e.key === 'Escape') {
+                                cancelEditing();
+                              }
+                            }}
+                            className="text-base uppercase font-medium bg-background/50 border-primary/50"
+                            autoFocus
+                          />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-9 w-9 text-green-600 hover:bg-green-100 hover:text-green-700 flex-shrink-0"
+                          >
+                            <Check className="h-5 w-5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-9 w-9 text-red-600 hover:bg-red-100 hover:text-red-700 flex-shrink-0"
+                          >
+                            <X className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-base text-foreground leading-relaxed uppercase font-medium flex-1">
+                            {pendency}
+                          </p>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => startEditing("pendencies", pendency, idx)}
+                              className="h-8 w-8 text-primary hover:bg-primary/10"
+                              title="Editar"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => removeArrayItem("pendencies", idx)}
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              title="Remover"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                <p className="text-lg italic">Nenhuma programação ou pendência registrada</p>
+                <div className="w-20 h-20 rounded-full bg-muted/30 flex items-center justify-center mb-4">
+                  <span className="text-4xl">📝</span>
+                </div>
+                <p className="text-lg font-medium">Nenhuma programação ou pendência registrada</p>
+                <p className="text-sm mt-2">Adicione a primeira programação ou pendência</p>
               </div>
             )}
+            <Button
+              onClick={() => startEditing("pendencies", "", patient.pendencies.length)}
+              className="mt-4 w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md hover:shadow-lg transition-all"
+              size="lg"
+            >
+              <span className="text-lg mr-2">+</span>
+              Adicionar Nova Programação / Pendência
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
