@@ -723,7 +723,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         size="icon"
                         variant="ghost"
                         onClick={handleCopyName}
-                        className="h-5 w-5 opacity-0 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0"
+                        className="h-5 w-5 opacity-40 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0"
                         title="Copiar nome"
                       >
                         <Copy className="h-3 w-3" />
