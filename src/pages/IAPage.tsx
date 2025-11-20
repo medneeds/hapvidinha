@@ -255,7 +255,7 @@ export default function IAPage() {
                 <Sparkles className="h-7 w-7 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-foreground">Examinus</h1>
+                <h1 className="text-3xl font-bold text-foreground">Assistente Examinus</h1>
                 <p className="text-sm text-muted-foreground">Formatador Inteligente de Exames Médicos</p>
               </div>
             </div>
@@ -270,7 +270,7 @@ export default function IAPage() {
                 <div className="inline-block p-8 rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
                   <Sparkles className="h-16 w-16 text-primary" />
                 </div>
-                <h2 className="text-2xl font-bold mb-3 text-foreground">Olá! Sou o Examinus</h2>
+                <h2 className="text-2xl font-bold mb-3 text-foreground">Olá! Sou o Assistente Examinus</h2>
                 <p className="text-muted-foreground text-lg mb-8">
                   Cole ou digite laudos de exames para formatação automática
                 </p>
