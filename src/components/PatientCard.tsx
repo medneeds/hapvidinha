@@ -5,11 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -241,6 +243,8 @@ interface SortableDiagnosisItemCollapsedProps {
   onKeyDown: (e: React.KeyboardEvent) => void;
   inputRef: React.RefObject<HTMLInputElement>;
   isLast: boolean;
+  onGetCid?: (diagnosis: string, index: number) => void;
+  loadingCid?: boolean;
 }
 
 function SortableDiagnosisItemCollapsed({ 
@@ -257,7 +261,9 @@ function SortableDiagnosisItemCollapsed({
   onAddNew,
   onEditValueChange,
   onKeyDown,
-  inputRef
+  inputRef,
+  onGetCid,
+  loadingCid
 }: SortableDiagnosisItemCollapsedProps) {
   const {
     attributes,
@@ -293,6 +299,18 @@ function SortableDiagnosisItemCollapsed({
           />
         </div>
         <div className="flex items-center gap-0.5 flex-shrink-0">
+          {onGetCid && (
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => onGetCid(editValue, index)}
+              disabled={loadingCid}
+              className="h-4 w-4 text-primary hover:bg-primary/10 p-0"
+              title="Buscar código CID"
+            >
+              <Sparkles className={`h-2.5 w-2.5 ${loadingCid ? 'animate-pulse' : ''}`} />
+            </Button>
+          )}
           <Button
             size="icon"
             variant="ghost"
@@ -377,9 +395,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [editValue, setEditValue] = useState("");
   const [editingArrayIndex, setEditingArrayIndex] = useState<number>(-1);
   const [expandedSection, setExpandedSection] = useState<'diagnoses' | 'exams' | 'medicalHistory' | 'pendencies' | null>(null);
+  const [loadingCid, setLoadingCid] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const config = sectorConfig[patient.sector];
-  const { toast } = useToast();
+  const { toast: toastHook } = useToast();
 
   useEffect(() => {
     if (editingField && inputRef.current) {
@@ -392,16 +411,46 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     e.stopPropagation();
     try {
       await navigator.clipboard.writeText(patient.name);
-      toast({
+      toastHook({
         title: "Nome copiado",
         description: `"${patient.name}" foi copiado para a área de transferência.`,
       });
     } catch (err) {
-      toast({
+      toastHook({
         title: "Erro ao copiar",
         description: "Não foi possível copiar o nome.",
         variant: "destructive",
       });
+    }
+  };
+
+  const getCidCode = async (diagnosis: string, index: number) => {
+    if (!diagnosis.trim()) {
+      toast.error("Digite um diagnóstico antes de buscar o CID");
+      return;
+    }
+
+    setLoadingCid(index);
+    try {
+      const { data, error } = await supabase.functions.invoke('get-cid-code', {
+        body: { diagnosis }
+      });
+
+      if (error) throw error;
+
+      if (data?.cidCode) {
+        const diagnosisWithCid = `${diagnosis} (${data.cidCode})`;
+        const updatedDiagnoses = patient.diagnoses.map((d, i) => 
+          i === index ? diagnosisWithCid : d
+        );
+        onUpdate({ ...patient, diagnoses: updatedDiagnoses });
+        toast.success(`CID ${data.cidCode} adicionado`);
+      }
+    } catch (error) {
+      console.error('Error getting CID code:', error);
+      toast.error("Erro ao buscar código CID");
+    } finally {
+      setLoadingCid(null);
     }
   };
 
@@ -487,7 +536,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     setEditValue("");
     setEditingArrayIndex(-1);
     
-    toast({
+    toastHook({
       title: "Campo atualizado",
       description: "As alterações foram salvas com sucesso.",
     });
@@ -512,7 +561,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     setEditValue("");
     // Mantém editingField e editingArrayIndex para continuar adicionando
     
-    toast({
+    toastHook({
       title: "Item adicionado",
       description: "Continue adicionando mais itens ou pressione Escape para finalizar.",
     });
@@ -532,7 +581,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }
 
     onUpdate(updatedPatient);
-    toast({
+    toastHook({
       title: "Item removido",
       description: "O item foi removido com sucesso.",
     });
@@ -562,7 +611,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       };
 
       onUpdate(updatedPatient);
-      toast({
+      toastHook({
         title: "Ordem atualizada",
         description: "A ordem das programações foi reorganizada.",
       });
@@ -582,7 +631,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       };
 
       onUpdate(updatedPatient);
-      toast({
+      toastHook({
         title: "Ordem atualizada",
         description: "A ordem das hipóteses foi reorganizada.",
       });
@@ -774,6 +823,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onKeyDown={handleKeyDown}
                         inputRef={inputRef}
                         isLast={idx === patient.diagnoses.length - 1}
+                        onGetCid={(diagnosis, index) => getCidCode(diagnosis, index)}
+                        loadingCid={loadingCid === idx}
                       />
                     ))}
                   </ol>
@@ -1352,7 +1403,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   // Wait for animation to complete before actually deleting
                   setTimeout(() => {
                     onDelete(patient.id);
-                    toast({
+                    toastHook({
                       title: "Paciente excluído",
                       description: `Leito ${patient.bedNumber} - ${patient.name} foi removido.`,
                       action: onUndelete ? (
