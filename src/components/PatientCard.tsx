@@ -629,7 +629,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             <div className="flex-1 grid grid-cols-1 md:grid-cols-18 gap-1.5 items-start">
               {/* Leito - ultra compacto */}
               <div className="flex flex-col md:col-span-1">
-                <span className="text-[9px] font-bold text-muted-foreground mb-0.5">Leito</span>
+                <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
                 <Badge className={cn("w-fit text-[10px] py-0 px-1 font-bold leading-tight", config.badgeColor)}>
                   {patient.bedNumber}
                 </Badge>
@@ -637,7 +637,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
               {/* Nome e Idade - mais espaço para nome completo */}
               <div className="flex flex-col md:col-span-3">
-                <span className="text-[10px] font-bold text-muted-foreground mb-0.5">Paciente</span>
+                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-start gap-1.5">
                     <div className="flex-1 min-w-0">
@@ -733,7 +733,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Hipóteses / Diagnósticos */}
             <div className="flex flex-col md:col-span-3 relative">
               <div className="flex items-center gap-1 mb-0.5">
-                <span className="text-[10px] font-bold text-muted-foreground">Hipóteses / Diagnósticos</span>
+                <span className="text-[10px] font-medium text-muted-foreground">Hipóteses / Diagnósticos</span>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -827,7 +827,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Antecedentes Mórbidos */}
             <div className="flex flex-col md:col-span-2 relative">
-              <span className="text-[10px] font-bold text-muted-foreground mb-0.5">Antecedentes Mórbidos</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Antecedentes Mórbidos</span>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -920,7 +920,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Exames Complementares */}
             <div className="flex flex-col md:col-span-2 relative">
               <div className="flex items-center gap-1 mb-0.5">
-                <span className="text-[10px] font-bold text-muted-foreground">Exames Complementares</span>
+                <span className="text-[10px] font-medium text-muted-foreground">Exames Complementares</span>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -1022,7 +1022,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Programações / Pendências - mais espaço */}
             <div className="flex flex-col md:col-span-7 relative">
-              <span className="text-[10px] font-bold text-muted-foreground mb-0.5">Programações / Pendências</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
