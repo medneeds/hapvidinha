@@ -26,19 +26,27 @@ export default function IAPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll para o final quando houver mudanças nas mensagens
+  // Auto-scroll forçado para o final
   useEffect(() => {
-    const scrollElement = scrollRef.current;
-    if (scrollElement) {
-      // Força scroll para o final imediatamente
-      const scrollToEnd = () => {
-        scrollElement.scrollTop = scrollElement.scrollHeight;
-      };
-      
-      scrollToEnd();
-      // Segundo scroll após pequeno delay para garantir que o DOM atualizou
-      setTimeout(scrollToEnd, 50);
-    }
+    const scrollToEnd = () => {
+      // Busca o viewport interno do ScrollArea
+      const viewport = document.querySelector('[data-radix-scroll-area-viewport]');
+      if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
+    };
+    
+    scrollToEnd();
+    // Múltiplos scrolls para garantir
+    const timer1 = setTimeout(scrollToEnd, 10);
+    const timer2 = setTimeout(scrollToEnd, 100);
+    const timer3 = setTimeout(scrollToEnd, 200);
+    
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
   }, [messages, isLoading]);
 
   useEffect(() => {
@@ -255,8 +263,8 @@ export default function IAPage() {
         </div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 px-4" ref={scrollRef}>
-          <div className="container mx-auto max-w-4xl py-8 space-y-6">
+        <ScrollArea className="flex-1 px-4">
+          <div className="container mx-auto max-w-4xl py-8 space-y-6" ref={scrollRef}>
             {messages.length === 0 && (
               <div className="text-center py-16">
                 <div className="inline-block p-8 rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
