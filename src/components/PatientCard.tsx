@@ -138,7 +138,7 @@ function SortablePendencyItem({ id, index, pendency, isHighlighted, onToggleHigh
         <GripVertical className="h-3 w-3 text-muted-foreground flex-shrink-0" />
       </div>
       <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
-      <span className="flex-1">{pendency}</span>
+      <span className={cn("flex-1", isHighlighted && "font-bold")}>{pendency}</span>
       <Button
         variant="ghost"
         size="sm"
@@ -213,7 +213,7 @@ function SortablePendencyItemCollapsed({
         onClick={onEdit}
       >
         <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
-        <span className="break-words">{pendency}</span>
+        <span className={cn("break-words", isHighlighted && "font-bold")}>{pendency}</span>
       </span>
       <div className="flex items-center gap-0.5 flex-shrink-0">
         <button
