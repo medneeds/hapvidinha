@@ -667,11 +667,13 @@ const Index = () => {
                   >
                     <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </Button>
-                  <div className="hidden md:flex items-center gap-1.5 bg-white/10 px-2 py-1 rounded-lg print:px-2 print:py-1 backdrop-blur-sm border border-white/20">
-                    <Users className="h-3.5 w-3.5 text-white/90" />
-                    <div className="flex flex-col justify-center min-w-[32px]">
-                      <p className="text-[8px] text-white/70 uppercase leading-tight">Total</p>
-                      <p className="text-sm font-bold text-white leading-tight">{totalPatients}</p>
+                  <div className="hidden md:flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all hover:scale-[1.02]">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-md bg-white/10 border border-white/20">
+                      <Users className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <p className="text-[9px] text-white/70 uppercase leading-none tracking-wide font-medium">Total</p>
+                      <p className="text-lg font-bold text-white leading-tight mt-0.5">{totalPatients}</p>
                     </div>
                   </div>
                   <div className="h-6 sm:h-8 w-px bg-white/20 mx-1 sm:mx-2 print:hidden hidden lg:block" />
