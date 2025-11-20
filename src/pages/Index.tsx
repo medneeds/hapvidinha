@@ -164,18 +164,20 @@ const Index = () => {
   const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
   const [departmentPassword, setDepartmentPassword] = useState("");
   const [selectedNewDepartment, setSelectedNewDepartment] = useState<Department | null>(null);
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const { toast } = useToast();
   const { signOut, user, role, loading: authLoading } = useAuth();
   const { saveVersion } = usePatientVersions();
   const isMobile = useIsMobile();
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [hasShownLoading, setHasShownLoading] = useState(false);
 
-  // Mostrar loading screen apenas quando autenticado e não mais carregando
+  // Mostrar loading screen apenas uma vez após autenticação completa
   useEffect(() => {
-    if (!authLoading && user) {
+    if (!authLoading && user && !hasShownLoading) {
       setShowLoadingScreen(true);
+      setHasShownLoading(true);
     }
-  }, [authLoading, user]);
+  }, [authLoading, user, hasShownLoading]);
 
   // Sensors for drag and drop
   const sensors = useSensors(
