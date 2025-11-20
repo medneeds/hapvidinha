@@ -64,6 +64,18 @@ export default function IAPage() {
     }
   };
 
+  const copyUppercaseToClipboard = async (text: string, index: number) => {
+    try {
+      const uppercaseText = text.toUpperCase();
+      await navigator.clipboard.writeText(uppercaseText);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+      toast.success("Copiado em caixa alta!");
+    } catch (error) {
+      toast.error("Erro ao copiar");
+    }
+  };
+
   const extractTextFromPDF = async (file: File): Promise<string> => {
     try {
       const arrayBuffer = await file.arrayBuffer();
@@ -311,18 +323,30 @@ export default function IAPage() {
                     {message.content}
                   </pre>
                   {message.role === "assistant" && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => copyToClipboard(message.content, index)}
-                    >
-                      {copiedIndex === index ? (
-                        <Check className="h-4 w-4 text-green-500" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </Button>
+                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => copyToClipboard(message.content, index)}
+                        title="Copiar"
+                      >
+                        {copiedIndex === index ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-xs font-bold"
+                        onClick={() => copyUppercaseToClipboard(message.content, index)}
+                        title="Copiar em Caixa Alta"
+                      >
+                        ABC
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
