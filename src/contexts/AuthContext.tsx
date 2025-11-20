@@ -96,13 +96,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     
     if (!error && data.user && desiredRole) {
-      // Atualizar ou criar papel do usuário
+      // Atualizar ou criar papel do usuário ANTES de qualquer outra coisa
       try {
         const { data: existingRole } = await supabase
           .from("user_roles")
           .select("role")
           .eq("user_id", data.user.id)
-          .single();
+          .maybeSingle();
         
         if (existingRole) {
           // Atualizar papel existente
@@ -117,8 +117,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .insert({ user_id: data.user.id, role: desiredRole });
         }
         
-        // Atualizar estado local do papel
+        // Forçar atualização da role no estado
         setRole(desiredRole);
+        
+        // Aguardar um pouco para garantir que a atualização foi persistida
+        await new Promise(resolve => setTimeout(resolve, 500));
       } catch (roleError) {
         if (import.meta.env.DEV) {
           console.error("Erro ao atribuir papel:", roleError);
@@ -127,6 +130,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     
     if (!error) {
+      // Fazer logout e login novamente para gerar novo JWT com role atualizada
+      if (desiredRole && data.user) {
+        await supabase.auth.signOut();
+        const { error: reloginError } = await supabase.auth.signInWithPassword({
+          email: internalEmail,
+          password,
+        });
+        
+        if (reloginError) {
+          return { error: reloginError };
+        }
+      }
+      
       navigate("/");
     }
     
