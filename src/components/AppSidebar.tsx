@@ -92,11 +92,7 @@ const menuItems = [
   {
     title: "IA",
     icon: Sparkles,
-    items: [
-      { name: "ASSISTENTE IA", link: "/ia" },
-      { name: "ANÁLISE DE EXAMES", link: null },
-      { name: "SUGESTÕES DIAGNÓSTICAS", link: null },
-    ],
+    link: "/ia",
   },
   {
     title: "PACIENTES",
