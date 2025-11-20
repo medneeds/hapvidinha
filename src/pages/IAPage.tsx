@@ -3,7 +3,7 @@ import { MainLayout } from "@/components/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Sparkles, Loader2 } from "lucide-react";
+import { Send, Sparkles, Loader2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
 interface Message {
@@ -15,13 +15,33 @@ export default function IAPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth"
+      });
     }
   }, [messages]);
+
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
+
+  const copyToClipboard = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+      toast.success("Copiado!");
+    } catch (error) {
+      toast.error("Erro ao copiar");
+    }
+  };
 
   const streamChat = async (userMessage: string) => {
     setIsLoading(true);
@@ -107,6 +127,7 @@ export default function IAPage() {
       setMessages(messages);
     } finally {
       setIsLoading(false);
+      setTimeout(() => textareaRef.current?.focus(), 100);
     }
   };
 
@@ -123,15 +144,15 @@ export default function IAPage() {
     <MainLayout>
       <div className="h-[calc(100vh-4rem)] flex flex-col bg-background">
         {/* Header */}
-        <div className="border-b bg-card/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-                <Sparkles className="h-6 w-6 text-primary-foreground" />
+        <div className="border-b bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg">
+                <Sparkles className="h-7 w-7 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Examinus</h1>
-                <p className="text-sm text-muted-foreground">Assistente de IA Médica</p>
+                <h1 className="text-3xl font-bold text-foreground">Examinus</h1>
+                <p className="text-sm text-muted-foreground">Formatador Inteligente de Exames Médicos</p>
               </div>
             </div>
           </div>
@@ -139,40 +160,77 @@ export default function IAPage() {
 
         {/* Messages */}
         <ScrollArea className="flex-1 px-4" ref={scrollRef}>
-          <div className="container mx-auto max-w-4xl py-6 space-y-4">
+          <div className="container mx-auto max-w-4xl py-8 space-y-6">
             {messages.length === 0 && (
-              <div className="text-center py-12">
-                <div className="inline-block p-6 rounded-full bg-primary/10 mb-4">
-                  <Sparkles className="h-12 w-12 text-primary" />
+              <div className="text-center py-16">
+                <div className="inline-block p-8 rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
+                  <Sparkles className="h-16 w-16 text-primary" />
                 </div>
-                <h2 className="text-xl font-semibold mb-2">Olá! Sou o Examinus</h2>
-                <p className="text-muted-foreground">
-                  Como posso ajudar com questões médicas hoje?
+                <h2 className="text-2xl font-bold mb-3 text-foreground">Olá! Sou o Examinus</h2>
+                <p className="text-muted-foreground text-lg mb-8">
+                  Cole ou digite laudos de exames para formatação automática
                 </p>
+                <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto text-left">
+                  <div className="p-4 rounded-xl bg-card border border-border">
+                    <h3 className="font-semibold mb-2 flex items-center gap-2">
+                      🧪 Exames Laboratoriais
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Hemograma, bioquímica, coagulograma formatados em linha única
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-xl bg-card border border-border">
+                    <h3 className="font-semibold mb-2 flex items-center gap-2">
+                      🖼 Exames de Imagem
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      TC, RX, US com apenas achados anormais extraídos
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
             
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-4 duration-500`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg px-4 py-3 ${
+                  className={`group relative max-w-[85%] rounded-2xl px-5 py-4 ${
                     message.role === "user"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground"
+                      ? "bg-primary text-primary-foreground shadow-lg"
+                      : "bg-card border border-border shadow-sm"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap break-words">{message.content}</p>
+                  <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed">
+                    {message.content}
+                  </pre>
+                  {message.role === "assistant" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => copyToClipboard(message.content, index)}
+                    >
+                      {copiedIndex === index ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}
             
             {isLoading && messages[messages.length - 1]?.role === "user" && (
-              <div className="flex justify-start">
-                <div className="bg-muted rounded-lg px-4 py-3">
-                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <div className="flex justify-start animate-in fade-in slide-in-from-bottom-4">
+                <div className="bg-card border border-border rounded-2xl px-5 py-4 shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    <span className="text-sm text-muted-foreground">Formatando...</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -180,14 +238,15 @@ export default function IAPage() {
         </ScrollArea>
 
         {/* Input */}
-        <div className="border-t bg-card/50 backdrop-blur-sm">
+        <div className="border-t bg-card/50 backdrop-blur-sm shadow-lg">
           <form onSubmit={handleSubmit} className="container mx-auto max-w-4xl px-4 py-4">
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <Textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Digite sua mensagem..."
-                className="min-h-[60px] max-h-[200px] resize-none"
+                placeholder="Cole o laudo do exame aqui..."
+                className="min-h-[80px] max-h-[300px] resize-none text-base font-mono shadow-sm"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -199,16 +258,19 @@ export default function IAPage() {
               <Button
                 type="submit"
                 size="icon"
-                className="h-[60px] w-[60px]"
+                className="h-[80px] w-[80px] rounded-2xl shadow-lg"
                 disabled={!input.trim() || isLoading}
               >
                 {isLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-6 w-6 animate-spin" />
                 ) : (
-                  <Send className="h-5 w-5" />
+                  <Send className="h-6 w-6" />
                 )}
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground mt-2 text-center">
+              Shift + Enter para nova linha • Enter para enviar
+            </p>
           </form>
         </div>
       </div>
