@@ -305,7 +305,7 @@ function SortableDiagnosisItemCollapsed({
               variant="ghost"
               onClick={() => onGetCid(editValue, index)}
               disabled={loadingCid}
-              className="h-4 w-4 text-primary hover:bg-primary/10 p-0"
+              className="h-4 w-4 text-amber-500 hover:bg-amber-100 hover:text-amber-600 p-0 transition-colors"
               title="Buscar código CID"
             >
               <Sparkles className={`h-2.5 w-2.5 ${loadingCid ? 'animate-pulse' : ''}`} />
