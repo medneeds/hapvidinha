@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { X, Sparkles } from "lucide-react";
+import { X, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -234,6 +234,24 @@ export function EditPatientDialog({
                 title="Buscar código CID"
               >
                 <Sparkles className={`h-3.5 w-3.5 ${loadingCid === idx ? 'animate-pulse' : ''}`} />
+              </Button>
+            )}
+            {field === "pendencies" && (
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                onClick={() => {
+                  const highlighted = formData.highlightedPendencies || [];
+                  const updatedHighlighted = highlighted.includes(idx)
+                    ? highlighted.filter(i => i !== idx)
+                    : [...highlighted, idx];
+                  setFormData({ ...formData, highlightedPendencies: updatedHighlighted });
+                }}
+                className="h-9 w-9 flex-shrink-0"
+                title="Destacar item"
+              >
+                <Star className={`h-3.5 w-3.5 ${formData.highlightedPendencies?.includes(idx) ? 'fill-amber-500 text-amber-500' : 'text-muted-foreground'}`} />
               </Button>
             )}
             <Button

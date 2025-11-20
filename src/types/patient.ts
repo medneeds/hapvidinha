@@ -10,6 +10,7 @@ export interface Patient {
   medicalHistory: string[];
   relevantExams: string[];
   pendencies: string[];
+  highlightedPendencies?: number[]; // Índices dos itens destacados
   schedule: string[];
   admissionHistory: string;
   admissionDate: string;

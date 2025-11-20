@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
@@ -100,9 +100,11 @@ interface SortablePendencyItemProps {
   id: string;
   index: number;
   pendency: string;
+  isHighlighted?: boolean;
+  onToggleHighlight?: () => void;
 }
 
-function SortablePendencyItem({ id, index, pendency }: SortablePendencyItemProps) {
+function SortablePendencyItem({ id, index, pendency, isHighlighted, onToggleHighlight }: SortablePendencyItemProps) {
   const {
     attributes,
     listeners,
@@ -123,8 +125,9 @@ function SortablePendencyItem({ id, index, pendency }: SortablePendencyItemProps
       ref={setNodeRef}
       style={style}
       className={cn(
-        "text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight flex items-center gap-2 rounded px-1 -mx-1 py-1",
-        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/30"
+        "text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight flex items-center gap-2 rounded px-2 -mx-1 py-1.5",
+        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/30",
+        isHighlighted && "bg-amber-500/20 border border-amber-500/50 shadow-sm"
       )}
     >
       <div
@@ -136,6 +139,14 @@ function SortablePendencyItem({ id, index, pendency }: SortablePendencyItemProps
       </div>
       <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
       <span className="flex-1">{pendency}</span>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onToggleHighlight}
+        className="h-5 w-5 p-0 print:hidden opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        <Star className={cn("h-3 w-3", isHighlighted ? "fill-amber-500 text-amber-500" : "text-muted-foreground")} />
+      </Button>
     </li>
   );
 }
@@ -149,6 +160,8 @@ interface SortablePendencyItemCollapsedProps {
   isLast: boolean;
   onAddNew: () => void;
   editingField: string | null;
+  isHighlighted?: boolean;
+  onToggleHighlight?: () => void;
 }
 
 function SortablePendencyItemCollapsed({ 
@@ -159,7 +172,9 @@ function SortablePendencyItemCollapsed({
   onRemove, 
   isLast, 
   onAddNew,
-  editingField 
+  editingField,
+  isHighlighted,
+  onToggleHighlight
 }: SortablePendencyItemCollapsedProps) {
   const {
     attributes,
@@ -182,7 +197,8 @@ function SortablePendencyItemCollapsed({
       style={style}
       className={cn(
         "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
-        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50"
+        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50",
+        isHighlighted && "bg-amber-500/20 border border-amber-500/50 shadow-sm"
       )}
     >
       <div
@@ -200,6 +216,15 @@ function SortablePendencyItemCollapsed({
         <span className="break-words">{pendency}</span>
       </span>
       <div className="flex items-center gap-0.5 flex-shrink-0">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleHighlight?.();
+          }}
+          className="opacity-0 group-hover/item:opacity-100 hover:text-amber-500 print:hidden"
+        >
+          <Star className={cn("h-2.5 w-2.5", isHighlighted ? "fill-amber-500 text-amber-500" : "text-muted-foreground")} />
+        </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -1185,6 +1210,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           isLast={idx === patient.pendencies.length - 1}
                           onAddNew={() => startEditing("pendencies", "", -2)}
                           editingField={editingField}
+                          isHighlighted={patient.highlightedPendencies?.includes(idx)}
+                          onToggleHighlight={() => {
+                            const highlighted = patient.highlightedPendencies || [];
+                            const updatedHighlighted = highlighted.includes(idx)
+                              ? highlighted.filter(i => i !== idx)
+                              : [...highlighted, idx];
+                            onUpdate({ ...patient, highlightedPendencies: updatedHighlighted });
+                          }}
                         />
                       )
                     ))}
