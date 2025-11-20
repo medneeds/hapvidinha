@@ -35,7 +35,7 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
           <div>
             <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>Leito</div>
             <div style={{ 
-              backgroundColor: '#3b82f6',
+              background: 'linear-gradient(135deg, #ef4444, #eab308, #3b82f6)',
               color: '#ffffff',
               padding: '2px 6px',
               borderRadius: '3px',

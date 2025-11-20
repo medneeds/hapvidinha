@@ -66,7 +66,7 @@ export function PrintLayout({
         <div style={{ 
           height: isCompact ? '28px' : '32px', 
           width: isCompact ? '28px' : '32px', 
-          background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+          background: 'linear-gradient(135deg, #ef4444, #eab308, #3b82f6)', 
           borderRadius: '4px',
           display: 'flex',
           alignItems: 'center',
