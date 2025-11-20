@@ -510,7 +510,7 @@ const Index = () => {
     setTimeout(() => {
       window.print();
       setTimeout(() => setPrintMode(null), 500);
-    }, 100);
+    }, 300);
   };
 
   const handlePrintSector = (sector: string) => {

@@ -147,6 +147,20 @@
     display: none !important;
   }
   
+  /* Hide all buttons, inputs, and interactive elements during print */
+  button:not(.print-show),
+  input,
+  textarea,
+  select,
+  [role="button"],
+  [role="textbox"],
+  .cursor-pointer,
+  [data-state],
+  [data-radix-collection-item],
+  [data-radix-popper-content-wrapper] {
+    display: none !important;
+  }
+  
   /* Show only print layout */
   .print-layout-container {
     display: block !important;
