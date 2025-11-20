@@ -165,6 +165,7 @@ export type Database = {
           created_by: string | null
           department: string
           diagnoses: string | null
+          highlighted_pendencies: number[] | null
           id: string
           medical_history: string | null
           name: string
@@ -183,6 +184,7 @@ export type Database = {
           created_by?: string | null
           department?: string
           diagnoses?: string | null
+          highlighted_pendencies?: number[] | null
           id?: string
           medical_history?: string | null
           name?: string
@@ -201,6 +203,7 @@ export type Database = {
           created_by?: string | null
           department?: string
           diagnoses?: string | null
+          highlighted_pendencies?: number[] | null
           id?: string
           medical_history?: string | null
           name?: string

@@ -34,6 +34,7 @@ export function usePatients(department?: Department) {
         medicalHistory: p.medical_history ? p.medical_history.split('\n').filter(Boolean) : [],
         relevantExams: p.relevant_exams ? p.relevant_exams.split('\n').filter(Boolean) : [],
         pendencies: p.pendencies ? p.pendencies.split('\n').filter(Boolean) : [],
+        highlightedPendencies: p.highlighted_pendencies || [],
         schedule: p.schedule ? p.schedule.split('\n').filter(Boolean) : [],
         admissionHistory: p.admission_history || '',
         admissionDate: p.admission_date || '',
@@ -64,6 +65,7 @@ export function usePatients(department?: Department) {
       if (updates.medicalHistory !== undefined) dbUpdates.medical_history = updates.medicalHistory.join('\n');
       if (updates.relevantExams !== undefined) dbUpdates.relevant_exams = updates.relevantExams.join('\n');
       if (updates.pendencies !== undefined) dbUpdates.pendencies = updates.pendencies.join('\n');
+      if (updates.highlightedPendencies !== undefined) dbUpdates.highlighted_pendencies = updates.highlightedPendencies;
       if (updates.schedule !== undefined) dbUpdates.schedule = updates.schedule.join('\n');
       if (updates.admissionHistory !== undefined) dbUpdates.admission_history = updates.admissionHistory;
       if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate;
@@ -111,6 +113,7 @@ export function usePatients(department?: Department) {
         medical_history: patient.medicalHistory.join('\n'),
         relevant_exams: patient.relevantExams.join('\n'),
         pendencies: patient.pendencies.join('\n'),
+        highlighted_pendencies: patient.highlightedPendencies || [],
         schedule: patient.schedule.join('\n'),
         admission_history: patient.admissionHistory,
         admission_date: patient.admissionDate,
@@ -135,6 +138,7 @@ export function usePatients(department?: Department) {
         medicalHistory: data.medical_history ? data.medical_history.split('\n').filter(Boolean) : [],
         relevantExams: data.relevant_exams ? data.relevant_exams.split('\n').filter(Boolean) : [],
         pendencies: data.pendencies ? data.pendencies.split('\n').filter(Boolean) : [],
+        highlightedPendencies: data.highlighted_pendencies || [],
         schedule: data.schedule ? data.schedule.split('\n').filter(Boolean) : [],
         admissionHistory: data.admission_history || '',
         admissionDate: data.admission_date || '',
