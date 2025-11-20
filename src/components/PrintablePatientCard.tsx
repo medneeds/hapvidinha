@@ -27,7 +27,7 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
       >
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: '60px 1fr 1fr 1fr 2fr',
+          gridTemplateColumns: '60px 1fr 1fr 1fr 1fr 2fr',
           gap: '8px',
           alignItems: 'start'
         }}>
@@ -81,6 +81,24 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
                 ))
               ) : (
                 <span style={{ fontSize: '7pt', color: '#9ca3af' }}>-</span>
+              )}
+            </div>
+          </div>
+
+          {/* Antecedentes Mórbidos */}
+          <div>
+            <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>
+              Antecedentes Mórbidos
+            </div>
+            <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
+              {patient.medicalHistory.length > 0 ? (
+                patient.medicalHistory.map((history, idx) => (
+                  <div key={idx} style={{ marginBottom: '1px' }}>
+                    <span style={{ fontWeight: 'bold', color: '#6b7280' }}>{idx + 1}.</span> {history}
+                  </div>
+                ))
+              ) : (
+                <span style={{ color: '#9ca3af' }}>-</span>
               )}
             </div>
           </div>
