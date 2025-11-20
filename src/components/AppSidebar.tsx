@@ -8,6 +8,7 @@ import {
   History,
   User,
   FolderOpen,
+  Sparkles,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
@@ -86,6 +87,15 @@ const menuItems = [
       "AVC",
       "TRAUMA",
       "INTOXICAÇÕES",
+    ],
+  },
+  {
+    title: "IA",
+    icon: Sparkles,
+    items: [
+      { name: "ASSISTENTE IA", link: "/ia" },
+      { name: "ANÁLISE DE EXAMES", link: null },
+      { name: "SUGESTÕES DIAGNÓSTICAS", link: null },
     ],
   },
   {
