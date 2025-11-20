@@ -90,7 +90,7 @@ const menuItems = [
     ],
   },
   {
-    title: "IA",
+    title: "EXAMINUS AI",
     icon: Sparkles,
     link: "/ia",
   },
