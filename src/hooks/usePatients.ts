@@ -2,18 +2,25 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Patient } from "@/types/patient";
 import { useToast } from "@/hooks/use-toast";
+import { Department } from "@/contexts/DepartmentContext";
 
-export function usePatients() {
+export function usePatients(department?: Department) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   const fetchPatients = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('patients')
-        .select('*')
-        .order('bed_number');
+        .select('*');
+      
+      // Filter by department if provided
+      if (department) {
+        query = query.eq('department', department);
+      }
+      
+      const { data, error } = await query.order('bed_number');
 
       if (error) throw error;
 
@@ -93,7 +100,7 @@ export function usePatients() {
     }
   };
 
-  const createPatient = async (patient: Omit<Patient, 'id'>) => {
+  const createPatient = async (patient: Omit<Patient, 'id'>, departmentValue?: Department) => {
     try {
       const dbData = {
         bed_number: patient.bedNumber,
@@ -107,6 +114,7 @@ export function usePatients() {
         schedule: patient.schedule.join('\n'),
         admission_history: patient.admissionHistory,
         admission_date: patient.admissionDate,
+        department: departmentValue || department || 'URGÊNCIA E EMERGÊNCIA ADULTO',
       };
 
       const { data, error } = await supabase
@@ -205,7 +213,8 @@ export function usePatients() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'patients'
+          table: 'patients',
+          filter: department ? `department=eq.${department}` : undefined,
         },
         (payload) => {
           console.log('Realtime INSERT:', payload);
@@ -238,7 +247,8 @@ export function usePatients() {
         {
           event: 'UPDATE',
           schema: 'public',
-          table: 'patients'
+          table: 'patients',
+          filter: department ? `department=eq.${department}` : undefined,
         },
         (payload) => {
           console.log('Realtime UPDATE:', payload);
@@ -265,7 +275,8 @@ export function usePatients() {
         {
           event: 'DELETE',
           schema: 'public',
-          table: 'patients'
+          table: 'patients',
+          filter: department ? `department=eq.${department}` : undefined,
         },
         (payload) => {
           console.log('Realtime DELETE:', payload);
