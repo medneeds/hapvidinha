@@ -1395,6 +1395,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     {patient.age} anos
                   </span>
+                  <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1499,6 +1503,21 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <span className="text-lg mr-2">+</span>
               Adicionar Nova Hipótese / Diagnóstico
             </Button>
+            
+            {/* História Admissional / Anamnese */}
+            {patient.admissionHistory && (
+              <div className="mt-6 pt-6 border-t border-border/30">
+                <h4 className="text-lg font-bold text-primary uppercase mb-3 flex items-center gap-2">
+                  <div className="w-1 h-5 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
+                  História Admissional / Anamnese
+                </h4>
+                <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm">
+                  <p className="text-sm text-foreground leading-relaxed uppercase whitespace-pre-wrap">
+                    {patient.admissionHistory}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
@@ -1522,6 +1541,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     {patient.age} anos
+                  </span>
+                  <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}
                   </span>
                 </div>
               </div>
@@ -1627,6 +1650,21 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <span className="text-lg mr-2">+</span>
               Adicionar Novo Exame
             </Button>
+            
+            {/* História Admissional / Anamnese */}
+            {patient.admissionHistory && (
+              <div className="mt-6 pt-6 border-t border-border/30">
+                <h4 className="text-lg font-bold text-primary uppercase mb-3 flex items-center gap-2">
+                  <div className="w-1 h-5 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
+                  História Admissional / Anamnese
+                </h4>
+                <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm">
+                  <p className="text-sm text-foreground leading-relaxed uppercase whitespace-pre-wrap">
+                    {patient.admissionHistory}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
@@ -1650,6 +1688,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     {patient.age} anos
+                  </span>
+                  <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}
                   </span>
                 </div>
               </div>
@@ -1755,6 +1797,21 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <span className="text-lg mr-2">+</span>
               Adicionar Novo Antecedente
             </Button>
+            
+            {/* História Admissional / Anamnese */}
+            {patient.admissionHistory && (
+              <div className="mt-6 pt-6 border-t border-border/30">
+                <h4 className="text-lg font-bold text-primary uppercase mb-3 flex items-center gap-2">
+                  <div className="w-1 h-5 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
+                  História Admissional / Anamnese
+                </h4>
+                <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm">
+                  <p className="text-sm text-foreground leading-relaxed uppercase whitespace-pre-wrap">
+                    {patient.admissionHistory}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
@@ -1778,6 +1835,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     {patient.age} anos
+                  </span>
+                  <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}
                   </span>
                 </div>
               </div>
@@ -1883,6 +1944,21 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <span className="text-lg mr-2">+</span>
               Adicionar Nova Programação / Pendência
             </Button>
+            
+            {/* História Admissional / Anamnese */}
+            {patient.admissionHistory && (
+              <div className="mt-6 pt-6 border-t border-border/30">
+                <h4 className="text-lg font-bold text-primary uppercase mb-3 flex items-center gap-2">
+                  <div className="w-1 h-5 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
+                  História Admissional / Anamnese
+                </h4>
+                <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm">
+                  <p className="text-sm text-foreground leading-relaxed uppercase whitespace-pre-wrap">
+                    {patient.admissionHistory}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
