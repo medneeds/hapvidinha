@@ -92,6 +92,7 @@ const menuItems = [
     title: "PACIENTES",
     icon: Users,
     items: [
+      { name: "MOVIMENTAÇÕES", link: "/movements" },
       { name: "BLOCO DE NOTAS", link: "/resources" },
       { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
       { name: "PADRÃO DE INTERNAÇÃO", link: null },
