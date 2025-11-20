@@ -104,7 +104,6 @@ export function PatientMovementDialog({
       const { error } = await supabase
         .from('patient_movements')
         .insert({
-          patient_id: patient.id,
           patient_name: patient.name,
           patient_bed: patient.bedNumber,
           patient_sector: patient.sector,
@@ -112,6 +111,7 @@ export function PatientMovementDialog({
           destination: finalDestination || null,
           notes: notes || null,
           created_by: user?.id,
+          patient_snapshot: patient as any,
         });
 
       if (error) throw error;

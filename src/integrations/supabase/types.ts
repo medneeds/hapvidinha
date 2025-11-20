@@ -95,6 +95,7 @@ export type Database = {
           patient_id: string | null
           patient_name: string
           patient_sector: string | null
+          patient_snapshot: Json | null
         }
         Insert: {
           created_at?: string
@@ -107,6 +108,7 @@ export type Database = {
           patient_id?: string | null
           patient_name: string
           patient_sector?: string | null
+          patient_snapshot?: Json | null
         }
         Update: {
           created_at?: string
@@ -119,6 +121,7 @@ export type Database = {
           patient_id?: string | null
           patient_name?: string
           patient_sector?: string | null
+          patient_snapshot?: Json | null
         }
         Relationships: []
       }
