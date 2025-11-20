@@ -27,7 +27,7 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
       >
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: '40px 2fr 2.5fr 1.5fr 1.5fr 3fr',
+          gridTemplateColumns: '40px 2fr 2.5fr 2fr 2fr 2.5fr',
           gap: '8px',
           alignItems: 'start'
         }}>
@@ -85,10 +85,10 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
             </div>
           </div>
 
-          {/* Antecedentes Mórbidos */}
+          {/* Antecedentes */}
           <div>
             <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>
-              Antecedentes Mórbidos
+              Antecedentes
             </div>
             <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
               {patient.medicalHistory.length > 0 ? (
@@ -103,10 +103,10 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
             </div>
           </div>
 
-          {/* Exames Complementares */}
+          {/* Exames */}
           <div>
             <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>
-              Exames Complementares
+              Exames
             </div>
             <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
               {patient.relevantExams.length > 0 ? (

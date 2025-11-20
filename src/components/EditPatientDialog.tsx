@@ -342,10 +342,10 @@ export function EditPatientDialog({
             {renderArrayField("diagnoses", "Hipóteses / Diagnósticos")}
 
             {/* Antecedentes */}
-            {renderArrayField("medicalHistory", "Antecedentes Mórbidos")}
+            {renderArrayField("medicalHistory", "Antecedentes")}
 
             {/* Exames */}
-            {renderArrayField("relevantExams", "Exames Relevantes")}
+            {renderArrayField("relevantExams", "Exames")}
 
             {/* Programações / Pendências */}
             {renderArrayField("pendencies", "Programações / Pendências")}
