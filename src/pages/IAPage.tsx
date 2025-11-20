@@ -26,14 +26,26 @@ export default function IAPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  // Auto-scroll suave para o final
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
         top: scrollRef.current.scrollHeight,
-        behavior: "smooth"
+        behavior
       });
     }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    if (isLoading) {
+      // Scroll imediato quando começar a processar
+      setTimeout(() => scrollToBottom("auto"), 100);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     textareaRef.current?.focus();
@@ -105,6 +117,9 @@ export default function IAPage() {
 
   const streamChat = async (userMessage: string, file?: File) => {
     setIsLoading(true);
+    
+    // Scroll imediato para mostrar que está processando
+    setTimeout(() => scrollToBottom("auto"), 50);
     
     const newMessages: Message[] = [...messages, { role: "user", content: userMessage || "Extraia e formate este exame:" }];
     setMessages(newMessages);
@@ -203,6 +218,8 @@ export default function IAPage() {
                 ...newMessages,
                 { role: "assistant", content: assistantContent }
               ]);
+              // Scroll contínuo enquanto a resposta chega
+              scrollToBottom("smooth");
             }
           } catch {
             textBuffer = line + "\n" + textBuffer;
