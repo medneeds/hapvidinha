@@ -102,9 +102,10 @@ interface SortablePendencyItemProps {
   pendency: string;
   isHighlighted?: boolean;
   onToggleHighlight?: () => void;
+  sector: Patient['sector'];
 }
 
-function SortablePendencyItem({ id, index, pendency, isHighlighted, onToggleHighlight }: SortablePendencyItemProps) {
+function SortablePendencyItem({ id, index, pendency, isHighlighted, onToggleHighlight, sector }: SortablePendencyItemProps) {
   const {
     attributes,
     listeners,
@@ -120,14 +121,28 @@ function SortablePendencyItem({ id, index, pendency, isHighlighted, onToggleHigh
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const highlightColors = {
+    red: "bg-critical/20 border-critical/50",
+    yellow: "bg-warning/20 border-warning/50",
+    blue: "bg-stable/20 border-stable/50",
+    outside: "bg-muted-foreground/20 border-muted-foreground/50"
+  };
+
+  const starColors = {
+    red: "fill-critical text-critical",
+    yellow: "fill-warning text-warning",
+    blue: "fill-stable text-stable",
+    outside: "fill-muted-foreground text-muted-foreground"
+  };
+
   return (
     <li
       ref={setNodeRef}
       style={style}
       className={cn(
-        "text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight flex items-center gap-2 rounded px-2 -mx-1 py-1.5",
+        "text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight flex items-center gap-2 rounded px-2 -mx-1 py-1.5 group",
         isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/30",
-        isHighlighted && "bg-amber-500/20 border border-amber-500/50 shadow-sm"
+        isHighlighted && `${highlightColors[sector]} border shadow-sm`
       )}
     >
       <div
@@ -145,7 +160,7 @@ function SortablePendencyItem({ id, index, pendency, isHighlighted, onToggleHigh
         onClick={onToggleHighlight}
         className="h-5 w-5 p-0 print:hidden opacity-0 group-hover:opacity-100 transition-opacity"
       >
-        <Star className={cn("h-3 w-3", isHighlighted ? "fill-amber-500 text-amber-500" : "text-muted-foreground")} />
+        <Star className={cn("h-3 w-3", isHighlighted ? starColors[sector] : "text-muted-foreground")} />
       </Button>
     </li>
   );
@@ -162,6 +177,7 @@ interface SortablePendencyItemCollapsedProps {
   editingField: string | null;
   isHighlighted?: boolean;
   onToggleHighlight?: () => void;
+  sector: Patient['sector'];
 }
 
 function SortablePendencyItemCollapsed({ 
@@ -174,7 +190,8 @@ function SortablePendencyItemCollapsed({
   onAddNew,
   editingField,
   isHighlighted,
-  onToggleHighlight
+  onToggleHighlight,
+  sector
 }: SortablePendencyItemCollapsedProps) {
   const {
     attributes,
@@ -191,6 +208,20 @@ function SortablePendencyItemCollapsed({
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const highlightColors = {
+    red: "bg-critical/20 border-critical/50",
+    yellow: "bg-warning/20 border-warning/50",
+    blue: "bg-stable/20 border-stable/50",
+    outside: "bg-muted-foreground/20 border-muted-foreground/50"
+  };
+
+  const starColors = {
+    red: "fill-critical text-critical",
+    yellow: "fill-warning text-warning",
+    blue: "fill-stable text-stable",
+    outside: "fill-muted-foreground text-muted-foreground"
+  };
+
   return (
     <div 
       ref={setNodeRef}
@@ -198,7 +229,7 @@ function SortablePendencyItemCollapsed({
       className={cn(
         "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
         isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50",
-        isHighlighted && "bg-amber-500/20 border border-amber-500/50 shadow-sm"
+        isHighlighted && `${highlightColors[sector]} border shadow-sm`
       )}
     >
       <div
@@ -221,9 +252,9 @@ function SortablePendencyItemCollapsed({
             e.stopPropagation();
             onToggleHighlight?.();
           }}
-          className="opacity-0 group-hover/item:opacity-100 hover:text-amber-500 print:hidden"
+          className="opacity-0 group-hover/item:opacity-100 hover:text-primary print:hidden"
         >
-          <Star className={cn("h-2.5 w-2.5", isHighlighted ? "fill-amber-500 text-amber-500" : "text-muted-foreground")} />
+          <Star className={cn("h-2.5 w-2.5", isHighlighted ? starColors[sector] : "text-muted-foreground")} />
         </button>
         <button
           onClick={(e) => {
@@ -1211,6 +1242,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           onAddNew={() => startEditing("pendencies", "", -2)}
                           editingField={editingField}
                           isHighlighted={patient.highlightedPendencies?.includes(idx)}
+                          sector={patient.sector}
                           onToggleHighlight={() => {
                             const highlighted = patient.highlightedPendencies || [];
                             const updatedHighlighted = highlighted.includes(idx)
