@@ -18,8 +18,8 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
         style={{ 
           border: '1px solid #d1d5db',
           borderRadius: '4px',
-          padding: '8px 10px',
-          marginBottom: '5px',
+          padding: '7px 8px',
+          marginBottom: '4px',
           backgroundColor: '#ffffff',
           fontSize: '8.5pt',
           pageBreakInside: 'avoid',
