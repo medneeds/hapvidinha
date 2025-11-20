@@ -26,26 +26,20 @@ export default function IAPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll suave para o final
-  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior
-      });
-    }
-  };
-
+  // Auto-scroll para o final quando houver mudanças nas mensagens
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
-    if (isLoading) {
-      // Scroll imediato quando começar a processar
-      setTimeout(() => scrollToBottom("auto"), 100);
+    const scrollElement = scrollRef.current;
+    if (scrollElement) {
+      // Força scroll para o final imediatamente
+      const scrollToEnd = () => {
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+      };
+      
+      scrollToEnd();
+      // Segundo scroll após pequeno delay para garantir que o DOM atualizou
+      setTimeout(scrollToEnd, 50);
     }
-  }, [isLoading]);
+  }, [messages, isLoading]);
 
   useEffect(() => {
     textareaRef.current?.focus();
@@ -117,9 +111,6 @@ export default function IAPage() {
 
   const streamChat = async (userMessage: string, file?: File) => {
     setIsLoading(true);
-    
-    // Scroll imediato para mostrar que está processando
-    setTimeout(() => scrollToBottom("auto"), 50);
     
     const newMessages: Message[] = [...messages, { role: "user", content: userMessage || "Extraia e formate este exame:" }];
     setMessages(newMessages);
@@ -218,8 +209,6 @@ export default function IAPage() {
                 ...newMessages,
                 { role: "assistant", content: assistantContent }
               ]);
-              // Scroll contínuo enquanto a resposta chega
-              scrollToBottom("smooth");
             }
           } catch {
             textBuffer = line + "\n" + textBuffer;
