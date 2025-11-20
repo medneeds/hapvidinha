@@ -1196,7 +1196,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               value={editValue}
                               onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                               onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
+                                if ((e.key === 'Enter' || e.key === 'Tab') && !e.shiftKey) {
                                   e.preventDefault();
                                   if (editingArrayIndex === -2) {
                                     saveAndContinueAdding();
@@ -1567,7 +1567,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                             onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
+                              if (e.key === 'Enter' || e.key === 'Tab') {
+                                e.preventDefault();
                                 saveInlineEdit();
                               } else if (e.key === 'Escape') {
                                 cancelEditing();
@@ -1714,7 +1715,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                             onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
+                              if (e.key === 'Enter' || e.key === 'Tab') {
+                                e.preventDefault();
                                 saveInlineEdit();
                               } else if (e.key === 'Escape') {
                                 cancelEditing();
@@ -1861,7 +1863,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                             onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
+                              if (e.key === 'Enter' || e.key === 'Tab') {
+                                e.preventDefault();
                                 saveInlineEdit();
                               } else if (e.key === 'Escape') {
                                 cancelEditing();
@@ -2008,7 +2011,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                             onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
+                              if (e.key === 'Enter' || e.key === 'Tab') {
+                                e.preventDefault();
                                 saveInlineEdit();
                               } else if (e.key === 'Escape') {
                                 cancelEditing();

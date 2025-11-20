@@ -162,7 +162,7 @@ export function EditPatientDialog({
     field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">,
     index: number
   ) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.key === 'Tab') {
       e.preventDefault();
       const isLastItem = index === formData[field].length - 1;
       const currentValue = formData[field][index].trim();
