@@ -24,6 +24,7 @@ export function PrintLayout({
   const isCompact = mode === 'compact';
 
   const containerStyle: React.CSSProperties = {
+    position: 'relative',
     maxWidth: isPreview ? '210mm' : 'none',
     margin: isPreview ? '0 auto' : '0',
     padding: isCompact ? '15mm 12mm' : '20mm 15mm',
