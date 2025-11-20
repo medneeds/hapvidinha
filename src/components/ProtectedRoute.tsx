@@ -1,32 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { LoadingScreen } from "./LoadingScreen";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
+    } else if (!loading && user && !showLoadingScreen) {
+      setShowLoadingScreen(true);
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, showLoadingScreen]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-background/95">
-        <div className="text-center space-y-4">
-          <div className="h-12 w-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-muted-foreground uppercase tracking-wide">
-            Carregando...
-          </p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (!user) {
     return null;
+  }
+
+  if (showLoadingScreen) {
+    return <LoadingScreen onComplete={() => setShowLoadingScreen(false)} />;
   }
 
   return <>{children}</>;

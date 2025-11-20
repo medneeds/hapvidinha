@@ -165,19 +165,9 @@ const Index = () => {
   const [departmentPassword, setDepartmentPassword] = useState("");
   const [selectedNewDepartment, setSelectedNewDepartment] = useState<Department | null>(null);
   const { toast } = useToast();
-  const { signOut, user, role, loading: authLoading } = useAuth();
+  const { signOut, user, role } = useAuth();
   const { saveVersion } = usePatientVersions();
   const isMobile = useIsMobile();
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
-  const [hasShownLoading, setHasShownLoading] = useState(false);
-
-  // Mostrar loading screen apenas uma vez após autenticação completa
-  useEffect(() => {
-    if (!authLoading && user && !hasShownLoading) {
-      setShowLoadingScreen(true);
-      setHasShownLoading(true);
-    }
-  }, [authLoading, user, hasShownLoading]);
 
   // Sensors for drag and drop
   const sensors = useSensors(
@@ -607,19 +597,8 @@ const Index = () => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      {/* Loading Screen */}
-      {showLoadingScreen && (
-        <LoadingScreen
-          onComplete={() => setShowLoadingScreen(false)}
-          duration={2500}
-        />
-      )}
-
       <div 
         className="flex min-h-screen w-full bg-background"
-        style={{
-          visibility: showLoadingScreen ? 'hidden' : 'visible'
-        }}
       >
         <AppSidebar 
           onOpenHandover={() => setHandoverDialogOpen(true)} 
