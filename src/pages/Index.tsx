@@ -130,6 +130,7 @@ const Index = () => {
   // Use real database patients filtered by department
   const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient, refetch } = usePatients(currentDepartment);
   const [patients, setPatients] = useState<Patient[]>(dbPatients);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [history, setHistory] = useState<Patient[][]>(() => {
     const saved = localStorage.getItem(HISTORY_KEY);
     return saved ? JSON.parse(saved) : [];
@@ -528,6 +529,25 @@ const Index = () => {
     }, 100);
   };
 
+  const handleRefreshMap = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetch();
+      toast({
+        title: "Mapa atualizado",
+        description: "Os dados foram atualizados com sucesso.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao atualizar",
+        description: "Não foi possível atualizar o mapa.",
+        variant: "destructive",
+      });
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 500);
+    }
+  };
+
   const handlePrintCompact = () => {
     // Imprime direto no modo compacto
     setPrintMode('compact');
@@ -723,8 +743,8 @@ const Index = () => {
                             <Save className="mr-2 h-4 w-4" />
                             Salvar Versão
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => refetch()}>
-                            <RefreshCw className="mr-2 h-4 w-4" />
+                          <DropdownMenuItem onClick={handleRefreshMap} disabled={isRefreshing}>
+                            <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                             Atualizar Mapa
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={handlePrintCompact}>
@@ -780,11 +800,12 @@ const Index = () => {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => refetch()}
+                        onClick={handleRefreshMap}
+                        disabled={isRefreshing}
                         className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
                         title="Atualizar mapa"
                       >
-                        <RefreshCw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <RefreshCw className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                       </Button>
                       <Button
                         variant={selectionMode ? "default" : "outline"}
