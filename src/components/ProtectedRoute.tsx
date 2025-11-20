@@ -7,14 +7,16 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [hasShownLoading, setHasShownLoading] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
-    } else if (!loading && user && !showLoadingScreen) {
+    } else if (!loading && user && !hasShownLoading) {
       setShowLoadingScreen(true);
+      setHasShownLoading(true);
     }
-  }, [user, loading, navigate, showLoadingScreen]);
+  }, [user, loading, navigate, hasShownLoading]);
 
   if (loading) {
     return null;
