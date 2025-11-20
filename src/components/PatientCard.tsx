@@ -1264,54 +1264,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 print:gap-1 print:grid-cols-2">
-            {/* Antecedentes */}
-            <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Antecedentes</h4>
-              <ul className="space-y-0 uppercase">
-                {patient.medicalHistory.map((history, idx) => (
-                  <li key={idx} className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight">• {history}</li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Exames */}
-            <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Exames</h4>
-              <ul className="space-y-0 uppercase">
-                {patient.relevantExams.map((exam, idx) => (
-                  <li key={idx} className="text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight">• {exam}</li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Programações / Pendências */}
-            <div>
-              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">Programações / Pendências</h4>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={patient.pendencies.map((_, idx) => `pendency-${idx}`)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <ul className="space-y-1 uppercase">
-                    {patient.pendencies.map((pendency, idx) => (
-                      <SortablePendencyItem
-                        key={`pendency-${idx}`}
-                        id={`pendency-${idx}`}
-                        index={idx}
-                        pendency={pendency}
-                      />
-                    ))}
-                  </ul>
-                </SortableContext>
-              </DndContext>
-            </div>
-          </div>
-
           {/* História Admissional */}
           <div className="pt-2 border-t border-border/50 print:pt-1">
             <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">História Admissional / Anamnese</h4>
