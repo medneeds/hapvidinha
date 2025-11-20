@@ -5,7 +5,7 @@ import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2 } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -128,7 +128,7 @@ const Index = () => {
   const { currentDepartment, setCurrentDepartment } = useDepartment();
   
   // Use real database patients filtered by department
-  const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient } = usePatients(currentDepartment);
+  const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient, refetch } = usePatients(currentDepartment);
   const [patients, setPatients] = useState<Patient[]>(dbPatients);
   const [history, setHistory] = useState<Patient[][]>(() => {
     const saved = localStorage.getItem(HISTORY_KEY);
@@ -723,6 +723,10 @@ const Index = () => {
                             <Save className="mr-2 h-4 w-4" />
                             Salvar Versão
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => refetch()}>
+                            <RefreshCw className="mr-2 h-4 w-4" />
+                            Atualizar Mapa
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={handlePrintCompact}>
                             <Printer className="mr-2 h-4 w-4" />
                             Imprimir Mapa
@@ -772,6 +776,15 @@ const Index = () => {
                         title="Salvar versão"
                       >
                         <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => refetch()}
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        title="Atualizar mapa"
+                      >
+                        <RefreshCw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
                       <Button
                         variant={selectionMode ? "default" : "outline"}
