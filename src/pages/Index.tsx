@@ -159,6 +159,9 @@ const Index = () => {
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
   const [isDeleteSelectedDialogOpen, setIsDeleteSelectedDialogOpen] = useState(false);
   const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
+  const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
+  const [departmentPassword, setDepartmentPassword] = useState("");
+  const [selectedNewDepartment, setSelectedNewDepartment] = useState<Department | null>(null);
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
   const { saveVersion } = usePatientVersions();
@@ -613,30 +616,34 @@ const Index = () => {
                   <div className="min-w-0 flex-1">
                     <h1 className="text-sm sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
                     <div className="flex items-center gap-2 print:hidden">
-                      <p className="text-[10px] sm:text-sm text-white/80 uppercase tracking-wide hidden sm:block">{currentDepartment}</p>
-                      <Select
-                        value={currentDepartment}
-                        onValueChange={(value: Department) => {
-                          setCurrentDepartment(value);
-                          toast({
-                            title: "Setor alterado",
-                            description: value,
-                          });
-                        }}
-                      >
-                        <SelectTrigger className="h-6 sm:h-7 w-auto bg-white/10 border-white/20 text-white text-[10px] sm:text-xs font-medium hover:bg-white/20 transition-colors print:hidden">
-                          <Building2 className="h-3 w-3 mr-1" />
-                          <span className="sm:hidden">Alterar</span>
-                          <span className="hidden sm:inline">Alterar Setor</span>
-                        </SelectTrigger>
-                        <SelectContent className="bg-background border border-border">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="flex items-center gap-1.5 h-6 sm:h-7 px-2 sm:px-3 bg-white/10 border border-white/20 text-white text-[10px] sm:text-xs font-medium hover:bg-white/20 transition-colors rounded-full cursor-pointer">
+                            <Building2 className="h-3 w-3 flex-shrink-0" />
+                            <span className="truncate max-w-[120px] sm:max-w-none">{currentDepartment}</span>
+                            <ChevronDown className="h-3 w-3 flex-shrink-0" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-background border border-border z-50">
                           {DEPARTMENTS.map((dept) => (
-                            <SelectItem key={dept} value={dept} className="text-xs sm:text-sm">
+                            <DropdownMenuItem 
+                              key={dept} 
+                              className={cn(
+                                "text-xs sm:text-sm cursor-pointer",
+                                currentDepartment === dept && "bg-accent"
+                              )}
+                              onClick={() => {
+                                if (dept !== currentDepartment) {
+                                  setSelectedNewDepartment(dept);
+                                  setIsDepartmentDialogOpen(true);
+                                }
+                              }}
+                            >
                               {dept}
-                            </SelectItem>
+                            </DropdownMenuItem>
                           ))}
-                        </SelectContent>
-                      </Select>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 </div>
@@ -1095,6 +1102,79 @@ const Index = () => {
         patients={patients}
       />
 
+      {/* Department Change Password Dialog */}
+      <AlertDialog open={isDepartmentDialogOpen} onOpenChange={(open) => {
+        setIsDepartmentDialogOpen(open);
+        if (!open) {
+          setDepartmentPassword("");
+          setSelectedNewDepartment(null);
+        }
+      }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Autorização de Coordenador</AlertDialogTitle>
+            <AlertDialogDescription>
+              Para alternar para <strong>{selectedNewDepartment}</strong>, digite a senha de coordenador:
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-4">
+            <Input
+              type="password"
+              placeholder="Senha de coordenador"
+              value={departmentPassword}
+              onChange={(e) => setDepartmentPassword(e.target.value.toUpperCase())}
+              className="uppercase"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && departmentPassword === 'NOTREDAME' && selectedNewDepartment) {
+                  setCurrentDepartment(selectedNewDepartment);
+                  toast({
+                    title: "Setor alterado",
+                    description: `Alternado para: ${selectedNewDepartment}`,
+                  });
+                  setIsDepartmentDialogOpen(false);
+                  setDepartmentPassword("");
+                  setSelectedNewDepartment(null);
+                } else if (e.key === 'Enter' && departmentPassword !== 'NOTREDAME') {
+                  toast({
+                    title: "Senha incorreta",
+                    description: "A senha de coordenador está incorreta.",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            />
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setDepartmentPassword("");
+              setSelectedNewDepartment(null);
+            }}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (departmentPassword === 'NOTREDAME' && selectedNewDepartment) {
+                  setCurrentDepartment(selectedNewDepartment);
+                  toast({
+                    title: "Setor alterado",
+                    description: `Alternado para: ${selectedNewDepartment}`,
+                  });
+                  setDepartmentPassword("");
+                  setSelectedNewDepartment(null);
+                } else {
+                  toast({
+                    title: "Senha incorreta",
+                    description: "A senha de coordenador está incorreta.",
+                    variant: "destructive",
+                  });
+                }
+              }}
+            >
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete Multiple Patients Confirmation Dialog */}
       <AlertDialog open={isDeleteSelectedDialogOpen} onOpenChange={setIsDeleteSelectedDialogOpen}>
