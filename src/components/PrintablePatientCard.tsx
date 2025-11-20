@@ -11,36 +11,36 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
   
   const isCompact = mode === 'compact';
   
-  // Modo compacto idêntico ao painel visual
+  // Modo compacto otimizado para paisagem
   if (isCompact) {
     return (
       <div 
         style={{ 
           border: '1px solid #d1d5db',
           borderRadius: '4px',
-          padding: '6px',
-          marginBottom: '6px',
+          padding: '8px 10px',
+          marginBottom: '5px',
           backgroundColor: '#ffffff',
-          fontSize: '8pt',
+          fontSize: '8.5pt',
           pageBreakInside: 'avoid',
           breakInside: 'avoid'
         }}
       >
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: '40px 2fr 2.5fr 2fr 2fr 2.5fr',
-          gap: '8px',
+          gridTemplateColumns: '45px 1.8fr 3fr 2.2fr 2.2fr 3.2fr',
+          gap: '12px',
           alignItems: 'start'
         }}>
           {/* Leito */}
           <div>
-            <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>Leito</div>
+            <div style={{ fontSize: '7.5pt', color: '#6b7280', marginBottom: '3px', textTransform: 'uppercase', fontWeight: '600' }}>Leito</div>
             <div style={{ 
               backgroundColor: bedColor,
               color: '#ffffff',
-              padding: '2px 6px',
-              borderRadius: '3px',
-              fontSize: '8pt',
+              padding: '3px 8px',
+              borderRadius: '4px',
+              fontSize: '9pt',
               fontWeight: 'bold',
               display: 'inline-block'
             }}>
@@ -50,51 +50,52 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
 
           {/* Paciente */}
           <div>
-            <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>Paciente</div>
-            <div style={{ fontSize: '8pt', fontWeight: 'bold', color: '#000000', marginBottom: '1px' }}>
+            <div style={{ fontSize: '7.5pt', color: '#6b7280', marginBottom: '3px', textTransform: 'uppercase', fontWeight: '600' }}>Paciente</div>
+            <div style={{ fontSize: '9pt', fontWeight: 'bold', color: '#000000', marginBottom: '2px' }}>
               {patient.name || 'SEM NOME'}
             </div>
-            <div style={{ fontSize: '7pt', color: '#6b7280' }}>
+            <div style={{ fontSize: '7.5pt', color: '#6b7280' }}>
               {patient.age ? `${patient.age} ANOS` : 'IDADE NÃO INFORMADA'}
             </div>
           </div>
 
           {/* Hipóteses / Diagnósticos */}
           <div>
-            <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '7.5pt', color: '#6b7280', marginBottom: '3px', textTransform: 'uppercase', fontWeight: '600' }}>
               Hipóteses / Diagnósticos
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
               {patient.diagnoses.length > 0 ? (
                 patient.diagnoses.map((diagnosis, idx) => (
                   <span 
                     key={idx} 
                     style={{ 
                       backgroundColor: '#f3f4f6',
-                      padding: '1px 4px',
+                      padding: '2px 6px',
                       borderRadius: '3px',
-                      fontSize: '7pt',
-                      color: '#374151'
+                      fontSize: '7.5pt',
+                      color: '#374151',
+                      lineHeight: '1.6'
                     }}
                   >
                     {diagnosis}
                   </span>
                 ))
               ) : (
-                <span style={{ fontSize: '7pt', color: '#9ca3af' }}>-</span>
+                <span style={{ fontSize: '7.5pt', color: '#9ca3af' }}>-</span>
               )}
             </div>
           </div>
 
           {/* Antecedentes */}
           <div>
-            <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '7.5pt', color: '#6b7280', marginBottom: '3px', textTransform: 'uppercase', fontWeight: '600' }}>
               Antecedentes
             </div>
-            <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
+            <div style={{ fontSize: '7.5pt', color: '#374151', lineHeight: '1.5' }}>
               {patient.medicalHistory.length > 0 ? (
                 patient.medicalHistory.map((history, idx) => (
-                  <div key={idx} style={{ marginBottom: '1px' }}>
+                  <div key={idx} style={{ marginBottom: '2px' }}>
                     <span style={{ fontWeight: 'bold', color: '#6b7280' }}>{idx + 1}.</span> {history}
                   </div>
                 ))
@@ -106,13 +107,13 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
 
           {/* Exames */}
           <div>
-            <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '7.5pt', color: '#6b7280', marginBottom: '3px', textTransform: 'uppercase', fontWeight: '600' }}>
               Exames
             </div>
-            <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
+            <div style={{ fontSize: '7.5pt', color: '#374151', lineHeight: '1.5' }}>
               {patient.relevantExams.length > 0 ? (
                 patient.relevantExams.map((exam, idx) => (
-                  <div key={idx} style={{ marginBottom: '1px' }}>
+                  <div key={idx} style={{ marginBottom: '2px' }}>
                     <span style={{ fontWeight: 'bold', color: '#6b7280' }}>{idx + 1}.</span> {exam}
                   </div>
                 ))
@@ -124,13 +125,13 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
 
           {/* Programações / Pendências */}
           <div>
-            <div style={{ fontSize: '7pt', color: '#6b7280', marginBottom: '2px', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '7.5pt', color: '#6b7280', marginBottom: '3px', textTransform: 'uppercase', fontWeight: '600' }}>
               Programações / Pendências
             </div>
-            <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
+            <div style={{ fontSize: '7.5pt', color: '#374151', lineHeight: '1.5' }}>
               {patient.pendencies.length > 0 ? (
                 patient.pendencies.map((pendency, idx) => (
-                  <div key={idx} style={{ marginBottom: '1px' }}>
+                  <div key={idx} style={{ marginBottom: '2px' }}>
                     <span style={{ fontWeight: 'bold', color: '#6b7280' }}>{idx + 1}.</span> {pendency}
                   </div>
                 ))
