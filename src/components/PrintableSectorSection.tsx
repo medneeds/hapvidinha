@@ -25,7 +25,7 @@ export function PrintableSectorSection({
   return (
     <div 
       style={{ 
-        marginBottom: isCompact ? '14px' : '24px',
+        marginBottom: isCompact ? '10px' : '20px',
         pageBreakInside: 'avoid',
         breakInside: 'avoid'
       }}
@@ -34,8 +34,8 @@ export function PrintableSectorSection({
         style={{ 
           backgroundColor: bgColor,
           borderLeft: `5px solid ${borderColor}`,
-          padding: isCompact ? '10px 14px' : '12px',
-          marginBottom: isCompact ? '8px' : '12px',
+          padding: isCompact ? '8px 10px' : '10px',
+          marginBottom: isCompact ? '6px' : '10px',
           pageBreakAfter: 'avoid',
           breakAfter: 'avoid'
         }}
