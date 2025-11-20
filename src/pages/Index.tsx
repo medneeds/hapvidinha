@@ -613,24 +613,24 @@ const Index = () => {
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:bg-white/10" />
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 flex flex-col gap-1.5">
                     <h1 className="text-sm sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
-                    <div className="flex items-center gap-2 print:hidden">
+                    <div className="print:hidden">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="flex items-center gap-1.5 h-6 sm:h-7 px-2 sm:px-3 bg-white/10 border border-white/20 text-white text-[10px] sm:text-xs font-medium hover:bg-white/20 transition-colors rounded-full cursor-pointer">
-                            <Building2 className="h-3 w-3 flex-shrink-0" />
-                            <span className="truncate max-w-[120px] sm:max-w-none">{currentDepartment}</span>
-                            <ChevronDown className="h-3 w-3 flex-shrink-0" />
+                          <button className="inline-flex items-center gap-1.5 h-7 px-3 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-xs font-semibold hover:bg-white/25 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                            <Building2 className="h-3.5 w-3.5 flex-shrink-0" />
+                            <span className="truncate max-w-[140px] sm:max-w-none">{currentDepartment}</span>
+                            <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 opacity-70" />
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-background border border-border z-50">
+                        <DropdownMenuContent className="bg-background border border-border shadow-lg z-50 min-w-[280px]">
                           {DEPARTMENTS.map((dept) => (
                             <DropdownMenuItem 
                               key={dept} 
                               className={cn(
-                                "text-xs sm:text-sm cursor-pointer",
-                                currentDepartment === dept && "bg-accent"
+                                "text-sm cursor-pointer py-2.5 px-3 transition-colors",
+                                currentDepartment === dept && "bg-accent font-medium"
                               )}
                               onClick={() => {
                                 if (dept !== currentDepartment) {
@@ -639,6 +639,7 @@ const Index = () => {
                                 }
                               }}
                             >
+                              <Building2 className="h-4 w-4 mr-2 opacity-60" />
                               {dept}
                             </DropdownMenuItem>
                           ))}
