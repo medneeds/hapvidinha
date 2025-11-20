@@ -76,6 +76,7 @@ export function PatientMovementDialog({
   const [destination, setDestination] = useState("");
   const [customDestination, setCustomDestination] = useState("");
   const [notes, setNotes] = useState("");
+  const [responsibleDoctor, setResponsibleDoctor] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -110,6 +111,7 @@ export function PatientMovementDialog({
           movement_type: movementType,
           destination: finalDestination || null,
           notes: notes || null,
+          responsible_doctor: responsibleDoctor || null,
           created_by: user?.id,
           patient_snapshot: patient as any,
         });
@@ -139,6 +141,7 @@ export function PatientMovementDialog({
     setDestination("");
     setCustomDestination("");
     setNotes("");
+    setResponsibleDoctor("");
     onClose();
   };
 
@@ -192,6 +195,17 @@ export function PatientMovementDialog({
               )}
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label htmlFor="responsibleDoctor">Médico Responsável</Label>
+            <Input
+              id="responsibleDoctor"
+              placeholder="Digite o nome do médico responsável (opcional)"
+              value={responsibleDoctor}
+              onChange={(e) => setResponsibleDoctor(e.target.value.toUpperCase())}
+              className="uppercase"
+            />
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="notes">Observações</Label>
