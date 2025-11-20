@@ -4,13 +4,14 @@ import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +29,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { usePatients } from "@/hooks/usePatients";
 import { usePatientVersions } from "@/hooks/usePatientVersions";
@@ -115,8 +123,11 @@ function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
 }
 
 const Index = () => {
-  // Use real database patients
-  const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient } = usePatients();
+  // Use department context
+  const { currentDepartment, setCurrentDepartment } = useDepartment();
+  
+  // Use real database patients filtered by department
+  const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient } = usePatients(currentDepartment);
   const [patients, setPatients] = useState<Patient[]>(dbPatients);
   const [history, setHistory] = useState<Patient[][]>(() => {
     const saved = localStorage.getItem(HISTORY_KEY);
@@ -313,7 +324,7 @@ const Index = () => {
     };
 
     try {
-      await dbCreatePatient(newPatientData);
+      await dbCreatePatient(newPatientData, currentDepartment);
       
       // Expandir automaticamente a seção correspondente
       if (sector === 'red') setIsRedSectionOpen(true);
@@ -348,7 +359,7 @@ const Index = () => {
         schedule: patient.schedule,
         admissionHistory: patient.admissionHistory,
         admissionDate: patient.admissionDate,
-      });
+      }, currentDepartment);
       toast({
         title: "Exclusão desfeita",
         description: `Leito ${patient.bedNumber} - ${patient.name} foi restaurado.`,
@@ -599,9 +610,34 @@ const Index = () => {
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:bg-white/10" />
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <h1 className="text-sm sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
-                    <p className="text-[10px] sm:text-sm text-white/80 print:hidden uppercase tracking-wide hidden sm:block">Urgência e Emergência</p>
+                    <div className="flex items-center gap-2 print:hidden">
+                      <p className="text-[10px] sm:text-sm text-white/80 uppercase tracking-wide hidden sm:block">{currentDepartment}</p>
+                      <Select
+                        value={currentDepartment}
+                        onValueChange={(value: Department) => {
+                          setCurrentDepartment(value);
+                          toast({
+                            title: "Setor alterado",
+                            description: value,
+                          });
+                        }}
+                      >
+                        <SelectTrigger className="h-6 sm:h-7 w-auto bg-white/10 border-white/20 text-white text-[10px] sm:text-xs font-medium hover:bg-white/20 transition-colors print:hidden">
+                          <Building2 className="h-3 w-3 mr-1" />
+                          <span className="sm:hidden">Alterar</span>
+                          <span className="hidden sm:inline">Alterar Setor</span>
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border border-border">
+                          {DEPARTMENTS.map((dept) => (
+                            <SelectItem key={dept} value={dept} className="text-xs sm:text-sm">
+                              {dept}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 

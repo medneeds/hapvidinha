@@ -132,6 +132,7 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
+          department: string
           description: string
           id: string
           snapshot_data: Json
@@ -139,6 +140,7 @@ export type Database = {
         Insert: {
           created_at?: string
           created_by?: string | null
+          department?: string
           description: string
           id?: string
           snapshot_data: Json
@@ -146,6 +148,7 @@ export type Database = {
         Update: {
           created_at?: string
           created_by?: string | null
+          department?: string
           description?: string
           id?: string
           snapshot_data?: Json
@@ -160,6 +163,7 @@ export type Database = {
           bed_number: string
           created_at: string
           created_by: string | null
+          department: string
           diagnoses: string | null
           id: string
           medical_history: string | null
@@ -177,6 +181,7 @@ export type Database = {
           bed_number: string
           created_at?: string
           created_by?: string | null
+          department?: string
           diagnoses?: string | null
           id?: string
           medical_history?: string | null
@@ -194,6 +199,7 @@ export type Database = {
           bed_number?: string
           created_at?: string
           created_by?: string | null
+          department?: string
           diagnoses?: string | null
           id?: string
           medical_history?: string | null
@@ -404,6 +410,7 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
+          department: string
           handover_datetime: string
           handover_from: string | null
           handover_to: string | null
@@ -417,6 +424,7 @@ export type Database = {
         Insert: {
           created_at?: string
           created_by?: string | null
+          department?: string
           handover_datetime?: string
           handover_from?: string | null
           handover_to?: string | null
@@ -430,6 +438,7 @@ export type Database = {
         Update: {
           created_at?: string
           created_by?: string | null
+          department?: string
           handover_datetime?: string
           handover_from?: string | null
           handover_to?: string | null

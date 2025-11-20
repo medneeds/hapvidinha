@@ -1,13 +1,21 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { LogIn, User, Lock, Sparkles } from "lucide-react";
+import { LogIn, User, Lock, Sparkles, Building2 } from "lucide-react";
 import { z } from "zod";
 import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const loginSchema = z.object({
   username: z.string().trim().min(1, { message: "LOGIN OBRIGATÓRIO" }).max(50),
@@ -16,6 +24,7 @@ const loginSchema = z.object({
 
 export default function AuthPage() {
   const { user, signIn } = useAuth();
+  const { setCurrentDepartment } = useDepartment();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   
@@ -24,6 +33,7 @@ export default function AuthPage() {
     password: "",
   });
   const [isAdminLogin, setIsAdminLogin] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState<Department>("URGÊNCIA E EMERGÊNCIA ADULTO");
 
   useEffect(() => {
     if (user) {
@@ -46,6 +56,8 @@ export default function AuthPage() {
           toast.error("ERRO AO FAZER LOGIN: " + error.message.toUpperCase());
         }
       } else {
+        // Set department after successful login
+        setCurrentDepartment(selectedDepartment);
         toast.success(isAdminLogin ? "LOGIN ADMINISTRADOR REALIZADO" : "LOGIN REALIZADO COM SUCESSO");
       }
     } catch (err) {
@@ -186,6 +198,42 @@ export default function AuthPage() {
                   autoComplete="current-password"
                 />
               </div>
+            </div>
+
+            {/* Department Selection */}
+            <div className="space-y-3 group">
+              <Label 
+                htmlFor="department-select" 
+                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
+              >
+                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                  <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                </div>
+                Setor
+              </Label>
+              <Select
+                value={selectedDepartment}
+                onValueChange={(value: Department) => setSelectedDepartment(value)}
+                disabled={loading}
+              >
+                <SelectTrigger 
+                  id="department-select"
+                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-base font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
+                >
+                  <SelectValue placeholder="Selecione o setor" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
+                  {DEPARTMENTS.map((dept) => (
+                    <SelectItem 
+                      key={dept} 
+                      value={dept}
+                      className="text-base font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
+                    >
+                      {dept}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Admin Login Toggle */}
