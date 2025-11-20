@@ -3,6 +3,7 @@ import { SectorSection } from "@/components/SectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
+import { LoadingScreen } from "@/components/LoadingScreen";
 import { Patient } from "@/types/patient";
 import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -162,6 +163,7 @@ const Index = () => {
   const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
   const [departmentPassword, setDepartmentPassword] = useState("");
   const [selectedNewDepartment, setSelectedNewDepartment] = useState<Department | null>(null);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
   const { saveVersion } = usePatientVersions();
@@ -576,7 +578,20 @@ const Index = () => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-background">
+      {/* Loading Screen */}
+      {showLoadingScreen && (
+        <LoadingScreen
+          onComplete={() => setShowLoadingScreen(false)}
+          duration={2500}
+        />
+      )}
+
+      <div 
+        className="flex min-h-screen w-full bg-background"
+        style={{
+          visibility: showLoadingScreen ? 'hidden' : 'visible'
+        }}
+      >
         <AppSidebar 
           onOpenHandover={() => setHandoverDialogOpen(true)} 
         />
