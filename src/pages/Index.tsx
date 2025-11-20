@@ -642,7 +642,7 @@ const Index = () => {
                         variant="outline"
                         size="icon"
                         onClick={handlePrintSelected}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
                         title={`Imprimir ${selectedPatients.size} selecionado(s)`}
                       >
                         <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -662,7 +662,7 @@ const Index = () => {
                     variant="outline"
                     size="icon"
                     onClick={handlePrintCompact}
-                    className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                    className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
                     title="Imprimir"
                   >
                     <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
