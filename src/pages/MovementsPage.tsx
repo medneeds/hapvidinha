@@ -9,7 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Search, TrendingUp, UserX, Heart, ArrowLeftRight } from "lucide-react";
+import { Search, TrendingUp, UserX, Heart, ArrowLeftRight, FileText } from "lucide-react";
+import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
 
 interface PatientMovement {
   id: string;
@@ -20,6 +21,7 @@ interface PatientMovement {
   destination: string | null;
   notes: string | null;
   created_at: string;
+  patient_snapshot: any;
 }
 
 const movementConfig = {
@@ -48,6 +50,8 @@ export default function MovementsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<string>("all");
+  const [selectedPatient, setSelectedPatient] = useState<any>(null);
+  const [isSnapshotDialogOpen, setIsSnapshotDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -196,9 +200,25 @@ export default function MovementsPage() {
                               </div>
                             </div>
                           </div>
-                          <Badge className={config.badgeColor}>
-                            {config.label}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge className={config.badgeColor}>
+                              {config.label}
+                            </Badge>
+                            {movement.patient_snapshot && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedPatient(movement.patient_snapshot);
+                                  setIsSnapshotDialogOpen(true);
+                                }}
+                                className="h-7 gap-1.5"
+                              >
+                                <FileText className="h-3.5 w-3.5" />
+                                Ver Dados
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-3">
@@ -229,6 +249,15 @@ export default function MovementsPage() {
           </Tabs>
         </div>
       </div>
+
+      <ViewPatientSnapshotDialog
+        patient={selectedPatient}
+        isOpen={isSnapshotDialogOpen}
+        onClose={() => {
+          setIsSnapshotDialogOpen(false);
+          setSelectedPatient(null);
+        }}
+      />
     </MainLayout>
   );
 }
