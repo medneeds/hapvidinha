@@ -129,9 +129,9 @@ export function PrintLayout({
         <PrintableSectorSection
           patients={outsidePatients}
           sectorName="Fora das Alas"
-          bgColor="#fef3f2"
-          borderColor="#f97316"
-          textColor="#c2410c"
+          bgColor="#f9fafb"
+          borderColor="#6b7280"
+          textColor="#4b5563"
           mode={mode}
         />
       </div>
