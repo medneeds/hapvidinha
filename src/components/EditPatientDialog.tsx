@@ -11,7 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { X, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface EditPatientDialogProps {
   patient: Patient;
@@ -29,6 +31,7 @@ export function EditPatientDialog({
   const [formData, setFormData] = useState(patient);
   const [focusField, setFocusField] = useState<{field: string, index: number} | null>(null);
   const [admissionHistoryLocal, setAdmissionHistoryLocal] = useState("");
+  const [loadingCid, setLoadingCid] = useState<number | null>(null);
   const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
 
   // Reset form data when patient changes or dialog opens
@@ -124,6 +127,34 @@ export function EditPatientDialog({
       admissionHistory: "",
       admissionDate: new Date().toISOString().slice(0, 16).replace("T", " "),
     });
+    setAdmissionHistoryLocal("");
+  };
+
+  const getCidCode = async (diagnosis: string, index: number) => {
+    if (!diagnosis.trim()) {
+      toast.error("Digite um diagnóstico antes de buscar o CID");
+      return;
+    }
+
+    setLoadingCid(index);
+    try {
+      const { data, error } = await supabase.functions.invoke('get-cid-code', {
+        body: { diagnosis }
+      });
+
+      if (error) throw error;
+
+      if (data?.cidCode) {
+        const diagnosisWithCid = `${diagnosis} (${data.cidCode})`;
+        updateItem("diagnoses", index, diagnosisWithCid);
+        toast.success(`CID ${data.cidCode} adicionado`);
+      }
+    } catch (error) {
+      console.error('Error getting CID code:', error);
+      toast.error("Erro ao buscar código CID");
+    } finally {
+      setLoadingCid(null);
+    }
   };
 
   const handleKeyDown = (
@@ -192,6 +223,19 @@ export function EditPatientDialog({
               placeholder={`${label} ${idx + 1}`}
               className="h-9 text-sm uppercase"
             />
+            {field === "diagnoses" && (
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                onClick={() => getCidCode(item, idx)}
+                disabled={loadingCid === idx}
+                className="h-9 w-9 flex-shrink-0"
+                title="Buscar código CID"
+              >
+                <Sparkles className={`h-3.5 w-3.5 ${loadingCid === idx ? 'animate-pulse' : ''}`} />
+              </Button>
+            )}
             <Button
               type="button"
               size="icon"
