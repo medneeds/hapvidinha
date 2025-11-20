@@ -27,7 +27,7 @@ export function PrintablePatientCard({ patient, mode }: PrintablePatientCardProp
       >
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: '60px 1fr 1fr 1fr 1fr 2fr',
+          gridTemplateColumns: '40px 2fr 2.5fr 1.5fr 1.5fr 3fr',
           gap: '8px',
           alignItems: 'start'
         }}>
