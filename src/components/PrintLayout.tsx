@@ -139,14 +139,17 @@ export function PrintLayout({
       
       {/* Footer */}
       <div style={{ 
-        fontSize: isCompact ? '9pt' : '10pt', 
+        fontSize: isCompact ? '7.5pt' : '8.5pt',
+        fontStyle: 'italic',
         textAlign: 'center', 
-        color: '#6b7280', 
-        marginTop: isCompact ? '16px' : '24px', 
-        paddingTop: isCompact ? '12px' : '16px', 
-        borderTop: '1px solid #e5e7eb' 
+        color: '#9ca3af', 
+        marginTop: isCompact ? '20px' : '28px', 
+        paddingTop: isCompact ? '14px' : '18px', 
+        borderTop: '1px solid #f3f4f6',
+        letterSpacing: '0.3px',
+        opacity: 0.85
       }}>
-        Urgência e Emergência - Documento gerado automaticamente
+        Urgência e Emergência • Hospital Guarás • Documento gerado automaticamente
       </div>
     </div>
   );
