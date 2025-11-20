@@ -3,8 +3,12 @@ import { MainLayout } from "@/components/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Sparkles, Loader2, Copy, Check } from "lucide-react";
+import { Send, Sparkles, Loader2, Copy, Check, FileText, X } from "lucide-react";
 import { toast } from "sonner";
+import * as pdfjsLib from "pdfjs-dist";
+
+// Configurar worker do PDF.js
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface Message {
   role: "user" | "assistant";
@@ -16,8 +20,11 @@ export default function IAPage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -43,11 +50,90 @@ export default function IAPage() {
     }
   };
 
-  const streamChat = async (userMessage: string) => {
+  const extractTextFromPDF = async (file: File): Promise<string> => {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = "";
+
+      for (let i = 1; i <= Math.min(pdf.numPages, 50); i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(" ");
+        fullText += pageText + "\n";
+      }
+
+      return fullText;
+    } catch (error) {
+      console.error("Erro ao extrair PDF:", error);
+      throw new Error("Falha ao processar PDF");
+    }
+  };
+
+  const handleFileSelect = async (file: File) => {
+    if (!file.type.includes("pdf") && !file.type.includes("image")) {
+      toast.error("Apenas PDFs e imagens são aceitos");
+      return;
+    }
+
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("Arquivo muito grande. Máximo 20MB");
+      return;
+    }
+
+    setSelectedFile(file);
+
+    // Preview para imagens
+    if (file.type.includes("image")) {
+      const reader = new FileReader();
+      reader.onload = (e) => setFilePreview(e.target?.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setFilePreview(null);
+    }
+  };
+
+  const removeFile = () => {
+    setSelectedFile(null);
+    setFilePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const streamChat = async (userMessage: string, file?: File) => {
     setIsLoading(true);
     
-    const newMessages: Message[] = [...messages, { role: "user", content: userMessage }];
+    const newMessages: Message[] = [...messages, { role: "user", content: userMessage || "Extraia e formate este exame:" }];
     setMessages(newMessages);
+    
+    let fileContent = null;
+
+    // Processar arquivo se houver
+    if (file) {
+      try {
+        if (file.type.includes("pdf")) {
+          // Extrair texto do PDF
+          const pdfText = await extractTextFromPDF(file);
+          userMessage = pdfText;
+        } else if (file.type.includes("image")) {
+          // Converter imagem para base64
+          const reader = new FileReader();
+          fileContent = await new Promise<string>((resolve) => {
+            reader.onload = (e) => resolve(e.target?.result as string);
+            reader.readAsDataURL(file);
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao processar arquivo:", error);
+        toast.error("Erro ao processar arquivo");
+        setMessages(messages);
+        setIsLoading(false);
+        return;
+      }
+    }
     
     try {
       const response = await fetch(
@@ -58,7 +144,10 @@ export default function IAPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ messages: newMessages }),
+          body: JSON.stringify({ 
+            messages: fileContent ? newMessages : newMessages,
+            fileContent 
+          }),
         }
       );
 
@@ -127,17 +216,18 @@ export default function IAPage() {
       setMessages(messages);
     } finally {
       setIsLoading(false);
+      removeFile();
       setTimeout(() => textareaRef.current?.focus(), 100);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if ((!input.trim() && !selectedFile) || isLoading) return;
 
     const userMessage = input.trim();
     setInput("");
-    streamChat(userMessage);
+    streamChat(userMessage, selectedFile || undefined);
   };
 
   return (
@@ -240,36 +330,90 @@ export default function IAPage() {
         {/* Input */}
         <div className="border-t bg-card/50 backdrop-blur-sm shadow-lg">
           <form onSubmit={handleSubmit} className="container mx-auto max-w-4xl px-4 py-4">
+            {/* File Preview */}
+            {selectedFile && (
+              <div className="mb-3 p-3 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {filePreview ? (
+                    <img src={filePreview} alt="Preview" className="h-12 w-12 rounded object-cover" />
+                  ) : (
+                    <FileText className="h-12 w-12 text-primary" />
+                  )}
+                  <div>
+                    <p className="font-medium text-sm">{selectedFile.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={removeFile}
+                  className="h-8 w-8"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
             <div className="flex gap-3">
-              <Textarea
-                ref={textareaRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Cole o laudo do exame aqui..."
-                className="min-h-[80px] max-h-[300px] resize-none text-base font-mono shadow-sm"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
-                disabled={isLoading}
-              />
-              <Button
-                type="submit"
-                size="icon"
-                className="h-[80px] w-[80px] rounded-2xl shadow-lg"
-                disabled={!input.trim() || isLoading}
-              >
-                {isLoading ? (
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                ) : (
-                  <Send className="h-6 w-6" />
-                )}
-              </Button>
+              <div className="flex-1 space-y-2">
+                <Textarea
+                  ref={textareaRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder={selectedFile ? "Mensagem opcional..." : "Cole o laudo do exame ou anexe PDF/imagem..."}
+                  className="min-h-[80px] max-h-[300px] resize-none text-base font-mono shadow-sm"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                  disabled={isLoading}
+                />
+              </div>
+              
+              <div className="flex flex-col gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileSelect(file);
+                  }}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="h-[38px] w-[38px]"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isLoading}
+                  title="Anexar PDF ou imagem"
+                >
+                  <FileText className="h-5 w-5" />
+                </Button>
+                <Button
+                  type="submit"
+                  size="icon"
+                  className="h-[38px] w-[38px]"
+                  disabled={(!input.trim() && !selectedFile) || isLoading}
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Send className="h-5 w-5" />
+                  )}
+                </Button>
+              </div>
             </div>
             <p className="text-xs text-muted-foreground mt-2 text-center">
-              Shift + Enter para nova linha • Enter para enviar
+              Shift + Enter para nova linha • Enter para enviar • PDF máximo 20MB
             </p>
           </form>
         </div>
@@ -277,3 +421,4 @@ export default function IAPage() {
     </MainLayout>
   );
 }
+
