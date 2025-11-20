@@ -108,7 +108,7 @@ export function AppSidebar({
 }: { 
   onOpenHandover?: () => void;
 }) {
-  const { open, setOpen, state } = useSidebar();
+  const { open, setOpen, openMobile, setOpenMobile, state } = useSidebar();
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -120,7 +120,7 @@ export function AppSidebar({
     if (typeof item === 'string') {
       navigate(item);
       if (isMobile) {
-        setOpen(false);
+        setOpenMobile(false);
       }
       return;
     }
@@ -130,17 +130,17 @@ export function AppSidebar({
       if (item.action === 'openHandover' && onOpenHandover) {
         onOpenHandover();
         if (isMobile) {
-          setOpen(false);
+          setOpenMobile(false);
         }
       } else if (item.action === 'openSepsisProtocol') {
         navigate('/sepsis-protocol');
         if (isMobile) {
-          setOpen(false);
+          setOpenMobile(false);
         }
       } else if (item.link) {
         navigate(item.link);
         if (isMobile) {
-          setOpen(false);
+          setOpenMobile(false);
         }
       }
     }
@@ -301,7 +301,7 @@ export function AppSidebar({
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={setOpen} modal={true}>
+      <Drawer open={openMobile} onOpenChange={setOpenMobile} modal={true}>
         <DrawerContent className="max-h-[85vh]">
           <DrawerHeader className="border-b pb-3 pt-2">
             <DrawerTitle className="text-center text-sm font-semibold uppercase tracking-wide">Menu de Navegação</DrawerTitle>
