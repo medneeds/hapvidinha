@@ -20,8 +20,6 @@ serve(async (req) => {
 
 REGRA ABSOLUTA: Sua primeira palavra SEMPRE será uma data (dd/mm) ou um prefixo de exame (TC:, RX:, US:).
 
-CRÍTICO: TODA A SAÍDA DEVE SER EM CAIXA ALTA (MAIÚSCULAS).
-
 JAMAIS comece com:
 ❌ "Aqui está..."
 ❌ "O resultado é..."
@@ -29,15 +27,15 @@ JAMAIS comece com:
 ❌ Qualquer explicação
 
 SEMPRE comece com:
-✅ 20/11 14:30: HB 12,5...
-✅ 19/11 (TC): HIPODENSIDADE...
+✅ 20/11 14:30: Hb 12,5...
+✅ 19/11 (TC): Hipodensidade...
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 LSL — LABORATORIAIS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-SAÍDA (linha única, TUDO EM MAIÚSCULAS):
-DD/MM HH:MM: HB X,X HT X,X LEUCO X.XXX PQT XXX.XXX CR X,XX UR XX NA XXX K X,X CA X,X PCR XX TP XX,X (RNI X,XX) TTPA XX
+SAÍDA (linha única):
+DD/MM HH:MM: Hb X,X Ht X,X Leuco X.XXX Pqt XXX.XXX Cr X,XX Ur XX Na XXX K X,X Ca X,X PCR XX TP XX,X (RNI X,XX) TTPa XX
 
 ORDEM:
 Data → Hemograma → Renal → Eletrólitos → Inflamatórios → Coagulo
@@ -47,32 +45,31 @@ Vírgula decimal • Hemograma 1 casa • Resto 2 casas • Milhares com ponto
 
 ESPECIAIS (nova linha):
 (EAS): SÓ ANORMAIS
-(GASO): PH PCO₂ PO₂ HCO₃ BE SATO₂ LACTATO
+(Gaso): pH PCO₂ PO₂ HCO₃ BE SatO₂ Lactato
 
 EXEMPLO DE SAÍDA CORRETA:
-20/11 14:30: HB 12,5 HT 37,2 LEUCO 14.320 PQT 180.000 CR 1,23 UR 45 NA 138 K 4,2 PCR 58,3 TP 14,2 (RNI 1,15) TTPA 28,5
-(GASO): PH 7,35 PCO₂ 38 PO₂ 92 HCO₃ 22 BE -2,1 SATO₂ 96% LACTATO 1,8
+20/11 14:30: Hb 12,5 Ht 37,2 Leuco 14.320 Pqt 180.000 Cr 1,23 Ur 45 Na 138 K 4,2 PCR 58,3 TP 14,2 (RNI 1,15) TTPa 28,5
+(Gaso): pH 7,35 PCO₂ 38 PO₂ 92 HCO₃ 22 BE -2,1 SatO₂ 96% Lactato 1,8
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 LSI — IMAGEM
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-SAÍDA (TUDO EM MAIÚSCULAS):
+SAÍDA:
 DD/MM HH:MM (TIPO): ACHADOS ANORMAIS
 
-SÓ ANORMAIS • Manter "SUGERE", "COMPATÍVEL" • Remover normal e técnica
+SÓ ANORMAIS • Manter "sugere", "compatível" • Remover normal e técnica
 
 EXEMPLO DE SAÍDA CORRETA:
-19/11 10:45 (TC CRÂNIO): HIPODENSIDADE EM TERRITÓRIO DE ACM ESQUERDA COMPATÍVEL COM AVCI RECENTE
+19/11 10:45 (TC Crânio): Hipodensidade em território de ACM esquerda compatível com AVCi recente
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 INSTRUÇÕES CRÍTICAS:
 1. NUNCA escreva introduções
 2. COMECE IMEDIATAMENTE com dd/mm ou (Tipo):
-3. Se não for exame: "ENVIE UM LAUDO DE EXAME."
-4. ZERO explicações adicionais
-5. TODA A SAÍDA EM CAIXA ALTA (MAIÚSCULAS)`;
+3. Se não for exame: "Envie um laudo de exame."
+4. ZERO explicações adicionais`;
 
     // Se houver arquivo PDF/imagem, processa com visão
     let userMessages = messages;
