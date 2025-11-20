@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Search, TrendingUp, UserX, Heart, ArrowLeftRight, FileText } from "lucide-react";
+import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText } from "lucide-react";
 import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
 
 interface PatientMovement {
@@ -34,7 +34,7 @@ const movementConfig = {
   },
   ÓBITO: {
     label: "Óbito",
-    icon: Heart,
+    icon: Skull,
     color: "bg-red-500/10 text-red-600 border-red-500/30",
     badgeColor: "bg-red-500 hover:bg-red-600"
   },
