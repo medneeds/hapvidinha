@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { TrendingUp, Heart, ArrowLeftRight } from "lucide-react";
+import { TrendingUp, Skull, ArrowLeftRight } from "lucide-react";
 
 interface PatientMovementDialogProps {
   patient: Patient | null;
@@ -42,7 +42,7 @@ const movementConfig = {
   ÓBITO: {
     title: "Registrar Óbito",
     description: "Registre o óbito do paciente",
-    icon: Heart,
+    icon: Skull,
     color: "text-red-600",
     showDestination: false,
   },

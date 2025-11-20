@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
@@ -1242,7 +1242,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     setMovementDialogOpen(true);
                   }}
                 >
-                  <Heart className="h-3.5 w-3.5 mr-2" />
+                  <Skull className="h-3.5 w-3.5 mr-2" />
                   Óbito
                 </DropdownMenuItem>
                 {onPrintPatient && (
