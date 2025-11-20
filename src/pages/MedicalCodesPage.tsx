@@ -93,11 +93,6 @@ export default function MedicalCodesPage() {
   };
 
   const handleSave = async () => {
-    if (role !== 'admin') {
-      toast.error("APENAS ADMINISTRADORES PODEM CRIAR OU EDITAR CÓDIGOS MÉDICOS");
-      return;
-    }
-
     if (!formData.code || !formData.name || !formData.system_description) {
       toast.error("PREENCHA TODOS OS CAMPOS");
       return;
@@ -147,11 +142,6 @@ export default function MedicalCodesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (role !== 'admin') {
-      toast.error("APENAS ADMINISTRADORES PODEM DELETAR CÓDIGOS MÉDICOS");
-      return;
-    }
-
     if (!confirm("TEM CERTEZA QUE DESEJA DELETAR ESTE CÓDIGO?")) return;
 
     const { error } = await supabase.from("medical_codes").delete().eq("id", id);
@@ -243,8 +233,6 @@ export default function MedicalCodesPage() {
           <Button 
             onClick={() => openDialog()} 
             className="gap-2"
-            disabled={role !== 'admin'}
-            title={role !== 'admin' ? 'APENAS ADMINISTRADORES PODEM ADICIONAR CÓDIGOS' : ''}
           >
             <Plus className="h-4 w-4" />
             ADICIONAR
