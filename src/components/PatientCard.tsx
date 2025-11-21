@@ -635,11 +635,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
     onUpdate(updatedPatient);
     setEditValue("");
-    // Mantém editingField e editingArrayIndex para continuar adicionando
+    // Incrementa o index para refletir o novo item adicionado
+    setEditingArrayIndex(-2);
     
     toastHook({
       title: "Item adicionado",
-      description: "Continue adicionando mais itens ou pressione Escape para finalizar.",
+      description: "Continue adicionando ou use Tab para próxima coluna.",
     });
   };
 
@@ -717,12 +718,47 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      // Se está adicionando novo item (editingArrayIndex === -2), continua adicionando
-      if (editingArrayIndex === -2 && (editingField === "diagnoses" || editingField === "pendencies")) {
+      // Enter: salva e continua na mesma coluna (próximo item do array ou apenas salva)
+      if (editingArrayIndex === -2 && (editingField === "diagnoses" || editingField === "medicalHistory" || editingField === "relevantExams" || editingField === "pendencies")) {
         saveAndContinueAdding();
       } else {
         saveInlineEdit();
       }
+    } else if (e.key === "Tab") {
+      e.preventDefault();
+      // Tab: salva e move para a próxima coluna
+      saveInlineEdit();
+      
+      // Determina qual é a próxima coluna
+      setTimeout(() => {
+        if (editingField === "name") {
+          startEditing("age", patient.age.toString());
+        } else if (editingField === "age") {
+          if (patient.diagnoses.length > 0) {
+            startEditing("diagnoses", patient.diagnoses[0], 0);
+          } else {
+            startEditing("diagnoses", "", -2);
+          }
+        } else if (editingField === "diagnoses") {
+          if (patient.medicalHistory.length > 0) {
+            startEditing("medicalHistory", patient.medicalHistory[0], 0);
+          } else {
+            startEditing("medicalHistory", "", -2);
+          }
+        } else if (editingField === "medicalHistory") {
+          if (patient.relevantExams.length > 0) {
+            startEditing("relevantExams", patient.relevantExams[0], 0);
+          } else {
+            startEditing("relevantExams", "", -2);
+          }
+        } else if (editingField === "relevantExams") {
+          if (patient.pendencies.length > 0) {
+            startEditing("pendencies", patient.pendencies[0], 0);
+          } else {
+            startEditing("pendencies", "", -2);
+          }
+        }
+      }, 50);
     } else if (e.key === "Escape") {
       cancelEditing();
     }
