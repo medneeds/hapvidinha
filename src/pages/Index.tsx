@@ -656,7 +656,7 @@ const Index = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-background border border-border shadow-lg z-50 min-w-[280px]">
                           {DEPARTMENTS
-                            .filter(dept => allowedDepartments.length === 0 || allowedDepartments.includes(dept))
+                            .filter(dept => role === 'admin' || allowedDepartments.includes(dept))
                             .map((dept) => (
                             <DropdownMenuItem 
                               key={dept} 
