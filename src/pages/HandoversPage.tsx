@@ -9,6 +9,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
+import { useDepartment } from "@/contexts/DepartmentContext";
 import { 
   ClipboardList, 
   Clock, 
@@ -69,13 +70,14 @@ export default function HandoversPage() {
   const { toast } = useToast();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { currentDepartment } = useDepartment();
 
   // Mock patients data for dialog - you can replace with actual data
   const mockPatients: Patient[] = [];
 
   useEffect(() => {
     fetchHandovers();
-  }, []);
+  }, [currentDepartment]);
 
   const fetchHandovers = async () => {
     setIsLoading(true);
@@ -83,6 +85,7 @@ export default function HandoversPage() {
       const { data, error } = await (supabase as any)
         .from('shift_handovers')
         .select('*')
+        .eq('department', currentDepartment)
         .order('handover_datetime', { ascending: false });
 
       if (error) throw error;

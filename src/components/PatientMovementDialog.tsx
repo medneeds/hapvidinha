@@ -102,6 +102,9 @@ export function PatientMovementDialog({
       
       const finalDestination = destination === "OUTRO" ? customDestination : destination;
 
+      // Get patient's department from the patient object
+      const patientDepartment = (patient as any).department || 'URGÊNCIA E EMERGÊNCIA ADULTO';
+
       const { error } = await supabase
         .from('patient_movements')
         .insert({
@@ -114,6 +117,7 @@ export function PatientMovementDialog({
           responsible_doctor: responsibleDoctor || null,
           created_by: user?.id,
           patient_snapshot: patient as any,
+          department: patientDepartment,
         });
 
       if (error) throw error;

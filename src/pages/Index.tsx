@@ -167,7 +167,7 @@ const Index = () => {
   const [selectedNewDepartment, setSelectedNewDepartment] = useState<Department | null>(null);
   const { toast } = useToast();
   const { signOut, user, role } = useAuth();
-  const { saveVersion } = usePatientVersions();
+  const { saveVersion, fetchVersions } = usePatientVersions();
   const isMobile = useIsMobile();
 
   // Sensors for drag and drop
@@ -518,7 +518,8 @@ const Index = () => {
 
   const handleSaveVersion = async () => {
     try {
-      await saveVersion(patients);
+      await saveVersion(patients, currentDepartment);
+      await fetchVersions(currentDepartment);
     } catch (error) {
       console.error('Failed to save version:', error);
     }
