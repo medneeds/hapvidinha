@@ -9,8 +9,9 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: UserRole;
+  allowedDepartments: string[];
   loading: boolean;
-  signIn: (username: string, password: string, desiredRole?: "admin" | "medico") => Promise<{ error: any }>;
+  signIn: (username: string, password: string) => Promise<{ error: any }>;
   signUp: (username: string, password: string, fullName: string, role?: "admin" | "medico") => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -21,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<UserRole>(null);
+  const [allowedDepartments, setAllowedDepartments] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -31,13 +33,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Defer role fetching with setTimeout to avoid deadlock
+        // Defer role and departments fetching with setTimeout to avoid deadlock
         if (session?.user) {
           setTimeout(() => {
-            fetchUserRole(session.user.id);
+            fetchUserRoleAndDepartments(session.user.id);
           }, 0);
         } else {
           setRole(null);
+          setAllowedDepartments([]);
           setLoading(false);
         }
       }
@@ -50,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (session?.user) {
         setTimeout(() => {
-          fetchUserRole(session.user.id);
+          fetchUserRoleAndDepartments(session.user.id);
         }, 0);
       } else {
         setLoading(false);
@@ -60,89 +63,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchUserRole = async (userId: string) => {
+  const fetchUserRoleAndDepartments = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      // Fetch role
+      const { data: roleData, error: roleError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", userId)
         .single();
 
-      if (error) {
+      if (roleError) {
         if (import.meta.env.DEV) {
-          console.error("Error fetching user role:", error);
+          console.error("Error fetching user role:", roleError);
         }
-        setRole("medico"); // Default role
+        setRole("medico");
       } else {
-        setRole(data?.role as UserRole);
+        setRole(roleData?.role as UserRole);
+      }
+
+      // Fetch allowed departments
+      const { data: deptData, error: deptError } = await supabase
+        .from("user_departments")
+        .select("department")
+        .eq("user_id", userId);
+
+      if (deptError) {
+        if (import.meta.env.DEV) {
+          console.error("Error fetching user departments:", deptError);
+        }
+        setAllowedDepartments([]);
+      } else {
+        setAllowedDepartments(deptData?.map(d => d.department) || []);
       }
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error("Error fetching user role:", error);
+        console.error("Error fetching user data:", error);
       }
       setRole("medico");
+      setAllowedDepartments([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const signIn = async (username: string, password: string, desiredRole?: "admin" | "medico") => {
+  const signIn = async (username: string, password: string) => {
     // Converter username para formato de email interno para Supabase
     const internalEmail = `${username.toLowerCase()}@sistema.local`;
     
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: internalEmail,
       password,
     });
     
-    if (!error && data.user && desiredRole) {
-      // Atualizar ou criar papel do usuário ANTES de qualquer outra coisa
-      try {
-        const { data: existingRole } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", data.user.id)
-          .maybeSingle();
-        
-        if (existingRole) {
-          // Atualizar papel existente
-          await supabase
-            .from("user_roles")
-            .update({ role: desiredRole })
-            .eq("user_id", data.user.id);
-        } else {
-          // Criar novo papel
-          await supabase
-            .from("user_roles")
-            .insert({ user_id: data.user.id, role: desiredRole });
-        }
-        
-        // Forçar atualização da role no estado
-        setRole(desiredRole);
-        
-        // Aguardar um pouco para garantir que a atualização foi persistida
-        await new Promise(resolve => setTimeout(resolve, 500));
-      } catch (roleError) {
-        if (import.meta.env.DEV) {
-          console.error("Erro ao atribuir papel:", roleError);
-        }
-      }
-    }
-    
     if (!error) {
-      // Fazer logout e login novamente para gerar novo JWT com role atualizada
-      if (desiredRole && data.user) {
-        await supabase.auth.signOut();
-        const { error: reloginError } = await supabase.auth.signInWithPassword({
-          email: internalEmail,
-          password,
-        });
-        
-        if (reloginError) {
-          return { error: reloginError };
-        }
-      }
-      
       navigate("/");
     }
     
@@ -178,11 +151,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSession(null);
     setRole(null);
+    setAllowedDepartments([]);
     navigate("/auth");
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, role, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, role, allowedDepartments, loading, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );
