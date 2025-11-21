@@ -162,11 +162,8 @@ const Index = () => {
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
   const [isDeleteSelectedDialogOpen, setIsDeleteSelectedDialogOpen] = useState(false);
   const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
-  const [isDepartmentDialogOpen, setIsDepartmentDialogOpen] = useState(false);
-  const [departmentPassword, setDepartmentPassword] = useState("");
-  const [selectedNewDepartment, setSelectedNewDepartment] = useState<Department | null>(null);
   const { toast } = useToast();
-  const { signOut, user, role, allowedDepartments } = useAuth();
+  const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
   const { saveVersion, fetchVersions } = usePatientVersions();
   const isMobile = useIsMobile();
 
@@ -654,10 +651,20 @@ const Index = () => {
                             <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 opacity-70" />
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-background border border-border shadow-lg z-50 min-w-[280px]">
-                          {DEPARTMENTS
-                            .filter(dept => role === 'admin' || allowedDepartments.includes(dept))
-                            .map((dept) => (
+                        <DropdownMenuContent className="bg-background border border-border shadow-lg z-[9999] min-w-[280px]">
+                          {authLoading ? (
+                            <DropdownMenuItem disabled className="text-sm py-2.5 px-3">
+                              Carregando...
+                            </DropdownMenuItem>
+                          ) : (
+                            DEPARTMENTS
+                              .filter(dept => {
+                                // Admin (COORDENADOR) vê todos os departamentos
+                                if (role === 'admin') return true;
+                                // Outros usuários veem apenas seus departamentos permitidos
+                                return allowedDepartments.includes(dept);
+                              })
+                              .map((dept) => (
                             <DropdownMenuItem 
                               key={dept} 
                               className={cn(
@@ -666,15 +673,30 @@ const Index = () => {
                               )}
                               onClick={() => {
                                 if (dept !== currentDepartment) {
-                                  setSelectedNewDepartment(dept);
-                                  setIsDepartmentDialogOpen(true);
+                                  // Admin pode trocar sem senha
+                                  if (role === 'admin') {
+                                    setCurrentDepartment(dept);
+                                    toast({
+                                      title: "Setor alterado",
+                                      description: `Alternado para: ${dept}`,
+                                    });
+                                  } else {
+                                    // Usuários não-admin NÃO podem trocar de departamento
+                                    // (eles só veem seus departamentos permitidos no dropdown)
+                                    toast({
+                                      title: "Acesso negado",
+                                      description: "Você não tem permissão para alterar departamentos.",
+                                      variant: "destructive",
+                                    });
+                                  }
                                 }
                               }}
                             >
                               <Building2 className="h-4 w-4 mr-2 opacity-60" />
                               {dept}
                             </DropdownMenuItem>
-                          ))}
+                          ))
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -1149,79 +1171,7 @@ const Index = () => {
         patients={patients}
       />
 
-      {/* Department Change Password Dialog */}
-      <AlertDialog open={isDepartmentDialogOpen} onOpenChange={(open) => {
-        setIsDepartmentDialogOpen(open);
-        if (!open) {
-          setDepartmentPassword("");
-          setSelectedNewDepartment(null);
-        }
-      }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Autorização de Coordenador</AlertDialogTitle>
-            <AlertDialogDescription>
-              Para alternar para <strong>{selectedNewDepartment}</strong>, digite a senha de coordenador:
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="py-4">
-            <Input
-              type="password"
-              placeholder="Senha de coordenador"
-              value={departmentPassword}
-              onChange={(e) => setDepartmentPassword(e.target.value.toUpperCase())}
-              className="uppercase"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && departmentPassword === 'NOTREDAME' && selectedNewDepartment) {
-                  setCurrentDepartment(selectedNewDepartment);
-                  toast({
-                    title: "Setor alterado",
-                    description: `Alternado para: ${selectedNewDepartment}`,
-                  });
-                  setIsDepartmentDialogOpen(false);
-                  setDepartmentPassword("");
-                  setSelectedNewDepartment(null);
-                } else if (e.key === 'Enter' && departmentPassword !== 'NOTREDAME') {
-                  toast({
-                    title: "Senha incorreta",
-                    description: "A senha de coordenador está incorreta.",
-                    variant: "destructive",
-                  });
-                }
-              }}
-            />
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setDepartmentPassword("");
-              setSelectedNewDepartment(null);
-            }}>
-              Cancelar
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (departmentPassword === 'NOTREDAME' && selectedNewDepartment) {
-                  setCurrentDepartment(selectedNewDepartment);
-                  toast({
-                    title: "Setor alterado",
-                    description: `Alternado para: ${selectedNewDepartment}`,
-                  });
-                  setDepartmentPassword("");
-                  setSelectedNewDepartment(null);
-                } else {
-                  toast({
-                    title: "Senha incorreta",
-                    description: "A senha de coordenador está incorreta.",
-                    variant: "destructive",
-                  });
-                }
-              }}
-            >
-              Confirmar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Department Change Password Dialog - Removido, apenas admin pode trocar */}
 
       {/* Delete Multiple Patients Confirmation Dialog */}
       <AlertDialog open={isDeleteSelectedDialogOpen} onOpenChange={setIsDeleteSelectedDialogOpen}>
