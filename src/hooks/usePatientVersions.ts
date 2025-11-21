@@ -17,13 +17,20 @@ export function usePatientVersions() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const fetchVersions = async () => {
+  const fetchVersions = async (department?: string) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
+      
+      let query = supabase
         .from('patient_versions')
         .select('*')
         .order('created_at', { ascending: false });
+      
+      if (department) {
+        query = query.eq('department', department);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
@@ -48,7 +55,7 @@ export function usePatientVersions() {
     }
   };
 
-  const saveVersion = async (patients: Patient[]) => {
+  const saveVersion = async (patients: Patient[], department: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
@@ -64,6 +71,7 @@ export function usePatientVersions() {
           created_by: user.id,
           description,
           snapshot_data: patients as any,
+          department: department,
         })
         .select()
         .single();

@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText } from "lucide-react";
 import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
+import { useDepartment } from "@/contexts/DepartmentContext";
 
 interface PatientMovement {
   id: string;
@@ -54,11 +55,12 @@ export default function MovementsPage() {
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [isSnapshotDialogOpen, setIsSnapshotDialogOpen] = useState(false);
   const { toast } = useToast();
+  const { currentDepartment } = useDepartment();
 
   useEffect(() => {
     fetchMovements();
 
-    // Realtime subscription
+    // Realtime subscription filtered by department
     const channel = supabase
       .channel('patient_movements_changes')
       .on(
@@ -66,7 +68,8 @@ export default function MovementsPage() {
         {
           event: '*',
           schema: 'public',
-          table: 'patient_movements'
+          table: 'patient_movements',
+          filter: `department=eq.${currentDepartment}`
         },
         () => {
           fetchMovements();
@@ -77,13 +80,14 @@ export default function MovementsPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [currentDepartment]);
 
   const fetchMovements = async () => {
     try {
       const { data, error } = await supabase
         .from('patient_movements')
         .select('*')
+        .eq('department', currentDepartment)
         .order('created_at', { ascending: false });
 
       if (error) throw error;

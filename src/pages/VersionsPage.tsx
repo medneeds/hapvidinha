@@ -11,10 +11,12 @@ import { usePatients } from "@/hooks/usePatients";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Patient } from "@/types/patient";
+import { useDepartment } from "@/contexts/DepartmentContext";
 
 export default function VersionsPage() {
   const { versions, isLoading, fetchVersions, deleteVersion } = usePatientVersions();
-  const { patients, deletePatient, createPatient } = usePatients();
+  const { currentDepartment } = useDepartment();
+  const { patients, deletePatient, createPatient } = usePatients(currentDepartment);
   const navigate = useNavigate();
   const { toast } = useToast();
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
@@ -23,8 +25,8 @@ export default function VersionsPage() {
   const [previewVersion, setPreviewVersion] = useState<typeof versions[0] | null>(null);
 
   useEffect(() => {
-    fetchVersions();
-  }, []);
+    fetchVersions(currentDepartment);
+  }, [currentDepartment]);
 
   const handleRestore = (versionId: string) => {
     setSelectedVersion(versionId);

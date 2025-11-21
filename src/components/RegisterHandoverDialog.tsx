@@ -9,6 +9,7 @@ import { Patient } from "@/types/patient";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
+import { useDepartment } from "@/contexts/DepartmentContext";
 
 interface RegisterHandoverDialogProps {
   open: boolean;
@@ -27,6 +28,7 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
   });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { currentDepartment } = useDepartment();
 
   const occupiedBeds = patients.filter(p => p.name.trim() !== "").length;
   const totalPatients = patients.length;
@@ -101,6 +103,7 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
           handover_from: handoverFrom.trim().toUpperCase() || null,
           handover_to: handoverTo.trim().toUpperCase() || null,
           handover_datetime: new Date(handoverDatetime).toISOString(),
+          department: currentDepartment,
         });
 
       if (error) throw error;
