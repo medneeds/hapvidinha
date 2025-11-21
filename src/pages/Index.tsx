@@ -166,7 +166,7 @@ const Index = () => {
   const [departmentPassword, setDepartmentPassword] = useState("");
   const [selectedNewDepartment, setSelectedNewDepartment] = useState<Department | null>(null);
   const { toast } = useToast();
-  const { signOut, user, role } = useAuth();
+  const { signOut, user, role, allowedDepartments } = useAuth();
   const { saveVersion, fetchVersions } = usePatientVersions();
   const isMobile = useIsMobile();
 
@@ -655,7 +655,9 @@ const Index = () => {
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-background border border-border shadow-lg z-50 min-w-[280px]">
-                          {DEPARTMENTS.map((dept) => (
+                          {DEPARTMENTS
+                            .filter(dept => allowedDepartments.length === 0 || allowedDepartments.includes(dept))
+                            .map((dept) => (
                             <DropdownMenuItem 
                               key={dept} 
                               className={cn(
