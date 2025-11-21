@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText } from "lucide-react";
+import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw } from "lucide-react";
 import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
 import { useDepartment } from "@/contexts/DepartmentContext";
 
@@ -121,6 +121,56 @@ export default function MovementsPage() {
 
   const counts = getMovementCounts();
 
+  const handleReallocatePatient = async (movement: PatientMovement) => {
+    if (!movement.patient_snapshot) {
+      toast({
+        title: "Erro ao realocar",
+        description: "Dados do paciente não encontrados.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const snapshot = movement.patient_snapshot;
+      
+      // Recreate patient in patients table with original data
+      const { error: insertError } = await supabase
+        .from('patients')
+        .insert({
+          name: snapshot.name,
+          age: snapshot.age,
+          bed_number: snapshot.bedNumber,
+          sector: snapshot.sector,
+          diagnoses: snapshot.diagnoses?.join('\n') || null,
+          medical_history: snapshot.medicalHistory?.join('\n') || null,
+          relevant_exams: snapshot.relevantExams?.join('\n') || null,
+          pendencies: snapshot.pendencies?.join('\n') || null,
+          highlighted_pendencies: snapshot.highlightedPendencies || [],
+          schedule: snapshot.schedule?.join('\n') || null,
+          admission_history: snapshot.admissionHistory || null,
+          admission_date: snapshot.admissionDate || new Date().toISOString(),
+          department: currentDepartment,
+        });
+
+      if (insertError) throw insertError;
+
+      toast({
+        title: "Paciente realocado com sucesso",
+        description: `${snapshot.name} foi realocado de volta ao setor ${snapshot.sector}.`,
+      });
+
+      fetchMovements();
+    } catch (error) {
+      console.error('Error reallocating patient:', error);
+      toast({
+        title: "Erro ao realocar paciente",
+        description: "Não foi possível realocar o paciente. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <MainLayout>
       <div className="container mx-auto p-4 md:p-6 space-y-6">
@@ -221,6 +271,17 @@ export default function MovementsPage() {
                               >
                                 <FileText className="h-3.5 w-3.5" />
                                 Ver Dados
+                              </Button>
+                            )}
+                            {movement.movement_type === "TRANSFERÊNCIA" && movement.patient_snapshot && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleReallocatePatient(movement)}
+                                className="h-7 gap-1.5"
+                              >
+                                <RotateCcw className="h-3.5 w-3.5" />
+                                Realocar
                               </Button>
                             )}
                           </div>
