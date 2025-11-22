@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.calculate-age]
 verify_jwt = false
+
+[functions.format-pediatric-age]
+verify_jwt = false
