@@ -882,7 +882,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           onClick={() => startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
                           title="Clique para editar"
                         >
-                          {patient.age ? (typeof patient.age === 'number' ? `${patient.age} anos` : patient.age) : <span className="italic">Clique para adicionar idade</span>}
+                          {patient.age ? (typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age) : <span className="italic">Clique para adicionar idade</span>}
                         </p>
                       )}
                     </div>
@@ -1574,7 +1574,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    {patient.age} anos
+                    {typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age}
                   </span>
                   <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
@@ -1722,7 +1722,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    {patient.age} anos
+                    {typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age}
                   </span>
                   <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
@@ -1870,7 +1870,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    {patient.age} anos
+                    {typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age}
                   </span>
                   <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
@@ -2018,7 +2018,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    {patient.age} anos
+                    {typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age}
                   </span>
                   <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                     <Calendar className="h-3 w-3" />

@@ -61,7 +61,7 @@ export function ViewPatientSnapshotDialog({
                     <span>Leito: {patient.bedNumber}</span>
                   </div>
                   {patient.age && (
-                    <span>Idade: {typeof patient.age === 'number' ? `${patient.age} anos` : patient.age}</span>
+                    <span>Idade: {typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age}</span>
                   )}
                 </div>
               </div>

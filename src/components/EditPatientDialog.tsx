@@ -41,9 +41,6 @@ export function EditPatientDialog({
   const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
 
   const isPediatric = currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA";
-  
-  console.log('EditPatientDialog - Current Department:', currentDepartment);
-  console.log('EditPatientDialog - isPediatric:', isPediatric);
 
   // Reset form data when patient changes or dialog opens
   useEffect(() => {
@@ -366,18 +363,13 @@ export function EditPatientDialog({
                     onKeyDown={async (e) => {
                       if (e.key === 'Enter' && ageInput.trim()) {
                         e.preventDefault();
-                        console.log('Enter pressed - isPediatric:', isPediatric);
-                        console.log('Age input value:', ageInput.trim());
                         
                         if (isPediatric) {
-                          console.log('Calling format-pediatric-age...');
                           setIsFormattingAge(true);
                           try {
                             const { data, error } = await supabase.functions.invoke('format-pediatric-age', {
                               body: { input: ageInput.trim() }
                             });
-
-                            console.log('format-pediatric-age response:', { data, error });
 
                             if (error) {
                               console.error('Error formatting age:', error);
@@ -386,7 +378,6 @@ export function EditPatientDialog({
                               setFormData({ ...formData, age: formatted });
                               setAgeInput(formatted);
                             } else if (data?.formatted_age) {
-                              console.log('Setting formatted age:', data.formatted_age);
                               setFormData({ ...formData, age: data.formatted_age });
                               setAgeInput(data.formatted_age);
                               if (data.explanation) {
@@ -400,9 +391,7 @@ export function EditPatientDialog({
                             setIsFormattingAge(false);
                           }
                         } else {
-                          console.log('Calling calculate-age...');
                           const calculatedAge = await calculateAge(ageInput);
-                          console.log('Calculated age:', calculatedAge);
                           if (calculatedAge !== null) {
                             setFormData({ ...formData, age: calculatedAge });
                             setAgeInput(calculatedAge.toString());
@@ -420,15 +409,11 @@ export function EditPatientDialog({
                       size="icon"
                       variant="default"
                       onClick={async () => {
-                        console.log('Format button clicked - isPediatric:', isPediatric);
-                        console.log('Age input value:', ageInput.trim());
                         setIsFormattingAge(true);
                         try {
                           const { data, error } = await supabase.functions.invoke('format-pediatric-age', {
                             body: { input: ageInput.trim() }
                           });
-
-                          console.log('format-pediatric-age response:', { data, error });
 
                           if (error) {
                             console.error('Error formatting age:', error);
@@ -437,7 +422,6 @@ export function EditPatientDialog({
                             setFormData({ ...formData, age: formatted });
                             setAgeInput(formatted);
                           } else if (data?.formatted_age) {
-                            console.log('Setting formatted age:', data.formatted_age);
                             setFormData({ ...formData, age: data.formatted_age });
                             setAgeInput(data.formatted_age);
                             if (data.explanation) {
