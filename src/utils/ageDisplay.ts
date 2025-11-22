@@ -12,8 +12,8 @@ export function formatAgeDisplay(age: string | number | undefined): string {
   // Se for string, verifica se é apenas número ou já está formatada
   const ageStr = age.toString().trim();
   
-  // Se a string já contém palavras como ANOS, MESES, DIAS, DOL, SEMANAS - já está formatada
-  if (/\b(ANO|ANOS|MES|MESES|DIA|DIAS|DOL|SEMANA|SEMANAS)\b/i.test(ageStr)) {
+  // Se a string já contém palavras como ANOS, MESES, DIAS, DV, SEMANAS - já está formatada
+  if (/\b(ANO|ANOS|MES|MESES|DIA|DIAS|DV|SEMANA|SEMANAS)\b/i.test(ageStr)) {
     return ageStr.toUpperCase();
   }
   
