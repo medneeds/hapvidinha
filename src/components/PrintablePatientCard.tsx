@@ -1,4 +1,5 @@
 import { Patient } from "@/types/patient";
+import { formatAgeDisplay } from "@/utils/ageDisplay";
 
 interface PrintablePatientCardProps {
   patient: Patient;
@@ -55,7 +56,7 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
               {patient.name || 'SEM NOME'}
             </div>
             <div style={{ fontSize: '7.5pt', color: '#6b7280' }}>
-              {patient.age ? (typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age) : 'IDADE NÃO INFORMADA'}
+              {formatAgeDisplay(patient.age)}
             </div>
           </div>
 

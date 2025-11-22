@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { formatAgeDisplay } from "@/utils/ageDisplay";
 import { 
   ClipboardList, 
   Clock, 
@@ -351,7 +352,7 @@ export default function HandoversPage() {
                                     className="p-2 bg-muted/20 rounded text-xs space-y-1"
                                   >
                                     <div className="font-semibold">
-                                      LEITO {patient.bedNumber} - {patient.name}, {typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age}
+                                      LEITO {patient.bedNumber} - {patient.name}, {formatAgeDisplay(patient.age)}
                                     </div>
                                     {patient.diagnoses.length > 0 && (
                                       <div className="text-muted-foreground">

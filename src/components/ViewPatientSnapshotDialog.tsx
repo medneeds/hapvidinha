@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar, Bed, User } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { formatAgeDisplay } from "@/utils/ageDisplay";
 
 interface ViewPatientSnapshotDialogProps {
   patient: Patient | null;
@@ -61,7 +62,7 @@ export function ViewPatientSnapshotDialog({
                     <span>Leito: {patient.bedNumber}</span>
                   </div>
                   {patient.age && (
-                    <span>Idade: {typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age}</span>
+                    <span>Idade: {formatAgeDisplay(patient.age)}</span>
                   )}
                 </div>
               </div>

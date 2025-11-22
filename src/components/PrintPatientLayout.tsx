@@ -1,4 +1,5 @@
 import { Patient } from "@/types/patient";
+import { formatAgeDisplay } from "@/utils/ageDisplay";
 import { ClipboardList } from "lucide-react";
 import hapvidaFullLogo from "@/assets/hapvida-notredame-full-logo.png";
 
@@ -106,7 +107,7 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
             </div>
             <div>
               <div style={{ fontSize: '9pt', color: '#6b7280', marginBottom: '4px' }}>IDADE</div>
-              <div style={{ fontSize: '14pt', fontWeight: 'bold', color: '#000000' }}>{typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age}</div>
+              <div style={{ fontSize: '14pt', fontWeight: 'bold', color: '#000000' }}>{formatAgeDisplay(patient.age)}</div>
             </div>
           </div>
           <div>
