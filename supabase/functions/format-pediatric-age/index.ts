@@ -36,7 +36,7 @@ TABELA DE FORMATAÇÃO (SIGA EXATAMENTE):
 ┌─────────────────┬──────────────────────────┬─────────────────────────────┐
 │ Faixa etária    │ Formato OBRIGATÓRIO      │ Exemplos                    │
 ├─────────────────┼──────────────────────────┼─────────────────────────────┤
-│ 0-28 dias       │ DOL X                    │ DOL 1, DOL 14, DOL 28       │
+│ 0-28 dias       │ DV X                     │ DV 1, DV 14, DV 28          │
 │ 29 dias-3 meses │ X SEMANA(S) + Y DIA(S)   │ 4 SEMANAS + 2 DIAS          │
 │ 3-12 meses      │ X MES(ES) E Y DIA(S)     │ 5 MESES E 18 DIAS           │
 │ 12-24 meses     │ X MESES (total)          │ 17 MESES, 20 MESES          │
@@ -54,7 +54,7 @@ REGRAS CRÍTICAS:
 7. Para 2-12 anos: mostre anos E meses (não ignore meses se >0)
 
 EXEMPLOS DE CÁLCULO:
-- Nasceu 20/11/2025, hoje ${todayStr} → 2 dias → "DOL 2"
+- Nasceu 20/11/2025, hoje ${todayStr} → 2 dias → "DV 2"
 - Nasceu 20/10/2025, hoje ${todayStr} → ~33 dias → "4 SEMANAS + 5 DIAS"
 - Nasceu 15/08/2025, hoje ${todayStr} → ~3 meses e 7 dias → "3 MESES E 7 DIAS"
 - Nasceu 15/03/2024, hoje ${todayStr} → ~20 meses → "20 MESES"
@@ -98,7 +98,7 @@ Responda apenas com o formato da tabela.`
                 properties: {
                   formatted_age: {
                     type: "string",
-                    description: "Idade formatada em MAIÚSCULAS seguindo EXATAMENTE a tabela de formatação (ex: 'DOL 14', '4 SEMANAS + 2 DIAS', '3 MESES E 7 DIAS', '17 MESES', '2 ANOS E 8 MESES', '12 ANOS')"
+                    description: "Idade formatada em MAIÚSCULAS seguindo EXATAMENTE a tabela de formatação (ex: 'DV 14', '4 SEMANAS + 2 DIAS', '3 MESES E 7 DIAS', '17 MESES', '2 ANOS E 8 MESES', '12 ANOS')"
                   },
                   age_category: {
                     type: "string",
