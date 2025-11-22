@@ -358,18 +358,70 @@ export function EditPatientDialog({
                 </Button>
               </div>
               <div className="space-y-2">
-                 <Input
-                  type="text"
-                  value={ageInput}
-                  onChange={(e) => setAgeInput(e.target.value)}
-                  onBlur={async () => {
-                    if (ageInput.trim()) {
-                      console.log('Age input onBlur - isPediatric:', isPediatric);
-                      console.log('Age input value:', ageInput.trim());
-                      
-                      if (isPediatric) {
-                        // No pediátrico, usa IA para formatar
-                        console.log('Calling format-pediatric-age...');
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    value={ageInput}
+                    onChange={(e) => setAgeInput(e.target.value)}
+                    onKeyDown={async (e) => {
+                      if (e.key === 'Enter' && ageInput.trim()) {
+                        e.preventDefault();
+                        console.log('Enter pressed - isPediatric:', isPediatric);
+                        console.log('Age input value:', ageInput.trim());
+                        
+                        if (isPediatric) {
+                          console.log('Calling format-pediatric-age...');
+                          setIsFormattingAge(true);
+                          try {
+                            const { data, error } = await supabase.functions.invoke('format-pediatric-age', {
+                              body: { input: ageInput.trim() }
+                            });
+
+                            console.log('format-pediatric-age response:', { data, error });
+
+                            if (error) {
+                              console.error('Error formatting age:', error);
+                              toast.error("Erro ao formatar idade");
+                              const formatted = ageInput.trim().toUpperCase();
+                              setFormData({ ...formData, age: formatted });
+                              setAgeInput(formatted);
+                            } else if (data?.formatted_age) {
+                              console.log('Setting formatted age:', data.formatted_age);
+                              setFormData({ ...formData, age: data.formatted_age });
+                              setAgeInput(data.formatted_age);
+                              if (data.explanation) {
+                                toast.success(data.explanation);
+                              }
+                            }
+                          } catch (err) {
+                            console.error('Error:', err);
+                            toast.error("Erro ao processar idade");
+                          } finally {
+                            setIsFormattingAge(false);
+                          }
+                        } else {
+                          console.log('Calling calculate-age...');
+                          const calculatedAge = await calculateAge(ageInput);
+                          console.log('Calculated age:', calculatedAge);
+                          if (calculatedAge !== null) {
+                            setFormData({ ...formData, age: calculatedAge });
+                            setAgeInput(calculatedAge.toString());
+                          }
+                        }
+                      }
+                    }}
+                    placeholder={isPediatric ? "Ex: 15/03/2023 ou 2 anos, 3 meses (Enter)" : "Ex: 25 ou 15/03/1999 (Enter)"}
+                    className="h-9 flex-1"
+                    disabled={isCalculating || isFormattingAge}
+                  />
+                  {isPediatric && ageInput.trim() && (
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="default"
+                      onClick={async () => {
+                        console.log('Format button clicked - isPediatric:', isPediatric);
+                        console.log('Age input value:', ageInput.trim());
                         setIsFormattingAge(true);
                         try {
                           const { data, error } = await supabase.functions.invoke('format-pediatric-age', {
@@ -381,7 +433,6 @@ export function EditPatientDialog({
                           if (error) {
                             console.error('Error formatting age:', error);
                             toast.error("Erro ao formatar idade");
-                            // Fallback: aceita entrada como está
                             const formatted = ageInput.trim().toUpperCase();
                             setFormData({ ...formData, age: formatted });
                             setAgeInput(formatted);
@@ -399,22 +450,15 @@ export function EditPatientDialog({
                         } finally {
                           setIsFormattingAge(false);
                         }
-                      } else {
-                        // No adulto, calcula a idade
-                        console.log('Calling calculate-age...');
-                        const calculatedAge = await calculateAge(ageInput);
-                        console.log('Calculated age:', calculatedAge);
-                        if (calculatedAge !== null) {
-                          setFormData({ ...formData, age: calculatedAge });
-                          setAgeInput(calculatedAge.toString());
-                        }
-                      }
-                    }
-                  }}
-                  placeholder={isPediatric ? "Ex: 15/03/2023 ou 2 anos, 3 meses" : "Ex: 25 ou 15/03/1999"}
-                  className="h-9"
-                  disabled={isCalculating || isFormattingAge}
-                />
+                      }}
+                      disabled={isFormattingAge}
+                      className="h-9 w-9 flex-shrink-0"
+                      title="Formatar idade"
+                    >
+                      <Sparkles className={`h-4 w-4 ${isFormattingAge ? 'animate-pulse' : ''}`} />
+                    </Button>
+                  )}
+                </div>
                 {!isPediatric && typeof formData.age === 'number' && formData.age > 0 && (
                   <div className="text-xs text-muted-foreground flex items-center gap-1">
                     <Sparkles className="h-3 w-3" />
