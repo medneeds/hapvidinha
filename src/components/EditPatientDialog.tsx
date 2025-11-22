@@ -394,7 +394,7 @@ export function EditPatientDialog({
                           const calculatedAge = await calculateAge(ageInput);
                           if (calculatedAge !== null) {
                             setFormData({ ...formData, age: calculatedAge });
-                            setAgeInput(calculatedAge.toString());
+                            setAgeInput(calculatedAge);
                           }
                         }
                       }
