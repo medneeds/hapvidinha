@@ -879,10 +879,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       ) : (
                         <p 
                           className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 w-fit"
-                          onClick={() => startEditing("age", patient.age.toString())}
+                          onClick={() => startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
                           title="Clique para editar"
                         >
-                          {patient.age > 0 ? `${patient.age} anos` : <span className="italic">Clique para adicionar idade</span>}
+                          {patient.age ? (typeof patient.age === 'number' ? `${patient.age} anos` : patient.age) : <span className="italic">Clique para adicionar idade</span>}
                         </p>
                       )}
                     </div>

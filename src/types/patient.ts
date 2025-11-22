@@ -4,7 +4,7 @@ export interface Patient {
   id: string;
   bedNumber: string;
   name: string;
-  age: number;
+  age: string | number;
   sector: SectorType;
   diagnoses: string[];
   medicalHistory: string[];

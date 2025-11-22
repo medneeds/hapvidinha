@@ -15,6 +15,7 @@ import { X, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAgeCalculator } from "@/hooks/useAgeCalculator";
+import { useDepartment } from "@/contexts/DepartmentContext";
 
 interface EditPatientDialogProps {
   patient: Patient;
@@ -35,14 +36,18 @@ export function EditPatientDialog({
   const [loadingCid, setLoadingCid] = useState<number | null>(null);
   const [ageInput, setAgeInput] = useState("");
   const { calculateAge, isCalculating } = useAgeCalculator();
+  const { currentDepartment } = useDepartment();
   const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
+
+  const isPediatric = currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA";
 
   // Reset form data when patient changes or dialog opens
   useEffect(() => {
     if (open) {
       setFormData(patient);
       setAdmissionHistoryLocal(patient.admissionHistory);
-      setAgeInput(patient.age > 0 ? patient.age.toString() : "");
+      const ageValue = typeof patient.age === 'number' ? (patient.age > 0 ? patient.age.toString() : "") : patient.age;
+      setAgeInput(ageValue);
       inputRefs.current = {};
     }
   }, [open, patient]);
@@ -355,21 +360,32 @@ export function EditPatientDialog({
                   onChange={(e) => setAgeInput(e.target.value)}
                   onBlur={async () => {
                     if (ageInput.trim()) {
-                      const calculatedAge = await calculateAge(ageInput);
-                      if (calculatedAge !== null) {
-                        setFormData({ ...formData, age: calculatedAge });
-                        setAgeInput(calculatedAge.toString());
+                      if (isPediatric) {
+                        // No pediátrico, aceita entrada livre de texto
+                        setFormData({ ...formData, age: ageInput.trim() });
+                      } else {
+                        // No adulto, calcula a idade
+                        const calculatedAge = await calculateAge(ageInput);
+                        if (calculatedAge !== null) {
+                          setFormData({ ...formData, age: calculatedAge });
+                          setAgeInput(calculatedAge.toString());
+                        }
                       }
                     }
                   }}
-                  placeholder="Ex: 25 ou 15/03/1999"
+                  placeholder={isPediatric ? "Ex: 2 anos, 3 meses, 15 dias" : "Ex: 25 ou 15/03/1999"}
                   className="h-9"
                   disabled={isCalculating}
                 />
-                {formData.age > 0 && (
+                {!isPediatric && typeof formData.age === 'number' && formData.age > 0 && (
                   <div className="text-xs text-muted-foreground flex items-center gap-1">
                     <Sparkles className="h-3 w-3" />
                     Idade calculada: {formData.age} anos
+                  </div>
+                )}
+                {isPediatric && formData.age && (
+                  <div className="text-xs text-muted-foreground">
+                    Idade: {formData.age}
                   </div>
                 )}
               </div>
