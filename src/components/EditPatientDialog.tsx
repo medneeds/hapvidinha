@@ -460,8 +460,12 @@ export function EditPatientDialog({
             </div>
             <Textarea
               value={admissionHistoryLocal}
-              onChange={(e) => setAdmissionHistoryLocal(e.target.value.toUpperCase())}
-              onBlur={(e) => setFormData({ ...formData, admissionHistory: e.target.value.toUpperCase() })}
+              onChange={(e) => setAdmissionHistoryLocal(e.target.value)}
+              onBlur={(e) => {
+                const upperValue = e.target.value.toUpperCase();
+                setAdmissionHistoryLocal(upperValue);
+                setFormData({ ...formData, admissionHistory: upperValue });
+              }}
               rows={5}
               className="text-sm resize-none uppercase"
             />
