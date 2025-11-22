@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAgeCalculator } from "@/hooks/useAgeCalculator";
 
 interface EditPatientDialogProps {
   patient: Patient;
@@ -32,6 +33,8 @@ export function EditPatientDialog({
   const [focusField, setFocusField] = useState<{field: string, index: number} | null>(null);
   const [admissionHistoryLocal, setAdmissionHistoryLocal] = useState("");
   const [loadingCid, setLoadingCid] = useState<number | null>(null);
+  const [ageInput, setAgeInput] = useState("");
+  const { calculateAge, isCalculating } = useAgeCalculator();
   const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
 
   // Reset form data when patient changes or dialog opens
@@ -39,6 +42,7 @@ export function EditPatientDialog({
     if (open) {
       setFormData(patient);
       setAdmissionHistoryLocal(patient.admissionHistory);
+      setAgeInput(patient.age > 0 ? patient.age.toString() : "");
       inputRefs.current = {};
     }
   }, [open, patient]);
@@ -326,25 +330,49 @@ export function EditPatientDialog({
             {/* Idade */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold">Idade</Label>
+                <Label className="text-sm font-semibold flex items-center gap-2">
+                  Idade
+                  {isCalculating && <Sparkles className="h-3 w-3 animate-pulse text-primary" />}
+                </Label>
                 <Button
                   type="button"
                   size="sm"
                   variant="ghost"
-                  onClick={() => setFormData({ ...formData, age: 0 })}
+                  onClick={() => {
+                    setFormData({ ...formData, age: 0 });
+                    setAgeInput("");
+                  }}
                   className="h-6 px-2 text-xs"
+                  disabled={isCalculating}
                 >
                   Limpar
                 </Button>
               </div>
-              <Input
-                type="number"
-                value={formData.age}
-                onChange={(e) =>
-                  setFormData({ ...formData, age: parseInt(e.target.value) || 0 })
-                }
-                className="h-9"
-              />
+              <div className="space-y-2">
+                <Input
+                  type="text"
+                  value={ageInput}
+                  onChange={(e) => setAgeInput(e.target.value)}
+                  onBlur={async () => {
+                    if (ageInput.trim()) {
+                      const calculatedAge = await calculateAge(ageInput);
+                      if (calculatedAge !== null) {
+                        setFormData({ ...formData, age: calculatedAge });
+                        setAgeInput(calculatedAge.toString());
+                      }
+                    }
+                  }}
+                  placeholder="Ex: 25 ou 15/03/1999"
+                  className="h-9"
+                  disabled={isCalculating}
+                />
+                {formData.age > 0 && (
+                  <div className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Sparkles className="h-3 w-3" />
+                    Idade calculada: {formData.age} anos
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Leito */}

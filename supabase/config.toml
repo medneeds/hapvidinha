@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.get-cid-code]
 verify_jwt = false
+
+[functions.calculate-age]
+verify_jwt = false

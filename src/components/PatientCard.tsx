@@ -12,6 +12,7 @@ import { PatientMovementDialog } from "./PatientMovementDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAgeCalculator } from "@/hooks/useAgeCalculator";
 import {
   Dialog,
   DialogContent,
@@ -455,6 +456,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const inputRef = useRef<HTMLInputElement>(null);
   const config = sectorConfig[patient.sector];
   const { toast: toastHook } = useToast();
+  const { calculateAge, isCalculating } = useAgeCalculator();
 
   useEffect(() => {
     if (editingField && inputRef.current) {
@@ -548,7 +550,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     setEditingArrayIndex(-1);
   };
 
-  const saveInlineEdit = () => {
+  const saveInlineEdit = async () => {
     if (!editingField) return;
 
     const updatedPatient = { ...patient };
@@ -556,7 +558,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     if (editingField === "name") {
       updatedPatient.name = editValue.toUpperCase();
     } else if (editingField === "age") {
-      updatedPatient.age = parseInt(editValue) || patient.age;
+      // Tenta calcular idade usando IA
+      const calculatedAge = await calculateAge(editValue);
+      updatedPatient.age = calculatedAge ?? (parseInt(editValue) || patient.age);
     } else if (editingField === "diagnoses") {
       if (editingArrayIndex === -2) {
         // Adding new
@@ -845,26 +849,29 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex items-center gap-1 mt-0.5">
                           <Input
                             ref={inputRef}
-                            type="number"
+                            type="text"
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[11px] w-16"
+                            className="h-5 text-[11px] w-32"
+                            placeholder="Idade ou data nasc."
+                            disabled={isCalculating}
                           />
-                          <span className="text-[11px] text-muted-foreground">anos</span>
                           <Button
                             size="icon"
                             variant="ghost"
                             onClick={saveInlineEdit}
                             className="h-5 w-5 text-green-600 hover:bg-green-100"
+                            disabled={isCalculating}
                           >
-                            <Check className="h-2.5 w-2.5" />
+                            <Check className={cn("h-2.5 w-2.5", isCalculating && "animate-spin")} />
                           </Button>
                           <Button
                             size="icon"
                             variant="ghost"
                             onClick={cancelEditing}
                             className="h-5 w-5 text-red-600 hover:bg-red-100"
+                            disabled={isCalculating}
                           >
                             <X className="h-2.5 w-2.5" />
                           </Button>
