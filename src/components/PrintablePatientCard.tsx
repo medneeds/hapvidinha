@@ -164,8 +164,10 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
         <span style={{ fontWeight: 'bold', fontSize: '11pt', color: '#000000' }}>
           {patient.bedNumber} - {patient.name}
         </span>
-        {patient.age > 0 && (
-          <span style={{ color: '#4b5563', fontSize: '11pt' }}>{patient.age}a</span>
+        {patient.age && (
+          <span style={{ color: '#4b5563', fontSize: '11pt' }}>
+            {typeof patient.age === 'number' ? `${patient.age}a` : patient.age}
+          </span>
         )}
       </div>
       
