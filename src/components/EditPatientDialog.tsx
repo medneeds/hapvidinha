@@ -467,7 +467,7 @@ export function EditPatientDialog({
                 setFormData({ ...formData, admissionHistory: upperValue });
               }}
               rows={5}
-              className="text-sm resize-none uppercase"
+              className="text-sm resize-y uppercase min-h-[120px]"
             />
           </div>
           </div>
