@@ -384,7 +384,7 @@ export function EditPatientDialog({
                       }
                     }
                   }}
-                  placeholder={isPediatric ? "Ex: 2 anos, 3 meses, 15 dias" : "Ex: 25 ou 15/03/1999"}
+                  placeholder={isPediatric ? "Ex: 15/03/2023 ou 2 anos, 3 meses" : "Ex: 25 ou 15/03/1999"}
                   className="h-9"
                   disabled={isCalculating}
                 />

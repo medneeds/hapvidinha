@@ -10,6 +10,62 @@ export interface PediatricAgeInput {
 }
 
 /**
+ * Calcula idade detalhada a partir de data de nascimento
+ */
+export function calculateDetailedAge(birthDate: Date): PediatricAgeInput {
+  const now = new Date();
+  const birth = new Date(birthDate);
+  
+  let years = now.getFullYear() - birth.getFullYear();
+  let months = now.getMonth() - birth.getMonth();
+  let days = now.getDate() - birth.getDate();
+  
+  // Ajustar dias negativos
+  if (days < 0) {
+    months--;
+    const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += lastMonth.getDate();
+  }
+  
+  // Ajustar meses negativos
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+  
+  return { years, months, days };
+}
+
+/**
+ * Tenta parsear uma data em múltiplos formatos
+ */
+export function parseDate(input: string): Date | null {
+  const normalized = input.trim();
+  
+  // Formato DD/MM/YYYY ou DD-MM-YYYY
+  const dmyMatch = normalized.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (dmyMatch) {
+    const day = parseInt(dmyMatch[1]);
+    const month = parseInt(dmyMatch[2]) - 1; // JS months are 0-indexed
+    const year = parseInt(dmyMatch[3]);
+    const date = new Date(year, month, day);
+    if (!isNaN(date.getTime())) return date;
+  }
+  
+  // Formato YYYY-MM-DD
+  const ymdMatch = normalized.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+  if (ymdMatch) {
+    const year = parseInt(ymdMatch[1]);
+    const month = parseInt(ymdMatch[2]) - 1;
+    const day = parseInt(ymdMatch[3]);
+    const date = new Date(year, month, day);
+    if (!isNaN(date.getTime())) return date;
+  }
+  
+  return null;
+}
+
+/**
  * Formata a idade para exibição seguindo padrões pediátricos
  */
 export function formatPediatricAge(input: string | number): string {
@@ -24,10 +80,16 @@ export function formatPediatricAge(input: string | number): string {
 }
 
 /**
- * Extrai componentes de idade de uma string
+ * Extrai componentes de idade de uma string ou data de nascimento
  */
 export function parsePediatricAge(ageString: string): PediatricAgeInput | null {
   const normalized = ageString.toLowerCase().trim();
+  
+  // Tentar parsear como data de nascimento primeiro
+  const birthDate = parseDate(ageString);
+  if (birthDate) {
+    return calculateDetailedAge(birthDate);
+  }
   
   // DOL pattern (dias de vida)
   const dolMatch = normalized.match(/dol\s*(\d+)/);
