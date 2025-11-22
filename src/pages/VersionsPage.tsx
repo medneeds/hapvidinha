@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Patient } from "@/types/patient";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { formatAgeDisplay } from "@/utils/ageDisplay";
 
 export default function VersionsPage() {
   const { versions, isLoading, fetchVersions, deleteVersion } = usePatientVersions();
@@ -200,7 +201,7 @@ export default function VersionsPage() {
                     <div className="space-y-1">
                       <CardTitle className="text-lg flex items-center gap-2">
                         LEITO {patient.bedNumber} - {patient.name}
-                        {patient.age && <span className="text-sm text-muted-foreground">({typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age})</span>}
+                        {patient.age && <span className="text-sm text-muted-foreground">({formatAgeDisplay(patient.age)})</span>}
                       </CardTitle>
                       <Badge variant="outline">{patient.sector}</Badge>
                     </div>
