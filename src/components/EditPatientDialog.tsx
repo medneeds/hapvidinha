@@ -16,7 +16,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAgeCalculator } from "@/hooks/useAgeCalculator";
 import { useDepartment } from "@/contexts/DepartmentContext";
-import { parsePediatricAge, suggestPediatricFormat } from "@/utils/pediatricAgeFormat";
 
 interface EditPatientDialogProps {
   patient: Patient;
@@ -36,6 +35,7 @@ export function EditPatientDialog({
   const [admissionHistoryLocal, setAdmissionHistoryLocal] = useState("");
   const [loadingCid, setLoadingCid] = useState<number | null>(null);
   const [ageInput, setAgeInput] = useState("");
+  const [isFormattingAge, setIsFormattingAge] = useState(false);
   const { calculateAge, isCalculating } = useAgeCalculator();
   const { currentDepartment } = useDepartment();
   const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
@@ -338,7 +338,7 @@ export function EditPatientDialog({
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-semibold flex items-center gap-2">
                   Idade
-                  {isCalculating && <Sparkles className="h-3 w-3 animate-pulse text-primary" />}
+                  {(isCalculating || isFormattingAge) && <Sparkles className="h-3 w-3 animate-pulse text-primary" />}
                 </Label>
                 <Button
                   type="button"
@@ -349,7 +349,7 @@ export function EditPatientDialog({
                     setAgeInput("");
                   }}
                   className="h-6 px-2 text-xs"
-                  disabled={isCalculating}
+                  disabled={isCalculating || isFormattingAge}
                 >
                   Limpar
                 </Button>
@@ -362,17 +362,32 @@ export function EditPatientDialog({
                   onBlur={async () => {
                     if (ageInput.trim()) {
                       if (isPediatric) {
-                        // No pediátrico, tenta parsear e sugerir formato correto
-                        const parsed = parsePediatricAge(ageInput);
-                        if (parsed) {
-                          const suggested = suggestPediatricFormat(parsed);
-                          setFormData({ ...formData, age: suggested });
-                          setAgeInput(suggested);
-                        } else {
-                          // Se não conseguiu parsear, aceita a entrada como está (uppercase)
-                          const formatted = ageInput.trim().toUpperCase();
-                          setFormData({ ...formData, age: formatted });
-                          setAgeInput(formatted);
+                        // No pediátrico, usa IA para formatar
+                        setIsFormattingAge(true);
+                        try {
+                          const { data, error } = await supabase.functions.invoke('format-pediatric-age', {
+                            body: { input: ageInput.trim() }
+                          });
+
+                          if (error) {
+                            console.error('Error formatting age:', error);
+                            toast.error("Erro ao formatar idade");
+                            // Fallback: aceita entrada como está
+                            const formatted = ageInput.trim().toUpperCase();
+                            setFormData({ ...formData, age: formatted });
+                            setAgeInput(formatted);
+                          } else if (data?.formatted_age) {
+                            setFormData({ ...formData, age: data.formatted_age });
+                            setAgeInput(data.formatted_age);
+                            if (data.explanation) {
+                              toast.success(data.explanation);
+                            }
+                          }
+                        } catch (err) {
+                          console.error('Error:', err);
+                          toast.error("Erro ao processar idade");
+                        } finally {
+                          setIsFormattingAge(false);
                         }
                       } else {
                         // No adulto, calcula a idade
@@ -386,7 +401,7 @@ export function EditPatientDialog({
                   }}
                   placeholder={isPediatric ? "Ex: 15/03/2023 ou 2 anos, 3 meses" : "Ex: 25 ou 15/03/1999"}
                   className="h-9"
-                  disabled={isCalculating}
+                  disabled={isCalculating || isFormattingAge}
                 />
                 {!isPediatric && typeof formData.age === 'number' && formData.age > 0 && (
                   <div className="text-xs text-muted-foreground flex items-center gap-1">
