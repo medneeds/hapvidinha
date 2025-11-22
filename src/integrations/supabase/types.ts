@@ -162,7 +162,7 @@ export type Database = {
         Row: {
           admission_date: string | null
           admission_history: string | null
-          age: number | null
+          age: string | null
           bed_number: string
           created_at: string
           created_by: string | null
@@ -181,7 +181,7 @@ export type Database = {
         Insert: {
           admission_date?: string | null
           admission_history?: string | null
-          age?: number | null
+          age?: string | null
           bed_number: string
           created_at?: string
           created_by?: string | null
@@ -200,7 +200,7 @@ export type Database = {
         Update: {
           admission_date?: string | null
           admission_history?: string | null
-          age?: number | null
+          age?: string | null
           bed_number?: string
           created_at?: string
           created_by?: string | null
