@@ -295,7 +295,7 @@ export function usePatients(department?: Department) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [department]);
 
   return {
     patients,
