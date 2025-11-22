@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAgeCalculator } from "@/hooks/useAgeCalculator";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { parsePediatricAge, suggestPediatricFormat } from "@/utils/pediatricAgeFormat";
 
 interface EditPatientDialogProps {
   patient: Patient;
@@ -127,7 +128,7 @@ export function EditPatientDialog({
     setFormData({
       ...patient,
       name: "",
-      age: 0,
+      age: "",
       diagnoses: [],
       medicalHistory: [],
       relevantExams: [],
@@ -344,7 +345,7 @@ export function EditPatientDialog({
                   size="sm"
                   variant="ghost"
                   onClick={() => {
-                    setFormData({ ...formData, age: 0 });
+                    setFormData({ ...formData, age: "" });
                     setAgeInput("");
                   }}
                   className="h-6 px-2 text-xs"
@@ -354,15 +355,25 @@ export function EditPatientDialog({
                 </Button>
               </div>
               <div className="space-y-2">
-                <Input
+                 <Input
                   type="text"
                   value={ageInput}
                   onChange={(e) => setAgeInput(e.target.value)}
                   onBlur={async () => {
                     if (ageInput.trim()) {
                       if (isPediatric) {
-                        // No pediátrico, aceita entrada livre de texto
-                        setFormData({ ...formData, age: ageInput.trim() });
+                        // No pediátrico, tenta parsear e sugerir formato correto
+                        const parsed = parsePediatricAge(ageInput);
+                        if (parsed) {
+                          const suggested = suggestPediatricFormat(parsed);
+                          setFormData({ ...formData, age: suggested });
+                          setAgeInput(suggested);
+                        } else {
+                          // Se não conseguiu parsear, aceita a entrada como está (uppercase)
+                          const formatted = ageInput.trim().toUpperCase();
+                          setFormData({ ...formData, age: formatted });
+                          setAgeInput(formatted);
+                        }
                       } else {
                         // No adulto, calcula a idade
                         const calculatedAge = await calculateAge(ageInput);
@@ -380,12 +391,12 @@ export function EditPatientDialog({
                 {!isPediatric && typeof formData.age === 'number' && formData.age > 0 && (
                   <div className="text-xs text-muted-foreground flex items-center gap-1">
                     <Sparkles className="h-3 w-3" />
-                    Idade calculada: {formData.age} anos
+                    Idade calculada: {formData.age} ano{formData.age !== 1 ? 's' : ''}
                   </div>
                 )}
                 {isPediatric && formData.age && (
-                  <div className="text-xs text-muted-foreground">
-                    Idade: {formData.age}
+                  <div className="text-xs text-primary font-medium">
+                    ✓ {formData.age}
                   </div>
                 )}
               </div>

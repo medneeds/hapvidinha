@@ -28,7 +28,7 @@ export function usePatients(department?: Department) {
         id: p.id,
         bedNumber: p.bed_number,
         name: p.name || '',
-        age: p.age || 0,
+        age: p.age || '',
         sector: p.sector as 'red' | 'yellow' | 'blue' | 'outside',
         diagnoses: p.diagnoses ? p.diagnoses.split('\n').filter(Boolean) : [],
         medicalHistory: p.medical_history ? p.medical_history.split('\n').filter(Boolean) : [],
@@ -59,7 +59,7 @@ export function usePatients(department?: Department) {
       
       if (updates.bedNumber !== undefined) dbUpdates.bed_number = updates.bedNumber;
       if (updates.name !== undefined) dbUpdates.name = updates.name;
-      if (updates.age !== undefined) dbUpdates.age = updates.age;
+      if (updates.age !== undefined) dbUpdates.age = typeof updates.age === 'number' ? updates.age.toString() : updates.age;
       if (updates.sector !== undefined) dbUpdates.sector = updates.sector;
       if (updates.diagnoses !== undefined) dbUpdates.diagnoses = updates.diagnoses.join('\n');
       if (updates.medicalHistory !== undefined) dbUpdates.medical_history = updates.medicalHistory.join('\n');
@@ -107,7 +107,7 @@ export function usePatients(department?: Department) {
       const dbData = {
         bed_number: patient.bedNumber,
         name: patient.name,
-        age: patient.age,
+        age: typeof patient.age === 'number' ? patient.age.toString() : patient.age,
         sector: patient.sector,
         diagnoses: patient.diagnoses.join('\n'),
         medical_history: patient.medicalHistory.join('\n'),
@@ -122,7 +122,7 @@ export function usePatients(department?: Department) {
 
       const { data, error } = await supabase
         .from('patients')
-        .insert(dbData)
+        .insert(dbData as any)
         .select()
         .single();
 
@@ -132,7 +132,7 @@ export function usePatients(department?: Department) {
         id: data.id,
         bedNumber: data.bed_number,
         name: data.name || '',
-        age: data.age || 0,
+        age: data.age || '',
         sector: data.sector as 'red' | 'yellow' | 'blue' | 'outside',
         diagnoses: data.diagnoses ? data.diagnoses.split('\n').filter(Boolean) : [],
         medicalHistory: data.medical_history ? data.medical_history.split('\n').filter(Boolean) : [],
@@ -227,7 +227,7 @@ export function usePatients(department?: Department) {
             id: newRecord.id,
             bedNumber: newRecord.bed_number,
             name: newRecord.name || '',
-            age: newRecord.age || 0,
+            age: newRecord.age || '',
             sector: newRecord.sector as 'red' | 'yellow' | 'blue' | 'outside',
             diagnoses: newRecord.diagnoses ? newRecord.diagnoses.split('\n').filter(Boolean) : [],
             medicalHistory: newRecord.medical_history ? newRecord.medical_history.split('\n').filter(Boolean) : [],
@@ -262,7 +262,7 @@ export function usePatients(department?: Department) {
             id: updatedRecord.id,
             bedNumber: updatedRecord.bed_number,
             name: updatedRecord.name || '',
-            age: updatedRecord.age || 0,
+            age: updatedRecord.age || '',
             sector: updatedRecord.sector as 'red' | 'yellow' | 'blue' | 'outside',
             diagnoses: updatedRecord.diagnoses ? updatedRecord.diagnoses.split('\n').filter(Boolean) : [],
             medicalHistory: updatedRecord.medical_history ? updatedRecord.medical_history.split('\n').filter(Boolean) : [],
