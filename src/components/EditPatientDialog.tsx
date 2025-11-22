@@ -442,7 +442,7 @@ export function EditPatientDialog({
           </div>
 
           {/* História Admissional */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 pb-20">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-semibold">História Admissional / Anamnese</Label>
               <Button
