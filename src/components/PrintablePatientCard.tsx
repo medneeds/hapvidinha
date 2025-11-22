@@ -55,7 +55,7 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
               {patient.name || 'SEM NOME'}
             </div>
             <div style={{ fontSize: '7.5pt', color: '#6b7280' }}>
-              {patient.age ? `${patient.age} ANOS` : 'IDADE NÃO INFORMADA'}
+              {patient.age ? (typeof patient.age === 'number' ? `${patient.age} ANOS` : patient.age) : 'IDADE NÃO INFORMADA'}
             </div>
           </div>
 
