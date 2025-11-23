@@ -454,23 +454,37 @@ const Index = () => {
     });
   };
 
-  const handleTransferPatient = (patientId: string, newSector: Patient['sector']) => {
+  const handleTransferPatient = async (patientId: string, newSector: Patient['sector']) => {
     saveToHistory(patients);
     
     const patient = patients.find(p => p.id === patientId);
     if (!patient) return;
 
     const updatedPatient = { ...patient, sector: newSector };
-    setPatients(prev => prev.map(p => p.id === patientId ? updatedPatient : p));
     
-    toast({
-      title: "Paciente transferido",
-      description: `${patient.name} foi transferido para ${
-        newSector === 'red' ? 'Cuidados Especiais' :
-        newSector === 'yellow' ? 'Observação Amarela' :
-        newSector === 'blue' ? 'Observação Azul' : 'Fora das Alas'
-      }.`,
-    });
+    try {
+      // Persist to database
+      await dbUpdatePatient(patientId, updatedPatient);
+      
+      // Update local state
+      setPatients(prev => prev.map(p => p.id === patientId ? updatedPatient : p));
+      
+      toast({
+        title: "Paciente transferido",
+        description: `${patient.name} foi transferido para ${
+          newSector === 'red' ? 'Cuidados Especiais' :
+          newSector === 'yellow' ? 'Observação Amarela' :
+          newSector === 'blue' ? 'Observação Azul' : 'Fora das Alas'
+        }.`,
+      });
+    } catch (error) {
+      console.error("Failed to transfer patient:", error);
+      toast({
+        title: "Erro ao transferir",
+        description: "Não foi possível transferir o paciente.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleUndo = () => {
