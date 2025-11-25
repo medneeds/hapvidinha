@@ -50,9 +50,15 @@ const InternmentHistoryPage = () => {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<InternmentRequest | null>(null);
   const [searchName, setSearchName] = useState("");
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  
+  // Temporary filter states (before applying)
+  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(undefined);
+  const [tempEndDate, setTempEndDate] = useState<Date | undefined>(undefined);
   const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
+  
+  // Applied filter states
+  const [appliedStartDate, setAppliedStartDate] = useState<Date | undefined>(undefined);
+  const [appliedEndDate, setAppliedEndDate] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     loadRequests();
@@ -60,7 +66,7 @@ const InternmentHistoryPage = () => {
 
   useEffect(() => {
     filterRequests();
-  }, [searchName, startDate, endDate, requests]);
+  }, [searchName, appliedStartDate, appliedEndDate, requests]);
 
   const loadRequests = async () => {
     const { data, error } = await supabase
@@ -89,22 +95,44 @@ const InternmentHistoryPage = () => {
     
     switch (period) {
       case "week":
-        setStartDate(subDays(now, 7));
-        setEndDate(now);
+        setTempStartDate(subDays(now, 7));
+        setTempEndDate(now);
         break;
       case "month":
-        setStartDate(subMonths(now, 1));
-        setEndDate(now);
+        setTempStartDate(subMonths(now, 1));
+        setTempEndDate(now);
         break;
       case "quarter":
-        setStartDate(subMonths(now, 3));
-        setEndDate(now);
+        setTempStartDate(subMonths(now, 3));
+        setTempEndDate(now);
         break;
       case "all":
-        setStartDate(undefined);
-        setEndDate(undefined);
+        setTempStartDate(undefined);
+        setTempEndDate(undefined);
         break;
     }
+  };
+
+  const handleApplyFilters = () => {
+    setAppliedStartDate(tempStartDate);
+    setAppliedEndDate(tempEndDate);
+    toast({
+      title: "FILTROS APLICADOS",
+      description: "A VISUALIZAÇÃO FOI ATUALIZADA COM OS FILTROS SELECIONADOS.",
+    });
+  };
+
+  const handleClearFilters = () => {
+    setTempStartDate(undefined);
+    setTempEndDate(undefined);
+    setAppliedStartDate(undefined);
+    setAppliedEndDate(undefined);
+    setSelectedPeriod("all");
+    setSearchName("");
+    toast({
+      title: "FILTROS LIMPOS",
+      description: "EXIBINDO TODAS AS SOLICITAÇÕES.",
+    });
   };
 
   const filterRequests = () => {
@@ -116,16 +144,16 @@ const InternmentHistoryPage = () => {
       );
     }
 
-    // Date filter
-    if (startDate || endDate) {
+    // Date filter using APPLIED dates
+    if (appliedStartDate || appliedEndDate) {
       filtered = filtered.filter(req => {
         const reqDate = new Date(req.created_at);
-        if (startDate && endDate) {
-          return reqDate >= startOfDay(startDate) && reqDate <= endOfDay(endDate);
-        } else if (startDate) {
-          return reqDate >= startOfDay(startDate);
-        } else if (endDate) {
-          return reqDate <= endOfDay(endDate);
+        if (appliedStartDate && appliedEndDate) {
+          return reqDate >= startOfDay(appliedStartDate) && reqDate <= endOfDay(appliedEndDate);
+        } else if (appliedStartDate) {
+          return reqDate >= startOfDay(appliedStartDate);
+        } else if (appliedEndDate) {
+          return reqDate <= endOfDay(appliedEndDate);
         }
         return true;
       });
@@ -269,19 +297,19 @@ const InternmentHistoryPage = () => {
                     variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-normal uppercase",
-                      !startDate && "text-muted-foreground"
+                      !tempStartDate && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDate ? format(startDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
+                    {tempStartDate ? format(tempStartDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={startDate}
+                    selected={tempStartDate}
                     onSelect={(date) => {
-                      setStartDate(date);
+                      setTempStartDate(date);
                       setSelectedPeriod("custom");
                     }}
                     initialFocus
@@ -299,19 +327,19 @@ const InternmentHistoryPage = () => {
                     variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-normal uppercase",
-                      !endDate && "text-muted-foreground"
+                      !tempEndDate && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {endDate ? format(endDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
+                    {tempEndDate ? format(tempEndDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={endDate}
+                    selected={tempEndDate}
                     onSelect={(date) => {
-                      setEndDate(date);
+                      setTempEndDate(date);
                       setSelectedPeriod("custom");
                     }}
                     initialFocus
@@ -322,20 +350,25 @@ const InternmentHistoryPage = () => {
             </div>
           </div>
 
-          {(startDate || endDate) && (
+          {/* Action Buttons */}
+          <div className="flex gap-2 pt-2">
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setStartDate(undefined);
-                setEndDate(undefined);
-                setSelectedPeriod("all");
-              }}
-              className="w-full uppercase text-xs"
+              onClick={handleApplyFilters}
+              className="flex-1 uppercase font-semibold"
+              size="lg"
             >
-              Limpar Filtros de Data
+              <Filter className="mr-2 h-4 w-4" />
+              Aplicar Filtro
             </Button>
-          )}
+            <Button
+              variant="outline"
+              onClick={handleClearFilters}
+              className="flex-1 uppercase"
+              size="lg"
+            >
+              Limpar Filtro
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
