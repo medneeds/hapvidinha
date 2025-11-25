@@ -44,10 +44,10 @@ export default function OpmePage() {
       <div className="p-6 md:p-8 space-y-8 max-w-6xl">
         {/* Header */}
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-500 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-500 to-purple-400 bg-clip-text text-transparent uppercase">
             LISTAS OPME
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-lg uppercase">
             Órteses, Próteses e Materiais Especiais
           </p>
           <Badge variant="secondary" className="mt-2">

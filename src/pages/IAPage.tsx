@@ -265,8 +265,8 @@ export default function IAPage() {
               <Sparkles className="h-7 w-7 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Assistente Examinus</h1>
-              <p className="text-sm text-muted-foreground">Formatador Inteligente de Exames Médicos</p>
+              <h1 className="text-3xl font-bold text-foreground uppercase">Assistente Examinus</h1>
+              <p className="text-sm text-muted-foreground uppercase">Formatador Inteligente de Exames Médicos</p>
             </div>
           </div>
         </div>
