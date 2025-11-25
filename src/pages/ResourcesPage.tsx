@@ -77,7 +77,6 @@ const ResourcesPage = () => {
     const patientId = searchParams.get('patientId');
     if (patientId && patients.length > 0) {
       setSelectedPatient(patientId);
-      setActiveTab("internment");
     }
   }, [searchParams, patients]);
 
