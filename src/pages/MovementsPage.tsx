@@ -201,11 +201,36 @@ export default function MovementsPage() {
   };
 
   const getMovementCounts = () => {
+    // Apply search and date filters to get base filtered list
+    let baseFiltered = [...movements];
+
+    // Search filter
+    if (searchTerm) {
+      baseFiltered = baseFiltered.filter(movement =>
+        movement.patient_name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Date filter
+    if (appliedStartDate || appliedEndDate) {
+      baseFiltered = baseFiltered.filter(movement => {
+        const movementDate = new Date(movement.created_at);
+        if (appliedStartDate && appliedEndDate) {
+          return movementDate >= startOfDay(appliedStartDate) && movementDate <= endOfDay(appliedEndDate);
+        } else if (appliedStartDate) {
+          return movementDate >= startOfDay(appliedStartDate);
+        } else if (appliedEndDate) {
+          return movementDate <= endOfDay(appliedEndDate);
+        }
+        return true;
+      });
+    }
+
     return {
-      all: movements.length,
-      ALTA: movements.filter(m => m.movement_type === "ALTA").length,
-      ÓBITO: movements.filter(m => m.movement_type === "ÓBITO").length,
-      TRANSFERÊNCIA: movements.filter(m => m.movement_type === "TRANSFERÊNCIA").length,
+      all: baseFiltered.length,
+      ALTA: baseFiltered.filter(m => m.movement_type === "ALTA").length,
+      ÓBITO: baseFiltered.filter(m => m.movement_type === "ÓBITO").length,
+      TRANSFERÊNCIA: baseFiltered.filter(m => m.movement_type === "TRANSFERÊNCIA").length,
     };
   };
 
