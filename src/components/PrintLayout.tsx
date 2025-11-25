@@ -30,14 +30,26 @@ export function PrintLayout({
     }
     
     @media print {
-      body {
-        margin: 0;
-        padding: 0;
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
       }
       
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        box-sizing: border-box !important;
+      }
+      
+      /* Mobile Safari specific fixes */
+      @supports (-webkit-touch-callout: none) {
+        * {
+          -webkit-print-color-adjust: exact !important;
+        }
       }
     }
   `;
