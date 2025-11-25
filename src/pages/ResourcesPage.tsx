@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import NotesTab from "@/components/resources/NotesTab";
 import {
   Dialog,
@@ -53,6 +53,7 @@ const ResourcesPage = () => {
   const { currentDepartment } = useDepartment();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
   const [savedRequestInfo, setSavedRequestInfo] = useState<{
@@ -71,6 +72,13 @@ const ResourcesPage = () => {
   useEffect(() => {
     loadPatients();
   }, [currentDepartment]);
+
+  useEffect(() => {
+    const patientId = searchParams.get('patientId');
+    if (patientId && patients.length > 0) {
+      setSelectedPatient(patientId);
+    }
+  }, [searchParams, patients]);
 
   const loadPatients = async () => {
     const { data, error } = await supabase
