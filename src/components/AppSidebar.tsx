@@ -66,11 +66,6 @@ const menuItems = [
     ],
   },
   {
-    title: "DOCUMENTOS",
-    icon: FolderOpen,
-    link: "/documents",
-  },
-  {
     title: "CÓDIGOS",
     icon: FileSearch,
     items: [
@@ -79,6 +74,11 @@ const menuItems = [
       { name: "MATERIAIS", link: "/codigos?category=materiais" },
       { name: "MEDICAÇÕES", link: "/codigos?category=medicacoes" },
     ],
+  },
+  {
+    title: "DOCUMENTOS",
+    icon: FolderOpen,
+    link: "/documents",
   },
   {
     title: "EXAMINUS AI",
