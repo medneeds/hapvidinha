@@ -55,12 +55,7 @@ const menuItems = [
     icon: Users,
     items: [
       { name: "MOVIMENTAÇÕES", link: "/movements" },
-      { 
-        name: "SOLICITAÇÕES", 
-        subsections: [
-          { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
-        ]
-      },
+      { name: "SOLICITAÇÕES", link: "/resources" },
       { name: "HISTÓRICO", link: "/internment-history" },
     ],
   },
@@ -253,7 +248,7 @@ export function AppSidebar({
                               </CollapsibleTrigger>
                               <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                                 <SidebarMenu className="ml-4 border-l border-border/30 pl-2">
-                                  {item.subsections.map((subitem: any) => (
+                                  {item.subsections && Array.isArray(item.subsections) && item.subsections.map((subitem: any) => (
                                     <SidebarMenuItem key={subitem.name}>
                                       <SidebarMenuButton
                                         className="group/subitem hover:bg-accent/60 transition-all duration-200 uppercase text-[10px] rounded-lg cursor-pointer gap-2 hover:translate-x-1 mb-1"
