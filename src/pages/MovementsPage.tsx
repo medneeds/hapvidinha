@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { MainLayout } from "@/components/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -172,7 +171,7 @@ export default function MovementsPage() {
   };
 
   return (
-    <MainLayout>
+    <>
       <div className="p-4 md:p-6 space-y-6">
         <div className="flex flex-col gap-4">
           <div>
@@ -330,6 +329,6 @@ export default function MovementsPage() {
           setSelectedPatient(null);
         }}
       />
-    </MainLayout>
+    </>
   );
 }

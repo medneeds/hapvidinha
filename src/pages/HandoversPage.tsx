@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MainLayout } from "@/components/MainLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { useDepartment } from "@/contexts/DepartmentContext";
@@ -185,7 +184,7 @@ export default function HandoversPage() {
   };
 
   return (
-    <MainLayout onOpenHandover={() => setHandoverDialogOpen(true)}>
+    <>
       <div className="p-4 sm:p-6 space-y-6">
         {/* Page Header */}
         <div className="flex items-center gap-3">
@@ -360,6 +359,6 @@ export default function HandoversPage() {
         onOpenChange={setHandoverDialogOpen}
         patients={mockPatients}
       />
-    </MainLayout>
+    </>
   );
 }
