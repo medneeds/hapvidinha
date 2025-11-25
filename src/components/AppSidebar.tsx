@@ -51,11 +51,6 @@ const menuItems = [
     link: "/",
   },
   {
-    title: "VERSÕES",
-    icon: History,
-    link: "/versions",
-  },
-  {
     title: "DOCUMENTOS",
     icon: FolderOpen,
     link: "/documents",
@@ -100,6 +95,11 @@ const menuItems = [
       },
       { name: "HISTÓRICO", link: "/internment-history" },
     ],
+  },
+  {
+    title: "VERSÕES",
+    icon: History,
+    link: "/versions",
   },
 ];
 
