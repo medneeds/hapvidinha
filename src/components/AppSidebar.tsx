@@ -10,9 +10,14 @@ import {
   FolderOpen,
   Sparkles,
   BarChart3,
+  LockKeyhole,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
+import { useState } from "react";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import {
   Sidebar,
   SidebarContent,
@@ -55,6 +60,8 @@ export function AppSidebar({
   const { signOut, user } = useAuth();
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [password, setPassword] = useState("");
   
   // Check if user is COORDENADOR
   const isCoordinator = user?.email === "coordenador@sistema.local";
@@ -105,6 +112,24 @@ export function AppSidebar({
       link: "/dashboard",
     },
   ];
+
+  const handleDashboardClick = () => {
+    setShowPasswordDialog(true);
+  };
+
+  const handlePasswordSubmit = () => {
+    if (password === "NOTREDAME") {
+      setShowPasswordDialog(false);
+      setPassword("");
+      navigate("/dashboard");
+      if (isMobile) {
+        setOpenMobile(false);
+      }
+    } else {
+      toast.error("Senha incorreta");
+      setPassword("");
+    }
+  };
 
   const handleItemClick = (item: string | { name: string; link?: string | null; action?: string; subsections?: any[] }) => {
     // Handle direct string links (like from section.link)
@@ -163,7 +188,7 @@ export function AppSidebar({
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton
-                      onClick={() => handleItemClick(section.link)}
+                      onClick={() => section.title === "DASHBOARD DE GESTÃO" ? handleDashboardClick() : handleItemClick(section.link)}
                       className={cn(
                         "transition-all duration-200 hover:bg-accent/80 hover:scale-105",
                         "justify-start px-4 py-3 h-auto",
@@ -174,6 +199,9 @@ export function AppSidebar({
                       <span className="text-xs font-medium uppercase tracking-wide text-foreground">
                         {section.title}
                       </span>
+                      {section.title === "DASHBOARD DE GESTÃO" && (
+                        <LockKeyhole className="h-3 w-3 ml-auto opacity-60" />
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -342,14 +370,44 @@ export function AppSidebar({
   }
 
   return (
-    <Sidebar 
-      collapsible="icon" 
-      className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
-      onClick={() => {
-        if (!open) setOpen(true);
-      }}
-    >
-      {sidebarContent}
-    </Sidebar>
+    <>
+      <Sidebar 
+        collapsible="icon" 
+        className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
+        onClick={() => {
+          if (!open) setOpen(true);
+        }}
+      >
+        {sidebarContent}
+      </Sidebar>
+
+      <AlertDialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Acesso Restrito ao Dashboard</AlertDialogTitle>
+            <AlertDialogDescription>
+              Digite a senha de coordenador para acessar o Dashboard de Gestão.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-4">
+            <Input
+              type="password"
+              placeholder="Senha de coordenador"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handlePasswordSubmit();
+                }
+              }}
+            />
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPassword("")}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handlePasswordSubmit}>Acessar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
