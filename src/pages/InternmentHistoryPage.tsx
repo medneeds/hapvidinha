@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Trash2, Eye, History, Filter } from "lucide-react";
+import { Search, Trash2, Eye, History, Filter, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -45,7 +50,9 @@ const InternmentHistoryPage = () => {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<InternmentRequest | null>(null);
   const [searchName, setSearchName] = useState("");
-  const [searchDate, setSearchDate] = useState("");
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
 
   useEffect(() => {
     loadRequests();
@@ -53,7 +60,7 @@ const InternmentHistoryPage = () => {
 
   useEffect(() => {
     filterRequests();
-  }, [searchName, searchDate, requests]);
+  }, [searchName, startDate, endDate, requests]);
 
   const loadRequests = async () => {
     const { data, error } = await supabase
@@ -76,6 +83,30 @@ const InternmentHistoryPage = () => {
     setRequests(data || []);
   };
 
+  const handlePeriodChange = (period: string) => {
+    setSelectedPeriod(period);
+    const now = new Date();
+    
+    switch (period) {
+      case "week":
+        setStartDate(subDays(now, 7));
+        setEndDate(now);
+        break;
+      case "month":
+        setStartDate(subMonths(now, 1));
+        setEndDate(now);
+        break;
+      case "quarter":
+        setStartDate(subMonths(now, 3));
+        setEndDate(now);
+        break;
+      case "all":
+        setStartDate(undefined);
+        setEndDate(undefined);
+        break;
+    }
+  };
+
   const filterRequests = () => {
     let filtered = [...requests];
 
@@ -85,10 +116,18 @@ const InternmentHistoryPage = () => {
       );
     }
 
-    if (searchDate) {
+    // Date filter
+    if (startDate || endDate) {
       filtered = filtered.filter(req => {
-        const reqDate = new Date(req.created_at).toISOString().split('T')[0];
-        return reqDate === searchDate;
+        const reqDate = new Date(req.created_at);
+        if (startDate && endDate) {
+          return reqDate >= startOfDay(startDate) && reqDate <= endOfDay(endDate);
+        } else if (startDate) {
+          return reqDate >= startOfDay(startDate);
+        } else if (endDate) {
+          return reqDate <= endOfDay(endDate);
+        }
+        return true;
       });
     }
 
@@ -160,37 +199,143 @@ const InternmentHistoryPage = () => {
             <CardTitle className="uppercase text-lg">Filtros de Busca</CardTitle>
           </div>
           <CardDescription className="uppercase text-xs">
-            Busque solicitações por nome do paciente ou data de criação
+            Busque solicitações por nome do paciente ou período
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <Label htmlFor="search-name" className="uppercase text-sm font-semibold flex items-center gap-2">
-                <Search className="h-4 w-4" />
-                Buscar por Nome do Paciente
-              </Label>
-              <Input
-                id="search-name"
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value.toUpperCase())}
-                placeholder="Digite o nome..."
-                className="uppercase h-12"
-              />
-            </div>
-            <div className="space-y-3">
-              <Label htmlFor="search-date" className="uppercase text-sm font-semibold">
-                Buscar por Data
-              </Label>
-              <Input
-                id="search-date"
-                type="date"
-                value={searchDate}
-                onChange={(e) => setSearchDate(e.target.value)}
-                className="h-12"
-              />
+        <CardContent className="pt-6 space-y-6">
+          {/* Search by Name */}
+          <div className="space-y-3">
+            <Label htmlFor="search-name" className="uppercase text-sm font-semibold flex items-center gap-2">
+              <Search className="h-4 w-4" />
+              Buscar por Nome do Paciente
+            </Label>
+            <Input
+              id="search-name"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value.toUpperCase())}
+              placeholder="Digite o nome..."
+              className="uppercase h-12"
+            />
+          </div>
+
+          <Separator />
+
+          {/* Quick Period Buttons */}
+          <div className="space-y-3">
+            <Label className="uppercase text-sm font-semibold">Período Rápido</Label>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant={selectedPeriod === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handlePeriodChange("all")}
+                className="uppercase text-xs"
+              >
+                Todos
+              </Button>
+              <Button
+                variant={selectedPeriod === "week" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handlePeriodChange("week")}
+                className="uppercase text-xs"
+              >
+                Última Semana
+              </Button>
+              <Button
+                variant={selectedPeriod === "month" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handlePeriodChange("month")}
+                className="uppercase text-xs"
+              >
+                Último Mês
+              </Button>
+              <Button
+                variant={selectedPeriod === "quarter" ? "default" : "outline"}
+                size="sm"
+                onClick={() => handlePeriodChange("quarter")}
+                className="uppercase text-xs"
+              >
+                Último Trimestre
+              </Button>
             </div>
           </div>
+
+          {/* Date Pickers */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium uppercase">Data Inicial</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal uppercase",
+                      !startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDate ? format(startDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={(date) => {
+                      setStartDate(date);
+                      setSelectedPeriod("custom");
+                    }}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium uppercase">Data Final</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal uppercase",
+                      !endDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {endDate ? format(endDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={(date) => {
+                      setEndDate(date);
+                      setSelectedPeriod("custom");
+                    }}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+
+          {(startDate || endDate) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setStartDate(undefined);
+                setEndDate(undefined);
+                setSelectedPeriod("all");
+              }}
+              className="w-full uppercase text-xs"
+            >
+              Limpar Filtros de Data
+            </Button>
+          )}
         </CardContent>
       </Card>
 
