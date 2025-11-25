@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, FileText, Database } from "lucide-react";
+import { Plus, FileText, Database, Import } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,6 +33,7 @@ interface Patient {
   bed_number: string;
   sector: string;
   age: string | null;
+  admission_history: string | null;
 }
 
 const ResourcesPage = () => {
@@ -57,7 +58,7 @@ const ResourcesPage = () => {
   const loadPatients = async () => {
     const { data, error } = await supabase
       .from("patients")
-      .select("id, name, bed_number, sector, age")
+      .select("id, name, bed_number, sector, age, admission_history")
       .eq("department", currentDepartment)
       .order("sector", { ascending: true })
       .order("bed_number", { ascending: true });
@@ -70,6 +71,42 @@ const ResourcesPage = () => {
     }
 
     setPatients(data || []);
+  };
+
+  const handleImportAdmissionHistory = () => {
+    if (!selectedPatient) {
+      toast({
+        title: "ERRO",
+        description: "SELECIONE UM PACIENTE PRIMEIRO",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const patient = patients.find(p => p.id === selectedPatient);
+    if (!patient) {
+      toast({
+        title: "ERRO",
+        description: "PACIENTE NÃO ENCONTRADO",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!patient.admission_history || patient.admission_history.trim() === "") {
+      toast({
+        title: "AVISO",
+        description: "ESTE PACIENTE NÃO POSSUI HISTÓRIA ADMISSIONAL REGISTRADA",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setFormData({ ...formData, content: patient.admission_history.toUpperCase() });
+    toast({
+      title: "IMPORTADO",
+      description: "HISTÓRIA ADMISSIONAL IMPORTADA COM SUCESSO",
+    });
   };
 
   const handleOpenSaveDialog = () => {
@@ -349,9 +386,22 @@ const ResourcesPage = () => {
             </div>
 
             <div className="grid gap-3">
-              <Label htmlFor="content" className="uppercase font-semibold text-sm">
-                Conteúdo da Solicitação *
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="content" className="uppercase font-semibold text-sm">
+                  Conteúdo da Solicitação *
+                </Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleImportAdmissionHistory}
+                  className="uppercase gap-2 h-8 text-xs"
+                  disabled={!selectedPatient}
+                >
+                  <Import className="h-3.5 w-3.5" />
+                  Importar Anamnese
+                </Button>
+              </div>
               <Textarea
                 id="content"
                 value={formData.content}
