@@ -58,7 +58,6 @@ const menuItems = [
       { 
         name: "SOLICITAÇÕES", 
         subsections: [
-          { name: "BLOCO DE NOTAS", link: "/resources" },
           { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
         ]
       },
