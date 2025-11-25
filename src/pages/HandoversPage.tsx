@@ -4,9 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { MainLayout } from "@/components/MainLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { useDepartment } from "@/contexts/DepartmentContext";
@@ -187,57 +185,22 @@ export default function HandoversPage() {
   };
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-gradient-to-br from-background via-background to-muted/20">
-        <AppSidebar onOpenHandover={() => setHandoverDialogOpen(true)} />
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-gradient-to-r from-background/95 via-background/98 to-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 print:hidden">
-            <div className="flex h-16 items-center justify-between px-4 sm:px-6">
-              <div className="flex items-center gap-3">
-                <SidebarTrigger className="hover:bg-accent/50 transition-colors" />
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary via-primary to-primary/80 flex items-center justify-center shadow-lg shadow-primary/30">
-                    <ClipboardList className="h-4 w-4 text-primary-foreground" />
-                  </div>
-                  <div>
-                    <h1 className="text-sm font-bold text-foreground uppercase tracking-tight">
-                      PASSAGENS DE PLANTÃO
-                    </h1>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                      Histórico de Registros
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <ThemeToggle />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate("/")}
-                  className="hover:bg-accent/50 transition-colors"
-                >
-                  <ClipboardList className="h-4 w-4" />
-                </Button>
-                {user && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => signOut()}
-                    className="gap-2 hover:bg-destructive/10 hover:text-destructive transition-colors"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span className="hidden sm:inline uppercase text-xs">Sair</span>
-                  </Button>
-                )}
-              </div>
-            </div>
-          </header>
-
-          {/* Main Content */}
-          <main className="flex-1 p-4 sm:p-6 space-y-4">
+    <MainLayout onOpenHandover={() => setHandoverDialogOpen(true)}>
+      <div className="container mx-auto p-4 sm:p-6 space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary via-primary to-primary/80 flex items-center justify-center shadow-lg shadow-primary/30">
+            <ClipboardList className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground uppercase tracking-tight">
+              PASSAGENS DE PLANTÃO
+            </h1>
+            <p className="text-sm text-muted-foreground uppercase tracking-wide">
+              Histórico de Registros
+            </p>
+          </div>
+        </div>
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -370,10 +333,9 @@ export default function HandoversPage() {
                 ))}
               </div>
             )}
-          </main>
-        </div>
       </div>
 
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -398,6 +360,6 @@ export default function HandoversPage() {
         onOpenChange={setHandoverDialogOpen}
         patients={mockPatients}
       />
-    </SidebarProvider>
+    </MainLayout>
   );
 }
