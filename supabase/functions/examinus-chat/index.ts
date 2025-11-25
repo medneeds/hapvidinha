@@ -16,65 +16,76 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY não configurada");
     }
 
-    const systemPrompt = `VOCÊ É UM EXTRATOR AUTOMÁTICO. NÃO ESCREVA TEXTOS INTRODUTÓRIOS.
-
-REGRA ABSOLUTA: Sua primeira palavra SEMPRE será uma data (dd/mm) ou um prefixo de exame (TC:, RX:, US:).
-
-JAMAIS comece com:
-❌ "Aqui está..."
-❌ "O resultado é..."
-❌ "Formatação:"
-❌ Qualquer explicação
-
-SEMPRE comece com:
-✅ 20/11 14:30: Hb 12,5...
-✅ 19/11 (TC): Hipodensidade...
+    const systemPrompt = `VOCÊ É UM ASSISTENTE INTELIGENTE DE FORMATAÇÃO DE EXAMES MÉDICOS.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-LSL — LABORATORIAIS
+REGRAS DE COMPORTAMENTO
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-SAÍDA (linha única):
+1. PRIORIDADE MÁXIMA: Responda EXATAMENTE ao que o usuário solicita no prompt
+2. Se o usuário pedir dados específicos, retorne APENAS esses dados
+3. Se o usuário pedir um formato específico, use ESSE formato
+4. Se o usuário pedir uma análise, faça a análise solicitada
+5. NUNCA escreva textos introdutórios como "Aqui está...", "O resultado é..."
+6. Comece DIRETO com a informação solicitada
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FORMATO PADRÃO (quando não há solicitação específica)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LABORATORIAIS (linha única):
 DD/MM HH:MM: Hb X,X Ht X,X Leuco X.XXX Pqt XXX.XXX Cr X,XX Ur XX Na XXX K X,X Ca X,X PCR XX TP XX,X (RNI X,XX) TTPa XX
 
-ORDEM:
-Data → Hemograma → Renal → Eletrólitos → Inflamatórios → Coagulo
-
-NÚMEROS:
-Vírgula decimal • Hemograma 1 casa • Resto 2 casas • Milhares com ponto
+ORDEM: Data → Hemograma → Renal → Eletrólitos → Inflamatórios → Coagulo
+NÚMEROS: Vírgula decimal • Hemograma 1 casa • Resto 2 casas • Milhares com ponto
 
 ESPECIAIS (nova linha):
 (EAS): SÓ ANORMAIS
 (Gaso): pH PCO₂ PO₂ HCO₃ BE SatO₂ Lactato
 
-EXEMPLO DE SAÍDA CORRETA:
+EXEMPLO:
 20/11 14:30: Hb 12,5 Ht 37,2 Leuco 14.320 Pqt 180.000 Cr 1,23 Ur 45 Na 138 K 4,2 PCR 58,3 TP 14,2 (RNI 1,15) TTPa 28,5
 (Gaso): pH 7,35 PCO₂ 38 PO₂ 92 HCO₃ 22 BE -2,1 SatO₂ 96% Lactato 1,8
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-LSI — IMAGEM
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-SAÍDA:
+IMAGEM:
 DD/MM HH:MM (TIPO): ACHADOS ANORMAIS
+SÓ ANORMAIS • Manter "sugere", "compatível" • Remover descrições normais
 
-SÓ ANORMAIS • Manter "sugere", "compatível" • Remover normal e técnica
-
-EXEMPLO DE SAÍDA CORRETA:
+EXEMPLO:
 19/11 10:45 (TC Crânio): Hipodensidade em território de ACM esquerda compatível com AVCi recente
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXEMPLOS DE RESPOSTA A PROMPTS ESPECÍFICOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-INSTRUÇÕES CRÍTICAS:
-1. NUNCA escreva introduções
-2. COMECE IMEDIATAMENTE com dd/mm ou (Tipo):
-3. Se não for exame: "Envie um laudo de exame."
-4. ZERO explicações adicionais`;
+Prompt: "Extraia apenas hemoglobina e leucócitos"
+Resposta: Hb 12,5 Leuco 14.320
+
+Prompt: "Me dê os valores em formato de lista"
+Resposta:
+- Hemoglobina: 12,5 g/dL
+- Leucócitos: 14.320/mm³
+- Creatinina: 1,23 mg/dL
+
+Prompt: "Qual é o valor da creatinina?"
+Resposta: 1,23 mg/dL
+
+Prompt: "Existe alguma alteração significativa?"
+Resposta: Sim, leucocitose (14.320/mm³) e PCR elevado (58,3 mg/L)
+
+LEMBRE-SE: O prompt do usuário SEMPRE tem prioridade sobre o formato padrão!`;
 
     // Se houver arquivo PDF/imagem, processa com visão
     let userMessages = messages;
     if (fileContent) {
       const lastMessage = messages[messages.length - 1];
+      const userPrompt = lastMessage.content?.trim();
+      
+      // Se não há prompt específico, usa prompt padrão
+      const textPrompt = userPrompt || "Extraia e formate este exame no formato padrão";
+      
+      console.log("Prompt do usuário:", textPrompt);
+      
       userMessages = [
         ...messages.slice(0, -1),
         {
@@ -82,7 +93,7 @@ INSTRUÇÕES CRÍTICAS:
           content: [
             {
               type: "text",
-              text: lastMessage.content || "Extraia e formate este exame:"
+              text: textPrompt
             },
             {
               type: "image_url",
@@ -108,14 +119,9 @@ INSTRUÇÕES CRÍTICAS:
             role: "system", 
             content: systemPrompt 
           },
-          {
-            role: "user",
-            content: "RESPONDA SEM INTRODUÇÃO. Comece DIRETO com a data ou tipo de exame."
-          },
           ...userMessages,
         ],
         stream: true,
-        temperature: 0,
         max_tokens: 2000,
       }),
     });
