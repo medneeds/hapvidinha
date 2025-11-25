@@ -243,6 +243,7 @@ const ResourcesPage = () => {
         patient_record: null,
         destination: formData.destination,
         content: formData.content.toUpperCase(),
+        department: currentDepartment,
         created_by: currentUser.id,
       });
 
