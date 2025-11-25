@@ -4,13 +4,11 @@ import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { MainLayout } from "@/components/MainLayout";
 import { Patient } from "@/types/patient";
 import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -614,14 +612,7 @@ const Index = () => {
   };
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      <div 
-        className="flex min-h-screen w-full bg-background"
-      >
-        <AppSidebar 
-          onOpenHandover={() => setHandoverDialogOpen(true)} 
-        />
-        
+    <MainLayout onOpenHandover={() => setHandoverDialogOpen(true)}>
         {/* Print-only layout - Hidden on screen, visible only when printing */}
         {printMode && (
           <div className="print-layout-container">
@@ -646,14 +637,13 @@ const Index = () => {
           ) : null;
         })()}
         
-        <div className={`flex-1 flex flex-col min-w-0 ${printMode ? 'print-hide' : ''}`}>
+        <div className={printMode ? 'print-hide' : ''}>
           {/* Header */}
           <header className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5">
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
             <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                  <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:bg-white/10" />
                   <div className="min-w-0 flex-1 flex flex-col gap-1.5">
                     <h1 className="text-sm sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
                     <div className="print:hidden">
@@ -800,7 +790,6 @@ const Index = () => {
                   ) : (
                     /* Desktop: Show all buttons as before */
                     <>
-                      <ThemeToggle />
                       <Button
                         variant="outline"
                         size="icon"
@@ -1176,7 +1165,6 @@ const Index = () => {
             </div>
           </footer>
         </div>
-      </div>
 
       {/* Register Handover Dialog */}
       <RegisterHandoverDialog
@@ -1208,7 +1196,7 @@ const Index = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </SidebarProvider>
+    </MainLayout>
   );
 };
 
