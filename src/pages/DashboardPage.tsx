@@ -11,8 +11,9 @@ import {
 } from "recharts";
 import { 
   CalendarIcon, Download, Users, FileText, UserCheck, 
-  UserX, ArrowRightLeft, TrendingUp, Activity, BarChart3
+  UserX, ArrowRightLeft, TrendingUp, Activity, BarChart3, Filter, X
 } from "lucide-react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "@/hooks/use-toast";
@@ -21,6 +22,14 @@ import { cn } from "@/lib/utils";
 const COLORS = ['#ef4444', '#eab308', '#3b82f6', '#6b7280', '#8b5cf6', '#ec4899'];
 
 const DashboardPage = () => {
+  // Temporary filter states (before applying)
+  const [tempDateRange, setTempDateRange] = useState<{ from: Date; to: Date }>({
+    from: subDays(new Date(), 30),
+    to: new Date()
+  });
+  const [tempSelectedDepartment, setTempSelectedDepartment] = useState<string>("all");
+  
+  // Applied filter states
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: subDays(new Date(), 30),
     to: new Date()
@@ -332,6 +341,30 @@ const DashboardPage = () => {
     return Math.round(((current - previous) / previous) * 100);
   };
 
+  const handleApplyFilters = () => {
+    setDateRange(tempDateRange);
+    setSelectedDepartment(tempSelectedDepartment);
+    toast({
+      title: "Filtros Aplicados",
+      description: "Os filtros foram aplicados com sucesso",
+    });
+  };
+
+  const handleClearFilters = () => {
+    const defaultDateRange = {
+      from: subDays(new Date(), 30),
+      to: new Date()
+    };
+    setTempDateRange(defaultDateRange);
+    setDateRange(defaultDateRange);
+    setTempSelectedDepartment("all");
+    setSelectedDepartment("all");
+    toast({
+      title: "Filtros Limpos",
+      description: "Todos os filtros foram removidos",
+    });
+  };
+
   const KPICard = ({ 
     title, 
     value, 
@@ -385,6 +418,7 @@ const DashboardPage = () => {
           <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
+                <SidebarTrigger className="text-white hover:bg-white/20 transition-colors" />
                 <div className="rounded-xl bg-white/20 p-3 backdrop-blur-sm">
                   <BarChart3 className="h-6 w-6 text-white" />
                 </div>
@@ -392,7 +426,7 @@ const DashboardPage = () => {
                   Dashboard de Gestão
                 </h1>
               </div>
-              <p className="text-white/80 text-sm ml-[60px]">
+              <p className="text-white/80 text-sm ml-[100px]">
                 Visão geral e indicadores de desempenho em tempo real
               </p>
             </div>
@@ -422,76 +456,97 @@ const DashboardPage = () => {
         {/* Filters com estilo aprimorado */}
         <Card className="border-border/50 shadow-lg backdrop-blur-sm bg-card/95 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <CardContent className="pt-6">
-            <div className="grid gap-6 md:grid-cols-3">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold uppercase tracking-wide text-foreground/80 flex items-center gap-2">
-                  <Activity className="h-3.5 w-3.5 text-primary" />
-                  Setor
-                </label>
-                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                  <SelectTrigger className="border-border/50 focus:ring-primary/30 transition-all duration-300 hover:border-primary/50">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {departments.map(dept => (
-                      <SelectItem key={dept.value} value={dept.value}>
-                        {dept.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-semibold uppercase tracking-wide text-foreground/80 flex items-center gap-2">
-                  <CalendarIcon className="h-3.5 w-3.5 text-primary" />
-                  Data Inicial
-                </label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start text-left font-normal border-border/50 hover:border-primary/50 transition-all duration-300"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
-                      {format(dateRange.from, "PPP", { locale: ptBR })}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={dateRange.from}
-                      onSelect={(date) => date && setDateRange({ ...dateRange, from: date })}
-                      locale={ptBR}
-                    />
-                  </PopoverContent>
-                </Popover>
+            <div className="space-y-4">
+              <div className="grid gap-6 md:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold uppercase tracking-wide text-foreground/80 flex items-center gap-2">
+                    <Activity className="h-3.5 w-3.5 text-primary" />
+                    Setor
+                  </label>
+                  <Select value={tempSelectedDepartment} onValueChange={setTempSelectedDepartment}>
+                    <SelectTrigger className="border-border/50 focus:ring-primary/30 transition-all duration-300 hover:border-primary/50">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.map(dept => (
+                        <SelectItem key={dept.value} value={dept.value}>
+                          {dept.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold uppercase tracking-wide text-foreground/80 flex items-center gap-2">
+                    <CalendarIcon className="h-3.5 w-3.5 text-primary" />
+                    Data Inicial
+                  </label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start text-left font-normal border-border/50 hover:border-primary/50 transition-all duration-300"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
+                        {format(tempDateRange.from, "PPP", { locale: ptBR })}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={tempDateRange.from}
+                        onSelect={(date) => date && setTempDateRange({ ...tempDateRange, from: date })}
+                        locale={ptBR}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold uppercase tracking-wide text-foreground/80 flex items-center gap-2">
+                    <CalendarIcon className="h-3.5 w-3.5 text-primary" />
+                    Data Final
+                  </label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start text-left font-normal border-border/50 hover:border-primary/50 transition-all duration-300"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
+                        {format(tempDateRange.to, "PPP", { locale: ptBR })}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={tempDateRange.to}
+                        onSelect={(date) => date && setTempDateRange({ ...tempDateRange, to: date })}
+                        locale={ptBR}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-semibold uppercase tracking-wide text-foreground/80 flex items-center gap-2">
-                  <CalendarIcon className="h-3.5 w-3.5 text-primary" />
-                  Data Final
-                </label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start text-left font-normal border-border/50 hover:border-primary/50 transition-all duration-300"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
-                      {format(dateRange.to, "PPP", { locale: ptBR })}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={dateRange.to}
-                      onSelect={(date) => date && setDateRange({ ...dateRange, to: date })}
-                      locale={ptBR}
-                    />
-                  </PopoverContent>
-                </Popover>
+              {/* Filter Action Buttons */}
+              <div className="flex gap-3 justify-end pt-2">
+                <Button
+                  variant="outline"
+                  onClick={handleClearFilters}
+                  className="uppercase gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-all duration-300"
+                >
+                  <X className="h-4 w-4" />
+                  Limpar Filtro
+                </Button>
+                <Button
+                  onClick={handleApplyFilters}
+                  className="uppercase gap-2 bg-gradient-primary hover:opacity-90 transition-all duration-300 shadow-md hover:shadow-lg"
+                >
+                  <Filter className="h-4 w-4" />
+                  Aplicar Filtro
+                </Button>
               </div>
             </div>
           </CardContent>
