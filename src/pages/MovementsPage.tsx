@@ -126,6 +126,10 @@ export default function MovementsPage() {
     const now = new Date();
     
     switch (period) {
+      case "today":
+        setTempStartDate(now);
+        setTempEndDate(now);
+        break;
       case "week":
         setTempStartDate(subDays(now, 7));
         setTempEndDate(now);
@@ -326,6 +330,14 @@ export default function MovementsPage() {
                   className="uppercase text-xs"
                 >
                   Todos
+                </Button>
+                <Button
+                  variant={selectedPeriod === "today" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePeriodChange("today")}
+                  className="uppercase text-xs"
+                >
+                  Hoje
                 </Button>
                 <Button
                   variant={selectedPeriod === "week" ? "default" : "outline"}
