@@ -1,7 +1,7 @@
 import { 
   FileText, 
   Biohazard, 
-  Target, 
+  Circle, 
   ClipboardList, 
   Droplet, 
   FileCheck, 
@@ -35,7 +35,7 @@ export default function DocumentsPage() {
       title: "Tomografias", 
       description: "Questionários e documentos para exames tomográficos",
       route: "/documents/tomografias",
-      icon: Target,
+      icon: Circle,
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"
     },
