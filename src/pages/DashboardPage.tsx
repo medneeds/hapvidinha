@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { 
   CalendarIcon, Download, Users, FileText, UserCheck, 
-  UserX, ArrowRightLeft, TrendingUp, Activity, BarChart3, Filter, X
+  UserX, ArrowRightLeft, TrendingUp, Activity, BarChart3, Filter, X, Loader2
 } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
@@ -24,6 +24,7 @@ const COLORS = ['#ef4444', '#eab308', '#3b82f6', '#6b7280', '#8b5cf6', '#ec4899'
 
 const DashboardPage = () => {
   const { currentDepartment } = useDepartment();
+  const [isLoading, setIsLoading] = useState(false);
   
   // Temporary filter states (before applying)
   const [tempDateRange, setTempDateRange] = useState<{ from: Date; to: Date }>({
@@ -44,6 +45,13 @@ const DashboardPage = () => {
   useEffect(() => {
     setTempSelectedDepartment(currentDepartment);
     setSelectedDepartment(currentDepartment);
+    
+    // Show toast instructing user to apply filters
+    toast({
+      title: "SETOR ALTERADO",
+      description: "Clique em 'APLICAR FILTRO' para visualizar os dados do novo setor",
+      duration: 4000,
+    });
   }, [currentDepartment]);
   
   // KPIs State
@@ -110,14 +118,19 @@ const DashboardPage = () => {
   }, [dateRange, selectedDepartment, comparisonPeriod]);
 
   const fetchDashboardData = async () => {
-    await Promise.all([
-      fetchKPIs(),
-      fetchMovementsOverTime(),
-      fetchSectorDistribution(),
-      fetchMovementsByType(),
-      fetchBedOccupancy(),
-      fetchRequestsByDestination()
-    ]);
+    setIsLoading(true);
+    try {
+      await Promise.all([
+        fetchKPIs(),
+        fetchMovementsOverTime(),
+        fetchSectorDistribution(),
+        fetchMovementsByType(),
+        fetchBedOccupancy(),
+        fetchRequestsByDestination()
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchKPIs = async () => {
@@ -354,8 +367,8 @@ const DashboardPage = () => {
     setDateRange(tempDateRange);
     setSelectedDepartment(tempSelectedDepartment);
     toast({
-      title: "Filtros Aplicados",
-      description: "Os filtros foram aplicados com sucesso",
+      title: "FILTROS APLICADOS COM SUCESSO",
+      description: "Dashboard atualizado com os novos filtros",
     });
   };
 
@@ -366,11 +379,11 @@ const DashboardPage = () => {
     };
     setTempDateRange(defaultDateRange);
     setDateRange(defaultDateRange);
-    setTempSelectedDepartment("all");
-    setSelectedDepartment("all");
+    setTempSelectedDepartment(currentDepartment);
+    setSelectedDepartment(currentDepartment);
     toast({
-      title: "Filtros Limpos",
-      description: "Todos os filtros foram removidos",
+      title: "FILTROS LIMPOS",
+      description: "Filtros restaurados aos valores padrão",
     });
   };
 
@@ -419,7 +432,20 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 animate-fade-in relative">
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center animate-fade-in">
+          <div className="flex flex-col items-center gap-4 p-8 rounded-2xl bg-card shadow-glow animate-scale-in">
+            <Loader2 className="h-12 w-12 text-primary animate-spin" />
+            <div className="text-center space-y-2">
+              <p className="text-lg font-semibold text-foreground">ATUALIZANDO DASHBOARD</p>
+              <p className="text-sm text-muted-foreground">Carregando dados do setor...</p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="container mx-auto p-6 space-y-8">
         {/* Header com gradiente */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-primary p-8 shadow-glow animate-scale-in">
