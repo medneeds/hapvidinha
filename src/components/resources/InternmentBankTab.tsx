@@ -34,7 +34,7 @@ import {
 
 interface InternmentRequest {
   id: string;
-  title: string;
+  destination: string;
   content: string;
   patient_name: string;
   patient_age: number | null;
@@ -61,7 +61,7 @@ const InternmentBankTab = () => {
     patientAge: "",
     patientSex: "",
     patientRecord: "",
-    title: "",
+    destination: "",
     content: "",
   });
 
@@ -120,7 +120,7 @@ const InternmentBankTab = () => {
       patientAge: "",
       patientSex: "",
       patientRecord: "",
-      title: "",
+      destination: "",
       content: "",
     });
     setIsSaveDialogOpen(true);
@@ -136,10 +136,10 @@ const InternmentBankTab = () => {
       return;
     }
 
-    if (!formData.title.trim()) {
+    if (!formData.destination.trim()) {
       toast({
         title: "ERRO",
-        description: "TÍTULO DA SOLICITAÇÃO É OBRIGATÓRIO",
+        description: "DESTINO DA SOLICITAÇÃO É OBRIGATÓRIO",
         variant: "destructive",
       });
       return;
@@ -171,7 +171,7 @@ const InternmentBankTab = () => {
         patient_age: formData.patientAge ? parseInt(formData.patientAge) : null,
         patient_sex: formData.patientSex || null,
         patient_record: formData.patientRecord.toUpperCase() || null,
-        title: formData.title.toUpperCase(),
+        destination: formData.destination.toUpperCase(),
         content: formData.content.toUpperCase(),
         created_by: user.id,
         department: currentDepartment,
@@ -310,7 +310,7 @@ const InternmentBankTab = () => {
             <TableRow>
               <TableHead className="uppercase">NOME DO PACIENTE</TableHead>
               <TableHead className="uppercase">IDADE</TableHead>
-              <TableHead className="uppercase">TÍTULO</TableHead>
+              <TableHead className="uppercase">DESTINO</TableHead>
               <TableHead className="uppercase">DATA</TableHead>
               <TableHead className="uppercase text-right print:hidden">AÇÕES</TableHead>
             </TableRow>
@@ -332,7 +332,7 @@ const InternmentBankTab = () => {
                     {request.patient_age || "-"}
                   </TableCell>
                   <TableCell className="uppercase max-w-xs truncate">
-                    {request.title}
+                    {request.destination}
                   </TableCell>
                   <TableCell className="uppercase text-xs">
                     {formatDate(request.created_at)}
@@ -437,17 +437,24 @@ const InternmentBankTab = () => {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="title" className="uppercase">
-                TÍTULO DA SOLICITAÇÃO *
+              <Label htmlFor="destination" className="uppercase">
+                DESTINO DA SOLICITAÇÃO *
               </Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value.toUpperCase() })}
-                placeholder="EX: INTERNAÇÃO CARDIOLOGIA - IAM"
-                className="uppercase"
-                required
-              />
+              <Select
+                value={formData.destination}
+                onValueChange={(value) => setFormData({ ...formData, destination: value })}
+              >
+                <SelectTrigger className="uppercase">
+                  <SelectValue placeholder="SELECIONE O DESTINO" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="UTI" className="uppercase">UTI - Unidade de Terapia Intensiva</SelectItem>
+                  <SelectItem value="ENFERMARIA" className="uppercase">Enfermaria</SelectItem>
+                  <SelectItem value="POSTO INTERNAÇÃO" className="uppercase">Posto Internação</SelectItem>
+                  <SelectItem value="CIRURGIA" className="uppercase">Centro Cirúrgico</SelectItem>
+                  <SelectItem value="HEMODINÂMICA" className="uppercase">Hemodinâmica</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid gap-2">
@@ -515,8 +522,8 @@ const InternmentBankTab = () => {
               </Card>
 
               <div>
-                <Label className="uppercase text-sm">TÍTULO</Label>
-                <p className="mt-1 font-medium uppercase">{selectedRequest.title}</p>
+                <Label className="uppercase text-sm">DESTINO</Label>
+                <p className="mt-1 font-medium uppercase">{selectedRequest.destination}</p>
               </div>
 
               <div>
