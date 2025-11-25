@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
@@ -461,6 +462,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const { currentDepartment } = useDepartment();
   const isPediatric = currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA";
   const { calculateAge, isCalculating } = useAgeCalculator(isPediatric);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (editingField && inputRef.current) {
@@ -1477,6 +1479,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 >
                   <Skull className="h-3.5 w-3.5 mr-2" />
                   Óbito
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/resources?patientId=${patient.id}`);
+                  }}
+                >
+                  <FileText className="h-3.5 w-3.5 mr-2" />
+                  Solicitar Internação
                 </DropdownMenuItem>
                 {onPrintPatient && (
                   <>
