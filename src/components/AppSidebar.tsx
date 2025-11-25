@@ -11,7 +11,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef } from "react";
 import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
 import {
   Sidebar,
@@ -94,7 +93,6 @@ export function AppSidebar({
   const { open, setOpen, openMobile, setOpenMobile, state } = useSidebar();
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
-  const sidebarRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
 
@@ -133,19 +131,6 @@ export function AppSidebar({
       }
     }
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (open && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    if (!isMobile) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open, setOpen, isMobile]);
 
   const sidebarContent = (
     <>
@@ -348,7 +333,6 @@ export function AppSidebar({
 
   return (
     <Sidebar 
-      ref={sidebarRef}
       collapsible="icon" 
       className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
       onClick={() => {
