@@ -16,8 +16,10 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
         
         <div className="flex-1 flex flex-col w-full">
           {/* Header */}
-          <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-            <SidebarTrigger />
+          <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="-ml-1" />
+            </div>
             <ThemeToggle />
           </header>
 
