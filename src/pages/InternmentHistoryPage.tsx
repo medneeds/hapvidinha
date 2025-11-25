@@ -31,7 +31,7 @@ import { Separator } from "@/components/ui/separator";
 
 interface InternmentRequest {
   id: string;
-  title: string;
+  destination: string;
   content: string;
   patient_name: string;
   patient_age: number | null;
@@ -400,7 +400,7 @@ const InternmentHistoryPage = () => {
                 <TableRow className="bg-muted/30">
                   <TableHead className="uppercase font-bold">Nome do Paciente</TableHead>
                   <TableHead className="uppercase font-bold">Idade</TableHead>
-                  <TableHead className="uppercase font-bold">Título</TableHead>
+                  <TableHead className="uppercase font-bold">Destino</TableHead>
                   <TableHead className="uppercase font-bold">Data</TableHead>
                   <TableHead className="uppercase text-right font-bold">Ações</TableHead>
                 </TableRow>
@@ -426,7 +426,7 @@ const InternmentHistoryPage = () => {
                         {request.patient_age || "-"}
                       </TableCell>
                       <TableCell className="uppercase max-w-xs truncate">
-                        {request.title}
+                        {request.destination}
                       </TableCell>
                       <TableCell className="uppercase text-xs">
                         {formatDate(request.created_at)}
@@ -502,10 +502,10 @@ const InternmentHistoryPage = () => {
 
               <Card className="border-primary/20">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm uppercase">Título</CardTitle>
+                  <CardTitle className="text-sm uppercase">Destino</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm uppercase font-medium">{selectedRequest.title}</p>
+                  <p className="text-sm uppercase font-medium">{selectedRequest.destination}</p>
                 </CardContent>
               </Card>
 

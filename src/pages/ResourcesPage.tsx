@@ -58,14 +58,12 @@ const ResourcesPage = () => {
   const [savedRequestInfo, setSavedRequestInfo] = useState<{
     patientName: string;
     destination: string;
-    title: string;
   } | null>(null);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string>("");
 
   // Form state
   const [formData, setFormData] = useState({
-    title: "",
     content: "",
     destination: "",
   });
@@ -128,14 +126,14 @@ const ResourcesPage = () => {
         ? diagnosesArray.join(" | ").toUpperCase()
         : patient.diagnoses.toUpperCase();
       
-      setFormData({ ...formData, title: diagnosesText });
+      setFormData({ ...formData, content: diagnosesText + "\n\n" + formData.content });
       toast({
         title: "IMPORTADO",
         description: "HIPÓTESES/DIAGNÓSTICOS IMPORTADOS COM SUCESSO",
       });
     } catch {
       // Se não for JSON válido, usar o texto direto
-      setFormData({ ...formData, title: patient.diagnoses.toUpperCase() });
+      setFormData({ ...formData, content: patient.diagnoses.toUpperCase() + "\n\n" + formData.content });
       toast({
         title: "IMPORTADO",
         description: "HIPÓTESES/DIAGNÓSTICOS IMPORTADOS COM SUCESSO",
@@ -182,7 +180,6 @@ const ResourcesPage = () => {
   const handleOpenSaveDialog = () => {
     setSelectedPatient("");
     setFormData({
-      title: "",
       content: "",
       destination: "",
     });
@@ -244,7 +241,7 @@ const ResourcesPage = () => {
         patient_age: patient.age ? parseInt(patient.age) : null,
         patient_sex: null,
         patient_record: null,
-        title: `${formData.title.toUpperCase()} - DESTINO: ${formData.destination}`,
+        destination: formData.destination,
         content: formData.content.toUpperCase(),
         created_by: currentUser.id,
       });
@@ -265,7 +262,6 @@ const ResourcesPage = () => {
     setSavedRequestInfo({
       patientName: patient.name.toUpperCase(),
       destination: formData.destination,
-      title: formData.title || "SEM TÍTULO"
     });
 
     setIsSaveDialogOpen(false);
@@ -447,46 +443,33 @@ const ResourcesPage = () => {
 
             <div className="grid gap-3">
               <div className="flex items-center justify-between">
-                <Label htmlFor="title" className="uppercase font-semibold text-sm">
-                  Título da Solicitação
-                </Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleImportDiagnoses}
-                  className="uppercase gap-2 h-8 text-xs"
-                  disabled={!selectedPatient}
-                >
-                  <Import className="h-3.5 w-3.5" />
-                  Importar Hipóteses
-                </Button>
-              </div>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value.toUpperCase() })}
-                placeholder="Ex: Internação Cardiologia - IAM"
-                className="uppercase h-12"
-              />
-            </div>
-
-            <div className="grid gap-3">
-              <div className="flex items-center justify-between">
                 <Label htmlFor="content" className="uppercase font-semibold text-sm">
                   Conteúdo da Solicitação *
                 </Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleImportAdmissionHistory}
-                  className="uppercase gap-2 h-8 text-xs"
-                  disabled={!selectedPatient}
-                >
-                  <Import className="h-3.5 w-3.5" />
-                  Importar Anamnese
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleImportDiagnoses}
+                    className="uppercase gap-2 h-8 text-xs"
+                    disabled={!selectedPatient}
+                  >
+                    <Import className="h-3.5 w-3.5" />
+                    Importar Hipóteses
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleImportAdmissionHistory}
+                    className="uppercase gap-2 h-8 text-xs"
+                    disabled={!selectedPatient}
+                  >
+                    <Import className="h-3.5 w-3.5" />
+                    Importar Anamnese
+                  </Button>
+                </div>
               </div>
               <Textarea
                 id="content"
@@ -538,11 +521,6 @@ const ResourcesPage = () => {
                   <div className="flex justify-between items-start">
                     <span className="text-xs font-semibold uppercase text-foreground">Destino:</span>
                     <span className="text-sm font-bold text-primary text-right">{savedRequestInfo?.destination}</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between items-start">
-                    <span className="text-xs font-semibold uppercase text-foreground">Título:</span>
-                    <span className="text-sm text-foreground text-right">{savedRequestInfo?.title}</span>
                   </div>
                 </div>
               </div>
