@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { MainLayout } from "@/components/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -257,24 +256,23 @@ export default function IAPage() {
   };
 
   return (
-    <MainLayout>
-      <div className="h-[calc(100vh-4rem)] flex flex-col bg-background">
-        {/* Header */}
-        <div className="border-b bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 backdrop-blur-sm">
-          <div className="px-4 py-6">
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg">
-                <Sparkles className="h-7 w-7 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">Assistente Examinus</h1>
-                <p className="text-sm text-muted-foreground">Formatador Inteligente de Exames Médicos</p>
-              </div>
+    <div className="h-[calc(100vh-4rem)] flex flex-col bg-background">
+      {/* Header */}
+      <div className="border-b bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 backdrop-blur-sm">
+        <div className="px-4 py-6">
+          <div className="flex items-center gap-4">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg">
+              <Sparkles className="h-7 w-7 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Assistente Examinus</h1>
+              <p className="text-sm text-muted-foreground">Formatador Inteligente de Exames Médicos</p>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Messages */}
+      {/* Messages */}
         <ScrollArea className="flex-1 px-4">
           <div className="max-w-4xl mx-auto py-8 space-y-6" ref={scrollRef}>
             {messages.length === 0 && (
@@ -455,8 +453,7 @@ export default function IAPage() {
             </p>
           </form>
         </div>
-      </div>
-    </MainLayout>
+    </div>
   );
 }
 
