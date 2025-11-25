@@ -132,9 +132,21 @@ export function PrintableDashboard({
               size: A4 landscape;
               margin: 1cm;
             }
-            body {
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
+            html, body {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            /* Mobile Safari specific fixes */
+            @supports (-webkit-touch-callout: none) {
+              * {
+                -webkit-print-color-adjust: exact !important;
+              }
             }
           }
         `}

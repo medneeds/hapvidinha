@@ -138,6 +138,13 @@
   * {
     print-color-adjust: exact !important;
     -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  html {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
   
   body {
@@ -145,6 +152,8 @@
     padding: 0 !important;
     background: #ffffff !important;
     position: relative;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   
   /* Marca d'água - Logo HapMap à esquerda */
@@ -222,6 +231,23 @@
     padding: 0 !important;
     position: relative;
     z-index: 1;
+  }
+  
+  /* Mobile print optimizations */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      -webkit-print-color-adjust: exact !important;
+    }
+    
+    * {
+      -webkit-print-color-adjust: exact !important;
+    }
+  }
+  
+  /* Force visibility of print content on mobile */
+  .print-layout-container * {
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 }
 
