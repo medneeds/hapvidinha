@@ -259,70 +259,70 @@ export default function IAPage() {
     <div className="h-[calc(100vh-4rem)] flex flex-col bg-background">
       {/* Header */}
       <div className="border-b bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 backdrop-blur-sm">
-        <div className="px-4 py-6">
-          <div className="flex items-center gap-4">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg">
-              <Sparkles className="h-7 w-7 text-primary-foreground" />
+        <div className="px-3 py-2">
+          <div className="flex items-center gap-2">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-md">
+              <Sparkles className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground uppercase">Assistente Examinus</h1>
-              <p className="text-sm text-muted-foreground uppercase">Formatador Inteligente de Exames Médicos</p>
+              <h1 className="text-xl font-bold text-foreground uppercase">Assistente Examinus</h1>
+              <p className="text-[10px] text-muted-foreground uppercase">Formatador Inteligente de Exames Médicos</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Messages */}
-        <ScrollArea className="flex-1 px-4">
-          <div className="max-w-4xl mx-auto py-8 space-y-6" ref={scrollRef}>
+        <ScrollArea className="flex-1 px-2">
+          <div className="max-w-4xl mx-auto py-2 space-y-4" ref={scrollRef}>
             {messages.length === 0 && (
-              <div className="text-center py-12 px-4">
+              <div className="text-center py-2 px-2">
                 {/* Icon heroico com animação */}
-                <div className="relative inline-block mb-8">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary/20 to-transparent rounded-full blur-2xl animate-pulse" />
-                  <div className="relative inline-flex items-center justify-center p-10 rounded-full bg-gradient-to-br from-primary via-primary/90 to-primary/70 shadow-2xl shadow-primary/20 border border-primary/20">
-                    <Sparkles className="h-20 w-20 text-primary-foreground animate-in zoom-in-50 duration-1000" />
+                <div className="relative inline-block mb-2">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary/20 to-transparent rounded-full blur-xl animate-pulse" />
+                  <div className="relative inline-flex items-center justify-center p-4 rounded-full bg-gradient-to-br from-primary via-primary/90 to-primary/70 shadow-xl shadow-primary/20 border border-primary/20">
+                    <Sparkles className="h-10 w-10 text-primary-foreground animate-in zoom-in-50 duration-1000" />
                   </div>
                 </div>
 
                 {/* Título com gradiente */}
-                <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <h2 className="text-xl font-bold mb-1 bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
                   OLÁ! SOU O ASSISTENTE EXAMINUS
                 </h2>
                 
                 {/* Subtítulo elegante */}
-                <p className="text-muted-foreground text-xl mb-12 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                <p className="text-muted-foreground text-sm mb-3 max-w-2xl mx-auto leading-snug animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
                   Cole ou digite laudos de exames para <span className="font-semibold text-foreground">formatação automática inteligente</span>
                 </p>
 
                 {/* Cards de funcionalidades com hover effect */}
-                <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                  <div className="group p-6 rounded-2xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
-                        <span className="text-3xl">🧪</span>
+                <div className="grid md:grid-cols-2 gap-3 max-w-3xl mx-auto text-left animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                  <div className="group p-3 rounded-xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-md hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-0.5">
+                    <div className="flex items-start gap-2">
+                      <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
+                        <span className="text-2xl">🧪</span>
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg mb-2 text-foreground uppercase tracking-wide">
+                        <h3 className="font-bold text-sm mb-0.5 text-foreground uppercase tracking-wide">
                           Exames Laboratoriais
                         </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <p className="text-[10px] text-muted-foreground leading-snug">
                           Hemograma, bioquímica, coagulograma e gasometria formatados em <span className="font-medium text-foreground">linha única compacta</span>
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="group p-6 rounded-2xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
-                        <span className="text-3xl">🖼️</span>
+                  <div className="group p-3 rounded-xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-md hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-0.5">
+                    <div className="flex items-start gap-2">
+                      <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
+                        <span className="text-2xl">🖼️</span>
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg mb-2 text-foreground uppercase tracking-wide">
+                        <h3 className="font-bold text-sm mb-0.5 text-foreground uppercase tracking-wide">
                           Exames de Imagem
                         </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <p className="text-[10px] text-muted-foreground leading-snug">
                           TC, RX, US e RM com extração de <span className="font-medium text-foreground">apenas achados anormais</span> relevantes
                         </p>
                       </div>
@@ -331,8 +331,8 @@ export default function IAPage() {
                 </div>
 
                 {/* Indicador sutil */}
-                <div className="mt-12 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-sm text-muted-foreground animate-in fade-in duration-1000 delay-500">
-                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-[10px] text-muted-foreground animate-in fade-in duration-1000 delay-500">
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                   <span className="uppercase tracking-wide">Pronto para ajudar</span>
                 </div>
               </div>
@@ -398,19 +398,19 @@ export default function IAPage() {
 
         {/* Input */}
         <div className="border-t bg-card/50 backdrop-blur-sm shadow-lg">
-          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto px-4 py-4">
+          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto px-2 py-2">
             {/* File Preview */}
             {selectedFile && (
-              <div className="mb-3 p-3 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <div className="mb-1.5 p-1.5 bg-primary/5 border border-primary/20 rounded-lg flex items-center justify-between">
+                <div className="flex items-center gap-2">
                   {filePreview ? (
-                    <img src={filePreview} alt="Preview" className="h-12 w-12 rounded object-cover" />
+                    <img src={filePreview} alt="Preview" className="h-8 w-8 rounded object-cover" />
                   ) : (
-                    <FileText className="h-12 w-12 text-primary" />
+                    <FileText className="h-8 w-8 text-primary" />
                   )}
                   <div>
-                    <p className="font-medium text-sm">{selectedFile.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-medium text-[10px]">{selectedFile.name}</p>
+                    <p className="text-[9px] text-muted-foreground">
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
@@ -420,21 +420,21 @@ export default function IAPage() {
                   variant="ghost"
                   size="icon"
                   onClick={removeFile}
-                  className="h-8 w-8"
+                  className="h-6 w-6"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3 w-3" />
                 </Button>
               </div>
             )}
 
-            <div className="flex gap-3">
-              <div className="flex-1 space-y-2">
+            <div className="flex gap-1.5">
+              <div className="flex-1 space-y-0.5">
                 <Textarea
                   ref={textareaRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder={selectedFile ? "Mensagem opcional..." : "Cole o laudo do exame ou anexe PDF/imagem..."}
-                  className="min-h-[80px] max-h-[300px] resize-none text-base font-mono shadow-sm"
+                  className="min-h-[50px] max-h-[150px] resize-none text-xs font-mono shadow-sm"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -445,7 +445,7 @@ export default function IAPage() {
                 />
               </div>
               
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -460,28 +460,28 @@ export default function IAPage() {
                   type="button"
                   variant="outline"
                   size="icon"
-                  className="h-[38px] w-[38px]"
+                  className="h-[28px] w-[28px]"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isLoading}
                   title="Anexar PDF ou imagem"
                 >
-                  <FileText className="h-5 w-5" />
+                  <FileText className="h-3.5 w-3.5" />
                 </Button>
                 <Button
                   type="submit"
                   size="icon"
-                  className="h-[38px] w-[38px]"
+                  className="h-[28px] w-[28px]"
                   disabled={(!input.trim() && !selectedFile) || isLoading}
                 >
                   {isLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   ) : (
-                    <Send className="h-5 w-5" />
+                    <Send className="h-3.5 w-3.5" />
                   )}
                 </Button>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
+            <p className="text-[9px] text-muted-foreground mt-0.5 text-center">
               Shift + Enter para nova linha • Enter para enviar • PDF máximo 20MB
             </p>
           </form>
