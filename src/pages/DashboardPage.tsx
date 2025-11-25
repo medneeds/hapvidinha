@@ -22,6 +22,14 @@ import { useDepartment } from "@/contexts/DepartmentContext";
 
 const COLORS = ['#ef4444', '#eab308', '#3b82f6', '#6b7280', '#8b5cf6', '#ec4899'];
 
+// Sector color mapping based on hospital identity
+const SECTOR_COLORS: Record<string, string> = {
+  'Cuidados Especiais': '#ef4444',     // Red
+  'Observação Amarela': '#eab308',      // Yellow
+  'Observação Azul': '#3b82f6',         // Blue
+  'Fora das Alas': '#6b7280',           // Gray
+};
+
 const DashboardPage = () => {
   const { currentDepartment } = useDepartment();
   const [isLoading, setIsLoading] = useState(false);
@@ -736,7 +744,7 @@ const DashboardPage = () => {
                     {sectorDistribution.map((entry, index) => (
                       <Cell 
                         key={`cell-${index}`} 
-                        fill={COLORS[index % COLORS.length]}
+                        fill={SECTOR_COLORS[entry.name] || COLORS[index % COLORS.length]}
                         className="hover:opacity-80 transition-opacity cursor-pointer"
                       />
                     ))}
