@@ -815,7 +815,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           <Input
                             ref={inputRef}
                             value={editValue}
-                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onChange={(e) => {
+                              const target = e.target as HTMLInputElement;
+                              const start = target.selectionStart ?? 0;
+                              const end = target.selectionEnd ?? 0;
+                              setEditValue(e.target.value.toUpperCase());
+                              requestAnimationFrame(() => {
+                                target.setSelectionRange(start, end);
+                              });
+                            }}
                             onKeyDown={handleKeyDown}
                             className="h-6 text-sm font-semibold uppercase"
                           />
@@ -958,7 +966,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <Input
                         ref={inputRef}
                         value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                        onChange={(e) => {
+                          const target = e.target as HTMLInputElement;
+                          const start = target.selectionStart ?? 0;
+                          const end = target.selectionEnd ?? 0;
+                          setEditValue(e.target.value.toUpperCase());
+                          requestAnimationFrame(() => {
+                            target.setSelectionRange(start, end);
+                          });
+                        }}
                         onKeyDown={handleKeyDown}
                         className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
                         placeholder="NOVA HIPÓTESE"
@@ -1061,7 +1077,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <Input
                         ref={inputRef}
                         value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                        onChange={(e) => {
+                          const target = e.target as HTMLInputElement;
+                          const start = target.selectionStart ?? 0;
+                          const end = target.selectionEnd ?? 0;
+                          setEditValue(e.target.value.toUpperCase());
+                          requestAnimationFrame(() => {
+                            target.setSelectionRange(start, end);
+                          });
+                        }}
                         onKeyDown={handleKeyDown}
                         className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
                         placeholder="NOVO ANTECEDENTE"
@@ -1164,7 +1188,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <Input
                         ref={inputRef}
                         value={editValue}
-                        onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                        onChange={(e) => {
+                          const target = e.target as HTMLInputElement;
+                          const start = target.selectionStart ?? 0;
+                          const end = target.selectionEnd ?? 0;
+                          setEditValue(e.target.value.toUpperCase());
+                          requestAnimationFrame(() => {
+                            target.setSelectionRange(start, end);
+                          });
+                        }}
                         onKeyDown={handleKeyDown}
                         className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
                         placeholder="NOVO EXAME"
@@ -1238,7 +1270,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             <textarea
                               ref={inputRef as any}
                               value={editValue}
-                              onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                              onChange={(e) => {
+                                const target = e.target as HTMLTextAreaElement;
+                                const start = target.selectionStart;
+                                const end = target.selectionEnd;
+                                setEditValue(e.target.value.toUpperCase());
+                                // Restaura a posição do cursor após a atualização
+                                requestAnimationFrame(() => {
+                                  target.setSelectionRange(start, end);
+                                });
+                              }}
                               onKeyDown={(e) => {
                                 if ((e.key === 'Enter' || e.key === 'Tab') && !e.shiftKey) {
                                   e.preventDefault();
@@ -1307,7 +1348,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <Input
                           ref={inputRef}
                           value={editValue}
-                          onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                          onChange={(e) => {
+                            const target = e.target as HTMLInputElement;
+                            const start = target.selectionStart ?? 0;
+                            const end = target.selectionEnd ?? 0;
+                            setEditValue(e.target.value.toUpperCase());
+                            // Restaura a posição do cursor após a atualização
+                            requestAnimationFrame(() => {
+                              target.setSelectionRange(start, end);
+                            });
+                          }}
                           onKeyDown={handleKeyDown}
                           className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
                           placeholder="NOVA PENDÊNCIA"
@@ -1609,7 +1659,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           <Input
                             ref={inputRef}
                             value={editValue}
-                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onChange={(e) => {
+                              const target = e.target as HTMLInputElement;
+                              const start = target.selectionStart ?? 0;
+                              const end = target.selectionEnd ?? 0;
+                              setEditValue(e.target.value.toUpperCase());
+                              requestAnimationFrame(() => {
+                                target.setSelectionRange(start, end);
+                              });
+                            }}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === 'Tab') {
                                 e.preventDefault();
@@ -1757,7 +1815,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           <Input
                             ref={inputRef}
                             value={editValue}
-                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onChange={(e) => {
+                              const target = e.target as HTMLInputElement;
+                              const start = target.selectionStart ?? 0;
+                              const end = target.selectionEnd ?? 0;
+                              setEditValue(e.target.value.toUpperCase());
+                              requestAnimationFrame(() => {
+                                target.setSelectionRange(start, end);
+                              });
+                            }}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === 'Tab') {
                                 e.preventDefault();
@@ -1905,7 +1971,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           <Input
                             ref={inputRef}
                             value={editValue}
-                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onChange={(e) => {
+                              const target = e.target as HTMLInputElement;
+                              const start = target.selectionStart ?? 0;
+                              const end = target.selectionEnd ?? 0;
+                              setEditValue(e.target.value.toUpperCase());
+                              requestAnimationFrame(() => {
+                                target.setSelectionRange(start, end);
+                              });
+                            }}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === 'Tab') {
                                 e.preventDefault();
@@ -2053,7 +2127,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           <Input
                             ref={inputRef}
                             value={editValue}
-                            onChange={(e) => setEditValue(e.target.value.toUpperCase())}
+                            onChange={(e) => {
+                              const target = e.target as HTMLInputElement;
+                              const start = target.selectionStart ?? 0;
+                              const end = target.selectionEnd ?? 0;
+                              setEditValue(e.target.value.toUpperCase());
+                              requestAnimationFrame(() => {
+                                target.setSelectionRange(start, end);
+                              });
+                            }}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === 'Tab') {
                                 e.preventDefault();
