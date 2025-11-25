@@ -79,6 +79,7 @@ const ResourcesPage = () => {
       const patient = patients.find(p => p.id === patientId);
       if (patient) {
         setSelectedPatient(patientId);
+        setIsSaveDialogOpen(true);
       }
     }
   }, [searchParams, patients, selectedPatient]);
