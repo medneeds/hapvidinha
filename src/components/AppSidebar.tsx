@@ -81,17 +81,6 @@ const menuItems = [
     ],
   },
   {
-    title: "PROTOCOLOS",
-    icon: BookOpen,
-    items: [
-      "SEPSE",
-      "IAM",
-      "AVC",
-      "TRAUMA",
-      "INTOXICAÇÕES",
-    ],
-  },
-  {
     title: "EXAMINUS AI",
     icon: Sparkles,
     link: "/ia",
@@ -115,7 +104,7 @@ export function AppSidebar({
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
 
-  const handleItemClick = (item: string | { name: string; link: string | null; action?: string }) => {
+  const handleItemClick = (item: string | { name: string; link?: string | null; action?: string; subsections?: any[] }) => {
     // Handle direct string links (like from section.link)
     if (typeof item === 'string') {
       navigate(item);
@@ -127,6 +116,11 @@ export function AppSidebar({
     
     // Handle object items
     if (typeof item === 'object') {
+      // Skip if item has subsections (it's a collapsible parent)
+      if (item.subsections) {
+        return;
+      }
+      
       if (item.action === 'openHandover' && onOpenHandover) {
         onOpenHandover();
         if (isMobile) {
