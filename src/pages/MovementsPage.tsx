@@ -51,6 +51,7 @@ const movementConfig = {
 
 export default function MovementsPage() {
   const [movements, setMovements] = useState<PatientMovement[]>([]);
+  const [filteredMovements, setFilteredMovements] = useState<PatientMovement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<string>("all");
@@ -93,6 +94,10 @@ export default function MovementsPage() {
       supabase.removeChannel(channel);
     };
   }, [currentDepartment]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [searchTerm, activeTab, appliedStartDate, appliedEndDate, movements]);
 
   const fetchMovements = async () => {
     try {
@@ -162,25 +167,38 @@ export default function MovementsPage() {
     });
   };
 
-  const filteredMovements = movements.filter(movement => {
-    const matchesSearch = movement.patient_name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTab = activeTab === "all" || movement.movement_type === activeTab;
-    
-    // Date filter using APPLIED dates
-    let matchesDate = true;
-    if (appliedStartDate || appliedEndDate) {
-      const movementDate = new Date(movement.created_at);
-      if (appliedStartDate && appliedEndDate) {
-        matchesDate = movementDate >= startOfDay(appliedStartDate) && movementDate <= endOfDay(appliedEndDate);
-      } else if (appliedStartDate) {
-        matchesDate = movementDate >= startOfDay(appliedStartDate);
-      } else if (appliedEndDate) {
-        matchesDate = movementDate <= endOfDay(appliedEndDate);
-      }
+  const applyFilters = () => {
+    let filtered = [...movements];
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(movement =>
+        movement.patient_name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
-    
-    return matchesSearch && matchesTab && matchesDate;
-  });
+
+    // Tab filter
+    if (activeTab !== "all") {
+      filtered = filtered.filter(movement => movement.movement_type === activeTab);
+    }
+
+    // Date filter using APPLIED dates
+    if (appliedStartDate || appliedEndDate) {
+      filtered = filtered.filter(movement => {
+        const movementDate = new Date(movement.created_at);
+        if (appliedStartDate && appliedEndDate) {
+          return movementDate >= startOfDay(appliedStartDate) && movementDate <= endOfDay(appliedEndDate);
+        } else if (appliedStartDate) {
+          return movementDate >= startOfDay(appliedStartDate);
+        } else if (appliedEndDate) {
+          return movementDate <= endOfDay(appliedEndDate);
+        }
+        return true;
+      });
+    }
+
+    setFilteredMovements(filtered);
+  };
 
   const getMovementCounts = () => {
     return {
