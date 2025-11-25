@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Plus, FileText, Database, Import } from "lucide-react";
+import { Plus, FileText, Database, Import, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import NotesTab from "@/components/resources/NotesTab";
 import {
   Dialog,
@@ -40,6 +41,7 @@ const ResourcesPage = () => {
   const { user } = useAuth();
   const { currentDepartment } = useDepartment();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string>("");
@@ -213,18 +215,28 @@ const ResourcesPage = () => {
     <div className="p-6 space-y-8 max-w-7xl">
       {/* Page Header */}
       <div className="space-y-2">
-        <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-            <Database className="h-6 w-6 text-primary" />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+              <Database className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight uppercase">
+                Solicitações de Internação
+              </h1>
+              <p className="text-muted-foreground uppercase text-sm">
+                {currentDepartment} • Criar e gerenciar solicitações
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight uppercase">
-              Solicitações de Internação
-            </h1>
-            <p className="text-muted-foreground uppercase text-sm">
-              {currentDepartment} • Criar e gerenciar solicitações
-            </p>
-          </div>
+          <Button
+            onClick={() => navigate('/internment-history')}
+            variant="outline"
+            className="gap-2 uppercase"
+          >
+            <History className="h-4 w-4" />
+            Histórico
+          </Button>
         </div>
       </div>
 
