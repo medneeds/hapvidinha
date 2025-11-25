@@ -267,8 +267,7 @@ export default function AuthPage() {
 
         {/* Footer with animation */}
         <div className="text-center mt-6 animate-in fade-in-0 duration-1000 delay-700">
-          <p className="text-white/60 text-xs">© 2024 Hospital Guarás. Todos os direitos reservados.</p>
-          <p className="text-white/40 text-[10px] italic mt-1">Desenvolvido por Artur Batista</p>
+          <p className="text-white/40 text-[10px] italic">Desenvolvido por Artur Batista</p>
         </div>
       </div>
     </div>
