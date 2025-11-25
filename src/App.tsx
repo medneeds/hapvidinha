@@ -59,7 +59,9 @@ const App = () => {
           path="/codigos"
           element={
             <ProtectedRoute>
-              <MedicalCodesPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <MedicalCodesPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -67,7 +69,9 @@ const App = () => {
           path="/handovers"
           element={
             <ProtectedRoute>
-              <HandoversPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <HandoversPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -75,7 +79,9 @@ const App = () => {
           path="/versions"
           element={
             <ProtectedRoute>
-              <VersionsPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <VersionsPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -93,7 +99,9 @@ const App = () => {
           path="/sepsis-protocol"
           element={
             <ProtectedRoute>
-              <SepsisProtocolPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <SepsisProtocolPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -101,7 +109,9 @@ const App = () => {
           path="/documents/tomografias"
           element={
             <ProtectedRoute>
-              <TomografiasPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <TomografiasPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -109,7 +119,9 @@ const App = () => {
           path="/documents/hemoderivados"
           element={
             <ProtectedRoute>
-              <HemoderivadosPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <HemoderivadosPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -117,7 +129,9 @@ const App = () => {
           path="/documents/regulacoes"
           element={
             <ProtectedRoute>
-              <RegulacoesPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <RegulacoesPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -125,7 +139,9 @@ const App = () => {
           path="/documents/opme"
           element={
             <ProtectedRoute>
-              <OpmePage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <OpmePage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -133,7 +149,9 @@ const App = () => {
           path="/documents/alto-custo"
           element={
             <ProtectedRoute>
-              <AltoCustoPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <AltoCustoPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -141,7 +159,9 @@ const App = () => {
           path="/documents/sadt"
           element={
             <ProtectedRoute>
-              <SadtPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <SadtPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -149,7 +169,9 @@ const App = () => {
           path="/movements"
           element={
             <ProtectedRoute>
-              <MovementsPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <MovementsPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -157,7 +179,9 @@ const App = () => {
           path="/ia"
           element={
             <ProtectedRoute>
-              <IAPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <IAPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />

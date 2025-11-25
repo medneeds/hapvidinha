@@ -3,9 +3,10 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Pencil, Trash2, ArrowLeft, LogOut } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, FileCode } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 
 type MedicalCode = {
   id: string;
@@ -42,7 +44,7 @@ const categoryLabels = {
 export default function MedicalCodesPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { signOut, user, role } = useAuth();
+  const { user, role } = useAuth();
   const category = (searchParams.get("category") || "EXAMES").toUpperCase();
   const [codes, setCodes] = useState<MedicalCode[]>([]);
   const [filteredCodes, setFilteredCodes] = useState<MedicalCode[]>([]);
@@ -179,67 +181,60 @@ export default function MedicalCodesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => navigate("/")}
-              className="hover:bg-primary hover:text-primary-foreground transition-all"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground uppercase tracking-tight mb-2">
-                {categoryLabels[category as keyof typeof categoryLabels]}
-              </h1>
-              <p className="text-sm text-muted-foreground uppercase tracking-wide">
-                Códigos e Descritivos do Sistema
-              </p>
-            </div>
+    <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+      {/* Page Header */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-500/10 flex items-center justify-center">
+            <FileCode className="h-6 w-6 text-cyan-600" />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-xs font-semibold text-foreground uppercase tracking-tight">
-                {user?.user_metadata?.username || user?.email?.split('@')[0]}
-              </p>
-              <p className="text-[10px] text-muted-foreground uppercase">
-                {role === 'admin' ? 'Administrador' : 'Médico'}
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={signOut}
-              title="Sair"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight uppercase">
+              {categoryLabels[category as keyof typeof categoryLabels]}
+            </h1>
+            <p className="text-muted-foreground uppercase text-sm">
+              Códigos e Descritivos do Sistema
+            </p>
           </div>
         </div>
+      </div>
 
-        <div className="flex gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="BUSCAR POR CÓDIGO, NOME OU DESCRITIVO..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
-              className="pl-10 uppercase"
-            />
+      <Separator className="my-6" />
+
+      {/* Search and Add */}
+      <Card className="border-primary/20 shadow-lg">
+        <CardHeader>
+          <CardTitle className="uppercase text-lg">Pesquisar Códigos</CardTitle>
+          <CardDescription className="uppercase text-xs">
+            {filteredCodes.length} {filteredCodes.length === 1 ? 'código encontrado' : 'códigos encontrados'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por código, nome ou descritivo..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
+                className="pl-10 uppercase h-12"
+              />
+            </div>
+            <Button 
+              onClick={() => openDialog()} 
+              className="gap-2 h-12 px-6"
+              size="lg"
+            >
+              <Plus className="h-4 w-4" />
+              Adicionar
+            </Button>
           </div>
-          <Button 
-            onClick={() => openDialog()} 
-            className="gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            ADICIONAR
-          </Button>
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="bg-card rounded-lg border border-border/50 shadow-lg overflow-hidden">
+      {/* Table */}
+      <Card className="shadow-lg">
+        <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/30">
@@ -253,12 +248,16 @@ export default function MedicalCodesPage() {
               {filteredCodes.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-12 text-muted-foreground uppercase">
-                    Nenhum código cadastrado
+                    <div className="flex flex-col items-center gap-2">
+                      <FileCode className="h-12 w-12 text-muted-foreground/50" />
+                      <p className="font-semibold">Nenhum Código Cadastrado</p>
+                      <p className="text-xs">Clique em "Adicionar" para criar um novo código</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredCodes.map((code) => (
-                  <TableRow key={code.id} className="hover:bg-muted/20">
+                  <TableRow key={code.id} className="hover:bg-muted/20 transition-colors">
                     <TableCell className="font-mono font-semibold text-primary uppercase">
                       {code.code}
                     </TableCell>
@@ -272,9 +271,9 @@ export default function MedicalCodesPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => openDialog(code)}
-                          className="h-8 w-8"
+                          className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
                           disabled={role !== 'admin'}
-                          title={role !== 'admin' ? 'APENAS ADMINISTRADORES' : ''}
+                          title={role !== 'admin' ? 'APENAS ADMINISTRADORES' : 'Editar'}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -282,9 +281,9 @@ export default function MedicalCodesPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleDelete(code.id)}
-                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                           disabled={role !== 'admin'}
-                          title={role !== 'admin' ? 'APENAS ADMINISTRADORES' : ''}
+                          title={role !== 'admin' ? 'APENAS ADMINISTRADORES' : 'Deletar'}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -296,18 +295,19 @@ export default function MedicalCodesPage() {
             </TableBody>
           </Table>
         </div>
-      </div>
+      </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="uppercase">
-              {editingCode ? "Editar Código" : "Adicionar Código"}
+            <DialogTitle className="uppercase flex items-center gap-2">
+              {editingCode ? <><Pencil className="h-5 w-5 text-primary" /> Editar Código</> : <><Plus className="h-5 w-5 text-primary" /> Adicionar Código</>}
             </DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="code" className="uppercase text-xs font-semibold">
+          <Separator className="my-4" />
+          <div className="grid gap-6 py-4">
+            <div className="grid gap-3">
+              <Label htmlFor="code" className="uppercase text-sm font-semibold">
                 Código
               </Label>
               <Input
@@ -316,12 +316,12 @@ export default function MedicalCodesPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, code: e.target.value.toUpperCase() })
                 }
-                placeholder="CÓDIGO"
-                className="uppercase"
+                placeholder="Código"
+                className="uppercase h-12"
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="name" className="uppercase text-xs font-semibold">
+            <div className="grid gap-3">
+              <Label htmlFor="name" className="uppercase text-sm font-semibold">
                 Nome
               </Label>
               <Input
@@ -330,12 +330,12 @@ export default function MedicalCodesPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value.toUpperCase() })
                 }
-                placeholder="NOME DO EXAME/PROCEDIMENTO/MATERIAL/MEDICAÇÃO"
-                className="uppercase"
+                placeholder="Nome do exame/procedimento/material/medicação"
+                className="uppercase h-12"
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description" className="uppercase text-xs font-semibold">
+            <div className="grid gap-3">
+              <Label htmlFor="description" className="uppercase text-sm font-semibold">
                 Descritivo no Sistema
               </Label>
               <Textarea
@@ -347,12 +347,12 @@ export default function MedicalCodesPage() {
                     system_description: e.target.value.toUpperCase(),
                   })
                 }
-                placeholder="COMO É ESCRITO NO SISTEMA"
-                className="uppercase min-h-24"
+                placeholder="Como é escrito no sistema"
+                className="uppercase min-h-24 resize-none"
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button
               variant="outline"
               onClick={() => {
@@ -360,10 +360,11 @@ export default function MedicalCodesPage() {
                 setEditingCode(null);
                 setFormData({ code: "", name: "", system_description: "" });
               }}
+              className="uppercase"
             >
-              CANCELAR
+              Cancelar
             </Button>
-            <Button onClick={handleSave}>SALVAR</Button>
+            <Button onClick={handleSave} className="uppercase">Salvar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
