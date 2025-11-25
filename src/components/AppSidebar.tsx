@@ -51,6 +51,21 @@ const menuItems = [
     link: "/",
   },
   {
+    title: "INTERNAÇÃO",
+    icon: Users,
+    items: [
+      { name: "MOVIMENTAÇÕES", link: "/movements" },
+      { 
+        name: "SOLICITAÇÕES", 
+        subsections: [
+          { name: "BLOCO DE NOTAS", link: "/resources" },
+          { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
+        ]
+      },
+      { name: "HISTÓRICO", link: "/internment-history" },
+    ],
+  },
+  {
     title: "DOCUMENTOS",
     icon: FolderOpen,
     link: "/documents",
@@ -80,21 +95,6 @@ const menuItems = [
     title: "EXAMINUS AI",
     icon: Sparkles,
     link: "/ia",
-  },
-  {
-    title: "INTERNAÇÃO",
-    icon: Users,
-    items: [
-      { name: "MOVIMENTAÇÕES", link: "/movements" },
-      { 
-        name: "SOLICITAÇÕES", 
-        subsections: [
-          { name: "BLOCO DE NOTAS", link: "/resources" },
-          { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
-        ]
-      },
-      { name: "HISTÓRICO", link: "/internment-history" },
-    ],
   },
   {
     title: "VERSÕES",
