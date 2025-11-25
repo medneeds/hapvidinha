@@ -19,6 +19,8 @@ import { ptBR } from "date-fns/locale";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { PrintableDashboard } from "@/components/PrintableDashboard";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const COLORS = ['#ef4444', '#eab308', '#3b82f6', '#6b7280', '#8b5cf6', '#ec4899'];
 
@@ -371,9 +373,13 @@ const DashboardPage = () => {
 
   const handleExportPDF = () => {
     toast({
-      title: "EXPORTAÇÃO EM DESENVOLVIMENTO",
-      description: "Funcionalidade de exportação PDF será implementada em breve",
+      title: "GERANDO PDF",
+      description: "Preparando documento para impressão...",
     });
+    
+    setTimeout(() => {
+      window.print();
+    }, 500);
   };
 
   const handleExportExcel = () => {
@@ -471,7 +477,7 @@ const DashboardPage = () => {
         </div>
       )}
       
-      <div className="container mx-auto p-6 space-y-8">
+      <div className="container mx-auto p-6 space-y-8 dashboard-screen-content">{/* Changed: Added dashboard-screen-content class */}
         {/* Header com gradiente */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-primary p-8 shadow-glow animate-scale-in">
           <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,transparent,white)]" />
@@ -513,6 +519,7 @@ const DashboardPage = () => {
                 <Download className="h-4 w-4 mr-2" />
                 Exportar Excel
               </Button>
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -927,6 +934,44 @@ const DashboardPage = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Printable Dashboard - Hidden on screen, visible in print */}
+      <PrintableDashboard
+        department={selectedDepartment}
+        dateRange={dateRange}
+        kpis={{
+          requests: {
+            value: kpis.internmentRequests,
+            previousValue: kpis.comparison.internmentRequests,
+            change: calculatePercentageChange(kpis.internmentRequests, kpis.comparison.internmentRequests)
+          },
+          activePatients: {
+            value: kpis.activePatients,
+            previousValue: kpis.comparison.activePatients,
+            change: calculatePercentageChange(kpis.activePatients, kpis.comparison.activePatients)
+          },
+          discharges: {
+            value: kpis.discharges,
+            previousValue: kpis.comparison.discharges,
+            change: calculatePercentageChange(kpis.discharges, kpis.comparison.discharges)
+          },
+          deaths: {
+            value: kpis.deaths,
+            previousValue: kpis.comparison.deaths,
+            change: calculatePercentageChange(kpis.deaths, kpis.comparison.deaths)
+          },
+          transfers: {
+            value: kpis.transfers,
+            previousValue: kpis.comparison.transfers,
+            change: calculatePercentageChange(kpis.transfers, kpis.comparison.transfers)
+          }
+        }}
+        movementsOverTime={movementsOverTime}
+        sectorDistribution={sectorDistribution}
+        movementsByType={movementsByType}
+        bedOccupancy={bedOccupancy}
+        requestsByDestination={requestsByDestination}
+      />
     </div>
   );
 };

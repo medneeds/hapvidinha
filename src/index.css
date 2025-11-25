@@ -181,12 +181,17 @@
     pointer-events: none;
   }
   
-  /* Hide sidebar */
+  /* Hide sidebar and navigation */
   aside,
   [data-sidebar],
   header,
   footer,
   nav {
+    display: none !important;
+  }
+  
+  /* Hide main dashboard content when printing */
+  .dashboard-screen-content {
     display: none !important;
   }
   
