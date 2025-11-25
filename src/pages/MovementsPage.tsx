@@ -6,11 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw } from "lucide-react";
+import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw, CalendarIcon, Filter } from "lucide-react";
 import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface PatientMovement {
   id: string;
@@ -53,6 +56,9 @@ export default function MovementsPage() {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [isSnapshotDialogOpen, setIsSnapshotDialogOpen] = useState(false);
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
   const { toast } = useToast();
   const { currentDepartment } = useDepartment();
 
@@ -103,10 +109,48 @@ export default function MovementsPage() {
     }
   };
 
+  const handlePeriodChange = (period: string) => {
+    setSelectedPeriod(period);
+    const now = new Date();
+    
+    switch (period) {
+      case "week":
+        setStartDate(subDays(now, 7));
+        setEndDate(now);
+        break;
+      case "month":
+        setStartDate(subMonths(now, 1));
+        setEndDate(now);
+        break;
+      case "quarter":
+        setStartDate(subMonths(now, 3));
+        setEndDate(now);
+        break;
+      case "all":
+        setStartDate(undefined);
+        setEndDate(undefined);
+        break;
+    }
+  };
+
   const filteredMovements = movements.filter(movement => {
     const matchesSearch = movement.patient_name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTab = activeTab === "all" || movement.movement_type === activeTab;
-    return matchesSearch && matchesTab;
+    
+    // Date filter
+    let matchesDate = true;
+    if (startDate || endDate) {
+      const movementDate = new Date(movement.created_at);
+      if (startDate && endDate) {
+        matchesDate = movementDate >= startOfDay(startDate) && movementDate <= endOfDay(endDate);
+      } else if (startDate) {
+        matchesDate = movementDate >= startOfDay(startDate);
+      } else if (endDate) {
+        matchesDate = movementDate <= endOfDay(endDate);
+      }
+    }
+    
+    return matchesSearch && matchesTab && matchesDate;
   });
 
   const getMovementCounts = () => {
@@ -188,9 +232,134 @@ export default function MovementsPage() {
               placeholder="Buscar por nome do paciente..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 uppercase"
             />
           </div>
+
+          {/* Date Filters */}
+          <Card className="border-primary/20">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-primary" />
+                <h3 className="font-semibold uppercase text-sm">Filtros de Data</h3>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Quick Period Buttons */}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={selectedPeriod === "all" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePeriodChange("all")}
+                  className="uppercase text-xs"
+                >
+                  Todos
+                </Button>
+                <Button
+                  variant={selectedPeriod === "week" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePeriodChange("week")}
+                  className="uppercase text-xs"
+                >
+                  Última Semana
+                </Button>
+                <Button
+                  variant={selectedPeriod === "month" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePeriodChange("month")}
+                  className="uppercase text-xs"
+                >
+                  Último Mês
+                </Button>
+                <Button
+                  variant={selectedPeriod === "quarter" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handlePeriodChange("quarter")}
+                  className="uppercase text-xs"
+                >
+                  Último Trimestre
+                </Button>
+              </div>
+
+              {/* Date Pickers */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium uppercase">Data Inicial</label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal uppercase",
+                          !startDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {startDate ? format(startDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={startDate}
+                        onSelect={(date) => {
+                          setStartDate(date);
+                          setSelectedPeriod("custom");
+                        }}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium uppercase">Data Final</label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal uppercase",
+                          !endDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {endDate ? format(endDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={endDate}
+                        onSelect={(date) => {
+                          setEndDate(date);
+                          setSelectedPeriod("custom");
+                        }}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+
+              {(startDate || endDate) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setStartDate(undefined);
+                    setEndDate(undefined);
+                    setSelectedPeriod("all");
+                  }}
+                  className="w-full uppercase text-xs"
+                >
+                  Limpar Filtros de Data
+                </Button>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
