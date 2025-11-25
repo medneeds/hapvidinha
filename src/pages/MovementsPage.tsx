@@ -56,9 +56,16 @@ export default function MovementsPage() {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [isSnapshotDialogOpen, setIsSnapshotDialogOpen] = useState(false);
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  
+  // Temporary filter states (before applying)
+  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(undefined);
+  const [tempEndDate, setTempEndDate] = useState<Date | undefined>(undefined);
   const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
+  
+  // Applied filter states
+  const [appliedStartDate, setAppliedStartDate] = useState<Date | undefined>(undefined);
+  const [appliedEndDate, setAppliedEndDate] = useState<Date | undefined>(undefined);
+  
   const { toast } = useToast();
   const { currentDepartment } = useDepartment();
 
@@ -115,38 +122,60 @@ export default function MovementsPage() {
     
     switch (period) {
       case "week":
-        setStartDate(subDays(now, 7));
-        setEndDate(now);
+        setTempStartDate(subDays(now, 7));
+        setTempEndDate(now);
         break;
       case "month":
-        setStartDate(subMonths(now, 1));
-        setEndDate(now);
+        setTempStartDate(subMonths(now, 1));
+        setTempEndDate(now);
         break;
       case "quarter":
-        setStartDate(subMonths(now, 3));
-        setEndDate(now);
+        setTempStartDate(subMonths(now, 3));
+        setTempEndDate(now);
         break;
       case "all":
-        setStartDate(undefined);
-        setEndDate(undefined);
+        setTempStartDate(undefined);
+        setTempEndDate(undefined);
         break;
     }
+  };
+
+  const handleApplyFilters = () => {
+    setAppliedStartDate(tempStartDate);
+    setAppliedEndDate(tempEndDate);
+    toast({
+      title: "Filtros aplicados",
+      description: "A visualização foi atualizada com os filtros selecionados.",
+    });
+  };
+
+  const handleClearFilters = () => {
+    setTempStartDate(undefined);
+    setTempEndDate(undefined);
+    setAppliedStartDate(undefined);
+    setAppliedEndDate(undefined);
+    setSelectedPeriod("all");
+    setSearchTerm("");
+    toast({
+      title: "Filtros limpos",
+      description: "Exibindo todas as movimentações.",
+    });
   };
 
   const filteredMovements = movements.filter(movement => {
     const matchesSearch = movement.patient_name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTab = activeTab === "all" || movement.movement_type === activeTab;
     
-    // Date filter
+    // Date filter using APPLIED dates
     let matchesDate = true;
-    if (startDate || endDate) {
+    if (appliedStartDate || appliedEndDate) {
       const movementDate = new Date(movement.created_at);
-      if (startDate && endDate) {
-        matchesDate = movementDate >= startOfDay(startDate) && movementDate <= endOfDay(endDate);
-      } else if (startDate) {
-        matchesDate = movementDate >= startOfDay(startDate);
-      } else if (endDate) {
-        matchesDate = movementDate <= endOfDay(endDate);
+      if (appliedStartDate && appliedEndDate) {
+        matchesDate = movementDate >= startOfDay(appliedStartDate) && movementDate <= endOfDay(appliedEndDate);
+      } else if (appliedStartDate) {
+        matchesDate = movementDate >= startOfDay(appliedStartDate);
+      } else if (appliedEndDate) {
+        matchesDate = movementDate <= endOfDay(appliedEndDate);
       }
     }
     
@@ -291,19 +320,19 @@ export default function MovementsPage() {
                         variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal uppercase",
-                          !startDate && "text-muted-foreground"
+                          !tempStartDate && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {startDate ? format(startDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
+                        {tempStartDate ? format(tempStartDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={startDate}
+                        selected={tempStartDate}
                         onSelect={(date) => {
-                          setStartDate(date);
+                          setTempStartDate(date);
                           setSelectedPeriod("custom");
                         }}
                         initialFocus
@@ -321,19 +350,19 @@ export default function MovementsPage() {
                         variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal uppercase",
-                          !endDate && "text-muted-foreground"
+                          !tempEndDate && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {endDate ? format(endDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
+                        {tempEndDate ? format(tempEndDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={endDate}
+                        selected={tempEndDate}
                         onSelect={(date) => {
-                          setEndDate(date);
+                          setTempEndDate(date);
                           setSelectedPeriod("custom");
                         }}
                         initialFocus
@@ -344,20 +373,25 @@ export default function MovementsPage() {
                 </div>
               </div>
 
-              {(startDate || endDate) && (
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-2">
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setStartDate(undefined);
-                    setEndDate(undefined);
-                    setSelectedPeriod("all");
-                  }}
-                  className="w-full uppercase text-xs"
+                  onClick={handleApplyFilters}
+                  className="flex-1 uppercase font-semibold"
+                  size="lg"
                 >
-                  Limpar Filtros de Data
+                  <Filter className="mr-2 h-4 w-4" />
+                  Aplicar Filtro
                 </Button>
-              )}
+                <Button
+                  variant="outline"
+                  onClick={handleClearFilters}
+                  className="flex-1 uppercase"
+                  size="lg"
+                >
+                  Limpar Filtro
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
