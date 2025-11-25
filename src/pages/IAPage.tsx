@@ -276,31 +276,64 @@ export default function IAPage() {
         <ScrollArea className="flex-1 px-4">
           <div className="max-w-4xl mx-auto py-8 space-y-6" ref={scrollRef}>
             {messages.length === 0 && (
-              <div className="text-center py-16">
-                <div className="inline-block p-8 rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
-                  <Sparkles className="h-16 w-16 text-primary" />
+              <div className="text-center py-12 px-4">
+                {/* Icon heroico com animação */}
+                <div className="relative inline-block mb-8">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary/20 to-transparent rounded-full blur-2xl animate-pulse" />
+                  <div className="relative inline-flex items-center justify-center p-10 rounded-full bg-gradient-to-br from-primary via-primary/90 to-primary/70 shadow-2xl shadow-primary/20 border border-primary/20">
+                    <Sparkles className="h-20 w-20 text-primary-foreground animate-in zoom-in-50 duration-1000" />
+                  </div>
                 </div>
-                <h2 className="text-2xl font-bold mb-3 text-foreground">Olá! Sou o Assistente Examinus</h2>
-                <p className="text-muted-foreground text-lg mb-8">
-                  Cole ou digite laudos de exames para formatação automática
+
+                {/* Título com gradiente */}
+                <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
+                  OLÁ! SOU O ASSISTENTE EXAMINUS
+                </h2>
+                
+                {/* Subtítulo elegante */}
+                <p className="text-muted-foreground text-xl mb-12 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                  Cole ou digite laudos de exames para <span className="font-semibold text-foreground">formatação automática inteligente</span>
                 </p>
-                <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto text-left">
-                  <div className="p-4 rounded-xl bg-card border border-border">
-                    <h3 className="font-semibold mb-2 flex items-center gap-2">
-                      🧪 Exames Laboratoriais
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Hemograma, bioquímica, coagulograma formatados em linha única
-                    </p>
+
+                {/* Cards de funcionalidades com hover effect */}
+                <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                  <div className="group p-6 rounded-2xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
+                        <span className="text-3xl">🧪</span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg mb-2 text-foreground uppercase tracking-wide">
+                          Exames Laboratoriais
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Hemograma, bioquímica, coagulograma e gasometria formatados em <span className="font-medium text-foreground">linha única compacta</span>
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-4 rounded-xl bg-card border border-border">
-                    <h3 className="font-semibold mb-2 flex items-center gap-2">
-                      🖼 Exames de Imagem
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      TC, RX, US com apenas achados anormais extraídos
-                    </p>
+
+                  <div className="group p-6 rounded-2xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
+                        <span className="text-3xl">🖼️</span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg mb-2 text-foreground uppercase tracking-wide">
+                          Exames de Imagem
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          TC, RX, US e RM com extração de <span className="font-medium text-foreground">apenas achados anormais</span> relevantes
+                        </p>
+                      </div>
+                    </div>
                   </div>
+                </div>
+
+                {/* Indicador sutil */}
+                <div className="mt-12 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-sm text-muted-foreground animate-in fade-in duration-1000 delay-500">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  <span className="uppercase tracking-wide">Pronto para ajudar</span>
                 </div>
               </div>
             )}
