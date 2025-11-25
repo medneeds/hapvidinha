@@ -95,7 +95,7 @@ const menuItems = [
     link: "/ia",
   },
   {
-    title: "PACIENTES",
+    title: "INTERNAÇÃO",
     icon: Users,
     items: [
       { name: "MOVIMENTAÇÕES", link: "/movements" },
