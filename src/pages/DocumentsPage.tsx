@@ -1,8 +1,8 @@
 import { 
   FileText, 
   Biohazard, 
-  Scan, 
-  Stethoscope, 
+  ScanLine, 
+  Bone, 
   Droplet, 
   FileCheck, 
   DollarSign,
@@ -36,7 +36,7 @@ export default function DocumentsPage() {
       title: "Tomografias", 
       description: "Questionários e documentos para exames tomográficos",
       route: "/documents/tomografias",
-      icon: Scan,
+      icon: ScanLine,
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"
     },
@@ -45,7 +45,7 @@ export default function DocumentsPage() {
       title: "Listas OPME", 
       description: "Órteses, Próteses e Materiais Especiais",
       route: "/documents/opme",
-      icon: Stethoscope,
+      icon: Bone,
       color: "text-purple-500",
       bgColor: "bg-purple-500/10"
     },
