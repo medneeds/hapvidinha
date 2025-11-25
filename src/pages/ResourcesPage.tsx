@@ -129,15 +129,6 @@ const ResourcesPage = () => {
       return;
     }
 
-    if (!formData.title.trim()) {
-      toast({
-        title: "ERRO",
-        description: "TÍTULO DA SOLICITAÇÃO É OBRIGATÓRIO",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!formData.content.trim()) {
       toast({
         title: "ERRO",
@@ -373,7 +364,7 @@ const ResourcesPage = () => {
 
             <div className="grid gap-3">
               <Label htmlFor="title" className="uppercase font-semibold text-sm">
-                Título da Solicitação *
+                Título da Solicitação
               </Label>
               <Input
                 id="title"
@@ -381,7 +372,6 @@ const ResourcesPage = () => {
                 onChange={(e) => setFormData({ ...formData, title: e.target.value.toUpperCase() })}
                 placeholder="Ex: Internação Cardiologia - IAM"
                 className="uppercase h-12"
-                required
               />
             </div>
 
