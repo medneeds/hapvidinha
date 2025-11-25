@@ -259,14 +259,14 @@ export default function IAPage() {
     <div className="h-[calc(100vh-4rem)] flex flex-col bg-background">
       {/* Header */}
       <div className="border-b bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 backdrop-blur-sm">
-        <div className="px-4 py-6">
-          <div className="flex items-center gap-4">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg">
-              <Sparkles className="h-7 w-7 text-primary-foreground" />
+        <div className="px-4 py-4">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg">
+              <Sparkles className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground uppercase">Assistente Examinus</h1>
-              <p className="text-sm text-muted-foreground uppercase">Formatador Inteligente de Exames Médicos</p>
+              <h1 className="text-2xl font-bold text-foreground uppercase">Assistente Examinus</h1>
+              <p className="text-xs text-muted-foreground uppercase">Formatador Inteligente de Exames Médicos</p>
             </div>
           </div>
         </div>
@@ -274,55 +274,55 @@ export default function IAPage() {
 
       {/* Messages */}
         <ScrollArea className="flex-1 px-4">
-          <div className="max-w-4xl mx-auto py-8 space-y-6" ref={scrollRef}>
+          <div className="max-w-4xl mx-auto py-4 space-y-6" ref={scrollRef}>
             {messages.length === 0 && (
-              <div className="text-center py-12 px-4">
+              <div className="text-center py-4 px-4">
                 {/* Icon heroico com animação */}
-                <div className="relative inline-block mb-8">
+                <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-primary/20 to-transparent rounded-full blur-2xl animate-pulse" />
-                  <div className="relative inline-flex items-center justify-center p-10 rounded-full bg-gradient-to-br from-primary via-primary/90 to-primary/70 shadow-2xl shadow-primary/20 border border-primary/20">
-                    <Sparkles className="h-20 w-20 text-primary-foreground animate-in zoom-in-50 duration-1000" />
+                  <div className="relative inline-flex items-center justify-center p-6 rounded-full bg-gradient-to-br from-primary via-primary/90 to-primary/70 shadow-2xl shadow-primary/20 border border-primary/20">
+                    <Sparkles className="h-12 w-12 text-primary-foreground animate-in zoom-in-50 duration-1000" />
                   </div>
                 </div>
 
                 {/* Título com gradiente */}
-                <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
                   OLÁ! SOU O ASSISTENTE EXAMINUS
                 </h2>
                 
                 {/* Subtítulo elegante */}
-                <p className="text-muted-foreground text-xl mb-12 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                <p className="text-muted-foreground text-base mb-6 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
                   Cole ou digite laudos de exames para <span className="font-semibold text-foreground">formatação automática inteligente</span>
                 </p>
 
                 {/* Cards de funcionalidades com hover effect */}
-                <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto text-left animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                  <div className="group p-6 rounded-2xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
-                        <span className="text-3xl">🧪</span>
+                <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto text-left animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                  <div className="group p-4 rounded-2xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
+                        <span className="text-2xl">🧪</span>
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg mb-2 text-foreground uppercase tracking-wide">
+                        <h3 className="font-bold text-base mb-1 text-foreground uppercase tracking-wide">
                           Exames Laboratoriais
                         </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <p className="text-xs text-muted-foreground leading-relaxed">
                           Hemograma, bioquímica, coagulograma e gasometria formatados em <span className="font-medium text-foreground">linha única compacta</span>
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="group p-6 rounded-2xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
-                        <span className="text-3xl">🖼️</span>
+                  <div className="group p-4 rounded-2xl bg-gradient-to-br from-card via-card to-card/80 border border-border/50 shadow-lg hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
+                        <span className="text-2xl">🖼️</span>
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg mb-2 text-foreground uppercase tracking-wide">
+                        <h3 className="font-bold text-base mb-1 text-foreground uppercase tracking-wide">
                           Exames de Imagem
                         </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <p className="text-xs text-muted-foreground leading-relaxed">
                           TC, RX, US e RM com extração de <span className="font-medium text-foreground">apenas achados anormais</span> relevantes
                         </p>
                       </div>
@@ -331,8 +331,8 @@ export default function IAPage() {
                 </div>
 
                 {/* Indicador sutil */}
-                <div className="mt-12 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-sm text-muted-foreground animate-in fade-in duration-1000 delay-500">
-                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-xs text-muted-foreground animate-in fade-in duration-1000 delay-500">
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                   <span className="uppercase tracking-wide">Pronto para ajudar</span>
                 </div>
               </div>
