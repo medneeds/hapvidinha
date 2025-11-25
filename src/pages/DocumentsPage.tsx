@@ -1,6 +1,6 @@
 import { 
   FileText, 
-  Droplets, 
+  Activity, 
   Scan, 
   Stethoscope, 
   Droplet, 
@@ -27,7 +27,7 @@ export default function DocumentsPage() {
       title: "Protocolo SEPSE", 
       description: "Protocolo institucional para manejo de sepse e choque séptico",
       route: "/sepsis-protocol",
-      icon: Droplets,
+      icon: Activity,
       color: "text-red-500",
       bgColor: "bg-red-500/10"
     },
