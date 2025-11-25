@@ -25,7 +25,7 @@ export function PrintableSectorSection({
   return (
     <div 
       style={{ 
-        marginBottom: isCompact ? '10px' : '20px',
+        marginBottom: isCompact ? '12px' : '16px',
         pageBreakInside: 'avoid',
         breakInside: 'avoid'
       }}
@@ -33,22 +33,23 @@ export function PrintableSectorSection({
       <div 
         style={{ 
           backgroundColor: bgColor,
-          borderLeft: `5px solid ${borderColor}`,
-          padding: isCompact ? '8px 10px' : '10px',
-          marginBottom: isCompact ? '6px' : '10px',
+          borderLeft: `6px solid ${borderColor}`,
+          padding: isCompact ? '8px 12px' : '10px 14px',
+          marginBottom: isCompact ? '8px' : '12px',
           pageBreakAfter: 'avoid',
-          breakAfter: 'avoid'
+          breakAfter: 'avoid',
+          borderRadius: '4px'
         }}
       >
         <h2 style={{ 
-          fontSize: isCompact ? '11.5pt' : '12pt', 
+          fontSize: isCompact ? '12pt' : '13pt', 
           fontWeight: 'bold', 
           textTransform: 'uppercase',
           color: textColor,
           margin: 0,
-          letterSpacing: '0.3px'
+          letterSpacing: '0.5px'
         }}>
-          {sectorName} ({patients.length})
+          {sectorName} ({patients.length} {patients.length === 1 ? 'PACIENTE' : 'PACIENTES'})
         </h2>
       </div>
       <div>

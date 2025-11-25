@@ -23,21 +23,42 @@ export function PrintLayout({
 
   const isCompact = mode === 'compact';
 
+  const pageStyle = `
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+    
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  `;
+
   const containerStyle: React.CSSProperties = {
     position: 'relative',
-    maxWidth: isPreview ? '210mm' : 'none',
+    maxWidth: isPreview ? '297mm' : 'none',
     margin: isPreview ? '0 auto' : '0',
-    padding: isCompact ? '15mm 12mm' : '20mm 15mm',
-    paddingTop: isCompact ? '20mm' : '25mm',
-    fontSize: isCompact ? '10pt' : '11pt',
+    padding: isCompact ? '12mm 15mm' : '15mm 18mm',
+    paddingTop: isCompact ? '15mm' : '18mm',
+    fontSize: isCompact ? '9pt' : '10pt',
     lineHeight: isCompact ? '1.3' : '1.4',
     backgroundColor: '#ffffff',
-    minHeight: '297mm',
+    minHeight: '210mm',
     boxShadow: isPreview ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none'
   };
 
   return (
-    <div style={containerStyle}>
+    <>
+      <style>{pageStyle}</style>
+      <div style={containerStyle}>
       {/* Logo as watermark */}
       <img 
         src={hapvidaFullLogo} 
@@ -57,30 +78,32 @@ export function PrintLayout({
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
-        gap: '8px', 
-        marginBottom: isCompact ? '12px' : '16px', 
-        paddingBottom: isCompact ? '6px' : '8px', 
+        gap: '10px', 
+        marginBottom: isCompact ? '10px' : '14px', 
+        paddingBottom: isCompact ? '8px' : '10px', 
         borderBottom: '2px solid #d1d5db',
         position: 'relative',
         zIndex: 1
       }}>
         <div style={{ 
-          height: isCompact ? '28px' : '32px', 
-          width: isCompact ? '28px' : '32px', 
+          height: isCompact ? '32px' : '36px', 
+          width: isCompact ? '32px' : '36px', 
           background: 'linear-gradient(135deg, #ef4444, #eab308, #3b82f6)', 
-          borderRadius: '4px',
+          borderRadius: '6px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          flexShrink: 0
         }}>
-          <ClipboardList style={{ height: isCompact ? '14px' : '16px', width: isCompact ? '14px' : '16px', color: '#ffffff' }} />
+          <ClipboardList style={{ height: isCompact ? '16px' : '18px', width: isCompact ? '16px' : '18px', color: '#ffffff' }} />
         </div>
         <h1 style={{ 
-          fontSize: isCompact ? '18pt' : '20pt', 
+          fontSize: isCompact ? '16pt' : '18pt', 
           fontWeight: 'bold', 
           textTransform: 'uppercase',
           margin: 0,
-          color: '#000000'
+          color: '#000000',
+          letterSpacing: '0.5px'
         }}>
           Mapa de Pacientes - Hospital Guarás
         </h1>
@@ -88,17 +111,21 @@ export function PrintLayout({
       
       {/* Metadata */}
       <div style={{ 
-        fontSize: isCompact ? '9pt' : '10pt', 
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gap: '12px',
+        fontSize: isCompact ? '8.5pt' : '9.5pt', 
         color: '#4b5563', 
-        marginBottom: isCompact ? '12px' : '16px', 
-        paddingBottom: isCompact ? '6px' : '8px', 
-        borderBottom: '1px solid #e5e7eb' 
+        marginBottom: isCompact ? '10px' : '14px', 
+        paddingBottom: isCompact ? '8px' : '10px', 
+        borderBottom: '1px solid #e5e7eb',
+        backgroundColor: '#f9fafb',
+        padding: '8px',
+        borderRadius: '4px'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span>Data: {new Date().toLocaleDateString('pt-BR')}</span>
-          <span>Hora: {new Date().toLocaleTimeString('pt-BR')}</span>
-          <span>Modo: {mode === 'compact' ? 'Retraído' : 'Detalhado'}</span>
-        </div>
+        <div><strong>Data:</strong> {new Date().toLocaleDateString('pt-BR')}</div>
+        <div><strong>Hora:</strong> {new Date().toLocaleTimeString('pt-BR')}</div>
+        <div><strong>Modo:</strong> {mode === 'compact' ? 'Retraído' : 'Detalhado'}</div>
       </div>
       
       {/* Sectors */}
@@ -143,14 +170,15 @@ export function PrintLayout({
         fontStyle: 'italic',
         textAlign: 'center', 
         color: '#9ca3af', 
-        marginTop: isCompact ? '20px' : '28px', 
-        paddingTop: isCompact ? '14px' : '18px', 
+        marginTop: isCompact ? '16px' : '20px', 
+        paddingTop: isCompact ? '12px' : '14px', 
         borderTop: '1px solid #f3f4f6',
         letterSpacing: '0.3px',
         opacity: 0.85
       }}>
-        Urgência e Emergência • Hospital Guarás • Documento gerado automaticamente
+        Urgência e Emergência • Hospital Guarás • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
       </div>
     </div>
+    </>
   );
 }
