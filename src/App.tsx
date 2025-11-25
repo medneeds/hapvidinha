@@ -24,6 +24,7 @@ import MovementsPage from "./pages/MovementsPage";
 import AuthPage from "./pages/AuthPage";
 import IAPage from "./pages/IAPage";
 import InternmentHistoryPage from "./pages/InternmentHistoryPage";
+import DashboardPage from "./pages/DashboardPage";
 
 const queryClient = new QueryClient();
 
@@ -191,6 +192,16 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <InternmentHistoryPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <DashboardPage />
               </MainLayout>
             </ProtectedRoute>
           }
