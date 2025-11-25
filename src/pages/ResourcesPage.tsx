@@ -75,7 +75,7 @@ const ResourcesPage = () => {
 
   useEffect(() => {
     const patientId = searchParams.get('patientId');
-    if (patientId && patients.length > 0) {
+    if (patientId && patients.length > 0 && !selectedPatient) {
       const patient = patients.find(p => p.id === patientId);
       if (patient) {
         setSelectedPatient(patientId);
@@ -103,11 +103,11 @@ const ResourcesPage = () => {
         
         setFormData({
           content: autoContent,
-          destination: "", // Deixar destino vazio para o usuário preencher
+          destination: "",
         });
       }
     }
-  }, [searchParams, patients]);
+  }, [searchParams, patients, selectedPatient]);
 
   const loadPatients = async () => {
     const { data, error } = await supabase
