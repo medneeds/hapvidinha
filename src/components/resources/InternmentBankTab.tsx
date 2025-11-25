@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Database, Plus, Search, Trash2, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useDepartment } from "@/contexts/DepartmentContext";
 import {
   Dialog,
   DialogContent,
@@ -44,6 +45,7 @@ interface InternmentRequest {
 }
 
 const InternmentBankTab = () => {
+  const { currentDepartment } = useDepartment();
   const [requests, setRequests] = useState<InternmentRequest[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<InternmentRequest[]>([]);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -75,6 +77,7 @@ const InternmentBankTab = () => {
     const { data, error } = await supabase
       .from("internment_requests")
       .select("*")
+      .eq("department", currentDepartment)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -171,6 +174,7 @@ const InternmentBankTab = () => {
         title: formData.title.toUpperCase(),
         content: formData.content.toUpperCase(),
         created_by: user.id,
+        department: currentDepartment,
       });
 
     if (error) {

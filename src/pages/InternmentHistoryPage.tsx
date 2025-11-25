@@ -62,7 +62,7 @@ const InternmentHistoryPage = () => {
 
   useEffect(() => {
     loadRequests();
-  }, []);
+  }, [currentDepartment]);
 
   useEffect(() => {
     filterRequests();
@@ -72,6 +72,7 @@ const InternmentHistoryPage = () => {
     const { data, error } = await supabase
       .from("internment_requests")
       .select("*")
+      .eq("department", currentDepartment)
       .order("created_at", { ascending: false });
 
     if (error) {

@@ -19,6 +19,7 @@ export type Database = {
           content: string
           created_at: string
           created_by: string | null
+          department: string
           id: string
           patient_age: number | null
           patient_name: string
@@ -31,6 +32,7 @@ export type Database = {
           content: string
           created_at?: string
           created_by?: string | null
+          department?: string
           id?: string
           patient_age?: number | null
           patient_name: string
@@ -43,6 +45,7 @@ export type Database = {
           content?: string
           created_at?: string
           created_by?: string | null
+          department?: string
           id?: string
           patient_age?: number | null
           patient_name?: string
