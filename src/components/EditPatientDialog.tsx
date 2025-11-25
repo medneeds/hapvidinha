@@ -36,11 +36,10 @@ export function EditPatientDialog({
   const [loadingCid, setLoadingCid] = useState<number | null>(null);
   const [ageInput, setAgeInput] = useState("");
   const [isFormattingAge, setIsFormattingAge] = useState(false);
-  const { calculateAge, isCalculating } = useAgeCalculator();
   const { currentDepartment } = useDepartment();
-  const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
-
   const isPediatric = currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA";
+  const { calculateAge, isCalculating } = useAgeCalculator(isPediatric);
+  const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
 
   // Reset form data when patient changes or dialog opens
   useEffect(() => {

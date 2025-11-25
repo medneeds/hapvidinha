@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { parseDate, calculateDetailedAge } from "@/utils/pediatricAgeFormat";
 
-export function useAgeCalculator() {
+export function useAgeCalculator(isPediatric: boolean = false) {
   const [isCalculating, setIsCalculating] = useState(false);
 
   const calculateAge = async (input: string): Promise<string | null> => {
@@ -10,6 +11,29 @@ export function useAgeCalculator() {
 
     setIsCalculating(true);
     try {
+      // Se não for setor pediátrico, fazer cálculo simples
+      if (!isPediatric) {
+        const trimmed = input.trim();
+        
+        // Se for um número, retornar como anos
+        if (/^\d+$/.test(trimmed)) {
+          const age = parseInt(trimmed);
+          return age === 1 ? "1 ANO" : `${age} ANOS`;
+        }
+        
+        // Tentar parsear como data de nascimento
+        const birthDate = parseDate(trimmed);
+        if (birthDate) {
+          const ageData = calculateDetailedAge(birthDate);
+          const years = ageData.years || 0;
+          return years === 1 ? "1 ANO" : `${years} ANOS`;
+        }
+        
+        // Se não conseguir parsear, retornar como está em uppercase
+        return trimmed.toUpperCase();
+      }
+
+      // Para setor pediátrico, usar a edge function
       const { data, error } = await supabase.functions.invoke("format-pediatric-age", {
         body: { input: input.trim() },
       });
