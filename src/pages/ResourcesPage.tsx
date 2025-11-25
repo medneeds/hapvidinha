@@ -45,6 +45,7 @@ interface Patient {
   sector: string;
   age: string | null;
   admission_history: string | null;
+  diagnoses: string | null;
 }
 
 const ResourcesPage = () => {
@@ -76,7 +77,7 @@ const ResourcesPage = () => {
   const loadPatients = async () => {
     const { data, error } = await supabase
       .from("patients")
-      .select("id, name, bed_number, sector, age, admission_history")
+      .select("id, name, bed_number, sector, age, admission_history, diagnoses")
       .eq("department", currentDepartment)
       .order("sector", { ascending: true })
       .order("bed_number", { ascending: true });
@@ -89,6 +90,57 @@ const ResourcesPage = () => {
     }
 
     setPatients(data || []);
+  };
+
+  const handleImportDiagnoses = () => {
+    if (!selectedPatient) {
+      toast({
+        title: "ERRO",
+        description: "SELECIONE UM PACIENTE PRIMEIRO",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const patient = patients.find(p => p.id === selectedPatient);
+    if (!patient) {
+      toast({
+        title: "ERRO",
+        description: "PACIENTE NÃO ENCONTRADO",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!patient.diagnoses || patient.diagnoses.trim() === "") {
+      toast({
+        title: "AVISO",
+        description: "ESTE PACIENTE NÃO POSSUI HIPÓTESES/DIAGNÓSTICOS REGISTRADOS",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Parse diagnoses array and join with " | "
+    try {
+      const diagnosesArray = JSON.parse(patient.diagnoses);
+      const diagnosesText = Array.isArray(diagnosesArray) 
+        ? diagnosesArray.join(" | ").toUpperCase()
+        : patient.diagnoses.toUpperCase();
+      
+      setFormData({ ...formData, title: diagnosesText });
+      toast({
+        title: "IMPORTADO",
+        description: "HIPÓTESES/DIAGNÓSTICOS IMPORTADOS COM SUCESSO",
+      });
+    } catch {
+      // Se não for JSON válido, usar o texto direto
+      setFormData({ ...formData, title: patient.diagnoses.toUpperCase() });
+      toast({
+        title: "IMPORTADO",
+        description: "HIPÓTESES/DIAGNÓSTICOS IMPORTADOS COM SUCESSO",
+      });
+    }
   };
 
   const handleImportAdmissionHistory = () => {
@@ -394,9 +446,22 @@ const ResourcesPage = () => {
             <Separator />
 
             <div className="grid gap-3">
-              <Label htmlFor="title" className="uppercase font-semibold text-sm">
-                Título da Solicitação
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="title" className="uppercase font-semibold text-sm">
+                  Título da Solicitação
+                </Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleImportDiagnoses}
+                  className="uppercase gap-2 h-8 text-xs"
+                  disabled={!selectedPatient}
+                >
+                  <Import className="h-3.5 w-3.5" />
+                  Importar Hipóteses
+                </Button>
+              </div>
               <Input
                 id="title"
                 value={formData.title}
