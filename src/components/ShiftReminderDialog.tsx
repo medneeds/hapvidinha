@@ -15,12 +15,25 @@ export function ShiftReminderDialog() {
       const hours = now.getHours();
       const minutes = now.getMinutes();
 
-      // Check if it's 6:45, 12:45, or 18:45
-      if (minutes === 45 && (hours === 6 || hours === 12 || hours === 18)) {
-        const shift = hours === 6 ? "MATUTINO" : hours === 12 ? "VESPERTINO" : "NOTURNO";
-        setShiftTime(shift);
-        setOpen(true);
+      // DEMONSTRAÇÃO: Mostrar sempre que carregar a página
+      // Determinar qual plantão está mais próximo
+      let shift = "MATUTINO";
+      if (hours >= 12 && hours < 18) {
+        shift = "VESPERTINO";
+      } else if (hours >= 18 || hours < 6) {
+        shift = "NOTURNO";
       }
+      
+      setShiftTime(shift);
+      setOpen(true);
+
+      // CÓDIGO ORIGINAL (comentado para demonstração):
+      // Check if it's 6:45, 12:45, or 18:45
+      // if (minutes === 45 && (hours === 6 || hours === 12 || hours === 18)) {
+      //   const shift = hours === 6 ? "MATUTINO" : hours === 12 ? "VESPERTINO" : "NOTURNO";
+      //   setShiftTime(shift);
+      //   setOpen(true);
+      // }
     };
 
     // Check immediately
