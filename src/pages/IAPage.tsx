@@ -398,18 +398,18 @@ export default function IAPage() {
 
         {/* Input */}
         <div className="border-t bg-card/50 backdrop-blur-sm shadow-lg">
-          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto px-4 py-4">
+          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto px-4 py-3">
             {/* File Preview */}
             {selectedFile && (
-              <div className="mb-3 p-3 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <div className="mb-2 p-2 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between">
+                <div className="flex items-center gap-2">
                   {filePreview ? (
-                    <img src={filePreview} alt="Preview" className="h-12 w-12 rounded object-cover" />
+                    <img src={filePreview} alt="Preview" className="h-10 w-10 rounded object-cover" />
                   ) : (
-                    <FileText className="h-12 w-12 text-primary" />
+                    <FileText className="h-10 w-10 text-primary" />
                   )}
                   <div>
-                    <p className="font-medium text-sm">{selectedFile.name}</p>
+                    <p className="font-medium text-xs">{selectedFile.name}</p>
                     <p className="text-xs text-muted-foreground">
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                     </p>
@@ -420,21 +420,21 @@ export default function IAPage() {
                   variant="ghost"
                   size="icon"
                   onClick={removeFile}
-                  className="h-8 w-8"
+                  className="h-7 w-7"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3 w-3" />
                 </Button>
               </div>
             )}
 
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <div className="flex-1 space-y-2">
                 <Textarea
                   ref={textareaRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder={selectedFile ? "Mensagem opcional..." : "Cole o laudo do exame ou anexe PDF/imagem..."}
-                  className="min-h-[80px] max-h-[300px] resize-none text-base font-mono shadow-sm"
+                  className="min-h-[60px] max-h-[200px] resize-none text-sm font-mono shadow-sm"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -460,28 +460,28 @@ export default function IAPage() {
                   type="button"
                   variant="outline"
                   size="icon"
-                  className="h-[38px] w-[38px]"
+                  className="h-[32px] w-[32px]"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isLoading}
                   title="Anexar PDF ou imagem"
                 >
-                  <FileText className="h-5 w-5" />
+                  <FileText className="h-4 w-4" />
                 </Button>
                 <Button
                   type="submit"
                   size="icon"
-                  className="h-[38px] w-[38px]"
+                  className="h-[32px] w-[32px]"
                   disabled={(!input.trim() && !selectedFile) || isLoading}
                 >
                   {isLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Send className="h-5 w-5" />
+                    <Send className="h-4 w-4" />
                   )}
                 </Button>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
+            <p className="text-xs text-muted-foreground mt-1.5 text-center">
               Shift + Enter para nova linha • Enter para enviar • PDF máximo 20MB
             </p>
           </form>
