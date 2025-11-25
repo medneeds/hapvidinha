@@ -36,15 +36,24 @@ FORMATO PADRÃO (quando não há solicitação específica)
 LABORATORIAIS (linha única):
 DD/MM HH:MM: Hb X,X Ht X,X Leuco X.XXX Pqt XXX.XXX Cr X,XX Ur XX Na XXX K X,X Ca X,X PCR XX TP XX,X (RNI X,XX) TTPa XX
 
-ORDEM: Data → Hemograma → Renal → Eletrólitos → Inflamatórios → Coagulo
+ORDEM PREFERENCIAL: Data → Hemograma → Renal → Eletrólitos → Inflamatórios → Coagulo
 NÚMEROS: Vírgula decimal • Hemograma 1 casa • Resto 2 casas • Milhares com ponto
+
+REGRA CRÍTICA DE RECONHECIMENTO:
+✓ TODOS os exames laboratoriais presentes devem ser incluídos
+✓ Se encontrar exames não listados acima, INCLUA usando abreviações aceitas
+✓ Mantenha a mesma lógica de formatação: abreviação + valor + unidade
+✓ Exemplos de outras abreviações: Mg (magnésio), Cl (cloro), Glic (glicose), BT (bilirrubina total), BD (bilirrubina direta), TGO, TGP, FA (fosfatase alcalina), GGT, Alb (albumina), Ferr (ferritina), TSH, T4L, Trop (troponina), ProBNP, D-dim (dímero-D), Fib (fibrinogênio)
 
 ESPECIAIS (nova linha):
 (EAS): SÓ ANORMAIS
 (Gaso): pH PCO₂ PO₂ HCO₃ BE SatO₂ Lactato
+(Hep): TGO TGP GGT FA BT BD Alb
+(Tireóide): TSH T4L T3
 
-EXEMPLO:
-20/11 14:30: Hb 12,5 Ht 37,2 Leuco 14.320 Pqt 180.000 Cr 1,23 Ur 45 Na 138 K 4,2 PCR 58,3 TP 14,2 (RNI 1,15) TTPa 28,5
+EXEMPLO COMPLETO COM EXAMES ADICIONAIS:
+20/11 14:30: Hb 12,5 Ht 37,2 Leuco 14.320 Pqt 180.000 Cr 1,23 Ur 45 Na 138 K 4,2 Ca 9,2 Mg 2,1 Cl 102 Glic 145 PCR 58,3 TP 14,2 (RNI 1,15) TTPa 28,5
+(Hep): TGO 45 TGP 52 GGT 89 FA 120 BT 1,2 BD 0,4 Alb 3,8
 (Gaso): pH 7,35 PCO₂ 38 PO₂ 92 HCO₃ 22 BE -2,1 SatO₂ 96% Lactato 1,8
 
 IMAGEM:
