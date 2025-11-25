@@ -16,6 +16,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,6 +53,12 @@ const ResourcesPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  const [savedRequestInfo, setSavedRequestInfo] = useState<{
+    patientName: string;
+    destination: string;
+    title: string;
+  } | null>(null);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string>("");
 
@@ -193,12 +209,15 @@ const ResourcesPage = () => {
       return;
     }
 
-    toast({
-      title: "SALVO",
-      description: "SOLICITAÇÃO SALVA COM SUCESSO NO BANCO",
+    // Salvar informações para o pop-up de confirmação
+    setSavedRequestInfo({
+      patientName: patient.name.toUpperCase(),
+      destination: formData.destination,
+      title: formData.title || "SEM TÍTULO"
     });
 
     setIsSaveDialogOpen(false);
+    setIsConfirmationDialogOpen(true);
   };
 
   const getSectorLabel = (sector: string) => {
@@ -434,6 +453,62 @@ const ResourcesPage = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={isConfirmationDialogOpen} onOpenChange={setIsConfirmationDialogOpen}>
+        <AlertDialogContent className="sm:max-w-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="uppercase flex items-center gap-2 text-green-600">
+              <Database className="h-6 w-6" />
+              Solicitação Registrada com Sucesso
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4 pt-4">
+              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <div className="grid gap-2">
+                  <div className="flex justify-between items-start">
+                    <span className="text-xs font-semibold uppercase text-foreground">Paciente:</span>
+                    <span className="text-sm font-bold text-foreground text-right">{savedRequestInfo?.patientName}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between items-start">
+                    <span className="text-xs font-semibold uppercase text-foreground">Destino:</span>
+                    <span className="text-sm font-bold text-primary text-right">{savedRequestInfo?.destination}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between items-start">
+                    <span className="text-xs font-semibold uppercase text-foreground">Título:</span>
+                    <span className="text-sm text-foreground text-right">{savedRequestInfo?.title}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <p className="text-sm text-blue-900 dark:text-blue-100 font-medium uppercase">
+                  📋 Informação Importante
+                </p>
+                <p className="text-xs text-blue-800 dark:text-blue-200 mt-2 uppercase leading-relaxed">
+                  A solicitação foi salva com sucesso no banco de dados. Você pode visualizar, editar ou imprimir a solicitação completa a qualquer momento acessando o <strong>Histórico de Solicitações</strong>.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-2">
+            <AlertDialogCancel className="uppercase">
+              Fechar
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                setIsConfirmationDialogOpen(false);
+                navigate('/internment-history');
+              }}
+              className="uppercase gap-2"
+            >
+              <History className="h-4 w-4" />
+              Ver Histórico
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
