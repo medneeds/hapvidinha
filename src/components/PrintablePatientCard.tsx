@@ -281,32 +281,6 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
           </div>
         </div>
       </div>
-
-      {/* História Admissional - Full width expandable section */}
-      {patient.admissionHistory && (
-        <div style={{ 
-          marginTop: '12px',
-          paddingTop: '10px',
-          borderTop: '1px solid #e5e7eb'
-        }}>
-          <div style={{ fontSize: '8pt', color: '#6b7280', marginBottom: '6px', textTransform: 'uppercase', fontWeight: '600' }}>
-            História Admissional / Anamnese
-          </div>
-          <div style={{ 
-            fontSize: '8pt', 
-            color: '#374151', 
-            lineHeight: '1.6',
-            whiteSpace: 'pre-wrap',
-            backgroundColor: '#f9fafb',
-            padding: '8px',
-            borderRadius: '4px',
-            maxHeight: '120px',
-            overflow: 'hidden'
-          }}>
-            {patient.admissionHistory}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
