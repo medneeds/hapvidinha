@@ -5,6 +5,7 @@ import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
+import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
 import { Patient } from "@/types/patient";
 import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -1172,6 +1173,9 @@ const Index = () => {
         onOpenChange={setHandoverDialogOpen}
         patients={patients}
       />
+
+      {/* Shift Reminder Dialog */}
+      <ShiftReminderDialog />
 
       {/* Department Change Password Dialog - Removido, apenas admin pode trocar */}
 
