@@ -146,57 +146,165 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
     );
   }
   
-  // Modo detalhado mantém formato atual
+  // Modo detalhado - agora com layout grid organizado
   return (
     <div 
       style={{ 
         border: '1px solid #d1d5db',
-        borderRadius: '4px',
-        padding: '12px',
-        marginBottom: '12px',
+        borderRadius: '6px',
+        padding: '10px 12px',
+        marginBottom: '10px',
         backgroundColor: '#ffffff',
-        fontSize: '10pt',
+        fontSize: '9.5pt',
         pageBreakInside: 'avoid',
-        breakInside: 'avoid',
-        opacity: 1
+        breakInside: 'avoid'
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-        <span style={{ fontWeight: 'bold', fontSize: '11pt', color: '#000000' }}>
-          {patient.bedNumber} - {patient.name}
-        </span>
-        {patient.age && (
-          <span style={{ color: '#4b5563', fontSize: '11pt' }}>
-            {typeof patient.age === 'number' ? `${patient.age}a` : patient.age}
-          </span>
-        )}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: '60px 2fr 3fr 2.5fr 2.5fr 3.5fr',
+        gap: '14px',
+        alignItems: 'start'
+      }}>
+        {/* Leito */}
+        <div>
+          <div style={{ fontSize: '8pt', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>Leito</div>
+          <div style={{ 
+            backgroundColor: bedColor,
+            color: '#ffffff',
+            padding: '4px 10px',
+            borderRadius: '5px',
+            fontSize: '10pt',
+            fontWeight: 'bold',
+            display: 'inline-block',
+            textAlign: 'center',
+            minWidth: '45px'
+          }}>
+            {patient.bedNumber}
+          </div>
+        </div>
+
+        {/* Paciente */}
+        <div>
+          <div style={{ fontSize: '8pt', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>Paciente</div>
+          <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#000000', marginBottom: '3px', lineHeight: '1.3' }}>
+            {patient.name || 'SEM NOME'}
+          </div>
+          <div style={{ fontSize: '8pt', color: '#6b7280' }}>
+            {formatAgeDisplay(patient.age)}
+          </div>
+        </div>
+
+        {/* Hipóteses / Diagnósticos */}
+        <div>
+          <div style={{ fontSize: '8pt', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>
+            Hipóteses / Diagnósticos
+          </div>
+          <div style={{ fontSize: '8.5pt', color: '#374151', lineHeight: '1.5' }}>
+            {patient.diagnoses.length > 0 ? (
+              patient.diagnoses.map((diagnosis, idx) => (
+                <div key={idx} style={{ marginBottom: '3px' }}>
+                  <span style={{ fontWeight: 'bold', color: '#6b7280' }}>{idx + 1}.</span> {diagnosis}
+                </div>
+              ))
+            ) : (
+              <span style={{ color: '#9ca3af' }}>-</span>
+            )}
+          </div>
+        </div>
+
+        {/* Antecedentes */}
+        <div>
+          <div style={{ fontSize: '8pt', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>
+            Antecedentes
+          </div>
+          <div style={{ fontSize: '8.5pt', color: '#374151', lineHeight: '1.5' }}>
+            {patient.medicalHistory.length > 0 ? (
+              patient.medicalHistory.map((history, idx) => (
+                <div key={idx} style={{ marginBottom: '3px' }}>
+                  <span style={{ fontWeight: 'bold', color: '#6b7280' }}>{idx + 1}.</span> {history}
+                </div>
+              ))
+            ) : (
+              <span style={{ color: '#9ca3af' }}>-</span>
+            )}
+          </div>
+        </div>
+
+        {/* Exames */}
+        <div>
+          <div style={{ fontSize: '8pt', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>
+            Exames
+          </div>
+          <div style={{ fontSize: '8.5pt', color: '#374151', lineHeight: '1.5' }}>
+            {patient.relevantExams.length > 0 ? (
+              patient.relevantExams.map((exam, idx) => (
+                <div key={idx} style={{ marginBottom: '3px' }}>
+                  <span style={{ fontWeight: 'bold', color: '#6b7280' }}>{idx + 1}.</span> {exam}
+                </div>
+              ))
+            ) : (
+              <span style={{ color: '#9ca3af' }}>-</span>
+            )}
+          </div>
+        </div>
+
+        {/* Programações / Pendências */}
+        <div>
+          <div style={{ fontSize: '8pt', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', fontWeight: '600' }}>
+            Programações / Pendências
+          </div>
+          <div style={{ fontSize: '8.5pt', color: '#374151', lineHeight: '1.5' }}>
+            {patient.pendencies.length > 0 ? (
+              patient.pendencies.map((pendency, idx) => {
+                const isHighlighted = patient.highlightedPendencies?.includes(idx);
+                return (
+                  <div 
+                    key={idx} 
+                    style={{ 
+                      marginBottom: '3px',
+                      fontWeight: isHighlighted ? 'bold' : 'normal',
+                      backgroundColor: isHighlighted ? '#fef3c7' : 'transparent',
+                      padding: isHighlighted ? '2px 4px' : '0',
+                      borderRadius: isHighlighted ? '3px' : '0',
+                      display: 'inline-block',
+                      width: '100%'
+                    }}
+                  >
+                    <span style={{ fontWeight: 'bold', color: '#6b7280' }}>{idx + 1}.</span> {pendency}
+                  </div>
+                );
+              })
+            ) : (
+              <span style={{ color: '#9ca3af' }}>-</span>
+            )}
+          </div>
+        </div>
       </div>
-      
-      {patient.diagnoses.length > 0 && (
-        <div style={{ color: '#374151', marginBottom: '8px', fontSize: '10pt' }}>
-          <strong>Hipóteses / Diagnósticos:</strong> {patient.diagnoses.join(', ')}
-        </div>
-      )}
-      
-      {patient.pendencies.length > 0 && (
-        <div style={{ color: '#374151', marginBottom: '8px', fontSize: '10pt' }}>
-          <strong>Programações / Pendências:</strong> {patient.pendencies.join(', ')}
-        </div>
-      )}
-      
-      {patient.medicalHistory.length > 0 && (
-        <div style={{ color: '#374151', marginBottom: '8px' }}>
-          <strong>Antecedentes:</strong> {patient.medicalHistory.join(', ')}
-        </div>
-      )}
-      {patient.relevantExams.length > 0 && (
-        <div style={{ color: '#374151', marginBottom: '8px' }}>
-          <strong>Exames:</strong> {patient.relevantExams.join(', ')}
-        </div>
-      )}
-      {patient.schedule.length > 0 && (
-        <div style={{ color: '#374151', marginBottom: '8px' }}>
-          <strong>Agenda:</strong> {patient.schedule.join(', ')}
+
+      {/* História Admissional - Full width expandable section */}
+      {patient.admissionHistory && (
+        <div style={{ 
+          marginTop: '12px',
+          paddingTop: '10px',
+          borderTop: '1px solid #e5e7eb'
+        }}>
+          <div style={{ fontSize: '8pt', color: '#6b7280', marginBottom: '6px', textTransform: 'uppercase', fontWeight: '600' }}>
+            História Admissional / Anamnese
+          </div>
+          <div style={{ 
+            fontSize: '8pt', 
+            color: '#374151', 
+            lineHeight: '1.6',
+            whiteSpace: 'pre-wrap',
+            backgroundColor: '#f9fafb',
+            padding: '8px',
+            borderRadius: '4px',
+            maxHeight: '120px',
+            overflow: 'hidden'
+          }}>
+            {patient.admissionHistory}
+          </div>
         </div>
       )}
     </div>
