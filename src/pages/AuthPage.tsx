@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { LogIn, User, Lock, Sparkles, Building2, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -28,6 +30,7 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   
   const [loginData, setLoginData] = useState({
     username: "",
@@ -55,10 +58,14 @@ export default function AuthPage() {
         } else {
           toast.error("ERRO AO FAZER LOGIN: " + error.message.toUpperCase());
         }
+        setLoading(false);
       } else {
         // Set department after successful login
         setCurrentDepartment(selectedDepartment);
         toast.success("LOGIN REALIZADO COM SUCESSO");
+        
+        // Show loading screen before navigation
+        setShowLoadingScreen(true);
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -66,13 +73,23 @@ export default function AuthPage() {
       } else {
         toast.error("ERRO AO VALIDAR DADOS");
       }
-    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] flex items-center justify-center p-4 relative overflow-hidden">
+    <>
+      {showLoadingScreen && (
+        <LoadingScreen 
+          onComplete={() => navigate("/")} 
+          duration={2500}
+        />
+      )}
+      
+      <div className={cn(
+        "min-h-screen bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] flex items-center justify-center p-4 relative overflow-hidden transition-opacity duration-500",
+        showLoadingScreen && "opacity-0"
+      )}>
       {/* Animated background elements with enhanced effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse" />
@@ -283,6 +300,7 @@ export default function AuthPage() {
           <p className="text-white/40 text-[10px] italic">Desenvolvido por Artur Batista</p>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
