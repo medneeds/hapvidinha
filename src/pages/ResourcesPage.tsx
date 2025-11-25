@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, LogOut, Plus } from "lucide-react";
+import { Plus, FileText, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useToast } from "@/hooks/use-toast";
@@ -26,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
 interface Patient {
   id: string;
@@ -36,8 +36,7 @@ interface Patient {
 }
 
 const ResourcesPage = () => {
-  const navigate = useNavigate();
-  const { signOut, user, role } = useAuth();
+  const { user } = useAuth();
   const { currentDepartment } = useDepartment();
   const { toast } = useToast();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -183,167 +182,202 @@ const ResourcesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => navigate("/")}
-              className="hover:bg-primary hover:text-primary-foreground transition-all"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground uppercase tracking-tight">
-                SOLICITAÇÕES DE INTERNAÇÃO
-              </h1>
-              <p className="text-sm text-muted-foreground uppercase">
-                {currentDepartment} • CRIAR E GERENCIAR SOLICITAÇÕES
-              </p>
-            </div>
+    <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+      {/* Page Header */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+            <Database className="h-6 w-6 text-primary" />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-xs font-semibold text-foreground uppercase tracking-tight">
-                {user?.user_metadata?.username || user?.email?.split('@')[0]}
-              </p>
-              <p className="text-[10px] text-muted-foreground uppercase">
-                {role === 'admin' ? 'Coordenador' : 'Médico'}
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={signOut}
-              title="Sair"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight uppercase">
+              Solicitações de Internação
+            </h1>
+            <p className="text-muted-foreground uppercase text-sm">
+              {currentDepartment} • Criar e gerenciar solicitações
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* New Request Button */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold uppercase mb-1">NOVA SOLICITAÇÃO</h2>
-              <p className="text-sm text-muted-foreground uppercase">
-                Selecione um paciente do mapa e crie a solicitação de internação
-              </p>
+      <Separator className="my-6" />
+
+      {/* Nueva Solicitação Section */}
+      <Card className="border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
+        <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent">
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Plus className="h-5 w-5 text-primary" />
+                <CardTitle className="uppercase text-xl">Nova Solicitação</CardTitle>
+              </div>
+              <CardDescription className="uppercase text-xs">
+                Selecione um paciente do mapa atual e crie a solicitação de internação
+              </CardDescription>
             </div>
             <Button
               onClick={handleOpenSaveDialog}
-              className="gap-2 uppercase"
               size="lg"
+              className="gap-2 uppercase shadow-md hover:shadow-lg transition-all"
             >
-              <Plus className="h-5 w-5" />
-              CRIAR SOLICITAÇÃO
+              <Plus className="h-4 w-4" />
+              Criar Solicitação
             </Button>
           </div>
-        </Card>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border/50">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <FileText className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold uppercase">Pacientes Disponíveis</p>
+                <p className="text-2xl font-bold text-primary">{patients.length}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border/50">
+              <div className="h-10 w-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                <Database className="h-5 w-5 text-cyan-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold uppercase">Banco de Dados</p>
+                <p className="text-xs text-muted-foreground uppercase">Solicitações Salvas</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border/50">
+              <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <FileText className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold uppercase">Templates</p>
+                <p className="text-xs text-muted-foreground uppercase">Modelos Personalizados</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Notes Tab */}
-        <NotesTab />
-      </div>
+      <Separator className="my-8" />
+
+      {/* Notes Section */}
+      <Card className="shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-muted/50 to-transparent">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" />
+            <CardTitle className="uppercase text-xl">Bloco de Notas & Templates</CardTitle>
+          </div>
+          <CardDescription className="uppercase text-xs">
+            Utilize templates padrão ou crie modelos personalizados para suas solicitações
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <NotesTab />
+        </CardContent>
+      </Card>
 
       {/* Save Dialog */}
       <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="uppercase">NOVA SOLICITAÇÃO DE INTERNAÇÃO</DialogTitle>
+            <DialogTitle className="uppercase flex items-center gap-2">
+              <Plus className="h-5 w-5 text-primary" />
+              Nova Solicitação de Internação
+            </DialogTitle>
             <DialogDescription className="uppercase">
-              SELECIONE O PACIENTE E PREENCHA OS DADOS DA SOLICITAÇÃO
+              Selecione o paciente e preencha os dados da solicitação
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="patient" className="uppercase">
-                PACIENTE DO MAPA *
+          <Separator className="my-4" />
+          <div className="grid gap-6 py-4">
+            <div className="grid gap-3">
+              <Label htmlFor="patient" className="uppercase font-semibold text-sm">
+                Paciente do Mapa *
               </Label>
               <Select
                 value={selectedPatient}
                 onValueChange={setSelectedPatient}
               >
-                <SelectTrigger className="uppercase">
-                  <SelectValue placeholder="SELECIONE UM PACIENTE" />
+                <SelectTrigger className="uppercase h-12">
+                  <SelectValue placeholder="Selecione um paciente" />
                 </SelectTrigger>
                 <SelectContent>
                   {patients.map((patient) => (
                     <SelectItem key={patient.id} value={patient.id} className="uppercase">
-                      LEITO {patient.bed_number} - {patient.name} ({getSectorLabel(patient.sector)})
+                      Leito {patient.bed_number} - {patient.name} ({getSectorLabel(patient.sector)})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="destination" className="uppercase">
-                DESTINO DA INTERNAÇÃO *
+            <div className="grid gap-3">
+              <Label htmlFor="destination" className="uppercase font-semibold text-sm">
+                Destino da Internação *
               </Label>
               <Select
                 value={formData.destination}
                 onValueChange={(value) => setFormData({ ...formData, destination: value })}
               >
-                <SelectTrigger className="uppercase">
-                  <SelectValue placeholder="SELECIONE O DESTINO" />
+                <SelectTrigger className="uppercase h-12">
+                  <SelectValue placeholder="Selecione o destino" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="UTI" className="uppercase">UTI</SelectItem>
-                  <SelectItem value="ENFERMARIA" className="uppercase">ENFERMARIA</SelectItem>
-                  <SelectItem value="POSTO INTERNAÇÃO" className="uppercase">POSTO INTERNAÇÃO</SelectItem>
-                  <SelectItem value="CIRURGIA" className="uppercase">CIRURGIA</SelectItem>
-                  <SelectItem value="HEMODINÂMICA" className="uppercase">HEMODINÂMICA</SelectItem>
+                  <SelectItem value="UTI" className="uppercase">UTI - Unidade de Terapia Intensiva</SelectItem>
+                  <SelectItem value="ENFERMARIA" className="uppercase">Enfermaria</SelectItem>
+                  <SelectItem value="POSTO INTERNAÇÃO" className="uppercase">Posto Internação</SelectItem>
+                  <SelectItem value="CIRURGIA" className="uppercase">Centro Cirúrgico</SelectItem>
+                  <SelectItem value="HEMODINÂMICA" className="uppercase">Hemodinâmica</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="title" className="uppercase">
-                TÍTULO DA SOLICITAÇÃO *
+            <Separator />
+
+            <div className="grid gap-3">
+              <Label htmlFor="title" className="uppercase font-semibold text-sm">
+                Título da Solicitação *
               </Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value.toUpperCase() })}
-                placeholder="EX: INTERNAÇÃO CARDIOLOGIA - IAM"
-                className="uppercase"
+                placeholder="Ex: Internação Cardiologia - IAM"
+                className="uppercase h-12"
                 required
               />
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="content" className="uppercase">
-                CONTEÚDO DA SOLICITAÇÃO *
+            <div className="grid gap-3">
+              <Label htmlFor="content" className="uppercase font-semibold text-sm">
+                Conteúdo da Solicitação *
               </Label>
               <Textarea
                 id="content"
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value.toUpperCase() })}
-                placeholder="DIGITE O CONTEÚDO DA SOLICITAÇÃO..."
-                className="min-h-[300px] font-mono text-sm uppercase"
+                placeholder="Digite o conteúdo detalhado da solicitação..."
+                className="min-h-[300px] font-mono text-sm uppercase resize-none"
                 required
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setIsSaveDialogOpen(false)}
               className="uppercase"
             >
-              CANCELAR
+              Cancelar
             </Button>
             <Button
               type="button"
               onClick={handleSave}
-              className="uppercase"
+              className="uppercase gap-2"
             >
-              SALVAR NO BANCO
+              <Database className="h-4 w-4" />
+              Salvar no Banco
             </Button>
           </DialogFooter>
         </DialogContent>

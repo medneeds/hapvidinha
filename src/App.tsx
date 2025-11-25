@@ -7,6 +7,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { MainLayout } from "@/components/MainLayout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { useState } from "react";
 import ResourcesPage from "./pages/ResourcesPage";
 import MedicalCodesPage from "./pages/MedicalCodesPage";
 import HandoversPage from "./pages/HandoversPage";
@@ -26,29 +27,34 @@ import InternmentHistoryPage from "./pages/InternmentHistoryPage";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <Routes>
-        <Route path="/auth" element={<AuthPage />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Index />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/resources"
-          element={
-            <ProtectedRoute>
-              <ResourcesPage />
-            </ProtectedRoute>
-          }
-        />
+const App = () => {
+  const [isHandoverOpen, setIsHandoverOpen] = useState(false);
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route path="/auth" element={<AuthPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resources"
+            element={
+              <ProtectedRoute>
+                <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                  <ResourcesPage />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
         <Route
           path="/codigos"
           element={
@@ -159,7 +165,9 @@ const App = () => (
           path="/internment-history"
           element={
             <ProtectedRoute>
-              <InternmentHistoryPage />
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <InternmentHistoryPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
@@ -168,6 +176,7 @@ const App = () => (
       </Routes>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
