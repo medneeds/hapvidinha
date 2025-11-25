@@ -187,10 +187,7 @@ const ResourcesPage = () => {
   };
 
   const handleSave = async () => {
-    console.log("handleSave iniciado", { selectedPatient, formData });
-    
     if (!selectedPatient) {
-      console.log("Validação falhou: paciente não selecionado");
       toast({
         title: "ERRO",
         description: "SELECIONE UM PACIENTE DO MAPA",
@@ -199,18 +196,7 @@ const ResourcesPage = () => {
       return;
     }
 
-    if (!formData.content.trim()) {
-      console.log("Validação falhou: conteúdo vazio");
-      toast({
-        title: "ERRO",
-        description: "CONTEÚDO DA SOLICITAÇÃO É OBRIGATÓRIO",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!formData.destination) {
-      console.log("Validação falhou: destino não selecionado");
       toast({
         title: "ERRO",
         description: "SELECIONE O DESTINO DA INTERNAÇÃO",
@@ -219,12 +205,18 @@ const ResourcesPage = () => {
       return;
     }
 
-    console.log("Obtendo usuário...");
+    if (!formData.content.trim()) {
+      toast({
+        title: "ERRO",
+        description: "CONTEÚDO DA SOLICITAÇÃO É OBRIGATÓRIO",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { data: { user: currentUser } } = await supabase.auth.getUser();
-    console.log("Usuário obtido:", currentUser?.id);
     
     if (!currentUser) {
-      console.log("Erro: usuário não autenticado");
       toast({
         title: "ERRO",
         description: "USUÁRIO NÃO AUTENTICADO",
@@ -234,10 +226,8 @@ const ResourcesPage = () => {
     }
 
     const patient = patients.find(p => p.id === selectedPatient);
-    console.log("Paciente encontrado:", patient);
     
     if (!patient) {
-      console.log("Erro: paciente não encontrado");
       toast({
         title: "ERRO",
         description: "PACIENTE NÃO ENCONTRADO",
@@ -246,35 +236,34 @@ const ResourcesPage = () => {
       return;
     }
 
-    const insertData = {
-      patient_name: patient.name.toUpperCase(),
-      patient_age: patient.age ? parseInt(patient.age) : null,
-      patient_sex: null,
-      patient_record: null,
-      destination: formData.destination,
-      content: formData.content.toUpperCase(),
-      department: currentDepartment,
-      created_by: currentUser.id,
-    };
-    
-    console.log("Tentando inserir:", insertData);
     const { error } = await supabase
       .from("internment_requests")
-      .insert(insertData);
+      .insert({
+        patient_name: patient.name.toUpperCase(),
+        patient_age: patient.age ? parseInt(patient.age) : null,
+        patient_sex: null,
+        patient_record: null,
+        destination: formData.destination,
+        content: formData.content.toUpperCase(),
+        department: currentDepartment,
+        created_by: currentUser.id,
+      });
 
     if (error) {
-      console.error("Erro ao salvar:", error);
+      console.error("Erro ao salvar solicitação:", error);
       toast({
         title: "ERRO",
-        description: `NÃO FOI POSSÍVEL SALVAR A SOLICITAÇÃO: ${error.message}`,
+        description: "NÃO FOI POSSÍVEL SALVAR A SOLICITAÇÃO",
         variant: "destructive",
       });
       return;
     }
-    
-    console.log("Solicitação salva com sucesso!");
 
-    // Salvar informações para o pop-up de confirmação
+    toast({
+      title: "SUCESSO",
+      description: "SOLICITAÇÃO SALVA COM SUCESSO",
+    });
+
     setSavedRequestInfo({
       patientName: patient.name.toUpperCase(),
       destination: formData.destination,
