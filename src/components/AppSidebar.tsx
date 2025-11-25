@@ -99,8 +99,14 @@ const menuItems = [
     icon: Users,
     items: [
       { name: "MOVIMENTAÇÕES", link: "/movements" },
-      { name: "BLOCO DE NOTAS", link: "/resources" },
-      { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
+      { 
+        name: "SOLICITAÇÕES", 
+        subsections: [
+          { name: "BLOCO DE NOTAS", link: "/resources" },
+          { name: "BANCO DE SOLICITAÇÕES", link: "/resources" },
+        ]
+      },
+      { name: "HISTÓRICO", link: "/internment-history" },
     ],
   },
 ];
@@ -238,7 +244,51 @@ export function AppSidebar({
                       {section.items.map((item, itemIndex) => {
                         const itemName = typeof item === 'string' ? item : item.name;
                         const itemKey = typeof item === 'string' ? item : item.name;
+                        const hasSubsections = typeof item === 'object' && 'subsections' in item && item.subsections;
                         
+                        // If item has subsections, render as nested collapsible
+                        if (hasSubsections) {
+                          return (
+                            <Collapsible key={itemKey} className="group/nested">
+                              <CollapsibleTrigger className="w-full">
+                                <SidebarMenuItem>
+                                  <SidebarMenuButton
+                                    className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 mb-1 justify-between"
+                                    tooltip={itemName}
+                                  >
+                                    <div className="flex items-center gap-3 flex-1">
+                                      <div className="rounded-full bg-primary/20 transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 h-2 w-2 ml-1" />
+                                      <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
+                                        {itemName}
+                                      </span>
+                                    </div>
+                                    <ChevronDown className="h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]/nested:rotate-180 mr-2" />
+                                  </SidebarMenuButton>
+                                </SidebarMenuItem>
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                                <SidebarMenu className="ml-4 border-l border-border/30 pl-2">
+                                  {item.subsections.map((subitem: any) => (
+                                    <SidebarMenuItem key={subitem.name}>
+                                      <SidebarMenuButton
+                                        className="group/subitem hover:bg-accent/60 transition-all duration-200 uppercase text-[10px] rounded-lg cursor-pointer gap-2 hover:translate-x-1 mb-1"
+                                        tooltip={subitem.name}
+                                        onClick={() => handleItemClick(subitem)}
+                                      >
+                                        <div className="rounded-full bg-primary/10 transition-all duration-200 group-hover/subitem:scale-150 flex-shrink-0 h-1.5 w-1.5" />
+                                        <span className="flex-1 text-left font-normal animate-fade-in">
+                                          {subitem.name}
+                                        </span>
+                                      </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                  ))}
+                                </SidebarMenu>
+                              </CollapsibleContent>
+                            </Collapsible>
+                          );
+                        }
+                        
+                        // Regular item without subsections
                         return (
                           <SidebarMenuItem key={itemKey}>
                             <SidebarMenuButton
