@@ -11,19 +11,17 @@ interface MainLayoutProps {
 export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex flex-col w-full bg-background">
-        {/* Header */}
-        <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-          <div className="flex items-center gap-2">
-            <SidebarTrigger className="-ml-1" />
-          </div>
-          <ThemeToggle />
-        </header>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar onOpenHandover={onOpenHandover} />
+        
+        <div className="flex-1 flex flex-col w-full">
+          {/* Header */}
+          <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 shrink-0">
+            <SidebarTrigger />
+            <ThemeToggle />
+          </header>
 
-        {/* Sidebar + Main Content */}
-        <div className="flex flex-1 w-full">
-          <AppSidebar onOpenHandover={onOpenHandover} />
-          
+          {/* Main Content */}
           <main className="flex-1 overflow-auto">
             {children}
           </main>
