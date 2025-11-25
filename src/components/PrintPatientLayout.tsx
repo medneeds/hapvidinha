@@ -14,7 +14,40 @@ const sectorLabels = {
   outside: "Fora das Alas"
 };
 
+const sectorColors = {
+  red: {
+    primary: '#ef4444',
+    light: '#fee2e2',
+    border: '#fca5a5',
+    text: '#7f1d1d',
+    dark: '#991b1b'
+  },
+  yellow: {
+    primary: '#eab308',
+    light: '#fef9c3',
+    border: '#fde047',
+    text: '#713f12',
+    dark: '#854d0e'
+  },
+  blue: {
+    primary: '#3b82f6',
+    light: '#dbeafe',
+    border: '#93c5fd',
+    text: '#1e3a8a',
+    dark: '#1e40af'
+  },
+  outside: {
+    primary: '#6b7280',
+    light: '#f3f4f6',
+    border: '#d1d5db',
+    text: '#1f2937',
+    dark: '#374151'
+  }
+};
+
 export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
+  const colors = sectorColors[patient.sector] || sectorColors.outside;
+  
   const containerStyle: React.CSSProperties = {
     padding: '15mm 12mm',
     paddingTop: '20mm',
@@ -79,7 +112,7 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
           <div style={{ 
             height: '36px', 
             width: '36px', 
-            background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+            backgroundColor: colors.primary,
             borderRadius: '6px',
             display: 'flex',
             alignItems: 'center',
@@ -127,11 +160,11 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
 
         {/* Patient Information Card */}
         <div style={{ 
-          backgroundColor: '#f0f9ff', 
+          backgroundColor: colors.light, 
           padding: '14px', 
           borderRadius: '8px',
           marginBottom: '18px',
-          border: '2px solid #bfdbfe'
+          border: `2px solid ${colors.border}`
         }}>
           <div style={{ 
             display: 'grid', 
@@ -140,16 +173,16 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
             alignItems: 'center'
           }}>
             <div>
-              <div style={{ fontSize: '9pt', color: '#1e40af', marginBottom: '4px', fontWeight: '600' }}>LEITO</div>
-              <div style={{ fontSize: '16pt', fontWeight: 'bold', color: '#1e3a8a' }}>{patient.bedNumber}</div>
+              <div style={{ fontSize: '9pt', color: colors.dark, marginBottom: '4px', fontWeight: '600' }}>LEITO</div>
+              <div style={{ fontSize: '16pt', fontWeight: 'bold', color: colors.text }}>{patient.bedNumber}</div>
             </div>
             <div>
-              <div style={{ fontSize: '9pt', color: '#1e40af', marginBottom: '4px', fontWeight: '600' }}>PACIENTE</div>
-              <div style={{ fontSize: '13pt', fontWeight: 'bold', color: '#1e3a8a', textTransform: 'uppercase' }}>{patient.name}</div>
+              <div style={{ fontSize: '9pt', color: colors.dark, marginBottom: '4px', fontWeight: '600' }}>PACIENTE</div>
+              <div style={{ fontSize: '13pt', fontWeight: 'bold', color: colors.text, textTransform: 'uppercase' }}>{patient.name}</div>
             </div>
             <div>
-              <div style={{ fontSize: '9pt', color: '#1e40af', marginBottom: '4px', fontWeight: '600' }}>IDADE</div>
-              <div style={{ fontSize: '13pt', fontWeight: 'bold', color: '#1e3a8a' }}>{formatAgeDisplay(patient.age)}</div>
+              <div style={{ fontSize: '9pt', color: colors.dark, marginBottom: '4px', fontWeight: '600' }}>IDADE</div>
+              <div style={{ fontSize: '13pt', fontWeight: 'bold', color: colors.text }}>{formatAgeDisplay(patient.age)}</div>
             </div>
           </div>
         </div>
