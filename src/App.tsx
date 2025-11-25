@@ -22,6 +22,7 @@ import SadtPage from "./pages/SadtPage";
 import MovementsPage from "./pages/MovementsPage";
 import AuthPage from "./pages/AuthPage";
 import IAPage from "./pages/IAPage";
+import InternmentHistoryPage from "./pages/InternmentHistoryPage";
 
 const queryClient = new QueryClient();
 
@@ -151,6 +152,14 @@ const App = () => (
           element={
             <ProtectedRoute>
               <IAPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/internment-history"
+          element={
+            <ProtectedRoute>
+              <InternmentHistoryPage />
             </ProtectedRoute>
           }
         />
