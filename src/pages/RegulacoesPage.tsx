@@ -32,7 +32,7 @@ export default function RegulacoesPage() {
 
   return (
     <div className="bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="container mx-auto p-6 md:p-8 space-y-8 max-w-6xl">
+      <div className="p-6 md:p-8 space-y-8 max-w-6xl">
         {/* Header */}
         <div className="space-y-2">
           <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-green-500 to-green-400 bg-clip-text text-transparent">

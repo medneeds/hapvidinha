@@ -181,7 +181,7 @@ export default function MedicalCodesPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+    <div className="p-6 space-y-8 max-w-7xl">
       {/* Page Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-3">

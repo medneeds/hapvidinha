@@ -261,7 +261,7 @@ export default function IAPage() {
       <div className="h-[calc(100vh-4rem)] flex flex-col bg-background">
         {/* Header */}
         <div className="border-b bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-6">
+          <div className="px-4 py-6">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg">
                 <Sparkles className="h-7 w-7 text-primary-foreground" />
@@ -276,7 +276,7 @@ export default function IAPage() {
 
         {/* Messages */}
         <ScrollArea className="flex-1 px-4">
-          <div className="container mx-auto max-w-4xl py-8 space-y-6" ref={scrollRef}>
+          <div className="max-w-4xl mx-auto py-8 space-y-6" ref={scrollRef}>
             {messages.length === 0 && (
               <div className="text-center py-16">
                 <div className="inline-block p-8 rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
@@ -367,7 +367,7 @@ export default function IAPage() {
 
         {/* Input */}
         <div className="border-t bg-card/50 backdrop-blur-sm shadow-lg">
-          <form onSubmit={handleSubmit} className="container mx-auto max-w-4xl px-4 py-4">
+          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto px-4 py-4">
             {/* File Preview */}
             {selectedFile && (
               <div className="mb-3 p-3 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between">
