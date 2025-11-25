@@ -65,11 +65,6 @@ export function AppSidebar({
       icon: LayoutDashboard,
       link: "/",
     },
-    ...(isCoordinator ? [{
-      title: "DASHBOARD",
-      icon: BarChart3,
-      link: "/dashboard",
-    }] : []),
     {
       title: "PACIENTES",
       icon: Users,
@@ -103,6 +98,11 @@ export function AppSidebar({
       title: "VERSÕES",
       icon: History,
       link: "/versions",
+    },
+    {
+      title: "DASHBOARD DE GESTÃO",
+      icon: BarChart3,
+      link: "/dashboard",
     },
   ];
 
