@@ -15,12 +15,6 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
         <AppSidebar onOpenHandover={onOpenHandover} />
         
         <div className="flex-1 flex flex-col w-full">
-          {/* Header */}
-          <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 shrink-0">
-            <SidebarTrigger />
-            <ThemeToggle />
-          </header>
-
           {/* Main Content */}
           <main className="flex-1 overflow-auto">
             {children}
