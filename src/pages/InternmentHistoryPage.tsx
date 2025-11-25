@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, LogOut, Search, Trash2, Eye } from "lucide-react";
+import { Search, Trash2, Eye, History, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useToast } from "@/hooks/use-toast";
@@ -23,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Separator } from "@/components/ui/separator";
 
 interface InternmentRequest {
   id: string;
@@ -37,8 +37,7 @@ interface InternmentRequest {
 }
 
 const InternmentHistoryPage = () => {
-  const navigate = useNavigate();
-  const { signOut, user, role } = useAuth();
+  const { user } = useAuth();
   const { currentDepartment } = useDepartment();
   const { toast } = useToast();
   const [requests, setRequests] = useState<InternmentRequest[]>([]);
@@ -133,200 +132,218 @@ const InternmentHistoryPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => navigate("/")}
-              className="hover:bg-primary hover:text-primary-foreground transition-all"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground uppercase tracking-tight">
-                HISTÓRICO DE SOLICITAÇÕES
-              </h1>
-              <p className="text-sm text-muted-foreground uppercase">
-                {currentDepartment} • {filteredRequests.length} REGISTROS
-              </p>
-            </div>
+    <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+      {/* Page Header */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-500/10 flex items-center justify-center">
+            <History className="h-6 w-6 text-amber-600" />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-xs font-semibold text-foreground uppercase tracking-tight">
-                {user?.user_metadata?.username || user?.email?.split('@')[0]}
-              </p>
-              <p className="text-[10px] text-muted-foreground uppercase">
-                {role === 'admin' ? 'Coordenador' : 'Médico'}
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={signOut}
-              title="Sair"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight uppercase">
+              Histórico de Solicitações
+            </h1>
+            <p className="text-muted-foreground uppercase text-sm">
+              {currentDepartment} • {filteredRequests.length} Registros Encontrados
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Filters */}
-        <Card className="p-4">
-          <div className="flex items-center gap-3 mb-4">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold uppercase">FILTROS DE BUSCA</h3>
+      <Separator className="my-6" />
+
+      {/* Filters Card */}
+      <Card className="border-primary/20 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-muted/50 to-transparent">
+          <div className="flex items-center gap-2">
+            <Filter className="h-5 w-5 text-primary" />
+            <CardTitle className="uppercase text-lg">Filtros de Busca</CardTitle>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="search-name" className="uppercase text-xs">
-                BUSCAR POR NOME DO PACIENTE
+          <CardDescription className="uppercase text-xs">
+            Busque solicitações por nome do paciente ou data de criação
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <Label htmlFor="search-name" className="uppercase text-sm font-semibold flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Buscar por Nome do Paciente
               </Label>
               <Input
                 id="search-name"
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value.toUpperCase())}
-                placeholder="DIGITE O NOME..."
-                className="uppercase"
+                placeholder="Digite o nome..."
+                className="uppercase h-12"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="search-date" className="uppercase text-xs">
-                BUSCAR POR DATA
+            <div className="space-y-3">
+              <Label htmlFor="search-date" className="uppercase text-sm font-semibold">
+                Buscar por Data
               </Label>
               <Input
                 id="search-date"
                 type="date"
                 value={searchDate}
                 onChange={(e) => setSearchDate(e.target.value)}
+                className="h-12"
               />
             </div>
           </div>
-        </Card>
+        </CardContent>
+      </Card>
 
-        {/* Table */}
-        <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="uppercase">NOME DO PACIENTE</TableHead>
-                <TableHead className="uppercase">IDADE</TableHead>
-                <TableHead className="uppercase">TÍTULO</TableHead>
-                <TableHead className="uppercase">DATA</TableHead>
-                <TableHead className="uppercase text-right">AÇÕES</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredRequests.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground uppercase py-8">
-                    NENHUMA SOLICITAÇÃO ENCONTRADA
-                  </TableCell>
+      {/* Results Table */}
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="uppercase text-lg">Solicitações Encontradas</CardTitle>
+          <CardDescription className="uppercase text-xs">
+            {filteredRequests.length} {filteredRequests.length === 1 ? 'registro' : 'registros'} no histórico
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/30">
+                  <TableHead className="uppercase font-bold">Nome do Paciente</TableHead>
+                  <TableHead className="uppercase font-bold">Idade</TableHead>
+                  <TableHead className="uppercase font-bold">Título</TableHead>
+                  <TableHead className="uppercase font-bold">Data</TableHead>
+                  <TableHead className="uppercase text-right font-bold">Ações</TableHead>
                 </TableRow>
-              ) : (
-                filteredRequests.map((request) => (
-                  <TableRow key={request.id}>
-                    <TableCell className="font-medium uppercase">
-                      {request.patient_name}
-                    </TableCell>
-                    <TableCell className="uppercase">
-                      {request.patient_age || "-"}
-                    </TableCell>
-                    <TableCell className="uppercase max-w-xs truncate">
-                      {request.title}
-                    </TableCell>
-                    <TableCell className="uppercase text-xs">
-                      {formatDate(request.created_at)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleView(request)}
-                          className="gap-2 uppercase"
-                        >
-                          <Eye className="h-3 w-3" />
-                          VER
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete(request.id)}
-                          className="gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 uppercase"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                          EXCLUIR
-                        </Button>
+              </TableHeader>
+              <TableBody>
+                {filteredRequests.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground uppercase py-12">
+                      <div className="flex flex-col items-center gap-2">
+                        <History className="h-12 w-12 text-muted-foreground/50" />
+                        <p className="font-semibold">Nenhuma Solicitação Encontrada</p>
+                        <p className="text-xs">Tente ajustar os filtros de busca</p>
                       </div>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </Card>
-      </div>
+                ) : (
+                  filteredRequests.map((request) => (
+                    <TableRow key={request.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="font-medium uppercase">
+                        {request.patient_name}
+                      </TableCell>
+                      <TableCell className="uppercase">
+                        {request.patient_age || "-"}
+                      </TableCell>
+                      <TableCell className="uppercase max-w-xs truncate">
+                        {request.title}
+                      </TableCell>
+                      <TableCell className="uppercase text-xs">
+                        {formatDate(request.created_at)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleView(request)}
+                            className="gap-2 uppercase hover:bg-primary/10 hover:text-primary"
+                          >
+                            <Eye className="h-3 w-3" />
+                            Ver
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(request.id)}
+                            className="gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 uppercase"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            Excluir
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* View Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="uppercase">DETALHES DA SOLICITAÇÃO</DialogTitle>
+            <DialogTitle className="uppercase flex items-center gap-2">
+              <Eye className="h-5 w-5 text-primary" />
+              Detalhes da Solicitação
+            </DialogTitle>
           </DialogHeader>
+          <Separator className="my-4" />
           {selectedRequest && (
             <div className="space-y-4">
-              <Card className="p-4 bg-muted/30">
-                <h3 className="font-semibold uppercase mb-3 text-sm">DADOS DO PACIENTE</h3>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <span className="text-muted-foreground uppercase">NOME:</span>
-                    <p className="font-medium uppercase">{selectedRequest.patient_name}</p>
+              <Card className="bg-muted/30 border-primary/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm uppercase">Dados do Paciente</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground uppercase text-xs">Nome:</span>
+                      <p className="font-medium uppercase">{selectedRequest.patient_name}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase text-xs">Idade:</span>
+                      <p className="font-medium uppercase">{selectedRequest.patient_age || "-"}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase text-xs">Sexo:</span>
+                      <p className="font-medium uppercase">{selectedRequest.patient_sex || "-"}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase text-xs">Prontuário:</span>
+                      <p className="font-medium uppercase">{selectedRequest.patient_record || "-"}</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-muted-foreground uppercase">IDADE:</span>
-                    <p className="font-medium uppercase">{selectedRequest.patient_age || "-"}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground uppercase">SEXO:</span>
-                    <p className="font-medium uppercase">{selectedRequest.patient_sex || "-"}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground uppercase">PRONTUÁRIO:</span>
-                    <p className="font-medium uppercase">{selectedRequest.patient_record || "-"}</p>
-                  </div>
-                </div>
+                </CardContent>
               </Card>
 
-              <Card className="p-4">
-                <h3 className="font-semibold uppercase mb-2 text-sm">TÍTULO</h3>
-                <p className="text-sm uppercase font-medium">{selectedRequest.title}</p>
+              <Card className="border-primary/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm uppercase">Título</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm uppercase font-medium">{selectedRequest.title}</p>
+                </CardContent>
               </Card>
 
-              <Card className="p-4">
-                <h3 className="font-semibold uppercase mb-2 text-sm">CONTEÚDO DA SOLICITAÇÃO</h3>
-                <div className="bg-muted/20 p-3 rounded-md">
-                  <pre className="whitespace-pre-wrap font-mono text-xs uppercase">
-                    {selectedRequest.content}
-                  </pre>
-                </div>
+              <Card className="border-primary/20">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm uppercase">Conteúdo da Solicitação</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted/20 p-4 rounded-md border">
+                    <pre className="whitespace-pre-wrap font-mono text-xs uppercase">
+                      {selectedRequest.content}
+                    </pre>
+                  </div>
+                </CardContent>
               </Card>
 
-              <Card className="p-4 bg-muted/30">
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div>
-                    <span className="text-muted-foreground uppercase">DATA DE CRIAÇÃO:</span>
-                    <p className="font-medium uppercase">{formatDate(selectedRequest.created_at)}</p>
+              <Card className="bg-muted/30 border-primary/20">
+                <CardContent className="pt-4">
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <span className="text-muted-foreground uppercase">Data de Criação:</span>
+                      <p className="font-medium uppercase">{formatDate(selectedRequest.created_at)}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground uppercase">Última Atualização:</span>
+                      <p className="font-medium uppercase">{formatDate(selectedRequest.updated_at)}</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-muted-foreground uppercase">ÚLTIMA ATUALIZAÇÃO:</span>
-                    <p className="font-medium uppercase">{formatDate(selectedRequest.updated_at)}</p>
-                  </div>
-                </div>
+                </CardContent>
               </Card>
             </div>
           )}
