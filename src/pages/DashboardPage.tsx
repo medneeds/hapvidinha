@@ -18,24 +18,33 @@ import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useDepartment } from "@/contexts/DepartmentContext";
 
 const COLORS = ['#ef4444', '#eab308', '#3b82f6', '#6b7280', '#8b5cf6', '#ec4899'];
 
 const DashboardPage = () => {
+  const { currentDepartment } = useDepartment();
+  
   // Temporary filter states (before applying)
   const [tempDateRange, setTempDateRange] = useState<{ from: Date; to: Date }>({
     from: subDays(new Date(), 30),
     to: new Date()
   });
-  const [tempSelectedDepartment, setTempSelectedDepartment] = useState<string>("all");
+  const [tempSelectedDepartment, setTempSelectedDepartment] = useState<string>(currentDepartment);
   
   // Applied filter states
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: subDays(new Date(), 30),
     to: new Date()
   });
-  const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
+  const [selectedDepartment, setSelectedDepartment] = useState<string>(currentDepartment);
   const [comparisonPeriod, setComparisonPeriod] = useState<string>("previous");
+  
+  // Update department filter when current department changes
+  useEffect(() => {
+    setTempSelectedDepartment(currentDepartment);
+    setSelectedDepartment(currentDepartment);
+  }, [currentDepartment]);
   
   // KPIs State
   const [kpis, setKpis] = useState({
@@ -62,8 +71,8 @@ const DashboardPage = () => {
 
   const departments = [
     { value: "all", label: "Todos os Setores" },
-    { value: "URGÊNCIA E EMERGÊNCIA ADULTO", label: "Urgência Adulto" },
-    { value: "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA", label: "Urgência Pediátrica" },
+    { value: "URGÊNCIA E EMERGÊNCIA ADULTO", label: "Urgência e Emergência Adulto" },
+    { value: "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA", label: "Urgência e Emergência Pediátrica" },
     { value: "UTI", label: "UTI" },
     { value: "POSTO INTERNAÇÃO", label: "Posto Internação" }
   ];
@@ -427,7 +436,11 @@ const DashboardPage = () => {
                 </h1>
               </div>
               <p className="text-white/80 text-sm ml-[100px]">
-                Visão geral e indicadores de desempenho em tempo real
+                {selectedDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" && "Visão geral da Urgência e Emergência Adulto"}
+                {selectedDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA" && "Visão geral da Urgência e Emergência Pediátrica"}
+                {selectedDepartment === "UTI" && "Visão geral da Unidade de Terapia Intensiva"}
+                {selectedDepartment === "POSTO INTERNAÇÃO" && "Visão geral do Posto de Internação"}
+                {selectedDepartment === "all" && "Visão geral de todos os setores"}
               </p>
             </div>
             <div className="flex gap-2">
