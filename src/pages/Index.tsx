@@ -648,7 +648,7 @@ const Index = () => {
               <div className="flex items-center justify-between gap-2">
                 {/* Left side: Sidebar button + Title + Department selector */}
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                  <SidebarTrigger className="print:hidden flex-shrink-0" />
+                  <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:bg-white/20 border-white/30 data-[state=open]:bg-white/20" />
                   
                   <div className="min-w-0 flex-1 flex flex-col gap-1.5">
                     <h1 className="text-sm sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
