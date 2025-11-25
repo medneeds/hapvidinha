@@ -76,7 +76,36 @@ const ResourcesPage = () => {
   useEffect(() => {
     const patientId = searchParams.get('patientId');
     if (patientId && patients.length > 0) {
-      setSelectedPatient(patientId);
+      const patient = patients.find(p => p.id === patientId);
+      if (patient) {
+        setSelectedPatient(patientId);
+        
+        // Auto-preencher conteúdo com diagnósticos e história admissional
+        let autoContent = "";
+        
+        // Adicionar diagnósticos se existirem
+        if (patient.diagnoses && patient.diagnoses.trim() !== "") {
+          try {
+            const diagnosesArray = JSON.parse(patient.diagnoses);
+            const diagnosesText = Array.isArray(diagnosesArray) 
+              ? diagnosesArray.join(" | ").toUpperCase()
+              : patient.diagnoses.toUpperCase();
+            autoContent += diagnosesText + "\n\n";
+          } catch {
+            autoContent += patient.diagnoses.toUpperCase() + "\n\n";
+          }
+        }
+        
+        // Adicionar história admissional se existir
+        if (patient.admission_history && patient.admission_history.trim() !== "") {
+          autoContent += patient.admission_history.toUpperCase();
+        }
+        
+        setFormData({
+          content: autoContent,
+          destination: "", // Deixar destino vazio para o usuário preencher
+        });
+      }
     }
   }, [searchParams, patients]);
 
