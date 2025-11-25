@@ -63,6 +63,7 @@ const transferDestinations = [
   "ENFERMARIA PEDIÁTRICA",
   "HEMODINÂMICA",
   "CENTRO CIRÚRGICO",
+  "INSTITUTO VOLTA VIDA (IVV)",
   "OUTRO HOSPITAL",
 ];
 
