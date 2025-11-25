@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { 
   CalendarIcon, Download, Users, FileText, UserCheck, 
-  UserX, ArrowRightLeft, TrendingUp, Activity
+  UserX, ArrowRightLeft, TrendingUp, Activity, BarChart3
 } from "lucide-react";
 import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -347,252 +347,467 @@ const DashboardPage = () => {
     const isPositive = change >= 0;
 
     return (
-      <Card className="relative overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium uppercase">{title}</CardTitle>
-          <Icon className="h-4 w-4 text-muted-foreground" />
+      <Card className="relative overflow-hidden border-border/50 shadow-lg backdrop-blur-sm bg-gradient-card hover:shadow-glow transition-all duration-500 hover:scale-105 group">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative">
+          <CardTitle className="text-xs font-semibold uppercase tracking-wider text-foreground/70 group-hover:text-foreground transition-colors">
+            {title}
+          </CardTitle>
+          <div className="rounded-lg bg-primary/10 p-2 group-hover:bg-primary/20 transition-colors duration-300">
+            <Icon className="h-4 w-4 text-primary" />
+          </div>
         </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">{value}</div>
-          <p className={cn(
-            "text-xs flex items-center gap-1 mt-1",
-            isPositive ? "text-green-600" : "text-red-600"
+        <CardContent className="relative">
+          <div className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
+            {value}
+          </div>
+          <div className={cn(
+            "text-xs flex items-center gap-1.5 font-medium px-2 py-1 rounded-full w-fit",
+            isPositive 
+              ? "bg-green-500/10 text-green-700 dark:text-green-400" 
+              : "bg-red-500/10 text-red-700 dark:text-red-400"
           )}>
-            <TrendingUp className={cn("h-3 w-3", !isPositive && "rotate-180")} />
-            {Math.abs(change)}% vs período anterior
-          </p>
+            <TrendingUp className={cn("h-3.5 w-3.5", !isPositive && "rotate-180")} />
+            <span>{Math.abs(change)}%</span>
+            <span className="text-muted-foreground">vs anterior</span>
+          </div>
         </CardContent>
       </Card>
     );
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight uppercase">Dashboard de Gestão</h1>
-          <p className="text-muted-foreground">Visão geral e indicadores de desempenho</p>
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={handleExportPDF} variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Exportar PDF
-          </Button>
-          <Button onClick={handleExportExcel} variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Exportar Excel
-          </Button>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="grid gap-4 md:grid-cols-3">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 animate-fade-in">
+      <div className="container mx-auto p-6 space-y-8">
+        {/* Header com gradiente */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-primary p-8 shadow-glow animate-scale-in">
+          <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,transparent,white)]" />
+          <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2">
-              <label className="text-sm font-medium uppercase">Setor</label>
-              <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {departments.map(dept => (
-                    <SelectItem key={dept.value} value={dept.value}>
-                      {dept.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-white/20 p-3 backdrop-blur-sm">
+                  <BarChart3 className="h-6 w-6 text-white" />
+                </div>
+                <h1 className="text-3xl font-bold tracking-tight uppercase text-white">
+                  Dashboard de Gestão
+                </h1>
+              </div>
+              <p className="text-white/80 text-sm ml-[60px]">
+                Visão geral e indicadores de desempenho em tempo real
+              </p>
             </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium uppercase">Data Inicial</label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {format(dateRange.from, "PPP", { locale: ptBR })}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={dateRange.from}
-                    onSelect={(date) => date && setDateRange({ ...dateRange, from: date })}
-                    locale={ptBR}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium uppercase">Data Final</label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {format(dateRange.to, "PPP", { locale: ptBR })}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={dateRange.to}
-                    onSelect={(date) => date && setDateRange({ ...dateRange, to: date })}
-                    locale={ptBR}
-                  />
-                </PopoverContent>
-              </Popover>
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleExportPDF} 
+                variant="secondary" 
+                size="sm"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm transition-all duration-300 hover:scale-105"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Exportar PDF
+              </Button>
+              <Button 
+                onClick={handleExportExcel} 
+                variant="secondary" 
+                size="sm"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm transition-all duration-300 hover:scale-105"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Exportar Excel
+              </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* KPIs */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <KPICard 
-          title="Pedidos de Internação" 
-          value={kpis.internmentRequests} 
-          icon={FileText}
-          comparison={kpis.comparison.internmentRequests}
-        />
-        <KPICard 
-          title="Pacientes Ativos" 
-          value={kpis.activePatients} 
-          icon={Users}
-          comparison={kpis.comparison.activePatients}
-        />
-        <KPICard 
-          title="Altas" 
-          value={kpis.discharges} 
-          icon={UserCheck}
-          comparison={kpis.comparison.discharges}
-        />
-        <KPICard 
-          title="Óbitos" 
-          value={kpis.deaths} 
-          icon={UserX}
-          comparison={kpis.comparison.deaths}
-        />
-        <KPICard 
-          title="Transferências" 
-          value={kpis.transfers} 
-          icon={ArrowRightLeft}
-          comparison={kpis.comparison.transfers}
-        />
-      </div>
+        {/* Filters com estilo aprimorado */}
+        <Card className="border-border/50 shadow-lg backdrop-blur-sm bg-card/95 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <CardContent className="pt-6">
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold uppercase tracking-wide text-foreground/80 flex items-center gap-2">
+                  <Activity className="h-3.5 w-3.5 text-primary" />
+                  Setor
+                </label>
+                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                  <SelectTrigger className="border-border/50 focus:ring-primary/30 transition-all duration-300 hover:border-primary/50">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map(dept => (
+                      <SelectItem key={dept.value} value={dept.value}>
+                        {dept.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-semibold uppercase tracking-wide text-foreground/80 flex items-center gap-2">
+                  <CalendarIcon className="h-3.5 w-3.5 text-primary" />
+                  Data Inicial
+                </label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start text-left font-normal border-border/50 hover:border-primary/50 transition-all duration-300"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
+                      {format(dateRange.from, "PPP", { locale: ptBR })}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={dateRange.from}
+                      onSelect={(date) => date && setDateRange({ ...dateRange, from: date })}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
 
-      {/* Charts Grid */}
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Movements Over Time */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="uppercase">Movimentações ao Longo do Tempo</CardTitle>
-            <CardDescription>Altas, Óbitos e Transferências</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={movementsOverTime}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="ALTA" stroke="#22c55e" strokeWidth={2} />
-                <Line type="monotone" dataKey="ÓBITO" stroke="#ef4444" strokeWidth={2} />
-                <Line type="monotone" dataKey="TRANSFERÊNCIA" stroke="#3b82f6" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold uppercase tracking-wide text-foreground/80 flex items-center gap-2">
+                  <CalendarIcon className="h-3.5 w-3.5 text-primary" />
+                  Data Final
+                </label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start text-left font-normal border-border/50 hover:border-primary/50 transition-all duration-300"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4 text-primary" />
+                      {format(dateRange.to, "PPP", { locale: ptBR })}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={dateRange.to}
+                      onSelect={(date) => date && setDateRange({ ...dateRange, to: date })}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Sector Distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="uppercase">Distribuição por Setor</CardTitle>
-            <CardDescription>Pacientes ativos por ala</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={sectorDistribution}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={(entry) => `${entry.name}: ${entry.value}`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {sectorDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        {/* KPIs com animações escalonadas */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+          <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <KPICard 
+              title="Pedidos de Internação" 
+              value={kpis.internmentRequests} 
+              icon={FileText}
+              comparison={kpis.comparison.internmentRequests}
+            />
+          </div>
+          <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <KPICard 
+              title="Pacientes Ativos" 
+              value={kpis.activePatients} 
+              icon={Users}
+              comparison={kpis.comparison.activePatients}
+            />
+          </div>
+          <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <KPICard 
+              title="Altas" 
+              value={kpis.discharges} 
+              icon={UserCheck}
+              comparison={kpis.comparison.discharges}
+            />
+          </div>
+          <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
+            <KPICard 
+              title="Óbitos" 
+              value={kpis.deaths} 
+              icon={UserX}
+              comparison={kpis.comparison.deaths}
+            />
+          </div>
+          <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            <KPICard 
+              title="Transferências" 
+              value={kpis.transfers} 
+              icon={ArrowRightLeft}
+              comparison={kpis.comparison.transfers}
+            />
+          </div>
+        </div>
 
-        {/* Movements by Type */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="uppercase">Movimentações por Tipo</CardTitle>
-            <CardDescription>Comparação de volumes</CardDescription>
+        {/* Charts Grid com estilo premium */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Movements Over Time */}
+          <Card className="border-border/50 shadow-lg backdrop-blur-sm bg-gradient-card hover:shadow-glow transition-all duration-500 animate-fade-in" style={{ animationDelay: '0.7s' }}>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="rounded-lg bg-primary/10 p-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="uppercase text-lg font-bold">Movimentações ao Longo do Tempo</CardTitle>
+              </div>
+              <CardDescription className="text-sm">Altas, Óbitos e Transferências por período</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={movementsOverTime}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                    }}
+                  />
+                  <Legend 
+                    wrapperStyle={{ fontSize: '12px' }}
+                    iconType="circle"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="ALTA" 
+                    stroke="#22c55e" 
+                    strokeWidth={3} 
+                    dot={{ fill: '#22c55e', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="ÓBITO" 
+                    stroke="#ef4444" 
+                    strokeWidth={3}
+                    dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="TRANSFERÊNCIA" 
+                    stroke="#3b82f6" 
+                    strokeWidth={3}
+                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Sector Distribution */}
+          <Card className="border-border/50 shadow-lg backdrop-blur-sm bg-gradient-card hover:shadow-glow transition-all duration-500 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="rounded-lg bg-primary/10 p-2">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="uppercase text-lg font-bold">Distribuição por Setor</CardTitle>
+              </div>
+              <CardDescription className="text-sm">Pacientes ativos distribuídos por ala</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={sectorDistribution}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={{
+                      stroke: 'hsl(var(--muted-foreground))',
+                      strokeWidth: 1
+                    }}
+                    label={(entry) => `${entry.name}: ${entry.value}`}
+                    outerRadius={90}
+                    fill="#8884d8"
+                    dataKey="value"
+                    stroke="hsl(var(--background))"
+                    strokeWidth={2}
+                  >
+                    {sectorDistribution.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={COLORS[index % COLORS.length]}
+                        className="hover:opacity-80 transition-opacity cursor-pointer"
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Movements by Type */}
+          <Card className="border-border/50 shadow-lg backdrop-blur-sm bg-gradient-card hover:shadow-glow transition-all duration-500 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="rounded-lg bg-primary/10 p-2">
+                  <ArrowRightLeft className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="uppercase text-lg font-bold">Movimentações por Tipo</CardTitle>
+              </div>
+              <CardDescription className="text-sm">Comparação de volumes entre categorias</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={movementsByType}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                  <XAxis 
+                    dataKey="type" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                    }}
+                    cursor={{ fill: 'hsl(var(--accent))' }}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="hsl(var(--primary))" 
+                    radius={[8, 8, 0, 0]}
+                    className="hover:opacity-80 transition-opacity"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Bed Occupancy */}
+          <Card className="border-border/50 shadow-lg backdrop-blur-sm bg-gradient-card hover:shadow-glow transition-all duration-500 animate-fade-in" style={{ animationDelay: '1s' }}>
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="rounded-lg bg-primary/10 p-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="uppercase text-lg font-bold">Ocupação de Leitos</CardTitle>
+              </div>
+              <CardDescription className="text-sm">Evolução temporal da ocupação</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={bedOccupancy}>
+                  <defs>
+                    <linearGradient id="colorOcupacao" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="ocupação" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={3}
+                    fill="url(#colorOcupacao)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Requests by Destination - Full width */}
+        <Card className="border-border/50 shadow-lg backdrop-blur-sm bg-gradient-card hover:shadow-glow transition-all duration-500 animate-fade-in" style={{ animationDelay: '1.1s' }}>
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="rounded-lg bg-primary/10 p-2">
+                <ArrowRightLeft className="h-5 w-5 text-primary" />
+              </div>
+              <CardTitle className="uppercase text-lg font-bold">Transferências por Destino</CardTitle>
+            </div>
+            <CardDescription className="text-sm">Principais destinos de transferência de pacientes</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={movementsByType}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="type" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#8b5cf6" />
+              <BarChart data={requestsByDestination} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                <XAxis 
+                  type="number" 
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={11}
+                  tickLine={false}
+                />
+                <YAxis 
+                  dataKey="destination" 
+                  type="category" 
+                  width={180}
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={11}
+                  tickLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                  }}
+                  cursor={{ fill: 'hsl(var(--accent))' }}
+                />
+                <Bar 
+                  dataKey="count" 
+                  fill="hsl(var(--primary))"
+                  radius={[0, 8, 8, 0]}
+                  className="hover:opacity-80 transition-opacity"
+                />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
-
-        {/* Bed Occupancy */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="uppercase">Ocupação de Leitos</CardTitle>
-            <CardDescription>Evolução temporal</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={bedOccupancy}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Area type="monotone" dataKey="ocupação" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
       </div>
-
-      {/* Requests by Destination */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="uppercase">Transferências por Destino</CardTitle>
-          <CardDescription>Principais destinos de transferência</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={requestsByDestination} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="destination" type="category" width={150} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#ec4899" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
     </div>
   );
 };
