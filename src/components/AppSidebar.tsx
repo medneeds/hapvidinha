@@ -61,14 +61,6 @@ const menuItems = [
     link: "/documents",
   },
   {
-    title: "PASSAGENS",
-    icon: ClipboardCheck,
-    items: [
-      { name: "INICIAR NOVA PASSAGEM", link: null, action: "openHandover" },
-      { name: "HISTÓRICO DE PASSAGENS", link: "/handovers" },
-    ],
-  },
-  {
     title: "CÓDIGOS",
     icon: FileSearch,
     items: [
