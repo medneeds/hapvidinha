@@ -1,12 +1,11 @@
 import { 
   FileText, 
   Biohazard, 
-  Brain, 
-  Drill, 
+  Target, 
+  ClipboardList, 
   Droplet, 
   FileCheck, 
   DollarSign,
-  ClipboardList,
   Search,
   ChevronRight
 } from "lucide-react";
@@ -36,7 +35,7 @@ export default function DocumentsPage() {
       title: "Tomografias", 
       description: "Questionários e documentos para exames tomográficos",
       route: "/documents/tomografias",
-      icon: Brain,
+      icon: Target,
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"
     },
@@ -45,7 +44,7 @@ export default function DocumentsPage() {
       title: "Listas OPME", 
       description: "Órteses, Próteses e Materiais Especiais",
       route: "/documents/opme",
-      icon: Drill,
+      icon: ClipboardList,
       color: "text-purple-500",
       bgColor: "bg-purple-500/10"
     },
