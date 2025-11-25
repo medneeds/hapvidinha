@@ -340,7 +340,24 @@ const DashboardPage = () => {
       .lte('created_at', dateRange.to.toISOString());
 
     if (data) {
-      const destCounts = data.reduce((acc: any, movement: any) => {
+      // Filter out pediatric destinations when in adult department and vice versa
+      const filteredData = data.filter((movement: any) => {
+        const dest = movement.destination || '';
+        
+        // If in adult department, exclude pediatric destinations
+        if (selectedDepartment === 'URGÊNCIA E EMERGÊNCIA ADULTO') {
+          return !dest.toLowerCase().includes('pediátr');
+        }
+        
+        // If in pediatric department, exclude adult destinations
+        if (selectedDepartment === 'URGÊNCIA E EMERGÊNCIA PEDIÁTRICA') {
+          return !dest.toLowerCase().includes('adulto');
+        }
+        
+        return true;
+      });
+      
+      const destCounts = filteredData.reduce((acc: any, movement: any) => {
         const dest = movement.destination || 'Não especificado';
         acc[dest] = (acc[dest] || 0) + 1;
         return acc;
