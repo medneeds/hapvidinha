@@ -1,7 +1,19 @@
-import { format } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
 import { TrendingUp, TrendingDown, UserPlus, Users, UserCheck, UserX, ArrowRightLeft, Bed } from "lucide-react";
+
+// Helper function to safely format dates
+const safeFormatDate = (dateValue: string | Date, formatString: string): string => {
+  try {
+    if (!dateValue) return "N/A";
+    const date = typeof dateValue === 'string' ? parseISO(dateValue) : dateValue;
+    if (!isValid(date)) return "N/A";
+    return format(date, formatString, { locale: ptBR });
+  } catch (error) {
+    return "N/A";
+  }
+};
 
 interface KPIData {
   value: number;
@@ -136,12 +148,12 @@ export function PrintableDashboard({
             <p className="font-semibold text-base">{departmentLabels[department] || department}</p>
             <p>
               <span className="font-medium">Período:</span>{" "}
-              {format(dateRange.from, "dd/MM/yyyy", { locale: ptBR })} até{" "}
-              {format(dateRange.to, "dd/MM/yyyy", { locale: ptBR })}
+              {safeFormatDate(dateRange.from, "dd/MM/yyyy")} até{" "}
+              {safeFormatDate(dateRange.to, "dd/MM/yyyy")}
             </p>
             <p>
               <span className="font-medium">Gerado em:</span>{" "}
-              {format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+              {safeFormatDate(new Date(), "dd/MM/yyyy 'às' HH:mm")}
             </p>
           </div>
         </div>
@@ -204,11 +216,11 @@ export function PrintableDashboard({
               <tbody>
                 {movementsOverTime.slice(0, 8).map((item, index) => (
                   <tr key={index} className="border-b border-gray-200">
-                    <td className="py-2">{format(new Date(item.date), "dd/MM", { locale: ptBR })}</td>
-                    <td className="text-right py-2 font-medium text-blue-600">{item.admissions}</td>
-                    <td className="text-right py-2 font-medium text-emerald-600">{item.discharges}</td>
-                    <td className="text-right py-2 font-medium text-rose-600">{item.deaths}</td>
-                    <td className="text-right py-2 font-medium text-amber-600">{item.transfers}</td>
+                    <td className="py-2">{safeFormatDate(item.date, "dd/MM")}</td>
+                    <td className="text-right py-2 font-medium text-blue-600">{item.admissions || 0}</td>
+                    <td className="text-right py-2 font-medium text-emerald-600">{item.discharges || 0}</td>
+                    <td className="text-right py-2 font-medium text-rose-600">{item.deaths || 0}</td>
+                    <td className="text-right py-2 font-medium text-amber-600">{item.transfers || 0}</td>
                   </tr>
                 ))}
               </tbody>
@@ -306,12 +318,12 @@ export function PrintableDashboard({
           <h3 className="text-lg font-bold text-primary mb-3">Ocupação de Leitos</h3>
           <div className="space-y-2">
             {bedOccupancy.slice(0, 8).map((item, index) => {
-              const total = item.occupied + item.available;
-              const occupancyRate = total > 0 ? ((item.occupied / total) * 100).toFixed(1) : "0.0";
+              const total = (item.occupied || 0) + (item.available || 0);
+              const occupancyRate = total > 0 ? (((item.occupied || 0) / total) * 100).toFixed(1) : "0.0";
               return (
                 <div key={index} className="flex items-center gap-3">
                   <span className="text-xs font-medium w-16">
-                    {format(new Date(item.date), "dd/MM", { locale: ptBR })}
+                    {safeFormatDate(item.date, "dd/MM")}
                   </span>
                   <div className="flex-1">
                     <div className="h-6 bg-gray-200 rounded-full overflow-hidden relative">
@@ -320,7 +332,7 @@ export function PrintableDashboard({
                         style={{ width: `${occupancyRate}%` }}
                       />
                       <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-700">
-                        {item.occupied}/{total} ({occupancyRate}%)
+                        {item.occupied || 0}/{total} ({occupancyRate}%)
                       </span>
                     </div>
                   </div>
