@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAgeCalculator } from "@/hooks/useAgeCalculator";
+import { useDepartment } from "@/contexts/DepartmentContext";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
 import {
   Dialog,
@@ -457,7 +458,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const inputRef = useRef<HTMLInputElement>(null);
   const config = sectorConfig[patient.sector];
   const { toast: toastHook } = useToast();
-  const { calculateAge, isCalculating } = useAgeCalculator();
+  const { currentDepartment } = useDepartment();
+  const isPediatric = currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA";
+  const { calculateAge, isCalculating } = useAgeCalculator(isPediatric);
 
   useEffect(() => {
     if (editingField && inputRef.current) {
