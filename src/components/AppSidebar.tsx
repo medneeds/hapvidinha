@@ -9,6 +9,7 @@ import {
   User,
   FolderOpen,
   Sparkles,
+  BarChart3,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
@@ -43,47 +44,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const menuItems = [
-  {
-    title: "MAPA",
-    icon: LayoutDashboard,
-    link: "/",
-  },
-  {
-    title: "PACIENTES",
-    icon: Users,
-    items: [
-      { name: "MOVIMENTAÇÕES", link: "/movements" },
-      { name: "SOLICITAÇÕES", link: "/resources" },
-      { name: "HISTÓRICO", link: "/internment-history" },
-    ],
-  },
-  {
-    title: "CÓDIGOS",
-    icon: FileSearch,
-    items: [
-      { name: "EXAMES", link: "/codigos?category=exames" },
-      { name: "PROCEDIMENTOS", link: "/codigos?category=procedimentos" },
-      { name: "MATERIAIS", link: "/codigos?category=materiais" },
-      { name: "MEDICAÇÕES", link: "/codigos?category=medicacoes" },
-    ],
-  },
-  {
-    title: "DOCUMENTOS",
-    icon: FolderOpen,
-    link: "/documents",
-  },
-  {
-    title: "EXAMINUS AI",
-    icon: Sparkles,
-    link: "/ia",
-  },
-  {
-    title: "VERSÕES",
-    icon: History,
-    link: "/versions",
-  },
-];
 
 export function AppSidebar({ 
   onOpenHandover
@@ -95,6 +55,56 @@ export function AppSidebar({
   const { signOut, user } = useAuth();
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
+  
+  // Check if user is COORDENADOR
+  const isCoordinator = user?.email === "coordenador@sistema.local";
+
+  const menuItems = [
+    {
+      title: "MAPA",
+      icon: LayoutDashboard,
+      link: "/",
+    },
+    ...(isCoordinator ? [{
+      title: "DASHBOARD",
+      icon: BarChart3,
+      link: "/dashboard",
+    }] : []),
+    {
+      title: "PACIENTES",
+      icon: Users,
+      items: [
+        { name: "MOVIMENTAÇÕES", link: "/movements" },
+        { name: "SOLICITAÇÕES", link: "/resources" },
+        { name: "HISTÓRICO", link: "/internment-history" },
+      ],
+    },
+    {
+      title: "CÓDIGOS",
+      icon: FileSearch,
+      items: [
+        { name: "EXAMES", link: "/codigos?category=exames" },
+        { name: "PROCEDIMENTOS", link: "/codigos?category=procedimentos" },
+        { name: "MATERIAIS", link: "/codigos?category=materiais" },
+        { name: "MEDICAÇÕES", link: "/codigos?category=medicacoes" },
+      ],
+    },
+    {
+      title: "DOCUMENTOS",
+      icon: FolderOpen,
+      link: "/documents",
+    },
+    {
+      title: "EXAMINUS AI",
+      icon: Sparkles,
+      link: "/ia",
+    },
+    {
+      title: "VERSÕES",
+      icon: History,
+      link: "/versions",
+    },
+  ];
 
   const handleItemClick = (item: string | { name: string; link?: string | null; action?: string; subsections?: any[] }) => {
     // Handle direct string links (like from section.link)
