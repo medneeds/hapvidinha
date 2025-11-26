@@ -273,10 +273,10 @@ const NotesTabOptimized = () => {
       <Tabs defaultValue="notes" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="notes" className="uppercase">
-            ANOTAÇÕES LIVRES
+            ANOTAÇÕES
           </TabsTrigger>
           <TabsTrigger value="checklist" className="uppercase">
-            CHECKLIST
+            CHECK-LIST
           </TabsTrigger>
         </TabsList>
 
@@ -320,7 +320,7 @@ const NotesTabOptimized = () => {
               <Textarea
                 value={notes}
                 onChange={handleChange}
-                placeholder="DIGITE SUA ANAMNESE AQUI OU IMPORTE O MODELO PADRÃO..."
+                placeholder="DIGITE SUA ANOTAÇÃO AQUI..."
                 className="min-h-[600px] font-mono text-sm resize-none focus:ring-2 focus:ring-emerald-500 transition-all uppercase print:min-h-0 print:border-0 print:focus:ring-0 print:p-0"
               />
 
