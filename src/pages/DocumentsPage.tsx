@@ -9,7 +9,8 @@ import {
   Search,
   ChevronRight,
   Scissors,
-  Activity
+  Activity,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,15 @@ export default function DocumentsPage() {
       icon: Activity,
       color: "text-emerald-500",
       bgColor: "bg-emerald-500/10"
+    },
+    { 
+      id: "cuidados-paliativos", 
+      title: "Cuidados Paliativos", 
+      description: "Termo de aceite de tratamento em cuidados paliativos",
+      route: "/documents/cuidados-paliativos",
+      icon: Heart,
+      color: "text-pink-500",
+      bgColor: "bg-pink-500/10"
     },
     { 
       id: "tomografias", 

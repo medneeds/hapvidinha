@@ -27,6 +27,7 @@ import InternmentHistoryPage from "./pages/InternmentHistoryPage";
 import DashboardPage from "./pages/DashboardPage";
 import PriorizacaoCirurgicaPage from "./pages/PriorizacaoCirurgicaPage";
 import ControleGlicemicoPage from "./pages/ControleGlicemicoPage";
+import CuidadosPaliativosPage from "./pages/CuidadosPaliativosPage";
 
 const queryClient = new QueryClient();
 
@@ -114,6 +115,16 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <ControleGlicemicoPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documents/cuidados-paliativos"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <CuidadosPaliativosPage />
               </MainLayout>
             </ProtectedRoute>
           }
