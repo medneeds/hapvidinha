@@ -86,6 +86,48 @@ export type Database = {
         }
         Relationships: []
       }
+      notes_reminders: {
+        Row: {
+          completed: boolean | null
+          content: string
+          created_at: string
+          created_by: string | null
+          department: string
+          id: string
+          is_active: boolean | null
+          scheduled_popup_time: string | null
+          type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          completed?: boolean | null
+          content: string
+          created_at?: string
+          created_by?: string | null
+          department?: string
+          id?: string
+          is_active?: boolean | null
+          scheduled_popup_time?: string | null
+          type: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          completed?: boolean | null
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          department?: string
+          id?: string
+          is_active?: boolean | null
+          scheduled_popup_time?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       patient_movements: {
         Row: {
           created_at: string
