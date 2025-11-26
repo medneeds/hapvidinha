@@ -7,7 +7,8 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell } from "lucide-react";
+import { NotificationCenter } from "@/components/NotificationCenter";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,6 +16,7 @@ import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentCon
 import { supabase } from "@/integrations/supabase/client";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import NotesTabOptimized from "@/components/resources/NotesTabOptimized";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -839,6 +841,9 @@ const Index = () => {
                       >
                         <RefreshCw className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                       </Button>
+                      <div className="print:hidden">
+                        <NotificationCenter />
+                      </div>
                       <Button
                         variant={selectionMode ? "default" : "outline"}
                         size="icon"
@@ -1074,94 +1079,7 @@ const Index = () => {
                   </div>
                   <CollapsibleContent>
                     <div className="mt-3">
-                    <Tabs defaultValue="text" className="w-full">
-                      <TabsList className="grid w-full grid-cols-2 mb-4">
-                        <TabsTrigger value="text" className="flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
-                          Texto Livre
-                        </TabsTrigger>
-                        <TabsTrigger value="checklist" className="flex items-center gap-2">
-                          <List className="h-4 w-4" />
-                          Checklist
-                        </TabsTrigger>
-                      </TabsList>
-                      
-                      <TabsContent value="text" className="space-y-2">
-                        <Textarea
-                          placeholder="DIGITE AQUI SUAS ANOTAÇÕES E LEMBRETES IMPORTANTES..."
-                          value={notes}
-                          onChange={(e) => setNotes(e.target.value.toUpperCase())}
-                          className="min-h-[250px] resize-none uppercase font-mono text-sm"
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          {notes.length} caracteres
-                        </p>
-                      </TabsContent>
-                      
-                      <TabsContent value="checklist" className="space-y-3">
-                        <div className="flex gap-2">
-                          <Input
-                            placeholder="ADICIONAR NOVO ITEM..."
-                            value={newChecklistItem}
-                            onChange={(e) => setNewChecklistItem(e.target.value.toUpperCase())}
-                            onKeyPress={(e) => {
-                              if (e.key === "Enter") {
-                                handleAddChecklistItem();
-                              }
-                            }}
-                            className="uppercase text-sm"
-                          />
-                          <Button
-                            size="sm"
-                            onClick={handleAddChecklistItem}
-                            disabled={!newChecklistItem.trim()}
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        
-                        <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                          {checklist.length === 0 ? (
-                            <p className="text-sm text-muted-foreground text-center py-8">
-                              NENHUM ITEM NA CHECKLIST
-                            </p>
-                          ) : (
-                            checklist.map((item) => (
-                              <div
-                                key={item.id}
-                                className="flex items-center gap-2 p-2 bg-muted/30 rounded-md border border-border group"
-                              >
-                                <Checkbox
-                                  checked={item.completed}
-                                  onCheckedChange={() => handleToggleChecklistItem(item.id)}
-                                  className="flex-shrink-0"
-                                />
-                                <span
-                                  className={cn(
-                                    "flex-1 text-sm uppercase",
-                                    item.completed && "line-through text-muted-foreground"
-                                  )}
-                                >
-                                  {item.text}
-                                </span>
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                                  onClick={() => handleRemoveChecklistItem(item.id)}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            ))
-                          )}
-                        </div>
-                        
-                        <p className="text-xs text-muted-foreground">
-                          {checklist.filter(item => item.completed).length} de {checklist.length} itens completos
-                        </p>
-                      </TabsContent>
-                    </Tabs>
+                      <NotesTabOptimized />
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
