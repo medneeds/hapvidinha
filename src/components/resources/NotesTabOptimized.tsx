@@ -8,17 +8,13 @@ import {
   Download,
   Copy,
   Trash2,
-  FileInput,
   Save,
-  FolderOpen,
   Printer,
   Plus,
   Clock,
-  CheckCircle2,
   X,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { internmentTemplate } from "@/data/internmentTemplate";
 import {
   Dialog,
   DialogContent,
@@ -28,24 +24,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-interface SavedTemplate {
-  id: string;
-  name: string;
-  content: string;
-  createdAt: string;
-}
 
 interface ChecklistItem {
   id: string;
@@ -55,10 +36,7 @@ interface ChecklistItem {
 
 const NotesTabOptimized = () => {
   const [notes, setNotes] = useState("");
-  const [savedTemplates, setSavedTemplates] = useState<SavedTemplate[]>([]);
-  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
-  const [templateName, setTemplateName] = useState("");
   const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
   const [newChecklistItem, setNewChecklistItem] = useState("");
   const [scheduledContent, setScheduledContent] = useState("");
@@ -68,11 +46,6 @@ const NotesTabOptimized = () => {
   const { currentDepartment } = useDepartment();
 
   useEffect(() => {
-    const stored = localStorage.getItem("customTemplates");
-    if (stored) {
-      setSavedTemplates(JSON.parse(stored));
-    }
-    
     loadChecklistFromDB();
   }, [currentDepartment]);
 
@@ -97,19 +70,6 @@ const NotesTabOptimized = () => {
         completed: item.completed,
       }))
     );
-  };
-
-  const saveTemplatesToStorage = (templates: SavedTemplate[]) => {
-    localStorage.setItem("customTemplates", JSON.stringify(templates));
-    setSavedTemplates(templates);
-  };
-
-  const handleImportTemplate = () => {
-    setNotes(internmentTemplate);
-    toast({
-      title: "MODELO IMPORTADO",
-      description: "TEMPLATE DE SOLICITAÇÃO DE INTERNAÇÃO CARREGADO COM SUCESSO",
-    });
   };
 
   const handleSaveFreeText = async () => {
@@ -308,64 +268,6 @@ const NotesTabOptimized = () => {
     setNotes(e.target.value.toUpperCase());
   };
 
-  const handleOpenSaveDialog = () => {
-    if (!notes.trim()) {
-      toast({
-        title: "ERRO",
-        description: "NÃO HÁ CONTEÚDO PARA SALVAR",
-        variant: "destructive",
-      });
-      return;
-    }
-    setIsSaveDialogOpen(true);
-  };
-
-  const handleSaveTemplate = () => {
-    if (!templateName.trim()) {
-      toast({
-        title: "ERRO",
-        description: "DIGITE UM NOME PARA O MODELO",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const newTemplate: SavedTemplate = {
-      id: Date.now().toString(),
-      name: templateName.toUpperCase(),
-      content: notes,
-      createdAt: new Date().toISOString(),
-    };
-
-    const updatedTemplates = [...savedTemplates, newTemplate];
-    saveTemplatesToStorage(updatedTemplates);
-
-    toast({
-      title: "MODELO SALVO",
-      description: `MODELO "${templateName.toUpperCase()}" SALVO COM SUCESSO`,
-    });
-
-    setTemplateName("");
-    setIsSaveDialogOpen(false);
-  };
-
-  const handleLoadTemplate = (template: SavedTemplate) => {
-    setNotes(template.content);
-    toast({
-      title: "MODELO CARREGADO",
-      description: `MODELO "${template.name}" CARREGADO COM SUCESSO`,
-    });
-  };
-
-  const handleDeleteTemplate = (templateId: string) => {
-    const updatedTemplates = savedTemplates.filter((t) => t.id !== templateId);
-    saveTemplatesToStorage(updatedTemplates);
-    toast({
-      title: "MODELO EXCLUÍDO",
-      description: "MODELO REMOVIDO COM SUCESSO",
-    });
-  };
-
   return (
     <div className="space-y-4">
       <Tabs defaultValue="notes" className="w-full">
@@ -381,27 +283,6 @@ const NotesTabOptimized = () => {
         <TabsContent value="notes" className="space-y-4">
           <div className="flex items-center justify-between print:hidden flex-wrap gap-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleImportTemplate}
-                className="gap-2 hover:bg-emerald-500/10 hover:text-emerald-600 hover:border-emerald-500/50 transition-all uppercase"
-              >
-                <FileInput className="h-4 w-4" />
-                IMPORTAR MODELO
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleOpenSaveDialog}
-                disabled={!notes}
-                className="gap-2 hover:bg-purple-500/10 hover:text-purple-600 hover:border-purple-500/50 transition-all uppercase"
-              >
-                <Save className="h-4 w-4" />
-                SALVAR COMO MODELO
-              </Button>
-
               <Button
                 variant="outline"
                 size="sm"
@@ -422,48 +303,6 @@ const NotesTabOptimized = () => {
                 <Clock className="h-4 w-4" />
                 PROGRAMAR LEMBRETE
               </Button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={savedTemplates.length === 0}
-                    className="gap-2 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/50 transition-all uppercase"
-                  >
-                    <FolderOpen className="h-4 w-4" />
-                    MEUS MODELOS ({savedTemplates.length})
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64">
-                  <DropdownMenuLabel className="uppercase">MODELOS SALVOS</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {savedTemplates.map((template) => (
-                    <DropdownMenuItem
-                      key={template.id}
-                      className="flex items-center justify-between group uppercase"
-                    >
-                      <button
-                        onClick={() => handleLoadTemplate(template)}
-                        className="flex-1 text-left uppercase"
-                      >
-                        {template.name}
-                      </button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteTemplate(template.id);
-                        }}
-                        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
 
@@ -602,53 +441,6 @@ const NotesTabOptimized = () => {
           </Card>
         </TabsContent>
       </Tabs>
-
-      {/* Save Template Dialog */}
-      <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="uppercase">SALVAR MODELO</DialogTitle>
-            <DialogDescription className="uppercase">
-              DIGITE UM NOME PARA ESTE MODELO
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="template-name" className="uppercase">
-                NOME DO MODELO
-              </Label>
-              <Input
-                id="template-name"
-                value={templateName}
-                onChange={(e) => setTemplateName(e.target.value.toUpperCase())}
-                placeholder="EX: MODELO CARDIOLOGIA"
-                className="uppercase"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSaveTemplate();
-                  }
-                }}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setIsSaveDialogOpen(false);
-                setTemplateName("");
-              }}
-              className="uppercase"
-            >
-              CANCELAR
-            </Button>
-            <Button type="button" onClick={handleSaveTemplate} className="uppercase">
-              SALVAR MODELO
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Schedule Popup Dialog */}
       <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
