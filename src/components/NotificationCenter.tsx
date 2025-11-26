@@ -23,11 +23,11 @@ interface Notification {
   id: string;
   content: string;
   type: "free_text" | "checklist_item";
-  completed: boolean;
+  completed: boolean | null;
   scheduled_popup_time: string | null;
-  is_active: boolean;
+  is_active: boolean | null;
   created_at: string;
-  read: boolean;
+  read: boolean | null;
 }
 
 export const NotificationCenter = () => {
@@ -50,10 +50,10 @@ export const NotificationCenter = () => {
       return;
     }
 
-    setNotifications((data as Notification[]) || []);
+    setNotifications((data as unknown as Notification[]) || []);
     
-    // Contar itens não completados de checklist
-    const unread = (data || []).filter(n => n.type === "checklist_item" && !n.completed).length;
+    // Contar itens não lidos
+    const unread = (data || []).filter(n => !n.read).length;
     setUnreadCount(unread);
   };
 
@@ -207,7 +207,7 @@ export const NotificationCenter = () => {
   const scheduledItems = notifications.filter(n => n.scheduled_popup_time);
 
   // Contar apenas não lidas
-  const unreadNotifications = notifications.filter(n => !n.read).length;
+  const unreadNotifications = notifications.filter(n => n.read === false || n.read === null).length;
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
