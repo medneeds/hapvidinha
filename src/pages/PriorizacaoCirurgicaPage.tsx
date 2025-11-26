@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Scissors, AlertCircle, Clock } from "lucide-react";
+import { ArrowLeft, Scissors, AlertCircle, Clock, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -13,9 +14,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 
 export default function PriorizacaoCirurgicaPage() {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const emergencyProcedures = [
     { specialty: "Cabeça e Pescoço", procedure: "Dissecção de veia para colocação de cateter central NPP ou QT" },
@@ -70,6 +73,20 @@ export default function PriorizacaoCirurgicaPage() {
     { specialty: "Urologia", procedure: "Colocação ureteroscópica de duplo J unilateral" },
   ];
 
+  const filterProcedures = (procedures: typeof emergencyProcedures) => {
+    if (!searchQuery.trim()) return procedures;
+    
+    const query = searchQuery.toLowerCase();
+    return procedures.filter(
+      (item) =>
+        item.procedure.toLowerCase().includes(query) ||
+        item.specialty.toLowerCase().includes(query)
+    );
+  };
+
+  const filteredEmergencyProcedures = filterProcedures(emergencyProcedures);
+  const filteredUrgencyProcedures = filterProcedures(urgencyProcedures);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
@@ -115,6 +132,22 @@ export default function PriorizacaoCirurgicaPage() {
 
         <Separator className="my-6" />
 
+        {/* Search Bar */}
+        <Card className="border-primary/20 shadow-lg">
+          <CardContent className="p-6">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Buscar por procedimento ou especialidade..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 h-14 text-base bg-background/50 border-border/50 focus:border-primary transition-all uppercase"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Tabs for Priority Levels */}
         <Tabs defaultValue="emergency" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8">
@@ -158,7 +191,15 @@ export default function PriorizacaoCirurgicaPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {emergencyProcedures.map((item, index) => (
+                      {filteredEmergencyProcedures.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={2} className="text-center py-12 text-muted-foreground uppercase">
+                            <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                            Nenhum procedimento encontrado com esse termo
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredEmergencyProcedures.map((item, index) => (
                         <TableRow 
                           key={index}
                           className="hover:bg-red-500/5 transition-colors"
@@ -170,7 +211,8 @@ export default function PriorizacaoCirurgicaPage() {
                             {item.procedure}
                           </TableCell>
                         </TableRow>
-                      ))}
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </div>
@@ -180,7 +222,9 @@ export default function PriorizacaoCirurgicaPage() {
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-2">
               <AlertCircle className="h-4 w-4 text-red-500" />
               <span className="uppercase">
-                Total: {emergencyProcedures.length} procedimentos de emergência
+                {searchQuery
+                  ? `Exibindo ${filteredEmergencyProcedures.length} de ${emergencyProcedures.length} procedimentos`
+                  : `Total: ${emergencyProcedures.length} procedimentos de emergência`}
               </span>
             </div>
           </TabsContent>
@@ -215,7 +259,15 @@ export default function PriorizacaoCirurgicaPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {urgencyProcedures.map((item, index) => (
+                      {filteredUrgencyProcedures.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={2} className="text-center py-12 text-muted-foreground uppercase">
+                            <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                            Nenhum procedimento encontrado com esse termo
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredUrgencyProcedures.map((item, index) => (
                         <TableRow 
                           key={index}
                           className="hover:bg-amber-500/5 transition-colors"
@@ -227,7 +279,8 @@ export default function PriorizacaoCirurgicaPage() {
                             {item.procedure}
                           </TableCell>
                         </TableRow>
-                      ))}
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </div>
@@ -237,7 +290,9 @@ export default function PriorizacaoCirurgicaPage() {
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-2">
               <Clock className="h-4 w-4 text-amber-500" />
               <span className="uppercase">
-                Total: {urgencyProcedures.length} procedimentos de urgência
+                {searchQuery
+                  ? `Exibindo ${filteredUrgencyProcedures.length} de ${urgencyProcedures.length} procedimentos`
+                  : `Total: ${urgencyProcedures.length} procedimentos de urgência`}
               </span>
             </div>
           </TabsContent>
