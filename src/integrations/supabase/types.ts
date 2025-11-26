@@ -95,6 +95,7 @@ export type Database = {
           department: string
           id: string
           is_active: boolean | null
+          read: boolean | null
           scheduled_popup_time: string | null
           type: string
           updated_at: string
@@ -108,6 +109,7 @@ export type Database = {
           department?: string
           id?: string
           is_active?: boolean | null
+          read?: boolean | null
           scheduled_popup_time?: string | null
           type: string
           updated_at?: string
@@ -121,6 +123,7 @@ export type Database = {
           department?: string
           id?: string
           is_active?: boolean | null
+          read?: boolean | null
           scheduled_popup_time?: string | null
           type?: string
           updated_at?: string
