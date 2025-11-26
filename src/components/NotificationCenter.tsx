@@ -27,6 +27,7 @@ interface Notification {
   scheduled_popup_time: string | null;
   is_active: boolean;
   created_at: string;
+  read: boolean;
 }
 
 export const NotificationCenter = () => {
@@ -159,11 +160,54 @@ export const NotificationCenter = () => {
     });
   };
 
+  const markAsRead = async (id: string) => {
+    const { error } = await supabase
+      .from("notes_reminders")
+      .update({ read: true })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "ERRO",
+        description: "NÃO FOI POSSÍVEL MARCAR COMO LIDA",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    fetchNotifications();
+  };
+
+  const markAllAsRead = async () => {
+    const { error } = await supabase
+      .from("notes_reminders")
+      .update({ read: true })
+      .eq("department", currentDepartment)
+      .eq("is_active", true)
+      .eq("read", false);
+
+    if (error) {
+      toast({
+        title: "ERRO",
+        description: "NÃO FOI POSSÍVEL MARCAR TODAS COMO LIDAS",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    fetchNotifications();
+    toast({
+      title: "SUCESSO",
+      description: "TODAS AS NOTIFICAÇÕES FORAM MARCADAS COMO LIDAS",
+    });
+  };
+
   const checklistItems = notifications.filter(n => n.type === "checklist_item");
   const freeTextItems = notifications.filter(n => n.type === "free_text" && !n.scheduled_popup_time);
   const scheduledItems = notifications.filter(n => n.scheduled_popup_time);
 
-  const totalNotifications = checklistItems.filter(i => !i.completed).length + freeTextItems.length + scheduledItems.length;
+  // Contar apenas não lidas
+  const unreadNotifications = notifications.filter(n => !n.read).length;
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -176,12 +220,12 @@ export const NotificationCenter = () => {
         >
           <div className="absolute inset-0 rounded-full bg-white/10 group-hover:bg-white/20 transition-all duration-300" />
           <Bell className="relative h-4 w-4 sm:h-5 sm:w-5 text-white group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
-          {totalNotifications > 0 && (
+          {unreadNotifications > 0 && (
             <Badge
               variant="destructive"
               className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center p-0 text-[9px] sm:text-[10px] font-bold shadow-lg animate-pulse border-2 border-white"
             >
-              {totalNotifications > 9 ? '9+' : totalNotifications}
+              {unreadNotifications > 9 ? '9+' : unreadNotifications}
             </Badge>
           )}
         </Button>
@@ -204,11 +248,23 @@ export const NotificationCenter = () => {
                 </p>
               </div>
             </div>
-            {totalNotifications > 0 && (
-              <Badge variant="secondary" className="h-7 px-3 font-semibold shadow-sm">
-                {totalNotifications} {totalNotifications === 1 ? 'item' : 'itens'}
-              </Badge>
-            )}
+            <div className="flex items-center gap-2">
+              {notifications.length > 0 && (
+                <Badge variant="secondary" className="h-7 px-3 font-semibold shadow-sm">
+                  {notifications.length} {notifications.length === 1 ? 'item' : 'itens'}
+                </Badge>
+              )}
+              {unreadNotifications > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={markAllAsRead}
+                  className="h-7 text-xs uppercase hover:bg-primary/10 hover:text-primary transition-all"
+                >
+                  Marcar todas como lidas
+                </Button>
+              )}
+            </div>
           </div>
         </SheetHeader>
 
@@ -233,8 +289,9 @@ export const NotificationCenter = () => {
                     <Card 
                       key={item.id} 
                       className={cn(
-                        "group border border-border/50 hover:border-border transition-all duration-300 hover:shadow-md",
-                        item.completed && "opacity-60 hover:opacity-80"
+                        "group border border-border/50 hover:border-border transition-all duration-300 hover:shadow-md relative",
+                        item.completed && "opacity-60 hover:opacity-80",
+                        !item.read && "border-l-4 border-l-blue-500"
                       )}
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
@@ -269,14 +326,27 @@ export const NotificationCenter = () => {
                             })}
                           </p>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteNotification(item.id)}
-                          className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive rounded-full transition-all"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                          {!item.read && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => markAsRead(item.id)}
+                              className="h-7 w-7 p-0 hover:bg-blue-500/10 hover:text-blue-600 rounded-full transition-all"
+                              title="Marcar como lida"
+                            >
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteNotification(item.id)}
+                            className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive rounded-full transition-all"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
@@ -303,7 +373,10 @@ export const NotificationCenter = () => {
                   {scheduledItems.map((item, index) => (
                     <Card 
                       key={item.id} 
-                      className="group border border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5 hover:border-amber-500/50 transition-all duration-300 hover:shadow-md"
+                      className={cn(
+                        "group border border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5 hover:border-amber-500/50 transition-all duration-300 hover:shadow-md relative",
+                        !item.read && "border-l-4 border-l-amber-600"
+                      )}
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       <CardContent className="p-3 space-y-2">
@@ -312,14 +385,27 @@ export const NotificationCenter = () => {
                             <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
                             <p className="text-sm font-medium uppercase leading-tight break-words">{item.content}</p>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deleteNotification(item.id)}
-                            className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive rounded-full transition-all"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                            {!item.read && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => markAsRead(item.id)}
+                                className="h-7 w-7 p-0 hover:bg-blue-500/10 hover:text-blue-600 rounded-full transition-all"
+                                title="Marcar como lida"
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteNotification(item.id)}
+                              className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive rounded-full transition-all"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/50 rounded-md px-2 py-1">
                           <Calendar className="h-3 w-3" />
@@ -351,7 +437,10 @@ export const NotificationCenter = () => {
                   {freeTextItems.map((item, index) => (
                     <Card 
                       key={item.id}
-                      className="group border border-border/50 hover:border-border transition-all duration-300 hover:shadow-md bg-gradient-to-br from-card to-accent/5"
+                      className={cn(
+                        "group border border-border/50 hover:border-border transition-all duration-300 hover:shadow-md bg-gradient-to-br from-card to-accent/5 relative",
+                        !item.read && "border-l-4 border-l-purple-500"
+                      )}
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       <CardContent className="p-3 space-y-2">
@@ -361,14 +450,27 @@ export const NotificationCenter = () => {
                               {item.content}
                             </p>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deleteNotification(item.id)}
-                            className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive rounded-full transition-all"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                            {!item.read && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => markAsRead(item.id)}
+                                className="h-7 w-7 p-0 hover:bg-blue-500/10 hover:text-blue-600 rounded-full transition-all"
+                                title="Marcar como lida"
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteNotification(item.id)}
+                              className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive rounded-full transition-all"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
                         </div>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                           <Clock className="h-3 w-3" />
