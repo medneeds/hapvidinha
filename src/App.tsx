@@ -25,6 +25,7 @@ import AuthPage from "./pages/AuthPage";
 import IAPage from "./pages/IAPage";
 import InternmentHistoryPage from "./pages/InternmentHistoryPage";
 import DashboardPage from "./pages/DashboardPage";
+import PriorizacaoCirurgicaPage from "./pages/PriorizacaoCirurgicaPage";
 
 const queryClient = new QueryClient();
 
@@ -162,6 +163,16 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <SadtPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documents/priorizacao-cirurgica"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <PriorizacaoCirurgicaPage />
               </MainLayout>
             </ProtectedRoute>
           }
