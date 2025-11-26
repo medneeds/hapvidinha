@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Pencil, Trash2, FileCode } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, FileCode, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -160,6 +160,15 @@ export default function MedicalCodesPage() {
     fetchCodes();
   };
 
+  const handleCopy = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(`${label.toUpperCase()} COPIADO`);
+    } catch (error) {
+      toast.error("ERRO AO COPIAR");
+    }
+  };
+
   const openDialog = (code?: MedicalCode) => {
     if (role !== 'admin') {
       toast.error("APENAS ADMINISTRADORES PODEM CRIAR OU EDITAR CÓDIGOS MÉDICOS");
@@ -259,11 +268,33 @@ export default function MedicalCodesPage() {
                 filteredCodes.map((code) => (
                   <TableRow key={code.id} className="hover:bg-muted/20 transition-colors">
                     <TableCell className="font-mono font-semibold text-primary uppercase">
-                      {code.code}
+                      <div className="group relative flex items-center gap-2">
+                        <span>{code.code}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleCopy(code.code, "Código")}
+                          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10 hover:text-primary"
+                          title="Copiar Código"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </TableCell>
                     <TableCell className="font-medium uppercase">{code.name}</TableCell>
                     <TableCell className="text-muted-foreground uppercase">
-                      {code.system_description}
+                      <div className="group relative flex items-center gap-2">
+                        <span className="flex-1">{code.system_description}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleCopy(code.system_description, "Descritivo")}
+                          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10 hover:text-primary flex-shrink-0"
+                          title="Copiar Descritivo"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
