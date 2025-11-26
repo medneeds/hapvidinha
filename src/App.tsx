@@ -26,6 +26,7 @@ import IAPage from "./pages/IAPage";
 import InternmentHistoryPage from "./pages/InternmentHistoryPage";
 import DashboardPage from "./pages/DashboardPage";
 import PriorizacaoCirurgicaPage from "./pages/PriorizacaoCirurgicaPage";
+import ControleGlicemicoPage from "./pages/ControleGlicemicoPage";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,16 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <SepsisProtocolPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documents/controle-glicemico"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <ControleGlicemicoPage />
               </MainLayout>
             </ProtectedRoute>
           }
