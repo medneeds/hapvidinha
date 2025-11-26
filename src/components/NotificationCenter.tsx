@@ -223,7 +223,7 @@ export const NotificationCenter = () => {
           {unreadNotifications > 0 && (
             <Badge
               variant="destructive"
-              className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center p-0 text-[9px] sm:text-[10px] font-bold shadow-lg animate-pulse border-2 border-white"
+              className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center p-0 text-[9px] sm:text-[10px] font-bold shadow-lg animate-pulse"
             >
               {unreadNotifications > 9 ? '9+' : unreadNotifications}
             </Badge>

@@ -841,9 +841,6 @@ const Index = () => {
                       >
                         <RefreshCw className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                       </Button>
-                      <div className="print:hidden">
-                        <NotificationCenter />
-                      </div>
                       <Button
                         variant={selectionMode ? "default" : "outline"}
                         size="icon"
@@ -912,6 +909,9 @@ const Index = () => {
                         >
                           <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </Button>
+                        <div className="print:hidden">
+                          <NotificationCenter />
+                        </div>
                         <div className="print:hidden">
                           <ThemeToggle />
                         </div>
