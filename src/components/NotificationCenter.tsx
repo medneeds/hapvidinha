@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Bell, X, Clock, CheckCircle2, Trash2, Calendar } from "lucide-react";
+import { Bell, Clock, CheckCircle2, Trash2, Calendar, FileText, ListChecks, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
@@ -11,13 +11,13 @@ import { cn } from "@/lib/utils";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Separator } from "@/components/ui/separator";
 
 interface Notification {
   id: string;
@@ -171,62 +171,98 @@ export const NotificationCenter = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="relative h-8 w-8 sm:h-10 sm:w-10 hover:bg-white/20 transition-all group"
+          className="relative h-8 w-8 sm:h-10 sm:w-10 hover:bg-white/20 transition-all duration-300 group rounded-full"
           title="Central de Notificações"
         >
-          <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-white group-hover:scale-110 transition-transform" />
+          <div className="absolute inset-0 rounded-full bg-white/10 group-hover:bg-white/20 transition-all duration-300" />
+          <Bell className="relative h-4 w-4 sm:h-5 sm:w-5 text-white group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
           {totalNotifications > 0 && (
             <Badge
               variant="destructive"
-              className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center p-0 text-[10px] sm:text-xs font-bold animate-pulse"
+              className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center p-0 text-[9px] sm:text-[10px] font-bold shadow-lg animate-pulse border-2 border-white"
             >
               {totalNotifications > 9 ? '9+' : totalNotifications}
             </Badge>
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg">
-        <SheetHeader>
-          <SheetTitle className="uppercase flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            CENTRAL DE NOTIFICAÇÕES
-          </SheetTitle>
-          <SheetDescription className="uppercase">
-            LEMBRETES E ANOTAÇÕES - {currentDepartment}
-          </SheetDescription>
+      <SheetContent className="w-full sm:max-w-xl border-l-0 bg-gradient-to-br from-background via-background to-accent/5 p-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none" />
+        
+        <SheetHeader className="relative px-6 pt-6 pb-4 border-b border-border/50 bg-card/50 backdrop-blur-xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                <Bell className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <div>
+                <SheetTitle className="text-lg font-bold uppercase tracking-tight">
+                  Central de Notificações
+                </SheetTitle>
+                <p className="text-xs text-muted-foreground uppercase mt-0.5">
+                  {currentDepartment}
+                </p>
+              </div>
+            </div>
+            {totalNotifications > 0 && (
+              <Badge variant="secondary" className="h-7 px-3 font-semibold shadow-sm">
+                {totalNotifications} {totalNotifications === 1 ? 'item' : 'itens'}
+              </Badge>
+            )}
+          </div>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-120px)] mt-6 pr-4">
-          <div className="space-y-6">
+        <ScrollArea className="relative h-[calc(100vh-140px)] px-6 py-4">
+          <div className="space-y-5">
             {/* Checklist Items */}
             {checklistItems.length > 0 && (
-              <div>
-                <h3 className="text-sm font-semibold mb-3 uppercase flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4" />
-                  CHECKLIST ({checklistItems.filter(i => !i.completed).length} PENDENTES)
-                </h3>
+              <div className="animate-fade-in">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/10 flex items-center justify-center">
+                    <ListChecks className="h-4 w-4 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-bold uppercase tracking-tight">Check-list</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {checklistItems.filter(i => !i.completed).length} pendente(s)
+                    </p>
+                  </div>
+                </div>
                 <div className="space-y-2">
-                  {checklistItems.map((item) => (
-                    <Card key={item.id} className={cn("transition-all", item.completed && "opacity-60")}>
+                  {checklistItems.map((item, index) => (
+                    <Card 
+                      key={item.id} 
+                      className={cn(
+                        "group border border-border/50 hover:border-border transition-all duration-300 hover:shadow-md",
+                        item.completed && "opacity-60 hover:opacity-80"
+                      )}
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
                       <CardContent className="p-3 flex items-start gap-3">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => toggleComplete(item.id, item.completed)}
-                          className="h-6 w-6 p-0 mt-1"
+                          className="h-7 w-7 p-0 rounded-full hover:scale-110 transition-transform"
                         >
                           <CheckCircle2
                             className={cn(
-                              "h-5 w-5",
-                              item.completed ? "text-green-500 fill-green-500" : "text-muted-foreground"
+                              "h-5 w-5 transition-all duration-300",
+                              item.completed 
+                                ? "text-green-500 fill-green-500" 
+                                : "text-muted-foreground hover:text-green-500"
                             )}
                           />
                         </Button>
-                        <div className="flex-1 space-y-1">
-                          <p className={cn("text-sm uppercase", item.completed && "line-through")}>
+                        <div className="flex-1 space-y-1 min-w-0">
+                          <p className={cn(
+                            "text-sm font-medium uppercase leading-tight break-words",
+                            item.completed && "line-through text-muted-foreground"
+                          )}>
                             {item.content}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
                             {formatDistanceToNow(new Date(item.created_at), {
                               addSuffix: true,
                               locale: ptBR,
@@ -237,9 +273,9 @@ export const NotificationCenter = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => deleteNotification(item.id)}
-                          className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+                          className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive rounded-full transition-all"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </CardContent>
                     </Card>
@@ -250,27 +286,42 @@ export const NotificationCenter = () => {
 
             {/* Scheduled Popups */}
             {scheduledItems.length > 0 && (
-              <div>
-                <h3 className="text-sm font-semibold mb-3 uppercase flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  LEMBRETES PROGRAMADOS ({scheduledItems.length})
-                </h3>
+              <div className="animate-fade-in">
+                <Separator className="my-5" />
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500/10 to-orange-500/10 flex items-center justify-center">
+                    <Clock className="h-4 w-4 text-amber-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-bold uppercase tracking-tight">Lembretes Programados</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {scheduledItems.length} agendado(s)
+                    </p>
+                  </div>
+                </div>
                 <div className="space-y-2">
-                  {scheduledItems.map((item) => (
-                    <Card key={item.id} className="border-amber-500/50 bg-amber-500/5">
+                  {scheduledItems.map((item, index) => (
+                    <Card 
+                      key={item.id} 
+                      className="group border border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5 hover:border-amber-500/50 transition-all duration-300 hover:shadow-md"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
                       <CardContent className="p-3 space-y-2">
                         <div className="flex items-start justify-between gap-2">
-                          <p className="text-sm uppercase flex-1">{item.content}</p>
+                          <div className="flex items-start gap-2 flex-1 min-w-0">
+                            <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                            <p className="text-sm font-medium uppercase leading-tight break-words">{item.content}</p>
+                          </div>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => deleteNotification(item.id)}
-                            className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+                            className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive rounded-full transition-all"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/50 rounded-md px-2 py-1">
                           <Calendar className="h-3 w-3" />
                           {new Date(item.scheduled_popup_time!).toLocaleString("pt-BR")}
                         </div>
@@ -283,27 +334,44 @@ export const NotificationCenter = () => {
 
             {/* Free Text Notes */}
             {freeTextItems.length > 0 && (
-              <div>
-                <h3 className="text-sm font-semibold mb-3 uppercase flex items-center gap-2">
-                  <Bell className="h-4 w-4" />
-                  ANOTAÇÕES LIVRES ({freeTextItems.length})
-                </h3>
+              <div className="animate-fade-in">
+                <Separator className="my-5" />
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 flex items-center justify-center">
+                    <FileText className="h-4 w-4 text-purple-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-bold uppercase tracking-tight">Anotações Salvas</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {freeTextItems.length} anotação(ões)
+                    </p>
+                  </div>
+                </div>
                 <div className="space-y-2">
-                  {freeTextItems.map((item) => (
-                    <Card key={item.id}>
+                  {freeTextItems.map((item, index) => (
+                    <Card 
+                      key={item.id}
+                      className="group border border-border/50 hover:border-border transition-all duration-300 hover:shadow-md bg-gradient-to-br from-card to-accent/5"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
                       <CardContent className="p-3 space-y-2">
                         <div className="flex items-start justify-between gap-2">
-                          <p className="text-sm uppercase flex-1 whitespace-pre-wrap">{item.content}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium uppercase leading-tight whitespace-pre-wrap break-words">
+                              {item.content}
+                            </p>
+                          </div>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => deleteNotification(item.id)}
-                            className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+                            className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive rounded-full transition-all"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
                           {formatDistanceToNow(new Date(item.created_at), {
                             addSuffix: true,
                             locale: ptBR,
@@ -317,11 +385,16 @@ export const NotificationCenter = () => {
             )}
 
             {notifications.length === 0 && (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <Bell className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                  <p className="text-sm text-muted-foreground uppercase">
-                    NENHUMA NOTIFICAÇÃO ATIVA
+              <Card className="border-dashed border-2 bg-gradient-to-br from-card to-accent/5">
+                <CardContent className="p-12 text-center">
+                  <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center mx-auto mb-4 animate-pulse">
+                    <Bell className="h-8 w-8 text-muted-foreground opacity-50" />
+                  </div>
+                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                    Nenhuma Notificação
+                  </p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">
+                    Suas anotações e lembretes aparecerão aqui
                   </p>
                 </CardContent>
               </Card>
