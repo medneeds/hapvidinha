@@ -28,6 +28,7 @@ import DashboardPage from "./pages/DashboardPage";
 import PriorizacaoCirurgicaPage from "./pages/PriorizacaoCirurgicaPage";
 import ControleGlicemicoPage from "./pages/ControleGlicemicoPage";
 import CuidadosPaliativosPage from "./pages/CuidadosPaliativosPage";
+import FluxoPaliativacaoPage from "./pages/FluxoPaliativacaoPage";
 
 const queryClient = new QueryClient();
 
@@ -125,6 +126,16 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <CuidadosPaliativosPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/documents/fluxo-paliativacao"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <FluxoPaliativacaoPage />
               </MainLayout>
             </ProtectedRoute>
           }

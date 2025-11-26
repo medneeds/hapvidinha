@@ -10,7 +10,8 @@ import {
   ChevronRight,
   Scissors,
   Activity,
-  Heart
+  Heart,
+  Workflow
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +51,15 @@ export default function DocumentsPage() {
       icon: Heart,
       color: "text-pink-500",
       bgColor: "bg-pink-500/10"
+    },
+    { 
+      id: "fluxo-paliativacao", 
+      title: "Fluxo de Paliativação", 
+      description: "Orientações sobre paliativação e transferência UTI",
+      route: "/documents/fluxo-paliativacao",
+      icon: Workflow,
+      color: "text-violet-500",
+      bgColor: "bg-violet-500/10"
     },
     { 
       id: "tomografias", 
