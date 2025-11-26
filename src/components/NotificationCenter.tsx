@@ -160,25 +160,27 @@ export const NotificationCenter = () => {
   };
 
   const checklistItems = notifications.filter(n => n.type === "checklist_item");
-  const freeTextItems = notifications.filter(n => n.type === "free_text");
+  const freeTextItems = notifications.filter(n => n.type === "free_text" && !n.scheduled_popup_time);
   const scheduledItems = notifications.filter(n => n.scheduled_popup_time);
+
+  const totalNotifications = checklistItems.filter(i => !i.completed).length + freeTextItems.length + scheduledItems.length;
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button
-          variant="outline"
-          size="sm"
-          className="relative gap-2 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/50 transition-all uppercase"
+          variant="ghost"
+          size="icon"
+          className="relative h-8 w-8 sm:h-10 sm:w-10 hover:bg-white/20 transition-all group"
+          title="Central de Notificações"
         >
-          <Bell className="h-4 w-4" />
-          CENTRAL
-          {unreadCount > 0 && (
+          <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-white group-hover:scale-110 transition-transform" />
+          {totalNotifications > 0 && (
             <Badge
               variant="destructive"
-              className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
+              className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center p-0 text-[10px] sm:text-xs font-bold animate-pulse"
             >
-              {unreadCount}
+              {totalNotifications > 9 ? '9+' : totalNotifications}
             </Badge>
           )}
         </Button>
