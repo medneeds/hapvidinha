@@ -8,7 +8,8 @@ import {
   DollarSign,
   Search,
   ChevronRight,
-  Scissors
+  Scissors,
+  Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,15 @@ export default function DocumentsPage() {
       icon: Biohazard,
       color: "text-red-500",
       bgColor: "bg-red-500/10"
+    },
+    { 
+      id: "controle-glicemico", 
+      title: "Controle Glicêmico", 
+      description: "Protocolo de insulina e controle glicêmico",
+      route: "/documents/controle-glicemico",
+      icon: Activity,
+      color: "text-emerald-500",
+      bgColor: "bg-emerald-500/10"
     },
     { 
       id: "tomografias", 
