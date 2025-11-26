@@ -7,7 +7,8 @@ import {
   FileCheck, 
   DollarSign,
   Search,
-  ChevronRight
+  ChevronRight,
+  Scissors
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -83,6 +84,15 @@ export default function DocumentsPage() {
       icon: ClipboardList,
       color: "text-cyan-500",
       bgColor: "bg-cyan-500/10"
+    },
+    { 
+      id: "priorizacao-cirurgica", 
+      title: "Priorização Cirúrgica", 
+      description: "Classificação de procedimentos cirúrgicos por prioridade",
+      route: "/documents/priorizacao-cirurgica",
+      icon: Scissors,
+      color: "text-orange-500",
+      bgColor: "bg-orange-500/10"
     },
   ];
 
