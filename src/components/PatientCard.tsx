@@ -820,7 +820,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   {patient.bedNumber}
                 </Badge>
                 <div className="flex flex-col gap-0.5">
-                  {localMedicalResponsibility ? (
+                  {localMedicalResponsibility?.type ? (
                     <MedicalResponsibilityIndicator
                       responsibility={localMedicalResponsibility}
                       sectorColor={sectorColorMap[patient.sector]}
