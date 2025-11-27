@@ -49,10 +49,10 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
   const colors = sectorColors[patient.sector] || sectorColors.outside;
   
   const containerStyle: React.CSSProperties = {
-    padding: '15mm 12mm',
-    paddingTop: '20mm',
-    fontSize: '10.5pt',
-    lineHeight: '1.5',
+    padding: '18mm 15mm',
+    paddingTop: '22mm',
+    fontSize: '11pt',
+    lineHeight: '1.6',
     backgroundColor: '#ffffff',
     minHeight: '297mm',
     width: '210mm',
@@ -90,216 +90,281 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
     }
   `;
 
+  const SectionCard = ({ title, children, bgColor, borderColor, textColor }: { 
+    title: string; 
+    children: React.ReactNode; 
+    bgColor: string; 
+    borderColor: string; 
+    textColor: string; 
+  }) => (
+    <div style={{ 
+      marginBottom: '20px',
+      backgroundColor: bgColor,
+      padding: '16px 18px',
+      borderRadius: '8px',
+      border: `2px solid ${borderColor}`,
+      boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
+    }}>
+      <div style={{ 
+        fontSize: '11pt', 
+        fontWeight: 'bold', 
+        color: textColor, 
+        marginBottom: '12px', 
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+        paddingBottom: '8px',
+        borderBottom: `2px solid ${borderColor}`
+      }}>
+        {title}
+      </div>
+      {children}
+    </div>
+  );
+
   return (
     <>
       <style>{pageStyle}</style>
       <div style={containerStyle}>
-        {/* Logo as watermark */}
+        {/* Logo Watermark */}
         <img 
           src={hapvidaFullLogo} 
           alt="Hapvida NotreDame Intermédica" 
           style={{ 
             position: 'absolute',
-            top: '8mm',
-            right: '12mm',
-            height: '38px',
+            top: '10mm',
+            right: '15mm',
+            height: '45px',
             width: 'auto',
-            opacity: 0.3,
+            opacity: 0.25,
             zIndex: 0
           }}
         />
         
-        {/* Header */}
+        {/* Header with Sector Identity */}
         <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '10px', 
-          marginBottom: '14px', 
-          paddingBottom: '10px', 
-          borderBottom: '2px solid #d1d5db',
+          background: `linear-gradient(135deg, ${colors.primary}, ${colors.dark})`,
+          padding: '18px 20px',
+          borderRadius: '10px',
+          marginBottom: '24px',
           position: 'relative',
-          zIndex: 1
+          zIndex: 1,
+          boxShadow: `0 4px 12px ${colors.primary}40`
         }}>
           <div style={{ 
-            height: '36px', 
-            width: '36px', 
-            backgroundColor: colors.primary,
-            borderRadius: '6px',
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '14px',
+            marginBottom: '12px'
+          }}>
+            <div style={{ 
+              height: '48px', 
+              width: '48px', 
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              border: '2px solid rgba(255, 255, 255, 0.3)'
+            }}>
+              <ClipboardList style={{ height: '24px', width: '24px', color: '#ffffff' }} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <h1 style={{ 
+                fontSize: '20pt', 
+                fontWeight: 'bold', 
+                textTransform: 'uppercase',
+                margin: 0,
+                color: '#ffffff',
+                letterSpacing: '1px',
+                textShadow: '0 2px 4px rgba(0,0,0,0.2)'
+              }}>
+                Caso Clínico Completo
+              </h1>
+              <div style={{ 
+                fontSize: '10pt', 
+                color: 'rgba(255, 255, 255, 0.9)',
+                marginTop: '4px',
+                letterSpacing: '0.3px'
+              }}>
+                {sectorLabels[patient.sector]} • Leito {patient.bedNumber}
+              </div>
+            </div>
+          </div>
+          
+          {/* Metadata Bar */}
+          <div style={{ 
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0
+            gap: '16px',
+            fontSize: '9pt',
+            color: 'rgba(255, 255, 255, 0.95)',
+            backgroundColor: 'rgba(0, 0, 0, 0.15)',
+            padding: '8px 12px',
+            borderRadius: '6px'
           }}>
-            <ClipboardList style={{ height: '18px', width: '18px', color: '#ffffff' }} />
-          </div>
-          <h1 style={{ 
-            fontSize: '18pt', 
-            fontWeight: 'bold', 
-            textTransform: 'uppercase',
-            margin: 0,
-            color: '#000000',
-            letterSpacing: '0.5px'
-          }}>
-            Caso Completo - Leito {patient.bedNumber}
-          </h1>
-        </div>
-        
-        {/* Metadata */}
-        <div style={{ 
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '12px',
-          fontSize: '9.5pt', 
-          color: '#4b5563', 
-          marginBottom: '16px', 
-          paddingBottom: '10px', 
-          borderBottom: '1px solid #e5e7eb',
-          backgroundColor: '#f9fafb',
-          padding: '10px',
-          borderRadius: '6px'
-        }}>
-          <div>
-            <strong>Data:</strong> {new Date().toLocaleDateString('pt-BR')}
-          </div>
-          <div>
-            <strong>Hora:</strong> {new Date().toLocaleTimeString('pt-BR')}
-          </div>
-          <div>
-            <strong>Setor:</strong> {sectorLabels[patient.sector]}
+            <div>
+              <strong>Data:</strong> {new Date().toLocaleDateString('pt-BR')}
+            </div>
+            <div style={{ borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '16px' }}>
+              <strong>Hora:</strong> {new Date().toLocaleTimeString('pt-BR')}
+            </div>
+            {patient.admissionDate && (
+              <div style={{ borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '16px' }}>
+                <strong>Admissão:</strong> {new Date(patient.admissionDate).toLocaleDateString('pt-BR')}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Patient Information Card */}
+        {/* Patient Information Card with Sector Colors */}
         <div style={{ 
           backgroundColor: colors.light, 
-          padding: '14px', 
-          borderRadius: '8px',
-          marginBottom: '18px',
-          border: `2px solid ${colors.border}`
+          padding: '20px', 
+          borderRadius: '10px',
+          marginBottom: '24px',
+          border: `3px solid ${colors.primary}`,
+          boxShadow: `0 2px 8px ${colors.primary}30`
         }}>
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: '1fr 2fr 1fr', 
-            gap: '16px',
+            gridTemplateColumns: 'auto 1fr auto', 
+            gap: '24px',
             alignItems: 'center'
           }}>
-            <div>
-              <div style={{ fontSize: '9pt', color: colors.dark, marginBottom: '4px', fontWeight: '600' }}>LEITO</div>
-              <div style={{ fontSize: '16pt', fontWeight: 'bold', color: colors.text }}>{patient.bedNumber}</div>
+            <div style={{
+              backgroundColor: colors.primary,
+              color: '#ffffff',
+              padding: '16px 20px',
+              borderRadius: '8px',
+              textAlign: 'center',
+              minWidth: '80px'
+            }}>
+              <div style={{ fontSize: '10pt', marginBottom: '4px', opacity: 0.9, fontWeight: '600' }}>LEITO</div>
+              <div style={{ fontSize: '24pt', fontWeight: 'bold' }}>{patient.bedNumber}</div>
             </div>
             <div>
-              <div style={{ fontSize: '9pt', color: colors.dark, marginBottom: '4px', fontWeight: '600' }}>PACIENTE</div>
-              <div style={{ fontSize: '13pt', fontWeight: 'bold', color: colors.text, textTransform: 'uppercase' }}>{patient.name}</div>
+              <div style={{ fontSize: '10pt', color: colors.dark, marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase' }}>
+                Paciente
+              </div>
+              <div style={{ 
+                fontSize: '16pt', 
+                fontWeight: 'bold', 
+                color: colors.text, 
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                {patient.name}
+              </div>
             </div>
-            <div>
-              <div style={{ fontSize: '9pt', color: colors.dark, marginBottom: '4px', fontWeight: '600' }}>IDADE</div>
-              <div style={{ fontSize: '13pt', fontWeight: 'bold', color: colors.text }}>{formatAgeDisplay(patient.age)}</div>
+            <div style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              padding: '12px 20px',
+              borderRadius: '8px',
+              border: `2px solid ${colors.border}`,
+              textAlign: 'center',
+              minWidth: '100px'
+            }}>
+              <div style={{ fontSize: '10pt', color: colors.dark, marginBottom: '4px', fontWeight: '600' }}>IDADE</div>
+              <div style={{ fontSize: '16pt', fontWeight: 'bold', color: colors.text }}>{formatAgeDisplay(patient.age)}</div>
             </div>
           </div>
         </div>
 
-        {/* Admission Date */}
-        {patient.admissionDate && (
-          <div style={{ 
-            marginBottom: '16px',
-            display: 'grid',
-            gridTemplateColumns: 'auto 1fr',
-            gap: '8px',
-            alignItems: 'center'
-          }}>
-            <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#000000' }}>Data de Admissão:</div>
-            <div style={{ fontSize: '10.5pt', color: '#374151' }}>{new Date(patient.admissionDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
-          </div>
-        )}
-
-        {/* Clinical Information Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '18px' }}>
-          {/* Diagnoses */}
-          {patient.diagnoses.length > 0 && (
-            <div style={{ 
-              backgroundColor: '#fef3c7', 
-              padding: '12px', 
-              borderRadius: '6px',
-              border: '1px solid #fde047'
-            }}>
-              <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#92400e', marginBottom: '8px', textTransform: 'uppercase' }}>
-                Hipóteses Diagnósticas
-              </div>
-              <ul style={{ margin: 0, paddingLeft: '18px', listStyleType: 'disc' }}>
-                {patient.diagnoses.map((diagnosis, idx) => (
-                  <li key={idx} style={{ fontSize: '10pt', color: '#451a03', marginBottom: '3px', lineHeight: '1.4' }}>{diagnosis}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Medical History */}
-          {patient.medicalHistory.length > 0 && (
-            <div style={{ 
-              backgroundColor: '#fce7f3', 
-              padding: '12px', 
-              borderRadius: '6px',
-              border: '1px solid #fbcfe8'
-            }}>
-              <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#831843', marginBottom: '8px', textTransform: 'uppercase' }}>
-                Antecedentes
-              </div>
-              <ul style={{ margin: 0, paddingLeft: '18px', listStyleType: 'disc' }}>
-                {patient.medicalHistory.map((history, idx) => (
-                  <li key={idx} style={{ fontSize: '10pt', color: '#500724', marginBottom: '3px', lineHeight: '1.4' }}>{history}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        {/* Relevant Exams */}
-        {patient.relevantExams.length > 0 && (
-          <div style={{ 
-            marginBottom: '16px',
-            backgroundColor: '#dbeafe',
-            padding: '12px',
-            borderRadius: '6px',
-            border: '1px solid #93c5fd'
-          }}>
-            <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#1e40af', marginBottom: '8px', textTransform: 'uppercase' }}>
-              Exames Complementares
-            </div>
-            <ul style={{ margin: 0, paddingLeft: '18px', listStyleType: 'square' }}>
-              {patient.relevantExams.map((exam, idx) => (
-                <li key={idx} style={{ fontSize: '10pt', color: '#1e3a8a', marginBottom: '3px', lineHeight: '1.4' }}>{exam}</li>
+        {/* Clinical Sections */}
+        {patient.diagnoses.length > 0 && (
+          <SectionCard
+            title="Hipóteses Diagnósticas"
+            bgColor="#fffbeb"
+            borderColor="#fbbf24"
+            textColor="#92400e"
+          >
+            <ul style={{ margin: 0, paddingLeft: '24px', listStyleType: 'disc' }}>
+              {patient.diagnoses.map((diagnosis, idx) => (
+                <li key={idx} style={{ 
+                  fontSize: '11pt', 
+                  color: '#78350f', 
+                  marginBottom: '8px', 
+                  lineHeight: '1.6',
+                  paddingLeft: '4px'
+                }}>
+                  {diagnosis}
+                </li>
               ))}
             </ul>
-          </div>
+          </SectionCard>
         )}
 
-        {/* Pendencies */}
+        {patient.medicalHistory.length > 0 && (
+          <SectionCard
+            title="Antecedentes Mórbidos Pessoais"
+            bgColor="#fdf2f8"
+            borderColor="#f472b6"
+            textColor="#9f1239"
+          >
+            <ul style={{ margin: 0, paddingLeft: '24px', listStyleType: 'disc' }}>
+              {patient.medicalHistory.map((history, idx) => (
+                <li key={idx} style={{ 
+                  fontSize: '11pt', 
+                  color: '#831843', 
+                  marginBottom: '8px', 
+                  lineHeight: '1.6',
+                  paddingLeft: '4px'
+                }}>
+                  {history}
+                </li>
+              ))}
+            </ul>
+          </SectionCard>
+        )}
+
+        {patient.relevantExams.length > 0 && (
+          <SectionCard
+            title="Exames Complementares Relevantes"
+            bgColor="#eff6ff"
+            borderColor="#60a5fa"
+            textColor="#1e40af"
+          >
+            <ul style={{ margin: 0, paddingLeft: '24px', listStyleType: 'square' }}>
+              {patient.relevantExams.map((exam, idx) => (
+                <li key={idx} style={{ 
+                  fontSize: '11pt', 
+                  color: '#1e3a8a', 
+                  marginBottom: '8px', 
+                  lineHeight: '1.6',
+                  paddingLeft: '4px'
+                }}>
+                  {exam}
+                </li>
+              ))}
+            </ul>
+          </SectionCard>
+        )}
+
         {patient.pendencies.length > 0 && (
-          <div style={{ 
-            marginBottom: '16px',
-            backgroundColor: '#dcfce7',
-            padding: '12px',
-            borderRadius: '6px',
-            border: '1px solid #86efac'
-          }}>
-            <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#166534', marginBottom: '8px', textTransform: 'uppercase' }}>
-              Programações / Pendências
-            </div>
-            <ul style={{ margin: 0, paddingLeft: '18px', listStyleType: 'decimal' }}>
+          <SectionCard
+            title="Programações e Pendências"
+            bgColor="#f0fdf4"
+            borderColor="#4ade80"
+            textColor="#166534"
+          >
+            <ul style={{ margin: 0, paddingLeft: '24px', listStyleType: 'decimal' }}>
               {patient.pendencies.map((pendency, idx) => {
                 const isHighlighted = patient.highlightedPendencies?.includes(idx);
                 return (
                   <li 
                     key={idx} 
                     style={{ 
-                      fontSize: '10pt', 
+                      fontSize: '11pt', 
                       color: '#14532d', 
-                      marginBottom: '3px', 
-                      lineHeight: '1.4',
+                      marginBottom: '8px', 
+                      lineHeight: '1.6',
+                      paddingLeft: '4px',
                       fontWeight: isHighlighted ? 'bold' : 'normal',
-                      backgroundColor: isHighlighted ? '#fbbf24' : 'transparent',
-                      padding: isHighlighted ? '3px 6px' : '0',
-                      borderRadius: isHighlighted ? '3px' : '0'
+                      backgroundColor: isHighlighted ? '#fef3c7' : 'transparent',
+                      padding: isHighlighted ? '6px 10px' : '0',
+                      marginLeft: isHighlighted ? '-10px' : '0',
+                      borderRadius: isHighlighted ? '5px' : '0',
+                      border: isHighlighted ? '2px solid #fbbf24' : 'none'
                     }}
                   >
                     {pendency}
@@ -307,43 +372,41 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
                 );
               })}
             </ul>
-          </div>
+          </SectionCard>
         )}
 
-        {/* Admission History */}
         {patient.admissionHistory && (
-          <div style={{ 
-            marginBottom: '16px',
-            backgroundColor: '#f5f5f4',
-            padding: '14px',
-            borderRadius: '6px',
-            border: '1px solid #d6d3d1'
-          }}>
-            <div style={{ fontSize: '10pt', fontWeight: 'bold', color: '#1c1917', marginBottom: '10px', textTransform: 'uppercase' }}>
-              História Admissional / Anamnese
-            </div>
+          <SectionCard
+            title="História Admissional e Anamnese Completa"
+            bgColor="#fafaf9"
+            borderColor="#a8a29e"
+            textColor="#292524"
+          >
             <div style={{ 
-              fontSize: '10pt', 
-              color: '#292524', 
-              lineHeight: '1.6',
+              fontSize: '11pt', 
+              color: '#1c1917', 
+              lineHeight: '1.8',
               whiteSpace: 'pre-wrap',
-              textAlign: 'justify'
+              textAlign: 'justify',
+              padding: '4px 0'
             }}>
               {patient.admissionHistory}
             </div>
-          </div>
+          </SectionCard>
         )}
 
         {/* Footer */}
         <div style={{ 
           fontSize: '9pt', 
           textAlign: 'center', 
-          color: '#6b7280', 
-          marginTop: '20px', 
-          paddingTop: '12px', 
-          borderTop: '1px solid #e5e7eb' 
+          color: '#9ca3af', 
+          marginTop: '32px', 
+          paddingTop: '16px', 
+          borderTop: '2px solid #e5e7eb',
+          fontStyle: 'italic'
         }}>
-          Urgência e Emergência - Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
+          Hospital Guarás - Urgência e Emergência • Documento Confidencial Gerado Automaticamente<br/>
+          {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })} às {new Date().toLocaleTimeString('pt-BR')}
         </div>
       </div>
     </>
