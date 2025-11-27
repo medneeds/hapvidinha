@@ -814,28 +814,29 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
             <div className="flex-1 grid grid-cols-1 md:grid-cols-18 gap-1.5 items-start">
               {/* Leito - ultra compacto */}
-              <div className="flex flex-col md:col-span-1">
+              <div className="flex flex-col md:col-span-1 gap-1">
                 <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                <div className="flex flex-col gap-1">
-                  <Badge className={cn("w-fit text-[10px] py-0 px-1 font-bold leading-tight", config.badgeColor)}>
-                    {patient.bedNumber}
-                  </Badge>
-                  {localMedicalResponsibility && (
+                <Badge className={cn("w-fit text-[10px] py-0 px-1 font-bold leading-tight", config.badgeColor)}>
+                  {patient.bedNumber}
+                </Badge>
+                <div className="flex flex-col gap-0.5">
+                  {localMedicalResponsibility ? (
                     <MedicalResponsibilityIndicator
                       responsibility={localMedicalResponsibility}
                       sectorColor={sectorColorMap[patient.sector]}
                       onClick={() => setMedicalResponsibilityDialogOpen(true)}
                       compact
                     />
-                  )}
-                  {!localMedicalResponsibility && (
+                  ) : (
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setMedicalResponsibilityDialogOpen(true)}
-                      className="h-4 w-fit px-1 text-[9px] text-muted-foreground hover:text-primary print:hidden"
+                      className="h-5 w-full px-1 text-[8px] text-muted-foreground hover:text-primary print:hidden flex items-center justify-center gap-0.5 border border-dashed border-muted-foreground/30 hover:border-primary/50 transition-all"
+                      title="Adicionar responsável"
                     >
-                      + Responsável
+                      <span className="text-[10px]">+</span>
+                      <span className="font-medium">Resp</span>
                     </Button>
                   )}
                 </div>

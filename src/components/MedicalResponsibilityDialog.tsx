@@ -3,9 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MedicalResponsibility, MedicalResponsibilityType } from "@/types/patient";
-import { X, Stethoscope, UserCog, UsersRound } from "lucide-react";
+import { X, Stethoscope, UserCog, UsersRound, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface MedicalResponsibilityDialogProps {
   open: boolean;
@@ -70,95 +70,93 @@ export const MedicalResponsibilityDialog = ({
 
         <div className="space-y-5 py-4">
           <div className="space-y-3">
-            <Label htmlFor="type" className="text-sm font-semibold">Tipo de Acompanhamento</Label>
-            <div className="grid grid-cols-1 gap-2">
+            <Label className="text-sm font-semibold text-foreground">Selecione o Tipo de Acompanhamento</Label>
+            <div className="grid grid-cols-2 gap-2.5">
               <button
                 type="button"
                 onClick={() => setType(null)}
-                className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
+                className={cn(
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md",
                   type === null
-                    ? 'border-gray-400 bg-gray-50'
+                    ? 'border-gray-400 bg-gray-50 shadow-sm'
                     : 'border-gray-200 hover:border-gray-300 bg-white'
-                }`}
+                )}
               >
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
-                  <X className="h-4 w-4 text-gray-500" />
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100">
+                  <X className="h-5 w-5 text-gray-500" />
                 </div>
-                <span className="font-medium text-sm">Nenhum</span>
+                <span className="font-semibold text-xs">Nenhum</span>
               </button>
               
               <button
                 type="button"
                 onClick={() => setType('porta')}
-                className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
-                  type === 'porta'
-                    ? 'bg-opacity-10'
-                    : 'border-gray-200 hover:border-gray-300 bg-white'
-                }`}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in",
+                  type === 'porta' && 'shadow-md'
+                )}
                 style={{
-                  borderColor: type === 'porta' ? sectorColor : undefined,
-                  backgroundColor: type === 'porta' ? `${sectorColor}10` : undefined,
+                  borderColor: type === 'porta' ? sectorColor : '#e5e7eb',
+                  backgroundColor: type === 'porta' ? `${sectorColor}10` : '#ffffff',
                 }}
               >
                 <div 
-                  className="flex items-center justify-center w-8 h-8 rounded-full"
+                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
                   style={{ backgroundColor: `${sectorColor}20` }}
                 >
-                  <Stethoscope className="h-4 w-4" style={{ color: sectorColor }} />
+                  <Stethoscope className="h-5 w-5" style={{ color: sectorColor }} />
                 </div>
-                <div className="flex flex-col items-start">
-                  <span className="font-semibold text-sm">Médico Porta</span>
-                  <span className="text-xs text-muted-foreground">Paciente sob responsabilidade do consultório</span>
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="font-semibold text-xs">Porta</span>
+                  <span className="text-[10px] text-muted-foreground text-center leading-tight">Consultório</span>
                 </div>
               </button>
               
               <button
                 type="button"
                 onClick={() => setType('lider')}
-                className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
-                  type === 'lider'
-                    ? 'bg-opacity-10'
-                    : 'border-gray-200 hover:border-gray-300 bg-white'
-                }`}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in",
+                  type === 'lider' && 'shadow-md'
+                )}
                 style={{
-                  borderColor: type === 'lider' ? sectorColor : undefined,
-                  backgroundColor: type === 'lider' ? `${sectorColor}10` : undefined,
+                  borderColor: type === 'lider' ? sectorColor : '#e5e7eb',
+                  backgroundColor: type === 'lider' ? `${sectorColor}10` : '#ffffff',
                 }}
               >
                 <div 
-                  className="flex items-center justify-center w-8 h-8 rounded-full"
+                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
                   style={{ backgroundColor: `${sectorColor}20` }}
                 >
-                  <UserCog className="h-4 w-4" style={{ color: sectorColor }} />
+                  <UserCog className="h-5 w-5" style={{ color: sectorColor }} />
                 </div>
-                <div className="flex flex-col items-start">
-                  <span className="font-semibold text-sm">Médico Líder</span>
-                  <span className="text-xs text-muted-foreground">Líderes assumiram 100% do caso</span>
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="font-semibold text-xs">Líder</span>
+                  <span className="text-[10px] text-muted-foreground text-center leading-tight">100% do caso</span>
                 </div>
               </button>
               
               <button
                 type="button"
                 onClick={() => setType('conjunto')}
-                className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
-                  type === 'conjunto'
-                    ? 'bg-opacity-10'
-                    : 'border-gray-200 hover:border-gray-300 bg-white'
-                }`}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in",
+                  type === 'conjunto' && 'shadow-md'
+                )}
                 style={{
-                  borderColor: type === 'conjunto' ? sectorColor : undefined,
-                  backgroundColor: type === 'conjunto' ? `${sectorColor}10` : undefined,
+                  borderColor: type === 'conjunto' ? sectorColor : '#e5e7eb',
+                  backgroundColor: type === 'conjunto' ? `${sectorColor}10` : '#ffffff',
                 }}
               >
                 <div 
-                  className="flex items-center justify-center w-8 h-8 rounded-full"
+                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
                   style={{ backgroundColor: `${sectorColor}20` }}
                 >
-                  <UsersRound className="h-4 w-4" style={{ color: sectorColor }} />
+                  <UsersRound className="h-5 w-5" style={{ color: sectorColor }} />
                 </div>
-                <div className="flex flex-col items-start">
-                  <span className="font-semibold text-sm">Seguimento Conjunto</span>
-                  <span className="text-xs text-muted-foreground">Líder + Porta em conjunto</span>
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="font-semibold text-xs">Conjunto</span>
+                  <span className="text-[10px] text-muted-foreground text-center leading-tight">Líder + Porta</span>
                 </div>
               </button>
             </div>
@@ -199,20 +197,30 @@ export const MedicalResponsibilityDialog = ({
           )}
         </div>
 
-        <div className="flex justify-between gap-2">
+        <div className="flex justify-between gap-3 pt-2">
           <Button
             variant="outline"
             onClick={handleClear}
-            className="gap-2"
+            className="gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-all"
+            disabled={!type}
           >
             <X className="h-4 w-4" />
             Limpar
           </Button>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button 
+              variant="outline" 
+              onClick={() => onOpenChange(false)}
+              className="hover:bg-accent transition-all"
+            >
               Cancelar
             </Button>
-            <Button onClick={handleSave} style={{ backgroundColor: sectorColor }}>
+            <Button 
+              onClick={handleSave}
+              className="gap-2 shadow-sm hover:shadow-md transition-all"
+              style={{ backgroundColor: sectorColor }}
+            >
+              <Check className="h-4 w-4" />
               Salvar
             </Button>
           </div>
