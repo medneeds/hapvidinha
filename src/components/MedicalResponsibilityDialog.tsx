@@ -42,12 +42,9 @@ export const MedicalResponsibilityDialog = ({
   };
 
   const handleClear = () => {
-    onSave({
-      type: null,
-      officeNumber: undefined,
-      leaderNames: undefined,
-    });
-    onOpenChange(false);
+    setType(null);
+    setOfficeNumber("");
+    setLeaderNames("");
   };
 
   return (
@@ -202,7 +199,6 @@ export const MedicalResponsibilityDialog = ({
             variant="outline"
             onClick={handleClear}
             className="gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-all"
-            disabled={!type}
           >
             <X className="h-4 w-4" />
             Limpar
