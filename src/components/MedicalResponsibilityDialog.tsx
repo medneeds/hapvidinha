@@ -54,63 +54,64 @@ export const MedicalResponsibilityDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="sm:max-w-[550px] bg-background dark:bg-gray-900 border-2 dark:border-gray-700 backdrop-blur-xl">
         <DialogHeader>
-          <DialogTitle className="text-xl flex items-center gap-2" style={{ color: sectorColor }}>
+          <DialogTitle className="text-xl flex items-center gap-2 dark:text-white" style={{ color: sectorColor }}>
             <div 
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: `${sectorColor}15` }}
+              className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm"
+              style={{ backgroundColor: `${sectorColor}20` }}
             >
               <UsersRound className="h-5 w-5" style={{ color: sectorColor }} />
             </div>
             Responsabilidade Médica
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="dark:text-gray-300">
             Configure o tipo de acompanhamento e responsáveis pelo paciente
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-5 py-4">
           <div className="space-y-3">
-            <Label className="text-sm font-semibold text-foreground">Selecione o Tipo de Acompanhamento</Label>
+            <Label className="text-sm font-semibold text-foreground dark:text-white">Selecione o Tipo de Acompanhamento</Label>
             <div className="grid grid-cols-2 gap-2.5">
               <button
                 type="button"
                 onClick={() => setType(null)}
                 className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md",
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-gray-700/50",
                   type === null
-                    ? 'border-gray-400 bg-gray-50 shadow-sm'
-                    : 'border-gray-200 hover:border-gray-300 bg-white'
+                    ? 'border-gray-400 bg-gray-50 dark:bg-gray-800 dark:border-gray-500 shadow-sm'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800/50'
                 )}
               >
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100">
-                  <X className="h-5 w-5 text-gray-500" />
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700">
+                  <X className="h-5 w-5 text-gray-500 dark:text-gray-300" />
                 </div>
-                <span className="font-semibold text-xs">Nenhum</span>
+                <span className="font-semibold text-xs dark:text-white">Nenhum</span>
               </button>
               
               <button
                 type="button"
                 onClick={() => setType('porta')}
                 className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in",
-                  type === 'porta' && 'shadow-md'
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
+                  type === 'porta' && 'shadow-md dark:shadow-lg',
+                  type !== 'porta' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
                 )}
                 style={{
-                  borderColor: type === 'porta' ? sectorColor : '#e5e7eb',
-                  backgroundColor: type === 'porta' ? `${sectorColor}10` : '#ffffff',
+                  borderColor: type === 'porta' ? sectorColor : undefined,
+                  backgroundColor: type === 'porta' ? `${sectorColor}20` : undefined,
                 }}
               >
                 <div 
                   className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: `${sectorColor}20` }}
+                  style={{ backgroundColor: `${sectorColor}25` }}
                 >
                   <Stethoscope className="h-5 w-5" style={{ color: sectorColor }} />
                 </div>
                 <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-semibold text-xs">Porta</span>
-                  <span className="text-[10px] text-muted-foreground text-center leading-tight">Consultório</span>
+                  <span className="font-semibold text-xs dark:text-white">Porta</span>
+                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Consultório</span>
                 </div>
               </button>
               
@@ -118,23 +119,24 @@ export const MedicalResponsibilityDialog = ({
                 type="button"
                 onClick={() => setType('lider')}
                 className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in",
-                  type === 'lider' && 'shadow-md'
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
+                  type === 'lider' && 'shadow-md dark:shadow-lg',
+                  type !== 'lider' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
                 )}
                 style={{
-                  borderColor: type === 'lider' ? sectorColor : '#e5e7eb',
-                  backgroundColor: type === 'lider' ? `${sectorColor}10` : '#ffffff',
+                  borderColor: type === 'lider' ? sectorColor : undefined,
+                  backgroundColor: type === 'lider' ? `${sectorColor}20` : undefined,
                 }}
               >
                 <div 
                   className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: `${sectorColor}20` }}
+                  style={{ backgroundColor: `${sectorColor}25` }}
                 >
                   <UserCog className="h-5 w-5" style={{ color: sectorColor }} />
                 </div>
                 <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-semibold text-xs">Líder</span>
-                  <span className="text-[10px] text-muted-foreground text-center leading-tight">100% do caso</span>
+                  <span className="font-semibold text-xs dark:text-white">Líder</span>
+                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">100% do caso</span>
                 </div>
               </button>
               
@@ -142,23 +144,24 @@ export const MedicalResponsibilityDialog = ({
                 type="button"
                 onClick={() => setType('conjunto')}
                 className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md animate-fade-in",
-                  type === 'conjunto' && 'shadow-md'
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
+                  type === 'conjunto' && 'shadow-md dark:shadow-lg',
+                  type !== 'conjunto' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
                 )}
                 style={{
-                  borderColor: type === 'conjunto' ? sectorColor : '#e5e7eb',
-                  backgroundColor: type === 'conjunto' ? `${sectorColor}10` : '#ffffff',
+                  borderColor: type === 'conjunto' ? sectorColor : undefined,
+                  backgroundColor: type === 'conjunto' ? `${sectorColor}20` : undefined,
                 }}
               >
                 <div 
                   className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: `${sectorColor}20` }}
+                  style={{ backgroundColor: `${sectorColor}25` }}
                 >
                   <UsersRound className="h-5 w-5" style={{ color: sectorColor }} />
                 </div>
                 <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-semibold text-xs">Conjunto</span>
-                  <span className="text-[10px] text-muted-foreground text-center leading-tight">Líder + Porta</span>
+                  <span className="font-semibold text-xs dark:text-white">Conjunto</span>
+                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Líder + Porta</span>
                 </div>
               </button>
             </div>
@@ -167,7 +170,7 @@ export const MedicalResponsibilityDialog = ({
           {(type === 'porta' || type === 'conjunto') && (
             <div className="space-y-3">
               <div className="space-y-2">
-                <Label htmlFor="office" className="text-sm font-semibold flex items-center gap-2">
+                <Label htmlFor="office" className="text-sm font-semibold flex items-center gap-2 dark:text-white">
                   <Stethoscope className="h-4 w-4" style={{ color: sectorColor }} />
                   Número do Consultório
                 </Label>
@@ -176,12 +179,12 @@ export const MedicalResponsibilityDialog = ({
                   value={officeNumber}
                   onChange={(e) => setOfficeNumber(e.target.value)}
                   placeholder="Ex: 3, 5A, etc."
-                  className="border-2"
+                  className="border-2 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   style={{ borderColor: `${sectorColor}40` }}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="portaNames" className="text-sm font-semibold flex items-center gap-2">
+                <Label htmlFor="portaNames" className="text-sm font-semibold flex items-center gap-2 dark:text-white">
                   <Stethoscope className="h-4 w-4" style={{ color: sectorColor }} />
                   Nomes dos Médicos Porta
                 </Label>
@@ -190,7 +193,7 @@ export const MedicalResponsibilityDialog = ({
                   value={portaNames}
                   onChange={(e) => setPortaNames(e.target.value)}
                   placeholder="Ex: Dr. Carlos, Dra. Ana"
-                  className="border-2"
+                  className="border-2 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   style={{ borderColor: `${sectorColor}40` }}
                 />
               </div>
@@ -199,7 +202,7 @@ export const MedicalResponsibilityDialog = ({
 
           {(type === 'lider' || type === 'conjunto') && (
             <div className="space-y-2">
-              <Label htmlFor="leaders" className="text-sm font-semibold flex items-center gap-2">
+              <Label htmlFor="leaders" className="text-sm font-semibold flex items-center gap-2 dark:text-white">
                 <UserCog className="h-4 w-4" style={{ color: sectorColor }} />
                 Nomes dos Médicos Líderes
               </Label>
@@ -208,7 +211,7 @@ export const MedicalResponsibilityDialog = ({
                 value={leaderNames}
                 onChange={(e) => setLeaderNames(e.target.value)}
                 placeholder="Ex: Dr. João, Dra. Maria"
-                className="border-2"
+                className="border-2 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                 style={{ borderColor: `${sectorColor}40` }}
               />
             </div>
@@ -219,7 +222,7 @@ export const MedicalResponsibilityDialog = ({
           <Button
             variant="outline"
             onClick={handleClear}
-            className="gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-all"
+            className="gap-2 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 dark:border-gray-600 dark:hover:bg-destructive/20 dark:text-white transition-all"
           >
             <X className="h-4 w-4" />
             Limpar
@@ -228,13 +231,13 @@ export const MedicalResponsibilityDialog = ({
             <Button 
               variant="outline" 
               onClick={() => onOpenChange(false)}
-              className="hover:bg-accent transition-all"
+              className="hover:bg-accent dark:border-gray-600 dark:hover:bg-gray-700 dark:text-white transition-all"
             >
               Cancelar
             </Button>
             <Button 
               onClick={handleSave}
-              className="gap-2 shadow-sm hover:shadow-md transition-all"
+              className="gap-2 shadow-sm hover:shadow-md transition-all text-white dark:shadow-lg"
               style={{ backgroundColor: sectorColor }}
             >
               <Check className="h-4 w-4" />
