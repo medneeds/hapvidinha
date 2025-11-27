@@ -91,9 +91,6 @@ export const MedicalResponsibilityIndicator = ({
           "rounded-full flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-110",
           compact ? "h-3.5 w-3.5" : "h-4 w-4"
         )}
-        style={{
-          backgroundColor: `${sectorColor}18`,
-        }}
       >
         {getIcon()}
       </div>
