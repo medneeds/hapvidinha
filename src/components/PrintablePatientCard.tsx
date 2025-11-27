@@ -7,6 +7,25 @@ interface PrintablePatientCardProps {
   bedColor?: string;
 }
 
+const getMedicalResponsibilityLabel = (patient: Patient) => {
+  if (!patient.medicalResponsibility?.type) return null;
+  
+  const { type, officeNumber, leaderNames } = patient.medicalResponsibility;
+  const parts: string[] = [];
+  
+  if (type === 'porta' && officeNumber) {
+    return `🚪 Consultório ${officeNumber}`;
+  } else if (type === 'lider' && leaderNames) {
+    return `✓ ${leaderNames}`;
+  } else if (type === 'conjunto') {
+    if (officeNumber) parts.push(`Cons. ${officeNumber}`);
+    if (leaderNames) parts.push(leaderNames);
+    return `👥 ${parts.join(' • ')}`;
+  }
+  
+  return null;
+};
+
 export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: PrintablePatientCardProps) {
   if (!patient.name) return null;
   
@@ -47,6 +66,20 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
             }}>
               {patient.bedNumber}
             </div>
+            {getMedicalResponsibilityLabel(patient) && (
+              <div style={{
+                fontSize: '6.5pt',
+                color: bedColor,
+                backgroundColor: `${bedColor}15`,
+                border: `1px solid ${bedColor}40`,
+                padding: '2px 4px',
+                borderRadius: '3px',
+                marginTop: '3px',
+                display: 'inline-block'
+              }}>
+                {getMedicalResponsibilityLabel(patient)}
+              </div>
+            )}
           </div>
 
           {/* Paciente */}
@@ -182,6 +215,20 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
           }}>
             {patient.bedNumber}
           </div>
+          {getMedicalResponsibilityLabel(patient) && (
+            <div style={{
+              fontSize: '7pt',
+              color: bedColor,
+              backgroundColor: `${bedColor}15`,
+              border: `1px solid ${bedColor}40`,
+              padding: '3px 6px',
+              borderRadius: '4px',
+              marginTop: '4px',
+              display: 'inline-block'
+            }}>
+              {getMedicalResponsibilityLabel(patient)}
+            </div>
+          )}
         </div>
 
         {/* Paciente */}
