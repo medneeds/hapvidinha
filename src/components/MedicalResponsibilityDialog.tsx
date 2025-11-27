@@ -54,7 +54,7 @@ export const MedicalResponsibilityDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] bg-background dark:bg-gray-900 border-2 dark:border-gray-700 backdrop-blur-xl">
+      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto bg-background dark:bg-gray-900 border-2 dark:border-gray-700 backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle className="text-xl flex items-center gap-2 dark:text-white" style={{ color: sectorColor }}>
             <div 
