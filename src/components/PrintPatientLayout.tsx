@@ -303,11 +303,11 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
                       marginBottom: '3px', 
                       lineHeight: '1.35',
                       fontWeight: isHighlighted ? '600' : 'normal',
-                      backgroundColor: isHighlighted ? '#fef3c7' : 'transparent',
+                      backgroundColor: isHighlighted ? colors.light : 'transparent',
                       padding: isHighlighted ? '2px 4px' : '0',
                       marginLeft: isHighlighted ? '-4px' : '0',
                       borderRadius: isHighlighted ? '2px' : '0',
-                      border: isHighlighted ? '1px solid #fbbf24' : 'none'
+                      border: isHighlighted ? `1px solid ${colors.border}` : 'none'
                     }}
                   >
                     {pendency}
