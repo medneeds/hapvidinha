@@ -1470,10 +1470,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 side="bottom"
                 alignOffset={-5}
                 sideOffset={8}
-                className="w-52 p-0 bg-background border shadow-lg"
+                className="w-56 p-0 bg-background dark:bg-gray-900 border-2 dark:border-gray-700 shadow-xl"
               >
-                <ScrollArea className="max-h-[min(60vh,400px)]">
-                  <div className="p-1">
+                <ScrollArea className="max-h-[min(65vh,450px)]">
+                  <div className="p-1.5">
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
@@ -1567,7 +1567,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             e.stopPropagation();
                             setIsDeleteDialogOpen(true);
                           }}
-                          className="text-destructive focus:text-destructive"
+                          className="text-destructive focus:text-destructive dark:text-red-400 dark:focus:text-red-300 dark:hover:bg-red-950/50 font-semibold"
                         >
                           <Trash2 className="h-3.5 w-3.5 mr-2" />
                           Excluir Paciente
