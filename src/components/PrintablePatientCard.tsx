@@ -14,11 +14,11 @@ const getMedicalResponsibilityLabel = (patient: Patient) => {
   const parts: string[] = [];
   
   if (type === 'porta' && officeNumber) {
-    return `🚪 Consultório ${officeNumber}`;
+    return `🩺 Porta C${officeNumber}`;
   } else if (type === 'lider' && leaderNames) {
-    return `✓ ${leaderNames}`;
+    return `⚕️ Líder: ${leaderNames}`;
   } else if (type === 'conjunto') {
-    if (officeNumber) parts.push(`Cons. ${officeNumber}`);
+    if (officeNumber) parts.push(`C${officeNumber}`);
     if (leaderNames) parts.push(leaderNames);
     return `👥 ${parts.join(' • ')}`;
   }
