@@ -190,13 +190,17 @@ export function PrintLayout({
       }}>
         Urgência e Emergência • Hospital Guarás • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
       </div>
+      
+      {/* Developer Signature - Fixed Bottom Right */}
       <div style={{
+        position: 'fixed',
+        bottom: '8mm',
+        right: '10mm',
         fontSize: '6pt',
         fontStyle: 'italic',
-        textAlign: 'center',
         color: '#9ca3af',
         opacity: 0.4,
-        marginTop: '6px'
+        zIndex: 1000
       }}>
         Desenvolvido por Artur Batista
       </div>
