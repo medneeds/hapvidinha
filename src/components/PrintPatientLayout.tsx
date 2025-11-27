@@ -49,10 +49,10 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
   const colors = sectorColors[patient.sector] || sectorColors.outside;
   
   const containerStyle: React.CSSProperties = {
-    padding: '18mm 15mm',
-    paddingTop: '22mm',
-    fontSize: '11pt',
-    lineHeight: '1.6',
+    padding: '12mm 10mm',
+    paddingTop: '14mm',
+    fontSize: '9pt',
+    lineHeight: '1.4',
     backgroundColor: '#ffffff',
     minHeight: '297mm',
     width: '210mm',
@@ -98,22 +98,21 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
     textColor: string; 
   }) => (
     <div style={{ 
-      marginBottom: '20px',
+      marginBottom: '10px',
       backgroundColor: bgColor,
-      padding: '16px 18px',
-      borderRadius: '8px',
-      border: `2px solid ${borderColor}`,
-      boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
+      padding: '10px 12px',
+      borderRadius: '5px',
+      border: `1.5px solid ${borderColor}`
     }}>
       <div style={{ 
-        fontSize: '11pt', 
+        fontSize: '8.5pt', 
         fontWeight: 'bold', 
         color: textColor, 
-        marginBottom: '12px', 
+        marginBottom: '6px', 
         textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-        paddingBottom: '8px',
-        borderBottom: `2px solid ${borderColor}`
+        letterSpacing: '0.3px',
+        paddingBottom: '4px',
+        borderBottom: `1px solid ${borderColor}`
       }}>
         {title}
       </div>
@@ -131,11 +130,11 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
           alt="Hapvida NotreDame Intermédica" 
           style={{ 
             position: 'absolute',
-            top: '10mm',
-            right: '15mm',
-            height: '45px',
+            top: '6mm',
+            right: '10mm',
+            height: '32px',
             width: 'auto',
-            opacity: 0.25,
+            opacity: 0.2,
             zIndex: 0
           }}
         />
@@ -143,49 +142,45 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
         {/* Header with Sector Identity */}
         <div style={{ 
           background: `linear-gradient(135deg, ${colors.primary}, ${colors.dark})`,
-          padding: '18px 20px',
-          borderRadius: '10px',
-          marginBottom: '24px',
+          padding: '10px 12px',
+          borderRadius: '6px',
+          marginBottom: '12px',
           position: 'relative',
-          zIndex: 1,
-          boxShadow: `0 4px 12px ${colors.primary}40`
+          zIndex: 1
         }}>
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '14px',
-            marginBottom: '12px'
+            gap: '10px',
+            marginBottom: '6px'
           }}>
             <div style={{ 
-              height: '48px', 
-              width: '48px', 
+              height: '32px', 
+              width: '32px', 
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              borderRadius: '8px',
+              borderRadius: '4px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              flexShrink: 0,
-              border: '2px solid rgba(255, 255, 255, 0.3)'
+              flexShrink: 0
             }}>
-              <ClipboardList style={{ height: '24px', width: '24px', color: '#ffffff' }} />
+              <ClipboardList style={{ height: '16px', width: '16px', color: '#ffffff' }} />
             </div>
             <div style={{ flex: 1 }}>
               <h1 style={{ 
-                fontSize: '20pt', 
+                fontSize: '13pt', 
                 fontWeight: 'bold', 
                 textTransform: 'uppercase',
                 margin: 0,
                 color: '#ffffff',
-                letterSpacing: '1px',
-                textShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                letterSpacing: '0.5px'
               }}>
                 Caso Clínico Completo
               </h1>
               <div style={{ 
-                fontSize: '10pt', 
+                fontSize: '8pt', 
                 color: 'rgba(255, 255, 255, 0.9)',
-                marginTop: '4px',
-                letterSpacing: '0.3px'
+                marginTop: '2px'
               }}>
                 {sectorLabels[patient.sector]} • Leito {patient.bedNumber}
               </div>
@@ -195,21 +190,21 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
           {/* Metadata Bar */}
           <div style={{ 
             display: 'flex',
-            gap: '16px',
-            fontSize: '9pt',
+            gap: '10px',
+            fontSize: '7.5pt',
             color: 'rgba(255, 255, 255, 0.95)',
             backgroundColor: 'rgba(0, 0, 0, 0.15)',
-            padding: '8px 12px',
-            borderRadius: '6px'
+            padding: '4px 8px',
+            borderRadius: '3px'
           }}>
             <div>
               <strong>Data:</strong> {new Date().toLocaleDateString('pt-BR')}
             </div>
-            <div style={{ borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '16px' }}>
+            <div style={{ borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '10px' }}>
               <strong>Hora:</strong> {new Date().toLocaleTimeString('pt-BR')}
             </div>
             {patient.admissionDate && (
-              <div style={{ borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '16px' }}>
+              <div style={{ borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '10px' }}>
                 <strong>Admissão:</strong> {new Date(patient.admissionDate).toLocaleDateString('pt-BR')}
               </div>
             )}
@@ -219,53 +214,52 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
         {/* Patient Information Card with Sector Colors */}
         <div style={{ 
           backgroundColor: colors.light, 
-          padding: '20px', 
-          borderRadius: '10px',
-          marginBottom: '24px',
-          border: `3px solid ${colors.primary}`,
-          boxShadow: `0 2px 8px ${colors.primary}30`
+          padding: '10px 12px', 
+          borderRadius: '5px',
+          marginBottom: '12px',
+          border: `2px solid ${colors.primary}`
         }}>
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: 'auto 1fr auto', 
-            gap: '24px',
+            gap: '12px',
             alignItems: 'center'
           }}>
             <div style={{
               backgroundColor: colors.primary,
               color: '#ffffff',
-              padding: '16px 20px',
-              borderRadius: '8px',
+              padding: '8px 12px',
+              borderRadius: '4px',
               textAlign: 'center',
-              minWidth: '80px'
+              minWidth: '50px'
             }}>
-              <div style={{ fontSize: '10pt', marginBottom: '4px', opacity: 0.9, fontWeight: '600' }}>LEITO</div>
-              <div style={{ fontSize: '24pt', fontWeight: 'bold' }}>{patient.bedNumber}</div>
+              <div style={{ fontSize: '7pt', marginBottom: '2px', opacity: 0.9, fontWeight: '600' }}>LEITO</div>
+              <div style={{ fontSize: '14pt', fontWeight: 'bold' }}>{patient.bedNumber}</div>
             </div>
             <div>
-              <div style={{ fontSize: '10pt', color: colors.dark, marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '7.5pt', color: colors.dark, marginBottom: '3px', fontWeight: '600', textTransform: 'uppercase' }}>
                 Paciente
               </div>
               <div style={{ 
-                fontSize: '16pt', 
+                fontSize: '11pt', 
                 fontWeight: 'bold', 
                 color: colors.text, 
                 textTransform: 'uppercase',
-                letterSpacing: '0.5px'
+                letterSpacing: '0.3px'
               }}>
                 {patient.name}
               </div>
             </div>
             <div style={{
               backgroundColor: 'rgba(255, 255, 255, 0.7)',
-              padding: '12px 20px',
-              borderRadius: '8px',
-              border: `2px solid ${colors.border}`,
+              padding: '6px 12px',
+              borderRadius: '4px',
+              border: `1.5px solid ${colors.border}`,
               textAlign: 'center',
-              minWidth: '100px'
+              minWidth: '60px'
             }}>
-              <div style={{ fontSize: '10pt', color: colors.dark, marginBottom: '4px', fontWeight: '600' }}>IDADE</div>
-              <div style={{ fontSize: '16pt', fontWeight: 'bold', color: colors.text }}>{formatAgeDisplay(patient.age)}</div>
+              <div style={{ fontSize: '7pt', color: colors.dark, marginBottom: '2px', fontWeight: '600' }}>IDADE</div>
+              <div style={{ fontSize: '10pt', fontWeight: 'bold', color: colors.text }}>{formatAgeDisplay(patient.age)}</div>
             </div>
           </div>
         </div>
@@ -278,14 +272,13 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
             borderColor="#fbbf24"
             textColor="#92400e"
           >
-            <ul style={{ margin: 0, paddingLeft: '24px', listStyleType: 'disc' }}>
+            <ul style={{ margin: 0, paddingLeft: '18px', listStyleType: 'disc' }}>
               {patient.diagnoses.map((diagnosis, idx) => (
                 <li key={idx} style={{ 
-                  fontSize: '11pt', 
+                  fontSize: '9pt', 
                   color: '#78350f', 
-                  marginBottom: '8px', 
-                  lineHeight: '1.6',
-                  paddingLeft: '4px'
+                  marginBottom: '4px', 
+                  lineHeight: '1.4'
                 }}>
                   {diagnosis}
                 </li>
@@ -301,14 +294,13 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
             borderColor="#f472b6"
             textColor="#9f1239"
           >
-            <ul style={{ margin: 0, paddingLeft: '24px', listStyleType: 'disc' }}>
+            <ul style={{ margin: 0, paddingLeft: '18px', listStyleType: 'disc' }}>
               {patient.medicalHistory.map((history, idx) => (
                 <li key={idx} style={{ 
-                  fontSize: '11pt', 
+                  fontSize: '9pt', 
                   color: '#831843', 
-                  marginBottom: '8px', 
-                  lineHeight: '1.6',
-                  paddingLeft: '4px'
+                  marginBottom: '4px', 
+                  lineHeight: '1.4'
                 }}>
                   {history}
                 </li>
@@ -324,14 +316,13 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
             borderColor="#60a5fa"
             textColor="#1e40af"
           >
-            <ul style={{ margin: 0, paddingLeft: '24px', listStyleType: 'square' }}>
+            <ul style={{ margin: 0, paddingLeft: '18px', listStyleType: 'square' }}>
               {patient.relevantExams.map((exam, idx) => (
                 <li key={idx} style={{ 
-                  fontSize: '11pt', 
+                  fontSize: '9pt', 
                   color: '#1e3a8a', 
-                  marginBottom: '8px', 
-                  lineHeight: '1.6',
-                  paddingLeft: '4px'
+                  marginBottom: '4px', 
+                  lineHeight: '1.4'
                 }}>
                   {exam}
                 </li>
@@ -347,24 +338,23 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
             borderColor="#4ade80"
             textColor="#166534"
           >
-            <ul style={{ margin: 0, paddingLeft: '24px', listStyleType: 'decimal' }}>
+            <ul style={{ margin: 0, paddingLeft: '18px', listStyleType: 'decimal' }}>
               {patient.pendencies.map((pendency, idx) => {
                 const isHighlighted = patient.highlightedPendencies?.includes(idx);
                 return (
                   <li 
                     key={idx} 
                     style={{ 
-                      fontSize: '11pt', 
+                      fontSize: '9pt', 
                       color: '#14532d', 
-                      marginBottom: '8px', 
-                      lineHeight: '1.6',
-                      paddingLeft: '4px',
+                      marginBottom: '4px', 
+                      lineHeight: '1.4',
                       fontWeight: isHighlighted ? 'bold' : 'normal',
                       backgroundColor: isHighlighted ? '#fef3c7' : 'transparent',
-                      padding: isHighlighted ? '6px 10px' : '0',
-                      marginLeft: isHighlighted ? '-10px' : '0',
-                      borderRadius: isHighlighted ? '5px' : '0',
-                      border: isHighlighted ? '2px solid #fbbf24' : 'none'
+                      padding: isHighlighted ? '3px 6px' : '0',
+                      marginLeft: isHighlighted ? '-6px' : '0',
+                      borderRadius: isHighlighted ? '3px' : '0',
+                      border: isHighlighted ? '1.5px solid #fbbf24' : 'none'
                     }}
                   >
                     {pendency}
@@ -383,12 +373,11 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
             textColor="#292524"
           >
             <div style={{ 
-              fontSize: '11pt', 
+              fontSize: '9pt', 
               color: '#1c1917', 
-              lineHeight: '1.8',
+              lineHeight: '1.5',
               whiteSpace: 'pre-wrap',
-              textAlign: 'justify',
-              padding: '4px 0'
+              textAlign: 'justify'
             }}>
               {patient.admissionHistory}
             </div>
@@ -397,16 +386,16 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
 
         {/* Footer */}
         <div style={{ 
-          fontSize: '9pt', 
+          fontSize: '7pt', 
           textAlign: 'center', 
           color: '#9ca3af', 
-          marginTop: '32px', 
-          paddingTop: '16px', 
-          borderTop: '2px solid #e5e7eb',
+          marginTop: '16px', 
+          paddingTop: '8px', 
+          borderTop: '1px solid #e5e7eb',
           fontStyle: 'italic'
         }}>
-          Hospital Guarás - Urgência e Emergência • Documento Confidencial Gerado Automaticamente<br/>
-          {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })} às {new Date().toLocaleTimeString('pt-BR')}
+          Hospital Guarás - Urgência e Emergência • Documento Confidencial<br/>
+          {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
         </div>
       </div>
     </>
