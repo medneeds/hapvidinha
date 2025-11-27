@@ -25,9 +25,7 @@ export function PrintableSectorSection({
   return (
     <div 
       style={{ 
-        marginBottom: isCompact ? '12px' : '16px',
-        pageBreakInside: 'avoid',
-        breakInside: 'avoid'
+        marginBottom: isCompact ? '12px' : '16px'
       }}
     >
       <div 
