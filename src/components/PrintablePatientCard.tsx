@@ -10,16 +10,19 @@ interface PrintablePatientCardProps {
 const getMedicalResponsibilityLabel = (patient: Patient) => {
   if (!patient.medicalResponsibility?.type) return null;
   
-  const { type, officeNumber, leaderNames } = patient.medicalResponsibility;
+  const { type, officeNumber, leaderNames, portaNames } = patient.medicalResponsibility;
   const parts: string[] = [];
   
-  if (type === 'porta' && officeNumber) {
-    return `🩺 Porta C${officeNumber}`;
+  if (type === 'porta') {
+    if (portaNames) parts.push(`🩺 ${portaNames}`);
+    if (officeNumber) parts.push(`C${officeNumber}`);
+    return parts.join(' • ') || '🩺 Porta';
   } else if (type === 'lider' && leaderNames) {
     return `⚕️ Líder: ${leaderNames}`;
   } else if (type === 'conjunto') {
+    if (portaNames) parts.push(portaNames);
     if (officeNumber) parts.push(`C${officeNumber}`);
-    if (leaderNames) parts.push(leaderNames);
+    if (leaderNames) parts.push(`Líder: ${leaderNames}`);
     return `👥 ${parts.join(' • ')}`;
   }
   

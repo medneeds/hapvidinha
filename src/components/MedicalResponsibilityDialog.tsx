@@ -31,12 +31,16 @@ export const MedicalResponsibilityDialog = ({
   const [leaderNames, setLeaderNames] = useState(
     currentResponsibility?.leaderNames || ""
   );
+  const [portaNames, setPortaNames] = useState(
+    currentResponsibility?.portaNames || ""
+  );
 
   const handleSave = () => {
     onSave({
       type,
       officeNumber: type === 'porta' || type === 'conjunto' ? officeNumber : undefined,
       leaderNames: type === 'lider' || type === 'conjunto' ? leaderNames : undefined,
+      portaNames: type === 'porta' || type === 'conjunto' ? portaNames : undefined,
     });
     onOpenChange(false);
   };
@@ -45,6 +49,7 @@ export const MedicalResponsibilityDialog = ({
     setType(null);
     setOfficeNumber("");
     setLeaderNames("");
+    setPortaNames("");
   };
 
   return (
@@ -160,19 +165,35 @@ export const MedicalResponsibilityDialog = ({
           </div>
 
           {(type === 'porta' || type === 'conjunto') && (
-            <div className="space-y-2">
-              <Label htmlFor="office" className="text-sm font-semibold flex items-center gap-2">
-                <Stethoscope className="h-4 w-4" style={{ color: sectorColor }} />
-                Número do Consultório
-              </Label>
-              <Input
-                id="office"
-                value={officeNumber}
-                onChange={(e) => setOfficeNumber(e.target.value)}
-                placeholder="Ex: 3, 5A, etc."
-                className="border-2"
-                style={{ borderColor: `${sectorColor}40` }}
-              />
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="office" className="text-sm font-semibold flex items-center gap-2">
+                  <Stethoscope className="h-4 w-4" style={{ color: sectorColor }} />
+                  Número do Consultório
+                </Label>
+                <Input
+                  id="office"
+                  value={officeNumber}
+                  onChange={(e) => setOfficeNumber(e.target.value)}
+                  placeholder="Ex: 3, 5A, etc."
+                  className="border-2"
+                  style={{ borderColor: `${sectorColor}40` }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="portaNames" className="text-sm font-semibold flex items-center gap-2">
+                  <Stethoscope className="h-4 w-4" style={{ color: sectorColor }} />
+                  Nomes dos Médicos Porta
+                </Label>
+                <Input
+                  id="portaNames"
+                  value={portaNames}
+                  onChange={(e) => setPortaNames(e.target.value)}
+                  placeholder="Ex: Dr. Carlos, Dra. Ana"
+                  className="border-2"
+                  style={{ borderColor: `${sectorColor}40` }}
+                />
+              </div>
             </div>
           )}
 
