@@ -1419,8 +1419,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 p-0 bg-background border shadow-lg">
-                <ScrollArea className="max-h-[60vh]">
+              <DropdownMenuContent 
+                align="end" 
+                side="bottom"
+                alignOffset={-5}
+                sideOffset={8}
+                className="w-52 p-0 bg-background border shadow-lg"
+              >
+                <ScrollArea className="max-h-[min(60vh,400px)]">
                   <div className="p-1">
                     <DropdownMenuItem
                       onClick={(e) => {
