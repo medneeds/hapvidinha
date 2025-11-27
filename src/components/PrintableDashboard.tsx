@@ -375,6 +375,9 @@ export function PrintableDashboard({
         <p className="text-xs text-gray-600">
           Documento gerado automaticamente pelo sistema HapMap - Dashboard de Gestão
         </p>
+        <p className="text-[10px] text-gray-400 italic mt-2 opacity-40">
+          Desenvolvido por Artur Batista
+        </p>
       </div>
     </div>
   );

@@ -343,6 +343,16 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
         }}>
           Hospital Guarás • Documento Confidencial • {new Date().toLocaleDateString('pt-BR')} {new Date().toLocaleTimeString('pt-BR')}
         </div>
+        <div style={{
+          fontSize: '5.5pt',
+          fontStyle: 'italic',
+          textAlign: 'center',
+          color: '#9ca3af',
+          opacity: 0.4,
+          marginTop: '4px'
+        }}>
+          Desenvolvido por Artur Batista
+        </div>
       </div>
     </>
   );
