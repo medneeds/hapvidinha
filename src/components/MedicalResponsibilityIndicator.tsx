@@ -33,11 +33,20 @@ export const MedicalResponsibilityIndicator = ({
   const getText = () => {
     const parts: string[] = [];
     
-    if (responsibility.type === 'porta' && responsibility.officeNumber) {
-      return `Cons. ${responsibility.officeNumber}`;
+    if (responsibility.type === 'porta') {
+      if (responsibility.portaNames) {
+        parts.push(responsibility.portaNames);
+      }
+      if (responsibility.officeNumber) {
+        parts.push(`C${responsibility.officeNumber}`);
+      }
+      return parts.join(' • ') || 'Porta';
     } else if (responsibility.type === 'lider' && responsibility.leaderNames) {
       return responsibility.leaderNames;
     } else if (responsibility.type === 'conjunto') {
+      if (responsibility.portaNames) {
+        parts.push(responsibility.portaNames);
+      }
       if (responsibility.officeNumber) {
         parts.push(`C${responsibility.officeNumber}`);
       }

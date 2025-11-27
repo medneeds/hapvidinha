@@ -6,6 +6,7 @@ export interface MedicalResponsibility {
   type: MedicalResponsibilityType;
   officeNumber?: string;
   leaderNames?: string;
+  portaNames?: string; // Nomes dos médicos porta
 }
 
 export interface Patient {
