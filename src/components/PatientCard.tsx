@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
+import { MedicalResponsibilityDialog } from "./MedicalResponsibilityDialog";
+import { MedicalResponsibilityIndicator } from "./MedicalResponsibilityIndicator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -464,6 +466,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const isPediatric = currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA";
   const { calculateAge, isCalculating } = useAgeCalculator(isPediatric);
   const navigate = useNavigate();
+  const [medicalResponsibilityDialogOpen, setMedicalResponsibilityDialogOpen] = useState(false);
+  const [localMedicalResponsibility, setLocalMedicalResponsibility] = useState(patient.medicalResponsibility);
+  
+  const sectorColorMap = {
+    red: "#ef4444",
+    yellow: "#eab308",
+    blue: "#3b82f6",
+    outside: "#6b7280"
+  };
 
   useEffect(() => {
     if (editingField && inputRef.current) {
@@ -805,9 +816,29 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               {/* Leito - ultra compacto */}
               <div className="flex flex-col md:col-span-1">
                 <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                <Badge className={cn("w-fit text-[10px] py-0 px-1 font-bold leading-tight", config.badgeColor)}>
-                  {patient.bedNumber}
-                </Badge>
+                <div className="flex flex-col gap-1">
+                  <Badge className={cn("w-fit text-[10px] py-0 px-1 font-bold leading-tight", config.badgeColor)}>
+                    {patient.bedNumber}
+                  </Badge>
+                  {localMedicalResponsibility && (
+                    <MedicalResponsibilityIndicator
+                      responsibility={localMedicalResponsibility}
+                      sectorColor={sectorColorMap[patient.sector]}
+                      onClick={() => setMedicalResponsibilityDialogOpen(true)}
+                      compact
+                    />
+                  )}
+                  {!localMedicalResponsibility && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setMedicalResponsibilityDialogOpen(true)}
+                      className="h-4 w-fit px-1 text-[9px] text-muted-foreground hover:text-primary print:hidden"
+                    >
+                      + Responsável
+                    </Button>
+                  )}
+                </div>
               </div>
 
               {/* Nome e Idade - mais espaço para nome completo */}
@@ -2256,6 +2287,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           </div>
         </DialogContent>
       </Dialog>
+      
+      {/* Medical Responsibility Dialog */}
+      <MedicalResponsibilityDialog
+        open={medicalResponsibilityDialogOpen}
+        onOpenChange={setMedicalResponsibilityDialogOpen}
+        currentResponsibility={localMedicalResponsibility}
+        onSave={(responsibility) => {
+          setLocalMedicalResponsibility(responsibility);
+          onUpdate({ ...patient, medicalResponsibility: responsibility });
+          toastHook({
+            title: "Responsabilidade atualizada",
+            description: "As informações de responsabilidade médica foram salvas.",
+          });
+        }}
+        sectorColor={sectorColorMap[patient.sector]}
+      />
     </>
   );
 }

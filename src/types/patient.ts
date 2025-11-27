@@ -1,5 +1,13 @@
 export type SectorType = 'red' | 'yellow' | 'blue' | 'outside';
 
+export type MedicalResponsibilityType = 'porta' | 'lider' | 'conjunto' | null;
+
+export interface MedicalResponsibility {
+  type: MedicalResponsibilityType;
+  officeNumber?: string;
+  leaderNames?: string;
+}
+
 export interface Patient {
   id: string;
   bedNumber: string;
@@ -14,4 +22,5 @@ export interface Patient {
   schedule: string[];
   admissionHistory: string;
   admissionDate: string;
+  medicalResponsibility?: MedicalResponsibility;
 }
