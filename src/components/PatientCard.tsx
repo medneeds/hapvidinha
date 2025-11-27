@@ -832,11 +832,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       variant="ghost"
                       size="sm"
                       onClick={() => setMedicalResponsibilityDialogOpen(true)}
-                      className="h-5 w-full px-1 text-[8px] text-muted-foreground hover:text-primary print:hidden flex items-center justify-center gap-0.5 border border-dashed border-muted-foreground/30 hover:border-primary/50 transition-all"
-                      title="Adicionar responsável"
+                      className="h-5 w-5 p-0 text-muted-foreground hover:text-primary print:hidden rounded-full border border-dashed border-muted-foreground/30 hover:border-primary/50 transition-all flex items-center justify-center"
+                      title="Adicionar responsável médico"
                     >
-                      <span className="text-[10px]">+</span>
-                      <span className="font-medium">Resp</span>
+                      <span className="text-sm font-bold">+</span>
                     </Button>
                   )}
                 </div>
