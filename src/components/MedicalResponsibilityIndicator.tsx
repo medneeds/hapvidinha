@@ -75,7 +75,7 @@ export const MedicalResponsibilityIndicator = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-1 rounded-md cursor-pointer transition-all hover:shadow-sm hover:scale-[1.02] animate-fade-in",
+        "flex items-center gap-1 rounded-md cursor-pointer transition-all hover:scale-[1.02] animate-fade-in",
         compact ? "text-[8.5px] px-1.5 py-1" : "text-[10px] px-2 py-1.5"
       )}
       style={{
