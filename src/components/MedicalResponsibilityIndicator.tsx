@@ -75,7 +75,7 @@ export const MedicalResponsibilityIndicator = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-1 rounded-md cursor-pointer transition-all hover:scale-[1.02] animate-fade-in",
+        "flex items-center gap-1 rounded-md cursor-pointer transition-all duration-300 hover:scale-105 animate-fade-in",
         compact ? "text-[8.5px] px-1.5 py-1" : "text-[10px] px-2 py-1.5"
       )}
       style={{
@@ -85,6 +85,16 @@ export const MedicalResponsibilityIndicator = ({
       }}
       onClick={onClick}
       title={getLabel()}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = `${sectorColor}20`;
+        e.currentTarget.style.borderColor = sectorColor;
+        e.currentTarget.style.transform = 'scale(1.05)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = `${sectorColor}08`;
+        e.currentTarget.style.borderColor = `${sectorColor}25`;
+        e.currentTarget.style.transform = 'scale(1)';
+      }}
     >
       <div 
         className={cn(
