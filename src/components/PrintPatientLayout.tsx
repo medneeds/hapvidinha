@@ -49,7 +49,8 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
   const colors = sectorColors[patient.sector] || sectorColors.outside;
   
   const containerStyle: React.CSSProperties = {
-    padding: '8mm 6mm 20mm 6mm',
+    padding: '10mm 8mm',
+    paddingTop: '12mm',
     fontSize: '8.5pt',
     lineHeight: '1.35',
     backgroundColor: '#ffffff',
@@ -62,7 +63,7 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
   const pageStyle = `
     @page {
       size: A4 portrait;
-      margin: 8mm 10mm 15mm 10mm;
+      margin: 0;
     }
     
     @media print {
@@ -86,17 +87,6 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
           -webkit-print-color-adjust: exact !important;
         }
       }
-      
-      /* Page break optimization */
-      .section-card {
-        page-break-inside: avoid;
-        break-inside: avoid;
-      }
-      
-      h1, h2, h3 {
-        page-break-after: avoid;
-        break-after: avoid;
-      }
     }
   `;
 
@@ -104,18 +94,13 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
     title: string; 
     children: React.ReactNode;
   }) => (
-    <div 
-      className="section-card"
-      style={{ 
-        marginBottom: '8px',
-        padding: '8px 10px',
-        borderRadius: '3px',
-        border: '1px solid #e5e7eb',
-        backgroundColor: '#fafafa',
-        pageBreakInside: 'avoid',
-        breakInside: 'avoid'
-      }}
-    >
+    <div style={{ 
+      marginBottom: '8px',
+      padding: '8px 10px',
+      borderRadius: '3px',
+      border: '1px solid #e5e7eb',
+      backgroundColor: '#fafafa'
+    }}>
       <div style={{ 
         fontSize: '7.5pt', 
         fontWeight: '600', 
@@ -352,11 +337,9 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
           fontSize: '6pt', 
           textAlign: 'center', 
           color: '#9ca3af', 
-          marginTop: '20mm',
-          paddingTop: '8px', 
-          borderTop: '1px solid #e5e7eb',
-          pageBreakInside: 'avoid',
-          breakInside: 'avoid'
+          marginTop: '12px', 
+          paddingTop: '6px', 
+          borderTop: '1px solid #e5e7eb'
         }}>
           Hospital Guarás • Documento Confidencial • {new Date().toLocaleDateString('pt-BR')} {new Date().toLocaleTimeString('pt-BR')}
         </div>
