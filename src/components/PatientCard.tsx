@@ -832,18 +832,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       variant="ghost"
                       size="sm"
                       onClick={() => setMedicalResponsibilityDialogOpen(true)}
-                      className="h-5 w-5 p-0 print:hidden rounded-full border-2 border-dashed transition-all flex items-center justify-center hover:scale-110"
+                      className="h-5 w-5 p-0 print:hidden rounded-full border border-dashed transition-all flex items-center justify-center hover:scale-110"
                       style={{
                         color: sectorColorMap[patient.sector],
                         borderColor: sectorColorMap[patient.sector],
-                        opacity: 0.6,
+                        opacity: 0.4,
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.opacity = '1';
                         e.currentTarget.style.backgroundColor = `${sectorColorMap[patient.sector]}15`;
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.opacity = '0.6';
+                        e.currentTarget.style.opacity = '0.4';
                         e.currentTarget.style.backgroundColor = 'transparent';
                       }}
                       title="Adicionar responsável médico"
