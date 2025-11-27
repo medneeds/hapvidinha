@@ -1635,16 +1635,17 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       />
 
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="dark:bg-gray-900 dark:border-gray-700">
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir o leito <strong>{patient.bedNumber}</strong> do paciente <strong>{patient.name}</strong>?
-              Esta ação não poderá ser desfeita.
+            <AlertDialogTitle className="dark:text-white text-lg font-semibold">Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription className="dark:text-gray-300 text-base">
+              Tem certeza que deseja excluir o leito <strong className="dark:text-white font-bold">{patient.bedNumber}</strong> do paciente <strong className="dark:text-white font-bold">{patient.name}</strong>?
+              <br />
+              <span className="dark:text-red-400 text-destructive font-medium mt-2 inline-block">Esta ação não poderá ser desfeita.</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel className="dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 if (onDelete) {
@@ -1671,7 +1672,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   }, 300);
                 }
               }}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 dark:bg-red-600 dark:text-white dark:hover:bg-red-700 font-semibold shadow-lg"
             >
               Excluir
             </AlertDialogAction>
