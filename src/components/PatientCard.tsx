@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { useAgeCalculator } from "@/hooks/useAgeCalculator";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
@@ -1418,107 +1419,111 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsEditDialogOpen(true);
-                  }}
-                >
-                  <Edit className="h-3.5 w-3.5 mr-2" />
-                  Edição Avançada
-                </DropdownMenuItem>
-                {onTransfer && (
-                  <>
+              <DropdownMenuContent align="end" className="w-48 p-0 z-50 bg-background">
+                <ScrollArea className="max-h-[70vh]">
+                  <div className="p-1">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsEditDialogOpen(true);
+                      }}
+                    >
+                      <Edit className="h-3.5 w-3.5 mr-2" />
+                      Edição Avançada
+                    </DropdownMenuItem>
+                    {onTransfer && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel className="text-xs">Realocar para</DropdownMenuLabel>
+                        {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
+                          sector !== patient.sector && (
+                            <DropdownMenuItem
+                              key={sector}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleTransfer(sector);
+                              }}
+                            >
+                              <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
+                              {sectorLabels[sector]}
+                            </DropdownMenuItem>
+                          )
+                        ))}
+                      </>
+                    )}
                     <DropdownMenuSeparator />
-                    <DropdownMenuLabel className="text-xs">Realocar para</DropdownMenuLabel>
-                    {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
-                      sector !== patient.sector && (
+                    <DropdownMenuLabel className="text-xs">Movimentações</DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMovementType("TRANSFERÊNCIA");
+                        setMovementDialogOpen(true);
+                      }}
+                    >
+                      <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
+                      Transferir
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMovementType("ALTA");
+                        setMovementDialogOpen(true);
+                      }}
+                    >
+                      <TrendingUp className="h-3.5 w-3.5 mr-2" />
+                      Alta
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMovementType("ÓBITO");
+                        setMovementDialogOpen(true);
+                      }}
+                    >
+                      <Skull className="h-3.5 w-3.5 mr-2" />
+                      Óbito
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/resources?patientId=${patient.id}`);
+                      }}
+                    >
+                      <FileText className="h-3.5 w-3.5 mr-2" />
+                      Solicitar Internação
+                    </DropdownMenuItem>
+                    {onPrintPatient && (
+                      <>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          key={sector}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleTransfer(sector);
+                            onPrintPatient(patient.id);
                           }}
                         >
-                          <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
-                          {sectorLabels[sector]}
+                          <Printer className="h-3.5 w-3.5 mr-2" />
+                          Imprimir Caso
                         </DropdownMenuItem>
-                      )
-                    ))}
-                  </>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-xs">Movimentações</DropdownMenuLabel>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMovementType("TRANSFERÊNCIA");
-                    setMovementDialogOpen(true);
-                  }}
-                >
-                  <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
-                  Transferir
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMovementType("ALTA");
-                    setMovementDialogOpen(true);
-                  }}
-                >
-                  <TrendingUp className="h-3.5 w-3.5 mr-2" />
-                  Alta
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMovementType("ÓBITO");
-                    setMovementDialogOpen(true);
-                  }}
-                >
-                  <Skull className="h-3.5 w-3.5 mr-2" />
-                  Óbito
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/resources?patientId=${patient.id}`);
-                  }}
-                >
-                  <FileText className="h-3.5 w-3.5 mr-2" />
-                  Solicitar Internação
-                </DropdownMenuItem>
-                {onPrintPatient && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onPrintPatient(patient.id);
-                      }}
-                    >
-                      <Printer className="h-3.5 w-3.5 mr-2" />
-                      Imprimir Caso
-                    </DropdownMenuItem>
-                  </>
-                )}
-                {onDelete && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsDeleteDialogOpen(true);
-                      }}
-                      className="text-destructive focus:text-destructive"
-                    >
-                      <Trash2 className="h-3.5 w-3.5 mr-2" />
-                      Excluir Paciente
-                    </DropdownMenuItem>
-                  </>
-                )}
+                      </>
+                    )}
+                    {onDelete && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsDeleteDialogOpen(true);
+                          }}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="h-3.5 w-3.5 mr-2" />
+                          Excluir Paciente
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </div>
+                </ScrollArea>
               </DropdownMenuContent>
             </DropdownMenu>
             
