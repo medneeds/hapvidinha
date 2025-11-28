@@ -172,7 +172,7 @@ export function usePatients(department?: Department) {
         throw new Error('Hospital unit and state must be selected');
       }
 
-      const dbData = {
+      const dbData: any = {
         bed_number: patient.bedNumber,
         name: patient.name,
         age: typeof patient.age === 'number' ? patient.age.toString() : patient.age,
@@ -188,11 +188,39 @@ export function usePatients(department?: Department) {
         department: departmentValue || department || 'URGÊNCIA E EMERGÊNCIA ADULTO',
         state_id: currentState.id,
         hospital_unit_id: currentHospital.id,
+        medical_responsibility: patient.medicalResponsibility || null,
       };
+
+      // Add UTI fields if they exist
+      if (patient.utiAdmissionDate) {
+        dbData.uti_admission_date = patient.utiAdmissionDate.map(date => {
+          try {
+            const parts = date.split('/');
+            if (parts.length === 3) {
+              const [day, month, year] = parts;
+              const isoDate = new Date(`${year}-${month}-${day}`);
+              if (!isNaN(isoDate.getTime())) {
+                return isoDate.toISOString();
+              }
+            }
+          } catch (e) {
+            // If parsing fails, return as is
+          }
+          return date;
+        }).join('\n');
+      }
+      if (patient.utiDischargePrediction) dbData.uti_discharge_prediction = patient.utiDischargePrediction.join('\n');
+      if (patient.utiAllergies) dbData.uti_allergies = patient.utiAllergies.join('\n');
+      if (patient.utiAdmissionReason) dbData.uti_admission_reason = patient.utiAdmissionReason.join('\n');
+      if (patient.utiCurrentStatus) dbData.uti_current_status = patient.utiCurrentStatus.join('\n');
+      if (patient.utiDevices) dbData.uti_devices = patient.utiDevices.join('\n');
+      if (patient.utiCulturesAntibiotics) dbData.uti_cultures_antibiotics = patient.utiCulturesAntibiotics.join('\n');
+      if (patient.utiSpecialties) dbData.uti_specialties = patient.utiSpecialties.join('\n');
+      if (patient.utiOriginSector) dbData.uti_origin_sector = patient.utiOriginSector.join('\n');
 
       const { data, error } = await supabase
         .from('patients')
-        .insert(dbData as any)
+        .insert(dbData)
         .select()
         .single();
 
@@ -212,6 +240,30 @@ export function usePatients(department?: Department) {
         schedule: data.schedule ? data.schedule.split('\n').filter(Boolean) : [],
         admissionHistory: data.admission_history || '',
         admissionDate: data.admission_date || '',
+        medicalResponsibility: (data.medical_responsibility as unknown) as Patient['medicalResponsibility'],
+        // UTI fields
+        utiAdmissionDate: data.uti_admission_date ? data.uti_admission_date.split('\n').filter(Boolean).map(date => {
+          try {
+            const parsedDate = new Date(date);
+            if (!isNaN(parsedDate.getTime())) {
+              const day = String(parsedDate.getDate()).padStart(2, '0');
+              const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+              const year = parsedDate.getFullYear();
+              return `${day}/${month}/${year}`;
+            }
+          } catch (e) {
+            // If parsing fails, return as is
+          }
+          return date;
+        }) : [],
+        utiDischargePrediction: data.uti_discharge_prediction ? data.uti_discharge_prediction.split('\n').filter(Boolean) : [],
+        utiAllergies: data.uti_allergies ? data.uti_allergies.split('\n').filter(Boolean) : [],
+        utiAdmissionReason: data.uti_admission_reason ? data.uti_admission_reason.split('\n').filter(Boolean) : [],
+        utiCurrentStatus: data.uti_current_status ? data.uti_current_status.split('\n').filter(Boolean) : [],
+        utiDevices: data.uti_devices ? data.uti_devices.split('\n').filter(Boolean) : [],
+        utiCulturesAntibiotics: data.uti_cultures_antibiotics ? data.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
+        utiSpecialties: data.uti_specialties ? data.uti_specialties.split('\n').filter(Boolean) : [],
+        utiOriginSector: data.uti_origin_sector ? data.uti_origin_sector.split('\n').filter(Boolean) : [],
       };
 
       // Don't add to local state - let realtime subscription handle it to avoid duplicates
@@ -309,6 +361,30 @@ export function usePatients(department?: Department) {
             schedule: newRecord.schedule ? newRecord.schedule.split('\n').filter(Boolean) : [],
             admissionHistory: newRecord.admission_history || '',
             admissionDate: newRecord.admission_date || '',
+            medicalResponsibility: (newRecord.medical_responsibility as unknown) as Patient['medicalResponsibility'],
+            // UTI fields
+            utiAdmissionDate: newRecord.uti_admission_date ? newRecord.uti_admission_date.split('\n').filter(Boolean).map(date => {
+              try {
+                const parsedDate = new Date(date);
+                if (!isNaN(parsedDate.getTime())) {
+                  const day = String(parsedDate.getDate()).padStart(2, '0');
+                  const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+                  const year = parsedDate.getFullYear();
+                  return `${day}/${month}/${year}`;
+                }
+              } catch (e) {
+                // If parsing fails, return as is
+              }
+              return date;
+            }) : [],
+            utiDischargePrediction: newRecord.uti_discharge_prediction ? newRecord.uti_discharge_prediction.split('\n').filter(Boolean) : [],
+            utiAllergies: newRecord.uti_allergies ? newRecord.uti_allergies.split('\n').filter(Boolean) : [],
+            utiAdmissionReason: newRecord.uti_admission_reason ? newRecord.uti_admission_reason.split('\n').filter(Boolean) : [],
+            utiCurrentStatus: newRecord.uti_current_status ? newRecord.uti_current_status.split('\n').filter(Boolean) : [],
+            utiDevices: newRecord.uti_devices ? newRecord.uti_devices.split('\n').filter(Boolean) : [],
+            utiCulturesAntibiotics: newRecord.uti_cultures_antibiotics ? newRecord.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
+            utiSpecialties: newRecord.uti_specialties ? newRecord.uti_specialties.split('\n').filter(Boolean) : [],
+            utiOriginSector: newRecord.uti_origin_sector ? newRecord.uti_origin_sector.split('\n').filter(Boolean) : [],
           };
           setPatients(prev => {
             // Check if patient already exists (avoid duplicates)
@@ -344,6 +420,30 @@ export function usePatients(department?: Department) {
             schedule: updatedRecord.schedule ? updatedRecord.schedule.split('\n').filter(Boolean) : [],
             admissionHistory: updatedRecord.admission_history || '',
             admissionDate: updatedRecord.admission_date || '',
+            medicalResponsibility: (updatedRecord.medical_responsibility as unknown) as Patient['medicalResponsibility'],
+            // UTI fields
+            utiAdmissionDate: updatedRecord.uti_admission_date ? updatedRecord.uti_admission_date.split('\n').filter(Boolean).map(date => {
+              try {
+                const parsedDate = new Date(date);
+                if (!isNaN(parsedDate.getTime())) {
+                  const day = String(parsedDate.getDate()).padStart(2, '0');
+                  const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+                  const year = parsedDate.getFullYear();
+                  return `${day}/${month}/${year}`;
+                }
+              } catch (e) {
+                // If parsing fails, return as is
+              }
+              return date;
+            }) : [],
+            utiDischargePrediction: updatedRecord.uti_discharge_prediction ? updatedRecord.uti_discharge_prediction.split('\n').filter(Boolean) : [],
+            utiAllergies: updatedRecord.uti_allergies ? updatedRecord.uti_allergies.split('\n').filter(Boolean) : [],
+            utiAdmissionReason: updatedRecord.uti_admission_reason ? updatedRecord.uti_admission_reason.split('\n').filter(Boolean) : [],
+            utiCurrentStatus: updatedRecord.uti_current_status ? updatedRecord.uti_current_status.split('\n').filter(Boolean) : [],
+            utiDevices: updatedRecord.uti_devices ? updatedRecord.uti_devices.split('\n').filter(Boolean) : [],
+            utiCulturesAntibiotics: updatedRecord.uti_cultures_antibiotics ? updatedRecord.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
+            utiSpecialties: updatedRecord.uti_specialties ? updatedRecord.uti_specialties.split('\n').filter(Boolean) : [],
+            utiOriginSector: updatedRecord.uti_origin_sector ? updatedRecord.uti_origin_sector.split('\n').filter(Boolean) : [],
           };
           setPatients(prev => prev.map(p => p.id === updatedPatient.id ? updatedPatient : p));
         }

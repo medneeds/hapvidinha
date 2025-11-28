@@ -323,7 +323,7 @@ const Index = () => {
     const maxBedNumber = bedNumbers.length > 0 ? Math.max(...bedNumbers) : 0;
     const extraBedNumber = maxBedNumber + 1;
     
-    const newPatientData = {
+    const newPatientData: Omit<Patient, 'id'> = {
       bedNumber: `${sectorPrefix}${String(extraBedNumber).padStart(2, '0')}`,
       name: "",
       age: 0,
@@ -334,7 +334,20 @@ const Index = () => {
       pendencies: [],
       schedule: [],
       admissionHistory: "",
-      admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' ')
+      admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      highlightedPendencies: [],
+      // Add UTI fields for UTI department
+      ...(currentDepartment === 'UTI' && {
+        utiAdmissionDate: [],
+        utiDischargePrediction: [],
+        utiAllergies: [],
+        utiAdmissionReason: [],
+        utiCurrentStatus: [],
+        utiDevices: [],
+        utiCulturesAntibiotics: [],
+        utiSpecialties: [],
+        utiOriginSector: [],
+      })
     };
 
     try {
@@ -370,9 +383,21 @@ const Index = () => {
         medicalHistory: patient.medicalHistory,
         relevantExams: patient.relevantExams,
         pendencies: patient.pendencies,
+        highlightedPendencies: patient.highlightedPendencies,
         schedule: patient.schedule,
         admissionHistory: patient.admissionHistory,
         admissionDate: patient.admissionDate,
+        medicalResponsibility: patient.medicalResponsibility,
+        // Include UTI fields
+        utiAdmissionDate: patient.utiAdmissionDate,
+        utiDischargePrediction: patient.utiDischargePrediction,
+        utiAllergies: patient.utiAllergies,
+        utiAdmissionReason: patient.utiAdmissionReason,
+        utiCurrentStatus: patient.utiCurrentStatus,
+        utiDevices: patient.utiDevices,
+        utiCulturesAntibiotics: patient.utiCulturesAntibiotics,
+        utiSpecialties: patient.utiSpecialties,
+        utiOriginSector: patient.utiOriginSector,
       }, currentDepartment);
       toast({
         title: "Exclusão desfeita",
