@@ -148,7 +148,7 @@ export function PatientCardUTI({
   };
 
   return (
-    <Card className="p-3 hover:shadow-md transition-shadow border-l-4 border-l-critical">
+    <Card className="p-3 hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
       <div className="flex items-start justify-between gap-2">
         {/* Coluna de seleção e leito */}
         <div className="flex items-center gap-2 flex-shrink-0">

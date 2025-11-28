@@ -133,14 +133,14 @@ export function UTISection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
-      <div className="bg-gradient-to-r from-critical/20 via-critical/10 to-critical/20 rounded-xl p-2 border border-critical/30 shadow-lg print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center">
+      <div className="bg-gradient-to-r from-blue-500/20 via-blue-500/10 to-blue-500/20 rounded-xl p-2 border border-blue-500/30 shadow-lg print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center">
         <div className="flex items-center justify-between w-full gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
               <Checkbox
                 checked={allPatientsSelected}
                 onCheckedChange={handleSelectAll}
-                className="h-5 w-5 border-2 border-critical data-[state=checked]:bg-critical data-[state=checked]:border-critical"
+                className="h-5 w-5 border-2 border-blue-500 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 aria-label="Selecionar todos os pacientes da UTI"
               />
             </div>
@@ -149,7 +149,7 @@ export function UTISection({
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
               <div className="flex items-center gap-2 print:gap-1">
-                <Heart className="h-5 w-5 text-critical print:h-4 print:w-4" />
+                <Heart className="h-5 w-5 text-blue-500 print:h-4 print:w-4" />
                 <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">Quadro de Leitos - UTI</h2>
               </div>
             </button>
@@ -160,7 +160,7 @@ export function UTISection({
                 variant="outline"
                 size="icon"
                 onClick={onAddBed}
-                className="h-8 w-8 print:hidden border-critical/50 hover:bg-critical/10"
+                className="h-8 w-8 print:hidden border-blue-500/50 hover:bg-blue-500/10"
                 title="Adicionar leito"
               >
                 <Plus className="h-3.5 w-3.5" />
@@ -171,14 +171,14 @@ export function UTISection({
                 variant="outline"
                 size="icon"
                 onClick={onPrintSection}
-                className="h-8 w-8 print:hidden border-critical/50 hover:bg-critical/10"
+                className="h-8 w-8 print:hidden border-blue-500/50 hover:bg-blue-500/10"
                 title="Imprimir UTI"
               >
                 <Printer className="h-3.5 w-3.5" />
               </Button>
             )}
-            <div className="flex items-center justify-center h-8 w-8 bg-critical/20 backdrop-blur-sm rounded-lg border border-critical/50 print:h-6 print:w-6">
-              <p className="text-base font-bold text-critical print:text-[10px]">{patients.length}/10</p>
+            <div className="flex items-center justify-center h-8 w-8 bg-blue-500/20 backdrop-blur-sm rounded-lg border border-blue-500/50 print:h-6 print:w-6">
+              <p className="text-base font-bold text-blue-500 print:text-[10px]">{patients.length}/10</p>
             </div>
           </div>
         </div>
@@ -187,7 +187,7 @@ export function UTISection({
       <CollapsibleContent className="space-y-1.5 print:space-y-0.5">
         {patients.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
-            <Heart className="h-12 w-12 mx-auto mb-3 text-critical/30" />
+            <Heart className="h-12 w-12 mx-auto mb-3 text-blue-500/30" />
             <p>Nenhum paciente internado na UTI</p>
             <p className="text-xs mt-1">Adicione um leito para começar</p>
           </div>
