@@ -1172,8 +1172,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {currentDepartment === "UTI" && (
               <>
                 {/* Bloco Administrativo - Linha 1 */}
-                <div className="md:col-span-13 border-l-2 border-primary/20 pl-3 pr-0 py-2 bg-muted/5 rounded-r">
-                  <div className="grid grid-cols-13 gap-2">
+                <div className="md:col-span-13 border-l-2 border-primary/20 pl-3 py-2 bg-muted/5 rounded-r">
+                  <div className="grid grid-cols-12 gap-2">
                     {/* Setor de Origem */}
                     <div className="flex flex-col md:col-span-3">
                   <span className="text-[9px] font-medium text-muted-foreground mb-0">Setor de Origem</span>
@@ -1360,7 +1360,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* Previsão de Alta */}
-                  <div className="flex flex-col md:col-span-5">
+                  <div className="flex flex-col md:col-span-4">
                   <span className="text-[9px] font-medium text-muted-foreground mb-0">Previsão de Alta</span>
                       <ol className="text-xs text-foreground space-y-0 print:text-[7.5px] list-none pl-0">
                         {(patient.utiDischargePrediction || []).map((item, idx) => {
@@ -1539,8 +1539,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Bloco Investigação - Linha 2 */}
-                <div className="md:col-span-13 border-l-2 border-muted-foreground/20 pl-3 pr-0 py-2 bg-muted/10 rounded-r">
-                  <div className="grid grid-cols-13 gap-2">
+                <div className="md:col-span-13 border-l-2 border-muted-foreground/20 pl-3 py-2 bg-muted/10 rounded-r">
+                  <div className="grid grid-cols-12 gap-2">
                     {/* Motivo da Admissão */}
                     <div className="flex flex-col md:col-span-3">
                   <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Motivo da Admissão</span>
@@ -1624,7 +1624,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* Hipóteses / Diagnósticos */}
-                  <div className="flex flex-col md:col-span-5 relative">
+                  <div className="flex flex-col md:col-span-4 relative">
                   <div className="flex items-center gap-1 mb-0.5">
                     <span className="text-[10px] font-medium text-muted-foreground">Hipóteses / Diagnósticos</span>
                     <Button
@@ -1927,8 +1927,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Bloco Clínico - Linha 3 */}
-                <div className="md:col-span-13 border-l-2 border-accent/30 pl-3 pr-0 py-2 bg-accent/5 rounded-r">
-                  <div className="grid grid-cols-13 gap-2">
+                <div className="md:col-span-13 border-l-2 border-accent/30 pl-3 py-2 bg-accent/5 rounded-r">
+                  <div className="grid grid-cols-12 gap-2">
                     {/* Dispositivos */}
                     <div className="flex flex-col md:col-span-3">
                   <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Dispositivos</span>
@@ -2028,7 +2028,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* Exames */}
-                  <div className="flex flex-col md:col-span-4 relative">
+                  <div className="flex flex-col md:col-span-3 relative">
                   <div className="flex items-center gap-1 mb-0.5">
                     <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
                     <Button
