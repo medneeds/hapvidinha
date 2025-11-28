@@ -933,7 +933,7 @@ const Index = () => {
                 <div>
                   <SectorSection 
                     sector="blue" 
-                    patients={patients}
+                    patients={patients.map(p => ({ ...p, sector: 'blue' as const }))}
                     onUpdatePatient={handleUpdatePatient}
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
