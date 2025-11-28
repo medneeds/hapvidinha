@@ -333,10 +333,10 @@ export function PatientCardUTI({
           )}
           
           <div className="flex-1 grid grid-cols-1 md:grid-cols-24 gap-0.5 items-start print:gap-0">
-            {/* LINHA 1 - Campos principais */}
+            {/* LINHA 1: Leito | Paciente | Ad. UTI | Prev. de Alta | Alergias | Comorbidades / Antecedentes */}
             
-            {/* Leito - ocupa 2 linhas */}
-            <div className="flex flex-col md:col-span-1 md:row-span-2 gap-0">
+            {/* Leito */}
+            <div className="flex flex-col md:col-span-2">
               <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Leito</span>
               <Badge className="w-fit text-[9px] py-0 px-1 font-bold leading-none bg-purple-500 text-white print:text-[7px]">
                 {patient.bedNumber}
@@ -344,7 +344,7 @@ export function PatientCardUTI({
             </div>
 
             {/* Paciente */}
-            <div className="flex flex-col md:col-span-3">
+            <div className="flex flex-col md:col-span-4">
               <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Paciente</span>
               {editingField === "name" ? (
                 <div className="flex items-center gap-0.5">
@@ -371,8 +371,8 @@ export function PatientCardUTI({
             </div>
 
             {/* Admissão UTI */}
-            <div className="flex flex-col md:col-span-2">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Admissão</span>
+            <div className="flex flex-col md:col-span-3">
+              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Ad. UTI</span>
               {editingField === "utiAdmissionDate" ? (
                 <div className="flex items-center gap-0.5">
                   <Input ref={inputRef} type="datetime-local" value={editValue} onChange={(e) => setEditValue(e.target.value)} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] print:h-3 print:text-[7px]" />
@@ -387,8 +387,8 @@ export function PatientCardUTI({
             </div>
 
             {/* Previsão Alta */}
-            <div className="flex flex-col md:col-span-2">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Prev. Alta</span>
+            <div className="flex flex-col md:col-span-3">
+              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Prev. de Alta</span>
               {editingField === "utiDischargePrediction" ? (
                 <div className="flex items-center gap-0.5">
                   <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase print:h-3 print:text-[7px]" />
@@ -403,7 +403,7 @@ export function PatientCardUTI({
             </div>
 
             {/* Alergias */}
-            <div className="flex flex-col md:col-span-3">
+            <div className="flex flex-col md:col-span-4">
               <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Alergias</span>
               {editingField === "utiAllergies" ? (
                 <div className="flex items-center gap-0.5">
@@ -418,127 +418,9 @@ export function PatientCardUTI({
               )}
             </div>
 
-            {/* Motivo Admissão */}
-            <div className="flex flex-col md:col-span-4">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Motivo Admissão</span>
-              {editingField === "utiAdmissionReason" ? (
-                <div className="flex items-center gap-0.5">
-                  <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase print:h-3 print:text-[7px]" />
-                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
-                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
-                </div>
-              ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiAdmissionReason", patient.utiAdmissionReason || "")}>
-                  {patient.utiAdmissionReason || <span className="text-muted-foreground italic">--</span>}
-                </p>
-              )}
-            </div>
-
-            {/* Quadro Atual */}
-            <div className="flex flex-col md:col-span-4">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Quadro Atual</span>
-              {editingField === "utiCurrentStatus" ? (
-                <div className="flex items-center gap-0.5">
-                  <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase print:h-3 print:text-[7px]" />
-                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
-                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
-                </div>
-              ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiCurrentStatus", patient.utiCurrentStatus || "")}>
-                  {patient.utiCurrentStatus || <span className="text-muted-foreground italic">--</span>}
-                </p>
-              )}
-            </div>
-
-            {/* Dispositivos */}
-            <div className="flex flex-col md:col-span-3">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Dispositivos</span>
-              {editingField === "utiDevices" ? (
-                <div className="flex items-center gap-0.5">
-                  <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase print:h-3 print:text-[7px]" />
-                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
-                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
-                </div>
-              ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiDevices", patient.utiDevices || "")}>
-                  {patient.utiDevices || <span className="text-muted-foreground italic">--</span>}
-                </p>
-              )}
-            </div>
-
-            {/* Culturas/ATB */}
-            <div className="flex flex-col md:col-span-2">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Culturas/ATB</span>
-              {editingField === "utiCulturesAntibiotics" ? (
-                <div className="flex items-center gap-0.5">
-                  <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase print:h-3 print:text-[7px]" />
-                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
-                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
-                </div>
-              ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiCulturesAntibiotics", patient.utiCulturesAntibiotics || "")}>
-                  {patient.utiCulturesAntibiotics || <span className="text-muted-foreground italic">--</span>}
-                </p>
-              )}
-            </div>
-
-            {/* LINHA 2 - Campos clínicos */}
-            
-            {/* Especialidades */}
-            <div className="flex flex-col md:col-span-2">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Especialidades</span>
-              {editingField === "utiSpecialties" ? (
-                <div className="flex items-center gap-0.5">
-                  <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase print:h-3 print:text-[7px]" />
-                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
-                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
-                </div>
-              ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiSpecialties", patient.utiSpecialties || "")}>
-                  {patient.utiSpecialties || <span className="text-muted-foreground italic">--</span>}
-                </p>
-              )}
-            </div>
-
-            {/* Hipóteses / Diagnósticos */}
-            <div className="flex flex-col md:col-span-4">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Hipóteses / Diagnósticos</span>
-              <ol className="text-[8px] space-y-0 list-none pl-0 print:text-[7px]">
-                {patient.diagnoses?.map((diagnosis, idx) => (
-                  <li key={idx} className="flex items-start gap-1 group hover:bg-accent/30 rounded px-1 -mx-1 py-0">
-                    {editingField === "diagnoses" && editingArrayIndex === idx ? (
-                      <>
-                        <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
-                        <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase flex-1 border-0 bg-transparent p-0" />
-                        <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5 p-0"><Check className="h-1.5 w-1.5" /></Button>
-                        <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5 p-0"><X className="h-1.5 w-1.5" /></Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
-                        <span className="flex-1 cursor-pointer uppercase text-[8px]" onClick={() => startEditing("diagnoses", diagnosis, idx)}>{diagnosis}</span>
-                        <Button size="icon" variant="ghost" onClick={() => removeArrayItem("diagnoses", idx)} className="h-3.5 w-3.5 p-0 opacity-0 group-hover:opacity-100"><X className="h-1.5 w-1.5 text-red-600" /></Button>
-                      </>
-                    )}
-                  </li>
-                ))}
-                {editingField === "diagnoses" && editingArrayIndex === -2 && (
-                  <li className="flex items-center gap-0.5 bg-accent/30 rounded px-0.5 py-0">
-                    <span className="font-semibold text-muted-foreground text-[8px]">{(patient.diagnoses?.length || 0) + 1}.</span>
-                    <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase flex-1 border-0 bg-transparent p-0" placeholder="NOVA" />
-                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5 p-0"><Check className="h-1.5 w-1.5" /></Button>
-                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5 p-0"><X className="h-1.5 w-1.5" /></Button>
-                  </li>
-                )}
-              </ol>
-              {(!patient.diagnoses || patient.diagnoses.length === 0) && editingField !== "diagnoses" && (
-                <Button size="icon" variant="ghost" onClick={() => startEditing("diagnoses", "", -2)} className="h-3.5 w-3.5 text-muted-foreground"><span className="text-[10px]">+</span></Button>
-              )}
-            </div>
-
-            {/* Antecedentes */}
-            <div className="flex flex-col md:col-span-4">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Antecedentes</span>
+            {/* Comorbidades / Antecedentes */}
+            <div className="flex flex-col md:col-span-8">
+              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Comorbidades / Antecedentes</span>
               <ol className="text-[8px] space-y-0 list-none pl-0 print:text-[7px]">
                 {patient.medicalHistory?.map((history, idx) => (
                   <li key={idx} className="flex items-start gap-1 group hover:bg-accent/30 rounded px-1 -mx-1 py-0">
@@ -572,8 +454,58 @@ export function PatientCardUTI({
               )}
             </div>
 
+            {/* LINHA 2: Origem | Culturas e ATB | Dispositivos | Exames */}
+            
+            {/* Origem */}
+            <div className="flex flex-col md:col-span-6">
+              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Origem</span>
+              {editingField === "admissionHistory" ? (
+                <div className="flex items-center gap-0.5">
+                  <Textarea ref={textareaRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="min-h-[32px] text-[8px] uppercase leading-none resize-none print:min-h-[24px] print:text-[7px]" />
+                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
+                </div>
+              ) : (
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("admissionHistory", patient.admissionHistory || "")}>
+                  {patient.admissionHistory || <span className="text-muted-foreground italic">--</span>}
+                </p>
+              )}
+            </div>
+
+            {/* Culturas e ATB */}
+            <div className="flex flex-col md:col-span-6">
+              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Culturas e ATB</span>
+              {editingField === "utiCulturesAntibiotics" ? (
+                <div className="flex items-center gap-0.5">
+                  <Textarea ref={textareaRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="min-h-[32px] text-[8px] uppercase leading-none resize-none print:min-h-[24px] print:text-[7px]" />
+                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
+                </div>
+              ) : (
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiCulturesAntibiotics", patient.utiCulturesAntibiotics || "")}>
+                  {patient.utiCulturesAntibiotics || <span className="text-muted-foreground italic">--</span>}
+                </p>
+              )}
+            </div>
+
+            {/* Dispositivos */}
+            <div className="flex flex-col md:col-span-6">
+              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Dispositivos</span>
+              {editingField === "utiDevices" ? (
+                <div className="flex items-center gap-0.5">
+                  <Textarea ref={textareaRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="min-h-[32px] text-[8px] uppercase leading-none resize-none print:min-h-[24px] print:text-[7px]" />
+                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
+                </div>
+              ) : (
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiDevices", patient.utiDevices || "")}>
+                  {patient.utiDevices || <span className="text-muted-foreground italic">--</span>}
+                </p>
+              )}
+            </div>
+
             {/* Exames */}
-            <div className="flex flex-col md:col-span-4">
+            <div className="flex flex-col md:col-span-6">
               <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Exames</span>
               <ol className="text-[8px] space-y-0 list-none pl-0 print:text-[7px]">
                 {patient.relevantExams?.map((exam, idx) => (
@@ -608,69 +540,101 @@ export function PatientCardUTI({
               )}
             </div>
 
-            {/* Programações / Pendências */}
-            <div className="flex flex-col md:col-span-9">
-              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Programações / Pendências</span>
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                <SortableContext items={patient.pendencies?.map((_, i) => `pendency-${i}`) || []} strategy={verticalListSortingStrategy}>
-                  <ol className="text-[8px] space-y-0 list-none pl-0 print:text-[7px]">
-                    {patient.pendencies?.map((pendency, idx) => (
-                      <SortablePendencyItem
-                        key={`pendency-${idx}`}
-                        id={`pendency-${idx}`}
-                        index={idx}
-                        pendency={pendency}
-                        isHighlighted={patient.highlightedPendencies?.includes(idx)}
-                        onToggleHighlight={() => toggleHighlightPendency(idx)}
-                        onEdit={() => startEditing("pendencies", pendency, idx)}
-                        onRemove={() => removeArrayItem("pendencies", idx)}
-                        isEditing={editingField === "pendencies" && editingArrayIndex === idx}
-                        editValue={editValue}
-                        onSave={saveInlineEdit}
-                        onCancel={cancelEditing}
-                        onEditValueChange={(val) => setEditValue(val)}
-                        onKeyDown={handleKeyDown}
-                        inputRef={inputRef}
-                        isLast={idx === (patient.pendencies?.length || 0) - 1}
-                        onAddNew={() => startEditing("pendencies", "", -2)}
-                      />
-                    ))}
-                  </ol>
-                </SortableContext>
-              </DndContext>
-              {editingField === "pendencies" && editingArrayIndex === -2 && (
-                <div className="flex items-center gap-0.5 bg-accent/30 rounded px-0.5 py-0">
-                  <div className="w-3" />
-                  <span className="font-semibold text-muted-foreground text-[8px]">{(patient.pendencies?.length || 0) + 1}.</span>
-                  <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase flex-1 border-0 bg-transparent p-0" placeholder="NOVA" />
-                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5 p-0"><Check className="h-1.5 w-1.5" /></Button>
-                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5 p-0"><X className="h-1.5 w-1.5" /></Button>
+            {/* LINHA 3: Motivo da Ad. | Hipóteses / Diagnósticos | Quadro atual */}
+            
+            {/* Motivo da Admissão */}
+            <div className="flex flex-col md:col-span-6">
+              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Motivo da Ad.</span>
+              {editingField === "utiAdmissionReason" ? (
+                <div className="flex items-center gap-0.5">
+                  <Textarea ref={textareaRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="min-h-[32px] text-[8px] uppercase leading-none resize-none print:min-h-[24px] print:text-[7px]" />
+                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
                 </div>
+              ) : (
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiAdmissionReason", patient.utiAdmissionReason || "")}>
+                  {patient.utiAdmissionReason || <span className="text-muted-foreground italic">--</span>}
+                </p>
               )}
-              {(!patient.pendencies || patient.pendencies.length === 0) && editingField !== "pendencies" && (
-                <Button size="icon" variant="ghost" onClick={() => startEditing("pendencies", "", -2)} className="h-3.5 w-3.5 text-muted-foreground"><span className="text-[10px]">+</span></Button>
+            </div>
+
+            {/* Hipóteses / Diagnósticos */}
+            <div className="flex flex-col md:col-span-9">
+              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Hipóteses / Diagnósticos</span>
+              <ol className="text-[8px] space-y-0 list-none pl-0 print:text-[7px]">
+                {patient.diagnoses?.map((diagnosis, idx) => (
+                  <li key={idx} className="flex items-start gap-1 group hover:bg-accent/30 rounded px-1 -mx-1 py-0">
+                    {editingField === "diagnoses" && editingArrayIndex === idx ? (
+                      <>
+                        <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
+                        <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase flex-1 border-0 bg-transparent p-0" />
+                        <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5 p-0"><Check className="h-1.5 w-1.5" /></Button>
+                        <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5 p-0"><X className="h-1.5 w-1.5" /></Button>
+                      </>
+                    ) : (
+                      <>
+                        <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
+                        <span className="flex-1 cursor-pointer uppercase text-[8px]" onClick={() => startEditing("diagnoses", diagnosis, idx)}>{diagnosis}</span>
+                        <Button size="icon" variant="ghost" onClick={() => removeArrayItem("diagnoses", idx)} className="h-3.5 w-3.5 p-0 opacity-0 group-hover:opacity-100"><X className="h-1.5 w-1.5 text-red-600" /></Button>
+                      </>
+                    )}
+                  </li>
+                ))}
+                {editingField === "diagnoses" && editingArrayIndex === -2 && (
+                  <li className="flex items-center gap-0.5 bg-accent/30 rounded px-0.5 py-0">
+                    <span className="font-semibold text-muted-foreground text-[8px]">{(patient.diagnoses?.length || 0) + 1}.</span>
+                    <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase flex-1 border-0 bg-transparent p-0" placeholder="NOVA" />
+                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5 p-0"><Check className="h-1.5 w-1.5" /></Button>
+                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5 p-0"><X className="h-1.5 w-1.5" /></Button>
+                  </li>
+                )}
+              </ol>
+              {(!patient.diagnoses || patient.diagnoses.length === 0) && editingField !== "diagnoses" && (
+                <Button size="icon" variant="ghost" onClick={() => startEditing("diagnoses", "", -2)} className="h-3.5 w-3.5 text-muted-foreground"><span className="text-[10px]">+</span></Button>
+              )}
+            </div>
+
+            {/* Quadro Atual */}
+            <div className="flex flex-col md:col-span-9">
+              <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Quadro Atual</span>
+              {editingField === "utiCurrentStatus" ? (
+                <div className="flex items-center gap-0.5">
+                  <Textarea ref={textareaRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="min-h-[32px] text-[8px] uppercase leading-none resize-none print:min-h-[24px] print:text-[7px]" />
+                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
+                </div>
+              ) : (
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiCurrentStatus", patient.utiCurrentStatus || "")}>
+                  {patient.utiCurrentStatus || <span className="text-muted-foreground italic">--</span>}
+                </p>
               )}
             </div>
           </div>
 
-          {/* Menu de ações */}
-          <div className="flex flex-col gap-1 flex-shrink-0">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="ghost" className="h-7 w-7">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => onDelete?.(patient.id)} className="text-destructive">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Excluir paciente
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {!selectionMode && (
+            <div className="flex flex-col gap-0.5 print:hidden ml-0.5">
+              <Button size="icon" variant="ghost" onClick={handleCopyName} className="h-5 w-5 p-0 hover:bg-accent">
+                <Copy className="h-3 w-3 text-muted-foreground" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="ghost" className="h-5 w-5 p-0 hover:bg-accent">
+                    <MoreVertical className="h-3 w-3 text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44">
+                  <DropdownMenuLabel className="text-xs">Ações</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {onDelete && (
+                    <DropdownMenuItem onClick={() => onDelete(patient.id)} className="text-red-600 focus:text-red-600 cursor-pointer text-xs">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Excluir paciente
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
         </div>
       </div>
     </Card>
