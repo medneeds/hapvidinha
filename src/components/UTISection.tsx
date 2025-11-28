@@ -1,6 +1,6 @@
 import { Patient } from "@/types/patient";
 import { PatientCardUTI } from "./PatientCardUTI";
-import { Plus, Printer, ChevronDown, GripVertical, Heart } from "lucide-react";
+import { Plus, Printer, ChevronDown, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -148,10 +148,7 @@ export function UTISection({
           <CollapsibleTrigger asChild>
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
-              <div className="flex items-center gap-2 print:gap-1">
-                <Heart className="h-5 w-5 text-blue-500 print:h-4 print:w-4" />
-                <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">Quadro de Leitos - UTI</h2>
-              </div>
+              <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">Quadro de Leitos - UTI</h2>
             </button>
           </CollapsibleTrigger>
           <div className="flex items-center gap-2">
@@ -187,7 +184,6 @@ export function UTISection({
       <CollapsibleContent className="space-y-1.5 print:space-y-0.5">
         {patients.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
-            <Heart className="h-12 w-12 mx-auto mb-3 text-blue-500/30" />
             <p>Nenhum paciente internado na UTI</p>
             <p className="text-xs mt-1">Adicione um leito para começar</p>
           </div>
