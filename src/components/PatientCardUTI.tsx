@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, ChevronUp, Edit, Trash2, Copy, Printer, Check, X, MoreVertical, Heart } from "lucide-react";
+import { ChevronDown, ChevronUp, Edit, Trash2, Copy, Printer, Check, X, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -159,12 +159,9 @@ export function PatientCardUTI({
               className="flex-shrink-0"
             />
           )}
-          <div className="flex items-center gap-1">
-            <Heart className="h-4 w-4" style={{ color: sectorColorMap[patient.sector] }} />
-            <Badge variant="outline" className="font-bold">
-              {patient.bedNumber}
-            </Badge>
-          </div>
+          <Badge variant="outline" className="font-bold">
+            {patient.bedNumber}
+          </Badge>
         </div>
 
         {/* Nome e idade */}
