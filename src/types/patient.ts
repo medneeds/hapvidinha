@@ -25,12 +25,12 @@ export interface Patient {
   admissionDate: string;
   medicalResponsibility?: MedicalResponsibility;
   // UTI-specific fields
-  utiAdmissionDate?: string;
-  utiDischargePrediction?: string;
-  utiAllergies?: string;
-  utiAdmissionReason?: string;
-  utiCurrentStatus?: string;
-  utiDevices?: string;
-  utiCulturesAntibiotics?: string;
-  utiSpecialties?: string;
+  utiAdmissionDate?: string[];
+  utiDischargePrediction?: string[];
+  utiAllergies?: string[];
+  utiAdmissionReason?: string[];
+  utiCurrentStatus?: string[];
+  utiDevices?: string[];
+  utiCulturesAntibiotics?: string[];
+  utiSpecialties?: string[];
 }
