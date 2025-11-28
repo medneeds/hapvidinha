@@ -73,6 +73,18 @@ export function PatientCardUTI({
       case "age":
         updates.age = editValue;
         break;
+      case "diagnoses":
+        updates.diagnoses = editValue.split('\n').filter(d => d.trim());
+        break;
+      case "medicalHistory":
+        updates.medicalHistory = editValue.split('\n').filter(h => h.trim());
+        break;
+      case "relevantExams":
+        updates.relevantExams = editValue.split('\n').filter(e => e.trim());
+        break;
+      case "pendencies":
+        updates.pendencies = editValue.split('\n').filter(p => p.trim());
+        break;
       case "utiAdmissionDate":
         updates.utiAdmissionDate = editValue;
         break;
@@ -570,6 +582,201 @@ export function PatientCardUTI({
               </div>
             ) : (
               <p className="text-xs whitespace-pre-wrap">{patient.utiSpecialties || 'Nenhuma especialidade registrada'}</p>
+            )}
+          </div>
+
+          {/* Divisor entre campos UTI e campos padrão */}
+          <div className="border-t pt-3 mt-4">
+            <p className="text-xs font-semibold text-muted-foreground mb-3">CAMPOS PADRÃO DO PACIENTE</p>
+          </div>
+
+          {/* Hipóteses / Diagnósticos */}
+          <div>
+            <label className="text-xs font-medium text-muted-foreground flex items-center gap-1 mb-1">
+              Hipóteses / Diagnósticos
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => startEditing("diagnoses", (patient.diagnoses || []).join('\n'))}
+                className="h-4 w-4 p-0"
+              >
+                <Edit className="h-3 w-3" />
+              </Button>
+            </label>
+            {editingField === "diagnoses" ? (
+              <div className="flex gap-1">
+                <Textarea
+                  ref={inputRef}
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="text-xs min-h-[80px]"
+                  placeholder="Digite cada hipótese em uma linha separada"
+                />
+                <div className="flex flex-col gap-1">
+                  <Button size="icon" variant="ghost" onClick={saveFieldEdit} className="h-8 w-8">
+                    <Check className="h-3 w-3" />
+                  </Button>
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-8 w-8">
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs">
+                {patient.diagnoses && patient.diagnoses.length > 0 ? (
+                  <ul className="list-disc list-inside space-y-1">
+                    {patient.diagnoses.map((d, i) => (
+                      <li key={i}>{d}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-muted-foreground italic">Nenhum diagnóstico registrado</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Antecedentes / Comorbidades */}
+          <div>
+            <label className="text-xs font-medium text-muted-foreground flex items-center gap-1 mb-1">
+              Antecedentes / Comorbidades
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => startEditing("medicalHistory", (patient.medicalHistory || []).join('\n'))}
+                className="h-4 w-4 p-0"
+              >
+                <Edit className="h-3 w-3" />
+              </Button>
+            </label>
+            {editingField === "medicalHistory" ? (
+              <div className="flex gap-1">
+                <Textarea
+                  ref={inputRef}
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="text-xs min-h-[80px]"
+                  placeholder="Digite cada antecedente em uma linha separada"
+                />
+                <div className="flex flex-col gap-1">
+                  <Button size="icon" variant="ghost" onClick={saveFieldEdit} className="h-8 w-8">
+                    <Check className="h-3 w-3" />
+                  </Button>
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-8 w-8">
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs">
+                {patient.medicalHistory && patient.medicalHistory.length > 0 ? (
+                  <ul className="list-disc list-inside space-y-1">
+                    {patient.medicalHistory.map((h, i) => (
+                      <li key={i}>{h}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-muted-foreground italic">Nenhum antecedente registrado</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Exames */}
+          <div>
+            <label className="text-xs font-medium text-muted-foreground flex items-center gap-1 mb-1">
+              Exames
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => startEditing("relevantExams", (patient.relevantExams || []).join('\n'))}
+                className="h-4 w-4 p-0"
+              >
+                <Edit className="h-3 w-3" />
+              </Button>
+            </label>
+            {editingField === "relevantExams" ? (
+              <div className="flex gap-1">
+                <Textarea
+                  ref={inputRef}
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="text-xs min-h-[80px]"
+                  placeholder="Digite cada exame em uma linha separada"
+                />
+                <div className="flex flex-col gap-1">
+                  <Button size="icon" variant="ghost" onClick={saveFieldEdit} className="h-8 w-8">
+                    <Check className="h-3 w-3" />
+                  </Button>
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-8 w-8">
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs">
+                {patient.relevantExams && patient.relevantExams.length > 0 ? (
+                  <ul className="list-disc list-inside space-y-1">
+                    {patient.relevantExams.map((e, i) => (
+                      <li key={i}>{e}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-muted-foreground italic">Nenhum exame registrado</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Programações / Pendências */}
+          <div>
+            <label className="text-xs font-medium text-muted-foreground flex items-center gap-1 mb-1">
+              Programações / Pendências
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => startEditing("pendencies", (patient.pendencies || []).join('\n'))}
+                className="h-4 w-4 p-0"
+              >
+                <Edit className="h-3 w-3" />
+              </Button>
+            </label>
+            {editingField === "pendencies" ? (
+              <div className="flex gap-1">
+                <Textarea
+                  ref={inputRef}
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="text-xs min-h-[80px]"
+                  placeholder="Digite cada pendência em uma linha separada"
+                />
+                <div className="flex flex-col gap-1">
+                  <Button size="icon" variant="ghost" onClick={saveFieldEdit} className="h-8 w-8">
+                    <Check className="h-3 w-3" />
+                  </Button>
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-8 w-8">
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs">
+                {patient.pendencies && patient.pendencies.length > 0 ? (
+                  <ol className="list-decimal list-inside space-y-1">
+                    {patient.pendencies.map((p, i) => (
+                      <li key={i} className={patient.highlightedPendencies?.includes(i) ? "font-bold text-amber-600 dark:text-amber-400" : ""}>
+                        {p}
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="text-muted-foreground italic">Nenhuma pendência registrada</p>
+                )}
+              </div>
             )}
           </div>
         </div>
