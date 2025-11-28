@@ -336,7 +336,7 @@ export function PatientCardUTI({
             {/* LINHA 1: Leito | Paciente | Ad. UTI | Prev. de Alta | Alergias | Comorbidades / Antecedentes */}
             
             {/* Leito */}
-            <div className="flex flex-col md:col-span-2">
+            <div className="flex flex-col md:col-span-1">
               <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Leito</span>
               <Badge className="w-fit text-[9px] py-0 px-1 font-bold leading-none bg-purple-500 text-white print:text-[7px]">
                 {patient.bedNumber}
@@ -344,7 +344,7 @@ export function PatientCardUTI({
             </div>
 
             {/* Paciente */}
-            <div className="flex flex-col md:col-span-4">
+            <div className="flex flex-col md:col-span-3">
               <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Paciente</span>
               {editingField === "name" ? (
                 <div className="flex items-center gap-0.5">
@@ -380,7 +380,7 @@ export function PatientCardUTI({
                   <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
                 </div>
               ) : (
-                <p className="text-[8px] leading-none cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 print:text-[7px]" onClick={() => startEditing("utiAdmissionDate", patient.utiAdmissionDate || "")}>
+                <p className="text-[8px] leading-none cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiAdmissionDate", patient.utiAdmissionDate || "")}>
                   {patient.utiAdmissionDate ? formatDateTime(patient.utiAdmissionDate) : <span className="text-muted-foreground italic">--</span>}
                 </p>
               )}
@@ -407,19 +407,19 @@ export function PatientCardUTI({
               <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Alergias</span>
               {editingField === "utiAllergies" ? (
                 <div className="flex items-center gap-0.5">
-                  <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="h-3.5 text-[8px] uppercase print:h-3 print:text-[7px]" />
+                  <Textarea ref={textareaRef} value={editValue} onChange={(e) => setEditValue(e.target.value.toUpperCase())} onKeyDown={handleKeyDown} className="min-h-[32px] text-[8px] uppercase leading-none resize-none print:min-h-[24px] print:text-[7px]" />
                   <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3.5 w-3.5"><Check className="h-2 w-2" /></Button>
                   <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
                 </div>
               ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiAllergies", patient.utiAllergies || "")}>
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words whitespace-normal print:text-[7px]" onClick={() => startEditing("utiAllergies", patient.utiAllergies || "")}>
                   {patient.utiAllergies || <span className="text-muted-foreground italic">--</span>}
                 </p>
               )}
             </div>
 
             {/* Comorbidades / Antecedentes */}
-            <div className="flex flex-col md:col-span-8">
+            <div className="flex flex-col md:col-span-10">
               <span className="text-[8px] font-medium text-muted-foreground mb-0 print:text-[7px]">Comorbidades / Antecedentes</span>
               <ol className="text-[8px] space-y-0 list-none pl-0 print:text-[7px]">
                 {patient.medicalHistory?.map((history, idx) => (
@@ -434,7 +434,7 @@ export function PatientCardUTI({
                     ) : (
                       <>
                         <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
-                        <span className="flex-1 cursor-pointer uppercase text-[8px]" onClick={() => startEditing("medicalHistory", history, idx)}>{history}</span>
+                        <span className="flex-1 cursor-pointer uppercase text-[8px] break-words" onClick={() => startEditing("medicalHistory", history, idx)}>{history}</span>
                         <Button size="icon" variant="ghost" onClick={() => removeArrayItem("medicalHistory", idx)} className="h-3.5 w-3.5 p-0 opacity-0 group-hover:opacity-100"><X className="h-1.5 w-1.5 text-red-600" /></Button>
                       </>
                     )}
@@ -466,7 +466,7 @@ export function PatientCardUTI({
                   <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
                 </div>
               ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("admissionHistory", patient.admissionHistory || "")}>
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words whitespace-normal print:text-[7px]" onClick={() => startEditing("admissionHistory", patient.admissionHistory || "")}>
                   {patient.admissionHistory || <span className="text-muted-foreground italic">--</span>}
                 </p>
               )}
@@ -482,7 +482,7 @@ export function PatientCardUTI({
                   <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
                 </div>
               ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiCulturesAntibiotics", patient.utiCulturesAntibiotics || "")}>
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words whitespace-normal print:text-[7px]" onClick={() => startEditing("utiCulturesAntibiotics", patient.utiCulturesAntibiotics || "")}>
                   {patient.utiCulturesAntibiotics || <span className="text-muted-foreground italic">--</span>}
                 </p>
               )}
@@ -498,7 +498,7 @@ export function PatientCardUTI({
                   <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
                 </div>
               ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiDevices", patient.utiDevices || "")}>
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words whitespace-normal print:text-[7px]" onClick={() => startEditing("utiDevices", patient.utiDevices || "")}>
                   {patient.utiDevices || <span className="text-muted-foreground italic">--</span>}
                 </p>
               )}
@@ -520,7 +520,7 @@ export function PatientCardUTI({
                     ) : (
                       <>
                         <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
-                        <span className="flex-1 cursor-pointer uppercase text-[8px]" onClick={() => startEditing("relevantExams", exam, idx)}>{exam}</span>
+                        <span className="flex-1 cursor-pointer uppercase text-[8px] break-words" onClick={() => startEditing("relevantExams", exam, idx)}>{exam}</span>
                         <Button size="icon" variant="ghost" onClick={() => removeArrayItem("relevantExams", idx)} className="h-3.5 w-3.5 p-0 opacity-0 group-hover:opacity-100"><X className="h-1.5 w-1.5 text-red-600" /></Button>
                       </>
                     )}
@@ -552,7 +552,7 @@ export function PatientCardUTI({
                   <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
                 </div>
               ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiAdmissionReason", patient.utiAdmissionReason || "")}>
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words whitespace-normal print:text-[7px]" onClick={() => startEditing("utiAdmissionReason", patient.utiAdmissionReason || "")}>
                   {patient.utiAdmissionReason || <span className="text-muted-foreground italic">--</span>}
                 </p>
               )}
@@ -574,7 +574,7 @@ export function PatientCardUTI({
                     ) : (
                       <>
                         <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
-                        <span className="flex-1 cursor-pointer uppercase text-[8px]" onClick={() => startEditing("diagnoses", diagnosis, idx)}>{diagnosis}</span>
+                        <span className="flex-1 cursor-pointer uppercase text-[8px] break-words" onClick={() => startEditing("diagnoses", diagnosis, idx)}>{diagnosis}</span>
                         <Button size="icon" variant="ghost" onClick={() => removeArrayItem("diagnoses", idx)} className="h-3.5 w-3.5 p-0 opacity-0 group-hover:opacity-100"><X className="h-1.5 w-1.5 text-red-600" /></Button>
                       </>
                     )}
@@ -604,7 +604,7 @@ export function PatientCardUTI({
                   <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3.5 w-3.5"><X className="h-2 w-2" /></Button>
                 </div>
               ) : (
-                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words print:text-[7px]" onClick={() => startEditing("utiCurrentStatus", patient.utiCurrentStatus || "")}>
+                <p className="text-[8px] leading-none uppercase cursor-pointer hover:bg-accent/50 rounded px-0.5 -mx-0.5 break-words whitespace-normal print:text-[7px]" onClick={() => startEditing("utiCurrentStatus", patient.utiCurrentStatus || "")}>
                   {patient.utiCurrentStatus || <span className="text-muted-foreground italic">--</span>}
                 </p>
               )}
