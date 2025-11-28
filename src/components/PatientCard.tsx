@@ -1624,7 +1624,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* Hipóteses / Diagnósticos */}
-                  <div className="flex flex-col md:col-span-3 relative">
+                  <div className="flex flex-col md:col-span-5 relative">
                   <div className="flex items-center gap-1 mb-0.5">
                     <span className="text-[10px] font-medium text-muted-foreground">Hipóteses / Diagnósticos</span>
                     <Button
@@ -1729,7 +1729,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* Quadro Atual */}
-                  <div className="flex flex-col md:col-span-3">
+                  <div className="flex flex-col md:col-span-1">
                   <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Quadro Atual</span>
                   <DndContext
                     sensors={sensors}
