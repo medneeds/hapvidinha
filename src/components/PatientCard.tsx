@@ -1007,7 +1007,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         isSelected && "ring-2 ring-primary",
         isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]"
       )}>
-        <div className="pt-2 px-2 pb-0 print:p-1.5">
+        <div className="p-2 print:p-1.5">
           <div className="flex items-start justify-between gap-2 print:gap-1">
             {selectionMode && onToggleSelection && (
               <div className="flex items-center justify-center print:hidden flex-shrink-0">
