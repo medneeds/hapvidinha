@@ -193,12 +193,12 @@ export function AppSidebar({
 
   const sidebarContent = (
     <>
-      <SidebarHeader className="px-4 py-4 bg-white border-b border-[#013ba6]/30">
-        <div className="flex items-center justify-center">
+      <SidebarHeader className="px-4 py-2.5 bg-white border-b border-[#013ba6]/30 h-[52px] flex items-center">
+        <div className="flex items-center justify-center w-full">
           <img 
             src={hapvidaLogo} 
             alt="Hapvida" 
-            className="w-full h-auto max-h-28 object-contain animate-fade-in"
+            className="w-full h-auto max-h-[40px] object-contain animate-fade-in"
           />
         </div>
       </SidebarHeader>
