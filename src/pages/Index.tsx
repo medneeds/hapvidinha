@@ -306,7 +306,7 @@ const Index = () => {
     saveToHistory(patients);
     // Se for UTI, usa prefixo 'U', caso contrário usa os prefixos normais
     const sectorPrefix = currentDepartment === 'UTI' 
-      ? 'V' 
+      ? 'U' 
       : sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : sector === 'blue' ? 'Z' : 'F';
     
     // Buscar todos os pacientes deste setor do banco de dados para garantir unicidade
@@ -932,21 +932,21 @@ const Index = () => {
               {currentDepartment === "UTI" ? (
                 <div>
                   <SectorSection 
-                    sector="red" 
+                    sector="blue" 
                     patients={patients}
                     onUpdatePatient={handleUpdatePatient}
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
-                    onPrintSector={() => handlePrintSector("red")}
-                    onAddExtraBed={() => handleAddExtraBed("red")}
+                    onPrintSector={() => handlePrintSector("blue")}
+                    onAddExtraBed={() => handleAddExtraBed("blue")}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}
-                    onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
+                    onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
-                    isOpen={isRedSectionOpen}
-                    onOpenChange={setIsRedSectionOpen}
+                    isOpen={isBlueSectionOpen}
+                    onOpenChange={setIsBlueSectionOpen}
                     customTitle="UTI - 10 LEITOS"
                     customIcon="🏥"
                   />
