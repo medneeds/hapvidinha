@@ -33,4 +33,5 @@ export interface Patient {
   utiDevices?: string[];
   utiCulturesAntibiotics?: string[];
   utiSpecialties?: string[];
+  utiOriginSector?: string[];
 }
