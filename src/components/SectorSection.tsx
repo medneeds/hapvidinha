@@ -39,6 +39,8 @@ interface SectorSectionProps {
   onPrintPatient?: (patientId: string) => void;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  customTitle?: string;
+  customIcon?: string;
 }
 
 const sectorInfo = {
@@ -121,9 +123,13 @@ export function SectorSection({
   onTransfer, 
   onPrintPatient,
   isOpen: controlledIsOpen,
-  onOpenChange
+  onOpenChange,
+  customTitle,
+  customIcon
 }: SectorSectionProps) {
   const info = sectorInfo[sector];
+  const displayTitle = customTitle || info.title;
+  const displayIcon = customIcon || info.icon;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
   
   // Use controlled state if provided, otherwise use internal state
@@ -195,8 +201,8 @@ export function SectorSection({
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
               <div className="flex items-center gap-2 print:gap-1">
-                <span className="text-lg print:text-sm">{info.icon}</span>
-                <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">{info.title}</h2>
+                <span className="text-lg print:text-sm">{displayIcon}</span>
+                <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">{displayTitle}</h2>
               </div>
             </button>
           </CollapsibleTrigger>
