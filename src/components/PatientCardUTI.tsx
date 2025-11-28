@@ -320,8 +320,8 @@ export function PatientCardUTI({
 
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-lg border-l-4 border-l-blue-500">
-      <div className="p-2">
-        <div className="flex items-start justify-between gap-2">
+      <div className="p-1.5 print:p-1">
+        <div className="flex items-start justify-between gap-1.5 print:gap-1">
           {selectionMode && onToggleSelection && (
             <div className="flex items-center justify-center flex-shrink-0">
               <Checkbox
@@ -332,40 +332,40 @@ export function PatientCardUTI({
             </div>
           )}
           
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-20 gap-1.5 items-start">
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-20 gap-1 items-start print:gap-0.5">
             {/* Leito */}
             <div className="flex flex-col md:col-span-1">
-              <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
-              <Badge className="w-fit text-[10px] py-0 px-1 font-bold leading-tight bg-blue-500 text-white">
+              <span className="text-[9px] font-medium text-muted-foreground mb-0 print:mb-0">Leito</span>
+              <Badge className="w-fit text-[10px] py-0 px-1 font-bold leading-tight bg-blue-500 text-white print:text-[8px] print:py-0">
                 {patient.bedNumber}
               </Badge>
             </div>
 
             {/* Paciente (Nome + Idade) */}
             <div className="flex flex-col md:col-span-2">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Paciente</span>
               <div className="group/name relative">
-                <div className="flex items-start gap-1">
+                <div className="flex items-start gap-0.5">
                   <div className="flex-1 min-w-0">
                     {editingField === "name" ? (
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-0.5">
                         <Input
                           ref={inputRef}
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value.toUpperCase())}
                           onKeyDown={handleKeyDown}
-                          className="h-6 text-sm font-semibold uppercase"
+                          className="h-6 text-xs font-semibold uppercase print:h-5 print:text-[9px]"
                         />
-                        <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-6 w-6">
+                        <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-6 w-6 print:h-5 print:w-5">
                           <Check className="h-3 w-3" />
                         </Button>
-                        <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-6 w-6">
+                        <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-6 w-6 print:h-5 print:w-5">
                           <X className="h-3 w-3" />
                         </Button>
                       </div>
                     ) : (
                       <p 
-                        className="font-semibold text-sm leading-tight uppercase cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                        className="font-semibold text-xs leading-tight uppercase cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 print:text-[9px] print:leading-none"
                         onClick={() => startEditing("name", patient.name)}
                       >
                         {patient.name || <span className="text-muted-foreground italic">Adicionar</span>}
@@ -373,24 +373,24 @@ export function PatientCardUTI({
                     )}
                     
                     {editingField === "age" ? (
-                      <div className="flex items-center gap-1 mt-0.5">
+                      <div className="flex items-center gap-0.5 mt-0">
                         <Input
                           ref={inputRef}
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value)}
                           onKeyDown={handleKeyDown}
-                          className="h-5 text-[11px]"
+                          className="h-5 text-[10px] print:h-4"
                         />
-                        <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-5 w-5">
+                        <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-5 w-5 print:h-4 print:w-4">
                           <Check className="h-2.5 w-2.5" />
                         </Button>
-                        <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-5 w-5">
+                        <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-5 w-5 print:h-4 print:w-4">
                           <X className="h-2.5 w-2.5" />
                         </Button>
                       </div>
                     ) : (
                       <p 
-                        className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                        className="text-[10px] text-muted-foreground mt-0 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 print:text-[8px]"
                         onClick={() => startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
                       >
                         {patient.age ? formatAgeDisplay(patient.age) : <span className="italic">Idade</span>}
@@ -402,7 +402,7 @@ export function PatientCardUTI({
                       size="icon"
                       variant="ghost"
                       onClick={handleCopyName}
-                      className="h-5 w-5 opacity-60 group-hover/name:opacity-100 transition-opacity"
+                      className="h-5 w-5 opacity-60 group-hover/name:opacity-100 transition-opacity print:hidden"
                       title="Copiar nome"
                     >
                       <Copy className="h-3 w-3" />
@@ -414,52 +414,52 @@ export function PatientCardUTI({
 
             {/* Admissão UTI + Previsão */}
             <div className="flex flex-col md:col-span-2">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Admissão / Previsão</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Admissão / Previsão</span>
               {editingField === "utiAdmissionDate" ? (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   <Input
                     ref={inputRef}
                     type="datetime-local"
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="h-6 text-[10px]"
+                    className="h-5 text-[9px] print:h-4"
                   />
-                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-5 w-5">
+                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-4 w-4">
                     <Check className="h-2.5 w-2.5" />
                   </Button>
-                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-5 w-5">
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-4 w-4">
                     <X className="h-2.5 w-2.5" />
                   </Button>
                 </div>
               ) : (
                 <p 
-                  className="text-[10px] cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                  className="text-[9px] cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 leading-tight print:text-[7.5px]"
                   onClick={() => startEditing("utiAdmissionDate", patient.utiAdmissionDate || "")}
                 >
                   {patient.utiAdmissionDate ? new Date(patient.utiAdmissionDate).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : <span className="italic text-muted-foreground">Admissão</span>}
                 </p>
               )}
               {editingField === "utiDischargePrediction" ? (
-                <div className="flex items-center gap-1 mt-0.5">
+                <div className="flex items-center gap-0.5 mt-0">
                   <Input
                     ref={inputRef}
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="h-5 text-[10px]"
+                    className="h-5 text-[9px] print:h-4"
                     placeholder="Ex: 3-5 dias"
                   />
-                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-5 w-5">
+                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-4 w-4">
                     <Check className="h-2.5 w-2.5" />
                   </Button>
-                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-5 w-5">
+                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-4 w-4">
                     <X className="h-2.5 w-2.5" />
                   </Button>
                 </div>
               ) : (
                 <p 
-                  className="text-[10px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                  className="text-[9px] text-muted-foreground mt-0 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 leading-tight print:text-[7.5px]"
                   onClick={() => startEditing("utiDischargePrediction", patient.utiDischargePrediction || "")}
                 >
                   {patient.utiDischargePrediction || <span className="italic">Previsão</span>}
@@ -469,8 +469,8 @@ export function PatientCardUTI({
 
             {/* Hipóteses / Diagnósticos */}
             <div className="flex flex-col md:col-span-3">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Hipóteses / Diagnósticos</span>
-              <ol className="text-[10px] space-y-0.5 list-none pl-0">
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Hipóteses / Diagnósticos</span>
+              <ol className="text-[10px] space-y-0 list-none pl-0 print:text-[7.5px]">
                 {patient.diagnoses?.map((diagnosis, idx) => (
                   <li key={idx} className="flex items-start gap-1 group hover:bg-accent/30 rounded px-1 -mx-1 py-0.5">
                     {editingField === "diagnoses" && editingArrayIndex === idx ? (
@@ -543,8 +543,8 @@ export function PatientCardUTI({
 
             {/* Antecedentes / Comorbidades */}
             <div className="flex flex-col md:col-span-2">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Antecedentes</span>
-              <ol className="text-[10px] space-y-0.5 list-none pl-0">
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Antecedentes</span>
+              <ol className="text-[10px] space-y-0 list-none pl-0 print:text-[7.5px]">
                 {patient.medicalHistory?.map((history, idx) => (
                   <li key={idx} className="flex items-start gap-1 group hover:bg-accent/30 rounded px-1 -mx-1 py-0.5">
                     {editingField === "medicalHistory" && editingArrayIndex === idx ? (
@@ -617,56 +617,56 @@ export function PatientCardUTI({
 
             {/* Motivo Admissão + Quadro Atual */}
             <div className="flex flex-col md:col-span-3">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Motivo / Quadro</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Motivo / Quadro</span>
               {editingField === "utiAdmissionReason" ? (
-                <div className="flex items-start gap-1">
+                <div className="flex items-start gap-0.5">
                   <Textarea
                     ref={textareaRef}
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="text-[10px] min-h-[40px] flex-1"
+                    className="text-[9px] min-h-[32px] flex-1 leading-snug print:min-h-[24px]"
                     placeholder="Motivo da admissão"
                   />
-                  <div className="flex flex-col gap-0.5">
-                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-5 w-5 p-0">
+                  <div className="flex flex-col gap-0">
+                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-4 w-4 p-0">
                       <Check className="h-2.5 w-2.5" />
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-5 w-5 p-0">
+                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-4 w-4 p-0">
                       <X className="h-2.5 w-2.5" />
                     </Button>
                   </div>
                 </div>
               ) : (
                 <p 
-                  className="text-[10px] cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 line-clamp-2"
+                  className="text-[9px] cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 line-clamp-2 leading-snug print:text-[7.5px] print:leading-tight"
                   onClick={() => startEditing("utiAdmissionReason", patient.utiAdmissionReason || "")}
                 >
                   {patient.utiAdmissionReason || <span className="italic text-muted-foreground">Motivo</span>}
                 </p>
               )}
               {editingField === "utiCurrentStatus" ? (
-                <div className="flex items-start gap-1 mt-1">
+                <div className="flex items-start gap-0.5 mt-0">
                   <Textarea
                     ref={textareaRef}
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="text-[10px] min-h-[40px] flex-1"
+                    className="text-[9px] min-h-[32px] flex-1 leading-snug print:min-h-[24px]"
                     placeholder="Quadro atual"
                   />
-                  <div className="flex flex-col gap-0.5">
-                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-5 w-5 p-0">
+                  <div className="flex flex-col gap-0">
+                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-4 w-4 p-0">
                       <Check className="h-2.5 w-2.5" />
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-5 w-5 p-0">
+                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-4 w-4 p-0">
                       <X className="h-2.5 w-2.5" />
                     </Button>
                   </div>
                 </div>
               ) : (
                 <p 
-                  className="text-[10px] text-muted-foreground mt-1 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 line-clamp-2"
+                  className="text-[9px] text-muted-foreground mt-0 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 line-clamp-2 leading-snug print:text-[7.5px] print:leading-tight"
                   onClick={() => startEditing("utiCurrentStatus", patient.utiCurrentStatus || "")}
                 >
                   {patient.utiCurrentStatus || <span className="italic">Quadro</span>}
@@ -676,28 +676,28 @@ export function PatientCardUTI({
 
             {/* Alergias */}
             <div className="flex flex-col md:col-span-2">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Alergias</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Alergias</span>
               {editingField === "utiAllergies" ? (
-                <div className="flex items-start gap-1">
+                <div className="flex items-start gap-0.5">
                   <Textarea
                     ref={textareaRef}
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="text-[10px] min-h-[40px] flex-1"
+                    className="text-[9px] min-h-[32px] flex-1 leading-snug"
                   />
-                  <div className="flex flex-col gap-0.5">
-                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-5 w-5 p-0">
+                  <div className="flex flex-col gap-0">
+                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-4 w-4 p-0">
                       <Check className="h-2.5 w-2.5" />
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-5 w-5 p-0">
+                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-4 w-4 p-0">
                       <X className="h-2.5 w-2.5" />
                     </Button>
                   </div>
                 </div>
               ) : (
                 <p 
-                  className="text-[10px] cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 line-clamp-3"
+                  className="text-[9px] cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 line-clamp-3 leading-snug print:text-[7.5px]"
                   onClick={() => startEditing("utiAllergies", patient.utiAllergies || "")}
                 >
                   {patient.utiAllergies || <span className="italic text-muted-foreground">Nenhuma</span>}
@@ -707,7 +707,7 @@ export function PatientCardUTI({
 
             {/* Dispositivos */}
             <div className="flex flex-col md:col-span-2">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Dispositivos</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Dispositivos</span>
               {editingField === "utiDevices" ? (
                 <div className="flex items-start gap-1">
                   <Textarea
@@ -739,7 +739,7 @@ export function PatientCardUTI({
 
             {/* Culturas / ATB */}
             <div className="flex flex-col md:col-span-2">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Culturas / ATB</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Culturas / ATB</span>
               {editingField === "utiCulturesAntibiotics" ? (
                 <div className="flex items-start gap-1">
                   <Textarea
@@ -770,8 +770,8 @@ export function PatientCardUTI({
 
             {/* Exames */}
             <div className="flex flex-col md:col-span-2">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Exames</span>
-              <ol className="text-[10px] space-y-0.5 list-none pl-0">
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Exames</span>
+              <ol className="text-[10px] space-y-0 list-none pl-0 print:text-[7.5px]">
                 {patient.relevantExams?.map((exam, idx) => (
                   <li key={idx} className="flex items-start gap-1 group hover:bg-accent/30 rounded px-1 -mx-1 py-0.5">
                     {editingField === "relevantExams" && editingArrayIndex === idx ? (
@@ -844,7 +844,7 @@ export function PatientCardUTI({
 
             {/* Programações / Pendências */}
             <div className="flex flex-col md:col-span-3">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Programações / Pendências</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Programações / Pendências</span>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -854,7 +854,7 @@ export function PatientCardUTI({
                   items={patient.pendencies?.map((_, i) => `pendency-${i}`) || []}
                   strategy={verticalListSortingStrategy}
                 >
-                  <ol className="text-[10px] space-y-0.5 list-none pl-0">
+                  <ol className="text-[10px] space-y-0 list-none pl-0 print:text-[7.5px]">
                     {patient.pendencies?.map((pendency, idx) => (
                       <SortablePendencyItem
                         key={`pendency-${idx}`}
@@ -914,29 +914,29 @@ export function PatientCardUTI({
 
             {/* Especialidades */}
             <div className="flex flex-col md:col-span-2">
-              <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Especialidades</span>
+              <span className="text-[10px] font-medium text-muted-foreground mb-0 print:text-[8px]">Especialidades</span>
               {editingField === "utiSpecialties" ? (
-                <div className="flex items-start gap-1">
+                <div className="flex items-start gap-0.5">
                   <Textarea
                     ref={textareaRef}
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="text-[10px] min-h-[40px] flex-1"
+                    className="text-[9px] min-h-[32px] flex-1 leading-snug"
                     placeholder="Ex: Pneumo, Infecto"
                   />
-                  <div className="flex flex-col gap-0.5">
-                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-5 w-5 p-0">
+                  <div className="flex flex-col gap-0">
+                    <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-4 w-4 p-0">
                       <Check className="h-2.5 w-2.5" />
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-5 w-5 p-0">
+                    <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-4 w-4 p-0">
                       <X className="h-2.5 w-2.5" />
                     </Button>
                   </div>
                 </div>
               ) : (
                 <p 
-                  className="text-[10px] cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 line-clamp-3"
+                  className="text-[9px] cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 line-clamp-3 leading-snug print:text-[7.5px]"
                   onClick={() => startEditing("utiSpecialties", patient.utiSpecialties || "")}
                 >
                   {patient.utiSpecialties || <span className="italic text-muted-foreground">Nenhuma</span>}
