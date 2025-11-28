@@ -107,13 +107,28 @@ export function AppSidebar({
       link: "/versions",
     },
     {
-      title: "DASHBOARD DE GESTÃO",
+      title: "ANOTAÇÕES, LEMBRETES E CHECK-LISTS",
+      icon: ClipboardCheck,
+      link: "/notes",
+    },
+    {
+      title: "PAINEL ADMIN",
       icon: BarChart3,
-      link: "/dashboard",
+      requiresPassword: true,
+      items: [
+        { name: "DASHBOARD DE GESTÃO", link: "/dashboard" },
+        { name: "CADASTRAR ESTADOS", link: "/admin/states" },
+        { name: "CADASTRAR UNIDADES", link: "/admin/units" },
+        { name: "GERENCIAR COORDENADORES", link: "/admin/coordinators" },
+      ],
     },
   ];
 
-  const handleDashboardClick = () => {
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  const [selectedSection, setSelectedSection] = useState<string | null>(null);
+
+  const handleAdminSectionClick = (sectionTitle: string) => {
+    setSelectedSection(sectionTitle);
     setShowPasswordDialog(true);
   };
 
@@ -121,7 +136,14 @@ export function AppSidebar({
     if (password === "NOTREDAME") {
       setShowPasswordDialog(false);
       setPassword("");
-      navigate("/dashboard");
+      setSelectedSection(null);
+      
+      // If there was a pending navigation (from clicking a subitem), navigate to it
+      if (pendingNavigation) {
+        navigate(pendingNavigation);
+        setPendingNavigation(null);
+      }
+      
       if (isMobile) {
         setOpenMobile(false);
       }
@@ -131,7 +153,14 @@ export function AppSidebar({
     }
   };
 
-  const handleItemClick = (item: string | { name: string; link?: string | null; action?: string; subsections?: any[] }) => {
+  const handleItemClick = (item: string | { name: string; link?: string | null; action?: string; subsections?: any[] }, parentSection?: any) => {
+    // Check if parent section requires password
+    if (parentSection?.requiresPassword) {
+      setPendingNavigation(typeof item === 'string' ? item : (item.link || null));
+      setSelectedSection(parentSection.title);
+      setShowPasswordDialog(true);
+      return;
+    }
     // Handle direct string links (like from section.link)
     if (typeof item === 'string') {
       navigate(item);
@@ -188,7 +217,7 @@ export function AppSidebar({
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton
-                      onClick={() => section.title === "DASHBOARD DE GESTÃO" ? handleDashboardClick() : handleItemClick(section.link)}
+                      onClick={() => handleItemClick(section.link)}
                       className={cn(
                         "transition-all duration-200 hover:bg-accent/80 hover:scale-105",
                         "justify-start px-4 py-3 h-auto",
@@ -199,9 +228,6 @@ export function AppSidebar({
                       <span className="text-xs font-medium uppercase tracking-wide text-foreground">
                         {section.title}
                       </span>
-                      {section.title === "DASHBOARD DE GESTÃO" && (
-                        <LockKeyhole className="h-3 w-3 ml-auto opacity-60" />
-                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -216,11 +242,18 @@ export function AppSidebar({
             >
               <SidebarGroup className="py-0 my-0">
                 <CollapsibleTrigger className="w-full">
-                  <SidebarGroupLabel className={cn(
-                    "transition-all duration-200 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
-                    isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3 hover:scale-105",
-                    "h-auto border-b border-border/50"
-                  )}
+                  <SidebarGroupLabel 
+                    className={cn(
+                      "transition-all duration-200 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
+                      isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3 hover:scale-105",
+                      "h-auto border-b border-border/50"
+                    )}
+                    onClick={(e) => {
+                      if (section.requiresPassword) {
+                        e.stopPropagation();
+                        handleAdminSectionClick(section.title);
+                      }
+                    }}
                   >
                     <div className={cn(
                       "flex items-center w-full",
@@ -235,7 +268,12 @@ export function AppSidebar({
                           <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
                             {section.title}
                           </span>
-                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                          {section.requiresPassword && (
+                            <LockKeyhole className="h-3 w-3 opacity-60" />
+                          )}
+                          {!section.requiresPassword && (
+                            <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                          )}
                         </>
                       )}
                     </div>
@@ -294,11 +332,11 @@ export function AppSidebar({
                         // Regular item without subsections
                         return (
                           <SidebarMenuItem key={itemKey}>
-                            <SidebarMenuButton
-                              className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 hover:translate-x-1 mb-1"
-                              tooltip={itemName}
-                              onClick={() => handleItemClick(item)}
-                            >
+                                     <SidebarMenuButton
+                                        className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 hover:translate-x-1 mb-1"
+                                        tooltip={itemName}
+                                        onClick={() => handleItemClick(item, section)}
+                                      >
                               <div className="rounded-full bg-primary/20 transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 h-2 w-2 ml-1" />
                               <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
                                 {itemName}
@@ -384,9 +422,9 @@ export function AppSidebar({
       <AlertDialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Acesso Restrito ao Dashboard</AlertDialogTitle>
+            <AlertDialogTitle>Acesso Restrito - Painel Admin</AlertDialogTitle>
             <AlertDialogDescription>
-              Digite a senha de coordenador para acessar o Dashboard de Gestão.
+              Digite a senha de coordenador para acessar {selectedSection || "o Painel Admin"}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="py-4">
