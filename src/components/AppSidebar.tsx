@@ -107,11 +107,6 @@ export function AppSidebar({
       link: "/versions",
     },
     {
-      title: "ANOTAÇÕES, LEMBRETES E CHECK-LISTS",
-      icon: ClipboardCheck,
-      link: "/notes",
-    },
-    {
       title: "PAINEL ADMIN",
       icon: BarChart3,
       requiresPassword: true,
