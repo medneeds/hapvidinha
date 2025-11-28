@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Patient } from "@/types/patient";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { useHospital } from "@/contexts/HospitalContext";
 
 export interface PatientVersion {
   id: string;
@@ -16,14 +17,22 @@ export function usePatientVersions() {
   const [versions, setVersions] = useState<PatientVersion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { currentState, currentHospital } = useHospital();
 
   const fetchVersions = async (department?: string) => {
     try {
       setIsLoading(true);
+
+      if (!currentHospital || !currentState) {
+        setIsLoading(false);
+        return;
+      }
       
       let query = supabase
         .from('patient_versions')
         .select('*')
+        .eq('hospital_unit_id', currentHospital.id)
+        .eq('state_id', currentState.id)
         .order('created_at', { ascending: false });
       
       if (department) {
@@ -63,6 +72,10 @@ export function usePatientVersions() {
         throw new Error("Usuário não autenticado");
       }
 
+      if (!currentHospital || !currentState) {
+        throw new Error("Hospital unit and state must be selected");
+      }
+
       const description = format(new Date(), "dd/MM/yyyy 'às' HH:mm");
 
       const { data, error } = await supabase
@@ -72,6 +85,8 @@ export function usePatientVersions() {
           description,
           snapshot_data: patients as any,
           department: department,
+          state_id: currentState.id,
+          hospital_unit_id: currentHospital.id,
         })
         .select()
         .single();

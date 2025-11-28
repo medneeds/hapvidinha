@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { useHospital } from "@/contexts/HospitalContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -51,6 +52,7 @@ interface Patient {
 const ResourcesPage = () => {
   const { user } = useAuth();
   const { currentDepartment } = useDepartment();
+  const { currentState, currentHospital } = useHospital();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -248,6 +250,15 @@ const ResourcesPage = () => {
       return;
     }
 
+    if (!currentHospital || !currentState) {
+      toast({
+        title: "ERRO",
+        description: "UNIDADE HOSPITALAR NÃO SELECIONADA",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase
       .from("internment_requests")
       .insert({
@@ -259,6 +270,8 @@ const ResourcesPage = () => {
         content: formData.content.toUpperCase(),
         department: currentDepartment,
         created_by: currentUser.id,
+        state_id: currentState.id,
+        hospital_unit_id: currentHospital.id,
       });
 
     if (error) {

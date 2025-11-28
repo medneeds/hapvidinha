@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useHospital } from "@/contexts/HospitalContext";
 import { TrendingUp, Skull, ArrowLeftRight } from "lucide-react";
 
 interface PatientMovementDialogProps {
@@ -80,6 +81,7 @@ export function PatientMovementDialog({
   const [responsibleDoctor, setResponsibleDoctor] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { currentState, currentHospital } = useHospital();
 
   const config = movementType ? movementConfig[movementType] : null;
   const Icon = config?.icon;
@@ -99,6 +101,10 @@ export function PatientMovementDialog({
     setIsSubmitting(true);
 
     try {
+      if (!currentHospital || !currentState) {
+        throw new Error('Hospital unit and state must be selected');
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       
       const finalDestination = destination === "OUTRO" ? customDestination : destination;
@@ -119,6 +125,8 @@ export function PatientMovementDialog({
           created_by: user?.id,
           patient_snapshot: patient as any,
           department: patientDepartment,
+          state_id: currentState.id,
+          hospital_unit_id: currentHospital.id,
         });
 
       if (error) throw error;

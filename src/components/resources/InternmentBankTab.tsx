@@ -5,6 +5,7 @@ import { Database, Plus, Search, Trash2, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { useHospital } from "@/contexts/HospitalContext";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +47,7 @@ interface InternmentRequest {
 
 const InternmentBankTab = () => {
   const { currentDepartment } = useDepartment();
+  const { currentState, currentHospital } = useHospital();
   const [requests, setRequests] = useState<InternmentRequest[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<InternmentRequest[]>([]);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -164,6 +166,15 @@ const InternmentBankTab = () => {
       return;
     }
 
+    if (!currentHospital || !currentState) {
+      toast({
+        title: "ERRO",
+        description: "UNIDADE HOSPITALAR NÃO SELECIONADA",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase
       .from("internment_requests")
       .insert({
@@ -175,6 +186,8 @@ const InternmentBankTab = () => {
         content: formData.content.toUpperCase(),
         created_by: user.id,
         department: currentDepartment,
+        state_id: currentState.id,
+        hospital_unit_id: currentHospital.id,
       });
 
     if (error) {
