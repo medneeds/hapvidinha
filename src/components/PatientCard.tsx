@@ -1172,7 +1172,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {currentDepartment === "UTI" && (
               <>
                 {/* Bloco Administrativo - Linha 1 */}
-                <div className="md:col-span-12 border-l-2 border-primary/20 pl-3 pr-3 py-2 bg-muted/5 rounded-r">
+                <div className="md:col-span-18 border-l-2 border-primary/20 pl-3 pr-3 py-2 bg-muted/5 rounded-r">
                   <div className="grid grid-cols-12 gap-2">
                     {/* Setor de Origem */}
                     <div className="flex flex-col md:col-span-3 min-w-0">
@@ -1539,7 +1539,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Bloco Investigação - Linha 2 */}
-                <div className="md:col-span-12 border-l-2 border-muted-foreground/20 pl-3 pr-3 py-2 bg-muted/10 rounded-r">
+                <div className="md:col-span-18 border-l-2 border-muted-foreground/20 pl-3 pr-3 py-2 bg-muted/10 rounded-r">
                   <div className="grid grid-cols-12 gap-2 items-start">
                     {/* Motivo da Admissão */}
                     <div className="flex flex-col md:col-span-3 min-w-0">
@@ -1927,7 +1927,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Bloco Clínico - Linha 3 */}
-                <div className="md:col-span-12 border-l-2 border-accent/30 pl-3 pr-3 py-2 bg-accent/5 rounded-r">
+                <div className="md:col-span-18 border-l-2 border-accent/30 pl-3 pr-3 py-2 bg-accent/5 rounded-r">
                   <div className="grid grid-cols-12 gap-2">
                     {/* Dispositivos */}
                     <div className="flex flex-col md:col-span-3 min-w-0">
