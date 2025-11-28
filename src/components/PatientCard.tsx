@@ -1371,15 +1371,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     )}
                     </DndContext>
                   </div>
-                  </div>
-                </div>
 
-                {/* Bloco Clínico Principal */}
-                <div className="md:col-span-12 border-l-2 border-accent/30 pl-3 py-2 bg-accent/5 rounded-r space-y-3">
-                  <div className="grid grid-cols-12 gap-2">
-                    {/* 5. Alergias */}
-                    <div className="flex flex-col md:col-span-3">
-                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Alergias</span>
+                  {/* 4. Alergias */}
+                  <div className="flex flex-col md:col-span-3">
+                  <span className="text-[9px] font-medium text-muted-foreground mb-0">Alergias</span>
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -1397,7 +1392,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       items={(patient.utiAllergies || []).map((_, i) => `uti-allergies-${i}`)}
                       strategy={verticalListSortingStrategy}
                     >
-                      <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                      <ol className="text-xs text-foreground space-y-0 print:text-[7.5px] list-none pl-0">
                         {(patient.utiAllergies || []).map((item, idx) => (
                           <SortableDiagnosisItemCollapsed
                             key={`uti-allergies-${idx}`}
@@ -1459,9 +1454,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </DndContext>
                   </div>
 
-                  {/* 6. Especialidades */}
+                  {/* 5. Especialidades */}
                   <div className="flex flex-col md:col-span-3">
-                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Especialidades</span>
+                  <span className="text-[9px] font-medium text-muted-foreground mb-0">Especialidades</span>
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -1479,7 +1474,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       items={(patient.utiSpecialties || []).map((_, i) => `uti-specialties-${i}`)}
                       strategy={verticalListSortingStrategy}
                     >
-                      <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                      <ol className="text-xs text-foreground space-y-0 print:text-[7.5px] list-none pl-0">
                         {(patient.utiSpecialties || []).map((item, idx) => (
                           <SortableDiagnosisItemCollapsed
                             key={`uti-specialties-${idx}`}
@@ -1556,9 +1551,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     )}
                     </DndContext>
                   </div>
+                  </div>
+                </div>
 
-                  {/* 7. Motivo da Admissão */}
-                  <div className="flex flex-col md:col-span-3">
+                {/* Bloco Clínico Principal */}
+                <div className="md:col-span-12 border-l-2 border-accent/30 pl-3 py-2 bg-accent/5 rounded-r space-y-3">
+                  <div className="grid grid-cols-12 gap-2">
+                    {/* 6. Motivo da Admissão */}
+                    <div className="flex flex-col md:col-span-3">
                   <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Motivo da Admissão</span>
                   <DndContext
                     sensors={sensors}
@@ -1599,7 +1599,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         ))}
                       </ol>
                     </SortableContext>
-                    {editingField === "utiAdmissionReason" && editingArrayIndex === -2 ? (
+                    {editingField === "utiAdmissionReason" && editingArrayIndex === -2 && (
                       <li className="text-[10px] text-foreground leading-snug uppercase rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
@@ -1622,40 +1622,24 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           />
                         </div>
                         <div className="flex items-center gap-0.5 flex-shrink-0">
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={saveInlineEdit}
-                            className="h-4 w-4 text-green-600 hover:bg-green-100 p-0"
-                          >
+                          <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-4 w-4 text-green-600 hover:bg-green-100 p-0">
                             <Check className="h-2.5 w-2.5" />
                           </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={cancelEditing}
-                            className="h-4 w-4 text-red-600 hover:bg-red-100 p-0"
-                          >
+                          <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-4 w-4 text-red-600 hover:bg-red-100 p-0">
                             <X className="h-2.5 w-2.5" />
                           </Button>
                         </div>
                       </li>
-                    ) : null}
+                    )}
                     {(patient.utiAdmissionReason || []).length === 0 && editingField !== "utiAdmissionReason" && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => startEditing("utiAdmissionReason", "", -2)}
-                        className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
-                        title="Adicionar Motivo da Admissão"
-                      >
+                      <Button size="icon" variant="ghost" onClick={() => startEditing("utiAdmissionReason", "", -2)} className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden" title="Adicionar Motivo">
                         <span className="text-xs">+</span>
                       </Button>
                     )}
                     </DndContext>
                   </div>
 
-                  {/* 8. Hipóteses / Diagnósticos */}
+                  {/* 7. Hipóteses / Diagnósticos */}
                   <div className="flex flex-col md:col-span-3 relative">
                   <div className="flex items-center gap-1 mb-0.5">
                     <span className="text-[10px] font-medium text-muted-foreground">Hipóteses / Diagnósticos</span>
@@ -1760,7 +1744,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </DndContext>
                   </div>
 
-                  {/* 9. Quadro Atual */}
+                  {/* 8. Quadro Atual */}
                   <div className="flex flex-col md:col-span-3">
                   <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Quadro Atual</span>
                   <DndContext
@@ -1858,7 +1842,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </DndContext>
                   </div>
 
-                  {/* 10. Dispositivos */}
+                  {/* 9. Dispositivos */}
                   <div className="flex flex-col md:col-span-3">
                   <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Dispositivos</span>
                   <DndContext
@@ -1961,7 +1945,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 {/* Bloco Investigação e Tratamento */}
                 <div className="md:col-span-12 border-l-2 border-muted-foreground/20 pl-3 py-2 bg-muted/10 rounded-r space-y-3">
                   <div className="grid grid-cols-12 gap-2">
-                    {/* 11. Exames */}
+                    {/* 10. Exames */}
                     <div className="flex flex-col md:col-span-3 relative">
                   <div className="flex items-center gap-1 mb-0.5">
                     <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
@@ -2072,7 +2056,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </DndContext>
                   </div>
 
-                  {/* 12. Culturas / ATB */}
+                  {/* 11. Culturas / ATB */}
                   <div className="flex flex-col md:col-span-3">
                   <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Culturas / ATB</span>
                   <DndContext
@@ -2170,7 +2154,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </DndContext>
                 </div>
 
-                {/* 13. Programações / Pendências */}
+                {/* 12. Programações / Pendências */}
                 <div className="flex flex-col md:col-span-5 relative">
                   <div className="flex items-center gap-1 mb-0.5">
                     <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
