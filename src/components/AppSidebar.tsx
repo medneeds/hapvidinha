@@ -193,7 +193,7 @@ export function AppSidebar({
 
   const sidebarContent = (
     <>
-      <SidebarHeader className="border-b border-border/30 px-3 py-3" style={{ backgroundColor: '#0057A8' }}>
+      <SidebarHeader className="border-b border-border/30 px-3 py-3" style={{ backgroundColor: '#1E5CB8' }}>
         <div className="flex items-center justify-center">
           <img 
             src={hapvidaLogo} 
