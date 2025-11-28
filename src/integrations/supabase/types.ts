@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      hospital_units: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          name: string
+          state_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          state_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          state_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospital_units_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       internment_requests: {
         Row: {
           content: string
@@ -21,11 +53,13 @@ export type Database = {
           created_by: string | null
           department: string
           destination: string
+          hospital_unit_id: string
           id: string
           patient_age: number | null
           patient_name: string
           patient_record: string | null
           patient_sex: string | null
+          state_id: string
           updated_at: string
         }
         Insert: {
@@ -34,11 +68,13 @@ export type Database = {
           created_by?: string | null
           department?: string
           destination: string
+          hospital_unit_id: string
           id?: string
           patient_age?: number | null
           patient_name: string
           patient_record?: string | null
           patient_sex?: string | null
+          state_id: string
           updated_at?: string
         }
         Update: {
@@ -47,14 +83,31 @@ export type Database = {
           created_by?: string | null
           department?: string
           destination?: string
+          hospital_unit_id?: string
           id?: string
           patient_age?: number | null
           patient_name?: string
           patient_record?: string | null
           patient_sex?: string | null
+          state_id?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "internment_requests_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "internment_requests_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       medical_codes: {
         Row: {
@@ -93,10 +146,12 @@ export type Database = {
           created_at: string
           created_by: string | null
           department: string
+          hospital_unit_id: string
           id: string
           is_active: boolean | null
           read: boolean | null
           scheduled_popup_time: string | null
+          state_id: string
           type: string
           updated_at: string
           user_id: string | null
@@ -107,10 +162,12 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           department?: string
+          hospital_unit_id: string
           id?: string
           is_active?: boolean | null
           read?: boolean | null
           scheduled_popup_time?: string | null
+          state_id: string
           type: string
           updated_at?: string
           user_id?: string | null
@@ -121,15 +178,32 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           department?: string
+          hospital_unit_id?: string
           id?: string
           is_active?: boolean | null
           read?: boolean | null
           scheduled_popup_time?: string | null
+          state_id?: string
           type?: string
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notes_reminders_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_reminders_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       patient_movements: {
         Row: {
@@ -137,6 +211,7 @@ export type Database = {
           created_by: string | null
           department: string
           destination: string | null
+          hospital_unit_id: string
           id: string
           movement_type: string
           notes: string | null
@@ -146,12 +221,14 @@ export type Database = {
           patient_sector: string | null
           patient_snapshot: Json | null
           responsible_doctor: string | null
+          state_id: string
         }
         Insert: {
           created_at?: string
           created_by?: string | null
           department?: string
           destination?: string | null
+          hospital_unit_id: string
           id?: string
           movement_type: string
           notes?: string | null
@@ -161,12 +238,14 @@ export type Database = {
           patient_sector?: string | null
           patient_snapshot?: Json | null
           responsible_doctor?: string | null
+          state_id: string
         }
         Update: {
           created_at?: string
           created_by?: string | null
           department?: string
           destination?: string | null
+          hospital_unit_id?: string
           id?: string
           movement_type?: string
           notes?: string | null
@@ -176,8 +255,24 @@ export type Database = {
           patient_sector?: string | null
           patient_snapshot?: Json | null
           responsible_doctor?: string | null
+          state_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "patient_movements_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_movements_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       patient_versions: {
         Row: {
@@ -185,26 +280,47 @@ export type Database = {
           created_by: string | null
           department: string
           description: string
+          hospital_unit_id: string
           id: string
           snapshot_data: Json
+          state_id: string
         }
         Insert: {
           created_at?: string
           created_by?: string | null
           department?: string
           description: string
+          hospital_unit_id: string
           id?: string
           snapshot_data: Json
+          state_id: string
         }
         Update: {
           created_at?: string
           created_by?: string | null
           department?: string
           description?: string
+          hospital_unit_id?: string
           id?: string
           snapshot_data?: Json
+          state_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "patient_versions_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_versions_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       patients: {
         Row: {
@@ -217,6 +333,7 @@ export type Database = {
           department: string
           diagnoses: string | null
           highlighted_pendencies: number[] | null
+          hospital_unit_id: string
           id: string
           medical_history: string | null
           name: string
@@ -224,6 +341,7 @@ export type Database = {
           relevant_exams: string | null
           schedule: string | null
           sector: string
+          state_id: string
           updated_at: string
         }
         Insert: {
@@ -236,6 +354,7 @@ export type Database = {
           department?: string
           diagnoses?: string | null
           highlighted_pendencies?: number[] | null
+          hospital_unit_id: string
           id?: string
           medical_history?: string | null
           name?: string
@@ -243,6 +362,7 @@ export type Database = {
           relevant_exams?: string | null
           schedule?: string | null
           sector: string
+          state_id: string
           updated_at?: string
         }
         Update: {
@@ -255,6 +375,7 @@ export type Database = {
           department?: string
           diagnoses?: string | null
           highlighted_pendencies?: number[] | null
+          hospital_unit_id?: string
           id?: string
           medical_history?: string | null
           name?: string
@@ -262,9 +383,25 @@ export type Database = {
           relevant_exams?: string | null
           schedule?: string | null
           sector?: string
+          state_id?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "patients_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patients_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -320,6 +457,7 @@ export type Database = {
           has_infection: boolean | null
           has_organic_dysfunction: boolean | null
           hospital: string | null
+          hospital_unit_id: string
           id: string
           infection_excluded_date: string | null
           lactate_date: string | null
@@ -341,6 +479,7 @@ export type Database = {
           sirs_temp_high: boolean | null
           sirs_temp_low: boolean | null
           sirs_young_cells: boolean | null
+          state_id: string
           updated_at: string
           volume_administered: number | null
         }
@@ -373,6 +512,7 @@ export type Database = {
           has_infection?: boolean | null
           has_organic_dysfunction?: boolean | null
           hospital?: string | null
+          hospital_unit_id: string
           id?: string
           infection_excluded_date?: string | null
           lactate_date?: string | null
@@ -394,6 +534,7 @@ export type Database = {
           sirs_temp_high?: boolean | null
           sirs_temp_low?: boolean | null
           sirs_young_cells?: boolean | null
+          state_id: string
           updated_at?: string
           volume_administered?: number | null
         }
@@ -426,6 +567,7 @@ export type Database = {
           has_infection?: boolean | null
           has_organic_dysfunction?: boolean | null
           hospital?: string | null
+          hospital_unit_id?: string
           id?: string
           infection_excluded_date?: string | null
           lactate_date?: string | null
@@ -447,15 +589,30 @@ export type Database = {
           sirs_temp_high?: boolean | null
           sirs_temp_low?: boolean | null
           sirs_young_cells?: boolean | null
+          state_id?: string
           updated_at?: string
           volume_administered?: number | null
         }
         Relationships: [
           {
+            foreignKeyName: "sepsis_protocols_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "sepsis_protocols_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sepsis_protocols_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
             referencedColumns: ["id"]
           },
         ]
@@ -468,11 +625,13 @@ export type Database = {
           handover_datetime: string
           handover_from: string | null
           handover_to: string | null
+          hospital_unit_id: string
           id: string
           notes: string | null
           occupied_beds: number
           shift_type: string | null
           snapshot_data: Json
+          state_id: string
           total_patients: number
         }
         Insert: {
@@ -482,11 +641,13 @@ export type Database = {
           handover_datetime?: string
           handover_from?: string | null
           handover_to?: string | null
+          hospital_unit_id: string
           id?: string
           notes?: string | null
           occupied_beds?: number
           shift_type?: string | null
           snapshot_data: Json
+          state_id: string
           total_patients?: number
         }
         Update: {
@@ -496,12 +657,50 @@ export type Database = {
           handover_datetime?: string
           handover_from?: string | null
           handover_to?: string | null
+          hospital_unit_id?: string
           id?: string
           notes?: string | null
           occupied_beds?: number
           shift_type?: string | null
           snapshot_data?: Json
+          state_id?: string
           total_patients?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shift_handovers_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shift_handovers_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      states: {
+        Row: {
+          abbreviation: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          abbreviation: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          abbreviation?: string
+          created_at?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }
@@ -525,6 +724,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_hospital_assignments: {
+        Row: {
+          created_at: string
+          hospital_unit_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hospital_unit_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hospital_unit_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_hospital_assignments_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
