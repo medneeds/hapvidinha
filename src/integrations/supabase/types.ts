@@ -344,6 +344,14 @@ export type Database = {
           sector: string
           state_id: string
           updated_at: string
+          uti_admission_date: string | null
+          uti_admission_reason: string | null
+          uti_allergies: string | null
+          uti_cultures_antibiotics: string | null
+          uti_current_status: string | null
+          uti_devices: string | null
+          uti_discharge_prediction: string | null
+          uti_specialties: string | null
         }
         Insert: {
           admission_date?: string | null
@@ -366,6 +374,14 @@ export type Database = {
           sector: string
           state_id: string
           updated_at?: string
+          uti_admission_date?: string | null
+          uti_admission_reason?: string | null
+          uti_allergies?: string | null
+          uti_cultures_antibiotics?: string | null
+          uti_current_status?: string | null
+          uti_devices?: string | null
+          uti_discharge_prediction?: string | null
+          uti_specialties?: string | null
         }
         Update: {
           admission_date?: string | null
@@ -388,6 +404,14 @@ export type Database = {
           sector?: string
           state_id?: string
           updated_at?: string
+          uti_admission_date?: string | null
+          uti_admission_reason?: string | null
+          uti_allergies?: string | null
+          uti_cultures_antibiotics?: string | null
+          uti_current_status?: string | null
+          uti_devices?: string | null
+          uti_discharge_prediction?: string | null
+          uti_specialties?: string | null
         }
         Relationships: [
           {
