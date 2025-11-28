@@ -929,8 +929,8 @@ const Index = () => {
               {currentDepartment === "UTI" ? (
                 <div>
                   <SectorSection 
-                    sector="red" 
-                    patients={redPatients} 
+                    sector="blue" 
+                    patients={redPatients}
                     onUpdatePatient={handleUpdatePatient}
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
