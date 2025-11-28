@@ -166,11 +166,11 @@ export default function AuthPage() {
             </div>
           </div>
           
-          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
-            Mapa de Pacientes
+          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 uppercase">
+            MAPA DE PACIENTES
           </h1>
           <p className="text-white/80 text-sm uppercase tracking-wider font-medium animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300">
-            Hospital Guarás - Urgência e Emergência
+            HOSPITAL GUARÁS - URGÊNCIA E EMERGÊNCIA
           </p>
         </div>
 
@@ -180,33 +180,30 @@ export default function AuthPage() {
           <div className="absolute inset-0 opacity-20 pointer-events-none">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#013ba6]/10 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
           </div>
-          <div className="mb-10 relative z-10">
-            <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="mb-8 relative z-10">
+            <div className="flex items-center justify-center gap-3">
               <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] flex items-center justify-center shadow-lg shadow-[#013ba6]/50 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <LogIn className="h-7 w-7 text-white relative z-10 transform group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-300" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-center text-gray-900 mb-2 tracking-tight">
-              Acesse sua conta
-            </h2>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5 relative z-10">
             {/* Hierarchical Selection Section */}
             <div className="space-y-4 pb-5 border-b-2 border-gray-200">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Selecione sua localização</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">SELECIONE SUA LOCALIZAÇÃO</p>
               
               {/* State Selection */}
               <div className="space-y-2 group">
                 <Label 
                   htmlFor="state-select" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
                 >
                   <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
                     <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
                   </div>
-                  Estado
+                  ESTADO
                 </Label>
                 <Select
                   value={selectedState}
@@ -218,9 +215,9 @@ export default function AuthPage() {
                 >
                   <SelectTrigger 
                     id="state-select"
-                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
+                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl uppercase"
                   >
-                    <SelectValue placeholder="Selecione o estado" />
+                    <SelectValue placeholder="SELECIONE O ESTADO" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
                     {states.map((state) => (
@@ -240,12 +237,12 @@ export default function AuthPage() {
               <div className="space-y-2 group">
                 <Label 
                   htmlFor="hospital-select" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
                 >
                   <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
                     <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
                   </div>
-                  Unidade Hospitalar
+                  UNIDADE HOSPITALAR
                 </Label>
                 <Select
                   value={selectedHospitalId}
@@ -254,9 +251,9 @@ export default function AuthPage() {
                 >
                   <SelectTrigger 
                     id="hospital-select"
-                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed uppercase"
                   >
-                    <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Primeiro selecione um estado"} />
+                    <SelectValue placeholder={selectedState ? "SELECIONE A UNIDADE" : "PRIMEIRO SELECIONE UM ESTADO"} />
                   </SelectTrigger>
                   <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
                     {filteredHospitals.map((hospital) => (
@@ -276,12 +273,12 @@ export default function AuthPage() {
               <div className="space-y-2 group">
                 <Label 
                   htmlFor="department-select" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
                 >
                   <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
                     <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
                   </div>
-                  Setor
+                  SETOR
                 </Label>
                 <Select
                   value={selectedDepartment}
@@ -290,9 +287,9 @@ export default function AuthPage() {
                 >
                   <SelectTrigger 
                     id="department-select"
-                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
+                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl uppercase"
                   >
-                    <SelectValue placeholder="Selecione o setor" />
+                    <SelectValue placeholder="SELECIONE O SETOR" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
                     {DEPARTMENTS.map((dept) => (
@@ -311,24 +308,24 @@ export default function AuthPage() {
 
             {/* Authentication Fields Section */}
             <div className="space-y-4 pt-2">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Dados de acesso</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">DADOS DE ACESSO</p>
               
               {/* Username Field */}
               <div className="space-y-2 group">
                 <Label 
                   htmlFor="login-username" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
                 >
                   <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
                     <User className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
                   </div>
-                  Usuário
+                  USUÁRIO
                 </Label>
                 <Input
                   id="login-username"
                   type="text"
-                  placeholder="Digite seu usuário"
-                  className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white"
+                  placeholder="DIGITE SEU USUÁRIO"
+                  className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white uppercase placeholder:uppercase"
                   value={loginData.username}
                   onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
                   disabled={loading}
@@ -340,19 +337,19 @@ export default function AuthPage() {
               <div className="space-y-2 group">
                 <Label 
                   htmlFor="login-password" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
                 >
                   <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
                     <Lock className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
                   </div>
-                  Senha
+                  SENHA
                 </Label>
                 <div className="relative">
                   <Input
                     id="login-password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Digite sua senha"
-                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-4 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white"
+                    placeholder="DIGITE SUA SENHA"
+                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-4 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white placeholder:uppercase"
                     value={loginData.password}
                     onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
                     disabled={loading}
@@ -377,36 +374,36 @@ export default function AuthPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-base rounded-2xl shadow-xl shadow-[#013ba6]/40 transition-all duration-300 hover:shadow-2xl hover:shadow-[#013ba6]/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mt-8 relative overflow-hidden group"
+              className="w-full h-14 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-base rounded-2xl shadow-xl shadow-[#013ba6]/40 transition-all duration-300 hover:shadow-2xl hover:shadow-[#013ba6]/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mt-8 relative overflow-hidden group uppercase"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               {loading ? (
                 <div className="flex items-center gap-3 relative z-10">
                   <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Entrando...</span>
+                  <span>ENTRANDO...</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-3 relative z-10">
                   <LogIn className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                  <span>Entrar no Sistema</span>
+                  <span>ENTRAR NO SISTEMA</span>
                 </div>
               )}
             </Button>
           </form>
 
           <div className="mt-8 pt-8 border-t-2 border-gray-200 relative z-10">
-            <div className="flex items-center justify-center gap-2 text-xs text-gray-500 font-medium">
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-500 font-medium uppercase">
               <div className="h-6 w-6 rounded-lg bg-gray-100 flex items-center justify-center">
                 <Lock className="h-3 w-3 text-gray-600" />
               </div>
-              <span className="tracking-wide">Conexão segura e criptografada</span>
+              <span className="tracking-wide">CONEXÃO SEGURA E CRIPTOGRAFADA</span>
             </div>
           </div>
         </div>
 
         {/* Footer with animation */}
         <div className="text-center mt-6 animate-in fade-in-0 duration-1000 delay-700">
-          <p className="text-white/40 text-[10px] italic">Desenvolvido por Artur Batista</p>
+          <p className="text-white/40 text-[10px] italic uppercase">DESENVOLVIDO POR ARTUR BATISTA</p>
         </div>
       </div>
       </div>
