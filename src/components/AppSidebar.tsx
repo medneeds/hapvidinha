@@ -13,7 +13,7 @@ import {
   LockKeyhole,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import hapvidaLogo from "@/assets/hapvida-logo-nova.jpg";
+import hapvidaLogo from "@/assets/logo-hapvida-fundo-branco.png";
 import { useState } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
@@ -193,12 +193,12 @@ export function AppSidebar({
 
   const sidebarContent = (
     <>
-      <SidebarHeader className="border-b border-border/30 px-3 py-3" style={{ backgroundColor: '#1E5CB8' }}>
+      <SidebarHeader className="border-b border-border/30 px-4 py-2 bg-white">
         <div className="flex items-center justify-center">
           <img 
             src={hapvidaLogo} 
-            alt="Hapvida NotreDame Intermédica" 
-            className="w-full h-auto max-h-14 object-contain animate-fade-in"
+            alt="Hapvida" 
+            className="w-full h-auto max-h-12 object-contain animate-fade-in"
           />
         </div>
       </SidebarHeader>
