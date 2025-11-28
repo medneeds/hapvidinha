@@ -192,176 +192,186 @@ export default function AuthPage() {
             </h2>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6 relative z-10">
-            <div className="space-y-3 group">
-              <Label 
-                htmlFor="login-username" 
-                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
-              >
-                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                  <User className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
-                </div>
-                Usuário
-              </Label>
-              <div className="relative">
+          <form onSubmit={handleLogin} className="space-y-5 relative z-10">
+            {/* Hierarchical Selection Section */}
+            <div className="space-y-4 pb-5 border-b-2 border-gray-200">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Selecione sua localização</p>
+              
+              {/* State Selection */}
+              <div className="space-y-2 group">
+                <Label 
+                  htmlFor="state-select" 
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                >
+                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                    <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                  </div>
+                  Estado
+                </Label>
+                <Select
+                  value={selectedState}
+                  onValueChange={(value) => {
+                    setSelectedState(value);
+                    setSelectedHospitalId(""); // Reset hospital when state changes
+                  }}
+                  disabled={loading || hospitalLoading}
+                >
+                  <SelectTrigger 
+                    id="state-select"
+                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
+                  >
+                    <SelectValue placeholder="Selecione o estado" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
+                    {states.map((state) => (
+                      <SelectItem 
+                        key={state.id} 
+                        value={state.id}
+                        className="text-sm font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
+                      >
+                        {state.name} ({state.abbreviation})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Hospital Unit Selection */}
+              <div className="space-y-2 group">
+                <Label 
+                  htmlFor="hospital-select" 
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                >
+                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                    <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                  </div>
+                  Unidade Hospitalar
+                </Label>
+                <Select
+                  value={selectedHospitalId}
+                  onValueChange={setSelectedHospitalId}
+                  disabled={loading || hospitalLoading || !selectedState}
+                >
+                  <SelectTrigger 
+                    id="hospital-select"
+                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Primeiro selecione um estado"} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
+                    {filteredHospitals.map((hospital) => (
+                      <SelectItem 
+                        key={hospital.id} 
+                        value={hospital.id}
+                        className="text-sm font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
+                      >
+                        {hospital.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Department Selection */}
+              <div className="space-y-2 group">
+                <Label 
+                  htmlFor="department-select" 
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                >
+                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                    <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                  </div>
+                  Setor
+                </Label>
+                <Select
+                  value={selectedDepartment}
+                  onValueChange={(value: Department) => setSelectedDepartment(value)}
+                  disabled={loading}
+                >
+                  <SelectTrigger 
+                    id="department-select"
+                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
+                  >
+                    <SelectValue placeholder="Selecione o setor" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
+                    {DEPARTMENTS.map((dept) => (
+                      <SelectItem 
+                        key={dept} 
+                        value={dept}
+                        className="text-sm font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
+                      >
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Authentication Fields Section */}
+            <div className="space-y-4 pt-2">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Dados de acesso</p>
+              
+              {/* Username Field */}
+              <div className="space-y-2 group">
+                <Label 
+                  htmlFor="login-username" 
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
+                >
+                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                    <User className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                  </div>
+                  Usuário
+                </Label>
                 <Input
                   id="login-username"
                   type="text"
                   placeholder="Digite seu usuário"
-                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-5 text-base font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white"
+                  className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white"
                   value={loginData.username}
                   onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
                   disabled={loading}
                   autoComplete="username"
                 />
               </div>
-            </div>
 
-            <div className="space-y-3 group">
-              <Label 
-                htmlFor="login-password" 
-                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
-              >
-                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                  <Lock className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
-                </div>
-                Senha
-              </Label>
-              <div className="relative">
-                <Input
-                  id="login-password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Digite sua senha"
-                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-5 pr-12 text-base font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white"
-                  value={loginData.password}
-                  onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                  disabled={loading}
-                  autoComplete="current-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#013ba6] transition-colors duration-200"
-                  tabIndex={-1}
+              {/* Password Field */}
+              <div className="space-y-2 group">
+                <Label 
+                  htmlFor="login-password" 
+                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6]"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
+                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                    <Lock className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                  </div>
+                  Senha
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="login-password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Digite sua senha"
+                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-4 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white"
+                    value={loginData.password}
+                    onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                    disabled={loading}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#013ba6] transition-colors duration-200"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
-
-            {/* State Selection */}
-            <div className="space-y-3 group">
-              <Label 
-                htmlFor="state-select" 
-                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
-              >
-                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                  <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
-                </div>
-                Estado
-              </Label>
-              <Select
-                value={selectedState}
-                onValueChange={(value) => {
-                  setSelectedState(value);
-                  setSelectedHospitalId(""); // Reset hospital when state changes
-                }}
-                disabled={loading || hospitalLoading}
-              >
-                <SelectTrigger 
-                  id="state-select"
-                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-base font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
-                >
-                  <SelectValue placeholder="Selecione o estado" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
-                  {states.map((state) => (
-                    <SelectItem 
-                      key={state.id} 
-                      value={state.id}
-                      className="text-base font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
-                    >
-                      {state.name} ({state.abbreviation})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Hospital Unit Selection */}
-            <div className="space-y-3 group">
-              <Label 
-                htmlFor="hospital-select" 
-                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
-              >
-                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                  <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
-                </div>
-                Unidade Hospitalar
-              </Label>
-              <Select
-                value={selectedHospitalId}
-                onValueChange={setSelectedHospitalId}
-                disabled={loading || hospitalLoading || !selectedState}
-              >
-                <SelectTrigger 
-                  id="hospital-select"
-                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-base font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
-                >
-                  <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Primeiro selecione um estado"} />
-                </SelectTrigger>
-                <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
-                  {filteredHospitals.map((hospital) => (
-                    <SelectItem 
-                      key={hospital.id} 
-                      value={hospital.id}
-                      className="text-base font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
-                    >
-                      {hospital.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Department Selection */}
-            <div className="space-y-3 group">
-              <Label 
-                htmlFor="department-select" 
-                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
-              >
-                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                  <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
-                </div>
-                Setor
-              </Label>
-              <Select
-                value={selectedDepartment}
-                onValueChange={(value: Department) => setSelectedDepartment(value)}
-                disabled={loading}
-              >
-                <SelectTrigger 
-                  id="department-select"
-                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-base font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
-                >
-                  <SelectValue placeholder="Selecione o setor" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
-                  {DEPARTMENTS.map((dept) => (
-                    <SelectItem 
-                      key={dept} 
-                      value={dept}
-                      className="text-base font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
-                    >
-                      {dept}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
             <Button
