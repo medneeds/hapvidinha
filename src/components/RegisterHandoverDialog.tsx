@@ -88,6 +88,8 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
           yellow: patients.filter(p => p.sector === 'yellow').length,
           blue: patients.filter(p => p.sector === 'blue').length,
           outside: patients.filter(p => p.sector === 'outside').length,
+          uti1: patients.filter(p => p.sector === 'uti1').length,
+          uti2: patients.filter(p => p.sector === 'uti2').length,
         }
       };
 

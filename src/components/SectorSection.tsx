@@ -41,6 +41,7 @@ interface SectorSectionProps {
   onOpenChange?: (open: boolean) => void;
   customTitle?: string;
   customIcon?: string;
+  customGradientClass?: string;
 }
 
 const sectorInfo = {
@@ -61,6 +62,24 @@ const sectorInfo = {
     subtitle: "Sem monitorização",
     icon: "🔵",
     gradientClass: "bg-gradient-stable"
+  },
+  outside: {
+    title: "Fora das Alas",
+    subtitle: "Local externo",
+    icon: "📍",
+    gradientClass: "bg-gradient-card"
+  },
+  uti1: {
+    title: "UTI 1",
+    subtitle: "Unidade de Terapia Intensiva 1",
+    icon: "🏥",
+    gradientClass: "bg-gradient-uti1"
+  },
+  uti2: {
+    title: "UTI 2",
+    subtitle: "Unidade de Terapia Intensiva 2",
+    icon: "🏥",
+    gradientClass: "bg-gradient-uti2"
   }
 };
 
@@ -125,11 +144,13 @@ export function SectorSection({
   isOpen: controlledIsOpen,
   onOpenChange,
   customTitle,
-  customIcon
+  customIcon,
+  customGradientClass
 }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
+  const gradientClass = customGradientClass || info.gradientClass;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
   
   // Use controlled state if provided, otherwise use internal state
@@ -179,7 +200,7 @@ export function SectorSection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
-      <div className={`${info.gradientClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center`}>
+      <div className={`${gradientClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center`}>
         <div className="flex items-center justify-between w-full gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
@@ -191,7 +212,9 @@ export function SectorSection({
                     ? 'border-critical data-[state=checked]:bg-critical data-[state=checked]:border-critical' 
                     : sector === 'yellow' 
                     ? 'border-warning data-[state=checked]:bg-warning data-[state=checked]:border-warning' 
-                    : 'border-stable data-[state=checked]:bg-stable data-[state=checked]:border-stable'
+                    : sector === 'blue' || sector === 'uti1' || sector === 'uti2'
+                    ? 'border-stable data-[state=checked]:bg-stable data-[state=checked]:border-stable'
+                    : 'border-border data-[state=checked]:bg-foreground data-[state=checked]:border-foreground'
                 }`}
                 aria-label={`Selecionar todos os pacientes de ${info.title}`}
               />

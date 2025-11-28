@@ -280,7 +280,10 @@ export function EditPatientDialog({
 
   const sectorLabel = patient.sector === 'outside' ? 'Fora das Alas' : 
                         patient.sector === 'red' ? 'Sala Vermelha' :
-                        patient.sector === 'yellow' ? 'Observação Amarela' : 'Observação Azul';
+                        patient.sector === 'yellow' ? 'Observação Amarela' :
+                        patient.sector === 'blue' ? 'Observação Azul' :
+                        patient.sector === 'uti1' ? 'UTI 1' :
+                        patient.sector === 'uti2' ? 'UTI 2' : 'Desconhecido';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
