@@ -100,6 +100,7 @@ export function usePatients(department?: Department) {
       if (updates.utiCulturesAntibiotics !== undefined) dbUpdates.uti_cultures_antibiotics = updates.utiCulturesAntibiotics.join('\n');
       if (updates.utiSpecialties !== undefined) dbUpdates.uti_specialties = updates.utiSpecialties.join('\n');
       if (updates.utiOriginSector !== undefined) dbUpdates.uti_origin_sector = updates.utiOriginSector.join('\n');
+      if (updates.utiAdmissionReason !== undefined) dbUpdates.uti_admission_reason = updates.utiAdmissionReason.join('\n');
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 
