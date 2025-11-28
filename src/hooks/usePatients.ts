@@ -107,32 +107,35 @@ export function usePatients(department?: Department) {
       // UTI fields
       if (updates.utiAdmissionDate !== undefined) {
         // Convert DD/MM/YYYY format back to ISO format for database storage
-        dbUpdates.uti_admission_date = updates.utiAdmissionDate.map(date => {
-          try {
-            // Check if it's already in DD/MM/YYYY format
-            const parts = date.split('/');
-            if (parts.length === 3) {
-              const [day, month, year] = parts;
-              const isoDate = new Date(`${year}-${month}-${day}`);
-              if (!isNaN(isoDate.getTime())) {
-                return isoDate.toISOString();
+        if (updates.utiAdmissionDate.length === 0) {
+          dbUpdates.uti_admission_date = null;
+        } else {
+          dbUpdates.uti_admission_date = updates.utiAdmissionDate.map(date => {
+            try {
+              // Check if it's already in DD/MM/YYYY format
+              const parts = date.split('/');
+              if (parts.length === 3) {
+                const [day, month, year] = parts;
+                const isoDate = new Date(`${year}-${month}-${day}`);
+                if (!isNaN(isoDate.getTime())) {
+                  return isoDate.toISOString();
+                }
               }
+            } catch (e) {
+              // If parsing fails, return as is
             }
-          } catch (e) {
-            // If parsing fails, return as is
-          }
-          return date;
-        }).join('\n');
+            return date;
+          }).join('\n');
+        }
       }
-      if (updates.utiDischargePrediction !== undefined) dbUpdates.uti_discharge_prediction = updates.utiDischargePrediction.join('\n');
-      if (updates.utiAllergies !== undefined) dbUpdates.uti_allergies = updates.utiAllergies.join('\n');
-      if (updates.utiAdmissionReason !== undefined) dbUpdates.uti_admission_reason = updates.utiAdmissionReason.join('\n');
-      if (updates.utiCurrentStatus !== undefined) dbUpdates.uti_current_status = updates.utiCurrentStatus.join('\n');
-      if (updates.utiDevices !== undefined) dbUpdates.uti_devices = updates.utiDevices.join('\n');
-      if (updates.utiCulturesAntibiotics !== undefined) dbUpdates.uti_cultures_antibiotics = updates.utiCulturesAntibiotics.join('\n');
-      if (updates.utiSpecialties !== undefined) dbUpdates.uti_specialties = updates.utiSpecialties.join('\n');
-      if (updates.utiOriginSector !== undefined) dbUpdates.uti_origin_sector = updates.utiOriginSector.join('\n');
-      if (updates.utiAdmissionReason !== undefined) dbUpdates.uti_admission_reason = updates.utiAdmissionReason.join('\n');
+      if (updates.utiDischargePrediction !== undefined) dbUpdates.uti_discharge_prediction = updates.utiDischargePrediction.length > 0 ? updates.utiDischargePrediction.join('\n') : null;
+      if (updates.utiAllergies !== undefined) dbUpdates.uti_allergies = updates.utiAllergies.length > 0 ? updates.utiAllergies.join('\n') : null;
+      if (updates.utiAdmissionReason !== undefined) dbUpdates.uti_admission_reason = updates.utiAdmissionReason.length > 0 ? updates.utiAdmissionReason.join('\n') : null;
+      if (updates.utiCurrentStatus !== undefined) dbUpdates.uti_current_status = updates.utiCurrentStatus.length > 0 ? updates.utiCurrentStatus.join('\n') : null;
+      if (updates.utiDevices !== undefined) dbUpdates.uti_devices = updates.utiDevices.length > 0 ? updates.utiDevices.join('\n') : null;
+      if (updates.utiCulturesAntibiotics !== undefined) dbUpdates.uti_cultures_antibiotics = updates.utiCulturesAntibiotics.length > 0 ? updates.utiCulturesAntibiotics.join('\n') : null;
+      if (updates.utiSpecialties !== undefined) dbUpdates.uti_specialties = updates.utiSpecialties.length > 0 ? updates.utiSpecialties.join('\n') : null;
+      if (updates.utiOriginSector !== undefined) dbUpdates.uti_origin_sector = updates.utiOriginSector.length > 0 ? updates.utiOriginSector.join('\n') : null;
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 
@@ -192,7 +195,7 @@ export function usePatients(department?: Department) {
       };
 
       // Add UTI fields if they exist
-      if (patient.utiAdmissionDate) {
+      if (patient.utiAdmissionDate && patient.utiAdmissionDate.length > 0) {
         dbData.uti_admission_date = patient.utiAdmissionDate.map(date => {
           try {
             const parts = date.split('/');
@@ -209,14 +212,14 @@ export function usePatients(department?: Department) {
           return date;
         }).join('\n');
       }
-      if (patient.utiDischargePrediction) dbData.uti_discharge_prediction = patient.utiDischargePrediction.join('\n');
-      if (patient.utiAllergies) dbData.uti_allergies = patient.utiAllergies.join('\n');
-      if (patient.utiAdmissionReason) dbData.uti_admission_reason = patient.utiAdmissionReason.join('\n');
-      if (patient.utiCurrentStatus) dbData.uti_current_status = patient.utiCurrentStatus.join('\n');
-      if (patient.utiDevices) dbData.uti_devices = patient.utiDevices.join('\n');
-      if (patient.utiCulturesAntibiotics) dbData.uti_cultures_antibiotics = patient.utiCulturesAntibiotics.join('\n');
-      if (patient.utiSpecialties) dbData.uti_specialties = patient.utiSpecialties.join('\n');
-      if (patient.utiOriginSector) dbData.uti_origin_sector = patient.utiOriginSector.join('\n');
+      if (patient.utiDischargePrediction && patient.utiDischargePrediction.length > 0) dbData.uti_discharge_prediction = patient.utiDischargePrediction.join('\n');
+      if (patient.utiAllergies && patient.utiAllergies.length > 0) dbData.uti_allergies = patient.utiAllergies.join('\n');
+      if (patient.utiAdmissionReason && patient.utiAdmissionReason.length > 0) dbData.uti_admission_reason = patient.utiAdmissionReason.join('\n');
+      if (patient.utiCurrentStatus && patient.utiCurrentStatus.length > 0) dbData.uti_current_status = patient.utiCurrentStatus.join('\n');
+      if (patient.utiDevices && patient.utiDevices.length > 0) dbData.uti_devices = patient.utiDevices.join('\n');
+      if (patient.utiCulturesAntibiotics && patient.utiCulturesAntibiotics.length > 0) dbData.uti_cultures_antibiotics = patient.utiCulturesAntibiotics.join('\n');
+      if (patient.utiSpecialties && patient.utiSpecialties.length > 0) dbData.uti_specialties = patient.utiSpecialties.join('\n');
+      if (patient.utiOriginSector && patient.utiOriginSector.length > 0) dbData.uti_origin_sector = patient.utiOriginSector.join('\n');
 
       const { data, error } = await supabase
         .from('patients')
