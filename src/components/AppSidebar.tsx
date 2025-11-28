@@ -198,7 +198,7 @@ export function AppSidebar({
           <img 
             src={hapvidaLogo} 
             alt="Hapvida" 
-            className="w-full h-auto max-h-20 object-contain animate-fade-in"
+            className="w-full h-auto max-h-28 object-contain animate-fade-in"
           />
         </div>
       </SidebarHeader>
