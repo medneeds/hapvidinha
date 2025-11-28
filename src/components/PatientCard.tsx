@@ -1937,6 +1937,375 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     )}
                   </DndContext>
                 </div>
+
+                {/* Exames para UTI */}
+                <div className="flex flex-col md:col-span-3 relative">
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setExpandedSection('exams')}
+                      className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
+                      title="Visualizar expandido"
+                    >
+                      <Maximize2 className="h-[2.5px] w-[2.5px]" />
+                    </Button>
+                  </div>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={(event: DragEndEvent) => {
+                      const { active, over } = event;
+                      if (over && active.id !== over.id) {
+                        const oldIndex = patient.relevantExams.findIndex((_, i) => `exam-${i}` === active.id);
+                        const newIndex = patient.relevantExams.findIndex((_, i) => `exam-${i}` === over.id);
+                        const reordered = arrayMove(patient.relevantExams, oldIndex, newIndex);
+                        onUpdate({ ...patient, relevantExams: reordered });
+                      }
+                    }}
+                  >
+                    <SortableContext
+                      items={patient.relevantExams.map((_, i) => `exam-${i}`)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                        {patient.relevantExams.map((exam, idx) => (
+                          <SortableDiagnosisItemCollapsed
+                            key={`exam-${idx}`}
+                            id={`exam-${idx}`}
+                            index={idx}
+                            diagnosis={exam}
+                            isEditing={editingField === "relevantExams" && editingArrayIndex === idx}
+                            editValue={editValue}
+                            onEdit={() => startEditing("relevantExams", exam, idx)}
+                            onSave={saveInlineEdit}
+                            onCancel={cancelEditing}
+                            onRemove={() => removeArrayItem("relevantExams", idx)}
+                            onAddNew={() => startEditing("relevantExams", "", -2)}
+                            onEditValueChange={(val) => setEditValue(val.toUpperCase())}
+                            onKeyDown={handleKeyDown}
+                            inputRef={inputRef}
+                            isLast={idx === patient.relevantExams.length - 1}
+                          />
+                        ))}
+                      </ol>
+                    </SortableContext>
+
+                    {editingField === "relevantExams" && editingArrayIndex === -2 ? (
+                      <li className="text-[10px] text-foreground leading-snug uppercase rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
+                        <div className="flex-shrink-0 w-3" />
+                        <div className="flex items-center gap-1 flex-1">
+                          <span className="font-semibold text-muted-foreground flex-shrink-0">{patient.relevantExams.length + 1}.</span>
+                          <Input
+                            ref={inputRef}
+                            value={editValue}
+                            onChange={(e) => {
+                              const target = e.target as HTMLInputElement;
+                              const start = target.selectionStart ?? 0;
+                              const end = target.selectionEnd ?? 0;
+                              setEditValue(e.target.value.toUpperCase());
+                              requestAnimationFrame(() => {
+                                target.setSelectionRange(start, end);
+                              });
+                            }}
+                            onKeyDown={handleKeyDown}
+                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            placeholder="NOVO EXAME"
+                          />
+                        </div>
+                        <div className="flex items-center gap-0.5 flex-shrink-0">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-4 w-4 text-green-600 hover:bg-green-100 p-0"
+                          >
+                            <Check className="h-2.5 w-2.5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-4 w-4 text-red-600 hover:bg-red-100 p-0"
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </Button>
+                        </div>
+                      </li>
+                    ) : null}
+                    
+                    {patient.relevantExams.length === 0 && editingField !== "relevantExams" && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => startEditing("relevantExams", "", -2)}
+                        className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                        title="Adicionar Exame"
+                      >
+                        <span className="text-xs">+</span>
+                      </Button>
+                    )}
+                  </DndContext>
+                </div>
+
+                {/* Culturas / ATB */}
+                <div className="flex flex-col md:col-span-3">
+                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Culturas / ATB</span>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={(event: DragEndEvent) => {
+                      const { active, over } = event;
+                      if (over && active.id !== over.id) {
+                        const oldIndex = (patient.utiCulturesAntibiotics || []).findIndex((_, i) => `uti-cultures-${i}` === active.id);
+                        const newIndex = (patient.utiCulturesAntibiotics || []).findIndex((_, i) => `uti-cultures-${i}` === over.id);
+                        const reordered = arrayMove(patient.utiCulturesAntibiotics || [], oldIndex, newIndex);
+                        onUpdate({ ...patient, utiCulturesAntibiotics: reordered });
+                      }
+                    }}
+                  >
+                    <SortableContext
+                      items={(patient.utiCulturesAntibiotics || []).map((_, i) => `uti-cultures-${i}`)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                        {(patient.utiCulturesAntibiotics || []).map((item, idx) => (
+                          <SortableDiagnosisItemCollapsed
+                            key={`uti-cultures-${idx}`}
+                            id={`uti-cultures-${idx}`}
+                            index={idx}
+                            diagnosis={item}
+                            isEditing={editingField === "utiCulturesAntibiotics" && editingArrayIndex === idx}
+                            editValue={editValue}
+                            onEdit={() => startEditing("utiCulturesAntibiotics", item, idx)}
+                            onSave={saveInlineEdit}
+                            onCancel={cancelEditing}
+                            onRemove={() => removeArrayItem("utiCulturesAntibiotics", idx)}
+                            onAddNew={() => startEditing("utiCulturesAntibiotics", "", -2)}
+                            onEditValueChange={(val) => setEditValue(val.toUpperCase())}
+                            onKeyDown={handleKeyDown}
+                            inputRef={inputRef}
+                            isLast={idx === (patient.utiCulturesAntibiotics || []).length - 1}
+                          />
+                        ))}
+                      </ol>
+                    </SortableContext>
+                    {editingField === "utiCulturesAntibiotics" && editingArrayIndex === -2 ? (
+                      <li className="text-[10px] text-foreground leading-snug uppercase rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
+                        <div className="flex-shrink-0 w-3" />
+                        <div className="flex items-center gap-1 flex-1">
+                          <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiCulturesAntibiotics || []).length + 1}.</span>
+                          <Input
+                            ref={inputRef}
+                            value={editValue}
+                            onChange={(e) => {
+                              const target = e.target as HTMLInputElement;
+                              const start = target.selectionStart ?? 0;
+                              const end = target.selectionEnd ?? 0;
+                              setEditValue(e.target.value.toUpperCase());
+                              requestAnimationFrame(() => {
+                                target.setSelectionRange(start, end);
+                              });
+                            }}
+                            onKeyDown={handleKeyDown}
+                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            placeholder="NOVA CULTURA/ATB"
+                          />
+                        </div>
+                        <div className="flex items-center gap-0.5 flex-shrink-0">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-4 w-4 text-green-600 hover:bg-green-100 p-0"
+                          >
+                            <Check className="h-2.5 w-2.5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-4 w-4 text-red-600 hover:bg-red-100 p-0"
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </Button>
+                        </div>
+                      </li>
+                    ) : null}
+                    {(patient.utiCulturesAntibiotics || []).length === 0 && editingField !== "utiCulturesAntibiotics" && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => startEditing("utiCulturesAntibiotics", "", -2)}
+                        className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                        title="Adicionar Cultura/ATB"
+                      >
+                        <span className="text-xs">+</span>
+                      </Button>
+                    )}
+                  </DndContext>
+                </div>
+
+                {/* Programações / Pendências para UTI */}
+                <div className="flex flex-col md:col-span-5 relative">
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setExpandedSection('pendencies')}
+                      className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
+                      title="Visualizar expandido"
+                    >
+                      <Maximize2 className="h-[2.5px] w-[2.5px]" />
+                    </Button>
+                  </div>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
+                      <SortableContext
+                        items={patient.pendencies.map((_, i) => `pendency-${i}`)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {patient.pendencies.map((pendency, idx) => (
+                          editingField === "pendencies" && editingArrayIndex === idx ? (
+                            <div key={idx} className="text-[10px] text-foreground leading-snug uppercase rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
+                              <div className="flex-shrink-0 w-3" />
+                              <div className="flex items-start gap-1 flex-1">
+                                <span className="font-semibold text-muted-foreground flex-shrink-0 mt-0.5">{idx + 1}.</span>
+                                <textarea
+                                  ref={inputRef as any}
+                                  value={editValue}
+                                  onChange={(e) => {
+                                    const target = e.target as HTMLTextAreaElement;
+                                    const start = target.selectionStart;
+                                    const end = target.selectionEnd;
+                                    setEditValue(e.target.value.toUpperCase());
+                                    requestAnimationFrame(() => {
+                                      target.setSelectionRange(start, end);
+                                    });
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if ((e.key === 'Enter' || e.key === 'Tab') && !e.shiftKey) {
+                                      e.preventDefault();
+                                      if (editingArrayIndex === -2) {
+                                        saveAndContinueAdding();
+                                      } else {
+                                        saveInlineEdit();
+                                      }
+                                    } else if (e.key === 'Escape') {
+                                      cancelEditing();
+                                    }
+                                  }}
+                                  className="min-h-[40px] text-[10px] flex-1 uppercase text-foreground resize-y border-0 bg-transparent p-0 focus-visible:ring-0"
+                                  rows={2}
+                                />
+                              </div>
+                              <div className="flex items-start gap-0.5 flex-shrink-0 mt-0.5">
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={saveInlineEdit}
+                                  className="h-4 w-4 text-green-600 hover:bg-green-100 p-0"
+                                >
+                                  <Check className="h-2.5 w-2.5" />
+                                </Button>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={cancelEditing}
+                                  className="h-4 w-4 text-red-600 hover:bg-red-100 p-0"
+                                >
+                                  <X className="h-2.5 w-2.5" />
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <SortablePendencyItemCollapsed
+                              key={`pendency-${idx}`}
+                              id={`pendency-${idx}`}
+                              index={idx}
+                              pendency={pendency}
+                              onEdit={() => startEditing("pendencies", pendency, idx)}
+                              onRemove={() => removeArrayItem("pendencies", idx)}
+                              isLast={idx === patient.pendencies.length - 1}
+                              onAddNew={() => startEditing("pendencies", "", -2)}
+                              editingField={editingField}
+                              isHighlighted={patient.highlightedPendencies?.includes(idx)}
+                              sector={patient.sector}
+                              onToggleHighlight={() => {
+                                const highlighted = patient.highlightedPendencies || [];
+                                const updatedHighlighted = highlighted.includes(idx)
+                                  ? highlighted.filter(i => i !== idx)
+                                  : [...highlighted, idx];
+                                onUpdate({ ...patient, highlightedPendencies: updatedHighlighted });
+                              }}
+                            />
+                          )
+                        ))}
+                      </SortableContext>
+                      
+                      {editingField === "pendencies" && editingArrayIndex === -2 ? (
+                        <div className="text-[10px] text-foreground leading-snug uppercase rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
+                          <div className="flex-shrink-0 w-3" />
+                          <div className="flex items-start gap-1 flex-1">
+                            <span className="font-semibold text-muted-foreground flex-shrink-0 mt-0.5">{patient.pendencies.length + 1}.</span>
+                            <Input
+                              ref={inputRef}
+                              value={editValue}
+                              onChange={(e) => {
+                                const target = e.target as HTMLInputElement;
+                                const start = target.selectionStart ?? 0;
+                                const end = target.selectionEnd ?? 0;
+                                setEditValue(e.target.value.toUpperCase());
+                                requestAnimationFrame(() => {
+                                  target.setSelectionRange(start, end);
+                                });
+                              }}
+                              onKeyDown={handleKeyDown}
+                              className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                              placeholder="NOVA PENDÊNCIA"
+                            />
+                          </div>
+                          <div className="flex items-start gap-0.5 flex-shrink-0">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={saveInlineEdit}
+                              className="h-4 w-4 text-green-600 hover:bg-green-100 p-0"
+                            >
+                              <Check className="h-2.5 w-2.5" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={cancelEditing}
+                              className="h-4 w-4 text-red-600 hover:bg-red-100 p-0"
+                            >
+                              <X className="h-2.5 w-2.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : null}
+                      
+                      {patient.pendencies.length === 0 && editingField !== "pendencies" && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => startEditing("pendencies", "", -2)}
+                          className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                          title="Adicionar Programação/Pendência"
+                        >
+                          <span className="text-xs">+</span>
+                        </Button>
+                      )}
+                    </div>
+                  </DndContext>
+                </div>
               </>
             )}
 
