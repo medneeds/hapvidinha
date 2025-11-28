@@ -351,6 +351,7 @@ export type Database = {
           uti_current_status: string | null
           uti_devices: string | null
           uti_discharge_prediction: string | null
+          uti_origin_sector: string | null
           uti_specialties: string | null
         }
         Insert: {
@@ -381,6 +382,7 @@ export type Database = {
           uti_current_status?: string | null
           uti_devices?: string | null
           uti_discharge_prediction?: string | null
+          uti_origin_sector?: string | null
           uti_specialties?: string | null
         }
         Update: {
@@ -411,6 +413,7 @@ export type Database = {
           uti_current_status?: string | null
           uti_devices?: string | null
           uti_discharge_prediction?: string | null
+          uti_origin_sector?: string | null
           uti_specialties?: string | null
         }
         Relationships: [

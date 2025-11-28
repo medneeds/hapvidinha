@@ -57,6 +57,7 @@ export function usePatients(department?: Department) {
         utiDevices: p.uti_devices ? p.uti_devices.split('\n').filter(Boolean) : [],
         utiCulturesAntibiotics: p.uti_cultures_antibiotics ? p.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
         utiSpecialties: p.uti_specialties ? p.uti_specialties.split('\n').filter(Boolean) : [],
+        utiOriginSector: p.uti_origin_sector ? p.uti_origin_sector.split('\n').filter(Boolean) : [],
       }));
 
       setPatients(mappedPatients);
@@ -98,6 +99,7 @@ export function usePatients(department?: Department) {
       if (updates.utiDevices !== undefined) dbUpdates.uti_devices = updates.utiDevices.join('\n');
       if (updates.utiCulturesAntibiotics !== undefined) dbUpdates.uti_cultures_antibiotics = updates.utiCulturesAntibiotics.join('\n');
       if (updates.utiSpecialties !== undefined) dbUpdates.uti_specialties = updates.utiSpecialties.join('\n');
+      if (updates.utiOriginSector !== undefined) dbUpdates.uti_origin_sector = updates.utiOriginSector.join('\n');
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 

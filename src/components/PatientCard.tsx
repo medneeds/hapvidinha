@@ -707,6 +707,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           i === editingArrayIndex ? editValue.toUpperCase() : item
         );
       }
+    } else if (editingField === "utiOriginSector") {
+      if (editingArrayIndex === -2) {
+        if (editValue.trim()) {
+          updatedPatient.utiOriginSector = [...(patient.utiOriginSector || []), editValue.toUpperCase()];
+        }
+      } else {
+        updatedPatient.utiOriginSector = (patient.utiOriginSector || []).map((item, i) => 
+          i === editingArrayIndex ? editValue.toUpperCase() : item
+        );
+      }
     }
 
     onUpdate(updatedPatient);
@@ -746,7 +756,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     });
   };
 
-  const removeArrayItem = (field: "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "utiAdmissionDate" | "utiDischargePrediction" | "utiAllergies" | "utiAdmissionReason" | "utiCurrentStatus" | "utiDevices" | "utiSpecialties" | "utiCulturesAntibiotics", index: number) => {
+  const removeArrayItem = (field: "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "utiAdmissionDate" | "utiDischargePrediction" | "utiAllergies" | "utiAdmissionReason" | "utiCurrentStatus" | "utiDevices" | "utiSpecialties" | "utiCulturesAntibiotics" | "utiOriginSector", index: number) => {
     const updatedPatient = { ...patient };
     
     if (field === "diagnoses") {
@@ -773,6 +783,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       updatedPatient.utiSpecialties = (patient.utiSpecialties || []).filter((_, i) => i !== index);
     } else if (field === "utiCulturesAntibiotics") {
       updatedPatient.utiCulturesAntibiotics = (patient.utiCulturesAntibiotics || []).filter((_, i) => i !== index);
+    } else if (field === "utiOriginSector") {
+      updatedPatient.utiOriginSector = (patient.utiOriginSector || []).filter((_, i) => i !== index);
     }
 
     onUpdate(updatedPatient);
@@ -1496,6 +1508,104 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onClick={() => startEditing("utiSpecialties", "", -2)}
                         className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
                         title="Adicionar Especialidade"
+                      >
+                        <span className="text-xs">+</span>
+                      </Button>
+                    )}
+                  </DndContext>
+                </div>
+
+                {/* Setor de Origem */}
+                <div className="flex flex-col md:col-span-3">
+                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Setor de Origem</span>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={(event: DragEndEvent) => {
+                      const { active, over } = event;
+                      if (over && active.id !== over.id) {
+                        const oldIndex = (patient.utiOriginSector || []).findIndex((_, i) => `uti-origin-${i}` === active.id);
+                        const newIndex = (patient.utiOriginSector || []).findIndex((_, i) => `uti-origin-${i}` === over.id);
+                        const reordered = arrayMove(patient.utiOriginSector || [], oldIndex, newIndex);
+                        onUpdate({ ...patient, utiOriginSector: reordered });
+                      }
+                    }}
+                  >
+                    <SortableContext
+                      items={(patient.utiOriginSector || []).map((_, i) => `uti-origin-${i}`)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                        {(patient.utiOriginSector || []).map((item, idx) => (
+                          <SortableDiagnosisItemCollapsed
+                            key={`uti-origin-${idx}`}
+                            id={`uti-origin-${idx}`}
+                            index={idx}
+                            diagnosis={item}
+                            isEditing={editingField === "utiOriginSector" && editingArrayIndex === idx}
+                            editValue={editValue}
+                            onEdit={() => startEditing("utiOriginSector", item, idx)}
+                            onSave={saveInlineEdit}
+                            onCancel={cancelEditing}
+                            onRemove={() => removeArrayItem("utiOriginSector", idx)}
+                            onAddNew={() => startEditing("utiOriginSector", "", -2)}
+                            onEditValueChange={(val) => setEditValue(val.toUpperCase())}
+                            onKeyDown={handleKeyDown}
+                            inputRef={inputRef}
+                            isLast={idx === (patient.utiOriginSector || []).length - 1}
+                          />
+                        ))}
+                      </ol>
+                    </SortableContext>
+                    {editingField === "utiOriginSector" && editingArrayIndex === -2 ? (
+                      <li className="text-[10px] text-foreground leading-snug uppercase rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
+                        <div className="flex-shrink-0 w-3" />
+                        <div className="flex items-center gap-1 flex-1">
+                          <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiOriginSector || []).length + 1}.</span>
+                          <Input
+                            ref={inputRef}
+                            value={editValue}
+                            onChange={(e) => {
+                              const target = e.target as HTMLInputElement;
+                              const start = target.selectionStart ?? 0;
+                              const end = target.selectionEnd ?? 0;
+                              setEditValue(e.target.value.toUpperCase());
+                              requestAnimationFrame(() => {
+                                target.setSelectionRange(start, end);
+                              });
+                            }}
+                            onKeyDown={handleKeyDown}
+                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            placeholder="NOVO SETOR"
+                          />
+                        </div>
+                        <div className="flex items-center gap-0.5 flex-shrink-0">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={saveInlineEdit}
+                            className="h-4 w-4 text-green-600 hover:bg-green-100 p-0"
+                          >
+                            <Check className="h-2.5 w-2.5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={cancelEditing}
+                            className="h-4 w-4 text-red-600 hover:bg-red-100 p-0"
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </Button>
+                        </div>
+                      </li>
+                    ) : null}
+                    {(patient.utiOriginSector || []).length === 0 && editingField !== "utiOriginSector" && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => startEditing("utiOriginSector", "", -2)}
+                        className="h-5 w-5 text-muted-foreground hover:text-primary print:hidden"
+                        title="Adicionar Setor de Origem"
                       >
                         <span className="text-xs">+</span>
                       </Button>
