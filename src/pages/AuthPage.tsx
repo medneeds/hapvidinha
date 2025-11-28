@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
+import { useHospital } from "@/contexts/HospitalContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,7 @@ const loginSchema = z.object({
 export default function AuthPage() {
   const { user, signIn } = useAuth();
   const { setCurrentDepartment } = useDepartment();
+  const { states, hospitals, setCurrentHospital, isLoading: hospitalLoading } = useHospital();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +38,14 @@ export default function AuthPage() {
     username: "",
     password: "",
   });
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedHospitalId, setSelectedHospitalId] = useState<string>("");
   const [selectedDepartment, setSelectedDepartment] = useState<Department>("URGÊNCIA E EMERGÊNCIA ADULTO");
+
+  // Filter hospitals by selected state
+  const filteredHospitals = selectedState 
+    ? hospitals.filter(h => h.state_id === selectedState)
+    : [];
 
   useEffect(() => {
     if (user) {
@@ -46,6 +55,17 @@ export default function AuthPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate selections
+    if (!selectedState) {
+      toast.error("SELECIONE UM ESTADO");
+      return;
+    }
+    if (!selectedHospitalId) {
+      toast.error("SELECIONE UMA UNIDADE HOSPITALAR");
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -60,7 +80,11 @@ export default function AuthPage() {
         }
         setLoading(false);
       } else {
-        // Set department after successful login
+        // Set hospital and department after successful login
+        const selectedHospital = hospitals.find(h => h.id === selectedHospitalId);
+        if (selectedHospital) {
+          setCurrentHospital(selectedHospital);
+        }
         setCurrentDepartment(selectedDepartment);
         toast.success("LOGIN REALIZADO COM SUCESSO");
         
@@ -227,6 +251,81 @@ export default function AuthPage() {
                   )}
                 </button>
               </div>
+            </div>
+
+            {/* State Selection */}
+            <div className="space-y-3 group">
+              <Label 
+                htmlFor="state-select" 
+                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
+              >
+                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                  <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                </div>
+                Estado
+              </Label>
+              <Select
+                value={selectedState}
+                onValueChange={(value) => {
+                  setSelectedState(value);
+                  setSelectedHospitalId(""); // Reset hospital when state changes
+                }}
+                disabled={loading || hospitalLoading}
+              >
+                <SelectTrigger 
+                  id="state-select"
+                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-base font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
+                >
+                  <SelectValue placeholder="Selecione o estado" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
+                  {states.map((state) => (
+                    <SelectItem 
+                      key={state.id} 
+                      value={state.id}
+                      className="text-base font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
+                    >
+                      {state.name} ({state.abbreviation})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Hospital Unit Selection */}
+            <div className="space-y-3 group">
+              <Label 
+                htmlFor="hospital-select" 
+                className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] mb-2"
+              >
+                <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
+                  <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                </div>
+                Unidade Hospitalar
+              </Label>
+              <Select
+                value={selectedHospitalId}
+                onValueChange={setSelectedHospitalId}
+                disabled={loading || hospitalLoading || !selectedState}
+              >
+                <SelectTrigger 
+                  id="hospital-select"
+                  className="h-14 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-2xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-base font-medium text-gray-900 hover:shadow-lg focus:shadow-xl"
+                >
+                  <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Primeiro selecione um estado"} />
+                </SelectTrigger>
+                <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
+                  {filteredHospitals.map((hospital) => (
+                    <SelectItem 
+                      key={hospital.id} 
+                      value={hospital.id}
+                      className="text-base font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
+                    >
+                      {hospital.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Department Selection */}
