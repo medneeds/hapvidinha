@@ -13,7 +13,7 @@ import {
   LockKeyhole,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import hapvidaLogo from "@/assets/logo-hapvida-fundo-branco.png";
+import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
 import { useState } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
@@ -193,20 +193,19 @@ export function AppSidebar({
 
   const sidebarContent = (
     <>
-      <SidebarHeader className="px-4 py-2.5 bg-white h-[52px] flex items-center relative border-b border-[#013ba6]/30">
-        <div className="flex items-center justify-center w-full">
+      <SidebarHeader className="border-b border-border/30 px-3 py-3 bg-white">
+        <div className="flex items-center justify-center">
           <img 
             src={hapvidaLogo} 
-            alt="Hapvida" 
-            className="w-full h-auto max-h-[40px] object-contain animate-fade-in"
+            alt="Hapvida NotreDame Intermédica" 
+            className="w-full h-auto max-h-14 object-contain animate-fade-in"
           />
         </div>
-        {/* Elegant gradient separator */}
-        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#013ba6]/20 to-transparent"></div>
       </SidebarHeader>
 
-      <SidebarContent className="gap-0 py-0 mt-2">{menuItems.map((section, index) => (
-          <div key={section.title} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
+      <SidebarContent className="gap-0 py-2">
+        {menuItems.map((section, index) => (
+          <div key={section.title}>
             {/* Direct link item (without subitems) */}
             {section.link && !section.items && (
               <SidebarGroup className="py-0 my-0">
@@ -215,13 +214,12 @@ export function AppSidebar({
                     <SidebarMenuButton
                       onClick={() => handleItemClick(section.link)}
                       className={cn(
-                        "transition-all duration-300 hover:bg-accent/80 hover:scale-[1.02]",
+                        "transition-all duration-200 hover:bg-accent/80 hover:scale-105",
                         "justify-start px-4 py-3 h-auto",
-                        "border-b border-border/30 hover:border-primary/30",
-                        "hover:shadow-sm"
+                        "border-b border-border/50"
                       )}
                     >
-                      <section.icon className="h-5 w-5 text-primary transition-all duration-300 group-hover:scale-110" />
+                      <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
                       <span className="text-xs font-medium uppercase tracking-wide text-foreground">
                         {section.title}
                       </span>
@@ -241,10 +239,9 @@ export function AppSidebar({
                 <CollapsibleTrigger className="w-full">
                   <SidebarGroupLabel 
                     className={cn(
-                      "transition-all duration-300 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
-                      isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3 hover:scale-[1.02]",
-                      "h-auto border-b border-border/30 hover:border-primary/30",
-                      "hover:shadow-sm"
+                      "transition-all duration-200 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
+                      isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3 hover:scale-105",
+                      "h-auto border-b border-border/50"
                     )}
                     onClick={(e) => {
                       if (section.requiresPassword) {
@@ -257,8 +254,8 @@ export function AppSidebar({
                       "flex items-center w-full",
                       isCollapsed ? "justify-center" : "gap-3"
                     )}>
-                       <section.icon className={cn(
-                        "text-primary transition-all duration-300 group-hover:scale-110",
+                      <section.icon className={cn(
+                        "text-primary transition-all duration-200",
                         isCollapsed ? "h-5 w-5" : "h-5 w-5"
                       )} />
                       {!isCollapsed && (
@@ -267,18 +264,18 @@ export function AppSidebar({
                             {section.title}
                           </span>
                           {section.requiresPassword && (
-                            <LockKeyhole className="h-3 w-3 opacity-60 transition-all duration-300" />
+                            <LockKeyhole className="h-3 w-3 opacity-60" />
                           )}
                           {!section.requiresPassword && (
-                            <ChevronDown className="h-4 w-4 text-muted-foreground transition-all duration-300 group-data-[state=open]/collapsible:rotate-180" />
+                            <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
                           )}
                         </>
                       )}
                     </div>
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
-                <CollapsibleContent className="transition-all duration-300 ease-in-out data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-                  <SidebarGroupContent className="px-2 pt-1">
+                <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                  <SidebarGroupContent className="px-2">
                     <SidebarMenu>
                       {section.items.map((item, itemIndex) => {
                         const itemName = typeof item === 'string' ? item : item.name;
@@ -292,29 +289,29 @@ export function AppSidebar({
                               <CollapsibleTrigger className="w-full">
                                 <SidebarMenuItem>
                                   <SidebarMenuButton
-                                    className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-300 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 mb-1 justify-between"
+                                    className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 mb-1 justify-between"
                                     tooltip={itemName}
                                   >
                                     <div className="flex items-center gap-3 flex-1">
-                                      <div className="rounded-full bg-primary/20 transition-all duration-300 group-hover/item:scale-150 group-hover/item:bg-primary/30 flex-shrink-0 h-2 w-2 ml-1" />
+                                      <div className="rounded-full bg-primary/20 transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 h-2 w-2 ml-1" />
                                       <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
                                         {itemName}
                                       </span>
                                     </div>
-                                    <ChevronDown className="h-3 w-3 text-muted-foreground transition-all duration-300 group-data-[state=open]/nested:rotate-180 mr-2" />
+                                    <ChevronDown className="h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]/nested:rotate-180 mr-2" />
                                   </SidebarMenuButton>
                                 </SidebarMenuItem>
                               </CollapsibleTrigger>
-                              <CollapsibleContent className="transition-all duration-300 ease-in-out data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                              <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                                 <SidebarMenu className="ml-4 border-l border-border/30 pl-2">
                                   {item.subsections && Array.isArray(item.subsections) && item.subsections.map((subitem: any) => (
                                     <SidebarMenuItem key={subitem.name}>
                                       <SidebarMenuButton
-                                        className="group/subitem hover:bg-accent/60 transition-all duration-300 uppercase text-[10px] rounded-lg cursor-pointer gap-2 hover:translate-x-1 mb-1"
+                                        className="group/subitem hover:bg-accent/60 transition-all duration-200 uppercase text-[10px] rounded-lg cursor-pointer gap-2 hover:translate-x-1 mb-1"
                                         tooltip={subitem.name}
                                         onClick={() => handleItemClick(subitem)}
                                       >
-                                        <div className="rounded-full bg-primary/10 transition-all duration-300 group-hover/subitem:scale-150 group-hover/subitem:bg-primary/20 flex-shrink-0 h-1.5 w-1.5" />
+                                        <div className="rounded-full bg-primary/10 transition-all duration-200 group-hover/subitem:scale-150 flex-shrink-0 h-1.5 w-1.5" />
                                         <span className="flex-1 text-left font-normal animate-fade-in">
                                           {subitem.name}
                                         </span>
@@ -331,11 +328,11 @@ export function AppSidebar({
                         return (
                           <SidebarMenuItem key={itemKey}>
                                      <SidebarMenuButton
-                                        className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-300 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 hover:translate-x-1 mb-1"
+                                        className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 hover:translate-x-1 mb-1"
                                         tooltip={itemName}
                                         onClick={() => handleItemClick(item, section)}
                                       >
-                              <div className="rounded-full bg-primary/20 transition-all duration-300 group-hover/item:scale-150 group-hover/item:bg-primary/30 flex-shrink-0 h-2 w-2 ml-1" />
+                              <div className="rounded-full bg-primary/20 transition-all duration-200 group-hover/item:scale-150 flex-shrink-0 h-2 w-2 ml-1" />
                               <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
                                 {itemName}
                               </span>
