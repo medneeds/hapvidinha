@@ -62,6 +62,21 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+// Helper function to format date input as DD/MM/YYYY
+const formatDateInput = (value: string): string => {
+  // Remove all non-numeric characters
+  const numbers = value.replace(/\D/g, '');
+  
+  // Format as DD/MM/YYYY
+  if (numbers.length <= 2) {
+    return numbers;
+  } else if (numbers.length <= 4) {
+    return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
+  } else {
+    return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
+  }
+};
+
 // Helper function to calculate days until discharge
 const calculateDaysUntilDischarge = (dateString: string): string | null => {
   if (!dateString || dateString.trim() === '') return null;
@@ -1291,7 +1306,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onCancel={cancelEditing}
                             onRemove={() => removeArrayItem("utiAdmissionDate", idx)}
                             onAddNew={() => startEditing("utiAdmissionDate", "", -2)}
-                            onEditValueChange={(val) => setEditValue(val.toUpperCase())}
+                            onEditValueChange={(val) => setEditValue(formatDateInput(val))}
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiAdmissionDate || []).length - 1}
@@ -1308,17 +1323,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             ref={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
-                              const start = target.selectionStart ?? 0;
-                              const end = target.selectionEnd ?? 0;
-                              setEditValue(e.target.value.toUpperCase());
-                              requestAnimationFrame(() => {
-                                target.setSelectionRange(start, end);
-                              });
+                              const formatted = formatDateInput(e.target.value);
+                              setEditValue(formatted);
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
-                            placeholder="NOVA DATA"
+                            className="h-5 text-[10px] text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            placeholder="DD/MM/AAAA"
+                            maxLength={10}
                           />
                         </div>
                         <div className="flex items-center gap-0.5 flex-shrink-0">
@@ -1373,7 +1384,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onCancel={cancelEditing}
                             onRemove={() => removeArrayItem("utiDischargePrediction", idx)}
                             onAddNew={() => startEditing("utiDischargePrediction", "", -2)}
-                            onEditValueChange={(val) => setEditValue(val.toUpperCase())}
+                            onEditValueChange={(val) => setEditValue(formatDateInput(val))}
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiDischargePrediction || []).length - 1}
@@ -1391,17 +1402,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             ref={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
-                              const start = target.selectionStart ?? 0;
-                              const end = target.selectionEnd ?? 0;
-                              setEditValue(e.target.value.toUpperCase());
-                              requestAnimationFrame(() => {
-                                target.setSelectionRange(start, end);
-                              });
+                              const formatted = formatDateInput(e.target.value);
+                              setEditValue(formatted);
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
-                            placeholder="NOVA PREVISÃO"
+                            className="h-5 text-[10px] text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            placeholder="DD/MM/AAAA"
+                            maxLength={10}
                           />
                         </div>
                         <div className="flex items-center gap-0.5 flex-shrink-0">
