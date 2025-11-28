@@ -1108,8 +1108,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {currentDepartment === "UTI" && (
               <>
                 {/* 1. Setor de Origem */}
-                <div className="flex flex-col md:col-span-3">
-                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Setor de Origem</span>
+                <div className="flex flex-col md:col-span-2">
+                  <span className="text-[9px] font-medium text-muted-foreground mb-0">Setor de Origem</span>
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -1127,7 +1127,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       items={(patient.utiOriginSector || []).map((_, i) => `uti-origin-${i}`)}
                       strategy={verticalListSortingStrategy}
                     >
-                      <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                      <ol className="text-xs text-foreground space-y-0 print:text-[7.5px] list-none pl-0">
                         {(patient.utiOriginSector || []).map((item, idx) => (
                           <SortableDiagnosisItemCollapsed
                             key={`uti-origin-${idx}`}
@@ -1206,8 +1206,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* 2. Data de Admissão UTI */}
-                <div className="flex flex-col md:col-span-3">
-                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Admissão UTI</span>
+                <div className="flex flex-col md:col-span-2">
+                  <span className="text-[9px] font-medium text-muted-foreground mb-0">Admissão UTI</span>
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -1225,7 +1225,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       items={(patient.utiAdmissionDate || []).map((_, i) => `uti-admission-date-${i}`)}
                       strategy={verticalListSortingStrategy}
                     >
-                      <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                      <ol className="text-xs text-foreground space-y-0 print:text-[7.5px] list-none pl-0">
                         {(patient.utiAdmissionDate || []).map((item, idx) => (
                           <SortableDiagnosisItemCollapsed
                             key={`uti-admission-date-${idx}`}
@@ -1386,8 +1386,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* 4. Previsão de Alta */}
-                <div className="flex flex-col md:col-span-3">
-                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Previsão de Alta</span>
+                <div className="flex flex-col md:col-span-2">
+                  <span className="text-[9px] font-medium text-muted-foreground mb-0">Previsão de Alta</span>
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -1405,7 +1405,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       items={(patient.utiDischargePrediction || []).map((_, i) => `uti-discharge-${i}`)}
                       strategy={verticalListSortingStrategy}
                     >
-                      <ol className="text-xs text-foreground space-y-0.5 print:text-[7.5px] list-none pl-0">
+                      <ol className="text-xs text-foreground space-y-0 print:text-[7.5px] list-none pl-0">
                         {(patient.utiDischargePrediction || []).map((item, idx) => (
                           <SortableDiagnosisItemCollapsed
                             key={`uti-discharge-${idx}`}
