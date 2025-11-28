@@ -926,140 +926,167 @@ const Index = () => {
           {/* Main Content */}
           <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
-              <div>
-                <SectorSection 
-                  sector="red" 
-                  patients={redPatients} 
-                  onUpdatePatient={handleUpdatePatient}
-                  onDeletePatient={handleDeletePatient}
-                  onUndeletePatient={handleUndeletePatient}
-                  onPrintSector={() => handlePrintSector("red")}
-                  onAddExtraBed={() => handleAddExtraBed("red")}
-                  selectionMode={selectionMode}
-                  selectedPatients={selectedPatients}
-                  onToggleSelection={handleToggleSelection}
-                  onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
-                  onTransfer={handleTransferPatient}
-                  onPrintPatient={handlePrintPatient}
-                  isOpen={isRedSectionOpen}
-                  onOpenChange={setIsRedSectionOpen}
-                />
-              </div>
-              <div>
-                <SectorSection 
-                  sector="yellow" 
-                  patients={yellowPatients} 
-                  onUpdatePatient={handleUpdatePatient}
-                  onDeletePatient={handleDeletePatient}
-                  onUndeletePatient={handleUndeletePatient}
-                  onPrintSector={() => handlePrintSector("yellow")}
-                  onAddExtraBed={() => handleAddExtraBed("yellow")}
-                  selectionMode={selectionMode}
-                  selectedPatients={selectedPatients}
-                  onToggleSelection={handleToggleSelection}
-                  onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
-                  onTransfer={handleTransferPatient}
-                  onPrintPatient={handlePrintPatient}
-                  isOpen={isYellowSectionOpen}
-                  onOpenChange={setIsYellowSectionOpen}
-                />
-              </div>
-              <div>
-                <SectorSection 
-                  sector="blue" 
-                  patients={bluePatients} 
-                  onUpdatePatient={handleUpdatePatient}
-                  onDeletePatient={handleDeletePatient}
-                  onUndeletePatient={handleUndeletePatient}
-                  onPrintSector={() => handlePrintSector("blue")}
-                  onAddExtraBed={() => handleAddExtraBed("blue")}
-                  selectionMode={selectionMode}
-                  selectedPatients={selectedPatients}
-                  onToggleSelection={handleToggleSelection}
-                  onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
-                  onTransfer={handleTransferPatient}
-                  onPrintPatient={handlePrintPatient}
-                  isOpen={isBlueSectionOpen}
-                  onOpenChange={setIsBlueSectionOpen}
-                />
-              </div>
+              {currentDepartment === "UTI" ? (
+                <div>
+                  <SectorSection 
+                    sector="red" 
+                    patients={redPatients} 
+                    onUpdatePatient={handleUpdatePatient}
+                    onDeletePatient={handleDeletePatient}
+                    onUndeletePatient={handleUndeletePatient}
+                    onPrintSector={() => handlePrintSector("red")}
+                    onAddExtraBed={() => handleAddExtraBed("red")}
+                    selectionMode={selectionMode}
+                    selectedPatients={selectedPatients}
+                    onToggleSelection={handleToggleSelection}
+                    onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
+                    onTransfer={handleTransferPatient}
+                    onPrintPatient={handlePrintPatient}
+                    isOpen={isRedSectionOpen}
+                    onOpenChange={setIsRedSectionOpen}
+                    customTitle="UTI - 10 LEITOS"
+                    customIcon="🏥"
+                  />
+                </div>
+              ) : (
+                <>
+                  {/* Emergency sectors: Red, Yellow, Blue, Outside */}
+                  <div>
+                    <SectorSection 
+                      sector="red" 
+                      patients={redPatients} 
+                      onUpdatePatient={handleUpdatePatient}
+                      onDeletePatient={handleDeletePatient}
+                      onUndeletePatient={handleUndeletePatient}
+                      onPrintSector={() => handlePrintSector("red")}
+                      onAddExtraBed={() => handleAddExtraBed("red")}
+                      selectionMode={selectionMode}
+                      selectedPatients={selectedPatients}
+                      onToggleSelection={handleToggleSelection}
+                      onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
+                      onTransfer={handleTransferPatient}
+                      onPrintPatient={handlePrintPatient}
+                      isOpen={isRedSectionOpen}
+                      onOpenChange={setIsRedSectionOpen}
+                    />
+                  </div>
+                  <div>
+                    <SectorSection 
+                      sector="yellow" 
+                      patients={yellowPatients} 
+                      onUpdatePatient={handleUpdatePatient}
+                      onDeletePatient={handleDeletePatient}
+                      onUndeletePatient={handleUndeletePatient}
+                      onPrintSector={() => handlePrintSector("yellow")}
+                      onAddExtraBed={() => handleAddExtraBed("yellow")}
+                      selectionMode={selectionMode}
+                      selectedPatients={selectedPatients}
+                      onToggleSelection={handleToggleSelection}
+                      onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
+                      onTransfer={handleTransferPatient}
+                      onPrintPatient={handlePrintPatient}
+                      isOpen={isYellowSectionOpen}
+                      onOpenChange={setIsYellowSectionOpen}
+                    />
+                  </div>
+                  <div>
+                    <SectorSection 
+                      sector="blue" 
+                      patients={bluePatients} 
+                      onUpdatePatient={handleUpdatePatient}
+                      onDeletePatient={handleDeletePatient}
+                      onUndeletePatient={handleUndeletePatient}
+                      onPrintSector={() => handlePrintSector("blue")}
+                      onAddExtraBed={() => handleAddExtraBed("blue")}
+                      selectionMode={selectionMode}
+                      selectedPatients={selectedPatients}
+                      onToggleSelection={handleToggleSelection}
+                      onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
+                      onTransfer={handleTransferPatient}
+                      onPrintPatient={handlePrintPatient}
+                      isOpen={isBlueSectionOpen}
+                      onOpenChange={setIsBlueSectionOpen}
+                    />
+                  </div>
 
-              {/* Pacientes Fora das Alas Section */}
-              <div className="mt-6 print:hidden">
-                <Collapsible open={isOutsideSectionOpen} onOpenChange={setIsOutsideSectionOpen}>
-                  <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
-                    <div className="flex items-center justify-between w-full">
-                      <CollapsibleTrigger asChild>
-                        <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                          <ChevronDown className={`h-5 w-5 transition-transform ${isOutsideSectionOpen ? '' : '-rotate-90'}`} />
+                  {/* Pacientes Fora das Alas Section */}
+                  <div className="mt-6 print:hidden">
+                    <Collapsible open={isOutsideSectionOpen} onOpenChange={setIsOutsideSectionOpen}>
+                      <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
+                        <div className="flex items-center justify-between w-full">
+                          <CollapsibleTrigger asChild>
+                            <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                              <ChevronDown className={`h-5 w-5 transition-transform ${isOutsideSectionOpen ? '' : '-rotate-90'}`} />
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg">📍</span>
+                                <h2 className="text-lg font-bold text-foreground uppercase">Fora das Alas</h2>
+                              </div>
+                            </button>
+                          </CollapsibleTrigger>
                           <div className="flex items-center gap-2">
-                            <span className="text-lg">📍</span>
-                            <h2 className="text-lg font-bold text-foreground uppercase">Fora das Alas</h2>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handleAddExtraBed("outside")}
+                              className="h-8 w-8"
+                              title="Adicionar paciente"
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handlePrintSector("outside")}
+                              className="h-8 w-8"
+                              title="Imprimir seção"
+                            >
+                              <Printer className="h-3.5 w-3.5" />
+                            </Button>
+                            <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
+                              <p className="text-base font-bold text-foreground">{outsidePatients.length}</p>
+                            </div>
                           </div>
-                        </button>
-                      </CollapsibleTrigger>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleAddExtraBed("outside")}
-                          className="h-8 w-8"
-                          title="Adicionar paciente"
-                        >
-                          <Plus className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handlePrintSector("outside")}
-                          className="h-8 w-8"
-                          title="Imprimir seção"
-                        >
-                          <Printer className="h-3.5 w-3.5" />
-                        </Button>
-                        <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
-                          <p className="text-base font-bold text-foreground">{outsidePatients.length}</p>
                         </div>
                       </div>
-                    </div>
+                      <CollapsibleContent>
+                        <div className="space-y-2 mt-3">
+                          {outsidePatients.length === 0 ? (
+                            <p className="text-sm text-muted-foreground text-center py-4">
+                              Nenhum paciente fora das alas
+                            </p>
+                          ) : (
+                            <DndContext
+                              sensors={sensors}
+                              collisionDetection={closestCenter}
+                              onDragEnd={handleDragEndOutside}
+                            >
+                              <SortableContext
+                                items={outsidePatients.map(p => p.id)}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                {outsidePatients.map((patient) => (
+                                  <SortableOutsidePatientCard
+                                    key={patient.id}
+                                    patient={patient}
+                                    onUpdate={handleUpdatePatient}
+                                    onDelete={handleDeletePatient}
+                                    onUndelete={handleUndeletePatient}
+                                    selectionMode={selectionMode}
+                                    isSelected={selectedPatients.has(patient.id)}
+                                    onToggleSelection={handleToggleSelection}
+                                    onTransfer={handleTransferPatient}
+                                    onPrintPatient={handlePrintPatient}
+                                  />
+                                ))}
+                              </SortableContext>
+                            </DndContext>
+                          )}
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </div>
-                  <CollapsibleContent>
-                    <div className="space-y-2 mt-3">
-                      {outsidePatients.length === 0 ? (
-                        <p className="text-sm text-muted-foreground text-center py-4">
-                          Nenhum paciente fora das alas
-                        </p>
-                      ) : (
-                        <DndContext
-                          sensors={sensors}
-                          collisionDetection={closestCenter}
-                          onDragEnd={handleDragEndOutside}
-                        >
-                          <SortableContext
-                            items={outsidePatients.map(p => p.id)}
-                            strategy={verticalListSortingStrategy}
-                          >
-                            {outsidePatients.map((patient) => (
-                              <SortableOutsidePatientCard
-                                key={patient.id}
-                                patient={patient}
-                                onUpdate={handleUpdatePatient}
-                                onDelete={handleDeletePatient}
-                                onUndelete={handleUndeletePatient}
-                                selectionMode={selectionMode}
-                                isSelected={selectedPatients.has(patient.id)}
-                                onToggleSelection={handleToggleSelection}
-                                onTransfer={handleTransferPatient}
-                                onPrintPatient={handlePrintPatient}
-                              />
-                            ))}
-                          </SortableContext>
-                        </DndContext>
-                      )}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
+                </>
+              )}
 
               {/* Anotações e Lembretes Section */}
               <div className="mt-6 print:hidden">
