@@ -76,8 +76,6 @@ export default {
         'gradient-critical': 'var(--gradient-critical)',
         'gradient-warning': 'var(--gradient-warning)',
         'gradient-stable': 'var(--gradient-stable)',
-        'gradient-uti1': 'var(--gradient-uti1)',
-        'gradient-uti2': 'var(--gradient-uti2)',
       },
       boxShadow: {
         'sm': 'var(--shadow-sm)',

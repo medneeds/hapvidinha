@@ -1,4 +1,4 @@
-export type SectorType = 'red' | 'yellow' | 'blue' | 'outside' | 'uti1' | 'uti2';
+export type SectorType = 'red' | 'yellow' | 'blue' | 'outside';
 
 export type MedicalResponsibilityType = 'porta' | 'lider' | 'conjunto' | null;
 

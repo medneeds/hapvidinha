@@ -473,9 +473,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     red: "#ef4444",
     yellow: "#eab308",
     blue: "#3b82f6",
-    outside: "#6b7280",
-    uti1: "#2563eb",
-    uti2: "#0ea5e9"
+    outside: "#6b7280"
   };
 
   useEffect(() => {
