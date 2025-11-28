@@ -48,6 +48,15 @@ export function usePatients(department?: Department) {
         admissionHistory: p.admission_history || '',
         admissionDate: p.admission_date || '',
         medicalResponsibility: (p.medical_responsibility as unknown) as Patient['medicalResponsibility'],
+        // UTI fields
+        utiAdmissionDate: p.uti_admission_date || undefined,
+        utiDischargePrediction: p.uti_discharge_prediction || undefined,
+        utiAllergies: p.uti_allergies || undefined,
+        utiAdmissionReason: p.uti_admission_reason || undefined,
+        utiCurrentStatus: p.uti_current_status || undefined,
+        utiDevices: p.uti_devices || undefined,
+        utiCulturesAntibiotics: p.uti_cultures_antibiotics || undefined,
+        utiSpecialties: p.uti_specialties || undefined,
       }));
 
       setPatients(mappedPatients);
@@ -80,6 +89,15 @@ export function usePatients(department?: Department) {
       if (updates.admissionHistory !== undefined) dbUpdates.admission_history = updates.admissionHistory;
       if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate;
       if (updates.medicalResponsibility !== undefined) dbUpdates.medical_responsibility = updates.medicalResponsibility;
+      // UTI fields
+      if (updates.utiAdmissionDate !== undefined) dbUpdates.uti_admission_date = updates.utiAdmissionDate;
+      if (updates.utiDischargePrediction !== undefined) dbUpdates.uti_discharge_prediction = updates.utiDischargePrediction;
+      if (updates.utiAllergies !== undefined) dbUpdates.uti_allergies = updates.utiAllergies;
+      if (updates.utiAdmissionReason !== undefined) dbUpdates.uti_admission_reason = updates.utiAdmissionReason;
+      if (updates.utiCurrentStatus !== undefined) dbUpdates.uti_current_status = updates.utiCurrentStatus;
+      if (updates.utiDevices !== undefined) dbUpdates.uti_devices = updates.utiDevices;
+      if (updates.utiCulturesAntibiotics !== undefined) dbUpdates.uti_cultures_antibiotics = updates.utiCulturesAntibiotics;
+      if (updates.utiSpecialties !== undefined) dbUpdates.uti_specialties = updates.utiSpecialties;
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 
