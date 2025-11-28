@@ -1111,7 +1111,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <div className="md:col-span-12 border-l-2 border-primary/20 pl-3 py-2 bg-muted/5 rounded-r">
                   <div className="grid grid-cols-12 gap-2">
                     {/* Setor de Origem */}
-                    <div className="flex flex-col md:col-span-3">
+                    <div className="flex flex-col md:col-span-2">
                   <span className="text-[9px] font-medium text-muted-foreground mb-0">Setor de Origem</span>
                   <DndContext
                     sensors={sensors}
@@ -1291,7 +1291,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* Previsão de Alta */}
-                  <div className="flex flex-col md:col-span-3">
+                  <div className="flex flex-col md:col-span-2">
                   <span className="text-[9px] font-medium text-muted-foreground mb-0">Previsão de Alta</span>
                   <DndContext
                     sensors={sensors}
@@ -1373,7 +1373,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* Alergias */}
-                  <div className="flex flex-col md:col-span-1">
+                  <div className="flex flex-col md:col-span-3">
                   <span className="text-[9px] font-medium text-muted-foreground mb-0">Alergias</span>
                   <DndContext
                     sensors={sensors}
