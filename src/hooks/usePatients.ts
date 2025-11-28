@@ -3,17 +3,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { Patient } from "@/types/patient";
 import { useToast } from "@/hooks/use-toast";
 import { Department } from "@/contexts/DepartmentContext";
+import { useHospital } from "@/contexts/HospitalContext";
 
 export function usePatients(department?: Department) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { currentState, currentHospital } = useHospital();
 
   const fetchPatients = async () => {
     try {
+      if (!currentHospital || !currentState) {
+        setIsLoading(false);
+        return;
+      }
+
       let query = supabase
         .from('patients')
-        .select('*');
+        .select('*')
+        .eq('hospital_unit_id', currentHospital.id)
+        .eq('state_id', currentState.id);
       
       // Filter by department if provided
       if (department) {
@@ -104,6 +113,10 @@ export function usePatients(department?: Department) {
 
   const createPatient = async (patient: Omit<Patient, 'id'>, departmentValue?: Department) => {
     try {
+      if (!currentHospital || !currentState) {
+        throw new Error('Hospital unit and state must be selected');
+      }
+
       const dbData = {
         bed_number: patient.bedNumber,
         name: patient.name,
@@ -118,6 +131,8 @@ export function usePatients(department?: Department) {
         admission_history: patient.admissionHistory,
         admission_date: patient.admissionDate,
         department: departmentValue || department || 'URGÊNCIA E EMERGÊNCIA ADULTO',
+        state_id: currentState.id,
+        hospital_unit_id: currentHospital.id,
       };
 
       const { data, error } = await supabase
@@ -207,6 +222,8 @@ export function usePatients(department?: Department) {
   };
 
   useEffect(() => {
+    if (!currentHospital || !currentState) return;
+
     fetchPatients();
 
     // Subscribe to realtime changes
@@ -218,7 +235,7 @@ export function usePatients(department?: Department) {
           event: 'INSERT',
           schema: 'public',
           table: 'patients',
-          filter: department ? `department=eq.${department}` : undefined,
+          filter: department ? `department=eq.${department}&hospital_unit_id=eq.${currentHospital.id}` : `hospital_unit_id=eq.${currentHospital.id}`,
         },
         (payload) => {
           console.log('Realtime INSERT:', payload);
@@ -253,7 +270,7 @@ export function usePatients(department?: Department) {
           event: 'UPDATE',
           schema: 'public',
           table: 'patients',
-          filter: department ? `department=eq.${department}` : undefined,
+          filter: department ? `department=eq.${department}&hospital_unit_id=eq.${currentHospital.id}` : `hospital_unit_id=eq.${currentHospital.id}`,
         },
         (payload) => {
           console.log('Realtime UPDATE:', payload);
@@ -282,7 +299,7 @@ export function usePatients(department?: Department) {
           event: 'DELETE',
           schema: 'public',
           table: 'patients',
-          filter: department ? `department=eq.${department}` : undefined,
+          filter: department ? `department=eq.${department}&hospital_unit_id=eq.${currentHospital.id}` : `hospital_unit_id=eq.${currentHospital.id}`,
         },
         (payload) => {
           console.log('Realtime DELETE:', payload);
@@ -295,7 +312,7 @@ export function usePatients(department?: Department) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [department]);
+  }, [department, currentHospital, currentState]);
 
   return {
     patients,

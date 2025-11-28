@@ -11,6 +11,7 @@ import { ptBR } from "date-fns/locale";
 import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw, CalendarIcon, Filter } from "lucide-react";
 import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { useHospital } from "@/contexts/HospitalContext";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -69,6 +70,7 @@ export default function MovementsPage() {
   
   const { toast } = useToast();
   const { currentDepartment } = useDepartment();
+  const { currentState, currentHospital } = useHospital();
 
   useEffect(() => {
     fetchMovements();
@@ -251,6 +253,10 @@ export default function MovementsPage() {
     }
 
     try {
+      if (!currentHospital || !currentState) {
+        throw new Error('Hospital unit and state must be selected');
+      }
+
       const snapshot = movement.patient_snapshot;
       
       // Recreate patient in patients table with original data
@@ -270,6 +276,8 @@ export default function MovementsPage() {
           admission_history: snapshot.admissionHistory || null,
           admission_date: snapshot.admissionDate || new Date().toISOString(),
           department: currentDepartment,
+          state_id: currentState.id,
+          hospital_unit_id: currentHospital.id,
         });
 
       if (insertError) throw insertError;

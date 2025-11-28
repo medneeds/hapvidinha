@@ -26,6 +26,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { useHospital } from "@/contexts/HospitalContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ChecklistItem {
@@ -44,6 +45,7 @@ const NotesTabOptimized = () => {
   const [scheduledTime, setScheduledTime] = useState("");
   const { toast } = useToast();
   const { currentDepartment } = useDepartment();
+  const { currentState, currentHospital } = useHospital();
 
   useEffect(() => {
     loadChecklistFromDB();
@@ -82,11 +84,22 @@ const NotesTabOptimized = () => {
       return;
     }
 
+    if (!currentHospital || !currentState) {
+      toast({
+        title: "ERRO",
+        description: "UNIDADE HOSPITALAR NÃO SELECIONADA",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase.from("notes_reminders").insert({
       department: currentDepartment,
       content: notes,
       type: "free_text",
       is_active: true,
+      state_id: currentState.id,
+      hospital_unit_id: currentHospital.id,
     });
 
     if (error) {
@@ -109,12 +122,23 @@ const NotesTabOptimized = () => {
   const handleAddChecklistItem = async () => {
     if (!newChecklistItem.trim()) return;
 
+    if (!currentHospital || !currentState) {
+      toast({
+        title: "ERRO",
+        description: "UNIDADE HOSPITALAR NÃO SELECIONADA",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase.from("notes_reminders").insert({
       department: currentDepartment,
       content: newChecklistItem.toUpperCase(),
       type: "checklist_item",
       completed: false,
       is_active: true,
+      state_id: currentState.id,
+      hospital_unit_id: currentHospital.id,
     });
 
     if (error) {
@@ -185,6 +209,15 @@ const NotesTabOptimized = () => {
       return;
     }
 
+    if (!currentHospital || !currentState) {
+      toast({
+        title: "ERRO",
+        description: "UNIDADE HOSPITALAR NÃO SELECIONADA",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const scheduledDateTime = `${scheduledDate}T${scheduledTime}:00`;
 
     const { error } = await supabase.from("notes_reminders").insert({
@@ -193,6 +226,8 @@ const NotesTabOptimized = () => {
       type: "free_text",
       scheduled_popup_time: scheduledDateTime,
       is_active: true,
+      state_id: currentState.id,
+      hospital_unit_id: currentHospital.id,
     });
 
     if (error) {
