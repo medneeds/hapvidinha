@@ -1258,7 +1258,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* Admissão UTI */}
-                  <div className="flex flex-col md:col-span-3">
+                  <div className="flex flex-col md:col-span-2">
                   <span className="text-[9px] font-medium text-muted-foreground mb-0">Admissão UTI</span>
                   <DndContext
                     sensors={sensors}
@@ -1340,7 +1340,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* Previsão de Alta */}
-                  <div className="flex flex-col md:col-span-2">
+                  <div className="flex flex-col md:col-span-3">
                   <span className="text-[9px] font-medium text-muted-foreground mb-0">Previsão de Alta</span>
                   <DndContext
                     sensors={sensors}
