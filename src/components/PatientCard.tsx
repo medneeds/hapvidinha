@@ -1450,6 +1450,59 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </DndContext>
             </div>
+
+            {/* Campos específicos da UTI - 6 novos campos */}
+            {currentDepartment === "UTI" && (
+              <>
+                {/* Admissão UTI */}
+                <div className="flex flex-col md:col-span-3">
+                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Admissão UTI</span>
+                  <p className="text-[10px] text-foreground leading-snug uppercase">
+                    {patient.utiAdmissionDate || "-"}
+                  </p>
+                </div>
+
+                {/* Previsão de Alta */}
+                <div className="flex flex-col md:col-span-3">
+                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Previsão de Alta</span>
+                  <p className="text-[10px] text-foreground leading-snug uppercase">
+                    {patient.utiDischargePrediction || "-"}
+                  </p>
+                </div>
+
+                {/* Alergias */}
+                <div className="flex flex-col md:col-span-3">
+                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Alergias</span>
+                  <p className="text-[10px] text-foreground leading-snug uppercase">
+                    {patient.utiAllergies || "-"}
+                  </p>
+                </div>
+
+                {/* Motivo da Admissão */}
+                <div className="flex flex-col md:col-span-3">
+                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Motivo da Admissão</span>
+                  <p className="text-[10px] text-foreground leading-snug uppercase">
+                    {patient.utiAdmissionReason || "-"}
+                  </p>
+                </div>
+
+                {/* Quadro Atual */}
+                <div className="flex flex-col md:col-span-3">
+                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Quadro Atual</span>
+                  <p className="text-[10px] text-foreground leading-snug uppercase">
+                    {patient.utiCurrentStatus || "-"}
+                  </p>
+                </div>
+
+                {/* Dispositivos */}
+                <div className="flex flex-col md:col-span-3">
+                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Dispositivos</span>
+                  <p className="text-[10px] text-foreground leading-snug uppercase">
+                    {patient.utiDevices || "-"}
+                  </p>
+                </div>
+              </>
+            )}
             </div>
 
           {/* Action Menu - Compact */}
