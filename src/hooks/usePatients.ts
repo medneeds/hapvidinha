@@ -49,7 +49,21 @@ export function usePatients(department?: Department) {
         admissionDate: p.admission_date || '',
         medicalResponsibility: (p.medical_responsibility as unknown) as Patient['medicalResponsibility'],
         // UTI fields
-        utiAdmissionDate: p.uti_admission_date ? p.uti_admission_date.split('\n').filter(Boolean) : [],
+        utiAdmissionDate: p.uti_admission_date ? p.uti_admission_date.split('\n').filter(Boolean).map(date => {
+          // Convert ISO timestamp to DD/MM/YYYY format if needed
+          try {
+            const parsedDate = new Date(date);
+            if (!isNaN(parsedDate.getTime())) {
+              const day = String(parsedDate.getDate()).padStart(2, '0');
+              const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+              const year = parsedDate.getFullYear();
+              return `${day}/${month}/${year}`;
+            }
+          } catch (e) {
+            // If parsing fails, return as is
+          }
+          return date;
+        }) : [],
         utiDischargePrediction: p.uti_discharge_prediction ? p.uti_discharge_prediction.split('\n').filter(Boolean) : [],
         utiAllergies: p.uti_allergies ? p.uti_allergies.split('\n').filter(Boolean) : [],
         utiAdmissionReason: p.uti_admission_reason ? p.uti_admission_reason.split('\n').filter(Boolean) : [],
@@ -91,7 +105,25 @@ export function usePatients(department?: Department) {
       if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate;
       if (updates.medicalResponsibility !== undefined) dbUpdates.medical_responsibility = updates.medicalResponsibility;
       // UTI fields
-      if (updates.utiAdmissionDate !== undefined) dbUpdates.uti_admission_date = updates.utiAdmissionDate.join('\n');
+      if (updates.utiAdmissionDate !== undefined) {
+        // Convert DD/MM/YYYY format back to ISO format for database storage
+        dbUpdates.uti_admission_date = updates.utiAdmissionDate.map(date => {
+          try {
+            // Check if it's already in DD/MM/YYYY format
+            const parts = date.split('/');
+            if (parts.length === 3) {
+              const [day, month, year] = parts;
+              const isoDate = new Date(`${year}-${month}-${day}`);
+              if (!isNaN(isoDate.getTime())) {
+                return isoDate.toISOString();
+              }
+            }
+          } catch (e) {
+            // If parsing fails, return as is
+          }
+          return date;
+        }).join('\n');
+      }
       if (updates.utiDischargePrediction !== undefined) dbUpdates.uti_discharge_prediction = updates.utiDischargePrediction.join('\n');
       if (updates.utiAllergies !== undefined) dbUpdates.uti_allergies = updates.utiAllergies.join('\n');
       if (updates.utiAdmissionReason !== undefined) dbUpdates.uti_admission_reason = updates.utiAdmissionReason.join('\n');
