@@ -336,6 +336,7 @@ export type Database = {
           hospital_unit_id: string
           id: string
           medical_history: string | null
+          medical_responsibility: Json | null
           name: string
           pendencies: string | null
           relevant_exams: string | null
@@ -357,6 +358,7 @@ export type Database = {
           hospital_unit_id: string
           id?: string
           medical_history?: string | null
+          medical_responsibility?: Json | null
           name?: string
           pendencies?: string | null
           relevant_exams?: string | null
@@ -378,6 +380,7 @@ export type Database = {
           hospital_unit_id?: string
           id?: string
           medical_history?: string | null
+          medical_responsibility?: Json | null
           name?: string
           pendencies?: string | null
           relevant_exams?: string | null

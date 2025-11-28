@@ -47,6 +47,7 @@ export function usePatients(department?: Department) {
         schedule: p.schedule ? p.schedule.split('\n').filter(Boolean) : [],
         admissionHistory: p.admission_history || '',
         admissionDate: p.admission_date || '',
+        medicalResponsibility: (p.medical_responsibility as unknown) as Patient['medicalResponsibility'],
       }));
 
       setPatients(mappedPatients);
@@ -78,6 +79,7 @@ export function usePatients(department?: Department) {
       if (updates.schedule !== undefined) dbUpdates.schedule = updates.schedule.join('\n');
       if (updates.admissionHistory !== undefined) dbUpdates.admission_history = updates.admissionHistory;
       if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate;
+      if (updates.medicalResponsibility !== undefined) dbUpdates.medical_responsibility = updates.medicalResponsibility;
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 
