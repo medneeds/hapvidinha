@@ -157,6 +157,8 @@ const Index = () => {
   const [isBlueSectionOpen, setIsBlueSectionOpen] = useState(false);
   const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(false);
   const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(false);
+  const [isUti1SectionOpen, setIsUti1SectionOpen] = useState(false);
+  const [isUti2SectionOpen, setIsUti2SectionOpen] = useState(false);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
   const [printingPatientId, setPrintingPatientId] = useState<string | null>(null);
@@ -228,12 +230,16 @@ const Index = () => {
     const yellow = patients.filter((p) => p.sector === "yellow");
     const blue = patients.filter((p) => p.sector === "blue");
     const outside = patients.filter((p) => p.sector === "outside");
+    const uti1 = patients.filter((p) => p.sector === "uti1");
+    const uti2 = patients.filter((p) => p.sector === "uti2");
     
     // Check if sections have any patient with data
     const hasRedData = red.some(p => p.name.trim() !== "");
     const hasYellowData = yellow.some(p => p.name.trim() !== "");
     const hasBlueData = blue.some(p => p.name.trim() !== "");
     const hasOutsideData = outside.some(p => p.name.trim() !== "");
+    const hasUti1Data = uti1.some(p => p.name.trim() !== "");
+    const hasUti2Data = uti2.some(p => p.name.trim() !== "");
     const hasNotesData = notes.trim() !== "" || checklist.length > 0;
     
     // Only open sections when they have data, never force close
@@ -241,6 +247,8 @@ const Index = () => {
     if (hasYellowData) setIsYellowSectionOpen(true);
     if (hasBlueData) setIsBlueSectionOpen(true);
     if (hasOutsideData) setIsOutsideSectionOpen(true);
+    if (hasUti1Data) setIsUti1SectionOpen(true);
+    if (hasUti2Data) setIsUti2SectionOpen(true);
     if (hasNotesData) setIsNotesSectionOpen(true);
   }, [patients, notes, checklist]);
 
@@ -281,6 +289,8 @@ const Index = () => {
   const yellowPatients = filterPatients(patients.filter((p) => p.sector === "yellow"));
   const bluePatients = filterPatients(patients.filter((p) => p.sector === "blue"));
   const outsidePatients = filterPatients(patients.filter((p) => p.sector === "outside"));
+  const uti1Patients = filterPatients(patients.filter((p) => p.sector === "uti1"));
+  const uti2Patients = filterPatients(patients.filter((p) => p.sector === "uti2"));
 
   const totalPatients = patients.length;
   const criticalPatients = redPatients.length;
@@ -304,7 +314,11 @@ const Index = () => {
 
   const handleAddExtraBed = async (sector: Patient['sector']) => {
     saveToHistory(patients);
-    const sectorPrefix = sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : sector === 'blue' ? 'Z' : 'F';
+    const sectorPrefix = sector === 'red' ? 'V' : 
+                        sector === 'yellow' ? 'A' : 
+                        sector === 'blue' ? 'Z' : 
+                        sector === 'uti1' ? 'U1' :
+                        sector === 'uti2' ? 'U2' : 'F';
     
     // Buscar todos os pacientes deste setor do banco de dados para garantir unicidade
     const { data: allSectorPatients } = await supabase
@@ -342,6 +356,8 @@ const Index = () => {
       else if (sector === 'yellow') setIsYellowSectionOpen(true);
       else if (sector === 'blue') setIsBlueSectionOpen(true);
       else if (sector === 'outside') setIsOutsideSectionOpen(true);
+      else if (sector === 'uti1') setIsUti1SectionOpen(true);
+      else if (sector === 'uti2') setIsUti2SectionOpen(true);
     } catch (error) {
       console.error("Failed to create patient:", error);
     }
@@ -477,7 +493,10 @@ const Index = () => {
         description: `${patient.name} foi transferido para ${
           newSector === 'red' ? 'Cuidados Especiais' :
           newSector === 'yellow' ? 'Observação Amarela' :
-          newSector === 'blue' ? 'Observação Azul' : 'Fora das Alas'
+          newSector === 'blue' ? 'Observação Azul' :
+          newSector === 'uti1' ? 'UTI 1' :
+          newSector === 'uti2' ? 'UTI 2' :
+          'Fora das Alas'
         }.`,
       });
     } catch (error) {
@@ -927,27 +946,52 @@ const Index = () => {
           <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
               {currentDepartment === "UTI" ? (
-                <div>
-                  <SectorSection 
-                    sector="red" 
-                    patients={redPatients} 
-                    onUpdatePatient={handleUpdatePatient}
-                    onDeletePatient={handleDeletePatient}
-                    onUndeletePatient={handleUndeletePatient}
-                    onPrintSector={() => handlePrintSector("red")}
-                    onAddExtraBed={() => handleAddExtraBed("red")}
-                    selectionMode={selectionMode}
-                    selectedPatients={selectedPatients}
-                    onToggleSelection={handleToggleSelection}
-                    onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
-                    onTransfer={handleTransferPatient}
-                    onPrintPatient={handlePrintPatient}
-                    isOpen={isRedSectionOpen}
-                    onOpenChange={setIsRedSectionOpen}
-                    customTitle="UTI - 10 LEITOS"
-                    customIcon="🏥"
-                  />
-                </div>
+                <>
+                  <div>
+                    <SectorSection 
+                      sector="uti1" 
+                      patients={uti1Patients} 
+                      onUpdatePatient={handleUpdatePatient}
+                      onDeletePatient={handleDeletePatient}
+                      onUndeletePatient={handleUndeletePatient}
+                      onPrintSector={() => handlePrintSector("uti1")}
+                      onAddExtraBed={() => handleAddExtraBed("uti1")}
+                      selectionMode={selectionMode}
+                      selectedPatients={selectedPatients}
+                      onToggleSelection={handleToggleSelection}
+                      onReorderPatients={(reordered) => handleReorderPatients("uti1", reordered)}
+                      onTransfer={handleTransferPatient}
+                      onPrintPatient={handlePrintPatient}
+                      isOpen={isUti1SectionOpen}
+                      onOpenChange={setIsUti1SectionOpen}
+                      customTitle="UTI 1"
+                      customIcon="🏥"
+                      customGradientClass="bg-gradient-uti1"
+                    />
+                  </div>
+                  <div>
+                    <SectorSection 
+                      sector="uti2" 
+                      patients={uti2Patients} 
+                      onUpdatePatient={handleUpdatePatient}
+                      onDeletePatient={handleDeletePatient}
+                      onUndeletePatient={handleUndeletePatient}
+                      onPrintSector={() => handlePrintSector("uti2")}
+                      onAddExtraBed={() => handleAddExtraBed("uti2")}
+                      selectionMode={selectionMode}
+                      selectedPatients={selectedPatients}
+                      onToggleSelection={handleToggleSelection}
+                      onReorderPatients={(reordered) => handleReorderPatients("uti2", reordered)}
+                      onTransfer={handleTransferPatient}
+                      onPrintPatient={handlePrintPatient}
+                      isOpen={isUti2SectionOpen}
+                      onOpenChange={setIsUti2SectionOpen}
+                      customTitle="UTI 2"
+                      customIcon="🏥"
+                      customGradientClass="bg-gradient-uti2"
+                    />
+                  </div>
+                </>
               ) : (
                 <>
                   {/* Emergency sectors: Red, Yellow, Blue, Outside */}
