@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { useAgeCalculator } from "@/hooks/useAgeCalculator";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
+import { differenceInDays, parseISO, isValid, parse } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
@@ -60,6 +61,49 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+// Helper function to calculate days until discharge
+const calculateDaysUntilDischarge = (dateString: string): string | null => {
+  if (!dateString || dateString.trim() === '') return null;
+  
+  try {
+    // Try parsing various date formats
+    let targetDate: Date | null = null;
+    
+    // Try ISO format first (YYYY-MM-DD)
+    targetDate = parseISO(dateString);
+    
+    // If invalid, try DD/MM/YYYY format
+    if (!isValid(targetDate)) {
+      targetDate = parse(dateString, 'dd/MM/yyyy', new Date());
+    }
+    
+    // If still invalid, try DD-MM-YYYY format
+    if (!isValid(targetDate)) {
+      targetDate = parse(dateString, 'dd-MM-yyyy', new Date());
+    }
+    
+    if (!isValid(targetDate)) return null;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time for accurate day calculation
+    targetDate.setHours(0, 0, 0, 0);
+    
+    const days = differenceInDays(targetDate, today);
+    
+    if (days < 0) {
+      return `(${Math.abs(days)} dias atrás)`;
+    } else if (days === 0) {
+      return '(hoje)';
+    } else if (days === 1) {
+      return '(amanhã)';
+    } else {
+      return `(em ${days} dias)`;
+    }
+  } catch (error) {
+    return null;
+  }
+};
 
 interface PatientCardProps {
   patient: Patient;
@@ -308,6 +352,7 @@ interface SortableDiagnosisItemCollapsedProps {
   isLast: boolean;
   onGetCid?: (diagnosis: string, index: number) => void;
   loadingCid?: boolean;
+  daysCalculation?: string | null;
 }
 
 function SortableDiagnosisItemCollapsed({ 
@@ -326,7 +371,8 @@ function SortableDiagnosisItemCollapsed({
   onKeyDown,
   inputRef,
   onGetCid,
-  loadingCid
+  loadingCid,
+  daysCalculation
 }: SortableDiagnosisItemCollapsedProps) {
   const {
     attributes,
@@ -417,6 +463,9 @@ function SortableDiagnosisItemCollapsed({
       >
         <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
         <span className="break-words">{diagnosis}</span>
+        {daysCalculation && (
+          <span className="text-[9px] text-muted-foreground/70 ml-1 font-normal">{daysCalculation}</span>
+        )}
       </span>
       <div className="flex items-center gap-0.5 flex-shrink-0">
         <button
@@ -1328,6 +1377,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiDischargePrediction || []).length - 1}
+                            daysCalculation={calculateDaysUntilDischarge(item)}
                           />
                         ))}
                       </ol>
