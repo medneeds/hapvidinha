@@ -1,10 +1,12 @@
 import { Patient, SectorType } from "@/types/patient";
 import { PatientCard } from "./PatientCard";
+import { PatientCardUTI } from "./PatientCardUTI";
 import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import { useDepartment } from "@/contexts/DepartmentContext";
 import {
   DndContext,
   closestCenter,
@@ -75,6 +77,9 @@ interface SortablePatientCardProps {
 }
 
 function SortablePatientCard(props: SortablePatientCardProps) {
+  const { currentDepartment } = useDepartment();
+  const isUTI = currentDepartment === "UTI";
+  
   const {
     attributes,
     listeners,
@@ -90,6 +95,8 @@ function SortablePatientCard(props: SortablePatientCardProps) {
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const CardComponent = isUTI ? PatientCardUTI : PatientCard;
+
   return (
     <div ref={setNodeRef} style={style} className="flex items-center gap-2 print:block print:w-full">
       <button
@@ -100,7 +107,7 @@ function SortablePatientCard(props: SortablePatientCardProps) {
         <GripVertical className="h-4 w-4 text-muted-foreground" />
       </button>
       <div className="flex-1 print:w-full">
-        <PatientCard {...props} />
+        <CardComponent {...props} />
       </div>
     </div>
   );
