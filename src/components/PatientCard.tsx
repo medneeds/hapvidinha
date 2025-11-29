@@ -5,13 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, HelpCircle, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { MedicalResponsibilityDialog } from "./MedicalResponsibilityDialog";
 import { MedicalResponsibilityIndicator } from "./MedicalResponsibilityIndicator";
+import { InternmentStatusDialog } from "./InternmentStatusDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -532,12 +533,37 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const navigate = useNavigate();
   const [medicalResponsibilityDialogOpen, setMedicalResponsibilityDialogOpen] = useState(false);
   const [localMedicalResponsibility, setLocalMedicalResponsibility] = useState(patient.medicalResponsibility);
+  const [internmentStatusDialogOpen, setInternmentStatusDialogOpen] = useState(false);
   
   const sectorColorMap = {
     red: "#ef4444",
     yellow: "#eab308",
     blue: "#3b82f6",
     outside: "#6b7280"
+  };
+
+  const internmentStatusConfig = {
+    SOLICITACAO_PENDENTE: {
+      label: "Solicitação Pendente",
+      icon: Clock,
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      borderColor: "border-amber-300",
+    },
+    PSM_FAVORAVEL: {
+      label: "PSM Favorável",
+      icon: CheckCircle2,
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      borderColor: "border-green-300",
+    },
+    AGUARDANDO_VAGA: {
+      label: "Aguardando Vaga",
+      icon: HelpCircle,
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      borderColor: "border-blue-300",
+    },
   };
 
   useEffect(() => {
@@ -2237,9 +2263,39 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                   {/* Programações / Pendências */}
-                  <div className="flex flex-col md:col-span-4 relative">
-                  <div className="flex items-center gap-1 mb-0.5">
+                  <div className="flex flex-col md:col-span-5 relative">
+                  <div className="flex items-center gap-1 mb-0.5 flex-wrap">
                     <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
+                    
+                    {/* Internment Status Badge */}
+                    {patient.internmentStatus && internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig] && (
+                      <Badge 
+                        variant="outline" 
+                        className={cn(
+                          "h-4 px-1.5 text-[8px] font-semibold uppercase gap-0.5 print:hidden",
+                          internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].color,
+                          internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].bgColor,
+                          internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].borderColor
+                        )}
+                      >
+                        {(() => {
+                          const Icon = internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].icon;
+                          return <Icon className="h-2.5 w-2.5" />;
+                        })()}
+                        {internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].label}
+                      </Badge>
+                    )}
+                    
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setInternmentStatusDialogOpen(true)}
+                      className="h-4 w-4 p-0 text-muted-foreground/60 hover:text-primary print:hidden"
+                      title="Gerenciar Status de Internação"
+                    >
+                      <Settings className="h-2.5 w-2.5" />
+                    </Button>
+                    
                     <Button
                       size="icon"
                       variant="ghost"
@@ -3764,6 +3820,20 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           });
         }}
         sectorColor={sectorColorMap[patient.sector]}
+      />
+
+      {/* Internment Status Dialog */}
+      <InternmentStatusDialog
+        isOpen={internmentStatusDialogOpen}
+        onClose={() => setInternmentStatusDialogOpen(false)}
+        patientId={patient.id}
+        patientName={patient.name}
+        currentStatus={patient.internmentStatus || null}
+        currentNotes={patient.internmentNotes || null}
+        onSuccess={() => {
+          // Reload patient data
+          onUpdate(patient);
+        }}
       />
     </>
   );
