@@ -1170,7 +1170,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* UTI - Nova Arquitetura em 4 Linhas */}
             {currentDepartment === "UTI" && (
-              <div className="md:col-span-18 space-y-3">
+              <div className="col-span-full space-y-3">
                 {/* LINHA 1 - CARD FULL WIDTH: Identificação + Campos Administrativos */}
                 <Card className="bg-card/80 border-border/50">
                   <div className="p-3">
