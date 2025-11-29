@@ -2782,7 +2782,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Programações / Pendências - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
               <div className="flex flex-col md:col-span-5 relative">
-                <div className="flex items-center gap-1 mb-0.5">
+                <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
                   
                   {/* Internment Status Badge */}
@@ -2808,10 +2808,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     size="icon"
                     variant="ghost"
                     onClick={() => setInternmentStatusDialogOpen(true)}
-                    className="h-2.5 w-2.5 p-0 text-muted-foreground hover:text-primary hover:bg-accent transition-all print:hidden"
+                    className="h-2 w-2 p-0 text-muted-foreground hover:text-primary hover:bg-accent transition-all print:hidden"
                     title="Gerenciar Status de Internação"
                   >
-                    <Settings className="h-2 w-2" />
+                    <Settings className="h-1.5 w-1.5" />
                   </Button>
               </div>
               <DndContext
