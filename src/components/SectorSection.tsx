@@ -4,7 +4,7 @@ import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -135,17 +135,16 @@ export function SectorSection({
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
-  const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
   
-  // Auto-expand when patients are added, auto-collapse when all removed
-  useEffect(() => {
-    if (controlledIsOpen === undefined) {
-      setInternalIsOpen(patients.length > 0);
-    }
-  }, [patients.length, controlledIsOpen]);
+  // Determine if section should be open based on patient count or controlled state
+  const shouldBeOpen = patients.length > 0;
+  const [internalIsOpen, setInternalIsOpen] = useState(shouldBeOpen);
   
   // Use controlled state if provided, otherwise use internal state
-  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  // If patients exist and section is closed, keep it open
+  const isOpen = controlledIsOpen !== undefined 
+    ? controlledIsOpen 
+    : (patients.length > 0 ? true : internalIsOpen);
   const setIsOpen = onOpenChange || setInternalIsOpen;
   
   const displayPatients = patients;
