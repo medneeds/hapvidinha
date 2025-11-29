@@ -168,9 +168,6 @@ const Index = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [newChecklistItem, setNewChecklistItem] = useState("");
-  const [isRedSectionOpen, setIsRedSectionOpen] = useState(false);
-  const [isYellowSectionOpen, setIsYellowSectionOpen] = useState(false);
-  const [isBlueSectionOpen, setIsBlueSectionOpen] = useState(false);
   const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(false);
   const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(false);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
@@ -245,18 +242,8 @@ const Index = () => {
     const blue = patients.filter((p) => p.sector === "blue");
     const outside = patients.filter((p) => p.sector === "outside");
     
-    // Check if sections have any patient with data
-    const hasRedData = red.some(p => p.name.trim() !== "");
-    const hasYellowData = yellow.some(p => p.name.trim() !== "");
-    const hasBlueData = blue.some(p => p.name.trim() !== "");
-    const hasOutsideData = outside.some(p => p.name.trim() !== "");
-    
-    // Open sections when they have data, collapse when empty
-    setIsRedSectionOpen(hasRedData);
-    setIsYellowSectionOpen(hasYellowData);
-    setIsBlueSectionOpen(hasBlueData);
-    setIsOutsideSectionOpen(hasOutsideData);
-    // Notes section remains controlled by user interaction only
+    // Auto-manage "Fora das Alas" section based on patient count
+    setIsOutsideSectionOpen(outside.length > 0);
   }, [patients]);
 
   const saveToHistory = (currentPatients: Patient[]) => {
@@ -367,12 +354,6 @@ const Index = () => {
 
     try {
       const createdPatient = await dbCreatePatient(newPatientData, currentDepartment);
-      
-      // Expandir automaticamente a seção correspondente
-      if (sector === 'red') setIsRedSectionOpen(true);
-      else if (sector === 'yellow') setIsYellowSectionOpen(true);
-      else if (sector === 'blue') setIsBlueSectionOpen(true);
-      else if (sector === 'outside') setIsOutsideSectionOpen(true);
 
       // Scroll automático para o novo leito criado após pequeno delay para garantir renderização
       setTimeout(() => {
@@ -996,8 +977,6 @@ const Index = () => {
                     onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
-                    isOpen={isBlueSectionOpen}
-                    onOpenChange={setIsBlueSectionOpen}
                     customTitle="UTI - 10 LEITOS"
                     customIcon="🏥"
                   />
@@ -1020,8 +999,6 @@ const Index = () => {
                       onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
                       onTransfer={handleTransferPatient}
                       onPrintPatient={handlePrintPatient}
-                      isOpen={isRedSectionOpen}
-                      onOpenChange={setIsRedSectionOpen}
                     />
                   </div>
                   <div>
@@ -1039,8 +1016,6 @@ const Index = () => {
                       onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
                       onTransfer={handleTransferPatient}
                       onPrintPatient={handlePrintPatient}
-                      isOpen={isYellowSectionOpen}
-                      onOpenChange={setIsYellowSectionOpen}
                     />
                   </div>
                   <div>
@@ -1058,8 +1033,6 @@ const Index = () => {
                       onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
                       onTransfer={handleTransferPatient}
                       onPrintPatient={handlePrintPatient}
-                      isOpen={isBlueSectionOpen}
-                      onOpenChange={setIsBlueSectionOpen}
                     />
                   </div>
 
