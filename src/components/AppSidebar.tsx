@@ -121,6 +121,7 @@ export function AppSidebar({
 
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
+  const [unlockedSections, setUnlockedSections] = useState<string[]>([]);
 
   const handleAdminSectionClick = (sectionTitle: string) => {
     setSelectedSection(sectionTitle);
@@ -129,6 +130,11 @@ export function AppSidebar({
 
   const handlePasswordSubmit = () => {
     if (password === "NOTREDAME") {
+      // Unlock the section
+      if (selectedSection && !unlockedSections.includes(selectedSection)) {
+        setUnlockedSections(prev => [...prev, selectedSection]);
+      }
+      
       setShowPasswordDialog(false);
       setPassword("");
       setSelectedSection(null);
@@ -142,6 +148,8 @@ export function AppSidebar({
       if (isMobile) {
         setOpenMobile(false);
       }
+      
+      toast.success("Acesso ao Painel Admin liberado");
     } else {
       toast.error("Senha incorreta");
       setPassword("");
@@ -233,10 +241,16 @@ export function AppSidebar({
             {section.items && (
             <Collapsible
               defaultOpen={section.title === "MAPA"}
+              open={section.requiresPassword ? unlockedSections.includes(section.title) : undefined}
+              onOpenChange={(isOpen) => {
+                if (section.requiresPassword && !unlockedSections.includes(section.title) && isOpen) {
+                  handleAdminSectionClick(section.title);
+                }
+              }}
               className="group/collapsible"
             >
               <SidebarGroup className="py-0 my-0">
-                <CollapsibleTrigger className="w-full">
+                <CollapsibleTrigger className="w-full" disabled={section.requiresPassword && !unlockedSections.includes(section.title)}>
                   <SidebarGroupLabel 
                     className={cn(
                       "transition-all duration-200 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
@@ -244,7 +258,8 @@ export function AppSidebar({
                       "h-auto border-b border-border/50"
                     )}
                     onClick={(e) => {
-                      if (section.requiresPassword) {
+                      if (section.requiresPassword && !unlockedSections.includes(section.title)) {
+                        e.preventDefault();
                         e.stopPropagation();
                         handleAdminSectionClick(section.title);
                       }
