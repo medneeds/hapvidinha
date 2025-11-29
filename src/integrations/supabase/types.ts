@@ -335,6 +335,8 @@ export type Database = {
           highlighted_pendencies: number[] | null
           hospital_unit_id: string
           id: string
+          internment_notes: string | null
+          internment_status: string | null
           medical_history: string | null
           medical_responsibility: Json | null
           name: string
@@ -366,6 +368,8 @@ export type Database = {
           highlighted_pendencies?: number[] | null
           hospital_unit_id: string
           id?: string
+          internment_notes?: string | null
+          internment_status?: string | null
           medical_history?: string | null
           medical_responsibility?: Json | null
           name?: string
@@ -397,6 +401,8 @@ export type Database = {
           highlighted_pendencies?: number[] | null
           hospital_unit_id?: string
           id?: string
+          internment_notes?: string | null
+          internment_status?: string | null
           medical_history?: string | null
           medical_responsibility?: Json | null
           name?: string

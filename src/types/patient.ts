@@ -24,6 +24,9 @@ export interface Patient {
   admissionHistory: string;
   admissionDate: string;
   medicalResponsibility?: MedicalResponsibility;
+  // Internment status fields
+  internmentStatus?: 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | null;
+  internmentNotes?: string | null;
   // UTI-specific fields
   utiAdmissionDate?: string[];
   utiDischargePrediction?: string[];
