@@ -2977,7 +2977,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             </div>
 
           {/* Action Menu - Compact */}
-          <div className="flex-shrink-0 flex gap-1 print:hidden items-start">
+          <div className="flex-shrink-0 flex flex-col gap-0.5 print:hidden items-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
