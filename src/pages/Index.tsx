@@ -129,14 +129,13 @@ function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
 
 // Componente interno que pode usar useSidebar
 function DynamicHeader({ children }: { children: React.ReactNode }) {
-  const { open, state } = useSidebar();
+  const { state } = useSidebar();
   
   return (
     <header 
-      className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl fixed top-0 left-0 right-0 z-50 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5"
+      className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl fixed top-0 right-0 z-50 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-300 ease-in-out"
       style={{
-        marginLeft: state === 'collapsed' ? '3rem' : '16rem',
-        transition: 'margin-left 200ms ease-linear'
+        left: state === 'collapsed' ? '3.5rem' : 'var(--sidebar-width)'
       }}
     >
       {children}
