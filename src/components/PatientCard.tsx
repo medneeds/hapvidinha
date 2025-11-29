@@ -3835,60 +3835,30 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         onOpenChange={setQuickTemplatesDialogOpen}
         patientName={patient.name}
         onAddTemplates={async (templates: string[]) => {
-          console.log('=== Quick Templates - Starting ===');
-          console.log('1. Templates received:', templates);
-          console.log('2. Current patient data:', patient);
-          
-          if (!templates || templates.length === 0) {
-            console.log('No templates to add');
-            return;
-          }
+          if (!templates || templates.length === 0) return;
 
           try {
-            // Get current pendencies from patient object
-            const currentPendenciesArray = patient.pendencies || [];
-            console.log('3. Current pendencies array:', currentPendenciesArray);
-            
-            // Combine current pendencies with new templates
-            const updatedPendencies = [...currentPendenciesArray, ...templates];
-            console.log('4. Updated pendencies array:', updatedPendencies);
-            
-            // Convert to database format (newline-separated string)
+            // Get current pendencies and add new templates
+            const currentPendencies = patient.pendencies || [];
+            const updatedPendencies = [...currentPendencies, ...templates];
             const pendenciesString = updatedPendencies.join('\n');
-            console.log('5. Pendencies string for DB:', pendenciesString);
 
-            // Update in database
-            const { data, error } = await supabase
+            // Update database
+            const { error } = await supabase
               .from('patients')
-              .update({
+              .update({ 
                 pendencies: pendenciesString,
                 updated_at: new Date().toISOString()
               })
-              .eq('id', patient.id)
-              .select()
-              .single();
+              .eq('id', patient.id);
 
-            if (error) {
-              console.error('6. Database error:', error);
-              throw error;
-            }
+            if (error) throw error;
 
-            console.log('7. Database update successful:', data);
-            
-            // Show success message
-            toast.success(`${templates.length} template(s) adicionado(s)`, {
-              description: 'As programações foram atualizadas com sucesso'
-            });
-            
-            // Force refresh
-            console.log('8. Triggering refresh...');
+            toast.success(`${templates.length} template(s) adicionado(s)`);
             onUpdate(patient);
-            
           } catch (error) {
-            console.error('ERROR in onAddTemplates:', error);
-            toast.error('Erro ao adicionar templates', {
-              description: error instanceof Error ? error.message : 'Erro desconhecido'
-            });
+            console.error('Error:', error);
+            toast.error('Erro ao adicionar templates');
           }
         }}
       />
