@@ -1,4 +1,4 @@
-import { Stethoscope, UserCog, UsersRound, Baby, Bone, Activity } from "lucide-react";
+import { Stethoscope, UserCog, UsersRound, Baby, Bone } from "lucide-react";
 import { MedicalResponsibility } from "@/types/patient";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +28,21 @@ export const MedicalResponsibilityIndicator = ({
       case 'obstetra':
         return <Baby className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
       case 'cirurgiao_geral':
-        return <Activity className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4", "rotate-90")} style={{ strokeWidth: 3 }} />;
+        return (
+          <svg 
+            className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")}
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2.5" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          >
+            <path d="M4 20 L8 16 L12 20 L16 16 L20 20" />
+            <path d="M10 18 L10 8 L14 4 L14 8" />
+            <circle cx="12" cy="5" r="1.5" fill="currentColor" />
+          </svg>
+        );
       case 'traumatologista':
         return <Bone className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
       default:
