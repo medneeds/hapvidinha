@@ -1,4 +1,4 @@
-import { Stethoscope, UserCog, UsersRound, Baby, Scissors, Bone } from "lucide-react";
+import { Stethoscope, UserCog, UsersRound, Baby, Bone, Slash } from "lucide-react";
 import { MedicalResponsibility } from "@/types/patient";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +28,7 @@ export const MedicalResponsibilityIndicator = ({
       case 'obstetra':
         return <Baby className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
       case 'cirurgiao_geral':
-        return <Scissors className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
+        return <Slash className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
       case 'traumatologista':
         return <Bone className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
       default:
