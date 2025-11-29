@@ -141,12 +141,9 @@ export function SectorSection({
   useEffect(() => {
     // Só atualizar se não houver controle externo
     if (controlledIsOpen === undefined) {
-      const shouldBeOpen = patients.length > 0;
-      if (shouldBeOpen !== internalIsOpen) {
-        setInternalIsOpen(shouldBeOpen);
-      }
+      setInternalIsOpen(patients.length > 0);
     }
-  }, [patients.length, controlledIsOpen, internalIsOpen]);
+  }, [patients.length, controlledIsOpen]);
   
   // Use controlled state if provided, otherwise use internal state
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
