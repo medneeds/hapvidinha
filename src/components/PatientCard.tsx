@@ -2349,25 +2349,24 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               )}
             </button>
           </div>
-        </div>
 
-        {/* Expanded Content */}
-        {isExpanded && (
-          <div className="px-2.5 pb-2.5 space-y-2 border-t border-border/50 pt-2 bg-card/50">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground print:text-[8px] print:gap-1">
-              <Calendar className="h-3 w-3 print:h-2 print:w-2" />
-              <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>
-            </div>
+          {/* Expanded Content */}
+          {isExpanded && (
+            <div className="px-2.5 pb-2.5 space-y-2 border-t border-border/50 pt-2 bg-card/50">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground print:text-[8px] print:gap-1">
+                <Calendar className="h-3 w-3 print:h-2 print:w-2" />
+                <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>
+              </div>
 
-            {/* História Admissional */}
-            <div className="pt-2 border-t border-border/50 print:pt-1">
-              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">História Admissional / Anamnese</h4>
-              <p className="text-xs leading-snug text-foreground whitespace-pre-wrap uppercase print:text-[7.5px] print:leading-tight">
-                {patient.admissionHistory}
-              </p>
+              {/* História Admissional */}
+              <div className="pt-2 border-t border-border/50 print:pt-1">
+                <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">História Admissional / Anamnese</h4>
+                <p className="text-xs leading-snug text-foreground whitespace-pre-wrap uppercase print:text-[7.5px] print:leading-tight">
+                  {patient.admissionHistory}
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
       </Card>
 
