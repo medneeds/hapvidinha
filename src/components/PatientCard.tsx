@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, HelpCircle, Settings } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -560,22 +560,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
   const internmentStatusConfig = {
     SOLICITACAO_PENDENTE: {
-      label: "Solicitação Pendente",
+      label: "🕐 Solicitação Pendente",
       icon: Clock,
       color: "text-amber-600",
       bgColor: "bg-amber-50",
       borderColor: "border-amber-300",
     },
     PSM_FAVORAVEL: {
-      label: "PSM Favorável",
+      label: "✅ Solicitada Internação PSM Favorável",
       icon: CheckCircle2,
       color: "text-green-600",
       bgColor: "bg-green-50",
       borderColor: "border-green-300",
     },
     AGUARDANDO_VAGA: {
-      label: "Aguardando Vaga",
-      icon: HelpCircle,
+      label: "🏥 Aguardando Alocação no SIGA Vaga",
+      icon: BedDouble,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
       borderColor: "border-blue-300",

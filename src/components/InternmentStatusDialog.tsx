@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Clock, CheckCircle2, HelpCircle, X } from "lucide-react";
+import { Clock, CheckCircle2, BedDouble, X } from "lucide-react";
 
 interface InternmentStatusDialogProps {
   isOpen: boolean;
@@ -33,22 +33,22 @@ interface InternmentStatusDialogProps {
 
 const statusConfig = {
   SOLICITACAO_PENDENTE: {
-    label: "Solicitação Pendente",
+    label: "🕐 Solicitação Pendente",
     icon: Clock,
     color: "text-amber-600",
     bgColor: "bg-amber-50",
     borderColor: "border-amber-300",
   },
   PSM_FAVORAVEL: {
-    label: "PSM Favorável",
+    label: "✅ Solicitada Internação PSM Favorável",
     icon: CheckCircle2,
     color: "text-green-600",
     bgColor: "bg-green-50",
     borderColor: "border-green-300",
   },
   AGUARDANDO_VAGA: {
-    label: "Aguardando Vaga",
-    icon: HelpCircle,
+    label: "🏥 Aguardando Alocação no SIGA Vaga",
+    icon: BedDouble,
     color: "text-blue-600",
     bgColor: "bg-blue-50",
     borderColor: "border-blue-300",
