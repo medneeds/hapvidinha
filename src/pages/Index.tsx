@@ -238,7 +238,7 @@ const Index = () => {
     localStorage.setItem(CHECKLIST_KEY, JSON.stringify(checklist));
   }, [checklist]);
 
-  // Smart auto-open sections when they have data (but don't auto-close)
+  // Auto-expand/collapse sections based on content
   useEffect(() => {
     const red = patients.filter((p) => p.sector === "red");
     const yellow = patients.filter((p) => p.sector === "yellow");
@@ -252,12 +252,12 @@ const Index = () => {
     const hasOutsideData = outside.some(p => p.name.trim() !== "");
     const hasNotesData = notes.trim() !== "" || checklist.length > 0;
     
-    // Only open sections when they have data, never force close
-    if (hasRedData) setIsRedSectionOpen(true);
-    if (hasYellowData) setIsYellowSectionOpen(true);
-    if (hasBlueData) setIsBlueSectionOpen(true);
-    if (hasOutsideData) setIsOutsideSectionOpen(true);
-    if (hasNotesData) setIsNotesSectionOpen(true);
+    // Open sections when they have data, collapse when empty
+    setIsRedSectionOpen(hasRedData);
+    setIsYellowSectionOpen(hasYellowData);
+    setIsBlueSectionOpen(hasBlueData);
+    setIsOutsideSectionOpen(hasOutsideData);
+    setIsNotesSectionOpen(hasNotesData);
   }, [patients, notes, checklist]);
 
   const saveToHistory = (currentPatients: Patient[]) => {
