@@ -18,19 +18,20 @@ export const MedicalResponsibilityIndicator = ({
   if (!responsibility?.type) return null;
 
   const getIcon = () => {
+    const iconStyle = { color: sectorColor };
     switch (responsibility.type) {
       case 'porta':
-        return <Stethoscope className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
+        return <Stethoscope className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} style={iconStyle} />;
       case 'lider':
-        return <UserCog className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
+        return <UserCog className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} style={iconStyle} />;
       case 'conjunto':
-        return <UsersRound className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
+        return <UsersRound className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} style={iconStyle} />;
       case 'obstetra':
-        return <Baby className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
+        return <Baby className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} style={iconStyle} />;
       case 'cirurgiao_geral':
-        return <Scissors className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} style={{ strokeWidth: 2.5 }} />;
+        return <Scissors className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} style={{ ...iconStyle, strokeWidth: 2.5 }} />;
       case 'traumatologista':
-        return <Bone className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
+        return <Bone className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} style={iconStyle} />;
       default:
         return null;
     }
@@ -159,11 +160,11 @@ export const MedicalResponsibilityIndicator = ({
       >
         {getIcon()}
       </div>
-      <span className="font-medium leading-none whitespace-nowrap" style={{ fontSize: compact ? '7px' : '8px' }}>
+      <span className="font-medium leading-none whitespace-nowrap" style={{ fontSize: compact ? '7px' : '8px', color: sectorColor }}>
         {getAbbreviation()}
       </span>
       {responsibility.officeNumber && (
-        <span className="font-normal leading-none whitespace-nowrap" style={{ fontSize: compact ? '6.5px' : '7.5px' }}>
+        <span className="font-normal leading-none whitespace-nowrap" style={{ fontSize: compact ? '6.5px' : '7.5px', color: sectorColor }}>
           C{responsibility.officeNumber}
         </span>
       )}
