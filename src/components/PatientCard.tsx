@@ -2687,16 +2687,19 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Exames - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
               <div className="flex flex-col md:col-span-3 relative">
-                <div className="flex items-center gap-1 mb-0.5">
+                <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
                 <Button
                   size="icon"
                   variant="ghost"
                   onClick={() => setExamCurvesDialogOpen(true)}
-                  className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
+                  className="h-4 w-4 p-0.5 text-muted-foreground/50 hover:text-primary opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110 hover:shadow-lg print:hidden group"
                   title="Adicionar Curva de Exames"
+                  style={{
+                    '--hover-glow': sectorColorMap[patient.sector],
+                  } as React.CSSProperties}
                 >
-                  <TrendingUp className="h-[2.5px] w-[2.5px]" />
+                  <TrendingUp className="h-3.5 w-3.5 group-hover:drop-shadow-[0_0_8px_var(--hover-glow)] transition-all duration-300" />
                 </Button>
               </div>
               <DndContext
