@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -1131,13 +1131,27 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           </Button>
                         </div>
                       ) : (
-                        <p 
-                          className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
-                          onClick={() => startEditing("name", patient.name)}
-                          title="Clique para editar"
-                        >
-                          {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          {/* PSM Status Icons */}
+                          {patient.pendencies && patient.pendencies.some(p => p.toUpperCase().includes('AGUARDANDO PSM')) && (
+                            <div title="Aguardando PSM">
+                              <AlertCircle className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                            </div>
+                          )}
+                          {patient.pendencies && patient.pendencies.some(p => p.toUpperCase().includes('PSM FAVORÁVEL')) && (
+                            <div title="PSM Favorável">
+                              <CircleCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
+                            </div>
+                          )}
+                          
+                          <p 
+                            className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                            onClick={() => startEditing("name", patient.name)}
+                            title="Clique para editar"
+                          >
+                            {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
+                          </p>
+                        </div>
                       )}
                       
                       {editingField === "age" ? (
