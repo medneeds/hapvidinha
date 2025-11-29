@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 interface QuickTemplatesDialogProps {
   open: boolean;
@@ -45,6 +47,7 @@ const QUICK_TEMPLATES = [
 
 export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates, patientName }: QuickTemplatesDialogProps) {
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleToggleTemplate = (template: string) => {
     setSelectedTemplates(prev => 
@@ -64,8 +67,13 @@ export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates, patie
 
   const handleCancel = () => {
     setSelectedTemplates([]);
+    setSearchTerm("");
     onOpenChange(false);
   };
+
+  const filteredTemplates = QUICK_TEMPLATES.filter(template =>
+    template.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -88,10 +96,41 @@ export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates, patie
             SELECIONE OS ITENS PARA ADICIONAR ÀS PROGRAMAÇÕES/PENDÊNCIAS
           </DialogDescription>
         </DialogHeader>
+
+        {/* Barra de pesquisa e botão adicionar no topo */}
+        <div className="space-y-3 pb-4 border-b border-border/50">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Pesquisar templates..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 uppercase tracking-wide"
+            />
+          </div>
+          <Button 
+            onClick={handleAdd}
+            disabled={selectedTemplates.length === 0}
+            className="w-full uppercase tracking-wider font-bold hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl"
+          >
+            <span className="mr-2">⚡</span>
+            ADICIONAR {selectedTemplates.length > 0 && `(${selectedTemplates.length})`}
+          </Button>
+        </div>
         
-        <ScrollArea className="h-[480px] pr-4 -mr-4">
+        <ScrollArea className="h-[380px] pr-4 -mr-4">
           <div className="space-y-2 pr-2">
-            {QUICK_TEMPLATES.map((template, index) => (
+            {filteredTemplates.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-sm uppercase tracking-wide">
+                  Nenhum template encontrado
+                </p>
+                <p className="text-muted-foreground text-xs mt-2">
+                  Tente outro termo de pesquisa
+                </p>
+              </div>
+            ) : (
+              filteredTemplates.map((template, index) => (
               <div 
                 key={template} 
                 className="group relative flex items-center space-x-3 p-3.5 rounded-xl border border-border/40 bg-gradient-to-r from-card/50 to-card/30 hover:from-accent/15 hover:to-accent/5 hover:border-primary/40 hover:shadow-md hover:scale-[1.02] transition-all duration-300 animate-fade-in"
@@ -113,14 +152,15 @@ export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates, patie
                 </Label>
                 <div className="flex items-center gap-2 z-10">
                   <span className="text-xs text-muted-foreground font-mono opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-0 translate-x-2">
-                    #{String(index + 1).padStart(2, "0")}
+                    #{String(QUICK_TEMPLATES.indexOf(template) + 1).padStart(2, "0")}
                   </span>
                   {selectedTemplates.includes(template) && (
                     <span className="text-primary animate-scale-in">✓</span>
                   )}
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </ScrollArea>
 
