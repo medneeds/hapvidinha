@@ -1093,7 +1093,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
               {/* Nome e Idade - mais espaço para nome completo */}
-              <div className="flex flex-col md:col-span-3">
+              <div className="flex flex-col md:col-span-4">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-start gap-1.5">
