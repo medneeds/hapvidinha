@@ -12,26 +12,18 @@ interface QuickTemplatesDialogProps {
 }
 
 const QUICK_TEMPLATES = [
-  "Solicitar vaga de internação",
-  "Aguardar resposta da regulação",
-  "Solicitar avaliação especializada",
-  "Programar exames complementares",
-  "Aguardar resultado de exames",
-  "Solicitar parecer cirúrgico",
-  "Programar procedimento",
-  "Solicitar transferência para UTI",
-  "Aguardar disponibilidade de leito",
-  "Realizar curativos",
-  "Ajustar medicação conforme resposta",
-  "Monitorar sinais vitais",
-  "Reavaliar em X horas",
-  "Solicitar hemoderivados",
-  "Programar TC/RM",
-  "Aguardar vaga cirúrgica",
-  "Contatar família",
-  "Programar alta hospitalar",
-  "Aguardar liberação PSM",
-  "Solicitar parecer de especialidade"
+  "SOLICITAR INTERNAÇÃO",
+  "SOLICITADA INTERNAÇÃO (AGUARDANDO PSM)",
+  "AGUARDANDO EXAMES",
+  'SOLICITAR PARECER PARA " "',
+  'SOLICITAR PROCEDIMENTO " "',
+  "SOLICITADA INTERNAÇÃO EM UTI (AGUARDANDO PSM)",
+  "AGUARDANDO ALOCAÇÃO NO SIGA",
+  "M.O.V.",
+  "MANTER",
+  "SOLICITAR HEMODERIVADOS",
+  "IR PARA O CENTRO CIRÚRGICO",
+  "AGUARDANDO PSM"
 ];
 
 export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates }: QuickTemplatesDialogProps) {
