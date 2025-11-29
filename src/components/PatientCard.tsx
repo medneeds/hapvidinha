@@ -2805,7 +2805,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     size="icon"
                     variant="ghost"
                     onClick={() => setQuickTemplatesDialogOpen(true)}
-                    className="h-4 w-4 p-1 text-muted-foreground hover:text-primary hover:bg-accent transition-all print:hidden"
+                    className="h-4 w-4 p-1 hover:bg-accent transition-all print:hidden"
+                    style={{ color: sectorColorMap[patient.sector] }}
                     title="Templates Rápidos"
                   >
                     <Zap className="h-2 w-2" />
