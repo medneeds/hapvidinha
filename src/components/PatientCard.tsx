@@ -1171,122 +1171,72 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </div>
                   </div>
 
-                  {/* UTI: Campos Administrativos Compactos */}
-                  <div className="flex flex-col md:col-span-13 gap-0.5">
-                    <div className="grid grid-cols-12 gap-1.5">
+                  {/* UTI: Campos Administrativos Compactos em Grid */}
+                  <div className="flex flex-col md:col-span-13">
+                    <div className="grid grid-cols-12 gap-2">
                       {/* Origem */}
-                      <div className="col-span-2">
-                      <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Origem</span>
-                      <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCenter}
-                        onDragEnd={(event: DragEndEvent) => {
-                          const { active, over } = event;
-                          if (over && active.id !== over.id) {
-                            const oldIndex = (patient.utiOriginSector || []).findIndex((_, i) => `uti-origin-${i}` === active.id);
-                            const newIndex = (patient.utiOriginSector || []).findIndex((_, i) => `uti-origin-${i}` === over.id);
-                            const reordered = arrayMove(patient.utiOriginSector || [], oldIndex, newIndex);
-                            onUpdate({ ...patient, utiOriginSector: reordered });
-                          }
-                        }}
-                      >
-                        <SortableContext items={(patient.utiOriginSector || []).map((_, i) => `uti-origin-${i}`)} strategy={verticalListSortingStrategy}>
-                          <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
-                            {(patient.utiOriginSector || []).map((item, idx) => (
-                              <SortableDiagnosisItemCollapsed
-                                key={`uti-origin-${idx}`}
-                                id={`uti-origin-${idx}`}
-                                index={idx}
-                                diagnosis={item}
-                                isEditing={editingField === "utiOriginSector" && editingArrayIndex === idx}
-                                editValue={editValue}
-                                onEdit={() => startEditing("utiOriginSector", item, idx)}
-                                onSave={saveInlineEdit}
-                                onCancel={cancelEditing}
-                                onRemove={() => removeArrayItem("utiOriginSector", idx)}
-                                onAddNew={() => startEditing("utiOriginSector", "", -2)}
-                                onEditValueChange={(val) => setEditValue(val.toUpperCase())}
-                                onKeyDown={handleKeyDown}
-                                inputRef={inputRef}
-                                isLast={idx === (patient.utiOriginSector || []).length - 1}
-                              />
-                            ))}
-                          </ol>
-                        </SortableContext>
-                        {editingField === "utiOriginSector" && editingArrayIndex === -2 && (
-                          <li className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
-                            <div className="flex-shrink-0 w-2" />
-                            <div className="flex items-center gap-0.5 flex-1">
-                              <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{(patient.utiOriginSector || []).length + 1}.</span>
-                              <Input ref={inputRef} value={editValue} onChange={(e) => { const target = e.target as HTMLInputElement; const start = target.selectionStart ?? 0; const end = target.selectionEnd ?? 0; setEditValue(e.target.value.toUpperCase()); requestAnimationFrame(() => { target.setSelectionRange(start, end); }); }} onKeyDown={handleKeyDown} className="h-4 text-[9px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="NOVO" />
-                            </div>
-                            <div className="flex items-center gap-0.5 flex-shrink-0">
-                              <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
-                              <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3 w-3 text-red-600 hover:bg-red-100 p-0"><X className="h-2 w-2" /></Button>
-                            </div>
-                          </li>
-                        )}
-                        {(patient.utiOriginSector || []).length === 0 && editingField !== "utiOriginSector" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiOriginSector", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
-                      </DndContext>
-                    </div>
-
-                      {/* Admissão UTI */}
-                      <div className="col-span-2">
-                        <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Admissão</span>
-                        <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
-                        {(patient.utiAdmissionDate || []).map((item, idx) => (
-                          <li key={`uti-admission-date-${idx}`} className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5">
-                            {editingField === "utiAdmissionDate" && editingArrayIndex === idx ? (
-                              <>
-                                <div className="flex items-center gap-0.5 flex-1">
-                                  <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
-                                  <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(formatDateInput(e.target.value))} onKeyDown={handleKeyDown} className="h-4 text-[9px] text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="DD/MM/AAAA" maxLength={10} />
-                                </div>
-                                <div className="flex items-center gap-0.5 flex-shrink-0">
-                                  <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
-                                  <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3 w-3 text-red-600 hover:bg-red-100 p-0"><X className="h-2 w-2" /></Button>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <div className="flex items-center gap-0.5 flex-1">
-                                  <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
-                                  <span className="break-words text-[9px]">{item}</span>
-                                </div>
-                                <div className="flex items-center gap-0.5 flex-shrink-0">
-                                  <Button size="icon" variant="ghost" onClick={() => startEditing("utiAdmissionDate", item, idx)} className="h-3 w-3 text-primary hover:bg-primary/10 print:hidden p-0"><Pencil className="h-2 w-2" /></Button>
-                                  <Button size="icon" variant="ghost" onClick={() => removeArrayItem("utiAdmissionDate", idx)} className="h-3 w-3 text-destructive hover:bg-destructive/10 print:hidden p-0"><X className="h-2 w-2" /></Button>
-                                  {idx === (patient.utiAdmissionDate || []).length - 1 && <Button size="icon" variant="ghost" onClick={() => startEditing("utiAdmissionDate", "", -2)} className="h-3 w-3 text-primary hover:bg-primary/10 print:hidden p-0"><Plus className="h-2 w-2" /></Button>}
-                                </div>
-                              </>
-                            )}
-                          </li>
-                        ))}
-                      </ol>
-                      {editingField === "utiAdmissionDate" && editingArrayIndex === -2 && (
-                        <li className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
-                          <div className="flex items-center gap-0.5 flex-1">
-                            <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{(patient.utiAdmissionDate || []).length + 1}.</span>
-                            <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(formatDateInput(e.target.value))} onKeyDown={handleKeyDown} className="h-4 text-[9px] text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="DD/MM/AAAA" maxLength={10} />
-                          </div>
-                          <div className="flex items-center gap-0.5 flex-shrink-0">
-                            <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
-                            <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3 w-3 text-red-600 hover:bg-red-100 p-0"><X className="h-2 w-2" /></Button>
-                          </div>
-                        </li>
-                      )}
-                      {(patient.utiAdmissionDate || []).length === 0 && editingField !== "utiAdmissionDate" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiAdmissionDate", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
+                      <div className="col-span-3">
+                        <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Origem</span>
+                        <DndContext
+                          sensors={sensors}
+                          collisionDetection={closestCenter}
+                          onDragEnd={(event: DragEndEvent) => {
+                            const { active, over } = event;
+                            if (over && active.id !== over.id) {
+                              const oldIndex = (patient.utiOriginSector || []).findIndex((_, i) => `uti-origin-${i}` === active.id);
+                              const newIndex = (patient.utiOriginSector || []).findIndex((_, i) => `uti-origin-${i}` === over.id);
+                              const reordered = arrayMove(patient.utiOriginSector || [], oldIndex, newIndex);
+                              onUpdate({ ...patient, utiOriginSector: reordered });
+                            }
+                          }}
+                        >
+                          <SortableContext items={(patient.utiOriginSector || []).map((_, i) => `uti-origin-${i}`)} strategy={verticalListSortingStrategy}>
+                            <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
+                              {(patient.utiOriginSector || []).map((item, idx) => (
+                                <SortableDiagnosisItemCollapsed
+                                  key={`uti-origin-${idx}`}
+                                  id={`uti-origin-${idx}`}
+                                  index={idx}
+                                  diagnosis={item}
+                                  isEditing={editingField === "utiOriginSector" && editingArrayIndex === idx}
+                                  editValue={editValue}
+                                  onEdit={() => startEditing("utiOriginSector", item, idx)}
+                                  onSave={saveInlineEdit}
+                                  onCancel={cancelEditing}
+                                  onRemove={() => removeArrayItem("utiOriginSector", idx)}
+                                  onAddNew={() => startEditing("utiOriginSector", "", -2)}
+                                  onEditValueChange={(val) => setEditValue(val.toUpperCase())}
+                                  onKeyDown={handleKeyDown}
+                                  inputRef={inputRef}
+                                  isLast={idx === (patient.utiOriginSector || []).length - 1}
+                                />
+                              ))}
+                            </ol>
+                          </SortableContext>
+                          {editingField === "utiOriginSector" && editingArrayIndex === -2 && (
+                            <li className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
+                              <div className="flex-shrink-0 w-2" />
+                              <div className="flex items-center gap-0.5 flex-1">
+                                <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{(patient.utiOriginSector || []).length + 1}.</span>
+                                <Input ref={inputRef} value={editValue} onChange={(e) => { const target = e.target as HTMLInputElement; const start = target.selectionStart ?? 0; const end = target.selectionEnd ?? 0; setEditValue(e.target.value.toUpperCase()); requestAnimationFrame(() => { target.setSelectionRange(start, end); }); }} onKeyDown={handleKeyDown} className="h-4 text-[9px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="NOVO" />
+                              </div>
+                              <div className="flex items-center gap-0.5 flex-shrink-0">
+                                <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
+                                <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3 w-3 text-red-600 hover:bg-red-100 p-0"><X className="h-2 w-2" /></Button>
+                              </div>
+                            </li>
+                          )}
+                          {(patient.utiOriginSector || []).length === 0 && editingField !== "utiOriginSector" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiOriginSector", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
+                        </DndContext>
                       </div>
 
-                      {/* Previsão de Alta */}
+                      {/* Admissão UTI */}
                       <div className="col-span-3">
-                      <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Previsão Alta</span>
-                      <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
-                        {(patient.utiDischargePrediction || []).map((item, idx) => {
-                          const daysCalculation = calculateDaysUntilDischarge(item);
-                          return (
-                            <li key={`uti-discharge-${idx}`} className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5">
-                              {editingField === "utiDischargePrediction" && editingArrayIndex === idx ? (
+                        <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Admissão</span>
+                        <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
+                          {(patient.utiAdmissionDate || []).map((item, idx) => (
+                            <li key={`uti-admission-date-${idx}`} className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5">
+                              {editingField === "utiAdmissionDate" && editingArrayIndex === idx ? (
                                 <>
                                   <div className="flex items-center gap-0.5 flex-1">
                                     <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
@@ -1301,51 +1251,23 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                 <>
                                   <div className="flex items-center gap-0.5 flex-1">
                                     <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
-                                    <span className="break-words text-[9px]">{item}{daysCalculation && <span className="ml-1 text-muted-foreground text-[8px]">{daysCalculation}</span>}</span>
+                                    <span className="break-words text-[9px]">{item}</span>
                                   </div>
                                   <div className="flex items-center gap-0.5 flex-shrink-0">
-                                    <Button size="icon" variant="ghost" onClick={() => startEditing("utiDischargePrediction", item, idx)} className="h-3 w-3 text-primary hover:bg-primary/10 print:hidden p-0"><Pencil className="h-2 w-2" /></Button>
-                                    <Button size="icon" variant="ghost" onClick={() => removeArrayItem("utiDischargePrediction", idx)} className="h-3 w-3 text-destructive hover:bg-destructive/10 print:hidden p-0"><X className="h-2 w-2" /></Button>
-                                    {idx === (patient.utiDischargePrediction || []).length - 1 && <Button size="icon" variant="ghost" onClick={() => startEditing("utiDischargePrediction", "", -2)} className="h-3 w-3 text-primary hover:bg-primary/10 print:hidden p-0"><Plus className="h-2 w-2" /></Button>}
+                                    <Button size="icon" variant="ghost" onClick={() => startEditing("utiAdmissionDate", item, idx)} className="h-3 w-3 text-primary hover:bg-primary/10 print:hidden p-0"><Pencil className="h-2 w-2" /></Button>
+                                    <Button size="icon" variant="ghost" onClick={() => removeArrayItem("utiAdmissionDate", idx)} className="h-3 w-3 text-destructive hover:bg-destructive/10 print:hidden p-0"><X className="h-2 w-2" /></Button>
+                                    {idx === (patient.utiAdmissionDate || []).length - 1 && <Button size="icon" variant="ghost" onClick={() => startEditing("utiAdmissionDate", "", -2)} className="h-3 w-3 text-primary hover:bg-primary/10 print:hidden p-0"><Plus className="h-2 w-2" /></Button>}
                                   </div>
                                 </>
                               )}
                             </li>
-                          );
-                        })}
-                      </ol>
-                      {editingField === "utiDischargePrediction" && editingArrayIndex === -2 && (
-                        <li className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
-                          <div className="flex items-center gap-0.5 flex-1">
-                            <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{(patient.utiDischargePrediction || []).length + 1}.</span>
-                            <Input ref={inputRef} value={editValue} onChange={(e) => { const formatted = formatDateInput(e.target.value); setEditValue(formatted); }} onKeyDown={handleKeyDown} className="h-4 text-[9px] text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="DD/MM/AAAA" maxLength={10} />
-                          </div>
-                          <div className="flex items-center gap-0.5 flex-shrink-0">
-                            <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
-                            <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3 w-3 text-red-600 hover:bg-red-100 p-0"><X className="h-2 w-2" /></Button>
-                          </div>
-                        </li>
-                      )}
-                      {(patient.utiDischargePrediction || []).length === 0 && editingField !== "utiDischargePrediction" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiDischargePrediction", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
-                      </div>
-
-                      {/* Especialidades */}
-                      <div className="col-span-2">
-                      <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Especialidades</span>
-                      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(event: DragEndEvent) => { const { active, over } = event; if (over && active.id !== over.id) { const oldIndex = (patient.utiSpecialties || []).findIndex((_, i) => `uti-specialties-${i}` === active.id); const newIndex = (patient.utiSpecialties || []).findIndex((_, i) => `uti-specialties-${i}` === over.id); const reordered = arrayMove(patient.utiSpecialties || [], oldIndex, newIndex); onUpdate({ ...patient, utiSpecialties: reordered }); } }}>
-                        <SortableContext items={(patient.utiSpecialties || []).map((_, i) => `uti-specialties-${i}`)} strategy={verticalListSortingStrategy}>
-                          <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
-                            {(patient.utiSpecialties || []).map((item, idx) => (
-                              <SortableDiagnosisItemCollapsed key={`uti-specialties-${idx}`} id={`uti-specialties-${idx}`} index={idx} diagnosis={item} isEditing={editingField === "utiSpecialties" && editingArrayIndex === idx} editValue={editValue} onEdit={() => startEditing("utiSpecialties", item, idx)} onSave={saveInlineEdit} onCancel={cancelEditing} onRemove={() => removeArrayItem("utiSpecialties", idx)} onAddNew={() => startEditing("utiSpecialties", "", -2)} onEditValueChange={(val) => setEditValue(val.toUpperCase())} onKeyDown={handleKeyDown} inputRef={inputRef} isLast={idx === (patient.utiSpecialties || []).length - 1} />
-                            ))}
-                          </ol>
-                        </SortableContext>
-                        {editingField === "utiSpecialties" && editingArrayIndex === -2 && (
+                          ))}
+                        </ol>
+                        {editingField === "utiAdmissionDate" && editingArrayIndex === -2 && (
                           <li className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
-                            <div className="flex-shrink-0 w-2" />
                             <div className="flex items-center gap-0.5 flex-1">
-                              <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{(patient.utiSpecialties || []).length + 1}.</span>
-                              <Input ref={inputRef} value={editValue} onChange={(e) => { const target = e.target as HTMLInputElement; const start = target.selectionStart ?? 0; const end = target.selectionEnd ?? 0; setEditValue(e.target.value.toUpperCase()); requestAnimationFrame(() => { target.setSelectionRange(start, end); }); }} onKeyDown={handleKeyDown} className="h-4 text-[9px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="NOVA" />
+                              <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{(patient.utiAdmissionDate || []).length + 1}.</span>
+                              <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(formatDateInput(e.target.value))} onKeyDown={handleKeyDown} className="h-4 text-[9px] text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="DD/MM/AAAA" maxLength={10} />
                             </div>
                             <div className="flex items-center gap-0.5 flex-shrink-0">
                               <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
@@ -1353,11 +1275,120 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             </div>
                           </li>
                         )}
-                        {(patient.utiSpecialties || []).length === 0 && editingField !== "utiSpecialties" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiSpecialties", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
-                      </DndContext>
+                        {(patient.utiAdmissionDate || []).length === 0 && editingField !== "utiAdmissionDate" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiAdmissionDate", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
+                      </div>
+
+                      {/* Previsão de Alta */}
+                      <div className="col-span-3">
+                        <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Previsão Alta</span>
+                        <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
+                          {(patient.utiDischargePrediction || []).map((item, idx) => {
+                            const daysCalculation = calculateDaysUntilDischarge(item);
+                            return (
+                              <li key={`uti-discharge-${idx}`} className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5">
+                                {editingField === "utiDischargePrediction" && editingArrayIndex === idx ? (
+                                  <>
+                                    <div className="flex items-center gap-0.5 flex-1">
+                                      <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
+                                      <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(formatDateInput(e.target.value))} onKeyDown={handleKeyDown} className="h-4 text-[9px] text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="DD/MM/AAAA" maxLength={10} />
+                                    </div>
+                                    <div className="flex items-center gap-0.5 flex-shrink-0">
+                                      <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
+                                      <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3 w-3 text-red-600 hover:bg-red-100 p-0"><X className="h-2 w-2" /></Button>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="flex items-center gap-0.5 flex-1">
+                                      <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{idx + 1}.</span>
+                                      <span className="break-words text-[9px]">
+                                        {item}
+                                        {daysCalculation && <span className="text-muted-foreground ml-1">({daysCalculation})</span>}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-0.5 flex-shrink-0">
+                                      <Button size="icon" variant="ghost" onClick={() => startEditing("utiDischargePrediction", item, idx)} className="h-3 w-3 text-primary hover:bg-primary/10 print:hidden p-0"><Pencil className="h-2 w-2" /></Button>
+                                      <Button size="icon" variant="ghost" onClick={() => removeArrayItem("utiDischargePrediction", idx)} className="h-3 w-3 text-destructive hover:bg-destructive/10 print:hidden p-0"><X className="h-2 w-2" /></Button>
+                                      {idx === (patient.utiDischargePrediction || []).length - 1 && <Button size="icon" variant="ghost" onClick={() => startEditing("utiDischargePrediction", "", -2)} className="h-3 w-3 text-primary hover:bg-primary/10 print:hidden p-0"><Plus className="h-2 w-2" /></Button>}
+                                    </div>
+                                  </>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ol>
+                        {editingField === "utiDischargePrediction" && editingArrayIndex === -2 && (
+                          <li className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
+                            <div className="flex items-center gap-0.5 flex-1">
+                              <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{(patient.utiDischargePrediction || []).length + 1}.</span>
+                              <Input ref={inputRef} value={editValue} onChange={(e) => setEditValue(formatDateInput(e.target.value))} onKeyDown={handleKeyDown} className="h-4 text-[9px] text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="DD/MM/AAAA" maxLength={10} />
+                            </div>
+                            <div className="flex items-center gap-0.5 flex-shrink-0">
+                              <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
+                              <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3 w-3 text-red-600 hover:bg-red-100 p-0"><X className="h-2 w-2" /></Button>
+                            </div>
+                          </li>
+                        )}
+                        {(patient.utiDischargePrediction || []).length === 0 && editingField !== "utiDischargePrediction" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiDischargePrediction", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
+                      </div>
+
+                      {/* Especialidades */}
+                      <div className="col-span-3">
+                        <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Especialidades</span>
+                        <DndContext
+                          sensors={sensors}
+                          collisionDetection={closestCenter}
+                          onDragEnd={(event: DragEndEvent) => {
+                            const { active, over } = event;
+                            if (over && active.id !== over.id) {
+                              const oldIndex = (patient.utiSpecialties || []).findIndex((_, i) => `uti-specialty-${i}` === active.id);
+                              const newIndex = (patient.utiSpecialties || []).findIndex((_, i) => `uti-specialty-${i}` === over.id);
+                              const reordered = arrayMove(patient.utiSpecialties || [], oldIndex, newIndex);
+                              onUpdate({ ...patient, utiSpecialties: reordered });
+                            }
+                          }}
+                        >
+                          <SortableContext items={(patient.utiSpecialties || []).map((_, i) => `uti-specialty-${i}`)} strategy={verticalListSortingStrategy}>
+                            <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
+                              {(patient.utiSpecialties || []).map((item, idx) => (
+                                <SortableDiagnosisItemCollapsed
+                                  key={`uti-specialty-${idx}`}
+                                  id={`uti-specialty-${idx}`}
+                                  index={idx}
+                                  diagnosis={item}
+                                  isEditing={editingField === "utiSpecialties" && editingArrayIndex === idx}
+                                  editValue={editValue}
+                                  onEdit={() => startEditing("utiSpecialties", item, idx)}
+                                  onSave={saveInlineEdit}
+                                  onCancel={cancelEditing}
+                                  onRemove={() => removeArrayItem("utiSpecialties", idx)}
+                                  onAddNew={() => startEditing("utiSpecialties", "", -2)}
+                                  onEditValueChange={(val) => setEditValue(val.toUpperCase())}
+                                  onKeyDown={handleKeyDown}
+                                  inputRef={inputRef}
+                                  isLast={idx === (patient.utiSpecialties || []).length - 1}
+                                />
+                              ))}
+                            </ol>
+                          </SortableContext>
+                          {editingField === "utiSpecialties" && editingArrayIndex === -2 && (
+                            <li className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
+                              <div className="flex-shrink-0 w-2" />
+                              <div className="flex items-center gap-0.5 flex-1">
+                                <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{(patient.utiSpecialties || []).length + 1}.</span>
+                                <Input ref={inputRef} value={editValue} onChange={(e) => { const target = e.target as HTMLInputElement; const start = target.selectionStart ?? 0; const end = target.selectionEnd ?? 0; setEditValue(e.target.value.toUpperCase()); requestAnimationFrame(() => { target.setSelectionRange(start, end); }); }} onKeyDown={handleKeyDown} className="h-4 text-[9px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="NOVA" />
+                              </div>
+                              <div className="flex items-center gap-0.5 flex-shrink-0">
+                                <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
+                                <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3 w-3 text-red-600 hover:bg-red-100 p-0"><X className="h-2 w-2" /></Button>
+                              </div>
+                            </li>
+                          )}
+                          {(patient.utiSpecialties || []).length === 0 && editingField !== "utiSpecialties" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiSpecialties", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
+                        </DndContext>
+                      </div>
                     </div>
                   </div>
-                </div>
                 </>
               ) : (
                 /* Outros departamentos: Nome e Idade padrão */
