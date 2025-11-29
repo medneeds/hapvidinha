@@ -1062,115 +1062,117 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
 
-              {/* Nome e Idade - mais espaço para nome completo */}
-              <div className="flex flex-col md:col-span-4">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
-                <div className="group/name relative">
-                  <div className="flex items-start gap-1.5">
-                    <div className="flex-1 min-w-0">
-                      {editingField === "name" ? (
-                        <div className="flex items-center gap-1">
-                          <Input
-                            ref={inputRef}
-                            value={editValue}
-                            onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
-                              const start = target.selectionStart ?? 0;
-                              const end = target.selectionEnd ?? 0;
-                              setEditValue(e.target.value.toUpperCase());
-                              requestAnimationFrame(() => {
-                                target.setSelectionRange(start, end);
-                              });
-                            }}
-                            onKeyDown={handleKeyDown}
-                            className="h-6 text-sm font-semibold uppercase"
-                          />
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={saveInlineEdit}
-                            className="h-6 w-6 text-green-600 hover:bg-green-100"
-                          >
-                            <Check className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={cancelEditing}
-                            className="h-6 w-6 text-red-600 hover:bg-red-100"
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
+              {/* Nome e Idade - UTI e outros departamentos */}
+              {currentDepartment === "UTI" ? (
+                <>
+                  {/* UTI: Nome e Idade Compactos */}
+                  <div className="flex flex-col md:col-span-4">
+                    <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
+                    <div className="group/name relative">
+                      <div className="flex items-start gap-1.5">
+                        <div className="flex-1 min-w-0">
+                          {editingField === "name" ? (
+                            <div className="flex items-center gap-1">
+                              <Input
+                                ref={inputRef}
+                                value={editValue}
+                                onChange={(e) => {
+                                  const target = e.target as HTMLInputElement;
+                                  const start = target.selectionStart ?? 0;
+                                  const end = target.selectionEnd ?? 0;
+                                  setEditValue(e.target.value.toUpperCase());
+                                  requestAnimationFrame(() => {
+                                    target.setSelectionRange(start, end);
+                                  });
+                                }}
+                                onKeyDown={handleKeyDown}
+                                className="h-6 text-sm font-semibold uppercase"
+                              />
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={saveInlineEdit}
+                                className="h-6 w-6 text-green-600 hover:bg-green-100"
+                              >
+                                <Check className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={cancelEditing}
+                                className="h-6 w-6 text-red-600 hover:bg-red-100"
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <p 
+                              className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                              onClick={() => startEditing("name", patient.name)}
+                              title="Clique para editar"
+                            >
+                              {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
+                            </p>
+                          )}
+                          
+                          {editingField === "age" ? (
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <Input
+                                ref={inputRef}
+                                type="text"
+                                value={editValue}
+                                onChange={(e) => setEditValue(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                className="h-5 text-[11px] w-32"
+                                placeholder="Idade ou data nasc."
+                                disabled={isCalculating}
+                              />
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={saveInlineEdit}
+                                className="h-5 w-5 text-green-600 hover:bg-green-100"
+                                disabled={isCalculating}
+                              >
+                                <Check className={cn("h-2.5 w-2.5", isCalculating && "animate-spin")} />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={cancelEditing}
+                                className="h-5 w-5 text-red-600 hover:bg-red-100"
+                                disabled={isCalculating}
+                              >
+                                <X className="h-2.5 w-2.5" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <p 
+                              className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 whitespace-normal break-words"
+                              onClick={() => startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
+                              title="Clique para editar"
+                            >
+                              {patient.age ? formatAgeDisplay(patient.age) : <span className="italic">Clique para adicionar idade</span>}
+                            </p>
+                          )}
                         </div>
-                      ) : (
-                        <p 
-                          className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
-                          onClick={() => startEditing("name", patient.name)}
-                          title="Clique para editar"
-                        >
-                          {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
-                        </p>
-                      )}
-                      
-                      {editingField === "age" ? (
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <Input
-                            ref={inputRef}
-                            type="text"
-                            value={editValue}
-                            onChange={(e) => setEditValue(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            className="h-5 text-[11px] w-32"
-                            placeholder="Idade ou data nasc."
-                            disabled={isCalculating}
-                          />
+                        {!editingField && (
                           <Button
                             size="icon"
                             variant="ghost"
-                            onClick={saveInlineEdit}
-                            className="h-5 w-5 text-green-600 hover:bg-green-100"
-                            disabled={isCalculating}
+                            onClick={handleCopyName}
+                            className="h-5 w-5 opacity-60 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0 text-muted-foreground"
+                            title="Copiar nome"
                           >
-                            <Check className={cn("h-2.5 w-2.5", isCalculating && "animate-spin")} />
+                            <Copy className="h-3 w-3" />
                           </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={cancelEditing}
-                            className="h-5 w-5 text-red-600 hover:bg-red-100"
-                            disabled={isCalculating}
-                          >
-                            <X className="h-2.5 w-2.5" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <p 
-                          className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 whitespace-normal break-words"
-                          onClick={() => startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
-                          title="Clique para editar"
-                        >
-                          {patient.age ? formatAgeDisplay(patient.age) : <span className="italic">Clique para adicionar idade</span>}
-                        </p>
-                      )}
+                        )}
+                      </div>
                     </div>
-                    {!editingField && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={handleCopyName}
-                        className="h-5 w-5 opacity-60 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0 text-muted-foreground"
-                        title="Copiar nome"
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                    )}
                   </div>
-              </div>
-            </div>
 
-            {/* UTI - Campos Administrativos Compactos ao lado do Nome */}
-            {currentDepartment === "UTI" && (
-              <div className="flex flex-col md:col-span-13 gap-1">
+                  {/* UTI: Campos Administrativos Compactos */}
+                  <div className="flex flex-col md:col-span-13 gap-1">
                   <div className="grid grid-cols-12 gap-2">
                     {/* Origem */}
                     <div className="col-span-2">
@@ -1384,9 +1386,117 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </div>
                   </div>
                 </div>
+                </>
+              ) : (
+                /* Outros departamentos: Nome e Idade padrão */
+                <div className="flex flex-col md:col-span-4">
+                  <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
+                  <div className="group/name relative">
+                    <div className="flex items-start gap-1.5">
+                      <div className="flex-1 min-w-0">
+                        {editingField === "name" ? (
+                          <div className="flex items-center gap-1">
+                            <Input
+                              ref={inputRef}
+                              value={editValue}
+                              onChange={(e) => {
+                                const target = e.target as HTMLInputElement;
+                                const start = target.selectionStart ?? 0;
+                                const end = target.selectionEnd ?? 0;
+                                setEditValue(e.target.value.toUpperCase());
+                                requestAnimationFrame(() => {
+                                  target.setSelectionRange(start, end);
+                                });
+                              }}
+                              onKeyDown={handleKeyDown}
+                              className="h-6 text-sm font-semibold uppercase"
+                            />
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={saveInlineEdit}
+                              className="h-6 w-6 text-green-600 hover:bg-green-100"
+                            >
+                              <Check className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={cancelEditing}
+                              className="h-6 w-6 text-red-600 hover:bg-red-100"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <p 
+                            className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                            onClick={() => startEditing("name", patient.name)}
+                            title="Clique para editar"
+                          >
+                            {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
+                          </p>
+                        )}
+                        
+                        {editingField === "age" ? (
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <Input
+                              ref={inputRef}
+                              type="text"
+                              value={editValue}
+                              onChange={(e) => setEditValue(e.target.value)}
+                              onKeyDown={handleKeyDown}
+                              className="h-5 text-[11px] w-32"
+                              placeholder="Idade ou data nasc."
+                              disabled={isCalculating}
+                            />
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={saveInlineEdit}
+                              className="h-5 w-5 text-green-600 hover:bg-green-100"
+                              disabled={isCalculating}
+                            >
+                              <Check className={cn("h-2.5 w-2.5", isCalculating && "animate-spin")} />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={cancelEditing}
+                              className="h-5 w-5 text-red-600 hover:bg-red-100"
+                              disabled={isCalculating}
+                            >
+                              <X className="h-2.5 w-2.5" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <p 
+                            className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 whitespace-normal break-words"
+                            onClick={() => startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
+                            title="Clique para editar"
+                          >
+                            {patient.age ? formatAgeDisplay(patient.age) : <span className="italic">Clique para adicionar idade</span>}
+                          </p>
+                        )}
+                      </div>
+                      {!editingField && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={handleCopyName}
+                          className="h-5 w-5 opacity-60 group-hover/name:opacity-100 transition-opacity print:hidden hover:bg-primary/10 hover:text-primary flex-shrink-0 text-muted-foreground"
+                          title="Copiar nome"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               )}
+            </div>
 
-                {/* LINHA 1 - TRÊS CARDS: Motivo | Hipóteses/Diagnósticos | Quadro Atual */}
+            {/* LINHA 1 - TRÊS CARDS: Motivo | Hipóteses/Diagnósticos | Quadro Atual */}
                 {currentDepartment === "UTI" && (
                 <div className="col-span-full grid grid-cols-3 gap-3">
                   {/* Card: Motivo da Internação */}
@@ -2267,8 +2377,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               )}
             </button>
           </div>
-          </div>
         </div>
+      </div>
 
       {/* Expanded Content */}
       {isExpanded && (
