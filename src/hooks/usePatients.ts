@@ -269,7 +269,8 @@ export function usePatients(department?: Department) {
         utiOriginSector: data.uti_origin_sector ? data.uti_origin_sector.split('\n').filter(Boolean) : [],
       };
 
-      // Don't add to local state - let realtime subscription handle it to avoid duplicates
+      // Add to local state immediately for instant UI update
+      setPatients(prev => [...prev, newPatient]);
 
       toast({
         title: "Leito criado",

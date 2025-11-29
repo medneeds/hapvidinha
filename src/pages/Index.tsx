@@ -351,13 +351,24 @@ const Index = () => {
     };
 
     try {
-      await dbCreatePatient(newPatientData, currentDepartment);
+      const createdPatient = await dbCreatePatient(newPatientData, currentDepartment);
       
       // Expandir automaticamente a seção correspondente
       if (sector === 'red') setIsRedSectionOpen(true);
       else if (sector === 'yellow') setIsYellowSectionOpen(true);
       else if (sector === 'blue') setIsBlueSectionOpen(true);
       else if (sector === 'outside') setIsOutsideSectionOpen(true);
+
+      // Scroll automático para o novo leito criado após pequeno delay para garantir renderização
+      setTimeout(() => {
+        const patientElement = document.querySelector(`[data-patient-id="${createdPatient.id}"]`);
+        if (patientElement) {
+          patientElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }
+      }, 100);
     } catch (error) {
       console.error("Failed to create patient:", error);
     }
