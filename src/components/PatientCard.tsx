@@ -3855,7 +3855,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             if (error) throw error;
 
             toast.success(`${templates.length} template(s) adicionado(s)`);
-            onUpdate(patient);
+            
+            // Force a complete refresh by calling onUpdate with no parameters
+            // This will trigger a full data refetch instead of using stale patient data
+            window.location.reload();
           } catch (error) {
             console.error('Error:', error);
             toast.error('Erro ao adicionar templates');
