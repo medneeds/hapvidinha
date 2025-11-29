@@ -39,18 +39,27 @@ export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates, patie
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
 
   const handleToggleTemplate = (template: string) => {
-    setSelectedTemplates(prev => 
-      prev.includes(template) 
+    console.log('Toggle template:', template);
+    setSelectedTemplates(prev => {
+      const newSelection = prev.includes(template) 
         ? prev.filter(t => t !== template)
-        : [...prev, template]
-    );
+        : [...prev, template];
+      console.log('New selection:', newSelection);
+      return newSelection;
+    });
   };
 
   const handleAdd = () => {
+    console.log('QuickTemplatesDialog - handleAdd called');
+    console.log('Selected templates:', selectedTemplates);
+    
     if (selectedTemplates.length > 0) {
+      console.log('Calling onAddTemplates with:', selectedTemplates);
       onAddTemplates(selectedTemplates);
       setSelectedTemplates([]);
       onOpenChange(false);
+    } else {
+      console.log('No templates selected');
     }
   };
 
