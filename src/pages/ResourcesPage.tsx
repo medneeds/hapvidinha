@@ -465,6 +465,9 @@ const ResourcesPage = () => {
                   <SelectItem value="POSTO INTERNAÇÃO" className="uppercase">Posto Internação</SelectItem>
                   <SelectItem value="CIRURGIA" className="uppercase">Centro Cirúrgico</SelectItem>
                   <SelectItem value="HEMODINÂMICA" className="uppercase">Hemodinâmica</SelectItem>
+                  <SelectItem value="PSIQUIATRIA (INSTITUTO VOLTA VIDA)" className="uppercase">
+                    Psiquiatria (Instituto Volta Vida)
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
