@@ -1168,11 +1168,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
             </div>
 
-            {/* UTI - Nova Arquitetura em 4 Linhas */}
+            {/* UTI - Campos Administrativos Compactos ao lado do Nome */}
             {currentDepartment === "UTI" && (
-              <>
-                {/* Campos Administrativos Compactos ao lado do Nome */}
-                <div className="flex flex-col md:col-span-13 gap-1">
+              <div className="flex flex-col md:col-span-13 gap-1">
                   <div className="grid grid-cols-12 gap-2">
                     {/* Origem */}
                     <div className="col-span-2">
@@ -1386,8 +1384,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </div>
                   </div>
                 </div>
+              )}
 
                 {/* LINHA 1 - TRÊS CARDS: Motivo | Hipóteses/Diagnósticos | Quadro Atual */}
+                {currentDepartment === "UTI" && (
                 <div className="col-span-full grid grid-cols-3 gap-3">
                   {/* Card: Motivo da Internação */}
                   <Card className="bg-card/80 border-border/50">
@@ -1482,9 +1482,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </div>
                   </Card>
                 </div>
+              )}
 
                 {/* LINHA 3 - TRÊS CARDS: Dispositivos | Exames | Culturas/ATB */}
-                <div className="grid grid-cols-3 gap-3">
+                {currentDepartment === "UTI" && (
+                <div className="col-span-full grid grid-cols-3 gap-3">
                   {/* Card: Dispositivos */}
                   <Card className="bg-card/80 border-border/50">
                     <div className="p-3">
@@ -1578,9 +1580,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </div>
                   </Card>
                 </div>
+              )}
 
                 {/* LINHA 4 - CARD FULL WIDTH: Pendências / Programações */}
-                <Card className="bg-card/80 border-border/50">
+                {currentDepartment === "UTI" && (
+                <Card className="bg-card/80 border-border/50 col-span-full">
                   <div className="p-3">
                     <div className="flex items-center gap-1 mb-2">
                       <h4 className="text-[10px] font-semibold text-muted-foreground uppercase">Programações / Pendências</h4>
@@ -1625,8 +1629,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </DndContext>
                   </div>
                 </Card>
-              </>
-            )}
+              )}
 
             {/* Hipóteses / Diagnósticos - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
