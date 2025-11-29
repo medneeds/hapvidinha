@@ -94,7 +94,7 @@ export function ExamCurvesDialog({
         const values = examValues[examId]?.filter((v) => v.trim() !== '') || [];
         
         if (exam && values.length > 0) {
-          return `${exam.abbreviation}: ${values.join(' > ')}`;
+          return `${exam.abbreviation}: ${values.join(' > ').toUpperCase()}`;
         }
         return null;
       })

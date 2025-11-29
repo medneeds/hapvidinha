@@ -14,6 +14,7 @@ import { MedicalResponsibilityDialog } from "./MedicalResponsibilityDialog";
 import { MedicalResponsibilityIndicator } from "./MedicalResponsibilityIndicator";
 import { InternmentStatusDialog } from "./InternmentStatusDialog";
 import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
+import { ExamCurvesDialog } from "./ExamCurvesDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -536,6 +537,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [localMedicalResponsibility, setLocalMedicalResponsibility] = useState(patient.medicalResponsibility);
   const [internmentStatusDialogOpen, setInternmentStatusDialogOpen] = useState(false);
   const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
+  const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
   
   const sectorColorMap = {
     red: "#ef4444",
@@ -2690,11 +2692,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <Button
                   size="icon"
                   variant="ghost"
-                  onClick={() => setExpandedSection('exams')}
+                  onClick={() => setExamCurvesDialogOpen(true)}
                   className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
-                  title="Visualizar expandido"
+                  title="Adicionar Curva de Exames"
                 >
-                  <Maximize2 className="h-[2.5px] w-[2.5px]" />
+                  <TrendingUp className="h-[2.5px] w-[2.5px]" />
                 </Button>
               </div>
               <DndContext
@@ -3927,6 +3929,92 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           } catch (error) {
             console.error('Error:', error);
             toast.error('Erro ao adicionar templates');
+          }
+        }}
+      />
+
+      {/* Exam Curves Dialog */}
+      <ExamCurvesDialog
+        open={examCurvesDialogOpen}
+        onOpenChange={setExamCurvesDialogOpen}
+        patientName={patient.name}
+        onAddCurves={async (curves: string[]) => {
+          if (!curves || curves.length === 0) return;
+
+          try {
+            // Get current exams and add new curves
+            const currentExams = patient.relevantExams || [];
+            const updatedExams = [...currentExams, ...curves];
+            const examsString = updatedExams.join('\n');
+
+            // Update database
+            const { error } = await supabase
+              .from('patients')
+              .update({ 
+                relevant_exams: examsString,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', patient.id);
+
+            if (error) throw error;
+
+            // Fetch the updated patient data
+            const { data: updatedPatient, error: fetchError } = await supabase
+              .from('patients')
+              .select('*')
+              .eq('id', patient.id)
+              .maybeSingle();
+
+            if (fetchError) throw fetchError;
+
+            toast.success(`${curves.length} curva(s) adicionada(s)`);
+            
+            // Update UI with fresh data
+            if (updatedPatient) {
+              const parseTextArray = (value: string | null): string[] => {
+                if (!value) return [];
+                if (value.startsWith('[')) {
+                  try {
+                    return JSON.parse(value);
+                  } catch {
+                    return value.split('\n').filter(line => line.trim());
+                  }
+                }
+                return value.split('\n').filter(line => line.trim());
+              };
+
+              const mappedPatient: Patient = {
+                id: updatedPatient.id,
+                bedNumber: updatedPatient.bed_number,
+                name: updatedPatient.name,
+                age: updatedPatient.age,
+                sector: updatedPatient.sector as SectorType,
+                diagnoses: parseTextArray(updatedPatient.diagnoses),
+                medicalHistory: parseTextArray(updatedPatient.medical_history),
+                relevantExams: parseTextArray(updatedPatient.relevant_exams),
+                pendencies: parseTextArray(updatedPatient.pendencies),
+                schedule: parseTextArray(updatedPatient.schedule),
+                admissionHistory: updatedPatient.admission_history || '',
+                admissionDate: updatedPatient.admission_date || '',
+                internmentStatus: updatedPatient.internment_status as 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | null,
+                internmentNotes: updatedPatient.internment_notes,
+                medicalResponsibility: updatedPatient.medical_responsibility as unknown as MedicalResponsibility | undefined,
+                highlightedPendencies: updatedPatient.highlighted_pendencies || [],
+                utiAdmissionDate: parseTextArray(updatedPatient.uti_admission_date),
+                utiAdmissionReason: parseTextArray(updatedPatient.uti_admission_reason),
+                utiDischargePrediction: parseTextArray(updatedPatient.uti_discharge_prediction),
+                utiAllergies: parseTextArray(updatedPatient.uti_allergies),
+                utiCurrentStatus: parseTextArray(updatedPatient.uti_current_status),
+                utiDevices: parseTextArray(updatedPatient.uti_devices),
+                utiSpecialties: parseTextArray(updatedPatient.uti_specialties),
+                utiCulturesAntibiotics: parseTextArray(updatedPatient.uti_cultures_antibiotics),
+                utiOriginSector: parseTextArray(updatedPatient.uti_origin_sector)
+              };
+              onUpdate(mappedPatient);
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            toast.error('Erro ao adicionar curvas de exames');
           }
         }}
       />
