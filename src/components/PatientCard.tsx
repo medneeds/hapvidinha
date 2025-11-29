@@ -2808,10 +2808,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     size="icon"
                     variant="ghost"
                     onClick={() => setInternmentStatusDialogOpen(true)}
-                    className="h-1 w-1 p-0 text-muted-foreground hover:text-primary hover:bg-accent transition-all print:hidden"
+                    className="h-4 w-4 p-1 text-muted-foreground hover:text-primary hover:bg-accent transition-all print:hidden"
                     title="Gerenciar Status de Internação"
                   >
-                    <Settings className="h-1 w-1" />
+                    <Settings className="h-2 w-2" />
                   </Button>
               </div>
               <DndContext
