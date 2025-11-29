@@ -683,7 +683,7 @@ const Index = () => {
         
         <div className={printMode ? 'print-hide' : ''}>
           {/* Header */}
-          <header className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl sticky top-0 z-10 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5">
+          <header className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl fixed top-0 left-0 right-0 z-50 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5">
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
             <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
@@ -963,7 +963,7 @@ const Index = () => {
           </header>
 
           {/* Main Content */}
-          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1">
+          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1 pt-[88px] print:pt-3">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
               {currentDepartment === "UTI" ? (
                 <div>
