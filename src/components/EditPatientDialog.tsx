@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { X, Sparkles, Star } from "lucide-react";
+import { X, Sparkles, Star, TrendingUp, Plus } from "lucide-react";
+import { ExamCurvesDialog } from './ExamCurvesDialog';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAgeCalculator } from "@/hooks/useAgeCalculator";
@@ -36,6 +37,7 @@ export function EditPatientDialog({
   const [loadingCid, setLoadingCid] = useState<number | null>(null);
   const [ageInput, setAgeInput] = useState("");
   const [isFormattingAge, setIsFormattingAge] = useState(false);
+  const [showExamCurvesDialog, setShowExamCurvesDialog] = useState(false);
   const { currentDepartment } = useDepartment();
   const isPediatric = currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA";
   const { calculateAge, isCalculating } = useAgeCalculator(isPediatric);
@@ -186,6 +188,34 @@ export function EditPatientDialog({
     }
   };
 
+  const handleAddExamCurves = (curves: string[]) => {
+    const currentExams = formData.relevantExams || [];
+    setFormData({
+      ...formData,
+      relevantExams: [...currentExams, ...curves],
+    });
+  };
+
+  const handleAddValueToCurve = (examIndex: number) => {
+    const currentExams = formData.relevantExams || [];
+    const examText = currentExams[examIndex];
+    
+    // Check if it's already a curve format (contains ":")
+    if (examText && examText.includes(':')) {
+      const newValue = prompt('Digite o novo valor para adicionar à curva:');
+      if (newValue && newValue.trim() !== '') {
+        const updatedExam = `${examText} > ${newValue.trim().toUpperCase()}`;
+        const updatedExams = currentExams.map((exam, idx) =>
+          idx === examIndex ? updatedExam : exam
+        );
+        setFormData({
+          ...formData,
+          relevantExams: updatedExams,
+        });
+      }
+    }
+  };
+
   const renderArrayField = (
     field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">,
     label: string
@@ -194,6 +224,19 @@ export function EditPatientDialog({
       <div className="flex items-center justify-between">
         <Label className="text-sm font-semibold">{label}</Label>
         <div className="flex gap-1">
+          {field === "relevantExams" && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setShowExamCurvesDialog(true)}
+              className="h-7 px-2 text-xs gap-1"
+              title="Adicionar Curva de Exames"
+            >
+              <TrendingUp className="h-3 w-3" />
+              Curvas
+            </Button>
+          )}
           <Button
             type="button"
             size="sm"
@@ -243,6 +286,18 @@ export function EditPatientDialog({
                 title="Buscar código CID"
               >
                 <Sparkles className={`h-3.5 w-3.5 ${loadingCid === idx ? 'animate-pulse' : ''}`} />
+              </Button>
+            )}
+            {field === "relevantExams" && item.includes(':') && (
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                onClick={() => handleAddValueToCurve(idx)}
+                className="h-9 w-9 flex-shrink-0"
+                title="Adicionar valor à curva"
+              >
+                <Plus className="h-3.5 w-3.5 text-primary" />
               </Button>
             )}
             {field === "pendencies" && (
@@ -562,6 +617,13 @@ export function EditPatientDialog({
           <Button onClick={handleSave} className="h-9">Salvar Alterações</Button>
         </div>
       </DialogContent>
+
+      <ExamCurvesDialog
+        open={showExamCurvesDialog}
+        onOpenChange={setShowExamCurvesDialog}
+        onAddCurves={handleAddExamCurves}
+        patientName={patient?.name}
+      />
     </Dialog>
   );
 }
