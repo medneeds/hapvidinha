@@ -86,9 +86,8 @@ export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates, patie
             {QUICK_TEMPLATES.map((template, index) => (
               <div 
                 key={template} 
-                className="group relative flex items-center space-x-3 p-3.5 rounded-xl border border-border/40 bg-gradient-to-r from-card/50 to-card/30 hover:from-accent/15 hover:to-accent/5 hover:border-primary/40 hover:shadow-md hover:scale-[1.02] transition-all duration-300 cursor-pointer animate-fade-in"
+                className="group relative flex items-center space-x-3 p-3.5 rounded-xl border border-border/40 bg-gradient-to-r from-card/50 to-card/30 hover:from-accent/15 hover:to-accent/5 hover:border-primary/40 hover:shadow-md hover:scale-[1.02] transition-all duration-300 animate-fade-in"
                 style={{ animationDelay: `${index * 30}ms` }}
-                onClick={() => handleToggleTemplate(template)}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/0 to-primary/0 group-hover:from-primary/5 group-hover:to-primary/10 rounded-xl transition-all duration-300" />
                 
