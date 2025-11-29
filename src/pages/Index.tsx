@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   AlertDialog,
@@ -124,6 +124,23 @@ function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
         <PatientCard {...props} />
       </div>
     </div>
+  );
+}
+
+// Componente interno que pode usar useSidebar
+function DynamicHeader({ children }: { children: React.ReactNode }) {
+  const { open, state } = useSidebar();
+  
+  return (
+    <header 
+      className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl fixed top-0 left-0 right-0 z-50 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5"
+      style={{
+        marginLeft: state === 'collapsed' ? '3rem' : '16rem',
+        transition: 'margin-left 200ms ease-linear'
+      }}
+    >
+      {children}
+    </header>
   );
 }
 
@@ -683,13 +700,7 @@ const Index = () => {
         
         <div className={printMode ? 'print-hide' : ''}>
           {/* Header */}
-          <header 
-            className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl fixed top-0 z-50 shadow-lg transition-all duration-200 print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5"
-            style={{
-              left: 'var(--sidebar-width, 0px)',
-              right: 0
-            }}
-          >
+          <DynamicHeader>
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
             <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
@@ -966,7 +977,7 @@ const Index = () => {
                 </div>
               </div>
             </div>
-          </header>
+          </DynamicHeader>
 
           {/* Main Content */}
           <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1 pt-[120px] sm:pt-[110px] print:pt-3">
