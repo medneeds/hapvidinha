@@ -245,7 +245,6 @@ interface SortablePendencyItemCollapsedProps {
   isHighlighted?: boolean;
   onToggleHighlight?: () => void;
   sector: Patient['sector'];
-  onOpenInternmentStatus?: () => void;
 }
 
 function SortablePendencyItemCollapsed({ 
@@ -259,8 +258,7 @@ function SortablePendencyItemCollapsed({
   editingField,
   isHighlighted,
   onToggleHighlight,
-  sector,
-  onOpenInternmentStatus
+  sector
 }: SortablePendencyItemCollapsedProps) {
   const {
     attributes,
@@ -335,32 +333,18 @@ function SortablePendencyItemCollapsed({
           <X className="h-2.5 w-2.5" />
         </button>
         {isLast && editingField !== "pendencies" && (
-          <>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                onAddNew();
-              }}
-              className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden p-0"
-              title="Adicionar Programação/Pendência"
-            >
-              <span className="text-xs">+</span>
-            </Button>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenInternmentStatus?.();
-              }}
-              className="h-4 w-4 text-muted-foreground hover:text-primary hover:bg-accent print:hidden p-0"
-              title="Gerenciar Status de Internação"
-            >
-              <Settings className="h-3 w-3" />
-            </Button>
-          </>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddNew();
+            }}
+            className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden p-0"
+            title="Adicionar Programação/Pendência"
+          >
+            <span className="text-xs">+</span>
+          </Button>
         )}
       </div>
     </div>
@@ -2305,6 +2289,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     <Button
                       size="icon"
                       variant="ghost"
+                      onClick={() => setInternmentStatusDialogOpen(true)}
+                      className="h-5 w-5 p-0.5 text-muted-foreground hover:text-primary hover:bg-accent print:hidden"
+                      title="Gerenciar Status de Internação"
+                    >
+                      <Settings className="h-3.5 w-3.5" />
+                    </Button>
+                    
+                    <Button
+                      size="icon"
+                      variant="ghost"
                       onClick={() => setExpandedSection('pendencies')}
                       className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
                       title="Visualizar expandido"
@@ -2395,7 +2389,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                   : [...highlighted, idx];
                                 onUpdate({ ...patient, highlightedPendencies: updatedHighlighted });
                               }}
-                              onOpenInternmentStatus={() => setInternmentStatusDialogOpen(true)}
                             />
                           )
                         ))}
