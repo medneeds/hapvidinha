@@ -159,11 +159,11 @@ export const MedicalResponsibilityIndicator = ({
       >
         {getIcon()}
       </div>
-      <span className="font-extrabold leading-none whitespace-nowrap" style={{ fontSize: compact ? '7px' : '8px' }}>
+      <span className="font-medium leading-none whitespace-nowrap" style={{ fontSize: compact ? '7px' : '8px' }}>
         {getAbbreviation()}
       </span>
       {responsibility.officeNumber && (
-        <span className="font-bold leading-none whitespace-nowrap" style={{ fontSize: compact ? '6.5px' : '7.5px' }}>
+        <span className="font-normal leading-none whitespace-nowrap" style={{ fontSize: compact ? '6.5px' : '7.5px' }}>
           C{responsibility.officeNumber}
         </span>
       )}
