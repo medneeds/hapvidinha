@@ -93,7 +93,12 @@ function SortablePatientCard(props: SortablePatientCardProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-2 print:block print:w-full">
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className="flex items-center gap-2 print:block print:w-full"
+      data-patient-id={props.patient.id}
+    >
       <button
         className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden"
         {...attributes}
