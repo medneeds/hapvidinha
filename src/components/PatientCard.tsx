@@ -2693,13 +2693,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   size="icon"
                   variant="ghost"
                   onClick={() => setExamCurvesDialogOpen(true)}
-                  className="h-4 w-4 p-0.5 text-muted-foreground/50 hover:text-primary opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110 hover:shadow-lg print:hidden group"
+                  className="h-4 w-4 p-0.5 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110 hover:shadow-lg print:hidden group"
                   title="Adicionar Curva de Exames"
-                  style={{
-                    '--hover-glow': sectorColorMap[patient.sector],
-                  } as React.CSSProperties}
+                  style={{ color: sectorColorMap[patient.sector] }}
                 >
-                  <TrendingUp className="h-3.5 w-3.5 group-hover:drop-shadow-[0_0_8px_var(--hover-glow)] transition-all duration-300" />
+                  <TrendingUp 
+                    className="h-3.5 w-3.5 transition-all duration-300" 
+                    style={{
+                      filter: 'drop-shadow(0 0 0px transparent)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.filter = `drop-shadow(0 0 8px ${sectorColorMap[patient.sector]})`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.filter = 'drop-shadow(0 0 0px transparent)';
+                    }}
+                  />
                 </Button>
               </div>
               <DndContext
