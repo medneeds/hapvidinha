@@ -2784,15 +2784,35 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <div className="flex flex-col md:col-span-5 relative">
                 <div className="flex items-center gap-1 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setExpandedSection('pendencies')}
-                  className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
-                  title="Visualizar expandido"
-                >
-                  <Maximize2 className="h-[2.5px] w-[2.5px]" />
-                </Button>
+                  
+                  {/* Internment Status Badge */}
+                  {patient.internmentStatus && internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig] && (
+                    <Badge 
+                      variant="outline" 
+                      className={cn(
+                        "h-4 px-1.5 text-[8px] font-semibold uppercase gap-0.5 print:hidden",
+                        internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].color,
+                        internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].bgColor,
+                        internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].borderColor
+                      )}
+                    >
+                      {(() => {
+                        const Icon = internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].icon;
+                        return <Icon className="h-2.5 w-2.5" />;
+                      })()}
+                      {internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig].label}
+                    </Badge>
+                  )}
+                  
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setInternmentStatusDialogOpen(true)}
+                    className="h-5 w-5 p-0 text-muted-foreground hover:text-primary hover:bg-accent transition-all print:hidden"
+                    title="Gerenciar Status de Internação"
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
               </div>
               <DndContext
                 sensors={sensors}
