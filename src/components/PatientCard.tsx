@@ -3836,25 +3836,41 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         patientName={patient.name}
         onAddTemplates={async (templates: string[]) => {
           try {
+            console.log('=== Adding Templates Debug ===');
+            console.log('Templates to add:', templates);
+            console.log('Current patient pendencies:', patient.pendencies);
+            console.log('Patient pendencies type:', typeof patient.pendencies);
+            console.log('Patient pendencies is array:', Array.isArray(patient.pendencies));
+            
             // Get existing pendencies (already parsed as array by usePatients)
             let currentPendencies: string[] = [];
-            if (patient.pendencies && patient.pendencies.length > 0) {
+            if (patient.pendencies && Array.isArray(patient.pendencies) && patient.pendencies.length > 0) {
               currentPendencies = [...patient.pendencies];
             }
 
+            console.log('Current pendencies array:', currentPendencies);
+
             // Add new templates at the end of the list
             const newPendencies = [...currentPendencies, ...templates];
+            console.log('New pendencies array:', newPendencies);
+            
+            const pendenciesString = newPendencies.join('\n');
+            console.log('Pendencies string to save:', pendenciesString);
 
             const { error } = await supabase
               .from('patients')
               .update({
-                pendencies: newPendencies.join('\n'),
+                pendencies: pendenciesString,
                 updated_at: new Date().toISOString()
               })
               .eq('id', patient.id);
 
-            if (error) throw error;
+            if (error) {
+              console.error('Supabase error:', error);
+              throw error;
+            }
 
+            console.log('Templates added successfully!');
             toast.success(`${templates.length} template(s) adicionado(s) às programações`);
             onUpdate(patient);
           } catch (error) {
