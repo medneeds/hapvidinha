@@ -2255,7 +2255,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     collisionDetection={closestCenter}
                     onDragEnd={handleDragEnd}
                   >
-                    <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
+                    <div className="space-y-0.5 max-h-[200px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                       <SortableContext
                         items={patient.pendencies.map((_, i) => `pendency-${i}`)}
                         strategy={verticalListSortingStrategy}
@@ -2753,7 +2753,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
               >
-                <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
+                <div className="space-y-0.5 max-h-[200px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                   <SortableContext
                     items={patient.pendencies.map((_, i) => `pendency-${i}`)}
                     strategy={verticalListSortingStrategy}
