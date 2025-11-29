@@ -1,6 +1,6 @@
 export type SectorType = 'red' | 'yellow' | 'blue' | 'outside';
 
-export type MedicalResponsibilityType = 'porta' | 'lider' | 'conjunto' | null;
+export type MedicalResponsibilityType = 'porta' | 'lider' | 'conjunto' | 'obstetra' | 'cirurgiao_geral' | 'traumatologista' | null;
 
 export interface MedicalResponsibility {
   type: MedicalResponsibilityType;

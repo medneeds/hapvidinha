@@ -1,4 +1,4 @@
-import { Stethoscope, UserCog, UsersRound } from "lucide-react";
+import { Stethoscope, UserCog, UsersRound, Baby, Scissors, Bone } from "lucide-react";
 import { MedicalResponsibility } from "@/types/patient";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +25,12 @@ export const MedicalResponsibilityIndicator = ({
         return <UserCog className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
       case 'conjunto':
         return <UsersRound className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
+      case 'obstetra':
+        return <Baby className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
+      case 'cirurgiao_geral':
+        return <Scissors className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
+      case 'traumatologista':
+        return <Bone className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} />;
       default:
         return null;
     }
@@ -54,6 +60,30 @@ export const MedicalResponsibilityIndicator = ({
         parts.push(responsibility.leaderNames);
       }
       return parts.join(' • ');
+    } else if (responsibility.type === 'obstetra') {
+      if (responsibility.portaNames) {
+        parts.push(responsibility.portaNames);
+      }
+      if (responsibility.officeNumber) {
+        parts.push(`C${responsibility.officeNumber}`);
+      }
+      return parts.join(' • ') || 'Obstetra';
+    } else if (responsibility.type === 'cirurgiao_geral') {
+      if (responsibility.portaNames) {
+        parts.push(responsibility.portaNames);
+      }
+      if (responsibility.officeNumber) {
+        parts.push(`C${responsibility.officeNumber}`);
+      }
+      return parts.join(' • ') || 'Cirurgião Geral';
+    } else if (responsibility.type === 'traumatologista') {
+      if (responsibility.portaNames) {
+        parts.push(responsibility.portaNames);
+      }
+      if (responsibility.officeNumber) {
+        parts.push(`C${responsibility.officeNumber}`);
+      }
+      return parts.join(' • ') || 'Traumatologista';
     }
 
     return '';
@@ -67,6 +97,12 @@ export const MedicalResponsibilityIndicator = ({
         return 'Médico Líder';
       case 'conjunto':
         return 'Seguimento Conjunto';
+      case 'obstetra':
+        return 'Obstetra';
+      case 'cirurgiao_geral':
+        return 'Cirurgião Geral';
+      case 'traumatologista':
+        return 'Traumatologista';
       default:
         return '';
     }
