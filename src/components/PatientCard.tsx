@@ -1096,7 +1096,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <div className="flex flex-col md:col-span-4">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
-                  <div className="flex items-start gap-1.5">
+                  <div className="flex items-start gap-0.5">
                     <div className="flex-1 min-w-0">
                       {editingField === "name" ? (
                         <div className="flex items-center gap-1">
