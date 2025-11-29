@@ -539,6 +539,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
   
+  // Sync local medical responsibility with patient prop changes
+  useEffect(() => {
+    setLocalMedicalResponsibility(patient.medicalResponsibility);
+  }, [patient.medicalResponsibility]);
+  
   const sectorColorMap = {
     red: "#ef4444",
     yellow: "#eab308",
