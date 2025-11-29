@@ -9,6 +9,7 @@ interface QuickTemplatesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddTemplates: (templates: string[]) => void;
+  patientName: string;
 }
 
 const QUICK_TEMPLATES = [
@@ -34,7 +35,7 @@ const QUICK_TEMPLATES = [
   "SEGUIMENTO CONJUNTO COM TELENEURO"
 ];
 
-export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates }: QuickTemplatesDialogProps) {
+export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates, patientName }: QuickTemplatesDialogProps) {
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
 
   const handleToggleTemplate = (template: string) => {
@@ -60,58 +61,77 @@ export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates }: Qui
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader className="space-y-3 pb-2">
-          <DialogTitle className="text-xl font-bold tracking-wide uppercase">
-            TEMPLATES RÁPIDOS DE PROGRAMAÇÕES
-          </DialogTitle>
-          <DialogDescription className="text-sm uppercase tracking-wide">
-            SELECIONE OS ITENS QUE DESEJA ADICIONAR ÀS PROGRAMAÇÕES/PENDÊNCIAS DO PACIENTE
+      <DialogContent className="sm:max-w-[650px] animate-scale-in">
+        <DialogHeader className="space-y-3 pb-4 border-b border-border/50">
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+              <span className="text-primary font-bold text-lg">⚡</span>
+            </div>
+            <div className="flex-1">
+              <DialogTitle className="text-xl font-bold tracking-wide uppercase text-primary">
+                TEMPLATES RÁPIDOS
+              </DialogTitle>
+              <p className="text-sm font-semibold text-foreground mt-1 tracking-wide">
+                {patientName}
+              </p>
+            </div>
+          </div>
+          <DialogDescription className="text-xs uppercase tracking-wider text-muted-foreground">
+            SELECIONE OS ITENS PARA ADICIONAR ÀS PROGRAMAÇÕES/PENDÊNCIAS
           </DialogDescription>
         </DialogHeader>
         
-        <ScrollArea className="h-[450px] pr-4">
-          <div className="space-y-2">
+        <ScrollArea className="h-[480px] pr-4 -mr-4">
+          <div className="space-y-2 pr-2">
             {QUICK_TEMPLATES.map((template, index) => (
               <div 
                 key={template} 
-                className="group flex items-center space-x-3 p-3 rounded-lg border border-border/50 bg-card/30 hover:bg-accent/10 hover:border-accent/50 transition-all duration-200 cursor-pointer"
+                className="group relative flex items-center space-x-3 p-3.5 rounded-xl border border-border/40 bg-gradient-to-r from-card/50 to-card/30 hover:from-accent/15 hover:to-accent/5 hover:border-primary/40 hover:shadow-md hover:scale-[1.02] transition-all duration-300 cursor-pointer animate-fade-in"
+                style={{ animationDelay: `${index * 30}ms` }}
                 onClick={() => handleToggleTemplate(template)}
               >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 to-primary/0 group-hover:from-primary/5 group-hover:to-primary/10 rounded-xl transition-all duration-300" />
+                
                 <Checkbox
                   id={template}
                   checked={selectedTemplates.includes(template)}
                   onCheckedChange={() => handleToggleTemplate(template)}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 z-10 transition-transform group-hover:scale-110"
                 />
                 <Label
                   htmlFor={template}
-                  className="text-sm font-medium leading-relaxed cursor-pointer flex-1 group-hover:text-accent-foreground transition-colors"
+                  className="text-sm font-medium leading-relaxed cursor-pointer flex-1 group-hover:text-primary group-hover:font-semibold transition-all duration-200 z-10"
                 >
                   {template}
                 </Label>
-                <span className="text-xs text-muted-foreground font-mono opacity-0 group-hover:opacity-100 transition-opacity">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+                <div className="flex items-center gap-2 z-10">
+                  <span className="text-xs text-muted-foreground font-mono opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-0 translate-x-2">
+                    #{String(index + 1).padStart(2, "0")}
+                  </span>
+                  {selectedTemplates.includes(template) && (
+                    <span className="text-primary animate-scale-in">✓</span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         </ScrollArea>
 
-        <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t">
+        <DialogFooter className="gap-2 sm:gap-2 pt-4 border-t border-border/50">
           <Button 
             variant="outline" 
             onClick={handleCancel}
-            className="uppercase tracking-wide"
+            className="uppercase tracking-wider font-semibold hover:scale-105 transition-transform duration-200"
           >
             CANCELAR
           </Button>
           <Button 
             onClick={handleAdd}
             disabled={selectedTemplates.length === 0}
-            className="uppercase tracking-wide font-semibold"
+            className="uppercase tracking-wider font-bold hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl"
           >
-            ADICIONAR ({selectedTemplates.length})
+            <span className="mr-2">⚡</span>
+            ADICIONAR {selectedTemplates.length > 0 && `(${selectedTemplates.length})`}
           </Button>
         </DialogFooter>
       </DialogContent>

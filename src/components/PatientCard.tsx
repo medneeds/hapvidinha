@@ -3833,6 +3833,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       <QuickTemplatesDialog
         open={quickTemplatesDialogOpen}
         onOpenChange={setQuickTemplatesDialogOpen}
+        patientName={patient.name}
         onAddTemplates={async (templates: string[]) => {
           try {
             // Parse existing pendencies
