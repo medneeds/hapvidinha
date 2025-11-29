@@ -133,10 +133,9 @@ function DynamicHeader({ children }: { children: React.ReactNode }) {
   
   return (
     <header 
-      className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl fixed top-0 right-0 z-50 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5"
+      className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl fixed top-0 right-0 z-50 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
       style={{
-        left: 'var(--sidebar-width)',
-        transition: 'left 200ms cubic-bezier(0.4, 0, 0.2, 1)'
+        left: state === 'collapsed' ? 'var(--sidebar-width-icon)' : 'var(--sidebar-width)'
       }}
     >
       {children}
