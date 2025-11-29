@@ -60,43 +60,58 @@ export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates }: Qui
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>Templates Rápidos de Programações</DialogTitle>
-          <DialogDescription>
-            Selecione os itens que deseja adicionar às programações/pendências do paciente
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader className="space-y-3 pb-2">
+          <DialogTitle className="text-xl font-bold tracking-wide uppercase">
+            TEMPLATES RÁPIDOS DE PROGRAMAÇÕES
+          </DialogTitle>
+          <DialogDescription className="text-sm uppercase tracking-wide">
+            SELECIONE OS ITENS QUE DESEJA ADICIONAR ÀS PROGRAMAÇÕES/PENDÊNCIAS DO PACIENTE
           </DialogDescription>
         </DialogHeader>
         
-        <ScrollArea className="h-[400px] pr-4">
-          <div className="space-y-3">
-            {QUICK_TEMPLATES.map((template) => (
-              <div key={template} className="flex items-center space-x-3">
+        <ScrollArea className="h-[450px] pr-4">
+          <div className="space-y-2">
+            {QUICK_TEMPLATES.map((template, index) => (
+              <div 
+                key={template} 
+                className="group flex items-center space-x-3 p-3 rounded-lg border border-border/50 bg-card/30 hover:bg-accent/10 hover:border-accent/50 transition-all duration-200 cursor-pointer"
+                onClick={() => handleToggleTemplate(template)}
+              >
                 <Checkbox
                   id={template}
                   checked={selectedTemplates.includes(template)}
                   onCheckedChange={() => handleToggleTemplate(template)}
+                  className="flex-shrink-0"
                 />
                 <Label
                   htmlFor={template}
-                  className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  className="text-sm font-medium leading-relaxed cursor-pointer flex-1 group-hover:text-accent-foreground transition-colors"
                 >
                   {template}
                 </Label>
+                <span className="text-xs text-muted-foreground font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
               </div>
             ))}
           </div>
         </ScrollArea>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={handleCancel}>
-            Cancelar
+        <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t">
+          <Button 
+            variant="outline" 
+            onClick={handleCancel}
+            className="uppercase tracking-wide"
+          >
+            CANCELAR
           </Button>
           <Button 
             onClick={handleAdd}
             disabled={selectedTemplates.length === 0}
+            className="uppercase tracking-wide font-semibold"
           >
-            Adicionar ({selectedTemplates.length})
+            ADICIONAR ({selectedTemplates.length})
           </Button>
         </DialogFooter>
       </DialogContent>
