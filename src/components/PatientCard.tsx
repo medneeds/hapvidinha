@@ -3835,47 +3835,60 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         onOpenChange={setQuickTemplatesDialogOpen}
         patientName={patient.name}
         onAddTemplates={async (templates: string[]) => {
+          console.log('=== Quick Templates - Starting ===');
+          console.log('1. Templates received:', templates);
+          console.log('2. Current patient data:', patient);
+          
+          if (!templates || templates.length === 0) {
+            console.log('No templates to add');
+            return;
+          }
+
           try {
-            console.log('=== Adding Templates Debug ===');
-            console.log('Templates to add:', templates);
-            console.log('Current patient pendencies:', patient.pendencies);
-            console.log('Patient pendencies type:', typeof patient.pendencies);
-            console.log('Patient pendencies is array:', Array.isArray(patient.pendencies));
+            // Get current pendencies from patient object
+            const currentPendenciesArray = patient.pendencies || [];
+            console.log('3. Current pendencies array:', currentPendenciesArray);
             
-            // Get existing pendencies (already parsed as array by usePatients)
-            let currentPendencies: string[] = [];
-            if (patient.pendencies && Array.isArray(patient.pendencies) && patient.pendencies.length > 0) {
-              currentPendencies = [...patient.pendencies];
-            }
-
-            console.log('Current pendencies array:', currentPendencies);
-
-            // Add new templates at the end of the list
-            const newPendencies = [...currentPendencies, ...templates];
-            console.log('New pendencies array:', newPendencies);
+            // Combine current pendencies with new templates
+            const updatedPendencies = [...currentPendenciesArray, ...templates];
+            console.log('4. Updated pendencies array:', updatedPendencies);
             
-            const pendenciesString = newPendencies.join('\n');
-            console.log('Pendencies string to save:', pendenciesString);
+            // Convert to database format (newline-separated string)
+            const pendenciesString = updatedPendencies.join('\n');
+            console.log('5. Pendencies string for DB:', pendenciesString);
 
-            const { error } = await supabase
+            // Update in database
+            const { data, error } = await supabase
               .from('patients')
               .update({
                 pendencies: pendenciesString,
                 updated_at: new Date().toISOString()
               })
-              .eq('id', patient.id);
+              .eq('id', patient.id)
+              .select()
+              .single();
 
             if (error) {
-              console.error('Supabase error:', error);
+              console.error('6. Database error:', error);
               throw error;
             }
 
-            console.log('Templates added successfully!');
-            toast.success(`${templates.length} template(s) adicionado(s) às programações`);
+            console.log('7. Database update successful:', data);
+            
+            // Show success message
+            toast.success(`${templates.length} template(s) adicionado(s)`, {
+              description: 'As programações foram atualizadas com sucesso'
+            });
+            
+            // Force refresh
+            console.log('8. Triggering refresh...');
             onUpdate(patient);
+            
           } catch (error) {
-            console.error('Error adding templates:', error);
-            toast.error("Erro ao adicionar templates");
+            console.error('ERROR in onAddTemplates:', error);
+            toast.error('Erro ao adicionar templates', {
+              description: error instanceof Error ? error.message : 'Erro desconhecido'
+            });
           }
         }}
       />
