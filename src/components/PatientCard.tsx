@@ -3842,8 +3842,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               currentPendencies = [...patient.pendencies];
             }
 
-            // Add new templates to the beginning of the list
-            const newPendencies = [...templates, ...currentPendencies];
+            // Add new templates at the end of the list
+            const newPendencies = [...currentPendencies, ...templates];
 
             const { error } = await supabase
               .from('patients')
