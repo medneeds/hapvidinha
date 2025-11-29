@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MedicalResponsibility, MedicalResponsibilityType } from "@/types/patient";
-import { X, Stethoscope, UserCog, UsersRound, Check, Baby, Bone, Slash } from "lucide-react";
+import { X, Stethoscope, UserCog, UsersRound, Check, Baby, Bone, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MedicalResponsibilityDialogProps {
@@ -207,7 +207,7 @@ export const MedicalResponsibilityDialog = ({
                   className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
                   style={{ backgroundColor: `${sectorColor}25` }}
                 >
-                  <Slash className="h-5 w-5" style={{ color: sectorColor }} />
+                  <Activity className="h-5 w-5 rotate-90" style={{ color: sectorColor, strokeWidth: 3 }} />
                 </div>
                 <div className="flex flex-col items-center gap-0.5">
                   <span className="font-semibold text-xs dark:text-white">Cirurgião</span>
