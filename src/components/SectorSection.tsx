@@ -140,16 +140,9 @@ export function SectorSection({
   // Auto-expand when patients are added, auto-collapse when all removed
   useEffect(() => {
     if (controlledIsOpen === undefined) {
-      // Se há pacientes e seção está fechada, abrir
-      if (patients.length > 0 && !internalIsOpen) {
-        setInternalIsOpen(true);
-      }
-      // Se não há pacientes e seção está aberta, fechar
-      if (patients.length === 0 && internalIsOpen) {
-        setInternalIsOpen(false);
-      }
+      setInternalIsOpen(patients.length > 0);
     }
-  }, [patients.length, controlledIsOpen, internalIsOpen]);
+  }, [patients.length, controlledIsOpen]);
   
   // Use controlled state if provided, otherwise use internal state
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
