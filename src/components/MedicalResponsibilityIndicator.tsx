@@ -89,6 +89,25 @@ export const MedicalResponsibilityIndicator = ({
     return '';
   };
 
+  const getAbbreviation = () => {
+    switch (responsibility.type) {
+      case 'porta':
+        return 'PORTA';
+      case 'lider':
+        return 'LÍDER';
+      case 'conjunto':
+        return 'CONJUNTO';
+      case 'obstetra':
+        return 'OBS';
+      case 'cirurgiao_geral':
+        return 'CIRURG.';
+      case 'traumatologista':
+        return 'ORTOP';
+      default:
+        return '';
+    }
+  };
+
   const getLabel = () => {
     switch (responsibility.type) {
       case 'porta':
@@ -111,8 +130,8 @@ export const MedicalResponsibilityIndicator = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-1 rounded-md cursor-pointer transition-all duration-300 hover:scale-105 animate-fade-in backdrop-blur-sm",
-        compact ? "text-[8.5px] px-1.5 py-1" : "text-[10px] px-2 py-1.5"
+        "flex flex-col items-center gap-0.5 rounded-md cursor-pointer transition-all duration-300 hover:scale-105 animate-fade-in backdrop-blur-sm",
+        compact ? "text-[8px] px-1.5 py-1" : "text-[9px] px-2 py-1.5"
       )}
       style={{
         backgroundColor: `${sectorColor}15`,
@@ -134,15 +153,18 @@ export const MedicalResponsibilityIndicator = ({
     >
       <div 
         className={cn(
-          "rounded-full flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-110",
-          compact ? "h-3.5 w-3.5" : "h-4 w-4"
+          "rounded-full flex items-center justify-center flex-shrink-0 transition-all",
+          compact ? "h-4 w-4" : "h-5 w-5"
         )}
       >
         {getIcon()}
       </div>
-      {getText() && (
-        <span className="font-bold truncate leading-none" style={{ fontSize: compact ? '8px' : '9px' }}>
-          {getText()}
+      <span className="font-extrabold leading-none whitespace-nowrap" style={{ fontSize: compact ? '7px' : '8px' }}>
+        {getAbbreviation()}
+      </span>
+      {responsibility.officeNumber && (
+        <span className="font-bold leading-none whitespace-nowrap" style={{ fontSize: compact ? '6.5px' : '7.5px' }}>
+          C{responsibility.officeNumber}
         </span>
       )}
     </div>
