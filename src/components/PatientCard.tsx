@@ -1093,7 +1093,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </div>
 
               {/* Nome e Idade - mais espaço para nome completo */}
-              <div className="flex flex-col md:col-span-4">
+              <div className="flex flex-col md:col-span-3">
                 <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-start gap-1.5">
@@ -2466,7 +2466,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Hipóteses / Diagnósticos - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className="flex flex-col md:col-span-2 relative">
+              <div className="flex flex-col md:col-span-3 relative">
                 <div className="flex items-center gap-1 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Hipóteses / Diagnósticos</span>
                 <Button
@@ -2573,7 +2573,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Antecedentes - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className="flex flex-col md:col-span-2 relative">
+              <div className="flex flex-col md:col-span-3 relative">
                 <div className="flex items-center gap-1 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Antecedentes</span>
                 <Button
@@ -2811,7 +2811,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Programações / Pendências - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className="flex flex-col md:col-span-6 relative">
+              <div className="flex flex-col md:col-span-4 relative">
                 <div className="flex items-center gap-3 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
                   
