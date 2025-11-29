@@ -250,15 +250,14 @@ const Index = () => {
     const hasYellowData = yellow.some(p => p.name.trim() !== "");
     const hasBlueData = blue.some(p => p.name.trim() !== "");
     const hasOutsideData = outside.some(p => p.name.trim() !== "");
-    const hasNotesData = notes.trim() !== "" || checklist.length > 0;
     
     // Open sections when they have data, collapse when empty
     setIsRedSectionOpen(hasRedData);
     setIsYellowSectionOpen(hasYellowData);
     setIsBlueSectionOpen(hasBlueData);
     setIsOutsideSectionOpen(hasOutsideData);
-    setIsNotesSectionOpen(hasNotesData);
-  }, [patients, notes, checklist]);
+    // Notes section remains controlled by user interaction only
+  }, [patients]);
 
   const saveToHistory = (currentPatients: Patient[]) => {
     setHistory(prev => [...prev.slice(-9), currentPatients]); // Keep last 10 states
