@@ -135,11 +135,22 @@ export function SectorSection({
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
+  const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
   
-  // Se não tem controle externo, usar diretamente patients.length > 0
-  // Se tem controle externo, usar o valor controlado
-  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : patients.length > 0;
-  const setIsOpen = onOpenChange || (() => {}); // No-op se não há onOpenChange
+  // Auto-expand when patients are added, auto-collapse when all removed
+  useEffect(() => {
+    // Só atualizar se não houver controle externo
+    if (controlledIsOpen === undefined) {
+      const shouldBeOpen = patients.length > 0;
+      if (shouldBeOpen !== internalIsOpen) {
+        setInternalIsOpen(shouldBeOpen);
+      }
+    }
+  }, [patients.length, controlledIsOpen, internalIsOpen]);
+  
+  // Use controlled state if provided, otherwise use internal state
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  const setIsOpen = onOpenChange || setInternalIsOpen;
   
   const displayPatients = patients;
 
