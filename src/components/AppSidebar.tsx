@@ -250,20 +250,15 @@ export function AppSidebar({
               className="group/collapsible"
             >
               <SidebarGroup className="py-0 my-0">
-                <CollapsibleTrigger className="w-full" disabled={section.requiresPassword && !unlockedSections.includes(section.title)}>
+                {section.requiresPassword && !unlockedSections.includes(section.title) ? (
+                  // Locked: show button that triggers password dialog
                   <SidebarGroupLabel 
                     className={cn(
                       "transition-all duration-200 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
                       isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3 hover:scale-105",
                       "h-auto border-b border-border/50"
                     )}
-                    onClick={(e) => {
-                      if (section.requiresPassword && !unlockedSections.includes(section.title)) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleAdminSectionClick(section.title);
-                      }
-                    }}
+                    onClick={() => handleAdminSectionClick(section.title)}
                   >
                     <div className={cn(
                       "flex items-center w-full",
@@ -278,17 +273,41 @@ export function AppSidebar({
                           <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
                             {section.title}
                           </span>
-                          {section.requiresPassword && (
-                            <LockKeyhole className="h-3 w-3 opacity-60" />
-                          )}
-                          {!section.requiresPassword && (
-                            <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
-                          )}
+                          <LockKeyhole className="h-3 w-3 opacity-60" />
+                        </>
+                      )}
+                    </div>
+                  </SidebarGroupLabel>
+                ) : (
+                  // Unlocked or not password-protected: normal collapsible trigger
+                  <CollapsibleTrigger className="w-full">
+                    <SidebarGroupLabel 
+                      className={cn(
+                        "transition-all duration-200 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
+                        isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3 hover:scale-105",
+                        "h-auto border-b border-border/50"
+                      )}
+                    >
+                    <div className={cn(
+                      "flex items-center w-full",
+                      isCollapsed ? "justify-center" : "gap-3"
+                    )}>
+                      <section.icon className={cn(
+                        "text-primary transition-all duration-200",
+                        isCollapsed ? "h-5 w-5" : "h-5 w-5"
+                      )} />
+                      {!isCollapsed && (
+                        <>
+                          <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
+                            {section.title}
+                          </span>
+                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
                         </>
                       )}
                     </div>
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
+                )}
                 <CollapsibleContent className="transition-all duration-300 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                   <SidebarGroupContent className="px-2">
                     <SidebarMenu>
