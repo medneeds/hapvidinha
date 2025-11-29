@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MedicalResponsibility, MedicalResponsibilityType } from "@/types/patient";
-import { X, Stethoscope, UserCog, UsersRound, Check } from "lucide-react";
+import { X, Stethoscope, UserCog, UsersRound, Check, Baby, Scissors, Bone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MedicalResponsibilityDialogProps {
@@ -38,9 +38,9 @@ export const MedicalResponsibilityDialog = ({
   const handleSave = () => {
     onSave({
       type,
-      officeNumber: type === 'porta' || type === 'conjunto' ? officeNumber : undefined,
+      officeNumber: type === 'porta' || type === 'conjunto' || type === 'obstetra' || type === 'cirurgiao_geral' || type === 'traumatologista' ? officeNumber : undefined,
       leaderNames: type === 'lider' || type === 'conjunto' ? leaderNames : undefined,
-      portaNames: type === 'porta' || type === 'conjunto' ? portaNames : undefined,
+      portaNames: type === 'porta' || type === 'conjunto' || type === 'obstetra' || type === 'cirurgiao_geral' || type === 'traumatologista' ? portaNames : undefined,
     });
     onOpenChange(false);
   };
@@ -73,7 +73,7 @@ export const MedicalResponsibilityDialog = ({
         <div className="space-y-5 py-4">
           <div className="space-y-3">
             <Label className="text-sm font-semibold text-foreground dark:text-white">Selecione o Tipo de Acompanhamento</Label>
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               <button
                 type="button"
                 onClick={() => setType(null)}
@@ -164,10 +164,85 @@ export const MedicalResponsibilityDialog = ({
                   <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Líder + Porta</span>
                 </div>
               </button>
+
+              <button
+                type="button"
+                onClick={() => setType('obstetra')}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
+                  type === 'obstetra' && 'shadow-md dark:shadow-lg',
+                  type !== 'obstetra' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
+                )}
+                style={{
+                  borderColor: type === 'obstetra' ? sectorColor : undefined,
+                  backgroundColor: type === 'obstetra' ? `${sectorColor}20` : undefined,
+                }}
+              >
+                <div 
+                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
+                  style={{ backgroundColor: `${sectorColor}25` }}
+                >
+                  <Baby className="h-5 w-5" style={{ color: sectorColor }} />
+                </div>
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="font-semibold text-xs dark:text-white">Obstetra</span>
+                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Especialista</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setType('cirurgiao_geral')}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
+                  type === 'cirurgiao_geral' && 'shadow-md dark:shadow-lg',
+                  type !== 'cirurgiao_geral' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
+                )}
+                style={{
+                  borderColor: type === 'cirurgiao_geral' ? sectorColor : undefined,
+                  backgroundColor: type === 'cirurgiao_geral' ? `${sectorColor}20` : undefined,
+                }}
+              >
+                <div 
+                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
+                  style={{ backgroundColor: `${sectorColor}25` }}
+                >
+                  <Scissors className="h-5 w-5" style={{ color: sectorColor }} />
+                </div>
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="font-semibold text-xs dark:text-white">Cirurgião</span>
+                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Geral</span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setType('traumatologista')}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
+                  type === 'traumatologista' && 'shadow-md dark:shadow-lg',
+                  type !== 'traumatologista' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
+                )}
+                style={{
+                  borderColor: type === 'traumatologista' ? sectorColor : undefined,
+                  backgroundColor: type === 'traumatologista' ? `${sectorColor}20` : undefined,
+                }}
+              >
+                <div 
+                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
+                  style={{ backgroundColor: `${sectorColor}25` }}
+                >
+                  <Bone className="h-5 w-5" style={{ color: sectorColor }} />
+                </div>
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="font-semibold text-xs dark:text-white">Traumato</span>
+                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Ortopedista</span>
+                </div>
+              </button>
             </div>
           </div>
 
-          {(type === 'porta' || type === 'conjunto') && (
+          {(type === 'porta' || type === 'conjunto' || type === 'obstetra' || type === 'cirurgiao_geral' || type === 'traumatologista') && (
             <div className="space-y-3">
               <div className="space-y-2">
                 <Label htmlFor="office" className="text-sm font-semibold flex items-center gap-2 dark:text-white">
@@ -186,7 +261,7 @@ export const MedicalResponsibilityDialog = ({
               <div className="space-y-2">
                 <Label htmlFor="portaNames" className="text-sm font-semibold flex items-center gap-2 dark:text-white">
                   <Stethoscope className="h-4 w-4" style={{ color: sectorColor }} />
-                  Nomes dos Médicos Porta
+                  {type === 'porta' || type === 'conjunto' ? 'Nomes dos Médicos Porta' : 'Nomes dos Médicos Especialistas'}
                 </Label>
                 <Input
                   id="portaNames"
