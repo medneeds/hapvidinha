@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -13,6 +13,7 @@ import { PatientMovementDialog } from "./PatientMovementDialog";
 import { MedicalResponsibilityDialog } from "./MedicalResponsibilityDialog";
 import { MedicalResponsibilityIndicator } from "./MedicalResponsibilityIndicator";
 import { InternmentStatusDialog } from "./InternmentStatusDialog";
+import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -534,6 +535,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [medicalResponsibilityDialogOpen, setMedicalResponsibilityDialogOpen] = useState(false);
   const [localMedicalResponsibility, setLocalMedicalResponsibility] = useState(patient.medicalResponsibility);
   const [internmentStatusDialogOpen, setInternmentStatusDialogOpen] = useState(false);
+  const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
   
   const sectorColorMap = {
     red: "#ef4444",
@@ -2813,6 +2815,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   >
                     <Settings className="h-2 w-2" />
                   </Button>
+
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setQuickTemplatesDialogOpen(true)}
+                    className="h-4 w-4 p-1 text-muted-foreground hover:text-primary hover:bg-accent transition-all print:hidden"
+                    title="Templates Rápidos"
+                  >
+                    <Zap className="h-2 w-2" />
+                  </Button>
               </div>
               <DndContext
                 sensors={sensors}
@@ -3843,6 +3855,44 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         onSuccess={() => {
           // Reload patient data
           onUpdate(patient);
+        }}
+      />
+
+      {/* Quick Templates Dialog */}
+      <QuickTemplatesDialog
+        open={quickTemplatesDialogOpen}
+        onOpenChange={setQuickTemplatesDialogOpen}
+        onAddTemplates={async (templates: string[]) => {
+          try {
+            // Parse existing pendencies
+            let currentPendencies: string[] = [];
+            if (patient.pendencies) {
+              currentPendencies = [...patient.pendencies];
+            }
+
+            // Add new templates (avoiding duplicates)
+            templates.forEach(template => {
+              if (!currentPendencies.includes(template)) {
+                currentPendencies.push(template);
+              }
+            });
+
+            const { error } = await supabase
+              .from('patients')
+              .update({
+                pendencies: JSON.stringify(currentPendencies),
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', patient.id);
+
+            if (error) throw error;
+
+            toast.success(`${templates.length} item(ns) adicionado(s) às programações`);
+            onUpdate(patient);
+          } catch (error) {
+            console.error('Error adding templates:', error);
+            toast.error("Erro ao adicionar templates");
+          }
         }}
       />
     </>

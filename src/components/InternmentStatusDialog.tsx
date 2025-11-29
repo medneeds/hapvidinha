@@ -73,11 +73,38 @@ export function InternmentStatusDialog({
     setIsSubmitting(true);
 
     try {
+      // Get current patient data to update pendencies
+      const { data: patientData, error: fetchError } = await supabase
+        .from("patients")
+        .select("pendencies")
+        .eq("id", patientId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Parse existing pendencies
+      let currentPendencies: string[] = [];
+      if (patientData.pendencies) {
+        try {
+          currentPendencies = JSON.parse(patientData.pendencies);
+        } catch {
+          currentPendencies = [];
+        }
+      }
+
+      // Add "SOLICITADA INTERNAÇÃO (AGUARDANDO PSM)" if status is being set and not already in list
+      const autoAddText = "SOLICITADA INTERNAÇÃO (AGUARDANDO PSM)";
+      if (status && !currentPendencies.includes(autoAddText)) {
+        currentPendencies.push(autoAddText);
+      }
+
+      // Update patient with new status and updated pendencies
       const { error } = await supabase
         .from("patients")
         .update({
           internment_status: status || null,
           internment_notes: notes || null,
+          pendencies: JSON.stringify(currentPendencies),
         })
         .eq("id", patientId);
 
