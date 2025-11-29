@@ -1172,10 +1172,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </div>
 
                   {/* UTI: Campos Administrativos Compactos */}
-                  <div className="flex flex-col md:col-span-13 gap-1">
-                  <div className="grid grid-cols-12 gap-2">
-                    {/* Origem */}
-                    <div className="col-span-2">
+                  <div className="flex flex-col md:col-span-13 gap-0.5">
+                    <div className="grid grid-cols-12 gap-1.5">
+                      {/* Origem */}
+                      <div className="col-span-2">
                       <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Origem</span>
                       <DndContext
                         sensors={sensors}
@@ -1230,38 +1230,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       </DndContext>
                     </div>
 
-                    {/* Alergias */}
-                    <div className="col-span-2">
-                      <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Alergias</span>
-                      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(event: DragEndEvent) => { const { active, over } = event; if (over && active.id !== over.id) { const oldIndex = (patient.utiAllergies || []).findIndex((_, i) => `uti-allergies-${i}` === active.id); const newIndex = (patient.utiAllergies || []).findIndex((_, i) => `uti-allergies-${i}` === over.id); const reordered = arrayMove(patient.utiAllergies || [], oldIndex, newIndex); onUpdate({ ...patient, utiAllergies: reordered }); } }}>
-                        <SortableContext items={(patient.utiAllergies || []).map((_, i) => `uti-allergies-${i}`)} strategy={verticalListSortingStrategy}>
-                          <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
-                            {(patient.utiAllergies || []).map((item, idx) => (
-                              <SortableDiagnosisItemCollapsed key={`uti-allergies-${idx}`} id={`uti-allergies-${idx}`} index={idx} diagnosis={item} isEditing={editingField === "utiAllergies" && editingArrayIndex === idx} editValue={editValue} onEdit={() => startEditing("utiAllergies", item, idx)} onSave={saveInlineEdit} onCancel={cancelEditing} onRemove={() => removeArrayItem("utiAllergies", idx)} onAddNew={() => startEditing("utiAllergies", "", -2)} onEditValueChange={(val) => setEditValue(val.toUpperCase())} onKeyDown={handleKeyDown} inputRef={inputRef} isLast={idx === (patient.utiAllergies || []).length - 1} />
-                            ))}
-                          </ol>
-                        </SortableContext>
-                        {editingField === "utiAllergies" && editingArrayIndex === -2 && (
-                          <li className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary">
-                            <div className="flex-shrink-0 w-2" />
-                            <div className="flex items-center gap-0.5 flex-1">
-                              <span className="font-semibold text-muted-foreground flex-shrink-0 text-[8px]">{(patient.utiAllergies || []).length + 1}.</span>
-                              <Input ref={inputRef} value={editValue} onChange={(e) => { const target = e.target as HTMLInputElement; const start = target.selectionStart ?? 0; const end = target.selectionEnd ?? 0; setEditValue(e.target.value.toUpperCase()); requestAnimationFrame(() => { target.setSelectionRange(start, end); }); }} onKeyDown={handleKeyDown} className="h-4 text-[9px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0" placeholder="NOVA" />
-                            </div>
-                            <div className="flex items-center gap-0.5 flex-shrink-0">
-                              <Button size="icon" variant="ghost" onClick={saveInlineEdit} className="h-3 w-3 text-green-600 hover:bg-green-100 p-0"><Check className="h-2 w-2" /></Button>
-                              <Button size="icon" variant="ghost" onClick={cancelEditing} className="h-3 w-3 text-red-600 hover:bg-red-100 p-0"><X className="h-2 w-2" /></Button>
-                            </div>
-                          </li>
-                        )}
-                        {(patient.utiAllergies || []).length === 0 && editingField !== "utiAllergies" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiAllergies", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
-                      </DndContext>
-                    </div>
-
-                    {/* Admissão UTI */}
-                    <div className="col-span-2">
-                      <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Admissão</span>
-                      <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
+                      {/* Admissão UTI */}
+                      <div className="col-span-2">
+                        <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Admissão</span>
+                        <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
                         {(patient.utiAdmissionDate || []).map((item, idx) => (
                           <li key={`uti-admission-date-${idx}`} className="text-[9px] text-foreground leading-snug uppercase rounded px-0.5 flex items-start justify-between gap-1 py-0.5">
                             {editingField === "utiAdmissionDate" && editingArrayIndex === idx ? (
@@ -1304,10 +1276,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </li>
                       )}
                       {(patient.utiAdmissionDate || []).length === 0 && editingField !== "utiAdmissionDate" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiAdmissionDate", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
-                    </div>
+                      </div>
 
-                    {/* Previsão de Alta */}
-                    <div className="col-span-3">
+                      {/* Previsão de Alta */}
+                      <div className="col-span-3">
                       <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Previsão Alta</span>
                       <ol className="text-[10px] text-foreground space-y-0 list-none pl-0">
                         {(patient.utiDischargePrediction || []).map((item, idx) => {
@@ -1355,10 +1327,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </li>
                       )}
                       {(patient.utiDischargePrediction || []).length === 0 && editingField !== "utiDischargePrediction" && <Button size="icon" variant="ghost" onClick={() => startEditing("utiDischargePrediction", "", -2)} className="h-4 w-4 text-muted-foreground hover:text-primary print:hidden" title="Adicionar"><span className="text-[10px]">+</span></Button>}
-                    </div>
+                      </div>
 
-                    {/* Especialidades */}
-                    <div className="col-span-3">
+                      {/* Especialidades */}
+                      <div className="col-span-2">
                       <span className="text-[9px] font-medium text-muted-foreground mb-0.5 block">Especialidades</span>
                       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(event: DragEndEvent) => { const { active, over } = event; if (over && active.id !== over.id) { const oldIndex = (patient.utiSpecialties || []).findIndex((_, i) => `uti-specialties-${i}` === active.id); const newIndex = (patient.utiSpecialties || []).findIndex((_, i) => `uti-specialties-${i}` === over.id); const reordered = arrayMove(patient.utiSpecialties || [], oldIndex, newIndex); onUpdate({ ...patient, utiSpecialties: reordered }); } }}>
                         <SortableContext items={(patient.utiSpecialties || []).map((_, i) => `uti-specialties-${i}`)} strategy={verticalListSortingStrategy}>
@@ -2378,25 +2350,25 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Expanded Content */}
-      {isExpanded && (
-        <div className="px-2.5 pb-2.5 space-y-2 border-t border-border/50 pt-2 bg-card/50">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground print:text-[8px] print:gap-1">
-            <Calendar className="h-3 w-3 print:h-2 print:w-2" />
-            <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>
-          </div>
+        {/* Expanded Content */}
+        {isExpanded && (
+          <div className="px-2.5 pb-2.5 space-y-2 border-t border-border/50 pt-2 bg-card/50">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground print:text-[8px] print:gap-1">
+              <Calendar className="h-3 w-3 print:h-2 print:w-2" />
+              <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>
+            </div>
 
-          {/* História Admissional */}
-          <div className="pt-2 border-t border-border/50 print:pt-1">
-            <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">História Admissional / Anamnese</h4>
-            <p className="text-xs leading-snug text-foreground whitespace-pre-wrap uppercase print:text-[7.5px] print:leading-tight">
-              {patient.admissionHistory}
-            </p>
+            {/* História Admissional */}
+            <div className="pt-2 border-t border-border/50 print:pt-1">
+              <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">História Admissional / Anamnese</h4>
+              <p className="text-xs leading-snug text-foreground whitespace-pre-wrap uppercase print:text-[7.5px] print:leading-tight">
+                {patient.admissionHistory}
+              </p>
+            </div>
           </div>
+        )}
         </div>
-      )}
       </Card>
 
       <EditPatientDialog
