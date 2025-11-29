@@ -3836,30 +3836,26 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         patientName={patient.name}
         onAddTemplates={async (templates: string[]) => {
           try {
-            // Parse existing pendencies
+            // Get existing pendencies (already parsed as array by usePatients)
             let currentPendencies: string[] = [];
-            if (patient.pendencies) {
+            if (patient.pendencies && patient.pendencies.length > 0) {
               currentPendencies = [...patient.pendencies];
             }
 
-            // Add new templates (avoiding duplicates)
-            templates.forEach(template => {
-              if (!currentPendencies.includes(template)) {
-                currentPendencies.push(template);
-              }
-            });
+            // Add new templates to the beginning of the list
+            const newPendencies = [...templates, ...currentPendencies];
 
             const { error } = await supabase
               .from('patients')
               .update({
-                pendencies: JSON.stringify(currentPendencies),
+                pendencies: newPendencies.join('\n'),
                 updated_at: new Date().toISOString()
               })
               .eq('id', patient.id);
 
             if (error) throw error;
 
-            toast.success(`${templates.length} item(ns) adicionado(s) às programações`);
+            toast.success(`${templates.length} template(s) adicionado(s) às programações`);
             onUpdate(patient);
           } catch (error) {
             console.error('Error adding templates:', error);
