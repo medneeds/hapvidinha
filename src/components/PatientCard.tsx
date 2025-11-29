@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Patient } from "@/types/patient";
+import { Patient, SectorType, MedicalResponsibility } from "@/types/patient";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -3854,11 +3854,48 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             if (error) throw error;
 
+            // Fetch the updated patient data
+            const { data: updatedPatient, error: fetchError } = await supabase
+              .from('patients')
+              .select('*')
+              .eq('id', patient.id)
+              .maybeSingle();
+
+            if (fetchError) throw fetchError;
+
             toast.success(`${templates.length} template(s) adicionado(s)`);
             
-            // Force a complete refresh by calling onUpdate with no parameters
-            // This will trigger a full data refetch instead of using stale patient data
-            window.location.reload();
+            // Update UI with fresh data - map database fields to Patient type
+            if (updatedPatient) {
+              const mappedPatient: Patient = {
+                id: updatedPatient.id,
+                bedNumber: updatedPatient.bed_number,
+                name: updatedPatient.name,
+                age: updatedPatient.age,
+                sector: updatedPatient.sector as SectorType,
+                diagnoses: updatedPatient.diagnoses ? JSON.parse(updatedPatient.diagnoses) : [],
+                medicalHistory: updatedPatient.medical_history ? JSON.parse(updatedPatient.medical_history) : [],
+                relevantExams: updatedPatient.relevant_exams ? JSON.parse(updatedPatient.relevant_exams) : [],
+                pendencies: updatedPatient.pendencies ? JSON.parse(updatedPatient.pendencies) : [],
+                schedule: updatedPatient.schedule ? JSON.parse(updatedPatient.schedule) : [],
+                admissionHistory: updatedPatient.admission_history || '',
+                admissionDate: updatedPatient.admission_date || '',
+                internmentStatus: updatedPatient.internment_status as 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | null,
+                internmentNotes: updatedPatient.internment_notes,
+                medicalResponsibility: updatedPatient.medical_responsibility as unknown as MedicalResponsibility | undefined,
+                highlightedPendencies: updatedPatient.highlighted_pendencies || [],
+                utiAdmissionDate: updatedPatient.uti_admission_date ? JSON.parse(updatedPatient.uti_admission_date) : [],
+                utiAdmissionReason: updatedPatient.uti_admission_reason ? JSON.parse(updatedPatient.uti_admission_reason) : [],
+                utiDischargePrediction: updatedPatient.uti_discharge_prediction ? JSON.parse(updatedPatient.uti_discharge_prediction) : [],
+                utiAllergies: updatedPatient.uti_allergies ? JSON.parse(updatedPatient.uti_allergies) : [],
+                utiCurrentStatus: updatedPatient.uti_current_status ? JSON.parse(updatedPatient.uti_current_status) : [],
+                utiDevices: updatedPatient.uti_devices ? JSON.parse(updatedPatient.uti_devices) : [],
+                utiSpecialties: updatedPatient.uti_specialties ? JSON.parse(updatedPatient.uti_specialties) : [],
+                utiCulturesAntibiotics: updatedPatient.uti_cultures_antibiotics ? JSON.parse(updatedPatient.uti_cultures_antibiotics) : [],
+                utiOriginSector: updatedPatient.uti_origin_sector ? JSON.parse(updatedPatient.uti_origin_sector) : []
+              };
+              onUpdate(mappedPatient);
+            }
           } catch (error) {
             console.error('Error:', error);
             toast.error('Erro ao adicionar templates');
