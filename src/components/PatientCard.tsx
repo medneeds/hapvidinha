@@ -1252,7 +1252,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       {editingField === "age" ? (
                         <div className="flex items-center gap-1 mt-0.5">
                           <Input
-                            ref={inputRef}
+                            ref={ageInputRef}
                             type="text"
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
@@ -1358,11 +1358,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiOriginSector || []).length + 1}.</span>
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -1371,7 +1371,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO SETOR"
                           />
                         </div>
@@ -1420,7 +1420,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                 <div className="flex items-center gap-1 flex-1">
                                   <span className="font-semibold text-muted-foreground flex-shrink-0">{idx + 1}.</span>
                                   <Input
-                                    ref={inputRef}
+                                    ref={dateInputRef}
                                     value={editValue}
                                     onChange={(e) => setEditValue(formatDateInput(e.target.value))}
                                     onKeyDown={handleKeyDown}
@@ -1467,7 +1467,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiAdmissionDate || []).length + 1}.</span>
                           <Input
-                            ref={inputRef}
+                            ref={dateInputRef}
                             value={editValue}
                             onChange={(e) => {
                               const formatted = formatDateInput(e.target.value);
@@ -1509,7 +1509,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                   <div className="flex items-center gap-1 flex-1">
                                     <span className="font-semibold text-muted-foreground flex-shrink-0">{idx + 1}.</span>
                                     <Input
-                                      ref={inputRef}
+                                      ref={dateInputRef}
                                       value={editValue}
                                       onChange={(e) => setEditValue(formatDateInput(e.target.value))}
                                       onKeyDown={handleKeyDown}
@@ -1562,7 +1562,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiDischargePrediction || []).length + 1}.</span>
                           <Input
-                            ref={inputRef}
+                            ref={dateInputRef}
                             value={editValue}
                             onChange={(e) => {
                               const formatted = formatDateInput(e.target.value);
@@ -1638,11 +1638,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiAllergies || []).length + 1}.</span>
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -1651,7 +1651,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVA ALERGIA"
                           />
                         </div>
@@ -1725,11 +1725,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiAdmissionReason || []).length + 1}.</span>
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -1738,7 +1738,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO MOTIVO"
                           />
                         </div>
@@ -1813,11 +1813,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{patient.diagnoses.length + 1}.</span>
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -1826,7 +1826,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVA HIPÓTESE/DIAGNÓSTICO"
                           />
                         </div>
@@ -1912,11 +1912,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiCurrentStatus || []).length + 1}.</span>
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -1925,7 +1925,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO STATUS"
                           />
                         </div>
@@ -2010,11 +2010,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiSpecialties || []).length + 1}.</span>
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -2023,7 +2023,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVA ESPECIALIDADE"
                           />
                         </div>
@@ -2113,11 +2113,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiDevices || []).length + 1}.</span>
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -2126,7 +2126,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO DISPOSITIVO"
                           />
                         </div>
@@ -2223,11 +2223,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{patient.relevantExams.length + 1}.</span>
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -2236,7 +2236,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO EXAME"
                           />
                         </div>
@@ -2322,11 +2322,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <div className="flex-shrink-0 w-3" />
                         <div className="flex items-center gap-1 flex-1">
                           <span className="font-semibold text-muted-foreground flex-shrink-0">{(patient.utiCulturesAntibiotics || []).length + 1}.</span>
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -2335,7 +2335,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
-                            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                            className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVA CULTURA/ATB"
                           />
                         </div>
@@ -2500,11 +2500,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           <div className="flex-shrink-0 w-3" />
                           <div className="flex items-start gap-1 flex-1">
                             <span className="font-semibold text-muted-foreground flex-shrink-0 mt-0.5">{patient.pendencies.length + 1}.</span>
-                            <Input
-                              ref={inputRef}
+                            <AutoResizeTextarea
+                              inputRef={inputRef}
                               value={editValue}
                               onChange={(e) => {
-                                const target = e.target as HTMLInputElement;
+                                const target = e.target as HTMLTextAreaElement;
                                 const start = target.selectionStart ?? 0;
                                 const end = target.selectionEnd ?? 0;
                                 setEditValue(e.target.value.toUpperCase());
@@ -2513,7 +2513,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                 });
                               }}
                               onKeyDown={handleKeyDown}
-                              className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                              className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                               placeholder="NOVA PENDÊNCIA"
                             />
                           </div>
@@ -2611,11 +2611,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     <div className="flex-shrink-0 w-3" />
                     <div className="flex items-center gap-1 flex-1">
                       <span className="font-semibold text-muted-foreground flex-shrink-0">{patient.diagnoses.length + 1}.</span>
-                      <Input
-                        ref={inputRef}
+                      <AutoResizeTextarea
+                        inputRef={inputRef}
                         value={editValue}
                         onChange={(e) => {
-                          const target = e.target as HTMLInputElement;
+                          const target = e.target as HTMLTextAreaElement;
                           const start = target.selectionStart ?? 0;
                           const end = target.selectionEnd ?? 0;
                           setEditValue(e.target.value.toUpperCase());
@@ -2624,7 +2624,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           });
                         }}
                         onKeyDown={handleKeyDown}
-                        className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                        className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                         placeholder="NOVA HIPÓTESE"
                       />
                     </div>
@@ -2724,11 +2724,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     <div className="flex-shrink-0 w-3" />
                     <div className="flex items-center gap-1 flex-1">
                       <span className="font-semibold text-muted-foreground flex-shrink-0">{patient.medicalHistory.length + 1}.</span>
-                      <Input
-                        ref={inputRef}
+                      <AutoResizeTextarea
+                        inputRef={inputRef}
                         value={editValue}
                         onChange={(e) => {
-                          const target = e.target as HTMLInputElement;
+                          const target = e.target as HTMLTextAreaElement;
                           const start = target.selectionStart ?? 0;
                           const end = target.selectionEnd ?? 0;
                           setEditValue(e.target.value.toUpperCase());
@@ -2737,7 +2737,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           });
                         }}
                         onKeyDown={handleKeyDown}
-                        className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                        className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                         placeholder="NOVO ANTECEDENTE"
                       />
                     </div>
@@ -2849,11 +2849,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     <div className="flex-shrink-0 w-3" />
                     <div className="flex items-center gap-1 flex-1">
                       <span className="font-semibold text-muted-foreground flex-shrink-0">{patient.relevantExams.length + 1}.</span>
-                      <Input
-                        ref={inputRef}
+                      <AutoResizeTextarea
+                        inputRef={inputRef}
                         value={editValue}
                         onChange={(e) => {
-                          const target = e.target as HTMLInputElement;
+                          const target = e.target as HTMLTextAreaElement;
                           const start = target.selectionStart ?? 0;
                           const end = target.selectionEnd ?? 0;
                           setEditValue(e.target.value.toUpperCase());
@@ -2862,7 +2862,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           });
                         }}
                         onKeyDown={handleKeyDown}
-                        className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                        className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                         placeholder="NOVO EXAME"
                       />
                     </div>
@@ -3013,11 +3013,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <div className="flex-shrink-0 w-3" />
                       <div className="flex items-start gap-1 flex-1">
                         <span className="font-semibold text-muted-foreground flex-shrink-0 mt-0.5">{patient.pendencies.length + 1}.</span>
-                        <Input
-                          ref={inputRef}
+                        <AutoResizeTextarea
+                          inputRef={inputRef}
                           value={editValue}
                           onChange={(e) => {
-                            const target = e.target as HTMLInputElement;
+                            const target = e.target as HTMLTextAreaElement;
                             const start = target.selectionStart ?? 0;
                             const end = target.selectionEnd ?? 0;
                             setEditValue(e.target.value.toUpperCase());
@@ -3027,7 +3027,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             });
                           }}
                           onKeyDown={handleKeyDown}
-                          className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+                          className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                           placeholder="NOVA PENDÊNCIA"
                         />
                       </div>
@@ -3424,11 +3424,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     <div className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all group-hover:bg-card">
                       {editingField === "diagnoses" && editingArrayIndex === idx ? (
                         <div className="flex items-center gap-2">
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -3444,8 +3444,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                 cancelEditing();
                               }
                             }}
-                            className="text-base uppercase font-medium bg-background/50 border-primary/50"
-                            autoFocus
+                            className="text-base uppercase font-medium bg-background/50 border-primary/50 resize-none"
                           />
                           <Button
                             size="icon"
@@ -3580,11 +3579,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     <div className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all group-hover:bg-card">
                       {editingField === "relevantExams" && editingArrayIndex === idx ? (
                         <div className="flex items-center gap-2">
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -3600,8 +3599,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                 cancelEditing();
                               }
                             }}
-                            className="text-base uppercase font-medium bg-background/50 border-primary/50"
-                            autoFocus
+                            className="text-base uppercase font-medium bg-background/50 border-primary/50 resize-none"
                           />
                           <Button
                             size="icon"
@@ -3736,11 +3734,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     <div className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all group-hover:bg-card">
                       {editingField === "medicalHistory" && editingArrayIndex === idx ? (
                         <div className="flex items-center gap-2">
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -3756,8 +3754,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                 cancelEditing();
                               }
                             }}
-                            className="text-base uppercase font-medium bg-background/50 border-primary/50"
-                            autoFocus
+                            className="text-base uppercase font-medium bg-background/50 border-primary/50 resize-none"
                           />
                           <Button
                             size="icon"
@@ -3892,11 +3889,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     <div className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all group-hover:bg-card">
                       {editingField === "pendencies" && editingArrayIndex === idx ? (
                         <div className="flex items-center gap-2">
-                          <Input
-                            ref={inputRef}
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
@@ -3912,8 +3909,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                 cancelEditing();
                               }
                             }}
-                            className="text-base uppercase font-medium bg-background/50 border-primary/50"
-                            autoFocus
+                            className="text-base uppercase font-medium bg-background/50 border-primary/50 resize-none"
                           />
                           <Button
                             size="icon"
