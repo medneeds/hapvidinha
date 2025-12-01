@@ -498,7 +498,13 @@ const Index = () => {
     const patient = patients.find(p => p.id === patientId);
     if (!patient) return;
 
-    const updatedPatient = { ...patient, sector: newSector };
+    // Calculate next available bed number in destination sector
+    const patientsInNewSector = patients.filter(p => p.sector === newSector);
+    const bedNumbers = patientsInNewSector.map(p => parseInt(p.bedNumber.replace(/\D/g, '')) || 0);
+    const maxBedNumber = bedNumbers.length > 0 ? Math.max(...bedNumbers) : 0;
+    const newBedNumber = `${patient.bedNumber.match(/[A-Z]+/)?.[0] || 'L'}${String(maxBedNumber + 1).padStart(2, '0')}`;
+
+    const updatedPatient = { ...patient, sector: newSector, bedNumber: newBedNumber };
     
     try {
       // Persist to database
@@ -513,7 +519,7 @@ const Index = () => {
           newSector === 'red' ? 'Cuidados Especiais' :
           newSector === 'yellow' ? 'Observação Amarela' :
           newSector === 'blue' ? 'Observação Azul' : 'Fora das Alas'
-        }.`,
+        } (novo leito: ${newBedNumber}).`,
       });
     } catch (error) {
       console.error("Failed to transfer patient:", error);
