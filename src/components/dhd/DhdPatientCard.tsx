@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileText, Calendar } from "lucide-react";
-import { format, parseISO, differenceInDays, eachDayOfInterval } from "date-fns";
+import { FileText, Calendar, Edit, ChevronDown, ChevronUp } from "lucide-react";
+import { format, parseISO, differenceInDays, eachDayOfInterval, startOfWeek, endOfWeek, addWeeks, subWeeks } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { DhdReportDialog } from "./DhdReportDialog";
+import { EditDhdPatientDialog } from "./EditDhdPatientDialog";
 
 interface DhdPatient {
   id: string;
@@ -28,6 +29,11 @@ interface DhdPatientCardProps {
 
 export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPatientCardProps) {
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [calendarExpanded, setCalendarExpanded] = useState(false);
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => 
+    startOfWeek(new Date(), { weekStartsOn: 0 })
+  );
 
   const startDate = parseISO(patient.start_date);
   const endDate = parseISO(patient.end_date);
@@ -36,8 +42,15 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
   const progressPercentage = (completedDays / totalDays) * 100;
   const daysRemaining = differenceInDays(endDate, new Date());
 
-  // Generate all days in the range
+  // Generate days based on view mode
   const allDays = eachDayOfInterval({ start: startDate, end: endDate });
+  const weekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 0 });
+  const weekDays = calendarExpanded 
+    ? allDays 
+    : eachDayOfInterval({ 
+        start: currentWeekStart > startDate ? currentWeekStart : startDate,
+        end: weekEnd < endDate ? weekEnd : endDate
+      });
 
   const handleDayClick = (date: Date) => {
     const dateStr = format(date, "yyyy-MM-dd");
@@ -48,6 +61,17 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
     const dateStr = format(date, "yyyy-MM-dd");
     return patient.medication_days.includes(dateStr);
   };
+
+  const handlePreviousWeek = () => {
+    setCurrentWeekStart(subWeeks(currentWeekStart, 1));
+  };
+
+  const handleNextWeek = () => {
+    setCurrentWeekStart(addWeeks(currentWeekStart, 1));
+  };
+
+  const canGoPrevious = currentWeekStart > startDate;
+  const canGoNext = weekEnd < endDate;
 
   return (
     <>
@@ -99,13 +123,48 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
 
           {/* Calendar Grid */}
           <div>
-            <p className="text-sm font-medium mb-3 flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Calendário de Medicações
-            </p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-medium flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                {calendarExpanded ? "Calendário Completo" : "Semana Atual"}
+              </p>
+              <div className="flex items-center gap-2">
+                {!calendarExpanded && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handlePreviousWeek}
+                      disabled={!canGoPrevious}
+                      className="h-7 w-7 p-0"
+                    >
+                      ◄
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleNextWeek}
+                      disabled={!canGoNext}
+                      className="h-7 w-7 p-0"
+                    >
+                      ►
+                    </Button>
+                  </>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCalendarExpanded(!calendarExpanded)}
+                  className="h-7 gap-1 text-xs"
+                >
+                  {calendarExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                  {calendarExpanded ? "Compactar" : "Expandir"}
+                </Button>
+              </div>
+            </div>
             
             {/* Day labels */}
-            <div className="grid grid-cols-7 gap-1 mb-1">
+            <div className={`grid ${calendarExpanded ? 'grid-cols-7' : 'grid-cols-7'} gap-1 mb-1`}>
               {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
                 <div key={i} className="text-center text-xs font-medium text-muted-foreground">
                   {day}
@@ -113,8 +172,8 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
               ))}
             </div>
             
-            <div className="grid grid-cols-7 gap-1.5">
-              {allDays.map((day, index) => {
+            <div className={`grid ${calendarExpanded ? 'grid-cols-7' : 'grid-cols-7'} gap-1.5`}>
+              {weekDays.map((day, index) => {
                 const isMarked = isDayMarked(day);
                 const isPast = day < new Date();
                 const isToday = format(day, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
@@ -145,6 +204,15 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
 
           {/* Actions */}
           <div className="flex gap-2 pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setEditDialogOpen(true)}
+              className="flex-1 gap-2"
+            >
+              <Edit className="h-4 w-4" />
+              Editar
+            </Button>
             {patient.dhd_report && (
               <Button
                 variant="outline"
@@ -165,6 +233,14 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
         open={reportDialogOpen}
         onOpenChange={setReportDialogOpen}
         patient={patient}
+      />
+
+      {/* Edit Dialog */}
+      <EditDhdPatientDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        patient={patient}
+        onUpdate={onRefresh}
       />
     </>
   );
