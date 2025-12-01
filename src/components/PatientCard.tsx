@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -97,6 +98,43 @@ const parseTextArray = (value: string | null): string[] => {
   }
   return value.split('\n').filter(line => line.trim());
 };
+
+// Auto-resize textarea component
+interface AutoResizeTextareaProps {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  placeholder?: string;
+  className?: string;
+  inputRef?: React.RefObject<HTMLTextAreaElement>;
+}
+
+const AutoResizeTextarea = memo(({ value, onChange, onKeyDown, placeholder, className, inputRef }: AutoResizeTextareaProps) => {
+  const textareaRef = inputRef || useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [value]);
+
+  return (
+    <textarea
+      ref={textareaRef}
+      value={value}
+      onChange={onChange}
+      onKeyDown={onKeyDown}
+      placeholder={placeholder}
+      className={cn(
+        "resize-none overflow-hidden w-full min-h-[20px] text-[10px] uppercase text-foreground border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:outline-none",
+        className
+      )}
+      rows={1}
+    />
+  );
+});
 
 // Helper function to calculate days until discharge
 const calculateDaysUntilDischarge = (dateString: string): string | null => {
@@ -384,7 +422,7 @@ interface SortableDiagnosisItemCollapsedProps {
   onAddNew: () => void;
   onEditValueChange: (value: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLTextAreaElement>;
   isLast: boolean;
   onGetCid?: (diagnosis: string, index: number) => void;
   loadingCid?: boolean;
@@ -433,14 +471,14 @@ const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollap
         className="text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5 bg-accent/30 border border-primary"
       >
         <div className="flex-shrink-0 w-3" />
-        <div className="flex items-center gap-1 flex-1">
-          <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
-          <Input
-            ref={inputRef}
+        <div className="flex items-start gap-1 flex-1">
+          <span className="font-semibold text-muted-foreground flex-shrink-0 pt-[2px]">{index + 1}.</span>
+          <AutoResizeTextarea
+            inputRef={inputRef}
             value={editValue}
             onChange={(e) => onEditValueChange(e.target.value)}
             onKeyDown={onKeyDown}
-            className="h-5 text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0"
+            className="flex-1"
           />
         </div>
         <div className="flex items-center gap-0.5 flex-shrink-0">
@@ -544,7 +582,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [editingArrayIndex, setEditingArrayIndex] = useState<number>(-1);
   const [expandedSection, setExpandedSection] = useState<'diagnoses' | 'exams' | 'medicalHistory' | 'pendencies' | null>(null);
   const [loadingCid, setLoadingCid] = useState<number | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  const ageInputRef = useRef<HTMLInputElement>(null);
   const config = sectorConfig[patient.sector];
   const { toast: toastHook } = useToast();
   const { currentDepartment } = useDepartment();
@@ -1152,12 +1192,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <div className="flex items-start gap-0.5">
                     <div className="flex-1 min-w-0">
                       {editingField === "name" ? (
-                        <div className="flex items-center gap-1">
-                          <Input
-                            ref={inputRef}
+                        <div className="flex items-start gap-1">
+                          <AutoResizeTextarea
+                            inputRef={inputRef}
                             value={editValue}
                             onChange={(e) => {
-                              const target = e.target as HTMLInputElement;
+                              const target = e.target as HTMLTextAreaElement;
                               const start = target.selectionStart ?? 0;
                               const end = target.selectionEnd ?? 0;
                               setEditValue(e.target.value.toUpperCase());
