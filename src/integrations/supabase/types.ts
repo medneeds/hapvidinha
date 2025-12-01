@@ -25,6 +25,7 @@ export type Database = {
           hospital_unit_id: string
           id: string
           medication_days: Json | null
+          medication_schedule: string | null
           patient_age: string | null
           patient_name: string
           start_date: string
@@ -42,6 +43,7 @@ export type Database = {
           hospital_unit_id: string
           id?: string
           medication_days?: Json | null
+          medication_schedule?: string | null
           patient_age?: string | null
           patient_name: string
           start_date: string
@@ -59,6 +61,7 @@ export type Database = {
           hospital_unit_id?: string
           id?: string
           medication_days?: Json | null
+          medication_schedule?: string | null
           patient_age?: string | null
           patient_name?: string
           start_date?: string

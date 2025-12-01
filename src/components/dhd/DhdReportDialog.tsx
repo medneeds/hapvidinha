@@ -16,6 +16,7 @@ interface DhdPatient {
   diagnosis: string | null;
   start_date: string;
   end_date: string;
+  medication_schedule: string | null;
   dhd_report: string | null;
 }
 
@@ -31,7 +32,7 @@ export function DhdReportDialog({ open, onOpenChange, patient }: DhdReportDialog
       <DialogContent className="max-w-3xl max-h-[85vh]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Relatório DHD</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="uppercase">
             {patient.patient_name}
             {patient.patient_age && ` • ${patient.patient_age}`}
           </DialogDescription>
@@ -59,6 +60,12 @@ export function DhdReportDialog({ open, onOpenChange, patient }: DhdReportDialog
                   </p>
                 </div>
               </div>
+              {patient.medication_schedule && (
+                <div className="pt-2 border-t">
+                  <p className="text-muted-foreground font-medium text-sm">Programação:</p>
+                  <p className="text-sm mt-1 font-semibold">{patient.medication_schedule}</p>
+                </div>
+              )}
               {patient.diagnosis && (
                 <div className="pt-2 border-t">
                   <p className="text-muted-foreground font-medium text-sm">Diagnóstico:</p>

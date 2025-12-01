@@ -20,6 +20,7 @@ interface DhdPatient {
   diagnosis: string | null;
   start_date: string;
   end_date: string;
+  medication_schedule: string | null;
   medication_days: string[] | any;
   dhd_report: string | null;
   status: string;
