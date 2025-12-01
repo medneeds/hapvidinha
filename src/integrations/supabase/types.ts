@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      dhd_patients: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department: string
+          dhd_report: string | null
+          diagnosis: string | null
+          end_date: string
+          hospital_unit_id: string
+          id: string
+          medication_days: Json | null
+          patient_age: string | null
+          patient_name: string
+          start_date: string
+          state_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department?: string
+          dhd_report?: string | null
+          diagnosis?: string | null
+          end_date: string
+          hospital_unit_id: string
+          id?: string
+          medication_days?: Json | null
+          patient_age?: string | null
+          patient_name: string
+          start_date: string
+          state_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department?: string
+          dhd_report?: string | null
+          diagnosis?: string | null
+          end_date?: string
+          hospital_unit_id?: string
+          id?: string
+          medication_days?: Json | null
+          patient_age?: string | null
+          patient_name?: string
+          start_date?: string
+          state_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dhd_patients_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dhd_patients_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hospital_units: {
         Row: {
           address: string | null

@@ -29,6 +29,9 @@ import PriorizacaoCirurgicaPage from "./pages/PriorizacaoCirurgicaPage";
 import ControleGlicemicoPage from "./pages/ControleGlicemicoPage";
 import CuidadosPaliativosPage from "./pages/CuidadosPaliativosPage";
 import FluxoPaliativacaoPage from "./pages/FluxoPaliativacaoPage";
+import DhdDashboardPage from "./pages/DhdDashboardPage";
+import DhdRegistrationPage from "./pages/DhdRegistrationPage";
+import DhdHistoryPage from "./pages/DhdHistoryPage";
 
 const queryClient = new QueryClient();
 
@@ -246,6 +249,36 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <DashboardPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dhd"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <DhdDashboardPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dhd/cadastro"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <DhdRegistrationPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dhd/historico"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <DhdHistoryPage />
               </MainLayout>
             </ProtectedRoute>
           }
