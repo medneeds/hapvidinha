@@ -55,6 +55,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -3008,7 +3013,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
             </div>
 
-          {/* Action Menu - Compact */}
+          {/* Action Menu - Compact with Collapsible Categories */}
           <div className="flex-shrink-0 flex flex-col gap-0.5 print:hidden items-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -3026,108 +3031,149 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 side="bottom"
                 alignOffset={-5}
                 sideOffset={8}
-                className="w-56 p-0 bg-background dark:bg-gray-900 border-2 dark:border-gray-700 shadow-xl"
+                className="w-64 p-0 bg-background dark:bg-gray-900 border-2 dark:border-gray-700 shadow-xl"
               >
-                <ScrollArea className="max-h-[min(65vh,450px)]">
-                  <div className="p-1.5">
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsEditDialogOpen(true);
-                      }}
-                    >
-                      <Edit className="h-3.5 w-3.5 mr-2" />
-                      Edição Avançada
-                    </DropdownMenuItem>
+                <ScrollArea className="max-h-[min(70vh,500px)]">
+                  <div className="p-1">
+                    {/* MOVIMENTAÇÕES - Priority: Always Expanded */}
+                    <Collapsible defaultOpen>
+                      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-xs font-semibold hover:bg-accent/50 transition-colors">
+                        <span className="text-muted-foreground uppercase tracking-wide">Movimentações</span>
+                        <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 data-[state=open]:rotate-180" />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="space-y-0.5 pt-0.5 animate-accordion-down data-[state=closed]:animate-accordion-up">
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMovementType("TRANSFERÊNCIA");
+                            setMovementDialogOpen(true);
+                          }}
+                          className="pl-6"
+                        >
+                          <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
+                          Transferir
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMovementType("ALTA");
+                            setMovementDialogOpen(true);
+                          }}
+                          className="pl-6"
+                        >
+                          <TrendingUp className="h-3.5 w-3.5 mr-2" />
+                          Alta
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMovementType("ÓBITO");
+                            setMovementDialogOpen(true);
+                          }}
+                          className="pl-6"
+                        >
+                          <Skull className="h-3.5 w-3.5 mr-2" />
+                          Óbito
+                        </DropdownMenuItem>
+                      </CollapsibleContent>
+                    </Collapsible>
+
+                    <DropdownMenuSeparator className="my-1" />
+
+                    {/* REALOCAÇÃO - Priority: Always Expanded */}
                     {onTransfer && (
                       <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuLabel className="text-xs">Realocar para</DropdownMenuLabel>
-                        {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
-                          sector !== patient.sector && (
-                            <DropdownMenuItem
-                              key={sector}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleTransfer(sector);
-                              }}
-                            >
-                              <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
-                              {sectorLabels[sector]}
-                            </DropdownMenuItem>
-                          )
-                        ))}
+                        <Collapsible defaultOpen>
+                          <CollapsibleTrigger className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-xs font-semibold hover:bg-accent/50 transition-colors">
+                            <span className="text-muted-foreground uppercase tracking-wide">Realocação</span>
+                            <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 data-[state=open]:rotate-180" />
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="space-y-0.5 pt-0.5 animate-accordion-down data-[state=closed]:animate-accordion-up">
+                            {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
+                              sector !== patient.sector && (
+                                <DropdownMenuItem
+                                  key={sector}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleTransfer(sector);
+                                  }}
+                                  className="pl-6"
+                                >
+                                  <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
+                                  {sectorLabels[sector]}
+                                </DropdownMenuItem>
+                              )
+                            ))}
+                          </CollapsibleContent>
+                        </Collapsible>
+                        <DropdownMenuSeparator className="my-1" />
                       </>
                     )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuLabel className="text-xs">Movimentações</DropdownMenuLabel>
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMovementType("TRANSFERÊNCIA");
-                        setMovementDialogOpen(true);
-                      }}
-                    >
-                      <ArrowRightLeft className="h-3.5 w-3.5 mr-2" />
-                      Transferir
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMovementType("ALTA");
-                        setMovementDialogOpen(true);
-                      }}
-                    >
-                      <TrendingUp className="h-3.5 w-3.5 mr-2" />
-                      Alta
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMovementType("ÓBITO");
-                        setMovementDialogOpen(true);
-                      }}
-                    >
-                      <Skull className="h-3.5 w-3.5 mr-2" />
-                      Óbito
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/resources?patientId=${patient.id}`);
-                      }}
-                    >
-                      <FileText className="h-3.5 w-3.5 mr-2" />
-                      Solicitar Internação
-                    </DropdownMenuItem>
-                    {onPrintPatient && (
-                      <>
-                        <DropdownMenuSeparator />
+
+                    {/* EDIÇÃO & DOCUMENTOS - Collapsible */}
+                    <Collapsible>
+                      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-xs font-semibold hover:bg-accent/50 transition-colors">
+                        <span className="text-muted-foreground uppercase tracking-wide">Edição & Documentos</span>
+                        <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 data-[state=open]:rotate-180" />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="space-y-0.5 pt-0.5 animate-accordion-down data-[state=closed]:animate-accordion-up">
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
-                            onPrintPatient(patient.id);
+                            setIsEditDialogOpen(true);
                           }}
+                          className="pl-6"
                         >
-                          <Printer className="h-3.5 w-3.5 mr-2" />
-                          Imprimir Caso
+                          <Edit className="h-3.5 w-3.5 mr-2" />
+                          Edição Avançada
                         </DropdownMenuItem>
-                      </>
-                    )}
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/resources?patientId=${patient.id}`);
+                          }}
+                          className="pl-6"
+                        >
+                          <FileText className="h-3.5 w-3.5 mr-2" />
+                          Solicitar Internação
+                        </DropdownMenuItem>
+                        {onPrintPatient && (
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onPrintPatient(patient.id);
+                            }}
+                            className="pl-6"
+                          >
+                            <Printer className="h-3.5 w-3.5 mr-2" />
+                            Imprimir Caso
+                          </DropdownMenuItem>
+                        )}
+                      </CollapsibleContent>
+                    </Collapsible>
+
+                    {/* AÇÕES CRÍTICAS - Collapsible */}
                     {onDelete && (
                       <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsDeleteDialogOpen(true);
-                          }}
-                          className="text-destructive focus:text-destructive dark:text-red-400 dark:focus:text-red-300 dark:hover:bg-red-950/50 font-semibold"
-                        >
-                          <Trash2 className="h-3.5 w-3.5 mr-2" />
-                          Excluir Paciente
-                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="my-1" />
+                        <Collapsible>
+                          <CollapsibleTrigger className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-xs font-semibold hover:bg-accent/50 transition-colors">
+                            <span className="text-destructive uppercase tracking-wide">Ações Críticas</span>
+                            <ChevronDown className="h-3.5 w-3.5 text-destructive transition-transform duration-200 data-[state=open]:rotate-180" />
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="space-y-0.5 pt-0.5 animate-accordion-down data-[state=closed]:animate-accordion-up">
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsDeleteDialogOpen(true);
+                              }}
+                              className="pl-6 text-destructive focus:text-destructive dark:text-red-400 dark:focus:text-red-300 dark:hover:bg-red-950/50 font-semibold"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-2" />
+                              Excluir Paciente
+                            </DropdownMenuItem>
+                          </CollapsibleContent>
+                        </Collapsible>
                       </>
                     )}
                   </div>
