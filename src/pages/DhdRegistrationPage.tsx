@@ -38,7 +38,7 @@ export default function DhdRegistrationPage() {
       return;
     }
 
-    if (!formData.patient_name || !formData.start_date || !formData.end_date || !formData.medication_schedule) {
+    if (!formData.patient_name || !formData.start_date || !formData.medication_schedule) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
@@ -51,7 +51,7 @@ export default function DhdRegistrationPage() {
         patient_age: formData.patient_age || null,
         diagnosis: formData.diagnosis || null,
         start_date: formData.start_date,
-        end_date: formData.end_date,
+        end_date: formData.end_date || null,
         medication_schedule: formData.medication_schedule,
         dhd_report: formData.dhd_report || null,
         medication_days: [],
@@ -163,15 +163,17 @@ export default function DhdRegistrationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="end_date">Data de Finalização *</Label>
+                <Label htmlFor="end_date">Data de Finalização</Label>
                 <Input
                   id="end_date"
                   type="date"
                   value={formData.end_date}
                   onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                   min={formData.start_date}
-                  required
                 />
+                <p className="text-xs text-muted-foreground">
+                  Opcional - pode ser definida posteriormente
+                </p>
               </div>
             </div>
 

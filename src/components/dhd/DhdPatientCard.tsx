@@ -36,20 +36,20 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
   );
 
   const startDate = parseISO(patient.start_date);
-  const endDate = parseISO(patient.end_date);
-  const totalDays = differenceInDays(endDate, startDate) + 1;
+  const endDate = patient.end_date ? parseISO(patient.end_date) : null;
+  const totalDays = endDate ? differenceInDays(endDate, startDate) + 1 : 0;
   const completedDays = patient.medication_days.length;
-  const progressPercentage = (completedDays / totalDays) * 100;
-  const daysRemaining = differenceInDays(endDate, new Date());
+  const progressPercentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+  const daysRemaining = endDate ? differenceInDays(endDate, new Date()) : null;
 
   // Generate days based on view mode
-  const allDays = eachDayOfInterval({ start: startDate, end: endDate });
+  const allDays = endDate ? eachDayOfInterval({ start: startDate, end: endDate }) : [];
   const weekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 0 });
   const weekDays = calendarExpanded 
     ? allDays 
     : eachDayOfInterval({ 
         start: currentWeekStart > startDate ? currentWeekStart : startDate,
-        end: weekEnd < endDate ? weekEnd : endDate
+        end: endDate && weekEnd < endDate ? weekEnd : (endDate || weekEnd)
       });
 
   const handleDayClick = (date: Date) => {
@@ -71,7 +71,7 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
   };
 
   const canGoPrevious = currentWeekStart > startDate;
-  const canGoNext = weekEnd < endDate;
+  const canGoNext = endDate ? weekEnd < endDate : false;
 
   return (
     <>
@@ -95,31 +95,37 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
                 </div>
               )}
             </div>
-            <Badge
-              variant={daysRemaining >= 0 ? "default" : "secondary"}
-              className="ml-2"
-            >
-              {daysRemaining >= 0
-                ? `${daysRemaining} dias restantes`
-                : "Prazo encerrado"}
-            </Badge>
+            {endDate ? (
+              <Badge
+                variant={daysRemaining !== null && daysRemaining >= 0 ? "default" : "secondary"}
+                className="ml-2"
+              >
+                {format(endDate, "dd/MM/yyyy")}
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="ml-2">
+                Sem data definida
+              </Badge>
+            )}
           </div>
         </CardHeader>
 
         <CardContent className="space-y-4">
           {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Progresso</span>
-              <span className="font-medium">{completedDays}/{totalDays} dias</span>
+          {endDate && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Progresso</span>
+                <span className="font-medium">{completedDays}/{totalDays} dias</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-500 ease-out"
+                  style={{ width: `${progressPercentage}%` }}
+                />
+              </div>
             </div>
-            <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-              <div
-                className="h-full bg-primary transition-all duration-500 ease-out"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
-          </div>
+          )}
 
           {/* Calendar Grid */}
           <div>
@@ -173,6 +179,11 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
             </div>
             
             <div className={`grid ${calendarExpanded ? 'grid-cols-7' : 'grid-cols-7'} gap-1.5`}>
+              {weekDays.length === 0 && (
+                <div className="col-span-7 text-center py-8 text-muted-foreground text-sm">
+                  Defina uma data de finalização para visualizar o calendário completo
+                </div>
+              )}
               {weekDays.map((day, index) => {
                 const isMarked = isDayMarked(day);
                 const isPast = day < new Date();

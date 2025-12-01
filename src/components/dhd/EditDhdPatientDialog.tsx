@@ -54,7 +54,7 @@ export function EditDhdPatientDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.patient_name || !formData.start_date || !formData.end_date || !formData.medication_schedule) {
+    if (!formData.patient_name || !formData.start_date || !formData.medication_schedule) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
@@ -69,7 +69,7 @@ export function EditDhdPatientDialog({
           patient_age: formData.patient_age || null,
           diagnosis: formData.diagnosis || null,
           start_date: formData.start_date,
-          end_date: formData.end_date,
+          end_date: formData.end_date || null,
           medication_schedule: formData.medication_schedule,
           dhd_report: formData.dhd_report || null,
         })
@@ -169,7 +169,7 @@ export function EditDhdPatientDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit_end_date">Data de Finalização *</Label>
+              <Label htmlFor="edit_end_date">Data de Finalização</Label>
               <Input
                 id="edit_end_date"
                 type="date"
@@ -178,8 +178,10 @@ export function EditDhdPatientDialog({
                   setFormData({ ...formData, end_date: e.target.value })
                 }
                 min={formData.start_date}
-                required
               />
+              <p className="text-xs text-muted-foreground">
+                Opcional - pode ser definida posteriormente
+              </p>
             </div>
           </div>
 
