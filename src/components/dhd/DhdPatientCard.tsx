@@ -14,6 +14,7 @@ interface DhdPatient {
   diagnosis: string | null;
   start_date: string;
   end_date: string;
+  medication_schedule: string | null;
   medication_days: string[] | any;
   dhd_report: string | null;
   status: string;
@@ -54,7 +55,7 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-lg mb-1">{patient.patient_name}</CardTitle>
+              <CardTitle className="text-lg mb-1 uppercase">{patient.patient_name}</CardTitle>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 {patient.patient_age && <span>{patient.patient_age}</span>}
                 {patient.patient_age && patient.diagnosis && <span>•</span>}
@@ -62,6 +63,13 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
                   <span className="line-clamp-1">{patient.diagnosis}</span>
                 )}
               </div>
+              {patient.medication_schedule && (
+                <div className="mt-2 flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs font-normal">
+                    {patient.medication_schedule}
+                  </Badge>
+                </div>
+              )}
             </div>
             <Badge
               variant={daysRemaining >= 0 ? "default" : "secondary"}
@@ -91,11 +99,21 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
 
           {/* Calendar Grid */}
           <div>
-            <p className="text-sm font-medium mb-2 flex items-center gap-2">
+            <p className="text-sm font-medium mb-3 flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Calendário de Medicações
             </p>
-            <div className="grid grid-cols-7 gap-1">
+            
+            {/* Day labels */}
+            <div className="grid grid-cols-7 gap-1 mb-1">
+              {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
+                <div key={i} className="text-center text-xs font-medium text-muted-foreground">
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            <div className="grid grid-cols-7 gap-1.5">
               {allDays.map((day, index) => {
                 const isMarked = isDayMarked(day);
                 const isPast = day < new Date();
@@ -106,12 +124,12 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
                     key={index}
                     onClick={() => handleDayClick(day)}
                     className={`
-                      aspect-square rounded-md text-xs font-medium transition-all
+                      aspect-square rounded-lg text-sm font-medium transition-all
                       ${isMarked
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "bg-muted hover:bg-muted/80"}
-                      ${isToday ? "ring-2 ring-primary ring-offset-1" : ""}
-                      ${isPast && !isMarked ? "opacity-50" : ""}
+                        ? "bg-primary text-primary-foreground shadow-md hover:shadow-lg"
+                        : "bg-muted hover:bg-muted/70"}
+                      ${isToday ? "ring-2 ring-primary ring-offset-2" : ""}
+                      ${isPast && !isMarked ? "opacity-40" : ""}
                     `}
                     title={format(day, "dd/MM/yyyy", { locale: ptBR })}
                   >
@@ -120,7 +138,7 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
                 );
               })}
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-xs text-muted-foreground mt-3 text-center">
               Clique nos dias para marcar/desmarcar medicações realizadas
             </p>
           </div>

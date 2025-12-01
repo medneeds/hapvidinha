@@ -25,6 +25,7 @@ export default function DhdRegistrationPage() {
     diagnosis: "",
     start_date: format(new Date(), "yyyy-MM-dd"),
     end_date: "",
+    medication_schedule: "",
     dhd_report: "",
   });
   const [saving, setSaving] = useState(false);
@@ -37,7 +38,7 @@ export default function DhdRegistrationPage() {
       return;
     }
 
-    if (!formData.patient_name || !formData.start_date || !formData.end_date) {
+    if (!formData.patient_name || !formData.start_date || !formData.end_date || !formData.medication_schedule) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
@@ -51,6 +52,7 @@ export default function DhdRegistrationPage() {
         diagnosis: formData.diagnosis || null,
         start_date: formData.start_date,
         end_date: formData.end_date,
+        medication_schedule: formData.medication_schedule,
         dhd_report: formData.dhd_report || null,
         medication_days: [],
         status: "active",
@@ -121,6 +123,20 @@ export default function DhdRegistrationPage() {
                   placeholder="Ex: 45 anos"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="medication_schedule">Programação das Medicações *</Label>
+              <Input
+                id="medication_schedule"
+                value={formData.medication_schedule}
+                onChange={(e) => setFormData({ ...formData, medication_schedule: e.target.value })}
+                placeholder="Ex: SEG, QUA, SEX | 24/24H | Dias Alternados"
+                required
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Descreva a programação: dias específicos da semana, intervalo de horas, ou padrão personalizado
+              </p>
             </div>
 
             <div className="space-y-2">
