@@ -21,7 +21,7 @@ export type Database = {
           department: string
           dhd_report: string | null
           diagnosis: string | null
-          end_date: string
+          end_date: string | null
           hospital_unit_id: string
           id: string
           medication_days: Json | null
@@ -39,7 +39,7 @@ export type Database = {
           department?: string
           dhd_report?: string | null
           diagnosis?: string | null
-          end_date: string
+          end_date?: string | null
           hospital_unit_id: string
           id?: string
           medication_days?: Json | null
@@ -57,7 +57,7 @@ export type Database = {
           department?: string
           dhd_report?: string | null
           diagnosis?: string | null
-          end_date?: string
+          end_date?: string | null
           hospital_unit_id?: string
           id?: string
           medication_days?: Json | null
