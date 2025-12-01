@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileText, Calendar, Edit, ChevronDown, ChevronUp } from "lucide-react";
-import { format, parseISO, differenceInDays, eachDayOfInterval, startOfWeek, endOfWeek, addWeeks, subWeeks } from "date-fns";
+import { format, parseISO, differenceInDays, eachDayOfInterval, startOfWeek, endOfWeek, addWeeks, subWeeks, startOfMonth, endOfMonth, eachMonthOfInterval, isSameMonth, getDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { DhdReportDialog } from "./DhdReportDialog";
 import { EditDhdPatientDialog } from "./EditDhdPatientDialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface DhdPatient {
   id: string;
@@ -44,6 +45,8 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
 
   // Generate days based on view mode
   const allDays = endDate ? eachDayOfInterval({ start: startDate, end: endDate }) : [];
+  const months = endDate ? eachMonthOfInterval({ start: startDate, end: endDate }) : [];
+  
   const weekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 0 });
   const weekDays = calendarExpanded 
     ? allDays 
@@ -51,6 +54,12 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
         start: currentWeekStart > startDate ? currentWeekStart : startDate,
         end: endDate && weekEnd < endDate ? weekEnd : (endDate || weekEnd)
       });
+
+  // Group days by month for expanded view
+  const daysByMonth = months.map(month => ({
+    month,
+    days: allDays.filter(day => isSameMonth(day, month))
+  }));
 
   const handleDayClick = (date: Date) => {
     const dateStr = format(date, "yyyy-MM-dd");
@@ -169,45 +178,120 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
               </div>
             </div>
             
-            {/* Day labels */}
-            <div className={`grid ${calendarExpanded ? 'grid-cols-7' : 'grid-cols-7'} gap-1 mb-1`}>
-              {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
-                <div key={i} className="text-center text-xs font-medium text-muted-foreground">
-                  {day}
-                </div>
-              ))}
-            </div>
-            
-            <div className={`grid ${calendarExpanded ? 'grid-cols-7' : 'grid-cols-7'} gap-1.5`}>
-              {weekDays.length === 0 && (
-                <div className="col-span-7 text-center py-8 text-muted-foreground text-sm">
-                  Defina uma data de finalização para visualizar o calendário completo
-                </div>
-              )}
-              {weekDays.map((day, index) => {
-                const isMarked = isDayMarked(day);
-                const isPast = day < new Date();
-                const isToday = format(day, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
+            {calendarExpanded ? (
+              // Expanded view with months
+              <ScrollArea className="h-[400px] w-full rounded-md border">
+                <div className="p-4 space-y-6">
+                  {daysByMonth.map(({ month, days }) => {
+                    const monthStart = startOfMonth(month);
+                    const monthEnd = endOfMonth(month);
+                    const firstDayOfMonth = getDay(monthStart);
+                    
+                    // Create empty cells for alignment
+                    const emptyCells = Array(firstDayOfMonth).fill(null);
+                    
+                    return (
+                      <div key={month.toString()} className="space-y-3">
+                        <h3 className="text-sm font-semibold text-foreground capitalize sticky top-0 bg-background py-2 border-b">
+                          {format(month, "MMMM 'de' yyyy", { locale: ptBR })}
+                        </h3>
+                        
+                        {/* Day labels */}
+                        <div className="grid grid-cols-7 gap-1 mb-1">
+                          {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
+                            <div key={i} className="text-center text-xs font-medium text-muted-foreground">
+                              {day}
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="grid grid-cols-7 gap-1.5">
+                          {/* Empty cells for alignment */}
+                          {emptyCells.map((_, i) => (
+                            <div key={`empty-${i}`} className="aspect-square" />
+                          ))}
+                          
+                          {/* Days of the month */}
+                          {days.map((day, index) => {
+                            const isMarked = isDayMarked(day);
+                            const isPast = day < new Date();
+                            const isToday = format(day, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
 
-                return (
-                  <button
-                    key={index}
-                    onClick={() => handleDayClick(day)}
-                    className={`
-                      aspect-square rounded-lg text-sm font-medium transition-all
-                      ${isMarked
-                        ? "bg-primary text-primary-foreground shadow-md hover:shadow-lg"
-                        : "bg-muted hover:bg-muted/70"}
-                      ${isToday ? "ring-2 ring-primary ring-offset-2" : ""}
-                      ${isPast && !isMarked ? "opacity-40" : ""}
-                    `}
-                    title={format(day, "dd/MM/yyyy", { locale: ptBR })}
-                  >
-                    {format(day, "d")}
-                  </button>
-                );
-              })}
-            </div>
+                            return (
+                              <button
+                                key={index}
+                                onClick={() => handleDayClick(day)}
+                                className={`
+                                  aspect-square rounded-lg text-sm font-medium transition-all
+                                  ${isMarked
+                                    ? "bg-primary text-primary-foreground shadow-md hover:shadow-lg"
+                                    : "bg-muted hover:bg-muted/70"}
+                                  ${isToday ? "ring-2 ring-primary ring-offset-2" : ""}
+                                  ${isPast && !isMarked ? "opacity-40" : ""}
+                                `}
+                                title={format(day, "dd/MM/yyyy", { locale: ptBR })}
+                              >
+                                {format(day, "d")}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {daysByMonth.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground text-sm">
+                      Defina uma data de finalização para visualizar o calendário completo
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            ) : (
+              // Compact weekly view
+              <div>
+                {/* Day labels */}
+                <div className="grid grid-cols-7 gap-1 mb-1">
+                  {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
+                    <div key={i} className="text-center text-xs font-medium text-muted-foreground">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="grid grid-cols-7 gap-1.5">
+                  {weekDays.length === 0 && (
+                    <div className="col-span-7 text-center py-8 text-muted-foreground text-sm">
+                      Defina uma data de finalização para visualizar o calendário completo
+                    </div>
+                  )}
+                  {weekDays.map((day, index) => {
+                    const isMarked = isDayMarked(day);
+                    const isPast = day < new Date();
+                    const isToday = format(day, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleDayClick(day)}
+                        className={`
+                          aspect-square rounded-lg text-sm font-medium transition-all
+                          ${isMarked
+                            ? "bg-primary text-primary-foreground shadow-md hover:shadow-lg"
+                            : "bg-muted hover:bg-muted/70"}
+                          ${isToday ? "ring-2 ring-primary ring-offset-2" : ""}
+                          ${isPast && !isMarked ? "opacity-40" : ""}
+                        `}
+                        title={format(day, "dd/MM/yyyy", { locale: ptBR })}
+                      >
+                        {format(day, "d")}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            
             <p className="text-xs text-muted-foreground mt-3 text-center">
               Clique nos dias para marcar/desmarcar medicações realizadas
             </p>
