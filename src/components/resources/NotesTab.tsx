@@ -188,7 +188,7 @@ const NotesTab = () => {
             size="sm"
             onClick={handleOpenSaveDialog}
             disabled={!notes}
-            className="gap-2 hover:bg-purple-500/10 hover:text-purple-600 hover:border-purple-500/50 transition-all uppercase"
+            className="gap-2 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-all uppercase"
           >
             <Save className="h-4 w-4" />
             SALVAR COMO MODELO

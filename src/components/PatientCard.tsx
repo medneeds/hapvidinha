@@ -3108,7 +3108,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     {onTransfer && (
                       <Collapsible defaultOpen className="group">
                         <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
-                          <Shuffle className="h-4 w-4 text-purple-500 dark:text-purple-400" />
+                          <Shuffle className="h-4 w-4 text-teal-500 dark:text-teal-400" />
                           <span className="flex-1 text-left text-foreground">Realocação</span>
                           <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" />
                         </CollapsibleTrigger>
@@ -3121,9 +3121,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                   e.stopPropagation();
                                   handleTransfer(sector);
                                 }}
-                                className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-purple-50 dark:hover:bg-purple-950/30 transition-colors cursor-pointer"
+                                className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-teal-50 dark:hover:bg-teal-950/30 transition-colors cursor-pointer"
                               >
-                                <ArrowRightLeft className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+                                <ArrowRightLeft className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
                                 <span>{sectorLabels[sector]}</span>
                               </DropdownMenuItem>
                             )

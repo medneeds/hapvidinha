@@ -423,8 +423,8 @@ export const NotificationCenter = () => {
               <div className="animate-fade-in">
                 <Separator className="my-5" />
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-purple-600" />
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-orange-500/10 to-amber-500/10 flex items-center justify-center">
+                    <FileText className="h-4 w-4 text-orange-600" />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-sm font-bold uppercase tracking-tight">Anotações Salvas</h3>
@@ -439,7 +439,7 @@ export const NotificationCenter = () => {
                       key={item.id}
                       className={cn(
                         "group border border-border/50 hover:border-border transition-all duration-300 hover:shadow-md bg-gradient-to-br from-card to-accent/5 relative",
-                        !item.read && "border-l-4 border-l-purple-500"
+                        !item.read && "border-l-4 border-l-orange-500"
                       )}
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
