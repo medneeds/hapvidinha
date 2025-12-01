@@ -3129,7 +3129,35 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 className="w-[280px] max-h-[min(75vh,600px)] p-0 bg-background/95 backdrop-blur-sm dark:bg-gray-900/95 border border-border/50 shadow-2xl rounded-lg overflow-hidden"
               >
                 <div className="p-2 space-y-1 overflow-y-auto max-h-[min(75vh,600px)] overscroll-contain">
-                    
+                  
+                    {/* REALOCAÇÃO - Priority Category */}
+                    {onTransfer && (
+                      <Collapsible defaultOpen className="group">
+                        <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
+                          <Shuffle className="h-4 w-4 text-teal-500 dark:text-teal-400" />
+                          <span className="flex-1 text-left text-foreground">Realocação</span>
+                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-1 space-y-0.5 overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                          {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
+                            sector !== patient.sector && (
+                              <DropdownMenuItem
+                                key={sector}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleTransfer(sector);
+                                }}
+                                className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-teal-50 dark:hover:bg-teal-950/30 transition-colors cursor-pointer"
+                              >
+                                <ArrowRightLeft className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+                                <span>{sectorLabels[sector]}</span>
+                              </DropdownMenuItem>
+                            )
+                          ))}
+                        </CollapsibleContent>
+                      </Collapsible>
+                    )}
+
                     {/* MOVIMENTAÇÕES - Priority Category with Gradient Accent */}
                     <Collapsible defaultOpen className="group">
                       <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
@@ -3183,34 +3211,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </DropdownMenuItem>
                       </CollapsibleContent>
                     </Collapsible>
-
-                    {/* REALOCAÇÃO - Priority Category */}
-                    {onTransfer && (
-                      <Collapsible defaultOpen className="group">
-                        <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
-                          <Shuffle className="h-4 w-4 text-teal-500 dark:text-teal-400" />
-                          <span className="flex-1 text-left text-foreground">Realocação</span>
-                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" />
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-1 space-y-0.5 overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-                          {(Object.keys(sectorLabels) as Array<Patient['sector']>).map((sector) => (
-                            sector !== patient.sector && (
-                              <DropdownMenuItem
-                                key={sector}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleTransfer(sector);
-                                }}
-                                className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-teal-50 dark:hover:bg-teal-950/30 transition-colors cursor-pointer"
-                              >
-                                <ArrowRightLeft className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
-                                <span>{sectorLabels[sector]}</span>
-                              </DropdownMenuItem>
-                            )
-                          ))}
-                        </CollapsibleContent>
-                      </Collapsible>
-                    )}
 
                     {/* Elegant Divider */}
                     <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
