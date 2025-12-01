@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo, memo } from "react";
 import { Patient, SectorType, MedicalResponsibility } from "@/types/patient";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -78,6 +78,19 @@ const formatDateInput = (value: string): string => {
   } else {
     return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
   }
+};
+
+// Helper function to parse text arrays (extracted to avoid duplication)
+const parseTextArray = (value: string | null): string[] => {
+  if (!value) return [];
+  if (value.startsWith('[')) {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value.split('\n').filter(line => line.trim());
+    }
+  }
+  return value.split('\n').filter(line => line.trim());
 };
 
 // Helper function to calculate days until discharge
@@ -174,7 +187,7 @@ interface SortablePendencyItemProps {
   sector: Patient['sector'];
 }
 
-function SortablePendencyItem({ id, index, pendency, isHighlighted, onToggleHighlight, sector }: SortablePendencyItemProps) {
+const SortablePendencyItem = memo(function SortablePendencyItem({ id, index, pendency, isHighlighted, onToggleHighlight, sector }: SortablePendencyItemProps) {
   const {
     attributes,
     listeners,
@@ -233,7 +246,7 @@ function SortablePendencyItem({ id, index, pendency, isHighlighted, onToggleHigh
       </Button>
     </li>
   );
-}
+});
 
 interface SortablePendencyItemCollapsedProps {
   id: string;
@@ -249,7 +262,7 @@ interface SortablePendencyItemCollapsedProps {
   sector: Patient['sector'];
 }
 
-function SortablePendencyItemCollapsed({ 
+const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapsed({
   id, 
   index, 
   pendency, 
@@ -351,7 +364,7 @@ function SortablePendencyItemCollapsed({
       </div>
     </div>
   );
-}
+});
 
 interface SortableDiagnosisItemCollapsedProps {
   id: string;
@@ -373,7 +386,7 @@ interface SortableDiagnosisItemCollapsedProps {
   daysCalculation?: string | null;
 }
 
-function SortableDiagnosisItemCollapsed({ 
+const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollapsed({
   id, 
   index, 
   diagnosis,
@@ -512,7 +525,7 @@ function SortableDiagnosisItemCollapsed({
       </div>
     </li>
   );
-}
+});
 
 export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -544,14 +557,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     setLocalMedicalResponsibility(patient.medicalResponsibility);
   }, [patient.medicalResponsibility]);
   
-  const sectorColorMap = {
+  const sectorColorMap = useMemo(() => ({
     red: "#ef4444",
     yellow: "#eab308",
     blue: "#3b82f6",
     outside: "#6b7280"
-  };
+  }), []);
 
-  const internmentStatusConfig = {
+  const internmentStatusConfig = useMemo(() => ({
     SOLICITACAO_PENDENTE: {
       label: "🕐 Solicitação Pendente",
       icon: Clock,
@@ -573,7 +586,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       bgColor: "bg-blue-50",
       borderColor: "border-blue-300",
     },
-  };
+  }), []);
 
   useEffect(() => {
     if (editingField && inputRef.current) {
@@ -582,7 +595,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }
   }, [editingField]);
 
-  const handleCopyName = async (e: React.MouseEvent) => {
+  const handleCopyName = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
       await navigator.clipboard.writeText(patient.name);
@@ -597,9 +610,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         variant: "destructive",
       });
     }
-  };
+  }, [patient.name, toastHook]);
 
-  const getCidCode = async (diagnosis: string, index: number) => {
+  const getCidCode = useCallback(async (diagnosis: string, index: number) => {
     if (!diagnosis.trim()) {
       toast.error("Digite um diagnóstico antes de buscar o CID");
       return;
@@ -647,25 +660,25 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     } finally {
       setLoadingCid(null);
     }
-  };
+  }, [patient, editingField, editingArrayIndex, onUpdate]);
 
-  const handleTransfer = (newSector: Patient['sector']) => {
+  const handleTransfer = useCallback((newSector: Patient['sector']) => {
     if (onTransfer && newSector !== patient.sector) {
       onTransfer(patient.id, newSector);
     }
-  };
+  }, [onTransfer, patient.id, patient.sector]);
 
-  const startEditing = (field: string, currentValue: string, index: number = -1) => {
+  const startEditing = useCallback((field: string, currentValue: string, index: number = -1) => {
     setEditingField(field);
     setEditValue(currentValue);
     setEditingArrayIndex(index);
-  };
+  }, []);
 
-  const cancelEditing = () => {
+  const cancelEditing = useCallback(() => {
     setEditingField(null);
     setEditValue("");
     setEditingArrayIndex(-1);
-  };
+  }, []);
 
   const saveInlineEdit = async () => {
     if (!editingField) return;
@@ -896,6 +909,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       updatedPatient.relevantExams = patient.relevantExams.filter((_, i) => i !== index);
     } else if (field === "pendencies") {
       updatedPatient.pendencies = patient.pendencies.filter((_, i) => i !== index);
+      // Atualiza os índices dos highlights após remoção
+      if (updatedPatient.highlightedPendencies && updatedPatient.highlightedPendencies.length > 0) {
+        updatedPatient.highlightedPendencies = updatedPatient.highlightedPendencies
+          .map(idx => idx > index ? idx - 1 : idx)
+          .filter(idx => idx !== index);
+      }
     } else if (field === "utiAdmissionDate") {
       updatedPatient.utiAdmissionDate = (patient.utiAdmissionDate || []).filter((_, i) => i !== index);
     } else if (field === "utiDischargePrediction") {
@@ -914,10 +933,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       updatedPatient.utiCulturesAntibiotics = (patient.utiCulturesAntibiotics || []).filter((_, i) => i !== index);
     } else if (field === "utiOriginSector") {
       updatedPatient.utiOriginSector = (patient.utiOriginSector || []).filter((_, i) => i !== index);
-    } else if (field === "utiAdmissionReason") {
-      updatedPatient.utiAdmissionReason = (patient.utiAdmissionReason || []).filter((_, i) => i !== index);
-    } else if (field === "utiCurrentStatus") {
-      updatedPatient.utiCurrentStatus = (patient.utiCurrentStatus || []).filter((_, i) => i !== index);
     }
 
     onUpdate(updatedPatient);
@@ -945,9 +960,21 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       const oldIndex = patient.pendencies.findIndex((_, i) => `pendency-${i}` === active.id);
       const newIndex = patient.pendencies.findIndex((_, i) => `pendency-${i}` === over.id);
 
+      // Atualiza os índices dos highlights após reordenação
+      let updatedHighlights = [...(patient.highlightedPendencies || [])];
+      if (updatedHighlights.length > 0) {
+        updatedHighlights = updatedHighlights.map(idx => {
+          if (idx === oldIndex) return newIndex;
+          if (oldIndex < newIndex && idx > oldIndex && idx <= newIndex) return idx - 1;
+          if (oldIndex > newIndex && idx >= newIndex && idx < oldIndex) return idx + 1;
+          return idx;
+        });
+      }
+
       const updatedPatient = {
         ...patient,
         pendencies: arrayMove(patient.pendencies, oldIndex, newIndex),
+        highlightedPendencies: updatedHighlights,
       };
 
       onUpdate(updatedPatient);
@@ -3901,19 +3928,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             
             // Update UI with fresh data - map database fields to Patient type
             if (updatedPatient) {
-              // Helper to safely parse text fields that may be plain strings or JSON arrays
-              const parseTextArray = (value: string | null): string[] => {
-                if (!value) return [];
-                if (value.startsWith('[')) {
-                  try {
-                    return JSON.parse(value);
-                  } catch {
-                    return value.split('\n').filter(line => line.trim());
-                  }
-                }
-                return value.split('\n').filter(line => line.trim());
-              };
-
               const mappedPatient: Patient = {
                 id: updatedPatient.id,
                 bedNumber: updatedPatient.bed_number,
@@ -3988,18 +4002,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             
             // Update UI with fresh data
             if (updatedPatient) {
-              const parseTextArray = (value: string | null): string[] => {
-                if (!value) return [];
-                if (value.startsWith('[')) {
-                  try {
-                    return JSON.parse(value);
-                  } catch {
-                    return value.split('\n').filter(line => line.trim());
-                  }
-                }
-                return value.split('\n').filter(line => line.trim());
-              };
-
               const mappedPatient: Patient = {
                 id: updatedPatient.id,
                 bedNumber: updatedPatient.bed_number,
