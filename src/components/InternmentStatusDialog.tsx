@@ -53,6 +53,20 @@ const statusConfig = {
     bgColor: "bg-blue-50",
     borderColor: "border-blue-300",
   },
+  IR_PARA_UTI: {
+    label: "🚨 IR PARA LEITO DE UTI",
+    icon: BedDouble,
+    color: "text-red-600",
+    bgColor: "bg-red-50",
+    borderColor: "border-red-300",
+  },
+  IR_PARA_ENFERMARIA: {
+    label: "🏥 IR PARA LEITO DE ENFERMARIA",
+    icon: BedDouble,
+    color: "text-purple-600",
+    bgColor: "bg-purple-50",
+    borderColor: "border-purple-300",
+  },
 };
 
 export function InternmentStatusDialog({
