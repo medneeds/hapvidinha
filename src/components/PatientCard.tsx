@@ -3031,10 +3031,24 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 side="bottom"
                 alignOffset={-5}
                 sideOffset={8}
-                className="w-[280px] p-0 bg-background/95 backdrop-blur-sm dark:bg-gray-900/95 border border-border/50 shadow-2xl rounded-lg overflow-hidden"
+                className="w-[280px] max-h-[min(75vh,600px)] p-0 bg-background/95 backdrop-blur-sm dark:bg-gray-900/95 border border-border/50 shadow-2xl rounded-lg overflow-hidden"
               >
-                <ScrollArea className="max-h-[min(70vh,520px)]">
-                  <div className="p-2 space-y-1">
+                <div className="p-2 space-y-1 overflow-y-auto max-h-[min(75vh,600px)] overscroll-contain">
+                    
+                    {/* EDIÇÃO AVANÇADA - Top Priority Action */}
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsEditDialogOpen(true);
+                      }}
+                      className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer border border-primary/20"
+                    >
+                      <Edit className="h-4 w-4 text-primary" />
+                      <span className="text-primary">Edição Avançada</span>
+                    </DropdownMenuItem>
+
+                    {/* Elegant Divider */}
+                    <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
                     
                     {/* MOVIMENTAÇÕES - Priority Category with Gradient Accent */}
                     <Collapsible defaultOpen className="group">
@@ -3111,24 +3125,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     {/* Elegant Divider */}
                     <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
 
-                    {/* EDIÇÃO & DOCUMENTOS - Secondary Category */}
+                    {/* DOCUMENTOS - Secondary Category */}
                     <Collapsible className="group">
                       <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
                         <FileEdit className="h-4 w-4 text-amber-500 dark:text-amber-400" />
-                        <span className="flex-1 text-left text-foreground">Edição & Documentos</span>
+                        <span className="flex-1 text-left text-foreground">Documentos</span>
                         <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" />
                       </CollapsibleTrigger>
                       <CollapsibleContent className="mt-1 space-y-0.5 overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsEditDialogOpen(true);
-                          }}
-                          className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
-                        >
-                          <Edit className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span>Edição Avançada</span>
-                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
@@ -3181,7 +3185,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     )}
                     
                   </div>
-                </ScrollArea>
               </DropdownMenuContent>
             </DropdownMenu>
             
