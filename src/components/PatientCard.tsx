@@ -593,6 +593,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     },
   }), []);
 
+  // Get sector color based on patient sector
+  const sectorColor = useMemo(() => {
+    switch (patient.sector) {
+      case 'red':
+        return sectorColorMap.red;
+      case 'yellow':
+        return sectorColorMap.yellow;
+      case 'blue':
+        return sectorColorMap.blue;
+      case 'outside':
+        return sectorColorMap.outside;
+      default:
+        return sectorColorMap.blue;
+    }
+  }, [patient.sector, sectorColorMap]);
+
   useEffect(() => {
     if (editingField && inputRef.current) {
       inputRef.current.focus();
@@ -3013,9 +3029,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
             </div>
 
-          {/* Action Buttons Column */}
-          <div className="flex-shrink-0 flex flex-col gap-1 print:hidden items-center">
-            {/* Edição Avançada - Independent Button */}
+          {/* Action Buttons Column - Integrated Design */}
+          <div className="flex-shrink-0 flex flex-col gap-1.5 print:hidden items-center">
+            {/* Edição Avançada - Primary Action with Sector Identity */}
             <Button
               size="icon"
               variant="ghost"
@@ -3023,22 +3039,46 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 e.stopPropagation();
                 setIsEditDialogOpen(true);
               }}
-              className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary transition-all duration-200 hover:scale-105"
+              className={cn(
+                "h-8 w-8 rounded-lg transition-all duration-300 hover:scale-110 shadow-sm",
+                "border border-transparent hover:border-current",
+                "relative overflow-hidden group"
+              )}
+              style={{
+                backgroundColor: `${sectorColor}15`,
+                color: sectorColor,
+              }}
               title="Edição Avançada"
             >
-              <Edit className="h-4 w-4" />
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                style={{ backgroundColor: sectorColor }}
+              />
+              <Edit className="h-4 w-4 relative z-10" />
             </Button>
 
-            {/* Actions Menu */}
+            {/* Actions Menu - Secondary Action */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-7 w-7 text-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200 hover:scale-105"
+                  className={cn(
+                    "h-8 w-8 rounded-lg transition-all duration-300 hover:scale-110 shadow-sm",
+                    "border border-transparent hover:border-current",
+                    "relative overflow-hidden group"
+                  )}
+                  style={{
+                    backgroundColor: `${sectorColor}10`,
+                    color: sectorColor,
+                  }}
                   title="Ações do Paciente"
                 >
-                  <MoreVertical className="h-4 w-4" />
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-300"
+                    style={{ backgroundColor: sectorColor }}
+                  />
+                  <MoreVertical className="h-4 w-4 relative z-10" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
@@ -3179,14 +3219,29 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               </DropdownMenuContent>
             </DropdownMenu>
             
+            {/* Expand/Collapse Button - Tertiary Action */}
             <button 
-              className="flex-shrink-0 p-1 hover:bg-accent/50 rounded-md transition-all duration-200"
+              className={cn(
+                "flex-shrink-0 h-7 w-7 rounded-lg flex items-center justify-center",
+                "transition-all duration-300 hover:scale-110",
+                "border border-transparent hover:border-current shadow-sm",
+                "relative overflow-hidden group"
+              )}
+              style={{
+                backgroundColor: `${sectorColor}08`,
+                color: sectorColor,
+              }}
               onClick={() => setIsExpanded(!isExpanded)}
+              title={isExpanded ? "Retrair" : "Expandir"}
             >
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                style={{ backgroundColor: sectorColor }}
+              />
               {isExpanded ? (
-                <ChevronUp className="h-4 w-4 text-foreground" />
+                <ChevronUp className="h-4 w-4 relative z-10" />
               ) : (
-                <ChevronDown className="h-4 w-4 text-foreground" />
+                <ChevronDown className="h-4 w-4 relative z-10" />
               )}
             </button>
           </div>
