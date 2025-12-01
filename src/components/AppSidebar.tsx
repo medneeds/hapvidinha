@@ -76,7 +76,7 @@ export function AppSidebar({
       title: "PACIENTES",
       icon: Users,
       items: [
-        { name: "DESOSPITALIZAÇÕES", link: "/dhd" },
+        // { name: "DESOSPITALIZAÇÕES", link: "/dhd" }, // Stand-by temporariamente
         { name: "MOVIMENTAÇÕES", link: "/movements" },
         { name: "SOLICITAÇÕES", link: "/resources" },
         { name: "HISTÓRICO", link: "/internment-history" },
