@@ -631,6 +631,20 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       bgColor: "bg-blue-50",
       borderColor: "border-blue-300",
     },
+    IR_PARA_UTI: {
+      label: "🚨 IR PARA LEITO DE UTI",
+      icon: BedDouble,
+      color: "text-red-600",
+      bgColor: "bg-red-50",
+      borderColor: "border-red-300",
+    },
+    IR_PARA_ENFERMARIA: {
+      label: "🏥 IR PARA LEITO DE ENFERMARIA",
+      icon: BedDouble,
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      borderColor: "border-purple-300",
+    },
   }), []);
 
   // Get sector color based on patient sector
@@ -1227,15 +1241,20 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5">
-                          {/* PSM Status Icons */}
-                          {patient.pendencies && patient.pendencies.some(p => p.toUpperCase().includes('AGUARDANDO PSM')) && (
-                            <div title="Aguardando PSM">
-                              <AlertCircle className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                            </div>
-                          )}
-                          {patient.pendencies && patient.pendencies.some(p => p.toUpperCase().includes('PSM FAVORÁVEL')) && (
+                          {/* Internment Status Icons */}
+                          {patient.internmentStatus === 'PSM_FAVORAVEL' && (
                             <div title="PSM Favorável">
                               <CircleCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
+                            </div>
+                          )}
+                          {patient.internmentStatus === 'IR_PARA_UTI' && (
+                            <div title="IR PARA LEITO DE UTI">
+                              <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0 animate-pulse" />
+                            </div>
+                          )}
+                          {patient.internmentStatus === 'IR_PARA_ENFERMARIA' && (
+                            <div title="IR PARA LEITO DE ENFERMARIA">
+                              <BedDouble className="h-4 w-4 text-purple-500 flex-shrink-0" />
                             </div>
                           )}
                           
@@ -4076,7 +4095,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 schedule: parseTextArray(updatedPatient.schedule),
                 admissionHistory: updatedPatient.admission_history || '',
                 admissionDate: updatedPatient.admission_date || '',
-                internmentStatus: updatedPatient.internment_status as 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | null,
+                internmentStatus: updatedPatient.internment_status as 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | 'IR_PARA_UTI' | 'IR_PARA_ENFERMARIA' | null,
                 internmentNotes: updatedPatient.internment_notes,
                 medicalResponsibility: updatedPatient.medical_responsibility as unknown as MedicalResponsibility | undefined,
                 highlightedPendencies: updatedPatient.highlighted_pendencies || [],
@@ -4150,7 +4169,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 schedule: parseTextArray(updatedPatient.schedule),
                 admissionHistory: updatedPatient.admission_history || '',
                 admissionDate: updatedPatient.admission_date || '',
-                internmentStatus: updatedPatient.internment_status as 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | null,
+                internmentStatus: updatedPatient.internment_status as 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | 'IR_PARA_UTI' | 'IR_PARA_ENFERMARIA' | null,
                 internmentNotes: updatedPatient.internment_notes,
                 medicalResponsibility: updatedPatient.medical_responsibility as unknown as MedicalResponsibility | undefined,
                 highlightedPendencies: updatedPatient.highlighted_pendencies || [],
