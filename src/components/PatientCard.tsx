@@ -3091,6 +3091,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           <Skull className="h-3.5 w-3.5 text-gray-600 dark:text-gray-400" />
                           <span>Óbito</span>
                         </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/resources?patientId=${patient.id}`);
+                          }}
+                          className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors cursor-pointer"
+                        >
+                          <FileText className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                          <span>Solicitar Internação</span>
+                        </DropdownMenuItem>
                       </CollapsibleContent>
                     </Collapsible>
 
@@ -3125,38 +3135,19 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     {/* Elegant Divider */}
                     <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
 
-                    {/* DOCUMENTOS - Secondary Category */}
-                    <Collapsible className="group">
-                      <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
-                        <FileEdit className="h-4 w-4 text-amber-500 dark:text-amber-400" />
-                        <span className="flex-1 text-left text-foreground">Documentos</span>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-1 space-y-0.5 overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/resources?patientId=${patient.id}`);
-                          }}
-                          className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
-                        >
-                          <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span>Solicitar Internação</span>
-                        </DropdownMenuItem>
-                        {onPrintPatient && (
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onPrintPatient(patient.id);
-                            }}
-                            className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
-                          >
-                            <Printer className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span>Imprimir Caso</span>
-                          </DropdownMenuItem>
-                        )}
-                      </CollapsibleContent>
-                    </Collapsible>
+                    {/* IMPRIMIR CASO - Independent Action */}
+                    {onPrintPatient && (
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onPrintPatient(patient.id);
+                        }}
+                        className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
+                      >
+                        <Printer className="h-4 w-4 text-muted-foreground" />
+                        <span>Imprimir Caso</span>
+                      </DropdownMenuItem>
+                    )}
 
                     {/* AÇÕES CRÍTICAS - Danger Category */}
                     {onDelete && (
