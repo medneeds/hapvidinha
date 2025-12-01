@@ -3013,8 +3013,23 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
             </div>
 
-          {/* Action Menu - Elegant Collapsible Design */}
-          <div className="flex-shrink-0 flex flex-col gap-0.5 print:hidden items-center">
+          {/* Action Buttons Column */}
+          <div className="flex-shrink-0 flex flex-col gap-1 print:hidden items-center">
+            {/* Edição Avançada - Independent Button */}
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditDialogOpen(true);
+              }}
+              className="h-7 w-7 text-primary hover:bg-primary/10 hover:text-primary transition-all duration-200 hover:scale-105"
+              title="Edição Avançada"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+
+            {/* Actions Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -3034,21 +3049,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 className="w-[280px] max-h-[min(75vh,600px)] p-0 bg-background/95 backdrop-blur-sm dark:bg-gray-900/95 border border-border/50 shadow-2xl rounded-lg overflow-hidden"
               >
                 <div className="p-2 space-y-1 overflow-y-auto max-h-[min(75vh,600px)] overscroll-contain">
-                    
-                    {/* EDIÇÃO AVANÇADA - Top Priority Action */}
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsEditDialogOpen(true);
-                      }}
-                      className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors cursor-pointer border border-primary/20"
-                    >
-                      <Edit className="h-4 w-4 text-primary" />
-                      <span className="text-primary">Edição Avançada</span>
-                    </DropdownMenuItem>
-
-                    {/* Elegant Divider */}
-                    <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
                     
                     {/* MOVIMENTAÇÕES - Priority Category with Gradient Accent */}
                     <Collapsible defaultOpen className="group">
