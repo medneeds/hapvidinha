@@ -698,14 +698,14 @@ const Index = () => {
                   <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:text-white hover:bg-white/25 border-white/30 hover:border-white/50 data-[state=open]:bg-white/25 transition-all duration-200" />
                   
                   <div className="min-w-0 flex-1 flex flex-col gap-1.5">
-                    <h1 className="text-sm sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
+                    <h1 className="text-base sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
                     <div className="print:hidden">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="inline-flex items-center gap-1.5 h-7 px-3 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-xs font-semibold hover:bg-white/25 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
-                            <Building2 className="h-3.5 w-3.5 flex-shrink-0" />
+                          <button className="inline-flex items-center gap-1.5 h-9 md:h-7 px-4 md:px-3 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-sm md:text-xs font-semibold hover:bg-white/25 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                            <Building2 className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0" />
                             <span className="truncate max-w-[140px] sm:max-w-none">{currentDepartment}</span>
-                            <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 opacity-70" />
+                            <ChevronDown className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0 opacity-70" />
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-background border border-border shadow-lg z-[9999] min-w-[280px]">
@@ -769,10 +769,10 @@ const Index = () => {
                         variant={selectionMode ? "default" : "outline"}
                         size="icon"
                         onClick={handleToggleSelectionMode}
-                        className={`print:hidden h-9 w-9 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
+                        className={`print:hidden h-11 w-11 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
                         title="Modo de seleção"
                       >
-                        <CheckSquare className="h-4 w-4" />
+                        <CheckSquare className="h-5 w-5" />
                       </Button>
                       {selectionMode && selectedPatients.size > 0 && (
                         <>
@@ -780,19 +780,19 @@ const Index = () => {
                             variant="outline"
                             size="icon"
                             onClick={handlePrintSelected}
-                            className="print:hidden h-9 w-9 bg-gradient-to-br from-critical via-warning to-stable text-white border-0"
+                            className="print:hidden h-11 w-11 bg-gradient-to-br from-critical via-warning to-stable text-white border-0"
                             title={`Imprimir ${selectedPatients.size}`}
                           >
-                            <Printer className="h-4 w-4" />
+                            <Printer className="h-5 w-5" />
                           </Button>
                           <Button
                             variant="destructive"
                             size="icon"
                             onClick={handleDeleteSelected}
-                            className="print:hidden h-9 w-9 bg-red-600 text-white hover:bg-red-700 border-0"
+                            className="print:hidden h-11 w-11 bg-red-600 text-white hover:bg-red-700 border-0"
                             title={`Deletar ${selectedPatients.size}`}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-5 w-5" />
                           </Button>
                         </>
                       )}
@@ -801,9 +801,9 @@ const Index = () => {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="print:hidden h-9 w-9 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                            className="print:hidden h-11 w-11 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
                           >
-                            <MoreVertical className="h-4 w-4" />
+                            <MoreVertical className="h-5 w-5" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48 bg-background z-50">
