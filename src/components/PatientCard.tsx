@@ -1245,13 +1245,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           {(() => {
                             const pendenciesText = patient.pendencies?.join(' ').toUpperCase() || '';
                             
-                            // Check for any internment status
+                            // Check for AGUARDANDO PSM - show clock icon
+                            if (pendenciesText.includes('AGUARDANDO PSM')) {
+                              return (
+                                <div title="Aguardando PSM">
+                                  <Clock className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                                </div>
+                              );
+                            }
+                            
+                            // Check for approved internment statuses - show green check
                             if (pendenciesText.includes('PSM FAVORÁVEL') || 
                                 pendenciesText.includes('PSM FAVORAVEL') ||
                                 pendenciesText.includes('IR PARA LEITO DE UTI') ||
                                 pendenciesText.includes('IR PARA LEITO DE ENFERMARIA')) {
                               return (
-                                <div title="Solicitação de Internação Ativa">
+                                <div title="Solicitação de Internação Aprovada">
                                   <CircleCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
                                 </div>
                               );
