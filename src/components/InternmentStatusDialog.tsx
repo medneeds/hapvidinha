@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Clock, CheckCircle2, BedDouble, X } from "lucide-react";
+import { Clock, CheckCircle2, BedDouble, AlertTriangle, X } from "lucide-react";
 
 interface InternmentStatusDialogProps {
   isOpen: boolean;
@@ -55,7 +55,7 @@ const statusConfig = {
   },
   IR_PARA_UTI: {
     label: "🚨 IR PARA LEITO DE UTI",
-    icon: BedDouble,
+    icon: AlertTriangle,
     color: "text-red-600",
     bgColor: "bg-red-50",
     borderColor: "border-red-300",
