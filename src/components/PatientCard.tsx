@@ -1241,33 +1241,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5">
-                          {/* Internment Status Icons - Based on Pendencies Content */}
+                          {/* Internment Status Icon - Based on Pendencies Content */}
                           {(() => {
                             const pendenciesText = patient.pendencies?.join(' ').toUpperCase() || '';
                             
-                            // Check for PSM Favorável
-                            if (pendenciesText.includes('PSM FAVORÁVEL') || pendenciesText.includes('PSM FAVORAVEL')) {
+                            // Check for any internment status
+                            if (pendenciesText.includes('PSM FAVORÁVEL') || 
+                                pendenciesText.includes('PSM FAVORAVEL') ||
+                                pendenciesText.includes('IR PARA LEITO DE UTI') ||
+                                pendenciesText.includes('IR PARA LEITO DE ENFERMARIA')) {
                               return (
-                                <div title="PSM Favorável">
+                                <div title="Solicitação de Internação Ativa">
                                   <CircleCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
-                                </div>
-                              );
-                            }
-                            
-                            // Check for IR PARA LEITO DE UTI
-                            if (pendenciesText.includes('IR PARA LEITO DE UTI')) {
-                              return (
-                                <div title="IR PARA LEITO DE UTI">
-                                  <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0 animate-pulse" />
-                                </div>
-                              );
-                            }
-                            
-                            // Check for IR PARA LEITO DE ENFERMARIA
-                            if (pendenciesText.includes('IR PARA LEITO DE ENFERMARIA')) {
-                              return (
-                                <div title="IR PARA LEITO DE ENFERMARIA">
-                                  <BedDouble className="h-4 w-4 text-purple-500 flex-shrink-0" />
                                 </div>
                               );
                             }
