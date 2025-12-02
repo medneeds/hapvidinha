@@ -691,6 +691,7 @@ const Index = () => {
         <div className={printMode ? 'print-hide' : ''}>
           {/* Header */}
           <DynamicHeader>
+
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
             <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               {/* Mobile: Two-row layout */}
@@ -715,19 +716,97 @@ const Index = () => {
                           <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 opacity-70" />
                         </button>
                       </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-background border border-border shadow-lg z-[9999] min-w-[280px]">
-                          {authLoading ? (
-                            <DropdownMenuItem disabled className="text-sm py-2.5 px-3">
-                              Carregando...
-                            </DropdownMenuItem>
-                          ) : (
-                            DEPARTMENTS
-                              .filter(dept => {
-                                // Admin (COORDENADOR) vê todos os departamentos
-                                if (role === 'admin') return true;
-                                // Outros usuários veem apenas seus departamentos permitidos
-                                return allowedDepartments.includes(dept);
-                              })
+                      <DropdownMenuContent className="bg-background border border-border shadow-lg z-[9999] min-w-[280px]">
+                        {authLoading ? (
+                          <DropdownMenuItem disabled className="text-sm py-2.5 px-3">
+                            Carregando...
+                          </DropdownMenuItem>
+                        ) : (
+                          DEPARTMENTS
+                            .filter(dept => {
+                              if (role === 'admin') return true;
+                              return allowedDepartments.includes(dept);
+                            })
+                            .map((dept) => (
+                              <DropdownMenuItem 
+                                key={dept} 
+                                className={cn(
+                                  "text-sm cursor-pointer py-2.5 px-3 transition-colors",
+                                  currentDepartment === dept && "bg-accent font-medium"
+                                )}
+                                onClick={() => {
+                                  if (dept !== currentDepartment) {
+                                    if (role === 'admin') {
+                                      setCurrentDepartment(dept);
+                                      toast({
+                                        title: "Setor alterado",
+                                        description: `Alternado para: ${dept}`,
+                                      });
+                                    } else {
+                                      toast({
+                                        title: "Acesso negado",
+                                        description: "Você não tem permissão para alterar departamentos.",
+                                        variant: "destructive",
+                                      });
+                                    }
+                                  }
+                                }}
+                              >
+                                <Building2 className="h-4 w-4 mr-2 opacity-60" />
+                                {dept}
+                              </DropdownMenuItem>
+                            ))
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  
+                  <div className="flex gap-1.5 items-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="print:hidden h-9 w-9 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 bg-background z-50">
+                        <DropdownMenuItem onClick={handleUndo} disabled={history.length === 0}>
+                          <Undo className="mr-2 h-4 w-4" />
+                          Desfazer
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleRedo} disabled={redoHistory.length === 0}>
+                          <Redo className="mr-2 h-4 w-4" />
+                          Refazer
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleSaveVersion}>
+                          <Save className="mr-2 h-4 w-4" />
+                          Salvar Versão
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleRefreshMap} disabled={isRefreshing}>
+                          <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                          Atualizar Mapa
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handlePrintCompact}>
+                          <Printer className="mr-2 h-4 w-4" />
+                          Imprimir Mapa
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}>
+                          {showOnlyOccupied ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
+                          {showOnlyOccupied ? "Mostrar Vazios" : "Ocultar Vazios"}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={signOut} className="text-red-600">
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Sair
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                               .map((dept) => (
                             <DropdownMenuItem 
                               key={dept} 
@@ -911,86 +990,19 @@ const Index = () => {
 
                 {/* Right side: Action buttons + Theme toggle */}
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
-                        variant={selectionMode ? "default" : "outline"}
-                        size="icon"
-                        onClick={handleToggleSelectionMode}
-                        className={`print:hidden h-11 w-11 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
-                        title="Modo de seleção"
-                      >
-                        <CheckSquare className="h-5 w-5" />
-                      </Button>
-                      {selectionMode && selectedPatients.size > 0 && (
-                        <>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={handlePrintSelected}
-                            className="print:hidden h-11 w-11 bg-gradient-to-br from-critical via-warning to-stable text-white border-0"
-                            title={`Imprimir ${selectedPatients.size}`}
-                          >
-                            <Printer className="h-5 w-5" />
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            onClick={handleDeleteSelected}
-                            className="print:hidden h-11 w-11 bg-red-600 text-white hover:bg-red-700 border-0"
-                            title={`Deletar ${selectedPatients.size}`}
-                          >
-                            <Trash2 className="h-5 w-5" />
-                          </Button>
-                        </>
-                      )}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="print:hidden h-11 w-11 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
-                          >
-                            <MoreVertical className="h-5 w-5" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 bg-background z-50">
-                          <DropdownMenuItem onClick={handleUndo} disabled={history.length === 0}>
-                            <Undo className="mr-2 h-4 w-4" />
-                            Desfazer
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={handleRedo} disabled={redoHistory.length === 0}>
-                            <Redo className="mr-2 h-4 w-4" />
-                            Refazer
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={handleSaveVersion}>
-                            <Save className="mr-2 h-4 w-4" />
-                            Salvar Versão
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={handleRefreshMap} disabled={isRefreshing}>
-                            <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                            Atualizar Mapa
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={handlePrintCompact}>
-                            <Printer className="mr-2 h-4 w-4" />
-                            Imprimir Mapa
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}>
-                            {showOnlyOccupied ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
-                            {showOnlyOccupied ? "Mostrar Vazios" : "Ocultar Vazios"}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={signOut} className="text-red-600">
-                            <LogOut className="mr-2 h-4 w-4" />
-                            Sair
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      <div className="print:hidden">
-                        <ThemeToggle />
-                      </div>
-                    </>
+                  {isMobile ? (
+                    {/* Mobile: Single menu button */}
+                    <Button
+                      variant={selectionMode ? "default" : "outline"}
+                      size="icon"
+                      onClick={handleToggleSelectionMode}
+                      className={`print:hidden h-9 w-9 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
+                      title="Modo de seleção"
+                    >
+                      <CheckSquare className="h-5 w-5" />
+                    </Button>
                   ) : (
-                    /* Desktop: Show all buttons as before */
+                    {/* Desktop: Show all buttons */}
                     <>
                       <Button
                         variant="outline"
