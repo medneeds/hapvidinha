@@ -106,10 +106,21 @@ export function InternmentStatusDialog({
         }
       }
 
-      // Add "SOLICITADA INTERNAÇÃO (AGUARDANDO PSM)" if status is being set and not already in list
-      const autoAddText = "SOLICITADA INTERNAÇÃO (AGUARDANDO PSM)";
-      if (status && !currentPendencies.includes(autoAddText)) {
-        currentPendencies.push(autoAddText);
+      // Map status to pendency text
+      const statusToPendencyText: Record<string, string> = {
+        PSM_FAVORAVEL: "SOLICITADA INTERNAÇÃO (PSM FAVORÁVEL)",
+        IR_PARA_UTI: "IR PARA LEITO DE UTI",
+        IR_PARA_ENFERMARIA: "IR PARA LEITO DE ENFERMARIA",
+        AGUARDANDO_VAGA: "AGUARDANDO ALOCAÇÃO NO SIGA VAGA",
+        SOLICITACAO_PENDENTE: "SOLICITAÇÃO DE INTERNAÇÃO PENDENTE"
+      };
+
+      // Add corresponding text to pendencies if status is being set and not already in list
+      if (status && statusToPendencyText[status]) {
+        const autoAddText = statusToPendencyText[status];
+        if (!currentPendencies.includes(autoAddText)) {
+          currentPendencies.push(autoAddText);
+        }
       }
 
       // Update patient with new status and updated pendencies
