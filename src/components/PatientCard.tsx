@@ -1144,22 +1144,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         isSelected && "ring-2 ring-primary",
         isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]"
       )}>
-        <div className="p-2 print:p-1.5">
-          <div className="flex items-start justify-between gap-2 print:gap-1">
+        <div className="p-3 md:p-2 print:p-1.5">
+          <div className="flex items-start justify-between gap-3 md:gap-2 print:gap-1">
             {selectionMode && onToggleSelection && (
               <div className="flex items-center justify-center print:hidden flex-shrink-0">
                 <Checkbox
                   checked={isSelected}
                   onCheckedChange={() => onToggleSelection(patient.id)}
-                  className={cn("h-5 w-5", checkboxColor)}
+                  className={cn("h-6 w-6 md:h-5 md:w-5", checkboxColor)}
                 />
               </div>
             )}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-18 gap-1.5 items-start">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-18 gap-3 md:gap-1.5 items-start">
               {/* Leito - ultra compacto */}
               <div className="flex flex-col md:col-span-1 gap-1">
-                <span className="text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                <Badge className={cn("w-fit text-[10px] py-0 px-1 font-bold leading-tight", config.badgeColor)}>
+                <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
+                <Badge className={cn("w-fit text-sm md:text-[10px] py-1 md:py-0 px-2 md:px-1 font-bold leading-tight", config.badgeColor)}>
                   {patient.bedNumber}
                 </Badge>
                 <div className="flex flex-col gap-0.5">
@@ -1201,7 +1201,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
               {/* Nome e Idade - mais espaço para nome completo */}
               <div className="flex flex-col md:col-span-3">
-                <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
+                <span className="text-xs md:text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-start gap-0.5">
                     <div className="flex-1 min-w-0">
@@ -1269,8 +1269,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             return null;
                           })()}
                           
-                          <p 
-                            className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
+                           <p 
+                            className="font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
                             onClick={() => startEditing("name", patient.name)}
                             title="Clique para editar"
                           >
@@ -1312,7 +1312,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </div>
                       ) : (
                         <p 
-                          className="text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 whitespace-normal break-words"
+                          className="text-sm md:text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 whitespace-normal break-words"
                           onClick={() => startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
                           title="Clique para editar"
                         >
@@ -1343,7 +1343,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <div className="grid grid-cols-12 gap-2">
                     {/* Setor de Origem */}
                     <div className="flex flex-col md:col-span-4">
-                  <span className="text-[9px] font-medium text-muted-foreground mb-0">Setor de Origem</span>
+                  <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0">Setor de Origem</span>
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -1441,7 +1441,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
                   {/* Admissão UTI */}
                   <div className="flex flex-col md:col-span-2">
-                  <span className="text-[9px] font-medium text-muted-foreground mb-0">Admissão UTI</span>
+                  <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0">Admissão UTI</span>
                       <ol className="text-xs text-foreground space-y-0 print:text-[7.5px] list-none pl-0">
                         {(patient.utiAdmissionDate || []).map((item, idx) => (
                           <li key={`uti-admission-date-${idx}`} className="text-[10px] text-foreground leading-snug uppercase rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5">
@@ -1528,7 +1528,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
                   {/* Previsão de Alta */}
                   <div className="flex flex-col md:col-span-4">
-                  <span className="text-[9px] font-medium text-muted-foreground mb-0">Previsão de Alta</span>
+                  <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0">Previsão de Alta</span>
                       <ol className="text-xs text-foreground space-y-0 print:text-[7.5px] list-none pl-0">
                         {(patient.utiDischargePrediction || []).map((item, idx) => {
                           const daysCalculation = calculateDaysUntilDischarge(item);
@@ -1623,7 +1623,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
                   {/* Alergias */}
                   <div className="flex flex-col md:col-span-2">
-                  <span className="text-[9px] font-medium text-muted-foreground mb-0">Alergias</span>
+                  <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0">Alergias</span>
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -3100,7 +3100,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             </div>
 
           {/* Action Buttons Column - Integrated Design */}
-          <div className="flex-shrink-0 flex flex-col gap-1.5 print:hidden items-center">
+          <div className="flex-shrink-0 flex flex-col gap-2 md:gap-1.5 print:hidden items-center">
             {/* Edição Avançada - Primary Action with Sector Identity */}
             <Button
               size="icon"
@@ -3110,7 +3110,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 setIsEditDialogOpen(true);
               }}
               className={cn(
-                "h-8 w-8 rounded-lg transition-all duration-300 hover:scale-110 shadow-sm",
+                "h-10 w-10 md:h-8 md:w-8 rounded-lg transition-all duration-300 hover:scale-110 shadow-sm",
                 "border border-transparent hover:border-current",
                 "relative overflow-hidden group"
               )}
@@ -3124,7 +3124,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
                 style={{ backgroundColor: sectorColor }}
               />
-              <Edit className="h-4 w-4 relative z-10" />
+              <Edit className="h-5 w-5 md:h-4 md:w-4 relative z-10" />
             </Button>
 
             {/* Actions Menu - Secondary Action */}
@@ -3134,7 +3134,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   size="icon"
                   variant="ghost"
                   className={cn(
-                    "h-8 w-8 rounded-lg transition-all duration-300 hover:scale-110 shadow-sm",
+                    "h-10 w-10 md:h-8 md:w-8 rounded-lg transition-all duration-300 hover:scale-110 shadow-sm",
                     "border border-transparent hover:border-current",
                     "relative overflow-hidden group"
                   )}
@@ -3148,7 +3148,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-300"
                     style={{ backgroundColor: sectorColor }}
                   />
-                  <MoreVertical className="h-4 w-4 relative z-10" />
+                  <MoreVertical className="h-5 w-5 md:h-4 md:w-4 relative z-10" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
@@ -3292,7 +3292,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Expand/Collapse Button - Tertiary Action */}
             <button 
               className={cn(
-                "flex-shrink-0 h-7 w-7 rounded-lg flex items-center justify-center",
+                "flex-shrink-0 h-10 w-10 md:h-7 md:w-7 rounded-lg flex items-center justify-center",
                 "transition-all duration-300 hover:scale-110",
                 "border border-transparent hover:border-current shadow-sm",
                 "relative overflow-hidden group"
