@@ -693,22 +693,28 @@ const Index = () => {
           <DynamicHeader>
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
             <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
-              <div className="flex items-center justify-between gap-2">
-                {/* Left side: Sidebar button + Title + Department selector */}
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+              {/* Mobile: Two-row layout */}
+              <div className="md:hidden flex flex-col gap-2">
+                {/* First row: Sidebar button + Title */}
+                <div className="flex items-center gap-2">
                   <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:text-white hover:bg-white/25 border-white/30 hover:border-white/50 data-[state=open]:bg-white/25 transition-all duration-200" />
-                  
-                  <div className="min-w-0 flex-1 flex flex-col gap-1.5">
-                    <h1 className="text-base sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
-                    <div className="print:hidden">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button className="inline-flex items-center gap-1.5 h-9 md:h-7 px-4 md:px-3 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-sm md:text-xs font-semibold hover:bg-white/25 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
-                            <Building2 className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0" />
-                            <span className="truncate max-w-[140px] sm:max-w-none">{currentDepartment}</span>
-                            <ChevronDown className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0 opacity-70" />
-                          </button>
-                        </DropdownMenuTrigger>
+                  <h1 className="text-sm font-bold text-white uppercase tracking-tight truncate flex-1">Hospital Guarás</h1>
+                  <div className="print:hidden flex-shrink-0">
+                    <ThemeToggle />
+                  </div>
+                </div>
+                
+                {/* Second row: Department selector + Action buttons */}
+                <div className="flex items-center gap-2 justify-between">
+                  <div className="print:hidden flex-shrink-0">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="inline-flex items-center gap-1.5 h-8 px-3 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-xs font-semibold hover:bg-white/25 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                          <Building2 className="h-3.5 w-3.5 flex-shrink-0" />
+                          <span className="truncate max-w-[120px]">{currentDepartment}</span>
+                          <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 opacity-70" />
+                        </button>
+                      </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-background border border-border shadow-lg z-[9999] min-w-[280px]">
                           {authLoading ? (
                             <DropdownMenuItem disabled className="text-sm py-2.5 px-3">
@@ -758,15 +764,153 @@ const Index = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
+                  
+                  <div className="flex gap-1.5 items-center flex-shrink-0">
+                    <Button
+                      variant={selectionMode ? "default" : "outline"}
+                      size="icon"
+                      onClick={handleToggleSelectionMode}
+                      className={`print:hidden h-9 w-9 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
+                      title="Modo de seleção"
+                    >
+                      <CheckSquare className="h-4 w-4" />
+                    </Button>
+                    {selectionMode && selectedPatients.size > 0 && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={handlePrintSelected}
+                          className="print:hidden h-9 w-9 bg-gradient-to-br from-critical via-warning to-stable text-white border-0"
+                          title={`Imprimir ${selectedPatients.size}`}
+                        >
+                          <Printer className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          onClick={handleDeleteSelected}
+                          className="print:hidden h-9 w-9 bg-red-600 text-white hover:bg-red-700 border-0"
+                          title={`Deletar ${selectedPatients.size}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="print:hidden h-9 w-9 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 bg-background z-50">
+                        <DropdownMenuItem onClick={handleUndo} disabled={history.length === 0}>
+                          <Undo className="mr-2 h-4 w-4" />
+                          Desfazer
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleRedo} disabled={redoHistory.length === 0}>
+                          <Redo className="mr-2 h-4 w-4" />
+                          Refazer
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleSaveVersion}>
+                          <Save className="mr-2 h-4 w-4" />
+                          Salvar Versão
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleRefreshMap} disabled={isRefreshing}>
+                          <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                          Atualizar Mapa
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handlePrintCompact}>
+                          <Printer className="mr-2 h-4 w-4" />
+                          Imprimir Mapa
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}>
+                          {showOnlyOccupied ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
+                          {showOnlyOccupied ? "Mostrar Vazios" : "Ocultar Vazios"}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={signOut} className="text-red-600">
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Sair
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Desktop: Single-row layout */}
+              <div className="hidden md:flex items-center justify-between gap-2">
+                {/* Left side: Sidebar button + Title + Department selector */}
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                  <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:text-white hover:bg-white/25 border-white/30 hover:border-white/50 data-[state=open]:bg-white/25 transition-all duration-200" />
+                  
+                  <div className="min-w-0 flex-1 flex flex-col gap-1.5">
+                    <h1 className="text-base sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
+                    <div className="print:hidden">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="inline-flex items-center gap-1.5 h-9 md:h-7 px-4 md:px-3 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-sm md:text-xs font-semibold hover:bg-white/25 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                            <Building2 className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0" />
+                            <span className="truncate max-w-[140px] sm:max-w-none">{currentDepartment}</span>
+                            <ChevronDown className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0 opacity-70" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-background border border-border shadow-lg z-[9999] min-w-[280px]">
+                          {authLoading ? (
+                            <DropdownMenuItem disabled className="text-sm py-2.5 px-3">
+                              Carregando...
+                            </DropdownMenuItem>
+                          ) : (
+                            DEPARTMENTS
+                              .filter(dept => {
+                                if (role === 'admin') return true;
+                                return allowedDepartments.includes(dept);
+                              })
+                              .map((dept) => (
+                            <DropdownMenuItem 
+                              key={dept} 
+                              className={cn(
+                                "text-sm cursor-pointer py-2.5 px-3 transition-colors",
+                                currentDepartment === dept && "bg-accent font-medium"
+                              )}
+                              onClick={() => {
+                                if (dept !== currentDepartment) {
+                                  if (role === 'admin') {
+                                    setCurrentDepartment(dept);
+                                    toast({
+                                      title: "Setor alterado",
+                                      description: `Alternado para: ${dept}`,
+                                    });
+                                  } else {
+                                    toast({
+                                      title: "Acesso negado",
+                                      description: "Você não tem permissão para alterar departamentos.",
+                                      variant: "destructive",
+                                    });
+                                  }
+                                }
+                              }}
+                            >
+                              <Building2 className="h-4 w-4 mr-2 opacity-60" />
+                              {dept}
+                            </DropdownMenuItem>
+                          ))
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
                 </div>
 
                 {/* Right side: Action buttons + Theme toggle */}
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
-                  {/* Mobile: Show only essential buttons + dropdown menu */}
-                  {isMobile ? (
-                    <>
-                      <Button
                         variant={selectionMode ? "default" : "outline"}
                         size="icon"
                         onClick={handleToggleSelectionMode}
