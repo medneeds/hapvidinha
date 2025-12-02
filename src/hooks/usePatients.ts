@@ -29,7 +29,7 @@ export function usePatients(department?: Department) {
         query = query.eq('department', department);
       }
       
-      const { data, error } = await query.order('bed_number');
+      const { data, error } = await query.order('display_order').order('bed_number');
 
       if (error) throw error;
 
@@ -72,6 +72,7 @@ export function usePatients(department?: Department) {
         utiCulturesAntibiotics: p.uti_cultures_antibiotics ? p.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
         utiSpecialties: p.uti_specialties ? p.uti_specialties.split('\n').filter(Boolean) : [],
         utiOriginSector: p.uti_origin_sector ? p.uti_origin_sector.split('\n').filter(Boolean) : [],
+        displayOrder: p.display_order ?? 0,
       }));
 
       setPatients(mappedPatients);
@@ -104,6 +105,7 @@ export function usePatients(department?: Department) {
       if (updates.admissionHistory !== undefined) dbUpdates.admission_history = updates.admissionHistory;
       if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate;
       if (updates.medicalResponsibility !== undefined) dbUpdates.medical_responsibility = updates.medicalResponsibility;
+      if (updates.displayOrder !== undefined) dbUpdates.display_order = updates.displayOrder;
       // UTI fields
       if (updates.utiAdmissionDate !== undefined) {
         // Convert DD/MM/YYYY format back to ISO format for database storage
@@ -332,6 +334,47 @@ export function usePatients(department?: Department) {
     }
   };
 
+  const reorderPatients = async (reorderedPatients: Patient[]) => {
+    try {
+      // Update display_order for each patient based on new position
+      const updates = reorderedPatients.map((patient, index) => ({
+        id: patient.id,
+        display_order: index,
+      }));
+
+      // Update all patients in batch
+      for (const update of updates) {
+        const { error } = await supabase
+          .from('patients')
+          .update({ display_order: update.display_order })
+          .eq('id', update.id);
+        
+        if (error) {
+          console.error('Error updating display_order:', error);
+          throw error;
+        }
+      }
+
+      // Update local state with new order
+      setPatients(prev => {
+        const updatedPatients = prev.map(p => {
+          const orderUpdate = updates.find(u => u.id === p.id);
+          return orderUpdate ? { ...p, displayOrder: orderUpdate.display_order } : p;
+        });
+        return updatedPatients.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+      });
+
+    } catch (error) {
+      console.error('Error reordering patients:', error);
+      toast({
+        title: "Erro ao reordenar",
+        description: "Não foi possível salvar a nova ordem.",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
   useEffect(() => {
     if (!currentHospital || !currentState) return;
 
@@ -479,6 +522,7 @@ export function usePatients(department?: Department) {
     updatePatient,
     createPatient,
     deletePatient,
+    reorderPatients,
     refetch: fetchPatients,
   };
 }

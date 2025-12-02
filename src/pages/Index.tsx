@@ -149,7 +149,7 @@ const Index = () => {
   const { currentDepartment, setCurrentDepartment } = useDepartment();
   
   // Use real database patients filtered by department
-  const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient, refetch } = usePatients(currentDepartment);
+  const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient, reorderPatients: dbReorderPatients, refetch } = usePatients(currentDepartment);
   const [patients, setPatients] = useState<Patient[]>(dbPatients);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [history, setHistory] = useState<Patient[][]>(() => {
@@ -483,18 +483,27 @@ const Index = () => {
     setSelectedPatients(new Set());
   };
 
-  const handleReorderPatients = (sector: Patient['sector'], reorderedPatients: Patient[]) => {
+  const handleReorderPatients = async (sector: Patient['sector'], reorderedPatients: Patient[]) => {
     saveToHistory(patients);
     
     // Manter pacientes de outros setores e substituir os do setor reordenado
     const otherSectorPatients = patients.filter(p => p.sector !== sector);
     const newPatients = [...otherSectorPatients, ...reorderedPatients];
     
+    // Update local state immediately for responsive UX
     setPatients(newPatients);
-    toast({
-      title: "Ordem atualizada",
-      description: "A ordem dos pacientes foi reorganizada.",
-    });
+    
+    try {
+      // Persist reorder to database
+      await dbReorderPatients(reorderedPatients);
+      toast({
+        title: "Ordem salva",
+        description: "A nova ordem foi salva com sucesso.",
+      });
+    } catch (error) {
+      console.error('Error persisting reorder:', error);
+      // Local state already updated, don't revert for better UX
+    }
   };
 
   const handleTransferPatient = async (patientId: string, newSector: Patient['sector']) => {
