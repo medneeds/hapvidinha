@@ -911,17 +911,94 @@ const Index = () => {
 
                 {/* Right side: Action buttons + Theme toggle */}
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={handleUndo}
-                    disabled={history.length === 0}
-                    className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
-                    title="Desfazer última ação"
-                  >
-                    <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Button>
-                  <Button
+                        variant={selectionMode ? "default" : "outline"}
+                        size="icon"
+                        onClick={handleToggleSelectionMode}
+                        className={`print:hidden h-11 w-11 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
+                        title="Modo de seleção"
+                      >
+                        <CheckSquare className="h-5 w-5" />
+                      </Button>
+                      {selectionMode && selectedPatients.size > 0 && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={handlePrintSelected}
+                            className="print:hidden h-11 w-11 bg-gradient-to-br from-critical via-warning to-stable text-white border-0"
+                            title={`Imprimir ${selectedPatients.size}`}
+                          >
+                            <Printer className="h-5 w-5" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={handleDeleteSelected}
+                            className="print:hidden h-11 w-11 bg-red-600 text-white hover:bg-red-700 border-0"
+                            title={`Deletar ${selectedPatients.size}`}
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </Button>
+                        </>
+                      )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="print:hidden h-11 w-11 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                          >
+                            <MoreVertical className="h-5 w-5" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 bg-background z-50">
+                          <DropdownMenuItem onClick={handleUndo} disabled={history.length === 0}>
+                            <Undo className="mr-2 h-4 w-4" />
+                            Desfazer
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={handleRedo} disabled={redoHistory.length === 0}>
+                            <Redo className="mr-2 h-4 w-4" />
+                            Refazer
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={handleSaveVersion}>
+                            <Save className="mr-2 h-4 w-4" />
+                            Salvar Versão
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={handleRefreshMap} disabled={isRefreshing}>
+                            <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                            Atualizar Mapa
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={handlePrintCompact}>
+                            <Printer className="mr-2 h-4 w-4" />
+                            Imprimir Mapa
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}>
+                            {showOnlyOccupied ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
+                            {showOnlyOccupied ? "Mostrar Vazios" : "Ocultar Vazios"}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={signOut} className="text-red-600">
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Sair
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      <div className="print:hidden">
+                        <ThemeToggle />
+                      </div>
+                    </>
+                  ) : (
+                    /* Desktop: Show all buttons as before */
+                    <>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handleUndo}
+                        disabled={history.length === 0}
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
+                        title="Desfazer última ação"
                       >
                         <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
@@ -1029,8 +1106,8 @@ const Index = () => {
                           <ThemeToggle />
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
