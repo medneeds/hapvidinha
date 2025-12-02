@@ -1241,22 +1241,39 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5">
-                          {/* Internment Status Icons */}
-                          {patient.internmentStatus === 'PSM_FAVORAVEL' && (
-                            <div title="PSM Favorável">
-                              <CircleCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
-                            </div>
-                          )}
-                          {patient.internmentStatus === 'IR_PARA_UTI' && (
-                            <div title="IR PARA LEITO DE UTI">
-                              <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0 animate-pulse" />
-                            </div>
-                          )}
-                          {patient.internmentStatus === 'IR_PARA_ENFERMARIA' && (
-                            <div title="IR PARA LEITO DE ENFERMARIA">
-                              <BedDouble className="h-4 w-4 text-purple-500 flex-shrink-0" />
-                            </div>
-                          )}
+                          {/* Internment Status Icons - Based on Pendencies Content */}
+                          {(() => {
+                            const pendenciesText = patient.pendencies?.join(' ').toUpperCase() || '';
+                            
+                            // Check for PSM Favorável
+                            if (pendenciesText.includes('PSM FAVORÁVEL') || pendenciesText.includes('PSM FAVORAVEL')) {
+                              return (
+                                <div title="PSM Favorável">
+                                  <CircleCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
+                                </div>
+                              );
+                            }
+                            
+                            // Check for IR PARA LEITO DE UTI
+                            if (pendenciesText.includes('IR PARA LEITO DE UTI')) {
+                              return (
+                                <div title="IR PARA LEITO DE UTI">
+                                  <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0 animate-pulse" />
+                                </div>
+                              );
+                            }
+                            
+                            // Check for IR PARA LEITO DE ENFERMARIA
+                            if (pendenciesText.includes('IR PARA LEITO DE ENFERMARIA')) {
+                              return (
+                                <div title="IR PARA LEITO DE ENFERMARIA">
+                                  <BedDouble className="h-4 w-4 text-purple-500 flex-shrink-0" />
+                                </div>
+                              );
+                            }
+                            
+                            return null;
+                          })()}
                           
                           <p 
                             className="font-semibold text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
