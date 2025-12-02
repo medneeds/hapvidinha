@@ -99,6 +99,32 @@ const parseTextArray = (value: string | null): string[] => {
   return value.split('\n').filter(line => line.trim());
 };
 
+// Helper to extract index from drag-and-drop ID (format: "prefix-X" or "prefix-sub-X")
+const extractIndexFromDragId = (id: string | number): number => {
+  const parts = String(id).split('-');
+  return parseInt(parts[parts.length - 1]);
+};
+
+// Helper to safely reorder array items via drag-and-drop
+const handleArrayDragReorder = <T,>(
+  event: DragEndEvent,
+  items: T[],
+  onReorder: (reordered: T[]) => void
+): void => {
+  const { active, over } = event;
+  if (!over || active.id === over.id) return;
+  
+  const oldIndex = extractIndexFromDragId(active.id);
+  const newIndex = extractIndexFromDragId(over.id);
+  
+  if (isNaN(oldIndex) || isNaN(newIndex) || oldIndex < 0 || newIndex < 0 || 
+      oldIndex >= items.length || newIndex >= items.length) {
+    return;
+  }
+  
+  onReorder(arrayMove(items, oldIndex, newIndex));
+};
+
 // Auto-resize textarea component
 interface AutoResizeTextareaProps {
   value: string;
@@ -1032,8 +1058,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = patient.pendencies.findIndex((_, i) => `pendency-${i}` === active.id);
-      const newIndex = patient.pendencies.findIndex((_, i) => `pendency-${i}` === over.id);
+      // Extract index from ID (format: "pendency-X")
+      const activeIdParts = String(active.id).split('-');
+      const overIdParts = String(over.id).split('-');
+      const oldIndex = parseInt(activeIdParts[activeIdParts.length - 1]);
+      const newIndex = parseInt(overIdParts[overIdParts.length - 1]);
+
+      if (isNaN(oldIndex) || isNaN(newIndex) || oldIndex < 0 || newIndex < 0 || 
+          oldIndex >= patient.pendencies.length || newIndex >= patient.pendencies.length) {
+        return;
+      }
 
       // Atualiza os índices dos highlights após reordenação
       let updatedHighlights = [...(patient.highlightedPendencies || [])];
@@ -1064,8 +1098,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = patient.diagnoses.findIndex((_, i) => `diagnosis-${i}` === active.id);
-      const newIndex = patient.diagnoses.findIndex((_, i) => `diagnosis-${i}` === over.id);
+      // Extract index from ID (format: "diagnosis-X")
+      const activeIdParts = String(active.id).split('-');
+      const overIdParts = String(over.id).split('-');
+      const oldIndex = parseInt(activeIdParts[activeIdParts.length - 1]);
+      const newIndex = parseInt(overIdParts[overIdParts.length - 1]);
+
+      if (isNaN(oldIndex) || isNaN(newIndex) || oldIndex < 0 || newIndex < 0 || 
+          oldIndex >= patient.diagnoses.length || newIndex >= patient.diagnoses.length) {
+        return;
+      }
 
       const updatedPatient = {
         ...patient,
