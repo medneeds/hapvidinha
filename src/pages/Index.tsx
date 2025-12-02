@@ -705,7 +705,13 @@ const Index = () => {
                         <DropdownMenuTrigger asChild>
                           <button className="inline-flex items-center gap-1.5 h-9 md:h-7 px-4 md:px-3 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-sm md:text-xs font-semibold hover:bg-white/25 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
                             <Building2 className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0" />
-                            <span className="truncate max-w-[140px] sm:max-w-none">{currentDepartment}</span>
+                            <span className="md:hidden truncate">
+                              {currentDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" ? "URG E EMERG..." : 
+                               currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA" ? "URG E EMERG PED..." :
+                               currentDepartment === "POSTO INTERNAÇÃO" ? "POSTO INT..." :
+                               currentDepartment}
+                            </span>
+                            <span className="hidden md:inline truncate max-w-none">{currentDepartment}</span>
                             <ChevronDown className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0 opacity-70" />
                           </button>
                         </DropdownMenuTrigger>
