@@ -7,7 +7,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2 } from "lucide-react";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { BedAllocationNotifications } from "@/components/BedAllocationNotifications";
 import { DoorPatientNotifications } from "@/components/DoorPatientNotifications";
@@ -184,6 +184,7 @@ const Index = () => {
   const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
   const [allocationDialogOpen, setAllocationDialogOpen] = useState(false);
   const [allocationTargetSector, setAllocationTargetSector] = useState<"Cuidados Especiais" | "Observação Amarela" | "Observação Azul">("Cuidados Especiais");
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
   const { saveVersion, fetchVersions } = usePatientVersions();
@@ -244,6 +245,29 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem(CHECKLIST_KEY, JSON.stringify(checklist));
   }, [checklist]);
+
+  // Fullscreen API handler
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        toast({
+          title: "Erro ao entrar em tela cheia",
+          description: "Não foi possível ativar o modo de tela cheia.",
+          variant: "destructive",
+        });
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   // Auto-expand/collapse sections based on content
   useEffect(() => {
@@ -879,6 +903,10 @@ const Index = () => {
                             <Printer className="mr-2 h-4 w-4" />
                             Imprimir Mapa
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={toggleFullscreen}>
+                            {isFullscreen ? <Minimize2 className="mr-2 h-4 w-4" /> : <Maximize2 className="mr-2 h-4 w-4" />}
+                            {isFullscreen ? "Sair Tela Cheia" : "Tela Cheia"}
+                          </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => setShowOnlyOccupied(!showOnlyOccupied)}>
                             {showOnlyOccupied ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
@@ -976,6 +1004,15 @@ const Index = () => {
                         title="Imprimir"
                       >
                         <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={toggleFullscreen}
+                        className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        title={isFullscreen ? "Sair da tela cheia" : "Visualização ampla (tela cheia)"}
+                      >
+                        {isFullscreen ? <Minimize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <Maximize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
                       </Button>
                       <div className="hidden md:flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all hover:scale-[1.02]">
                         <div className="flex items-center justify-center w-8 h-8 rounded-md bg-white/10 border border-white/20">
