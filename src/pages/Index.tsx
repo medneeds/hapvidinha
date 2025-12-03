@@ -11,6 +11,7 @@ import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, Ch
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { BedAllocationNotifications } from "@/components/BedAllocationNotifications";
 import { DoorPatientNotifications } from "@/components/DoorPatientNotifications";
+import { RequestNewAllocationDialog } from "@/components/RequestNewAllocationDialog";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -181,6 +182,8 @@ const Index = () => {
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
   const [isDeleteSelectedDialogOpen, setIsDeleteSelectedDialogOpen] = useState(false);
   const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
+  const [allocationDialogOpen, setAllocationDialogOpen] = useState(false);
+  const [allocationTargetSector, setAllocationTargetSector] = useState<"Cuidados Especiais" | "Observação Amarela" | "Observação Azul">("Cuidados Especiais");
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
   const { saveVersion, fetchVersions } = usePatientVersions();
@@ -330,6 +333,18 @@ const Index = () => {
   };
 
   const handleAddExtraBed = async (sector: Patient['sector']) => {
+    // For porta users, clicking on specialized sectors opens allocation request dialog
+    if (role === 'porta' && (sector === 'red' || sector === 'yellow' || sector === 'blue')) {
+      const sectorMap: Record<string, "Cuidados Especiais" | "Observação Amarela" | "Observação Azul"> = {
+        'red': 'Cuidados Especiais',
+        'yellow': 'Observação Amarela',
+        'blue': 'Observação Azul',
+      };
+      setAllocationTargetSector(sectorMap[sector]);
+      setAllocationDialogOpen(true);
+      return;
+    }
+
     saveToHistory(patients);
     // Se for UTI, usa prefixo 'U', caso contrário usa os prefixos normais
     const sectorPrefix = currentDepartment === 'UTI' 
@@ -1212,6 +1227,13 @@ const Index = () => {
 
       {/* Shift Reminder Dialog */}
       <ShiftReminderDialog />
+
+      {/* Request New Allocation Dialog (for porta users) */}
+      <RequestNewAllocationDialog
+        open={allocationDialogOpen}
+        onOpenChange={setAllocationDialogOpen}
+        targetSector={allocationTargetSector}
+      />
 
       {/* Department Change Password Dialog - Removido, apenas admin pode trocar */}
 

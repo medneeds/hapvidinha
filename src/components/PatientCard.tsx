@@ -16,6 +16,7 @@ import { MedicalResponsibilityIndicator } from "./MedicalResponsibilityIndicator
 import { InternmentStatusDialog } from "./InternmentStatusDialog";
 import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
+import { AllocationPendingBadge } from "./AllocationPendingBadge";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -1322,6 +1323,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           >
                             {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
                           </p>
+                          
+                          {/* Allocation Pending Badge */}
+                          <AllocationPendingBadge patient={patient} />
                         </div>
                       )}
                       
