@@ -316,18 +316,6 @@ const Index = () => {
       filtered = filtered.filter(p => p.name.trim() !== "");
     }
     
-    // For porta users, only show patients where:
-    // 1. Medical responsibility is 'porta' or 'conjunto', OR
-    // 2. Patient is a door patient (created by porta user)
-    if (role === 'porta') {
-      filtered = filtered.filter(p => {
-        const responsibilityType = p.medicalResponsibility?.type;
-        return responsibilityType === 'porta' || 
-               responsibilityType === 'conjunto' || 
-               p.isDoorPatient === true;
-      });
-    }
-    
     return filtered;
   };
 
