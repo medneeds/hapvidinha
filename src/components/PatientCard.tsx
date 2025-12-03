@@ -626,7 +626,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
-  const { role } = useAuth();
+  const { role, user } = useAuth();
+  
+  // Check if porta user can edit this patient (only their own patients)
+  const canEdit = useMemo(() => {
+    if (role !== 'porta') return true;
+    // Porta users can only edit patients they created
+    return patient.createdBy === user?.id;
+  }, [role, user?.id, patient.createdBy]);
   
   // Sync local medical responsibility with patient prop changes
   useEffect(() => {
@@ -775,10 +782,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   }, [onTransfer, patient.id, patient.sector]);
 
   const startEditing = useCallback((field: string, currentValue: string, index: number = -1) => {
+    // Porta users can only edit patients they created
+    if (!canEdit) {
+      toast.error("Você só pode editar pacientes que você criou");
+      return;
+    }
     setEditingField(field);
     setEditValue(currentValue);
     setEditingArrayIndex(index);
-  }, []);
+  }, [canEdit]);
 
   const cancelEditing = useCallback(() => {
     setEditingField(null);
@@ -1315,11 +1327,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             
                             return null;
                           })()}
-                          
+                           
                            <p 
-                            className="font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1"
-                            onClick={() => startEditing("name", patient.name)}
-                            title="Clique para editar"
+                            className={cn(
+                              "font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words rounded px-1 -mx-1",
+                              canEdit && "cursor-pointer hover:bg-accent/50"
+                            )}
+                            onClick={() => canEdit && startEditing("name", patient.name)}
+                            title={canEdit ? "Clique para editar" : undefined}
                           >
                             {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
                           </p>
@@ -1362,9 +1377,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </div>
                       ) : (
                         <p 
-                          className="text-sm md:text-[11px] text-muted-foreground mt-0.5 cursor-pointer hover:bg-accent/50 rounded px-1 -mx-1 whitespace-normal break-words"
-                          onClick={() => startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
-                          title="Clique para editar"
+                          className={cn(
+                            "text-sm md:text-[11px] text-muted-foreground mt-0.5 rounded px-1 -mx-1 whitespace-normal break-words",
+                            canEdit && "cursor-pointer hover:bg-accent/50"
+                          )}
+                          onClick={() => canEdit && startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
+                          title={canEdit ? "Clique para editar" : undefined}
                         >
                           {patient.age ? formatAgeDisplay(patient.age) : <span className="italic">Clique para adicionar idade</span>}
                         </p>
@@ -3152,6 +3170,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           {/* Action Buttons Column - Integrated Design */}
           <div className="flex-shrink-0 flex flex-col gap-2 md:gap-1.5 print:hidden items-center">
             {/* Edição Avançada - Primary Action with Sector Identity */}
+            {canEdit && (
             <Button
               size="icon"
               variant="ghost"
@@ -3176,6 +3195,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               />
               <Edit className="h-5 w-5 md:h-4 md:w-4 relative z-10" />
             </Button>
+            )}
 
             {/* Actions Menu - Secondary Action */}
             <DropdownMenu>
