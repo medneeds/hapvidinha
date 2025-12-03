@@ -14,6 +14,79 @@ export type Database = {
   }
   public: {
     Tables: {
+      bed_allocation_requests: {
+        Row: {
+          created_at: string
+          department: string
+          hospital_unit_id: string
+          id: string
+          patient_id: string | null
+          rejection_reason: string | null
+          requested_bed: string | null
+          requested_by: string | null
+          requested_sector: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          state_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string
+          hospital_unit_id: string
+          id?: string
+          patient_id?: string | null
+          rejection_reason?: string | null
+          requested_bed?: string | null
+          requested_by?: string | null
+          requested_sector: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          state_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          hospital_unit_id?: string
+          id?: string
+          patient_id?: string | null
+          rejection_reason?: string | null
+          requested_bed?: string | null
+          requested_by?: string | null
+          requested_sector?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          state_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bed_allocation_requests_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bed_allocation_requests_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bed_allocation_requests_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dhd_patients: {
         Row: {
           created_at: string
@@ -399,6 +472,7 @@ export type Database = {
           admission_date: string | null
           admission_history: string | null
           age: string | null
+          allocation_status: string | null
           bed_number: string
           created_at: string
           created_by: string | null
@@ -410,6 +484,7 @@ export type Database = {
           id: string
           internment_notes: string | null
           internment_status: string | null
+          is_door_patient: boolean | null
           medical_history: string | null
           medical_responsibility: Json | null
           name: string
@@ -433,6 +508,7 @@ export type Database = {
           admission_date?: string | null
           admission_history?: string | null
           age?: string | null
+          allocation_status?: string | null
           bed_number: string
           created_at?: string
           created_by?: string | null
@@ -444,6 +520,7 @@ export type Database = {
           id?: string
           internment_notes?: string | null
           internment_status?: string | null
+          is_door_patient?: boolean | null
           medical_history?: string | null
           medical_responsibility?: Json | null
           name?: string
@@ -467,6 +544,7 @@ export type Database = {
           admission_date?: string | null
           admission_history?: string | null
           age?: string | null
+          allocation_status?: string | null
           bed_number?: string
           created_at?: string
           created_by?: string | null
@@ -478,6 +556,7 @@ export type Database = {
           id?: string
           internment_notes?: string | null
           internment_status?: string | null
+          is_door_patient?: boolean | null
           medical_history?: string | null
           medical_responsibility?: Json | null
           name?: string
@@ -897,7 +976,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "medico"
+      app_role: "admin" | "medico" | "porta"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1025,7 +1104,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "medico"],
+      app_role: ["admin", "medico", "porta"],
     },
   },
 } as const

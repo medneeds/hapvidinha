@@ -28,6 +28,9 @@ export interface Patient {
   // Internment status fields
   internmentStatus?: 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | 'IR_PARA_UTI' | 'IR_PARA_ENFERMARIA' | null;
   internmentNotes?: string | null;
+  // Door patient fields
+  isDoorPatient?: boolean;
+  allocationStatus?: 'pending' | 'approved' | 'discussing' | 'rejected' | null;
   // UTI-specific fields
   utiAdmissionDate?: string[];
   utiDischargePrediction?: string[];

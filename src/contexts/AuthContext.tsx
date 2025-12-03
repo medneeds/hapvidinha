@@ -3,7 +3,7 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
-type UserRole = "admin" | "medico" | null;
+type UserRole = "admin" | "medico" | "porta" | null;
 
 interface AuthContextType {
   user: User | null;

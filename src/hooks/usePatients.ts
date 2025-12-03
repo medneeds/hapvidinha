@@ -73,6 +73,8 @@ export function usePatients(department?: Department) {
         utiSpecialties: p.uti_specialties ? p.uti_specialties.split('\n').filter(Boolean) : [],
         utiOriginSector: p.uti_origin_sector ? p.uti_origin_sector.split('\n').filter(Boolean) : [],
         displayOrder: p.display_order ?? 0,
+        isDoorPatient: p.is_door_patient ?? false,
+        allocationStatus: p.allocation_status as Patient['allocationStatus'],
       }));
 
       setPatients(mappedPatients);

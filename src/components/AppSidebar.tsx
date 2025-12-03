@@ -57,7 +57,7 @@ export function AppSidebar({
 }) {
   const { open, setOpen, openMobile, setOpenMobile, state } = useSidebar();
   const navigate = useNavigate();
-  const { signOut, user } = useAuth();
+  const { signOut, user, role } = useAuth();
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -65,8 +65,11 @@ export function AppSidebar({
   
   // Check if user is COORDENADOR
   const isCoordinator = user?.email === "coordenador@sistema.local";
+  
+  // Check if user is BIGDOOR (porta role)
+  const isDoorUser = role === "porta";
 
-  const menuItems = [
+  const allMenuItems = [
     {
       title: "MAPA",
       icon: LayoutDashboard,
@@ -119,6 +122,11 @@ export function AppSidebar({
       ],
     },
   ];
+
+  // Filtra itens de menu baseado no papel do usuário
+  const menuItems = isDoorUser 
+    ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "EXAMINUS AI")
+    : allMenuItems;
 
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
