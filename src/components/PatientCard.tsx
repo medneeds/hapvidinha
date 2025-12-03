@@ -2984,11 +2984,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     size="icon"
                     variant="ghost"
                     onClick={() => setQuickTemplatesDialogOpen(true)}
-                    className="h-3 w-3 p-0 hover:bg-accent transition-all print:hidden"
+                    className="h-2.5 w-2.5 p-0 hover:bg-accent transition-all print:hidden"
                     style={{ color: sectorColorMap[patient.sector] }}
                     title="Templates Rápidos"
                   >
-                    <Zap className="h-2.5 w-2.5" />
+                    <Zap className="h-2 w-2" />
                   </Button>
               </div>
               <DndContext
