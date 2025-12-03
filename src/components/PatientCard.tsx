@@ -16,11 +16,13 @@ import { MedicalResponsibilityIndicator } from "./MedicalResponsibilityIndicator
 import { InternmentStatusDialog } from "./InternmentStatusDialog";
 import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
+import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAgeCalculator } from "@/hooks/useAgeCalculator";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
 import { differenceInDays, parseISO, isValid, parse } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -622,6 +624,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [internmentStatusDialogOpen, setInternmentStatusDialogOpen] = useState(false);
   const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
+  const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
+  const { role } = useAuth();
   
   // Sync local medical responsibility with patient prop changes
   useEffect(() => {
@@ -3202,6 +3206,23 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               >
                 <div className="p-2 space-y-1 overflow-y-auto max-h-[min(75vh,600px)] overscroll-contain">
                   
+                    {/* SOLICITAR LEITO - Porta Users Only (Primary for porta) */}
+                    {role === 'porta' && patient.sector === 'outside' && (
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setBedAllocationDialogOpen(true);
+                        }}
+                        className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/30 hover:from-purple-100 dark:hover:from-purple-950/50 transition-colors cursor-pointer"
+                      >
+                        <BedDouble className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                        <span className="text-purple-700 dark:text-purple-300">Solicitar Leito</span>
+                      </DropdownMenuItem>
+                    )}
+
+                    {/* Non-porta users see regular menu */}
+                    {role !== 'porta' && (
+                      <>
                     {/* REALOCAÇÃO - Priority Category */}
                     {onTransfer && (
                       <Collapsible defaultOpen className="group">
@@ -3324,6 +3345,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             </DropdownMenuItem>
                           </CollapsibleContent>
                         </Collapsible>
+                      </>
+                    )}
                       </>
                     )}
                     
@@ -4243,6 +4266,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             toast.error('Erro ao adicionar curvas de exames');
           }
         }}
+      />
+
+      <RequestBedAllocationDialog
+        open={bedAllocationDialogOpen}
+        onOpenChange={setBedAllocationDialogOpen}
+        patient={patient}
       />
     </>
   );
