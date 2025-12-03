@@ -974,6 +974,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      setup_bigdoor_user: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "medico" | "porta"
