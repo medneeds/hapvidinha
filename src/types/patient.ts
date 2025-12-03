@@ -25,6 +25,7 @@ export interface Patient {
   admissionDate: string;
   medicalResponsibility?: MedicalResponsibility;
   displayOrder?: number; // For persisting patient order in sectors
+  createdBy?: string; // User ID who created the patient
   // Internment status fields
   internmentStatus?: 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | 'IR_PARA_UTI' | 'IR_PARA_ENFERMARIA' | null;
   internmentNotes?: string | null;

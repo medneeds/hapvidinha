@@ -75,6 +75,7 @@ export function usePatients(department?: Department) {
         displayOrder: p.display_order ?? 0,
         isDoorPatient: p.is_door_patient ?? false,
         allocationStatus: p.allocation_status as Patient['allocationStatus'],
+        createdBy: p.created_by || undefined,
       }));
 
       setPatients(mappedPatients);
@@ -271,6 +272,7 @@ export function usePatients(department?: Department) {
         utiCulturesAntibiotics: data.uti_cultures_antibiotics ? data.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
         utiSpecialties: data.uti_specialties ? data.uti_specialties.split('\n').filter(Boolean) : [],
         utiOriginSector: data.uti_origin_sector ? data.uti_origin_sector.split('\n').filter(Boolean) : [],
+        createdBy: data.created_by || undefined,
       };
 
       // Add to local state immediately for instant UI update
@@ -434,6 +436,7 @@ export function usePatients(department?: Department) {
             utiCulturesAntibiotics: newRecord.uti_cultures_antibiotics ? newRecord.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
             utiSpecialties: newRecord.uti_specialties ? newRecord.uti_specialties.split('\n').filter(Boolean) : [],
             utiOriginSector: newRecord.uti_origin_sector ? newRecord.uti_origin_sector.split('\n').filter(Boolean) : [],
+            createdBy: newRecord.created_by || undefined,
           };
           setPatients(prev => {
             // Check if patient already exists (avoid duplicates)
@@ -493,6 +496,7 @@ export function usePatients(department?: Department) {
             utiCulturesAntibiotics: updatedRecord.uti_cultures_antibiotics ? updatedRecord.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
             utiSpecialties: updatedRecord.uti_specialties ? updatedRecord.uti_specialties.split('\n').filter(Boolean) : [],
             utiOriginSector: updatedRecord.uti_origin_sector ? updatedRecord.uti_origin_sector.split('\n').filter(Boolean) : [],
+            createdBy: updatedRecord.created_by || undefined,
           };
           setPatients(prev => prev.map(p => p.id === updatedPatient.id ? updatedPatient : p));
         }
