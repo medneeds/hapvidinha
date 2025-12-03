@@ -9,6 +9,8 @@ import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
 import { Patient } from "@/types/patient";
 import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell } from "lucide-react";
 import { NotificationCenter } from "@/components/NotificationCenter";
+import { BedAllocationNotifications } from "@/components/BedAllocationNotifications";
+import { DoorPatientNotifications } from "@/components/DoorPatientNotifications";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -972,6 +974,12 @@ const Index = () => {
                         </Button>
                         <div className="print:hidden">
                           <NotificationCenter />
+                        </div>
+                        <div className="print:hidden">
+                          <BedAllocationNotifications />
+                        </div>
+                        <div className="print:hidden">
+                          <DoorPatientNotifications />
                         </div>
                         <div className="print:hidden">
                           <ThemeToggle />
