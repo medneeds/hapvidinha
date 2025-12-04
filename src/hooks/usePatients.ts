@@ -107,8 +107,8 @@ export function usePatients(department?: Department) {
       if (updates.pendencies !== undefined) dbUpdates.pendencies = updates.pendencies.join('\n');
       if (updates.highlightedPendencies !== undefined) dbUpdates.highlighted_pendencies = updates.highlightedPendencies;
       if (updates.schedule !== undefined) dbUpdates.schedule = updates.schedule.join('\n');
-      if (updates.admissionHistory !== undefined) dbUpdates.admission_history = updates.admissionHistory;
-      if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate;
+      if (updates.admissionHistory !== undefined) dbUpdates.admission_history = updates.admissionHistory || null;
+      if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate && updates.admissionDate !== '' ? updates.admissionDate : null;
       if (updates.medicalResponsibility !== undefined) dbUpdates.medical_responsibility = updates.medicalResponsibility;
       if (updates.displayOrder !== undefined) dbUpdates.display_order = updates.displayOrder;
       // UTI fields
