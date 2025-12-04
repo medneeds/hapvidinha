@@ -230,9 +230,12 @@ export function useBedAllocationRequests() {
       if (patientError) throw patientError;
 
       toast({
-        title: "Alocação aprovada",
+        title: "✓ Alocação aprovada",
         description: `Paciente alocado no leito ${newBedNumber} - ${request.requested_sector}.`,
       });
+
+      // Trigger immediate refetch to update UI
+      await fetchRequests();
 
       return true;
     } catch (error) {
@@ -284,9 +287,12 @@ export function useBedAllocationRequests() {
         .eq("id", request.patient_id);
 
       toast({
-        title: "Aguardando discussão",
-        description: "Médico da porta será notificado.",
+        title: "Em discussão",
+        description: "Médico da porta será notificado sobre a discussão do caso.",
       });
+
+      // Trigger immediate refetch
+      await fetchRequests();
 
       return true;
     } catch (error) {
@@ -340,8 +346,11 @@ export function useBedAllocationRequests() {
 
       toast({
         title: "Solicitação negada",
-        description: "Médico da porta será notificado.",
+        description: "Médico da porta será notificado sobre a negação.",
       });
+
+      // Trigger immediate refetch
+      await fetchRequests();
 
       return true;
     } catch (error) {
