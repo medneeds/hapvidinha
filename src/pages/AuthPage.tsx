@@ -219,12 +219,12 @@ export default function AuthPage() {
                   >
                     <SelectValue placeholder="SELECIONE O ESTADO" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
+                  <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
                     {states.map((state) => (
                       <SelectItem 
                         key={state.id} 
                         value={state.id}
-                        className="text-sm font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
+                        className="text-sm font-semibold text-gray-900 hover:bg-[#013ba6] hover:text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
                       >
                         {state.name} ({state.abbreviation})
                       </SelectItem>
@@ -255,12 +255,12 @@ export default function AuthPage() {
                   >
                     <SelectValue placeholder={selectedState ? "SELECIONE A UNIDADE" : "PRIMEIRO SELECIONE UM ESTADO"} />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
+                  <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
                     {filteredHospitals.map((hospital) => (
                       <SelectItem 
                         key={hospital.id} 
                         value={hospital.id}
-                        className="text-sm font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
+                        className="text-sm font-semibold text-gray-900 hover:bg-[#013ba6] hover:text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
                       >
                         {hospital.name}
                       </SelectItem>
@@ -291,12 +291,12 @@ export default function AuthPage() {
                   >
                     <SelectValue placeholder="SELECIONE O SETOR" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border-2 border-gray-200 shadow-xl">
+                  <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
                     {DEPARTMENTS.map((dept) => (
                       <SelectItem 
                         key={dept} 
                         value={dept}
-                        className="text-sm font-medium hover:bg-[#013ba6]/10 cursor-pointer transition-colors"
+                        className="text-sm font-semibold text-gray-900 hover:bg-[#013ba6] hover:text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
                       >
                         {dept}
                       </SelectItem>
