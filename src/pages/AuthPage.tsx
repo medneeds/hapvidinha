@@ -26,13 +26,14 @@ const loginSchema = z.object({
 });
 
 export default function AuthPage() {
-  const { user, signIn } = useAuth();
+  const { user, signIn, signUp } = useAuth();
   const { setCurrentDepartment } = useDepartment();
   const { states, hospitals, setCurrentHospital, isLoading: hospitalLoading } = useHospital();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   
   const [loginData, setLoginData] = useState({
     username: "",
@@ -87,6 +88,54 @@ export default function AuthPage() {
         }
         setCurrentDepartment(selectedDepartment);
         toast.success("LOGIN REALIZADO COM SUCESSO");
+        
+        // Show loading screen before navigation
+        setShowLoadingScreen(true);
+      }
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        toast.error(err.errors[0].message);
+      } else {
+        toast.error("ERRO AO VALIDAR DADOS");
+      }
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate selections
+    if (!selectedState) {
+      toast.error("SELECIONE UM ESTADO");
+      return;
+    }
+    if (!selectedHospitalId) {
+      toast.error("SELECIONE UMA UNIDADE HOSPITALAR");
+      return;
+    }
+    
+    setLoading(true);
+
+    try {
+      const validated = loginSchema.parse(loginData);
+      const { error } = await signUp(validated.username, validated.password, validated.username);
+
+      if (error) {
+        if (error.message.includes("User already registered")) {
+          toast.error("USUÁRIO JÁ CADASTRADO");
+        } else {
+          toast.error("ERRO AO CADASTRAR: " + error.message.toUpperCase());
+        }
+        setLoading(false);
+      } else {
+        // Set hospital and department after successful signup
+        const selectedHospital = hospitals.find(h => h.id === selectedHospitalId);
+        if (selectedHospital) {
+          setCurrentHospital(selectedHospital);
+        }
+        setCurrentDepartment(selectedDepartment);
+        toast.success("CADASTRO REALIZADO COM SUCESSO");
         
         // Show loading screen before navigation
         setShowLoadingScreen(true);
@@ -189,7 +238,7 @@ export default function AuthPage() {
             </div>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5 relative z-10">
+          <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-5 relative z-10">
             {/* Hierarchical Selection Section */}
             <div className="space-y-4 pb-5 border-b-2 border-gray-200">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">SELECIONE SUA LOCALIZAÇÃO</p>
@@ -380,18 +429,28 @@ export default function AuthPage() {
               {loading ? (
                 <div className="flex items-center gap-3 relative z-10">
                   <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>ENTRANDO...</span>
+                  <span>{isSignUp ? "CADASTRANDO..." : "ENTRANDO..."}</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-3 relative z-10">
                   <LogIn className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                  <span>ENTRAR NO SISTEMA</span>
+                  <span>{isSignUp ? "CADASTRAR USUÁRIO" : "ENTRAR NO SISTEMA"}</span>
                 </div>
               )}
             </Button>
           </form>
 
-          <div className="mt-8 pt-8 border-t-2 border-gray-200 relative z-10">
+          <div className="mt-6 pt-6 border-t-2 border-gray-200 relative z-10">
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="w-full text-center text-sm text-[#013ba6] hover:text-[#012d7a] font-semibold uppercase tracking-wide transition-colors duration-200"
+            >
+              {isSignUp ? "JÁ TENHO CONTA - FAZER LOGIN" : "CRIAR NOVA CONTA"}
+            </button>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-gray-100 relative z-10">
             <div className="flex items-center justify-center gap-2 text-xs text-gray-500 font-medium uppercase">
               <div className="h-6 w-6 rounded-lg bg-gray-100 flex items-center justify-center">
                 <Lock className="h-3 w-3 text-gray-600" />
