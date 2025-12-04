@@ -224,92 +224,112 @@ export function BedAllocationNotifications() {
 
       {/* Request detail dialog */}
       <Dialog open={!!selectedRequest && !showRejectDialog} onOpenChange={() => setSelectedRequest(null)}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Solicitação de Alocação</DialogTitle>
-            <DialogDescription>
-              Revise os dados do paciente e decida sobre a alocação
-            </DialogDescription>
-          </DialogHeader>
-
+        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
           {selectedRequest && (
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-muted/50 space-y-3">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-primary" />
-                  <span className="font-semibold text-lg">
-                    {selectedRequest.patient?.name || "Paciente"}
-                  </span>
-                </div>
-                
-                {selectedRequest.patient?.age && (
-                  <p className="text-sm">
-                    <span className="text-muted-foreground">Idade:</span> {selectedRequest.patient.age}
-                  </p>
-                )}
-
-                <div className="flex items-center gap-2">
-                  <Bed className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Setor solicitado:</span>
-                  <Badge variant="outline" className={getSectorColor(selectedRequest.requested_sector)}>
+            <>
+              {/* Header with patient name and sector badge */}
+              <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 border-b">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                        <User className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold truncate">
+                          {selectedRequest.patient?.name || "Paciente"}
+                        </h2>
+                        {selectedRequest.patient?.age && (
+                          <p className="text-sm text-muted-foreground">{selectedRequest.patient.age}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <Badge 
+                    variant="outline" 
+                    className={`${getSectorColor(selectedRequest.requested_sector)} text-sm px-3 py-1.5 shrink-0`}
+                  >
+                    <Bed className="h-3.5 w-3.5 mr-1.5" />
                     {selectedRequest.requested_sector}
                   </Badge>
                 </div>
+                <p className="text-xs text-muted-foreground mt-3">
+                  Solicitado em {format(new Date(selectedRequest.created_at), "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+                </p>
+              </div>
 
+              {/* Content area */}
+              <div className="p-6 space-y-5">
+                {/* Diagnoses */}
                 {selectedRequest.patient?.diagnoses && (
-                  <div>
-                    <p className="text-sm font-medium mb-1">Hipóteses/Diagnósticos:</p>
-                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                      {selectedRequest.patient.diagnoses}
-                    </p>
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                      Hipóteses / Diagnósticos
+                    </h3>
+                    <div className="bg-muted/30 rounded-lg p-3 border border-border/50">
+                      <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                        {selectedRequest.patient.diagnoses}
+                      </p>
+                    </div>
                   </div>
                 )}
 
+                {/* Admission History */}
                 {selectedRequest.patient?.admission_history && (
-                  <div>
-                    <p className="text-sm font-medium mb-1 flex items-center gap-1">
-                      <FileText className="h-3 w-3" />
-                      História Admissional:
-                    </p>
-                    <ScrollArea className="h-32 rounded border p-2">
-                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                        {selectedRequest.patient.admission_history}
-                      </p>
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-primary" />
+                      História Admissional / Anamnese
+                    </h3>
+                    <ScrollArea className="h-40 rounded-lg border border-border/50 bg-muted/30">
+                      <div className="p-3">
+                        <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                          {selectedRequest.patient.admission_history}
+                        </p>
+                      </div>
                     </ScrollArea>
                   </div>
                 )}
 
-                <p className="text-xs text-muted-foreground">
-                  Solicitado em: {format(new Date(selectedRequest.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                </p>
+                {/* Empty state if no clinical data */}
+                {!selectedRequest.patient?.diagnoses && !selectedRequest.patient?.admission_history && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <FileText className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                    <p className="text-sm">Nenhuma informação clínica adicional disponível</p>
+                  </div>
+                )}
               </div>
 
-              <DialogFooter className="flex-col sm:flex-row gap-2">
-                <Button
-                  variant="outline"
-                  className="flex-1 border-red-500/30 text-red-500 hover:bg-red-500/10"
-                  onClick={() => setShowRejectDialog(true)}
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Negar
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1 border-blue-500/30 text-blue-500 hover:bg-blue-500/10"
-                  onClick={() => handleDiscussing(selectedRequest)}
-                >
-                  <Clock className="h-4 w-4 mr-2" />
-                  Aguardando Discussão
-                </Button>
-                <Button
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                  onClick={() => handleApprove(selectedRequest)}
-                >
-                  <Check className="h-4 w-4 mr-2" />
-                  Aprovar Alocação
-                </Button>
-              </DialogFooter>
-            </div>
+              {/* Action buttons */}
+              <div className="border-t bg-muted/20 p-4">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-11 border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50"
+                    onClick={() => setShowRejectDialog(true)}
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Negar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-11 border-blue-500/30 text-blue-500 hover:bg-blue-500/10 hover:border-blue-500/50"
+                    onClick={() => handleDiscussing(selectedRequest)}
+                  >
+                    <Clock className="h-4 w-4 mr-2" />
+                    Aguardando Discussão
+                  </Button>
+                  <Button
+                    className="flex-1 h-11 bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20"
+                    onClick={() => handleApprove(selectedRequest)}
+                  >
+                    <Check className="h-4 w-4 mr-2" />
+                    Aprovar Alocação
+                  </Button>
+                </div>
+              </div>
+            </>
           )}
         </DialogContent>
       </Dialog>
