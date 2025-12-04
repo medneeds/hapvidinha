@@ -20,6 +20,8 @@ export interface BedAllocationRequest {
   department: string;
   created_at: string;
   updated_at: string;
+  requesting_doctor_name: string | null;
+  requesting_office_number: string | null;
   // Joined patient data
   patient?: {
     id: string;
@@ -96,7 +98,13 @@ export function useBedAllocationRequests() {
     fetchRequests();
   }, [fetchRequests]);
 
-  const createRequest = async (patientId: string, requestedSector: string, requestedBed?: string) => {
+  const createRequest = async (
+    patientId: string, 
+    requestedSector: string, 
+    requestedBed?: string,
+    doctorName?: string,
+    officeNumber?: string
+  ) => {
     if (!currentHospital?.id || !currentState?.id || !user?.id) {
       toast({
         title: "Erro",
@@ -114,6 +122,8 @@ export function useBedAllocationRequests() {
           requested_by: user.id,
           requested_sector: requestedSector,
           requested_bed: requestedBed || null,
+          requesting_doctor_name: doctorName || null,
+          requesting_office_number: officeNumber || null,
           state_id: currentState.id,
           hospital_unit_id: currentHospital.id,
           department: currentDepartment,

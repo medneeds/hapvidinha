@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Check, Clock, X, User, Bed, FileText } from "lucide-react";
+import { Bell, Check, Clock, X, User, Bed, FileText, Stethoscope, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -220,6 +220,15 @@ export function BedAllocationNotifications() {
                             {request.requested_sector}
                           </Badge>
                         </div>
+                        {request.requesting_doctor_name && (
+                          <div className="flex items-center gap-1.5 mt-1 text-xs text-emerald-600 dark:text-emerald-400">
+                            <Stethoscope className="h-3 w-3" />
+                            <span>{request.requesting_doctor_name}</span>
+                            {request.requesting_office_number && (
+                              <span className="text-muted-foreground">• Cons. {request.requesting_office_number}</span>
+                            )}
+                          </div>
+                        )}
                         <p className="text-xs text-muted-foreground mt-1">
                           {format(new Date(request.created_at), "dd/MM HH:mm", { locale: ptBR })}
                         </p>
@@ -250,6 +259,15 @@ export function BedAllocationNotifications() {
                             {request.requested_sector}
                           </Badge>
                         </div>
+                        {request.requesting_doctor_name && (
+                          <div className="flex items-center gap-1.5 mt-1 text-xs text-emerald-600 dark:text-emerald-400">
+                            <Stethoscope className="h-3 w-3" />
+                            <span>{request.requesting_doctor_name}</span>
+                            {request.requesting_office_number && (
+                              <span className="text-muted-foreground">• Cons. {request.requesting_office_number}</span>
+                            )}
+                          </div>
+                        )}
                         <p className="text-xs text-muted-foreground mt-1">
                           {format(new Date(request.created_at), "dd/MM HH:mm", { locale: ptBR })}
                         </p>
@@ -297,6 +315,30 @@ export function BedAllocationNotifications() {
                     {selectedRequest.requested_sector}
                   </Badge>
                 </div>
+                
+                {/* Requesting Doctor Info */}
+                {(selectedRequest.requesting_doctor_name || selectedRequest.requesting_office_number) && (
+                  <div className="mt-3 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                    <div className="flex items-center gap-3 text-sm">
+                      <Stethoscope className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span className="text-muted-foreground">Solicitante:</span>
+                      <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                        {selectedRequest.requesting_doctor_name || "Não informado"}
+                      </span>
+                      {selectedRequest.requesting_office_number && (
+                        <>
+                          <span className="text-muted-foreground mx-1">|</span>
+                          <Building className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <span className="text-muted-foreground">Consultório:</span>
+                          <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                            {selectedRequest.requesting_office_number}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <p className="text-xs text-muted-foreground mt-3">
                   Solicitado em {format(new Date(selectedRequest.created_at), "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })}
                 </p>
