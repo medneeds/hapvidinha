@@ -41,6 +41,7 @@ interface SectorSectionProps {
   onOpenChange?: (open: boolean) => void;
   customTitle?: string;
   customIcon?: string;
+  onRefetch?: () => void;
 }
 
 const sectorInfo = {
@@ -74,6 +75,7 @@ interface SortablePatientCardProps {
   onToggleSelection?: (patientId: string) => void;
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
   onPrintPatient?: (patientId: string) => void;
+  onRefetch?: () => void;
 }
 
 function SortablePatientCard(props: SortablePatientCardProps) {
@@ -130,7 +132,8 @@ export function SectorSection({
   isOpen: controlledIsOpen,
   onOpenChange,
   customTitle,
-  customIcon
+  customIcon,
+  onRefetch
 }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
@@ -279,6 +282,7 @@ export function SectorSection({
                   onToggleSelection={onToggleSelection}
                   onTransfer={onTransfer}
                   onPrintPatient={onPrintPatient}
+                  onRefetch={onRefetch}
                 />
               ))}
             </SortableContext>
