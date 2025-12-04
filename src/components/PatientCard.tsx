@@ -628,11 +628,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
   const { role, user } = useAuth();
   
-  // Check if porta user can edit this patient (only their own patients)
+  // Check if porta or visitante user can edit this patient
   const canEdit = useMemo(() => {
-    if (role !== 'porta') return true;
+    // Visitante users cannot edit any patient
+    if (role === 'visitante') return false;
     // Porta users can only edit patients they created
-    return patient.createdBy === user?.id;
+    if (role === 'porta') return patient.createdBy === user?.id;
+    // Other roles can edit all patients
+    return true;
   }, [role, user?.id, patient.createdBy]);
   
   // Sync local medical responsibility with patient prop changes

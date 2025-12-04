@@ -975,9 +975,10 @@ export type Database = {
         Returns: boolean
       }
       setup_bigdoor_user: { Args: never; Returns: undefined }
+      setup_visitante_user: { Args: never; Returns: undefined }
     }
     Enums: {
-      app_role: "admin" | "medico" | "porta"
+      app_role: "admin" | "medico" | "porta" | "visitante"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1105,7 +1106,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "medico", "porta"],
+      app_role: ["admin", "medico", "porta", "visitante"],
     },
   },
 } as const
