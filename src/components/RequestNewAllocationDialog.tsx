@@ -39,6 +39,8 @@ export function RequestNewAllocationDialog({
 }: RequestNewAllocationDialogProps) {
   const [patientName, setPatientName] = useState("");
   const [patientAge, setPatientAge] = useState("");
+  const [doctorName, setDoctorName] = useState("");
+  const [officeNumber, setOfficeNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createRequest } = useBedAllocationRequests();
   const { createPatient } = usePatients();
@@ -52,6 +54,15 @@ export function RequestNewAllocationDialog({
       toast({
         title: "Nome obrigatório",
         description: "Por favor, informe o nome do paciente.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!doctorName.trim()) {
+      toast({
+        title: "Nome do médico obrigatório",
+        description: "Por favor, informe o nome do médico solicitante.",
         variant: "destructive",
       });
       return;
@@ -107,8 +118,14 @@ export function RequestNewAllocationDialog({
 
       if (createError) throw createError;
 
-      // Create the allocation request
-      const result = await createRequest(newPatient.id, targetSector);
+      // Create the allocation request with doctor info
+      const result = await createRequest(
+        newPatient.id, 
+        targetSector, 
+        undefined, 
+        doctorName.toUpperCase(), 
+        officeNumber || undefined
+      );
       
       if (result) {
         toast({
@@ -118,6 +135,8 @@ export function RequestNewAllocationDialog({
         onOpenChange(false);
         setPatientName("");
         setPatientAge("");
+        setDoctorName("");
+        setOfficeNumber("");
       }
     } catch (error) {
       console.error('Error creating allocation request:', error);
@@ -156,25 +175,55 @@ export function RequestNewAllocationDialog({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="patient-name">Nome do Paciente *</Label>
-            <Input
-              id="patient-name"
-              value={patientName}
-              onChange={(e) => setPatientName(e.target.value.toUpperCase())}
-              placeholder="NOME COMPLETO DO PACIENTE"
-              className="uppercase"
-            />
+          {/* Doctor Info Section */}
+          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
+            <p className="text-xs font-semibold text-primary uppercase tracking-wide">Médico Solicitante</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="doctor-name" className="text-xs">Nome do Médico *</Label>
+                <Input
+                  id="doctor-name"
+                  value={doctorName}
+                  onChange={(e) => setDoctorName(e.target.value.toUpperCase())}
+                  placeholder="DR. NOME"
+                  className="uppercase h-9 text-sm"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="office-number" className="text-xs">Nº Consultório</Label>
+                <Input
+                  id="office-number"
+                  value={officeNumber}
+                  onChange={(e) => setOfficeNumber(e.target.value)}
+                  placeholder="Ex: 01"
+                  className="h-9 text-sm"
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="patient-age">Idade (opcional)</Label>
-            <Input
-              id="patient-age"
-              value={patientAge}
-              onChange={(e) => setPatientAge(e.target.value)}
-              placeholder="Ex: 45 anos"
-            />
+          {/* Patient Info Section */}
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="patient-name">Nome do Paciente *</Label>
+              <Input
+                id="patient-name"
+                value={patientName}
+                onChange={(e) => setPatientName(e.target.value.toUpperCase())}
+                placeholder="NOME COMPLETO DO PACIENTE"
+                className="uppercase"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="patient-age">Idade (opcional)</Label>
+              <Input
+                id="patient-age"
+                value={patientAge}
+                onChange={(e) => setPatientAge(e.target.value)}
+                placeholder="Ex: 45 anos"
+              />
+            </div>
           </div>
 
           <div className="p-3 rounded-lg bg-muted/50 border">
@@ -200,7 +249,7 @@ export function RequestNewAllocationDialog({
           </Button>
           <Button 
             onClick={handleSubmit} 
-            disabled={!patientName.trim() || isSubmitting}
+            disabled={!patientName.trim() || !doctorName.trim() || isSubmitting}
             className="bg-primary"
           >
             <Send className="h-4 w-4 mr-2" />

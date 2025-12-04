@@ -25,6 +25,8 @@ export type Database = {
           requested_bed: string | null
           requested_by: string | null
           requested_sector: string
+          requesting_doctor_name: string | null
+          requesting_office_number: string | null
           reviewed_at: string | null
           reviewed_by: string | null
           state_id: string
@@ -41,6 +43,8 @@ export type Database = {
           requested_bed?: string | null
           requested_by?: string | null
           requested_sector: string
+          requesting_doctor_name?: string | null
+          requesting_office_number?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           state_id: string
@@ -57,6 +61,8 @@ export type Database = {
           requested_bed?: string | null
           requested_by?: string | null
           requested_sector?: string
+          requesting_doctor_name?: string | null
+          requesting_office_number?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
           state_id?: string
