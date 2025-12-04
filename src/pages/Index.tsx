@@ -345,6 +345,16 @@ const Index = () => {
   };
 
   const handleAddExtraBed = async (sector: Patient['sector']) => {
+    // Visitante users cannot add beds
+    if (role === 'visitante') {
+      toast({
+        title: "Acesso restrito",
+        description: "Usuários visitantes não podem adicionar leitos.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     // For porta users, clicking on specialized sectors opens allocation request dialog
     if (role === 'porta' && (sector === 'red' || sector === 'yellow' || sector === 'blue')) {
       const sectorMap: Record<string, "Cuidados Especiais" | "Observação Amarela" | "Observação Azul"> = {
