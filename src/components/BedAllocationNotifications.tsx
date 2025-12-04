@@ -110,7 +110,7 @@ export function BedAllocationNotifications() {
     <>
       {/* Pop-up notification for new requests */}
       <Dialog open={showPopup} onOpenChange={setShowPopup}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader className="text-center pb-2">
             <div className="mx-auto mb-3 h-14 w-14 rounded-full bg-amber-500/20 flex items-center justify-center">
               <Bed className="h-7 w-7 text-amber-500 animate-pulse" />
@@ -120,27 +120,42 @@ export function BedAllocationNotifications() {
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 py-2">
-            <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+          <div className="space-y-3 py-2">
+            {/* Where the patient is */}
+            <div className="bg-gray-500/10 rounded-lg p-3 border border-gray-500/20">
               <div className="flex items-start gap-3">
                 <div className="h-6 w-6 rounded-full bg-gray-500/20 flex items-center justify-center shrink-0 mt-0.5">
                   <User className="h-3.5 w-3.5 text-gray-500" />
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Um médico da porta registrou um novo paciente que está{" "}
-                  <span className="font-semibold text-foreground">aguardando alocação</span> na seção{" "}
-                  <span className="font-semibold text-foreground">"Fora das Alas"</span>.
+                <p className="text-sm">
+                  Um médico da porta registrou um novo paciente. O paciente está atualmente na seção{" "}
+                  <span className="font-semibold text-foreground">"Fora das Alas"</span>, aguardando sua aprovação para alocação.
                 </p>
               </div>
-              
+            </div>
+
+            {/* What the leader can do */}
+            <div className="bg-amber-500/10 rounded-lg p-3 border border-amber-500/20">
               <div className="flex items-start gap-3">
                 <div className="h-6 w-6 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Bed className="h-3.5 w-3.5 text-amber-500" />
+                  <Clock className="h-3.5 w-3.5 text-amber-500" />
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Para revisar e aprovar, acesse{" "}
-                  <span className="font-semibold text-amber-500">"Solicitações de Alocação"</span>{" "}
-                  no cabeçalho (ícone de leito).
+                <p className="text-sm">
+                  Você pode <span className="font-semibold text-amber-600 dark:text-amber-400">aguardar a discussão do caso</span> antes de decidir, ou <span className="font-semibold text-green-600 dark:text-green-400">aprovar diretamente</span> a alocação para o setor solicitado.
+                </p>
+              </div>
+            </div>
+
+            {/* How to access */}
+            <div className="bg-primary/10 rounded-lg p-3 border border-primary/20">
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <Bed className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <p className="text-sm">
+                  Para revisar, acesse{" "}
+                  <span className="font-semibold text-primary">"Solicitações de Alocação"</span>{" "}
+                  clicando no ícone de leito no cabeçalho.
                 </p>
               </div>
             </div>
