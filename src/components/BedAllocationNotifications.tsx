@@ -27,7 +27,7 @@ import { ptBR } from "date-fns/locale";
 export function BedAllocationNotifications() {
   const { role } = useAuth();
   const { currentHospital } = useHospital();
-  const { requests, pendingCount, approveRequest, setDiscussing, rejectRequest } = useBedAllocationRequests();
+  const { requests, pendingCount, approveRequest, setDiscussing, rejectRequest, refetch } = useBedAllocationRequests();
   const [selectedRequest, setSelectedRequest] = useState<BedAllocationRequest | null>(null);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
@@ -73,6 +73,8 @@ export function BedAllocationNotifications() {
     const success = await approveRequest(request.id);
     if (success) {
       setSelectedRequest(null);
+      // Refetch to update the list immediately
+      await refetch();
     }
   };
 
@@ -80,6 +82,7 @@ export function BedAllocationNotifications() {
     const success = await setDiscussing(request.id);
     if (success) {
       setSelectedRequest(null);
+      await refetch();
     }
   };
 
@@ -90,6 +93,7 @@ export function BedAllocationNotifications() {
       setSelectedRequest(null);
       setShowRejectDialog(false);
       setRejectReason("");
+      await refetch();
     }
   };
 
