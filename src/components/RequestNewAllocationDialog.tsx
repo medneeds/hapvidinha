@@ -15,6 +15,7 @@ import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
 import { usePatients } from "@/hooks/usePatients";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useHospital } from "@/contexts/HospitalContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Patient } from "@/types/patient";
@@ -43,6 +44,7 @@ export function RequestNewAllocationDialog({
   const { createPatient } = usePatients();
   const { currentDepartment } = useDepartment();
   const { currentHospital, currentState } = useHospital();
+  const { user } = useAuth();
   const { toast } = useToast();
 
   const handleSubmit = async () => {
@@ -98,6 +100,7 @@ export function RequestNewAllocationDialog({
           is_door_patient: true,
           allocation_status: 'pending',
           medical_responsibility: { type: 'porta' },
+          created_by: user?.id || null,
         })
         .select()
         .single();

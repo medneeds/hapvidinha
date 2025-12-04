@@ -4,12 +4,14 @@ import { Patient } from "@/types/patient";
 import { useToast } from "@/hooks/use-toast";
 import { Department } from "@/contexts/DepartmentContext";
 import { useHospital } from "@/contexts/HospitalContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function usePatients(department?: Department) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const { currentState, currentHospital } = useHospital();
+  const { user } = useAuth();
 
   const fetchPatients = async () => {
     try {
@@ -197,6 +199,7 @@ export function usePatients(department?: Department) {
         state_id: currentState.id,
         hospital_unit_id: currentHospital.id,
         medical_responsibility: patient.medicalResponsibility || null,
+        created_by: user?.id || null,
       };
 
       // Add UTI fields if they exist
