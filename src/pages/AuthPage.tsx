@@ -224,7 +224,7 @@ export default function AuthPage() {
                       <SelectItem 
                         key={state.id} 
                         value={state.id}
-                        className="text-sm font-semibold text-gray-900 hover:bg-[#013ba6] hover:text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
+                        className="text-sm font-semibold !text-gray-900 bg-white hover:!bg-[#013ba6] hover:!text-white focus:!bg-[#013ba6] focus:!text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
                       >
                         {state.name} ({state.abbreviation})
                       </SelectItem>
@@ -260,7 +260,7 @@ export default function AuthPage() {
                       <SelectItem 
                         key={hospital.id} 
                         value={hospital.id}
-                        className="text-sm font-semibold text-gray-900 hover:bg-[#013ba6] hover:text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
+                        className="text-sm font-semibold !text-gray-900 bg-white hover:!bg-[#013ba6] hover:!text-white focus:!bg-[#013ba6] focus:!text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
                       >
                         {hospital.name}
                       </SelectItem>
@@ -296,7 +296,7 @@ export default function AuthPage() {
                       <SelectItem 
                         key={dept} 
                         value={dept}
-                        className="text-sm font-semibold text-gray-900 hover:bg-[#013ba6] hover:text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
+                        className="text-sm font-semibold !text-gray-900 bg-white hover:!bg-[#013ba6] hover:!text-white focus:!bg-[#013ba6] focus:!text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
                       >
                         {dept}
                       </SelectItem>
