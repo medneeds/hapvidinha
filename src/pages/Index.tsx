@@ -96,6 +96,7 @@ interface SortableOutsidePatientCardProps {
   onToggleSelection?: (patientId: string) => void;
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
   onPrintPatient?: (patientId: string) => void;
+  onRefetch?: () => void;
 }
 
 function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {

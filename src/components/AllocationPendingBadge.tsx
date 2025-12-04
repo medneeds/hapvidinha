@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Clock, CheckCircle, XCircle, MessageSquare, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -16,16 +17,21 @@ import {
 } from "@/components/ui/dialog";
 import { Patient } from "@/types/patient";
 import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
+import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 interface AllocationPendingBadgeProps {
   patient: Patient;
+  onStatusChange?: () => void;
 }
 
-export function AllocationPendingBadge({ patient }: AllocationPendingBadgeProps) {
+export function AllocationPendingBadge({ patient, onStatusChange }: AllocationPendingBadgeProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { requests } = useBedAllocationRequests();
+  const [isApproving, setIsApproving] = useState(false);
+  const [isSettingDiscussing, setIsSettingDiscussing] = useState(false);
+  const { requests, approveRequest, setDiscussing, refetch } = useBedAllocationRequests();
+  const { role } = useAuth();
   
   // Find request for this patient
   const patientRequest = requests.find(r => r.patient_id === patient.id);
@@ -33,6 +39,9 @@ export function AllocationPendingBadge({ patient }: AllocationPendingBadgeProps)
   const status = patient.allocationStatus || patientRequest?.status;
   
   if (!status || status === 'approved') return null;
+
+  // Check if user can take actions (LIDER, COORDENADOR, admin)
+  const canTakeAction = role === 'admin' || role === 'medico';
 
   const statusConfig = {
     pending: {
@@ -65,6 +74,35 @@ export function AllocationPendingBadge({ patient }: AllocationPendingBadgeProps)
   if (!config) return null;
 
   const Icon = config.icon;
+
+  const handleApprove = async () => {
+    if (!patientRequest?.id) return;
+    setIsApproving(true);
+    try {
+      const success = await approveRequest(patientRequest.id);
+      if (success) {
+        setIsDialogOpen(false);
+        await refetch();
+        onStatusChange?.();
+      }
+    } finally {
+      setIsApproving(false);
+    }
+  };
+
+  const handleSetDiscussing = async () => {
+    if (!patientRequest?.id) return;
+    setIsSettingDiscussing(true);
+    try {
+      const success = await setDiscussing(patientRequest.id);
+      if (success) {
+        await refetch();
+        onStatusChange?.();
+      }
+    } finally {
+      setIsSettingDiscussing(false);
+    }
+  };
 
   return (
     <TooltipProvider>
@@ -146,6 +184,50 @@ export function AllocationPendingBadge({ patient }: AllocationPendingBadgeProps)
                 </div>
               )}
             </div>
+
+            {/* Action buttons for LIDER/COORDENADOR */}
+            {canTakeAction && (status === 'pending' || status === 'discussing') && patientRequest && (
+              <div className="flex flex-col gap-2 pt-4 border-t">
+                <Button
+                  onClick={handleApprove}
+                  disabled={isApproving || isSettingDiscussing}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  {isApproving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Aprovando...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Aprovar Alocação
+                    </>
+                  )}
+                </Button>
+                
+                {status === 'pending' && (
+                  <Button
+                    variant="outline"
+                    onClick={handleSetDiscussing}
+                    disabled={isApproving || isSettingDiscussing}
+                    className="w-full border-sky-500/50 text-sky-500 hover:bg-sky-500/10"
+                  >
+                    {isSettingDiscussing ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Atualizando...
+                      </>
+                    ) : (
+                      <>
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Aguardando Discussão do Caso
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>

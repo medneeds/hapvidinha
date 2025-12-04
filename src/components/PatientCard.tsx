@@ -218,6 +218,7 @@ interface PatientCardProps {
   onToggleSelection?: (patientId: string) => void;
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
   onPrintPatient?: (patientId: string) => void;
+  onRefetch?: () => void;
 }
 
 const sectorConfig = {
@@ -599,7 +600,7 @@ const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollap
   );
 });
 
-export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient }: PatientCardProps) {
+export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode = false, isSelected = false, onToggleSelection, onTransfer, onPrintPatient, onRefetch }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -1343,7 +1344,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           </p>
                           
                           {/* Allocation Pending Badge */}
-                          <AllocationPendingBadge patient={patient} />
+                          <AllocationPendingBadge patient={patient} onStatusChange={onRefetch} />
                         </div>
                       )}
                       
