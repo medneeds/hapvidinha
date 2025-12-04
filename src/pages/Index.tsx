@@ -1080,6 +1080,7 @@ const Index = () => {
                     onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
+                    onRefetch={refetch}
                     customTitle="UTI - 10 LEITOS"
                     customIcon="🏥"
                   />
@@ -1102,6 +1103,7 @@ const Index = () => {
                       onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
                       onTransfer={handleTransferPatient}
                       onPrintPatient={handlePrintPatient}
+                      onRefetch={refetch}
                     />
                   </div>
                   <div>
@@ -1119,6 +1121,7 @@ const Index = () => {
                       onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
                       onTransfer={handleTransferPatient}
                       onPrintPatient={handlePrintPatient}
+                      onRefetch={refetch}
                     />
                   </div>
                   <div>
@@ -1136,6 +1139,7 @@ const Index = () => {
                       onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
                       onTransfer={handleTransferPatient}
                       onPrintPatient={handlePrintPatient}
+                      onRefetch={refetch}
                     />
                   </div>
 
@@ -1195,7 +1199,7 @@ const Index = () => {
                                 strategy={verticalListSortingStrategy}
                               >
                                 {outsidePatients.map((patient) => (
-                                  <SortableOutsidePatientCard
+                                <SortableOutsidePatientCard
                                     key={patient.id}
                                     patient={patient}
                                     onUpdate={handleUpdatePatient}
@@ -1206,6 +1210,7 @@ const Index = () => {
                                     onToggleSelection={handleToggleSelection}
                                     onTransfer={handleTransferPatient}
                                     onPrintPatient={handlePrintPatient}
+                                    onRefetch={refetch}
                                   />
                                 ))}
                               </SortableContext>
