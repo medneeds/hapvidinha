@@ -111,18 +111,47 @@ export function BedAllocationNotifications() {
       {/* Pop-up notification for new requests */}
       <Dialog open={showPopup} onOpenChange={setShowPopup}>
         <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-amber-500">
-              <Bell className="h-5 w-5 animate-pulse" />
+          <DialogHeader className="text-center pb-2">
+            <div className="mx-auto mb-3 h-14 w-14 rounded-full bg-amber-500/20 flex items-center justify-center">
+              <Bed className="h-7 w-7 text-amber-500 animate-pulse" />
+            </div>
+            <DialogTitle className="text-lg">
               Nova Solicitação de Alocação
             </DialogTitle>
-            <DialogDescription>
-              Um médico da porta solicitou alocação de paciente.
-            </DialogDescription>
           </DialogHeader>
-          <div className="flex justify-center py-4">
-            <Button onClick={() => setShowPopup(false)}>
-              Ver Solicitações
+          
+          <div className="space-y-4 py-2">
+            <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-gray-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <User className="h-3.5 w-3.5 text-gray-500" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Um médico da porta registrou um novo paciente que está{" "}
+                  <span className="font-semibold text-foreground">aguardando alocação</span> na seção{" "}
+                  <span className="font-semibold text-foreground">"Fora das Alas"</span>.
+                </p>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <Bed className="h-3.5 w-3.5 text-amber-500" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Para revisar e aprovar, acesse{" "}
+                  <span className="font-semibold text-amber-500">"Solicitações de Alocação"</span>{" "}
+                  no cabeçalho (ícone de leito).
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <Button 
+              onClick={() => setShowPopup(false)} 
+              className="w-full h-11"
+            >
+              Entendido
             </Button>
           </div>
         </DialogContent>
