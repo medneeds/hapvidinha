@@ -150,8 +150,22 @@ export function useBedAllocationRequests() {
     if (!user?.id) return false;
 
     try {
-      const request = requests.find(r => r.id === requestId);
-      if (!request) throw new Error("Solicitação não encontrada");
+      // First try to find in local state, otherwise fetch from database
+      let request = requests.find(r => r.id === requestId);
+      
+      if (!request) {
+        // Fetch from database if not in local state
+        const { data, error } = await supabase
+          .from("bed_allocation_requests")
+          .select("*")
+          .eq("id", requestId)
+          .single();
+        
+        if (error || !data) {
+          throw new Error("Solicitação não encontrada");
+        }
+        request = data as unknown as BedAllocationRequest;
+      }
 
       // Update request status
       const { error: updateError } = await supabase
@@ -165,13 +179,20 @@ export function useBedAllocationRequests() {
 
       if (updateError) throw updateError;
 
-      // Move patient to official sector
+      // Move patient to official sector - map sector name to db sector value
+      const sectorMap: Record<string, string> = {
+        "Cuidados Especiais": "red",
+        "Observação Amarela": "yellow",
+        "Observação Azul": "blue",
+      };
+      const dbSector = sectorMap[request.requested_sector] || request.requested_sector;
+
       const { error: patientError } = await supabase
         .from("patients")
         .update({
           is_door_patient: false,
           allocation_status: "approved",
-          sector: request.requested_sector,
+          sector: dbSector,
         })
         .eq("id", request.patient_id);
 
