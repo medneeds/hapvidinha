@@ -128,11 +128,11 @@ export function BedAllocationNotifications() {
         </DialogContent>
       </Dialog>
 
-      {/* Bell icon with counter */}
+      {/* Bed allocation icon with counter */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className="relative" title="Solicitações de Alocação">
+            <Bed className="h-5 w-5" />
             {pendingCount > 0 && (
               <Badge 
                 className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-amber-500 text-white text-xs animate-pulse"
