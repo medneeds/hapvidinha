@@ -974,7 +974,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      setup_bigdoor_user: { Args: never; Returns: undefined }
+      setup_medicoporta_user: { Args: never; Returns: undefined }
       setup_visitante_user: { Args: never; Returns: undefined }
     }
     Enums: {
