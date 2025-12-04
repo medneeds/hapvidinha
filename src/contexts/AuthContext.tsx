@@ -122,7 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signUp = async (username: string, password: string, fullName: string, role: "admin" | "medico" = "medico") => {
+  const signUp = async (username: string, password: string, fullName: string, role: "admin" | "medico" | "porta" | "visitante" = "medico") => {
     const redirectUrl = `${window.location.origin}/`;
     const internalEmail = `${username.toLowerCase()}@sistema.local`;
     
