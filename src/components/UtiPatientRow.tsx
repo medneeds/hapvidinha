@@ -463,30 +463,32 @@ export function UtiPatientRow({
           </div>
 
           {/* Single Horizontal Scroll Container per Patient */}
-          <div className="flex-1 overflow-x-auto scrollbar-thin p-2">
-            <div className="flex flex-col gap-1.5" style={{ width: "max-content", minWidth: "100%" }}>
-              {/* Line 1 */}
-              <div className="flex gap-1.5">
-                {line1Fields.map((field) => (
-                  <FieldCell 
-                    key={field.key} 
-                    field={field} 
-                    patient={patient}
-                    onUpdateField={handleUpdateField}
-                  />
-                ))}
-              </div>
-              
-              {/* Line 2 */}
-              <div className="flex gap-1.5">
-                {line2Fields.map((field) => (
-                  <FieldCell 
-                    key={field.key} 
-                    field={field} 
-                    patient={patient}
-                    onUpdateField={handleUpdateField}
-                  />
-                ))}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-x-auto scrollbar-thin-bottom p-2 pb-3">
+              <div className="flex flex-col gap-1.5" style={{ width: "max-content", minWidth: "100%" }}>
+                {/* Line 1 */}
+                <div className="flex gap-1.5">
+                  {line1Fields.map((field) => (
+                    <FieldCell 
+                      key={field.key} 
+                      field={field} 
+                      patient={patient}
+                      onUpdateField={handleUpdateField}
+                    />
+                  ))}
+                </div>
+                
+                {/* Line 2 */}
+                <div className="flex gap-1.5">
+                  {line2Fields.map((field) => (
+                    <FieldCell 
+                      key={field.key} 
+                      field={field} 
+                      patient={patient}
+                      onUpdateField={handleUpdateField}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
