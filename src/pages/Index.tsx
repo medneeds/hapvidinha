@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { SectorSection } from "@/components/SectorSection";
+import { UtiSectorSection } from "@/components/UtiSectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
@@ -1066,7 +1067,7 @@ const Index = () => {
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
               {currentDepartment === "UTI" ? (
                 <div>
-                  <SectorSection 
+                  <UtiSectorSection 
                     sector="blue" 
                     patients={patients.map(p => ({ ...p, sector: 'blue' as const }))}
                     onUpdatePatient={handleUpdatePatient}
