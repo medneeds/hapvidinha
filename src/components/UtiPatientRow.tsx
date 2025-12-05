@@ -49,14 +49,17 @@ const fields: FieldConfig[] = [
 const getFieldValue = (patient: Patient, key: keyof Patient): string => {
   const value = patient[key];
   if (Array.isArray(value)) {
-    return value.length > 0 ? value.join("; ") : "";
+    return value.filter(v => typeof v === 'string').join("; ");
   }
   return (value as string) || "";
 };
 
-const getDisplayValue = (patient: Patient, key: keyof Patient): string => {
-  const value = getFieldValue(patient, key);
-  return value || "-";
+const getFieldArray = (patient: Patient, key: keyof Patient): string[] => {
+  const value = patient[key];
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === 'string');
+  }
+  return value ? [value as string] : [];
 };
 
 interface FieldCellProps {
@@ -80,7 +83,9 @@ function FieldCell({
   onSave,
   onCancel 
 }: FieldCellProps) {
-  const displayValue = getDisplayValue(patient, field.key);
+  const items = field.isArray ? getFieldArray(patient, field.key) : [];
+  const singleValue = !field.isArray ? getFieldValue(patient, field.key) : "";
+  const hasContent = field.isArray ? items.length > 0 : !!singleValue;
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -158,11 +163,24 @@ function FieldCell({
         </div>
       ) : (
         <div className={cn(
-          "text-sm text-foreground/90 whitespace-pre-wrap break-words",
+          "text-sm text-foreground/90",
           field.key === "bedNumber" && "text-base font-bold text-primary",
           field.key === "name" && "font-semibold"
         )}>
-          {displayValue}
+          {!hasContent ? (
+            <span className="text-muted-foreground/50">-</span>
+          ) : field.isArray && items.length > 0 ? (
+            <ul className="space-y-0.5 list-none">
+              {items.map((item, idx) => (
+                <li key={idx} className="flex items-start gap-1.5">
+                  <span className="text-primary/70 font-medium text-xs min-w-[16px]">{idx + 1}.</span>
+                  <span className="break-words">{item}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <span>{singleValue}</span>
+          )}
         </div>
       )}
     </div>
