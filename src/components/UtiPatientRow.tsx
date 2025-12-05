@@ -462,11 +462,11 @@ export function UtiPatientRow({
             </DropdownMenu>
           </div>
 
-          {/* Two-line Scrollable Fields Container */}
-          <div className="flex-1 flex flex-col gap-1.5 p-2 overflow-hidden">
-            {/* Line 1 */}
-            <div className="overflow-x-auto scrollbar-thin pb-1">
-              <div className="flex gap-1.5" style={{ width: "max-content" }}>
+          {/* Single Horizontal Scroll Container per Patient */}
+          <div className="flex-1 overflow-x-auto scrollbar-thin p-2">
+            <div className="flex flex-col gap-1.5" style={{ width: "max-content", minWidth: "100%" }}>
+              {/* Line 1 */}
+              <div className="flex gap-1.5">
                 {line1Fields.map((field) => (
                   <FieldCell 
                     key={field.key} 
@@ -476,11 +476,9 @@ export function UtiPatientRow({
                   />
                 ))}
               </div>
-            </div>
-            
-            {/* Line 2 */}
-            <div className="overflow-x-auto scrollbar-thin pb-1">
-              <div className="flex gap-1.5" style={{ width: "max-content" }}>
+              
+              {/* Line 2 */}
+              <div className="flex gap-1.5">
                 {line2Fields.map((field) => (
                   <FieldCell 
                     key={field.key} 
