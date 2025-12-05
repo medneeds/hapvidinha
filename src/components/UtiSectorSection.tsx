@@ -1,11 +1,10 @@
 import { Patient, SectorType } from "@/types/patient";
-import { PatientCard } from "./PatientCard";
-import { Printer, Plus, ChevronDown, GripVertical, ChevronLeft, ChevronRight } from "lucide-react";
+import { UtiPatientRow } from "./UtiPatientRow";
+import { Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState, useEffect, useRef } from "react";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useState, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -20,7 +19,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
-  horizontalListSortingStrategy,
+  verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -66,20 +65,18 @@ const sectorInfo = {
   }
 };
 
-interface SortableUtiPatientCardProps {
+interface SortableUtiRowProps {
   patient: Patient;
   onUpdate: (patient: Patient) => void;
   onDelete?: (patientId: string) => void;
-  onUndelete?: (patient: Patient) => void;
+  onPrintPatient?: (patientId: string) => void;
+  onRefetch?: () => void;
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
-  onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
-  onPrintPatient?: (patientId: string) => void;
-  onRefetch?: () => void;
 }
 
-function SortableUtiPatientCard(props: SortableUtiPatientCardProps) {
+function SortableUtiRow(props: SortableUtiRowProps) {
   const {
     attributes,
     listeners,
@@ -99,18 +96,31 @@ function SortableUtiPatientCard(props: SortableUtiPatientCardProps) {
     <div 
       ref={setNodeRef} 
       style={style} 
-      className="flex flex-col items-center gap-1 min-w-[320px] max-w-[380px] flex-shrink-0"
+      className="flex items-center gap-2"
       data-patient-id={props.patient.id}
     >
+      {props.selectionMode && (
+        <Checkbox
+          checked={props.isSelected}
+          onCheckedChange={() => props.onToggleSelection?.(props.patient.id)}
+          className="flex-shrink-0"
+        />
+      )}
       <button
-        className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden self-center"
+        className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden"
         {...attributes}
         {...listeners}
       >
-        <GripVertical className="h-4 w-4 text-muted-foreground rotate-90" />
+        <GripVertical className="h-4 w-4 text-muted-foreground" />
       </button>
-      <div className="w-full">
-        <PatientCard {...props} />
+      <div className="flex-1">
+        <UtiPatientRow
+          patient={props.patient}
+          onUpdate={props.onUpdate}
+          onDelete={props.onDelete}
+          onPrintPatient={props.onPrintPatient}
+          onRefetch={props.onRefetch}
+        />
       </div>
     </div>
   );
@@ -140,7 +150,6 @@ export function UtiSectorSection({
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     if (controlledIsOpen === undefined) {
@@ -189,18 +198,6 @@ export function UtiSectorSection({
       
       const reorderedPatients = arrayMove(displayPatients, oldIndex, newIndex);
       onReorderPatients(reorderedPatients);
-    }
-  };
-
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -350, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 350, behavior: 'smooth' });
     }
   };
 
@@ -262,81 +259,42 @@ export function UtiSectorSection({
         </div>
       </div>
 
-      <CollapsibleContent className="space-y-1.5 print:space-y-0.5">
+      <CollapsibleContent className="space-y-2 print:space-y-0.5">
+        {/* Field Labels Header */}
+        <div className="hidden md:flex items-center gap-2 px-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+          <div className="w-[72px]"></div> {/* Space for actions + drag handle */}
+          <div className="flex-1 text-center">← Arraste para ver todos os campos →</div>
+        </div>
+
         {displayPatients.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
             <p>Nenhum paciente neste setor</p>
           </div>
         ) : (
-          <div className="relative">
-            {/* Navigation Arrows */}
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={scrollLeft}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/90 backdrop-blur-sm shadow-lg border-2 hover:bg-accent print:hidden"
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={displayPatients.map(p => p.id)}
+              strategy={verticalListSortingStrategy}
             >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={scrollRight}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/90 backdrop-blur-sm shadow-lg border-2 hover:bg-accent print:hidden"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-
-            {/* Horizontal Scroll Container */}
-            <div 
-              ref={scrollContainerRef}
-              className="overflow-x-auto overflow-y-hidden px-12 py-2 scroll-smooth"
-              style={{ 
-                scrollbarWidth: 'thin',
-                scrollbarColor: 'hsl(var(--muted-foreground)) transparent'
-              }}
-            >
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={displayPatients.map(p => p.id)}
-                  strategy={horizontalListSortingStrategy}
-                >
-                  <div className="flex gap-4 pb-2">
-                    {displayPatients.map((patient) => (
-                      <SortableUtiPatientCard
-                        key={patient.id}
-                        patient={patient}
-                        onUpdate={onUpdatePatient}
-                        onDelete={onDeletePatient}
-                        onUndelete={onUndeletePatient}
-                        selectionMode={selectionMode}
-                        isSelected={selectedPatients.has(patient.id)}
-                        onToggleSelection={onToggleSelection}
-                        onTransfer={onTransfer}
-                        onPrintPatient={onPrintPatient}
-                        onRefetch={onRefetch}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            </div>
-
-            {/* Scroll Indicators */}
-            <div className="flex justify-center gap-1 mt-2 print:hidden">
-              {displayPatients.map((_, index) => (
-                <div 
-                  key={index}
-                  className="w-2 h-2 rounded-full bg-muted-foreground/30"
+              {displayPatients.map((patient) => (
+                <SortableUtiRow
+                  key={patient.id}
+                  patient={patient}
+                  onUpdate={onUpdatePatient}
+                  onDelete={onDeletePatient}
+                  onPrintPatient={onPrintPatient}
+                  onRefetch={onRefetch}
+                  selectionMode={selectionMode}
+                  isSelected={selectedPatients.has(patient.id)}
+                  onToggleSelection={onToggleSelection}
                 />
               ))}
-            </div>
-          </div>
+            </SortableContext>
+          </DndContext>
         )}
       </CollapsibleContent>
     </Collapsible>
