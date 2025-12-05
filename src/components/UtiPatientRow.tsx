@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, MoreVertical, Check, X } from "lucide-react";
+import { Edit, MoreVertical, Check, X, Plus, GripVertical, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import {
@@ -10,6 +10,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface UtiPatientRowProps {
   patient: Patient;
@@ -28,7 +45,6 @@ interface FieldConfig {
 }
 
 const fields: FieldConfig[] = [
-  // Line 1
   { key: "bedNumber", label: "Leito", isArray: false, line: 1, minWidth: "70px" },
   { key: "name", label: "Paciente", isArray: false, line: 1, minWidth: "160px" },
   { key: "utiOriginSector", label: "Setor de Origem", isArray: true, line: 1, minWidth: "120px" },
@@ -36,7 +52,6 @@ const fields: FieldConfig[] = [
   { key: "utiDischargePrediction", label: "Previsão de Alta", isArray: true, line: 1, minWidth: "110px" },
   { key: "utiAllergies", label: "Alergias", isArray: true, line: 1, minWidth: "120px" },
   { key: "utiAdmissionReason", label: "Motivo Admissão", isArray: true, line: 1, minWidth: "150px" },
-  // Line 2
   { key: "diagnoses", label: "Hipóteses / Diagnósticos", isArray: true, line: 2, minWidth: "180px" },
   { key: "utiCurrentStatus", label: "Quadro Atual", isArray: true, line: 2, minWidth: "150px" },
   { key: "utiSpecialties", label: "Especialidades", isArray: true, line: 2, minWidth: "130px" },
@@ -62,127 +77,328 @@ const getFieldArray = (patient: Patient, key: keyof Patient): string[] => {
   return value ? [value as string] : [];
 };
 
-interface FieldCellProps {
-  field: FieldConfig;
-  patient: Patient;
+// Sortable Item Component
+interface SortableItemProps {
+  id: string;
+  index: number;
+  value: string;
+  onEdit: (newValue: string) => void;
+  onDelete: () => void;
   isEditing: boolean;
-  editValue: string;
-  onEditChange: (value: string) => void;
   onStartEdit: () => void;
-  onSave: () => void;
-  onCancel: () => void;
+  onStopEdit: () => void;
 }
 
-function FieldCell({ 
-  field, 
-  patient, 
-  isEditing, 
-  editValue, 
-  onEditChange,
-  onStartEdit,
-  onSave,
-  onCancel 
-}: FieldCellProps) {
-  const items = field.isArray ? getFieldArray(patient, field.key) : [];
-  const singleValue = !field.isArray ? getFieldValue(patient, field.key) : "";
-  const hasContent = field.isArray ? items.length > 0 : !!singleValue;
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+function SortableItem({ id, index, value, onEdit, onDelete, isEditing, onStartEdit, onStopEdit }: SortableItemProps) {
+  const [localValue, setLocalValue] = useState(value);
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
-      inputRef.current.select();
     }
   }, [isEditing]);
 
-  const isSpecialField = field.key === "bedNumber" || field.key === "name";
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const handleSave = () => {
+    onEdit(localValue);
+    onStopEdit();
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={cn(
+        "flex items-center gap-1 group py-0.5",
+        isDragging && "z-50"
+      )}
+    >
+      <button
+        className="cursor-grab active:cursor-grabbing p-0.5 opacity-40 hover:opacity-100 transition-opacity"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-3 w-3 text-muted-foreground" />
+      </button>
+      <span className="text-primary/70 font-medium text-xs min-w-[16px]">{index + 1}.</span>
+      
+      {isEditing ? (
+        <div className="flex-1 flex items-center gap-1">
+          <input
+            ref={inputRef}
+            type="text"
+            value={localValue}
+            onChange={(e) => setLocalValue(e.target.value)}
+            className="flex-1 text-sm bg-white dark:bg-slate-800 border border-primary/30 rounded px-1.5 py-0.5 outline-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSave();
+              if (e.key === 'Escape') onStopEdit();
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <Button size="icon" variant="ghost" className="h-5 w-5" onClick={handleSave}>
+            <Check className="h-3 w-3 text-green-600" />
+          </Button>
+          <Button size="icon" variant="ghost" className="h-5 w-5" onClick={onStopEdit}>
+            <X className="h-3 w-3 text-red-500" />
+          </Button>
+        </div>
+      ) : (
+        <>
+          <span 
+            className="flex-1 text-sm break-words cursor-pointer hover:text-primary transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onStartEdit();
+            }}
+          >
+            {value}
+          </span>
+          <Button 
+            size="icon" 
+            variant="ghost" 
+            className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+          >
+            <Trash2 className="h-3 w-3 text-destructive" />
+          </Button>
+        </>
+      )}
+    </div>
+  );
+}
+
+interface FieldCellProps {
+  field: FieldConfig;
+  patient: Patient;
+  onUpdateField: (key: keyof Patient, value: string | string[]) => void;
+}
+
+function FieldCell({ field, patient, onUpdateField }: FieldCellProps) {
+  const items = field.isArray ? getFieldArray(patient, field.key) : [];
+  const singleValue = !field.isArray ? getFieldValue(patient, field.key) : "";
+  const hasContent = field.isArray ? items.length > 0 : !!singleValue;
   
+  const [isEditingSingle, setIsEditingSingle] = useState(false);
+  const [singleEditValue, setSingleEditValue] = useState(singleValue);
+  const [editingItemIndex, setEditingItemIndex] = useState<number | null>(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [newItemValue, setNewItemValue] = useState("");
+  const newInputRef = useRef<HTMLInputElement>(null);
+  const singleInputRef = useRef<HTMLInputElement>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  useEffect(() => {
+    if (isAddingNew && newInputRef.current) {
+      newInputRef.current.focus();
+    }
+  }, [isAddingNew]);
+
+  useEffect(() => {
+    if (isEditingSingle && singleInputRef.current) {
+      singleInputRef.current.focus();
+    }
+  }, [isEditingSingle]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = items.findIndex((_, i) => `item-${i}` === active.id);
+      const newIndex = items.findIndex((_, i) => `item-${i}` === over.id);
+      const newItems = arrayMove(items, oldIndex, newIndex);
+      onUpdateField(field.key, newItems);
+    }
+  };
+
+  const handleAddItem = () => {
+    if (newItemValue.trim()) {
+      onUpdateField(field.key, [...items, newItemValue.trim()]);
+      setNewItemValue("");
+      setIsAddingNew(false);
+    }
+  };
+
+  const handleEditItem = (index: number, newValue: string) => {
+    const newItems = [...items];
+    newItems[index] = newValue;
+    onUpdateField(field.key, newItems);
+  };
+
+  const handleDeleteItem = (index: number) => {
+    const newItems = items.filter((_, i) => i !== index);
+    onUpdateField(field.key, newItems);
+  };
+
+  const handleSaveSingle = () => {
+    onUpdateField(field.key, singleEditValue);
+    setIsEditingSingle(false);
+  };
+
+  const isSpecialField = field.key === "bedNumber" || field.key === "name";
+
   return (
     <div 
       className={cn(
         "flex flex-col py-2 px-3 rounded-md border transition-all duration-200 flex-shrink-0",
         "bg-slate-50/50 dark:bg-slate-800/30 border-slate-200/60 dark:border-slate-700/40",
-        "hover:bg-slate-100/70 dark:hover:bg-slate-700/40 cursor-pointer",
         field.key === "bedNumber" && "bg-primary/5 dark:bg-primary/10 border-primary/20",
         field.key === "name" && "bg-slate-100/50 dark:bg-slate-700/30",
-        isEditing && "ring-2 ring-primary/40 bg-white dark:bg-slate-800 shadow-md"
       )}
-      style={{ minWidth: field.minWidth, maxWidth: isEditing ? "400px" : "300px" }}
-      onClick={() => !isEditing && onStartEdit()}
+      style={{ minWidth: field.minWidth, maxWidth: "350px" }}
     >
-      <span className="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wider mb-1">
-        {field.label}
-      </span>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wider">
+          {field.label}
+        </span>
+        {field.isArray && (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-5 w-5 text-primary/60 hover:text-primary"
+            onClick={() => setIsAddingNew(true)}
+            title="Adicionar item"
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </Button>
+        )}
+      </div>
       
-      {isEditing ? (
-        <div className="flex flex-col gap-2">
-          <textarea
-            ref={inputRef}
-            value={editValue}
-            onChange={(e) => onEditChange(e.target.value)}
-            className="text-sm bg-transparent border border-border/50 rounded px-2 py-1 outline-none resize-none min-h-[60px] text-foreground focus:border-primary/50"
-            rows={3}
-            placeholder={field.isArray ? "Separe itens com ; (ponto e vírgula)" : "Digite o valor..."}
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                onSave();
-              }
-              if (e.key === 'Escape') {
-                onCancel();
-              }
-            }}
-          />
-          <div className="flex gap-1 justify-end">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-6 px-2 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSave();
-              }}
-            >
-              <Check className="h-3.5 w-3.5 mr-1" />
-              Salvar
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-6 px-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-              onClick={(e) => {
-                e.stopPropagation();
-                onCancel();
-              }}
-            >
-              <X className="h-3.5 w-3.5 mr-1" />
-              Cancelar
-            </Button>
+      <div className={cn(
+        "text-sm text-foreground/90",
+        field.key === "bedNumber" && "text-base font-bold text-primary",
+        field.key === "name" && "font-semibold"
+      )}>
+        {field.isArray ? (
+          <div className="space-y-0.5">
+            {items.length > 0 ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={items.map((_, i) => `item-${i}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {items.map((item, idx) => (
+                    <SortableItem
+                      key={`item-${idx}`}
+                      id={`item-${idx}`}
+                      index={idx}
+                      value={item}
+                      onEdit={(newValue) => handleEditItem(idx, newValue)}
+                      onDelete={() => handleDeleteItem(idx)}
+                      isEditing={editingItemIndex === idx}
+                      onStartEdit={() => setEditingItemIndex(idx)}
+                      onStopEdit={() => setEditingItemIndex(null)}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            ) : !isAddingNew ? (
+              <span 
+                className="text-muted-foreground/50 cursor-pointer hover:text-muted-foreground"
+                onClick={() => setIsAddingNew(true)}
+              >
+                Clique para adicionar
+              </span>
+            ) : null}
+            
+            {isAddingNew && (
+              <div className="flex items-center gap-1 mt-1">
+                <input
+                  ref={newInputRef}
+                  type="text"
+                  value={newItemValue}
+                  onChange={(e) => setNewItemValue(e.target.value)}
+                  placeholder="Novo item..."
+                  className="flex-1 text-sm bg-white dark:bg-slate-800 border border-primary/30 rounded px-2 py-1 outline-none"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleAddItem();
+                    if (e.key === 'Escape') {
+                      setIsAddingNew(false);
+                      setNewItemValue("");
+                    }
+                  }}
+                />
+                <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleAddItem}>
+                  <Check className="h-3.5 w-3.5 text-green-600" />
+                </Button>
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  className="h-6 w-6" 
+                  onClick={() => {
+                    setIsAddingNew(false);
+                    setNewItemValue("");
+                  }}
+                >
+                  <X className="h-3.5 w-3.5 text-red-500" />
+                </Button>
+              </div>
+            )}
           </div>
-        </div>
-      ) : (
-        <div className={cn(
-          "text-sm text-foreground/90",
-          field.key === "bedNumber" && "text-base font-bold text-primary",
-          field.key === "name" && "font-semibold"
-        )}>
-          {!hasContent ? (
-            <span className="text-muted-foreground/50">-</span>
-          ) : field.isArray && items.length > 0 ? (
-            <ul className="space-y-0.5 list-none">
-              {items.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-1.5">
-                  <span className="text-primary/70 font-medium text-xs min-w-[16px]">{idx + 1}.</span>
-                  <span className="break-words">{item}</span>
-                </li>
-              ))}
-            </ul>
+        ) : (
+          // Single value field
+          isEditingSingle ? (
+            <div className="flex items-center gap-1">
+              <input
+                ref={singleInputRef}
+                type="text"
+                value={singleEditValue}
+                onChange={(e) => setSingleEditValue(e.target.value)}
+                className="flex-1 text-sm bg-white dark:bg-slate-800 border border-primary/30 rounded px-2 py-1 outline-none"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSaveSingle();
+                  if (e.key === 'Escape') setIsEditingSingle(false);
+                }}
+              />
+              <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleSaveSingle}>
+                <Check className="h-3.5 w-3.5 text-green-600" />
+              </Button>
+              <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setIsEditingSingle(false)}>
+                <X className="h-3.5 w-3.5 text-red-500" />
+              </Button>
+            </div>
           ) : (
-            <span>{singleValue}</span>
-          )}
-        </div>
-      )}
+            <span 
+              className="cursor-pointer hover:text-primary transition-colors"
+              onClick={() => {
+                setSingleEditValue(singleValue);
+                setIsEditingSingle(true);
+              }}
+            >
+              {hasContent ? singleValue : <span className="text-muted-foreground/50">-</span>}
+            </span>
+          )
+        )}
+      </div>
     </div>
   );
 }
@@ -195,48 +411,16 @@ export function UtiPatientRow({
   onRefetch 
 }: UtiPatientRowProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingField, setEditingField] = useState<keyof Patient | null>(null);
-  const [editValue, setEditValue] = useState("");
 
   const line1Fields = fields.filter(f => f.line === 1);
   const line2Fields = fields.filter(f => f.line === 2);
 
-  const handleStartEdit = (field: FieldConfig) => {
-    const currentValue = getFieldValue(patient, field.key);
-    setEditingField(field.key);
-    setEditValue(currentValue);
-  };
-
-  const handleSave = () => {
-    if (editingField) {
-      const field = fields.find(f => f.key === editingField);
-      if (field) {
-        let newValue: string | string[];
-        
-        if (field.isArray) {
-          newValue = editValue
-            .split(";")
-            .map(item => item.trim())
-            .filter(item => item.length > 0);
-        } else {
-          newValue = editValue;
-        }
-        
-        const updatedPatient = {
-          ...patient,
-          [editingField]: newValue
-        };
-        
-        onUpdate(updatedPatient);
-      }
-      setEditingField(null);
-      setEditValue("");
-    }
-  };
-
-  const handleCancel = () => {
-    setEditingField(null);
-    setEditValue("");
+  const handleUpdateField = (key: keyof Patient, value: string | string[]) => {
+    const updatedPatient = {
+      ...patient,
+      [key]: value
+    };
+    onUpdate(updatedPatient);
   };
 
   return (
@@ -280,39 +464,29 @@ export function UtiPatientRow({
 
           {/* Two-line Scrollable Fields Container */}
           <div className="flex-1 flex flex-col gap-1.5 p-2 overflow-hidden">
-            {/* Line 1 - Horizontal scroll */}
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent pb-1">
+            {/* Line 1 */}
+            <div className="overflow-x-auto scrollbar-thin pb-1">
               <div className="flex gap-1.5" style={{ width: "max-content" }}>
                 {line1Fields.map((field) => (
                   <FieldCell 
                     key={field.key} 
                     field={field} 
                     patient={patient}
-                    isEditing={editingField === field.key}
-                    editValue={editValue}
-                    onEditChange={setEditValue}
-                    onStartEdit={() => handleStartEdit(field)}
-                    onSave={handleSave}
-                    onCancel={handleCancel}
+                    onUpdateField={handleUpdateField}
                   />
                 ))}
               </div>
             </div>
             
-            {/* Line 2 - Horizontal scroll */}
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent pb-1">
+            {/* Line 2 */}
+            <div className="overflow-x-auto scrollbar-thin pb-1">
               <div className="flex gap-1.5" style={{ width: "max-content" }}>
                 {line2Fields.map((field) => (
                   <FieldCell 
                     key={field.key} 
                     field={field} 
                     patient={patient}
-                    isEditing={editingField === field.key}
-                    editValue={editValue}
-                    onEditChange={setEditValue}
-                    onStartEdit={() => handleStartEdit(field)}
-                    onSave={handleSave}
-                    onCancel={handleCancel}
+                    onUpdateField={handleUpdateField}
                   />
                 ))}
               </div>
