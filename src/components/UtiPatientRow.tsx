@@ -462,33 +462,36 @@ export function UtiPatientRow({
             </DropdownMenu>
           </div>
 
-          {/* Single Horizontal Scroll Container per Patient */}
-          <div className="flex-1 min-w-0">
-            <div className="scrollbar-thin-bottom p-2 pb-4">
-              <div className="flex flex-col gap-1.5" style={{ width: "max-content", minWidth: "100%" }}>
-                {/* Line 1 */}
-                <div className="flex gap-1.5">
-                  {line1Fields.map((field) => (
-                    <FieldCell 
-                      key={field.key} 
-                      field={field} 
-                      patient={patient}
-                      onUpdateField={handleUpdateField}
-                    />
-                  ))}
-                </div>
-                
-                {/* Line 2 */}
-                <div className="flex gap-1.5">
-                  {line2Fields.map((field) => (
-                    <FieldCell 
-                      key={field.key} 
-                      field={field} 
-                      patient={patient}
-                      onUpdateField={handleUpdateField}
-                    />
-                  ))}
-                </div>
+          {/* Scrollable Content Area */}
+          <div className="flex-1 min-w-0 flex flex-col">
+            {/* Line 1 - Top Section */}
+            <div className="overflow-x-auto scrollbar-thin-bottom p-2">
+              <div className="flex gap-1.5" style={{ width: "max-content", minWidth: "100%" }}>
+                {line1Fields.map((field) => (
+                  <FieldCell 
+                    key={field.key} 
+                    field={field} 
+                    patient={patient}
+                    onUpdateField={handleUpdateField}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            {/* Separator with strategic scrollbar position */}
+            <div className="h-px bg-border/30 mx-2" />
+            
+            {/* Line 2 - Bottom Section */}
+            <div className="overflow-x-auto scrollbar-thin-bottom p-2">
+              <div className="flex gap-1.5" style={{ width: "max-content", minWidth: "100%" }}>
+                {line2Fields.map((field) => (
+                  <FieldCell 
+                    key={field.key} 
+                    field={field} 
+                    patient={patient}
+                    onUpdateField={handleUpdateField}
+                  />
+                ))}
               </div>
             </div>
           </div>
