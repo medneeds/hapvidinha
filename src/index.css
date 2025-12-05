@@ -160,6 +160,45 @@
   background: hsl(var(--muted-foreground) / 0.6);
 }
 
+/* Bottom scrollbar - visible at card bottom */
+.scrollbar-thin-bottom {
+  scrollbar-width: thin;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.scrollbar-thin-bottom::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scrollbar-thin-bottom::-webkit-scrollbar-track {
+  background: hsl(var(--muted) / 0.5);
+  border-radius: 4px;
+  margin: 0 8px;
+}
+
+.scrollbar-thin-bottom::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.4);
+  border-radius: 4px;
+  border: 1px solid hsl(var(--border) / 0.3);
+}
+
+.scrollbar-thin-bottom::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.6);
+}
+
+.dark .scrollbar-thin-bottom::-webkit-scrollbar-track {
+  background: hsl(var(--muted) / 0.3);
+}
+
+.dark .scrollbar-thin-bottom::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+}
+
+.dark .scrollbar-thin-bottom::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
+}
+
 @media print {
   @page {
     size: A4 landscape;
