@@ -160,55 +160,36 @@
   background: hsl(var(--muted-foreground) / 0.6);
 }
 
-/* Bottom scrollbar - overlay style with high visibility */
+/* Bottom scrollbar - elegant and discreet */
 .scrollbar-thin-bottom {
-  scrollbar-width: auto;
-  overflow-x: scroll !important;
+  scrollbar-width: thin;
+  overflow-x: auto;
   overflow-y: hidden;
-  position: relative;
 }
 
 .scrollbar-thin-bottom::-webkit-scrollbar {
-  height: 14px;
-  display: block !important;
-  position: absolute;
-  bottom: 0;
-  z-index: 50;
+  height: 6px;
 }
 
 .scrollbar-thin-bottom::-webkit-scrollbar-track {
-  background: linear-gradient(90deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.25), hsl(var(--primary) / 0.15));
-  border-radius: 7px;
-  border: 2px solid hsl(var(--primary) / 0.3);
-  box-shadow: inset 0 0 6px hsl(var(--primary) / 0.2);
+  background: transparent;
 }
 
 .scrollbar-thin-bottom::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
-  border-radius: 7px;
-  min-width: 60px;
-  border: 2px solid hsl(var(--primary-foreground) / 0.3);
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.5), inset 0 1px 0 hsl(var(--primary-foreground) / 0.2);
+  background: hsl(var(--muted-foreground) / 0.25);
+  border-radius: 3px;
 }
 
 .scrollbar-thin-bottom::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.9));
-  box-shadow: 0 2px 12px hsl(var(--primary) / 0.7), inset 0 1px 0 hsl(var(--primary-foreground) / 0.3);
-}
-
-.dark .scrollbar-thin-bottom::-webkit-scrollbar-track {
-  background: linear-gradient(90deg, hsl(var(--primary) / 0.2), hsl(var(--primary) / 0.35), hsl(var(--primary) / 0.2));
-  border-color: hsl(var(--primary) / 0.4);
+  background: hsl(var(--muted-foreground) / 0.4);
 }
 
 .dark .scrollbar-thin-bottom::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.85));
-  box-shadow: 0 2px 10px hsl(var(--primary) / 0.6), inset 0 1px 0 hsl(var(--primary-foreground) / 0.25);
+  background: hsl(var(--muted-foreground) / 0.3);
 }
 
 .dark .scrollbar-thin-bottom::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary)));
-  box-shadow: 0 2px 14px hsl(var(--primary) / 0.8);
+  background: hsl(var(--muted-foreground) / 0.5);
 }
 
 @media print {
