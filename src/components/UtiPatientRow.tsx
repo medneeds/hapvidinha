@@ -24,25 +24,26 @@ interface FieldConfig {
   label: string;
   isArray: boolean;
   line: 1 | 2;
+  minWidth: string;
 }
 
 const fields: FieldConfig[] = [
   // Line 1
-  { key: "bedNumber", label: "Leito", isArray: false, line: 1 },
-  { key: "name", label: "Paciente", isArray: false, line: 1 },
-  { key: "utiOriginSector", label: "Setor de Origem", isArray: true, line: 1 },
-  { key: "utiAdmissionDate", label: "Admissão UTI", isArray: true, line: 1 },
-  { key: "utiDischargePrediction", label: "Previsão de Alta", isArray: true, line: 1 },
-  { key: "utiAllergies", label: "Alergias", isArray: true, line: 1 },
-  { key: "utiAdmissionReason", label: "Motivo Admissão", isArray: true, line: 1 },
+  { key: "bedNumber", label: "Leito", isArray: false, line: 1, minWidth: "70px" },
+  { key: "name", label: "Paciente", isArray: false, line: 1, minWidth: "160px" },
+  { key: "utiOriginSector", label: "Setor de Origem", isArray: true, line: 1, minWidth: "120px" },
+  { key: "utiAdmissionDate", label: "Admissão UTI", isArray: true, line: 1, minWidth: "110px" },
+  { key: "utiDischargePrediction", label: "Previsão de Alta", isArray: true, line: 1, minWidth: "110px" },
+  { key: "utiAllergies", label: "Alergias", isArray: true, line: 1, minWidth: "120px" },
+  { key: "utiAdmissionReason", label: "Motivo Admissão", isArray: true, line: 1, minWidth: "150px" },
   // Line 2
-  { key: "diagnoses", label: "Hipóteses / Diagnósticos", isArray: true, line: 2 },
-  { key: "utiCurrentStatus", label: "Quadro Atual", isArray: true, line: 2 },
-  { key: "utiSpecialties", label: "Especialidades", isArray: true, line: 2 },
-  { key: "utiDevices", label: "Dispositivos", isArray: true, line: 2 },
-  { key: "relevantExams", label: "Exames", isArray: true, line: 2 },
-  { key: "utiCulturesAntibiotics", label: "Culturas / ATB", isArray: true, line: 2 },
-  { key: "pendencies", label: "Programações / Pendências", isArray: true, line: 2 },
+  { key: "diagnoses", label: "Hipóteses / Diagnósticos", isArray: true, line: 2, minWidth: "180px" },
+  { key: "utiCurrentStatus", label: "Quadro Atual", isArray: true, line: 2, minWidth: "150px" },
+  { key: "utiSpecialties", label: "Especialidades", isArray: true, line: 2, minWidth: "130px" },
+  { key: "utiDevices", label: "Dispositivos", isArray: true, line: 2, minWidth: "130px" },
+  { key: "relevantExams", label: "Exames", isArray: true, line: 2, minWidth: "150px" },
+  { key: "utiCulturesAntibiotics", label: "Culturas / ATB", isArray: true, line: 2, minWidth: "150px" },
+  { key: "pendencies", label: "Programações / Pendências", isArray: true, line: 2, minWidth: "180px" },
 ];
 
 const getFieldValue = (patient: Patient, key: keyof Patient): string => {
@@ -94,28 +95,30 @@ function FieldCell({
   return (
     <div 
       className={cn(
-        "flex flex-col py-2 px-3 rounded-md border transition-all duration-200",
+        "flex flex-col py-2 px-3 rounded-md border transition-all duration-200 flex-shrink-0",
         "bg-slate-50/50 dark:bg-slate-800/30 border-slate-200/60 dark:border-slate-700/40",
-        field.key === "bedNumber" && "flex-shrink-0 w-[70px] bg-primary/5 dark:bg-primary/10 border-primary/20",
-        field.key === "name" && "flex-[2] min-w-[150px] bg-slate-100/50 dark:bg-slate-700/30",
-        !isSpecialField && "flex-1 min-w-[100px]",
-        isEditing && "ring-2 ring-primary/30 bg-white dark:bg-slate-800"
+        "hover:bg-slate-100/70 dark:hover:bg-slate-700/40 cursor-pointer",
+        field.key === "bedNumber" && "bg-primary/5 dark:bg-primary/10 border-primary/20",
+        field.key === "name" && "bg-slate-100/50 dark:bg-slate-700/30",
+        isEditing && "ring-2 ring-primary/40 bg-white dark:bg-slate-800 shadow-md"
       )}
-      onDoubleClick={() => !isEditing && onStartEdit()}
+      style={{ minWidth: field.minWidth, maxWidth: isEditing ? "400px" : "300px" }}
+      onClick={() => !isEditing && onStartEdit()}
     >
-      <span className="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wider mb-0.5">
+      <span className="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-wider mb-1">
         {field.label}
       </span>
       
       {isEditing ? (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <textarea
             ref={inputRef}
             value={editValue}
             onChange={(e) => onEditChange(e.target.value)}
-            className="text-sm bg-transparent border-none outline-none resize-none min-h-[24px] text-foreground"
-            rows={2}
-            placeholder={field.isArray ? "Separe itens com ; (ponto e vírgula)" : ""}
+            className="text-sm bg-transparent border border-border/50 rounded px-2 py-1 outline-none resize-none min-h-[60px] text-foreground focus:border-primary/50"
+            rows={3}
+            placeholder={field.isArray ? "Separe itens com ; (ponto e vírgula)" : "Digite o valor..."}
+            onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -128,37 +131,39 @@ function FieldCell({
           />
           <div className="flex gap-1 justify-end">
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
-              className="h-5 w-5 text-green-600 hover:text-green-700 hover:bg-green-50"
+              className="h-6 px-2 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
               onClick={(e) => {
                 e.stopPropagation();
                 onSave();
               }}
             >
-              <Check className="h-3 w-3" />
+              <Check className="h-3.5 w-3.5 mr-1" />
+              Salvar
             </Button>
             <Button
-              size="icon"
+              size="sm"
               variant="ghost"
-              className="h-5 w-5 text-red-500 hover:text-red-600 hover:bg-red-50"
+              className="h-6 px-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
               onClick={(e) => {
                 e.stopPropagation();
                 onCancel();
               }}
             >
-              <X className="h-3 w-3" />
+              <X className="h-3.5 w-3.5 mr-1" />
+              Cancelar
             </Button>
           </div>
         </div>
       ) : (
-        <span className={cn(
-          "text-sm text-foreground/90 line-clamp-2 cursor-pointer hover:text-foreground transition-colors",
+        <div className={cn(
+          "text-sm text-foreground/90 whitespace-pre-wrap break-words",
           field.key === "bedNumber" && "text-base font-bold text-primary",
           field.key === "name" && "font-semibold"
         )}>
           {displayValue}
-        </span>
+        </div>
       )}
     </div>
   );
@@ -191,7 +196,6 @@ export function UtiPatientRow({
         let newValue: string | string[];
         
         if (field.isArray) {
-          // Convert string back to array, split by semicolon
           newValue = editValue
             .split(";")
             .map(item => item.trim())
@@ -228,7 +232,7 @@ export function UtiPatientRow({
               size="icon"
               onClick={() => setIsEditDialogOpen(true)}
               className="h-8 w-8 text-muted-foreground hover:text-primary"
-              title="Editar paciente"
+              title="Edição avançada"
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -256,40 +260,44 @@ export function UtiPatientRow({
             </DropdownMenu>
           </div>
 
-          {/* Two-line Fields Container */}
-          <div className="flex-1 flex flex-col gap-1.5 p-2">
-            {/* Line 1 */}
-            <div className="flex gap-1.5 flex-wrap">
-              {line1Fields.map((field) => (
-                <FieldCell 
-                  key={field.key} 
-                  field={field} 
-                  patient={patient}
-                  isEditing={editingField === field.key}
-                  editValue={editValue}
-                  onEditChange={setEditValue}
-                  onStartEdit={() => handleStartEdit(field)}
-                  onSave={handleSave}
-                  onCancel={handleCancel}
-                />
-              ))}
+          {/* Two-line Scrollable Fields Container */}
+          <div className="flex-1 flex flex-col gap-1.5 p-2 overflow-hidden">
+            {/* Line 1 - Horizontal scroll */}
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent pb-1">
+              <div className="flex gap-1.5" style={{ width: "max-content" }}>
+                {line1Fields.map((field) => (
+                  <FieldCell 
+                    key={field.key} 
+                    field={field} 
+                    patient={patient}
+                    isEditing={editingField === field.key}
+                    editValue={editValue}
+                    onEditChange={setEditValue}
+                    onStartEdit={() => handleStartEdit(field)}
+                    onSave={handleSave}
+                    onCancel={handleCancel}
+                  />
+                ))}
+              </div>
             </div>
             
-            {/* Line 2 */}
-            <div className="flex gap-1.5 flex-wrap">
-              {line2Fields.map((field) => (
-                <FieldCell 
-                  key={field.key} 
-                  field={field} 
-                  patient={patient}
-                  isEditing={editingField === field.key}
-                  editValue={editValue}
-                  onEditChange={setEditValue}
-                  onStartEdit={() => handleStartEdit(field)}
-                  onSave={handleSave}
-                  onCancel={handleCancel}
-                />
-              ))}
+            {/* Line 2 - Horizontal scroll */}
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent pb-1">
+              <div className="flex gap-1.5" style={{ width: "max-content" }}>
+                {line2Fields.map((field) => (
+                  <FieldCell 
+                    key={field.key} 
+                    field={field} 
+                    patient={patient}
+                    isEditing={editingField === field.key}
+                    editValue={editValue}
+                    onEditChange={setEditValue}
+                    onStartEdit={() => handleStartEdit(field)}
+                    onSave={handleSave}
+                    onCancel={handleCancel}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
