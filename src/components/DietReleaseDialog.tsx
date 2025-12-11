@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Utensils, Printer, Eye } from "lucide-react";
+import { Utensils, Printer, Eye, Apple, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PrintableDietDocument } from "./PrintableDietDocument";
 
@@ -28,18 +29,15 @@ const DIET_TYPES = [
   "Pastosa",
   "Liquidificada",
   "Líquida",
-  "Leve",
-  "Semi-líquida",
-  "Zero",
 ];
 
 const RESTRICTIONS = [
-  { id: "hipossodica", label: "Hipossódica (Hipertensão)" },
-  { id: "diabetica", label: "Diabética (DM)" },
-  { id: "renal", label: "Renal (DRC)" },
-  { id: "hipogordurosa", label: "Hipogordurosa" },
-  { id: "hipoproteica", label: "Hipoproteica" },
-  { id: "sem_residuo", label: "Sem Resíduo" },
+  { id: "hipossodica", label: "Hipossódica", desc: "Hipertensão" },
+  { id: "diabetica", label: "Diabética", desc: "DM" },
+  { id: "renal", label: "Renal", desc: "DRC" },
+  { id: "hipogordurosa", label: "Hipogordurosa", desc: "" },
+  { id: "hipoproteica", label: "Hipoproteica", desc: "" },
+  { id: "sem_residuo", label: "Sem Resíduo", desc: "" },
 ];
 
 export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialogProps) {
@@ -88,9 +86,6 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
 
   const handlePrint = () => {
     setShowPreview(true);
-    setTimeout(() => {
-      window.print();
-    }, 100);
   };
 
   const handleClose = () => {
@@ -126,43 +121,73 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-lg">
-            <Utensils className="h-5 w-5 text-primary" />
-            Liberar Dieta - {patient.name}
+        <DialogHeader className="pb-4 border-b">
+          <DialogTitle className="flex items-center gap-3 text-xl">
+            <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+              <Utensils className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <span>Autorização de Dieta</span>
+              <p className="text-sm font-normal text-muted-foreground mt-0.5">
+                {patient.name} • Leito {patient.bedNumber}
+              </p>
+            </div>
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Formulário para autorização de dieta do paciente
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Seção 1: Via da Dieta */}
-          <div className="space-y-3">
+          <div className="space-y-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
             <Label className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">1</span>
+              <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">1</span>
               Via da Dieta
             </Label>
             <RadioGroup
               value={dietRoute}
               onValueChange={(value) => setDietRoute(value as "oral" | "enteral")}
-              className="flex gap-4"
+              className="flex gap-3 pt-1"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="oral" id="oral" />
-                <Label htmlFor="oral" className="cursor-pointer">Oral</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="enteral" id="enteral" />
-                <Label htmlFor="enteral" className="cursor-pointer">Enteral</Label>
-              </div>
+              <label 
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-lg border-2 cursor-pointer transition-all flex-1",
+                  dietRoute === "oral" 
+                    ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" 
+                    : "border-slate-200 dark:border-slate-600 hover:border-slate-300"
+                )}
+              >
+                <RadioGroupItem value="oral" id="oral" className="sr-only" />
+                <Apple className={cn("h-5 w-5", dietRoute === "oral" ? "text-emerald-600" : "text-slate-400")} />
+                <span className={cn("font-medium", dietRoute === "oral" ? "text-emerald-700 dark:text-emerald-400" : "text-slate-600 dark:text-slate-300")}>
+                  Oral
+                </span>
+              </label>
+              <label 
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-lg border-2 cursor-pointer transition-all flex-1",
+                  dietRoute === "enteral" 
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
+                    : "border-slate-200 dark:border-slate-600 hover:border-slate-300"
+                )}
+              >
+                <RadioGroupItem value="enteral" id="enteral" className="sr-only" />
+                <Heart className={cn("h-5 w-5", dietRoute === "enteral" ? "text-blue-600" : "text-slate-400")} />
+                <span className={cn("font-medium", dietRoute === "enteral" ? "text-blue-700 dark:text-blue-400" : "text-slate-600 dark:text-slate-300")}>
+                  Enteral
+                </span>
+              </label>
             </RadioGroup>
           </div>
 
           {/* Seção 2: Tipo de Dieta */}
-          <div className="space-y-3">
+          <div className="space-y-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
             <Label className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">2</span>
+              <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">2</span>
               Tipo de Dieta
             </Label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="flex flex-wrap gap-2 pt-1">
               {DIET_TYPES.map((type) => (
                 <Button
                   key={type}
@@ -170,8 +195,10 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
                   variant={selectedDietType === type ? "default" : "outline"}
                   size="sm"
                   className={cn(
-                    "h-9 text-xs",
-                    selectedDietType === type && "bg-primary text-primary-foreground"
+                    "h-10 px-4 text-sm font-medium transition-all",
+                    selectedDietType === type 
+                      ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-md" 
+                      : "hover:border-emerald-300 hover:text-emerald-700"
                   )}
                   onClick={() => setSelectedDietType(selectedDietType === type ? "" : type)}
                 >
@@ -179,48 +206,75 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
                 </Button>
               ))}
             </div>
-            <div className="mt-2">
-              <Input
-                placeholder="Outro tipo / Especificações adicionais..."
-                value={customDietType}
-                onChange={(e) => setCustomDietType(e.target.value)}
-                className="text-sm"
-              />
-            </div>
+            <Input
+              placeholder="Especificações adicionais ou outro tipo..."
+              value={customDietType}
+              onChange={(e) => setCustomDietType(e.target.value)}
+              className="text-sm mt-2"
+            />
           </div>
 
           {/* Seção 3: Restrições/Comorbidades */}
-          <div className="space-y-3">
+          <div className="space-y-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
             <Label className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">3</span>
+              <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">3</span>
               Restrições / Comorbidades
             </Label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
               {RESTRICTIONS.map((restriction) => (
-                <div key={restriction.id} className="flex items-center space-x-2">
+                <label
+                  key={restriction.id}
+                  className={cn(
+                    "flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-all",
+                    selectedRestrictions.includes(restriction.id)
+                      ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20"
+                      : "border-slate-200 dark:border-slate-600 hover:border-slate-300"
+                  )}
+                >
                   <Checkbox
                     id={restriction.id}
                     checked={selectedRestrictions.includes(restriction.id)}
                     onCheckedChange={(checked) => handleRestrictionChange(restriction.id, !!checked)}
+                    className="sr-only"
                   />
-                  <Label htmlFor={restriction.id} className="text-sm cursor-pointer">
-                    {restriction.label}
-                  </Label>
-                </div>
+                  <div className={cn(
+                    "w-4 h-4 rounded border-2 flex items-center justify-center",
+                    selectedRestrictions.includes(restriction.id)
+                      ? "bg-amber-500 border-amber-500"
+                      : "border-slate-300 dark:border-slate-500"
+                  )}>
+                    {selectedRestrictions.includes(restriction.id) && (
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className={cn(
+                      "text-sm font-medium",
+                      selectedRestrictions.includes(restriction.id) ? "text-amber-700 dark:text-amber-400" : "text-slate-700 dark:text-slate-300"
+                    )}>
+                      {restriction.label}
+                    </span>
+                    {restriction.desc && (
+                      <span className="text-xs text-muted-foreground">{restriction.desc}</span>
+                    )}
+                  </div>
+                </label>
               ))}
             </div>
             <Textarea
-              placeholder="Outras restrições ou observações..."
+              placeholder="Outras restrições ou observações específicas..."
               value={customRestriction}
               onChange={(e) => setCustomRestriction(e.target.value)}
-              className="text-sm min-h-[60px]"
+              className="text-sm min-h-[60px] mt-2"
             />
           </div>
 
           {/* Seção 4: Dados do Paciente */}
-          <div className="space-y-3">
+          <div className="space-y-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
             <Label className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">4</span>
+              <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">4</span>
               Data de Nascimento
             </Label>
             <Input
@@ -233,14 +287,14 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
           </div>
 
           {/* Seção 5: Médico Responsável */}
-          <div className="space-y-3">
+          <div className="space-y-3 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
             <Label className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">5</span>
+              <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">5</span>
               Médico Responsável
             </Label>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-xs text-muted-foreground">Nome</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Nome Completo</Label>
                 <Input
                   placeholder="Dr(a). Nome Completo"
                   value={doctorName}
@@ -248,7 +302,7 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
                   className="text-sm"
                 />
               </div>
-              <div>
+              <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">CRM</Label>
                 <Input
                   placeholder="CRM-MA 00000"
@@ -263,7 +317,7 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
 
         {/* Footer Actions */}
         <div className="flex items-center justify-between pt-4 border-t">
-          <Button variant="ghost" onClick={handleClose}>
+          <Button variant="ghost" onClick={handleClose} className="text-slate-600">
             Cancelar
           </Button>
           <div className="flex gap-2">
@@ -279,10 +333,10 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
             <Button
               onClick={handlePrint}
               disabled={!isFormValid}
-              className="gap-2"
+              className="gap-2 bg-emerald-600 hover:bg-emerald-700"
             >
               <Printer className="h-4 w-4" />
-              Imprimir
+              Gerar Documento
             </Button>
           </div>
         </div>
