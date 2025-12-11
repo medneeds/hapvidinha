@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -18,6 +18,7 @@ import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
+import { DietReleaseDialog } from "./DietReleaseDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -627,6 +628,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
+  const [dietDialogOpen, setDietDialogOpen] = useState(false);
   const { role, user } = useAuth();
   
   // Check if porta or visitante user can edit this patient
@@ -3350,7 +3352,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       </DropdownMenuItem>
                     )}
 
-                    {/* AÇÕES CRÍTICAS - Danger Category */}
+                    {/* LIBERAR DIETA - Diet Authorization */}
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDietDialogOpen(true);
+                      }}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
+                    >
+                      <Utensils className="h-4 w-4 text-green-600 dark:text-green-400" />
+                      <span>Liberar Dieta</span>
+                    </DropdownMenuItem>
+
                     {onDelete && (
                       <>
                         <div className="h-px bg-gradient-to-r from-transparent via-red-200 dark:via-red-900/50 to-transparent my-2" />
@@ -4299,6 +4312,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       <RequestBedAllocationDialog
         open={bedAllocationDialogOpen}
         onOpenChange={setBedAllocationDialogOpen}
+        patient={patient}
+      />
+
+      <DietReleaseDialog
+        isOpen={dietDialogOpen}
+        onClose={() => setDietDialogOpen(false)}
         patient={patient}
       />
     </>
