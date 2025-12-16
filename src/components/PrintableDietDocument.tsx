@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { X, Printer } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useEffect } from "react";
+import { useRef } from "react";
 
 // Import logos
 import hospitalGuarasLogo from "@/assets/hospital-guaras-logo.png";
@@ -30,66 +30,265 @@ export function PrintableDietDocument({
   crm,
   onClose,
 }: PrintableDietDocumentProps) {
+  const printRef = useRef<HTMLDivElement>(null);
   const currentDate = new Date();
   const formattedDate = format(currentDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
   const formattedTime = format(currentDate, "HH:mm");
 
-  useEffect(() => {
-    // Add print-specific class to body
-    document.body.classList.add('diet-print-mode');
-    return () => {
-      document.body.classList.remove('diet-print-mode');
-    };
-  }, []);
-
   const handlePrint = () => {
-    window.print();
-  };
+    const printContent = printRef.current;
+    if (!printContent) return;
 
-  return (
-    <div className="fixed inset-0 z-[9999] bg-slate-100 dark:bg-slate-900 overflow-auto print:bg-white">
-      {/* Print Styles - Global */}
-      <style>
-        {`
-          @media print {
-            html, body {
-              margin: 0 !important;
-              padding: 0 !important;
-              background: white !important;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Por favor, permita pop-ups para imprimir o documento.');
+      return;
+    }
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Autorização de Dieta - ${patient.name}</title>
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
             }
-            body * {
-              visibility: hidden !important;
-            }
-            .diet-print-container, .diet-print-container * {
-              visibility: visible !important;
-            }
-            .diet-print-container {
-              position: fixed !important;
-              left: 0 !important;
-              top: 0 !important;
-              width: 100% !important;
-              height: auto !important;
-              background: white !important;
-              margin: 0 !important;
-              padding: 12mm 15mm !important;
-              box-shadow: none !important;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-            .no-print {
-              display: none !important;
-              visibility: hidden !important;
+            body {
+              font-family: 'Georgia', 'Times New Roman', Times, serif;
+              background: white;
+              color: black;
+              padding: 12mm 15mm;
             }
             @page {
               size: A4 portrait;
               margin: 8mm;
             }
-          }
-        `}
-      </style>
+            @media print {
+              body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+            }
+            .header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 24px;
+              padding-bottom: 16px;
+              border-bottom: 2px solid #1e40af;
+            }
+            .header img {
+              height: 60px;
+              width: auto;
+              object-fit: contain;
+            }
+            .header-center {
+              text-align: center;
+              flex: 1;
+              padding: 0 24px;
+            }
+            .header-title {
+              font-size: 22px;
+              font-weight: bold;
+              color: #1e3a5f;
+              letter-spacing: 1px;
+              text-transform: uppercase;
+            }
+            .header-subtitle {
+              font-size: 13px;
+              color: #64748b;
+              margin-top: 4px;
+            }
+            .patient-card {
+              margin-bottom: 24px;
+              padding: 16px;
+              background-color: #f8fafc;
+              border-radius: 8px;
+              border: 1px solid #e2e8f0;
+            }
+            .patient-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 16px;
+            }
+            .field-label {
+              font-size: 10px;
+              color: #64748b;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              display: block;
+            }
+            .field-value {
+              font-size: 16px;
+              font-weight: 600;
+              color: #1e293b;
+              margin-top: 4px;
+            }
+            .field-value-small {
+              font-size: 14px;
+              font-weight: 500;
+              color: #1e293b;
+              margin-top: 4px;
+            }
+            .diet-section {
+              margin-bottom: 24px;
+            }
+            .diet-title {
+              font-size: 16px;
+              font-weight: bold;
+              color: #1e3a5f;
+              margin-bottom: 16px;
+              padding-bottom: 8px;
+              border-bottom: 1px solid #cbd5e1;
+            }
+            .diet-row {
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 12px;
+              padding-left: 8px;
+            }
+            .diet-label {
+              font-weight: 600;
+              color: #475569;
+              min-width: 100px;
+              font-size: 14px;
+            }
+            .badge-blue {
+              background-color: #dbeafe;
+              color: #1e40af;
+              padding: 6px 16px;
+              border-radius: 6px;
+              font-weight: 600;
+              font-size: 14px;
+              text-transform: uppercase;
+            }
+            .badge-green {
+              background-color: #dcfce7;
+              color: #166534;
+              padding: 6px 16px;
+              border-radius: 6px;
+              font-weight: 600;
+              font-size: 14px;
+              text-transform: uppercase;
+            }
+            .badge-yellow {
+              background-color: #fef3c7;
+              color: #92400e;
+              padding: 6px 12px;
+              border-radius: 6px;
+              font-size: 13px;
+              font-weight: 500;
+              border: 1px solid #fcd34d;
+              margin: 4px;
+            }
+            .restrictions-row {
+              display: flex;
+              align-items: flex-start;
+              gap: 12px;
+              margin-bottom: 12px;
+              padding-left: 8px;
+            }
+            .restrictions-badges {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+            }
+            .observations {
+              margin-bottom: 32px;
+            }
+            .observations-title {
+              font-size: 13px;
+              font-weight: 600;
+              color: #475569;
+              margin-bottom: 8px;
+            }
+            .observations-box {
+              border: 1px solid #cbd5e1;
+              border-radius: 6px;
+              padding: 16px;
+              min-height: 70px;
+              background-color: #fafafa;
+            }
+            .observations-placeholder {
+              color: #94a3b8;
+              font-size: 12px;
+              font-style: italic;
+            }
+            .signature-section {
+              margin-top: 40px;
+              padding-top: 20px;
+              display: flex;
+              justify-content: center;
+            }
+            .signature-container {
+              text-align: center;
+            }
+            .signature-line {
+              width: 280px;
+              border-top: 2px solid #1e293b;
+              padding-top: 8px;
+              margin-bottom: 4px;
+            }
+            .signature-name {
+              font-weight: 500;
+              color: #1e293b;
+              font-size: 14px;
+            }
+            .signature-role {
+              font-size: 12px;
+              color: #64748b;
+              margin-top: 4px;
+            }
+            .signature-crm {
+              font-size: 12px;
+              color: #475569;
+              font-weight: 600;
+              margin-top: 2px;
+            }
+            .footer {
+              position: fixed;
+              bottom: 12mm;
+              left: 15mm;
+              right: 15mm;
+              text-align: center;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 12px;
+            }
+            .footer-hospital {
+              font-size: 11px;
+              color: #64748b;
+            }
+            .footer-address {
+              font-size: 10px;
+              color: #94a3b8;
+              margin-top: 4px;
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
 
-      {/* Screen Controls - Hidden on Print */}
-      <div className="no-print sticky top-0 z-10 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 p-4 flex items-center justify-between shadow-sm">
+    printWindow.document.close();
+    
+    // Wait for images to load before printing
+    setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }, 500);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[9999] bg-slate-100 dark:bg-slate-900 overflow-auto">
+      {/* Screen Controls */}
+      <div className="sticky top-0 z-10 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 p-4 flex items-center justify-between shadow-sm">
         <h2 className="text-lg font-semibold text-slate-800 dark:text-white">
           Visualização - Autorização de Dieta
         </h2>
@@ -105,158 +304,85 @@ export function PrintableDietDocument({
         </div>
       </div>
 
-      {/* Document Preview Container */}
-      <div className="no-print flex justify-center py-8 px-4">
+      {/* Document Preview */}
+      <div className="flex justify-center py-8 px-4">
         <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
-          {/* The actual printable document */}
           <div 
-            className="diet-print-container bg-white text-black"
+            ref={printRef}
+            className="bg-white text-black"
             style={{ 
               width: '210mm',
               minHeight: '297mm',
               padding: '12mm 15mm',
               fontFamily: "'Georgia', 'Times New Roman', Times, serif",
+              position: 'relative'
             }}
           >
-            {/* Header with Logos */}
-            <div className="flex items-center justify-between mb-6 pb-4" style={{ borderBottom: '2px solid #1e40af' }}>
-              <img 
-                src={hospitalGuarasLogo} 
-                alt="Hospital Guarás" 
-                style={{ height: '60px', width: 'auto', objectFit: 'contain' }}
-              />
-              <div className="text-center flex-1 px-6">
-                <h1 style={{ 
-                  fontSize: '22px', 
-                  fontWeight: 'bold', 
-                  color: '#1e3a5f',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  margin: 0
-                }}>
+            {/* Header */}
+            <div className="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', paddingBottom: '16px', borderBottom: '2px solid #1e40af' }}>
+              <img src={hospitalGuarasLogo} alt="Hospital Guarás" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
+              <div style={{ textAlign: 'center', flex: 1, padding: '0 24px' }}>
+                <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#1e3a5f', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>
                   Autorização de Dieta
                 </h1>
                 <p style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>
                   Serviço de Nutrição e Dietética
                 </p>
               </div>
-              <img 
-                src={hapvidaLogo} 
-                alt="Hapvida NotreDame Intermédica" 
-                style={{ height: '50px', width: 'auto', objectFit: 'contain' }}
-              />
+              <img src={hapvidaLogo} alt="Hapvida" style={{ height: '50px', width: 'auto', objectFit: 'contain' }} />
             </div>
 
-            {/* Patient Information Card */}
-            <div style={{ 
-              marginBottom: '24px', 
-              padding: '16px', 
-              backgroundColor: '#f8fafc',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0'
-            }}>
+            {/* Patient Info */}
+            <div style={{ marginBottom: '24px', padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
-                    Paciente
-                  </span>
-                  <p style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', textTransform: 'uppercase', margin: '4px 0 0 0' }}>
-                    {patient.name}
-                  </p>
+                  <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>Paciente</span>
+                  <p style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', textTransform: 'uppercase', margin: '4px 0 0 0' }}>{patient.name}</p>
                 </div>
                 <div>
-                  <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
-                    Leito
-                  </span>
-                  <p style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', margin: '4px 0 0 0' }}>
-                    {patient.bedNumber}
-                  </p>
+                  <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>Leito</span>
+                  <p style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', margin: '4px 0 0 0' }}>{patient.bedNumber}</p>
                 </div>
                 {birthDate && (
                   <div>
-                    <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
-                      Data de Nascimento
-                    </span>
-                    <p style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b', margin: '4px 0 0 0' }}>
-                      {birthDate}
-                    </p>
+                    <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>Data de Nascimento</span>
+                    <p style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b', margin: '4px 0 0 0' }}>{birthDate}</p>
                   </div>
                 )}
                 <div>
-                  <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
-                    Data da Solicitação
-                  </span>
-                  <p style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b', margin: '4px 0 0 0' }}>
-                    {formattedDate} às {formattedTime}
-                  </p>
+                  <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>Data da Solicitação</span>
+                  <p style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b', margin: '4px 0 0 0' }}>{formattedDate} às {formattedTime}</p>
                 </div>
               </div>
             </div>
 
-            {/* Diet Authorization Section */}
+            {/* Diet Section */}
             <div style={{ marginBottom: '24px' }}>
-              <h2 style={{ 
-                fontSize: '16px', 
-                fontWeight: 'bold', 
-                color: '#1e3a5f',
-                marginBottom: '16px',
-                paddingBottom: '8px',
-                borderBottom: '1px solid #cbd5e1'
-              }}>
+              <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#1e3a5f', marginBottom: '16px', paddingBottom: '8px', borderBottom: '1px solid #cbd5e1' }}>
                 LIBERADA DIETA:
               </h2>
               
               <div style={{ paddingLeft: '8px' }}>
-                {/* Via */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                   <span style={{ fontWeight: '600', color: '#475569', minWidth: '100px', fontSize: '14px' }}>Via:</span>
-                  <span style={{ 
-                    backgroundColor: '#dbeafe', 
-                    color: '#1e40af',
-                    padding: '6px 16px', 
-                    borderRadius: '6px',
-                    fontWeight: '600',
-                    fontSize: '14px',
-                    textTransform: 'uppercase'
-                  }}>
+                  <span style={{ backgroundColor: '#dbeafe', color: '#1e40af', padding: '6px 16px', borderRadius: '6px', fontWeight: '600', fontSize: '14px', textTransform: 'uppercase' }}>
                     {dietRoute === "oral" ? "Oral" : "Enteral"}
                   </span>
                 </div>
                 
-                {/* Tipo */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                   <span style={{ fontWeight: '600', color: '#475569', minWidth: '100px', fontSize: '14px' }}>Tipo:</span>
-                  <span style={{ 
-                    backgroundColor: '#dcfce7', 
-                    color: '#166534',
-                    padding: '6px 16px', 
-                    borderRadius: '6px',
-                    fontWeight: '600',
-                    fontSize: '14px',
-                    textTransform: 'uppercase'
-                  }}>
+                  <span style={{ backgroundColor: '#dcfce7', color: '#166534', padding: '6px 16px', borderRadius: '6px', fontWeight: '600', fontSize: '14px', textTransform: 'uppercase' }}>
                     {dietType || "Não especificado"}
                   </span>
                 </div>
                 
-                {/* Restrições */}
                 {restrictions.length > 0 && (
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
                     <span style={{ fontWeight: '600', color: '#475569', minWidth: '100px', fontSize: '14px', paddingTop: '6px' }}>Restrições:</span>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                       {restrictions.map((restriction, index) => (
-                        <span 
-                          key={index}
-                          style={{ 
-                            backgroundColor: '#fef3c7',
-                            color: '#92400e',
-                            padding: '6px 12px', 
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            fontWeight: '500',
-                            border: '1px solid #fcd34d'
-                          }}
-                        >
+                        <span key={index} style={{ backgroundColor: '#fef3c7', color: '#92400e', padding: '6px 12px', borderRadius: '6px', fontSize: '13px', fontWeight: '500', border: '1px solid #fcd34d' }}>
                           {restriction}
                         </span>
                       ))}
@@ -266,268 +392,31 @@ export function PrintableDietDocument({
               </div>
             </div>
 
-            {/* Observations Area */}
+            {/* Observations */}
             <div style={{ marginBottom: '32px' }}>
-              <h3 style={{ fontSize: '13px', fontWeight: '600', color: '#475569', marginBottom: '8px' }}>
-                Observações da Nutrição:
-              </h3>
-              <div style={{ 
-                border: '1px solid #cbd5e1', 
-                borderRadius: '6px', 
-                padding: '16px', 
-                minHeight: '70px',
-                backgroundColor: '#fafafa'
-              }}>
-                <p style={{ color: '#94a3b8', fontSize: '12px', fontStyle: 'italic', margin: 0 }}>
-                  Espaço reservado para anotações
-                </p>
+              <h3 style={{ fontSize: '13px', fontWeight: '600', color: '#475569', marginBottom: '8px' }}>Observações da Nutrição:</h3>
+              <div style={{ border: '1px solid #cbd5e1', borderRadius: '6px', padding: '16px', minHeight: '70px', backgroundColor: '#fafafa' }}>
+                <p style={{ color: '#94a3b8', fontSize: '12px', fontStyle: 'italic', margin: 0 }}>Espaço reservado para anotações</p>
               </div>
             </div>
 
-            {/* Signature Section */}
-            <div style={{ marginTop: '40px', paddingTop: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ 
-                    width: '280px', 
-                    borderTop: '2px solid #1e293b', 
-                    paddingTop: '8px',
-                    marginBottom: '4px'
-                  }}>
-                    <p style={{ fontWeight: '500', color: '#1e293b', margin: 0, fontSize: '14px' }}>
-                      {doctorName || ""}
-                    </p>
-                  </div>
-                  <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>Médico(a) Responsável</p>
-                  {crm && <p style={{ fontSize: '12px', color: '#475569', fontWeight: '600', margin: '2px 0 0 0' }}>{crm}</p>}
+            {/* Signature */}
+            <div style={{ marginTop: '40px', paddingTop: '20px', display: 'flex', justifyContent: 'center' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ width: '280px', borderTop: '2px solid #1e293b', paddingTop: '8px', marginBottom: '4px' }}>
+                  <p style={{ fontWeight: '500', color: '#1e293b', margin: 0, fontSize: '14px' }}>{doctorName || ""}</p>
                 </div>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>Médico(a) Responsável</p>
+                {crm && <p style={{ fontSize: '12px', color: '#475569', fontWeight: '600', margin: '2px 0 0 0' }}>{crm}</p>}
               </div>
             </div>
 
             {/* Footer */}
-            <div style={{ 
-              position: 'absolute',
-              bottom: '12mm',
-              left: '15mm',
-              right: '15mm',
-              textAlign: 'center',
-              borderTop: '1px solid #e2e8f0',
-              paddingTop: '12px'
-            }}>
-              <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>
-                Hospital Guarás - Rede Hapvida NotreDame Intermédica
-              </p>
-              <p style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>
-                Rua Armando Vieira da Silva, São Luís, MA, 65030-130
-              </p>
+            <div style={{ position: 'absolute', bottom: '12mm', left: '0', right: '0', textAlign: 'center', borderTop: '1px solid #e2e8f0', paddingTop: '12px', marginLeft: '15mm', marginRight: '15mm' }}>
+              <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>Hospital Guarás - Rede Hapvida NotreDame Intermédica</p>
+              <p style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>Rua Armando Vieira da Silva, São Luís, MA, 65030-130</p>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Hidden printable version (exact same content but positioned for print) */}
-      <div 
-        className="diet-print-container hidden print:block bg-white text-black"
-        style={{ 
-          fontFamily: "'Georgia', 'Times New Roman', Times, serif",
-        }}
-      >
-        {/* Header with Logos */}
-        <div className="flex items-center justify-between mb-6 pb-4" style={{ borderBottom: '2px solid #1e40af' }}>
-          <img 
-            src={hospitalGuarasLogo} 
-            alt="Hospital Guarás" 
-            style={{ height: '60px', width: 'auto', objectFit: 'contain' }}
-          />
-          <div className="text-center flex-1 px-6">
-            <h1 style={{ 
-              fontSize: '22px', 
-              fontWeight: 'bold', 
-              color: '#1e3a5f',
-              letterSpacing: '1px',
-              textTransform: 'uppercase',
-              margin: 0
-            }}>
-              Autorização de Dieta
-            </h1>
-            <p style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>
-              Serviço de Nutrição e Dietética
-            </p>
-          </div>
-          <img 
-            src={hapvidaLogo} 
-            alt="Hapvida NotreDame Intermédica" 
-            style={{ height: '50px', width: 'auto', objectFit: 'contain' }}
-          />
-        </div>
-
-        {/* Patient Information Card */}
-        <div style={{ 
-          marginBottom: '24px', 
-          padding: '16px', 
-          backgroundColor: '#f8fafc',
-          borderRadius: '8px',
-          border: '1px solid #e2e8f0'
-        }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div>
-              <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
-                Paciente
-              </span>
-              <p style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', textTransform: 'uppercase', margin: '4px 0 0 0' }}>
-                {patient.name}
-              </p>
-            </div>
-            <div>
-              <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
-                Leito
-              </span>
-              <p style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', margin: '4px 0 0 0' }}>
-                {patient.bedNumber}
-              </p>
-            </div>
-            {birthDate && (
-              <div>
-                <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
-                  Data de Nascimento
-                </span>
-                <p style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b', margin: '4px 0 0 0' }}>
-                  {birthDate}
-                </p>
-              </div>
-            )}
-            <div>
-              <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
-                Data da Solicitação
-              </span>
-              <p style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b', margin: '4px 0 0 0' }}>
-                {formattedDate} às {formattedTime}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Diet Authorization Section */}
-        <div style={{ marginBottom: '24px' }}>
-          <h2 style={{ 
-            fontSize: '16px', 
-            fontWeight: 'bold', 
-            color: '#1e3a5f',
-            marginBottom: '16px',
-            paddingBottom: '8px',
-            borderBottom: '1px solid #cbd5e1'
-          }}>
-            LIBERADA DIETA:
-          </h2>
-          
-          <div style={{ paddingLeft: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <span style={{ fontWeight: '600', color: '#475569', minWidth: '100px', fontSize: '14px' }}>Via:</span>
-              <span style={{ 
-                backgroundColor: '#dbeafe', 
-                color: '#1e40af',
-                padding: '6px 16px', 
-                borderRadius: '6px',
-                fontWeight: '600',
-                fontSize: '14px',
-                textTransform: 'uppercase'
-              }}>
-                {dietRoute === "oral" ? "Oral" : "Enteral"}
-              </span>
-            </div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <span style={{ fontWeight: '600', color: '#475569', minWidth: '100px', fontSize: '14px' }}>Tipo:</span>
-              <span style={{ 
-                backgroundColor: '#dcfce7', 
-                color: '#166534',
-                padding: '6px 16px', 
-                borderRadius: '6px',
-                fontWeight: '600',
-                fontSize: '14px',
-                textTransform: 'uppercase'
-              }}>
-                {dietType || "Não especificado"}
-              </span>
-            </div>
-            
-            {restrictions.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
-                <span style={{ fontWeight: '600', color: '#475569', minWidth: '100px', fontSize: '14px', paddingTop: '6px' }}>Restrições:</span>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {restrictions.map((restriction, index) => (
-                    <span 
-                      key={index}
-                      style={{ 
-                        backgroundColor: '#fef3c7',
-                        color: '#92400e',
-                        padding: '6px 12px', 
-                        borderRadius: '6px',
-                        fontSize: '13px',
-                        fontWeight: '500',
-                        border: '1px solid #fcd34d'
-                      }}
-                    >
-                      {restriction}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Observations Area */}
-        <div style={{ marginBottom: '32px' }}>
-          <h3 style={{ fontSize: '13px', fontWeight: '600', color: '#475569', marginBottom: '8px' }}>
-            Observações da Nutrição:
-          </h3>
-          <div style={{ 
-            border: '1px solid #cbd5e1', 
-            borderRadius: '6px', 
-            padding: '16px', 
-            minHeight: '70px',
-            backgroundColor: '#fafafa'
-          }}>
-            <p style={{ color: '#94a3b8', fontSize: '12px', fontStyle: 'italic', margin: 0 }}>
-              Espaço reservado para anotações
-            </p>
-          </div>
-        </div>
-
-        {/* Signature Section */}
-        <div style={{ marginTop: '40px', paddingTop: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ 
-                width: '280px', 
-                borderTop: '2px solid #1e293b', 
-                paddingTop: '8px',
-                marginBottom: '4px'
-              }}>
-                <p style={{ fontWeight: '500', color: '#1e293b', margin: 0, fontSize: '14px' }}>
-                  {doctorName || ""}
-                </p>
-              </div>
-              <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>Médico(a) Responsável</p>
-              {crm && <p style={{ fontSize: '12px', color: '#475569', fontWeight: '600', margin: '2px 0 0 0' }}>{crm}</p>}
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div style={{ 
-          marginTop: '60px',
-          textAlign: 'center',
-          borderTop: '1px solid #e2e8f0',
-          paddingTop: '12px'
-        }}>
-          <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>
-            Hospital Guarás - Rede Hapvida NotreDame Intermédica
-          </p>
-          <p style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>
-            Rua Armando Vieira da Silva, São Luís, MA, 65030-130
-          </p>
         </div>
       </div>
     </div>
