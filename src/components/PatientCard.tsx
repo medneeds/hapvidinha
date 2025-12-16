@@ -1350,7 +1350,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 />
               </div>
             )}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-18 gap-3 md:gap-1.5 items-start">
+            <div className="flex-1 grid grid-cols-18 gap-1.5 items-start">
               {/* Leito - ultra compacto */}
               <div className="flex flex-col md:col-span-1 gap-1">
                 <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
