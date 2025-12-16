@@ -1302,10 +1302,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             }}
           >
             {/* Status */}
-            {allocationStatusBarConfig.icon === Clock && <Clock className={cn("h-4 w-4 relative z-10", allocationStatusBarConfig.iconClass)} />}
-            {allocationStatusBarConfig.icon === MessageSquare && <MessageSquare className={cn("h-4 w-4 relative z-10", allocationStatusBarConfig.iconClass)} />}
-            {allocationStatusBarConfig.icon === XCircle && <XCircle className={cn("h-4 w-4 relative z-10", allocationStatusBarConfig.iconClass)} />}
-            <span className={cn("text-xs font-bold tracking-wide relative z-10 uppercase", allocationStatusBarConfig.statusClass)}>
+            {allocationStatusBarConfig.icon === Clock && <Clock className={cn("h-3.5 w-3.5 relative z-10", allocationStatusBarConfig.iconClass)} />}
+            {allocationStatusBarConfig.icon === MessageSquare && <MessageSquare className={cn("h-3.5 w-3.5 relative z-10", allocationStatusBarConfig.iconClass)} />}
+            {allocationStatusBarConfig.icon === XCircle && <XCircle className={cn("h-3.5 w-3.5 relative z-10", allocationStatusBarConfig.iconClass)} />}
+            <span className={cn("text-xs font-semibold relative z-10 uppercase", allocationStatusBarConfig.statusClass)}>
               {allocationStatusBarConfig.label}
             </span>
             
@@ -1313,7 +1313,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             <span className="separator relative z-10">•</span>
             
             {/* Destination */}
-            <span className="text-xs font-bold relative z-10 status-destination">
+            <span className="text-xs font-semibold relative z-10 status-destination uppercase">
               PARA: {allocationStatusBarConfig.sectorDisplayName}
             </span>
             
@@ -1321,8 +1321,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {allocationTimeElapsed && (
               <>
                 <span className="separator relative z-10">•</span>
-                <span className="text-[10px] font-semibold relative z-10 status-time">
-                  há {allocationTimeElapsed}
+                <span className="text-xs font-semibold relative z-10 status-time uppercase">
+                  HÁ {allocationTimeElapsed.toUpperCase()}
                 </span>
               </>
             )}
