@@ -1292,7 +1292,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         {allocationStatusBarConfig && (
           <div 
             className={cn(
-              "allocation-status-bar py-2 px-4 flex items-center justify-center gap-2 cursor-pointer transition-all print:hidden flex-wrap",
+              "allocation-status-bar py-1 px-3 flex items-center justify-center gap-2 cursor-pointer transition-all print:hidden",
               allocationStatusBarConfig.sectorColorClass
             )}
             onClick={() => {
