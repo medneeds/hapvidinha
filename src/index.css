@@ -58,6 +58,11 @@
     --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+    /* Allocation Status Bar Colors */
+    --status-pending: 45 93% 47%;
+    --status-discussing: 199 89% 48%;
+    --status-rejected: 0 72% 51%;
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -398,6 +403,51 @@
 
   .bg-gradient-radial {
     background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+
+  /* Allocation Status Bar - Shimmer Effect */
+  .allocation-status-bar {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+
+  .allocation-status-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%
+    );
+    animation: shimmer 2s infinite;
+    z-index: 1;
+  }
+
+  .allocation-status-bar.status-pending {
+    background: linear-gradient(90deg, hsl(45 93% 47%) 0%, hsl(38 92% 50%) 50%, hsl(45 93% 47%) 100%);
+  }
+
+  .allocation-status-bar.status-discussing {
+    background: linear-gradient(90deg, hsl(199 89% 48%) 0%, hsl(199 89% 58%) 50%, hsl(199 89% 48%) 100%);
+  }
+
+  .allocation-status-bar.status-rejected {
+    background: linear-gradient(90deg, hsl(0 72% 51%) 0%, hsl(0 72% 61%) 50%, hsl(0 72% 51%) 100%);
+  }
+
+  .dark .allocation-status-bar::before {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 100%
+    );
   }
 }
 
