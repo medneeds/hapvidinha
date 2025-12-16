@@ -25,8 +25,9 @@ import { toast } from "sonner";
 import { useAgeCalculator } from "@/hooks/useAgeCalculator";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
-import { differenceInDays, parseISO, isValid, parse } from "date-fns";
+import { differenceInDays, differenceInHours, differenceInMinutes, parseISO, isValid, parse } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
@@ -630,6 +631,28 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
   const [dietDialogOpen, setDietDialogOpen] = useState(false);
   const { role, user } = useAuth();
+  const { requests } = useBedAllocationRequests();
+  
+  // Find allocation request for this patient and calculate elapsed time
+  const allocationTimeElapsed = useMemo(() => {
+    if (!patient.allocationStatus || patient.allocationStatus === 'approved' || !patient.isDoorPatient) {
+      return null;
+    }
+    
+    const patientRequest = requests.find(r => r.patient_id === patient.id);
+    if (!patientRequest?.created_at) return null;
+    
+    const createdAt = new Date(patientRequest.created_at);
+    const now = new Date();
+    
+    const minutes = differenceInMinutes(now, createdAt);
+    const hours = differenceInHours(now, createdAt);
+    const days = differenceInDays(now, createdAt);
+    
+    if (days > 0) return `${days}d ${hours % 24}h`;
+    if (hours > 0) return `${hours}h ${minutes % 60}min`;
+    return `${minutes}min`;
+  }, [patient.id, patient.allocationStatus, patient.isDoorPatient, requests]);
   
   // Check if porta or visitante user can edit this patient
   const canEdit = useMemo(() => {
@@ -1250,6 +1273,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             <span className="text-xs font-bold tracking-widest relative z-10 uppercase status-text">
               {allocationStatusBarConfig.label}
             </span>
+            {allocationTimeElapsed && (
+              <span className="text-[10px] font-semibold relative z-10 status-time ml-1">
+                • há {allocationTimeElapsed}
+              </span>
+            )}
           </div>
         )}
         
