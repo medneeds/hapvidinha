@@ -1230,26 +1230,60 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       return null;
     }
     
-    const configs = {
+    // Find the allocation request to get the requested sector
+    const patientRequest = requests.find(r => r.patient_id === patient.id);
+    const requestedSector = patientRequest?.requested_sector || '';
+    
+    // Map sector to color class
+    const sectorColorClass = {
+      'red': 'sector-red',
+      'yellow': 'sector-yellow', 
+      'blue': 'sector-blue',
+      'Sala de Cuidados Especiais': 'sector-red',
+      'Observação Amarela': 'sector-yellow',
+      'Observação Azul': 'sector-blue',
+    }[requestedSector] || 'sector-blue';
+    
+    // Map sector to display name
+    const sectorDisplayName = {
+      'red': 'SALA DE CUIDADOS ESPECIAIS',
+      'yellow': 'OBSERVAÇÃO AMARELA',
+      'blue': 'OBSERVAÇÃO AZUL',
+      'Sala de Cuidados Especiais': 'SALA DE CUIDADOS ESPECIAIS',
+      'Observação Amarela': 'OBSERVAÇÃO AMARELA',
+      'Observação Azul': 'OBSERVAÇÃO AZUL',
+    }[requestedSector] || requestedSector.toUpperCase();
+    
+    const statusConfigs = {
       pending: {
-        label: "AGUARDANDO APROVAÇÃO",
-        className: "status-pending",
+        label: "AGUARDANDO",
+        statusClass: "status-pending",
+        iconClass: "icon-pending",
         icon: Clock,
       },
       discussing: {
         label: "EM DISCUSSÃO",
-        className: "status-discussing",
+        statusClass: "status-discussing",
+        iconClass: "icon-discussing",
         icon: MessageSquare,
       },
       rejected: {
         label: "NEGADO",
-        className: "status-rejected",
+        statusClass: "status-rejected",
+        iconClass: "icon-rejected",
         icon: XCircle,
       },
     };
     
-    return configs[patient.allocationStatus as keyof typeof configs] || null;
-  }, [patient.allocationStatus, patient.isDoorPatient]);
+    const statusConfig = statusConfigs[patient.allocationStatus as keyof typeof statusConfigs];
+    if (!statusConfig) return null;
+    
+    return {
+      ...statusConfig,
+      sectorColorClass,
+      sectorDisplayName,
+    };
+  }, [patient.allocationStatus, patient.isDoorPatient, patient.id, requests]);
 
   return (
     <>
@@ -1258,8 +1292,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         {allocationStatusBarConfig && (
           <div 
             className={cn(
-              "allocation-status-bar py-1.5 px-3 flex items-center justify-center gap-2 cursor-pointer transition-all print:hidden",
-              allocationStatusBarConfig.className
+              "allocation-status-bar py-2 px-4 flex items-center justify-center gap-2 cursor-pointer transition-all print:hidden flex-wrap",
+              allocationStatusBarConfig.sectorColorClass
             )}
             onClick={() => {
               // Trigger the same dialog as AllocationPendingBadge
@@ -1267,16 +1301,30 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               if (badge) (badge as HTMLElement).click();
             }}
           >
-            {allocationStatusBarConfig.icon === Clock && <Clock className="h-4 w-4 status-icon" />}
-            {allocationStatusBarConfig.icon === MessageSquare && <MessageSquare className="h-4 w-4 status-icon" />}
-            {allocationStatusBarConfig.icon === XCircle && <XCircle className="h-4 w-4 status-icon" />}
-            <span className="text-xs font-bold tracking-widest relative z-10 uppercase status-text">
+            {/* Status */}
+            {allocationStatusBarConfig.icon === Clock && <Clock className={cn("h-4 w-4 relative z-10", allocationStatusBarConfig.iconClass)} />}
+            {allocationStatusBarConfig.icon === MessageSquare && <MessageSquare className={cn("h-4 w-4 relative z-10", allocationStatusBarConfig.iconClass)} />}
+            {allocationStatusBarConfig.icon === XCircle && <XCircle className={cn("h-4 w-4 relative z-10", allocationStatusBarConfig.iconClass)} />}
+            <span className={cn("text-xs font-bold tracking-wide relative z-10 uppercase", allocationStatusBarConfig.statusClass)}>
               {allocationStatusBarConfig.label}
             </span>
+            
+            {/* Separator */}
+            <span className="separator relative z-10">•</span>
+            
+            {/* Destination */}
+            <span className="text-xs font-bold relative z-10 status-destination">
+              PARA: {allocationStatusBarConfig.sectorDisplayName}
+            </span>
+            
+            {/* Time */}
             {allocationTimeElapsed && (
-              <span className="text-[10px] font-semibold relative z-10 status-time ml-1">
-                • há {allocationTimeElapsed}
-              </span>
+              <>
+                <span className="separator relative z-10">•</span>
+                <span className="text-[10px] font-semibold relative z-10 status-time">
+                  há {allocationTimeElapsed}
+                </span>
+              </>
             )}
           </div>
         )}

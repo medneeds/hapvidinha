@@ -405,14 +405,14 @@
     background: radial-gradient(circle, var(--tw-gradient-stops));
   }
 
-  /* Allocation Status Bar - Premium Shimmer Effect */
+  /* Allocation Status Bar - Sector-based colors */
   .allocation-status-bar {
     position: relative;
     overflow: hidden;
     border-radius: 0.5rem 0.5rem 0 0;
     box-shadow: 
-      inset 0 1px 0 rgba(255, 255, 255, 0.25),
-      0 2px 8px rgba(0, 0, 0, 0.15);
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.12);
   }
 
   .allocation-status-bar::before {
@@ -425,130 +425,134 @@
     background: linear-gradient(
       110deg,
       transparent 20%,
-      rgba(255, 255, 255, 0.5) 40%,
-      rgba(255, 255, 255, 0.7) 50%,
-      rgba(255, 255, 255, 0.5) 60%,
+      rgba(255, 255, 255, 0.4) 40%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0.4) 60%,
       transparent 80%
     );
     animation: shimmer 2.5s ease-in-out infinite;
     z-index: 1;
   }
 
-  .allocation-status-bar.status-pending {
+  /* Sector-based background colors */
+  .allocation-status-bar.sector-red {
     background: linear-gradient(
       135deg,
-      hsl(38 100% 50% / 0.35) 0%,
-      hsl(45 100% 55% / 0.4) 25%,
-      hsl(42 100% 58% / 0.45) 50%,
-      hsl(45 100% 55% / 0.4) 75%,
-      hsl(38 100% 50% / 0.35) 100%
+      hsl(0 72% 51% / 0.45) 0%,
+      hsl(0 72% 55% / 0.5) 50%,
+      hsl(0 72% 51% / 0.45) 100%
     );
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
   }
 
-  .allocation-status-bar.status-discussing {
+  .allocation-status-bar.sector-yellow {
     background: linear-gradient(
       135deg,
-      hsl(199 100% 45% / 0.35) 0%,
-      hsl(195 100% 50% / 0.4) 25%,
-      hsl(190 100% 55% / 0.45) 50%,
-      hsl(195 100% 50% / 0.4) 75%,
-      hsl(199 100% 45% / 0.35) 100%
+      hsl(45 93% 47% / 0.45) 0%,
+      hsl(45 93% 52% / 0.5) 50%,
+      hsl(45 93% 47% / 0.45) 100%
     );
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
   }
 
-  .allocation-status-bar.status-rejected {
+  .allocation-status-bar.sector-blue {
     background: linear-gradient(
       135deg,
-      hsl(0 85% 55% / 0.35) 0%,
-      hsl(355 90% 60% / 0.4) 25%,
-      hsl(350 95% 65% / 0.45) 50%,
-      hsl(355 90% 60% / 0.4) 75%,
-      hsl(0 85% 55% / 0.35) 100%
+      hsl(210 80% 50% / 0.45) 0%,
+      hsl(210 80% 55% / 0.5) 50%,
+      hsl(210 80% 50% / 0.45) 100%
     );
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
   }
 
-  /* Strong contrasting icon colors */
-  .allocation-status-bar.status-pending .status-icon {
-    color: hsl(25 100% 45%);
-    filter: drop-shadow(0 0 6px hsl(25 100% 50% / 0.8)) drop-shadow(0 0 12px hsl(25 100% 55% / 0.5));
+  /* Status text colors - high contrast */
+  .allocation-status-bar .status-pending {
+    color: hsl(25 100% 35%);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
   }
 
-  .allocation-status-bar.status-discussing .status-icon {
-    color: hsl(205 100% 35%);
-    filter: drop-shadow(0 0 6px hsl(205 100% 45% / 0.8)) drop-shadow(0 0 12px hsl(205 100% 50% / 0.5));
+  .allocation-status-bar .status-discussing {
+    color: hsl(199 100% 30%);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
   }
 
-  .allocation-status-bar.status-rejected .status-icon {
-    color: hsl(0 90% 40%);
-    filter: drop-shadow(0 0 6px hsl(0 90% 50% / 0.8)) drop-shadow(0 0 12px hsl(0 90% 55% / 0.5));
+  .allocation-status-bar .status-rejected {
+    color: hsl(0 80% 30%);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
   }
 
-  /* Dark text with subtle shadow - better readability */
-  .allocation-status-bar .status-text {
-    color: hsl(220 20% 20%);
+  /* Status icon colors with glow */
+  .allocation-status-bar .icon-pending {
+    color: hsl(25 100% 40%);
+    filter: drop-shadow(0 0 4px hsl(25 100% 50% / 0.7));
+  }
+
+  .allocation-status-bar .icon-discussing {
+    color: hsl(199 100% 35%);
+    filter: drop-shadow(0 0 4px hsl(199 100% 50% / 0.7));
+  }
+
+  .allocation-status-bar .icon-rejected {
+    color: hsl(0 80% 35%);
+    filter: drop-shadow(0 0 4px hsl(0 80% 50% / 0.7));
+  }
+
+  /* Destination text - prominent white */
+  .allocation-status-bar .status-destination {
+    color: white;
     font-weight: 700;
     text-shadow: 
-      0 1px 2px rgba(255, 255, 255, 0.6),
+      0 1px 3px rgba(0, 0, 0, 0.4),
       0 0 8px rgba(255, 255, 255, 0.3);
   }
 
+  /* Time text - subtle */
   .allocation-status-bar .status-time {
-    color: hsl(220 15% 30%);
+    color: hsl(220 20% 25%);
     font-weight: 600;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
   }
 
-  .dark .allocation-status-bar .status-text {
-    color: hsl(220 20% 95%);
-    text-shadow: 
-      0 1px 3px rgba(0, 0, 0, 0.5),
-      0 0 10px rgba(255, 255, 255, 0.2);
+  /* Separator dot */
+  .allocation-status-bar .separator {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 
-  .dark .allocation-status-bar .status-time {
-    color: hsl(220 15% 85%);
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-  }
-
-  @keyframes gradient-shift {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
+  /* Dark mode adjustments */
   .dark .allocation-status-bar::before {
     background: linear-gradient(
       110deg,
       transparent 20%,
-      rgba(255, 255, 255, 0.3) 40%,
-      rgba(255, 255, 255, 0.5) 50%,
-      rgba(255, 255, 255, 0.3) 60%,
+      rgba(255, 255, 255, 0.25) 40%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0.25) 60%,
       transparent 80%
     );
   }
 
-  .dark .allocation-status-bar .status-text {
-    text-shadow: 
-      0 0 12px rgba(255, 255, 255, 1),
-      0 0 25px rgba(255, 255, 255, 0.7),
-      0 0 40px rgba(255, 255, 255, 0.5),
-      0 1px 3px rgba(0, 0, 0, 0.4);
+  .dark .allocation-status-bar .status-pending {
+    color: hsl(35 100% 65%);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
   }
 
-  .dark .allocation-status-bar .status-icon {
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.6));
+  .dark .allocation-status-bar .status-discussing {
+    color: hsl(199 100% 70%);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+
+  .dark .allocation-status-bar .status-rejected {
+    color: hsl(0 80% 70%);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+
+  .dark .allocation-status-bar .status-time {
+    color: hsl(220 15% 80%);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .dark .allocation-status-bar .status-destination {
+    text-shadow: 
+      0 1px 4px rgba(0, 0, 0, 0.6),
+      0 0 12px rgba(255, 255, 255, 0.2);
   }
 }
 
