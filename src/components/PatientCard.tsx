@@ -1244,10 +1244,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               if (badge) (badge as HTMLElement).click();
             }}
           >
-            {allocationStatusBarConfig.icon === Clock && <Clock className="h-4 w-4 text-white relative z-10" />}
-            {allocationStatusBarConfig.icon === MessageSquare && <MessageSquare className="h-4 w-4 text-white relative z-10" />}
-            {allocationStatusBarConfig.icon === XCircle && <XCircle className="h-4 w-4 text-white relative z-10" />}
-            <span className="text-xs font-bold text-white tracking-wider relative z-10 uppercase">
+            {allocationStatusBarConfig.icon === Clock && <Clock className="h-4 w-4 text-gray-900 relative z-10" />}
+            {allocationStatusBarConfig.icon === MessageSquare && <MessageSquare className="h-4 w-4 text-gray-900 relative z-10" />}
+            {allocationStatusBarConfig.icon === XCircle && <XCircle className="h-4 w-4 text-gray-900 relative z-10" />}
+            <span className="text-xs font-bold text-gray-900 tracking-wider relative z-10 uppercase">
               {allocationStatusBarConfig.label}
             </span>
           </div>
