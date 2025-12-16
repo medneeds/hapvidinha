@@ -76,31 +76,36 @@ export function PrintableDietDocument({
               display: flex;
               align-items: center;
               justify-content: space-between;
-              margin-bottom: 24px;
-              padding-bottom: 16px;
+              margin-bottom: 16px;
+              padding-bottom: 12px;
               border-bottom: 2px solid #1e40af;
             }
-            .header img {
-              height: 60px;
+            .header img.logo-left {
+              height: 70px;
               width: auto;
               object-fit: contain;
             }
-            .header-center {
+            .header img.logo-right {
+              height: 55px;
+              width: auto;
+              object-fit: contain;
+            }
+            .title-section {
               text-align: center;
-              flex: 1;
-              padding: 0 24px;
+              margin-bottom: 24px;
             }
             .header-title {
-              font-size: 22px;
+              font-size: 24px;
               font-weight: bold;
               color: #1e3a5f;
-              letter-spacing: 1px;
+              letter-spacing: 2px;
               text-transform: uppercase;
+              margin: 0;
             }
             .header-subtitle {
-              font-size: 13px;
+              font-size: 14px;
               color: #64748b;
-              margin-top: 4px;
+              margin-top: 6px;
             }
             .patient-card {
               margin-bottom: 24px;
@@ -318,18 +323,20 @@ export function PrintableDietDocument({
               position: 'relative'
             }}
           >
-            {/* Header */}
-            <div className="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', paddingBottom: '16px', borderBottom: '2px solid #1e40af' }}>
-              <img src={hospitalGuarasLogo} alt="Hospital Guarás" style={{ height: '60px', width: 'auto', objectFit: 'contain' }} />
-              <div style={{ textAlign: 'center', flex: 1, padding: '0 24px' }}>
-                <h1 style={{ fontSize: '22px', fontWeight: 'bold', color: '#1e3a5f', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>
-                  Autorização de Dieta
-                </h1>
-                <p style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>
-                  Serviço de Nutrição e Dietética
-                </p>
-              </div>
-              <img src={hapvidaLogo} alt="Hapvida" style={{ height: '50px', width: 'auto', objectFit: 'contain' }} />
+            {/* Header - Only Logos */}
+            <div className="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '12px', borderBottom: '2px solid #1e40af' }}>
+              <img src={hospitalGuarasLogo} alt="Hospital Guarás" className="logo-left" style={{ height: '70px', width: 'auto', objectFit: 'contain' }} />
+              <img src={hapvidaLogo} alt="Hapvida" className="logo-right" style={{ height: '55px', width: 'auto', objectFit: 'contain' }} />
+            </div>
+
+            {/* Title Section */}
+            <div className="title-section" style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e3a5f', letterSpacing: '2px', textTransform: 'uppercase', margin: 0 }}>
+                Autorização de Dieta
+              </h1>
+              <p style={{ fontSize: '14px', color: '#64748b', marginTop: '6px' }}>
+                Serviço de Nutrição e Dietética
+              </p>
             </div>
 
             {/* Patient Info */}
