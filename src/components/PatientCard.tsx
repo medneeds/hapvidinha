@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils, MessageSquare, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -1201,14 +1201,68 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     outside: "border-muted-foreground data-[state=checked]:bg-muted-foreground data-[state=checked]:border-muted-foreground"
   }[patient.sector];
 
+  // Allocation Status Bar configuration
+  const allocationStatusBarConfig = useMemo(() => {
+    if (!patient.allocationStatus || patient.allocationStatus === 'approved' || !patient.isDoorPatient) {
+      return null;
+    }
+    
+    const configs = {
+      pending: {
+        label: "AGUARDANDO APROVAÇÃO",
+        className: "status-pending",
+        icon: Clock,
+      },
+      discussing: {
+        label: "EM DISCUSSÃO",
+        className: "status-discussing",
+        icon: MessageSquare,
+      },
+      rejected: {
+        label: "NEGADO",
+        className: "status-rejected",
+        icon: XCircle,
+      },
+    };
+    
+    return configs[patient.allocationStatus as keyof typeof configs] || null;
+  }, [patient.allocationStatus, patient.isDoorPatient]);
+
   return (
     <>
-      <Card className={cn(
-        "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
-        config.color,
-        isSelected && "ring-2 ring-primary",
-        isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]"
-      )}>
+      <div className="relative">
+        {/* Allocation Status Bar - Above Card */}
+        {allocationStatusBarConfig && (
+          <div 
+            className={cn(
+              "allocation-status-bar py-1.5 px-3 flex items-center justify-center gap-2 cursor-pointer transition-all print:hidden",
+              allocationStatusBarConfig.className
+            )}
+            onClick={() => {
+              // Trigger the same dialog as AllocationPendingBadge
+              const badge = document.querySelector(`[data-patient-id="${patient.id}"] .allocation-badge-trigger`);
+              if (badge) (badge as HTMLElement).click();
+            }}
+          >
+            {allocationStatusBarConfig.icon === Clock && <Clock className="h-4 w-4 text-white relative z-10" />}
+            {allocationStatusBarConfig.icon === MessageSquare && <MessageSquare className="h-4 w-4 text-white relative z-10" />}
+            {allocationStatusBarConfig.icon === XCircle && <XCircle className="h-4 w-4 text-white relative z-10" />}
+            <span className="text-xs font-bold text-white tracking-wider relative z-10 uppercase">
+              {allocationStatusBarConfig.label}
+            </span>
+          </div>
+        )}
+        
+        <Card 
+          data-patient-id={patient.id}
+          className={cn(
+            "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
+            config.color,
+            isSelected && "ring-2 ring-primary",
+            isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
+            allocationStatusBarConfig && "rounded-t-none"
+          )}
+        >
         <div className="p-3 md:p-2 print:p-1.5">
           <div className="flex items-start justify-between gap-3 md:gap-2 print:gap-1">
             {selectionMode && onToggleSelection && (
@@ -1345,8 +1399,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
                           </p>
                           
-                          {/* Allocation Pending Badge */}
-                          <AllocationPendingBadge patient={patient} onStatusChange={onRefetch} />
+                          {/* Allocation Pending Badge - Hidden when status bar is visible, kept for dialog functionality */}
+                          <div className={cn(allocationStatusBarConfig && "sr-only")}>
+                            <AllocationPendingBadge patient={patient} onStatusChange={onRefetch} />
+                          </div>
                         </div>
                       )}
                       
@@ -3442,6 +3498,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         </div>
       )}
       </Card>
+      </div>
 
       <EditPatientDialog
         patient={patient}
