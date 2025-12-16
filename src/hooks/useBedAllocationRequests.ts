@@ -188,21 +188,26 @@ export function useBedAllocationRequests() {
       // Calculate next available bed number in destination sector
       const { data: existingPatients } = await supabase
         .from("patients")
-        .select("bed_number")
+        .select("bed_number, display_order")
         .eq("hospital_unit_id", currentHospital.id)
         .eq("department", currentDepartment)
         .eq("sector", dbSector);
 
       let maxBedNumber = 0;
+      let maxDisplayOrder = 0;
       if (existingPatients) {
         existingPatients.forEach((p) => {
           const num = parseInt(p.bed_number.replace(/\D/g, ""), 10);
           if (!isNaN(num) && num > maxBedNumber) {
             maxBedNumber = num;
           }
+          if (p.display_order && p.display_order > maxDisplayOrder) {
+            maxDisplayOrder = p.display_order;
+          }
         });
       }
       const newBedNumber = String(maxBedNumber + 1).padStart(2, "0");
+      const newDisplayOrder = maxDisplayOrder + 1;
 
       // Update request status
       const { error: updateError } = await supabase
@@ -216,7 +221,7 @@ export function useBedAllocationRequests() {
 
       if (updateError) throw updateError;
 
-      // Move patient to official sector with new bed number
+      // Move patient to official sector with new bed number and display order at the end
       const { error: patientError } = await supabase
         .from("patients")
         .update({
@@ -224,6 +229,7 @@ export function useBedAllocationRequests() {
           allocation_status: "approved",
           sector: dbSector,
           bed_number: newBedNumber,
+          display_order: newDisplayOrder,
         })
         .eq("id", request.patient_id);
 
