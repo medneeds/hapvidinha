@@ -1089,64 +1089,57 @@ const Index = () => {
               ) : (
                 <>
                   {/* Emergency sectors: Red, Yellow, Blue, Outside */}
-                  <div>
-                    <SectorSection 
-                      sector="red" 
-                      patients={redPatients} 
-                      onUpdatePatient={handleUpdatePatient}
-                      onDeletePatient={handleDeletePatient}
-                      onUndeletePatient={handleUndeletePatient}
-                      onPrintSector={() => handlePrintSector("red")}
-                      onAddExtraBed={() => handleAddExtraBed("red")}
-                      selectionMode={selectionMode}
-                      selectedPatients={selectedPatients}
-                      onToggleSelection={handleToggleSelection}
-                      onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
-                      onTransfer={handleTransferPatient}
-                      onPrintPatient={handlePrintPatient}
-                      onRefetch={refetch}
-                    />
-                  </div>
-                  <div>
-                    <SectorSection 
-                      sector="yellow" 
-                      patients={yellowPatients} 
-                      onUpdatePatient={handleUpdatePatient}
-                      onDeletePatient={handleDeletePatient}
-                      onUndeletePatient={handleUndeletePatient}
-                      onPrintSector={() => handlePrintSector("yellow")}
-                      onAddExtraBed={() => handleAddExtraBed("yellow")}
-                      selectionMode={selectionMode}
-                      selectedPatients={selectedPatients}
-                      onToggleSelection={handleToggleSelection}
-                      onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
-                      onTransfer={handleTransferPatient}
-                      onPrintPatient={handlePrintPatient}
-                      onRefetch={refetch}
-                    />
-                  </div>
-                  <div>
-                    <SectorSection 
-                      sector="blue" 
-                      patients={bluePatients} 
-                      onUpdatePatient={handleUpdatePatient}
-                      onDeletePatient={handleDeletePatient}
-                      onUndeletePatient={handleUndeletePatient}
-                      onPrintSector={() => handlePrintSector("blue")}
-                      onAddExtraBed={() => handleAddExtraBed("blue")}
-                      selectionMode={selectionMode}
-                      selectedPatients={selectedPatients}
-                      onToggleSelection={handleToggleSelection}
-                      onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
-                      onTransfer={handleTransferPatient}
-                      onPrintPatient={handlePrintPatient}
-                      onRefetch={refetch}
-                    />
-                  </div>
+                  <SectorSection 
+                    sector="red" 
+                    patients={redPatients} 
+                    onUpdatePatient={handleUpdatePatient}
+                    onDeletePatient={handleDeletePatient}
+                    onUndeletePatient={handleUndeletePatient}
+                    onPrintSector={() => handlePrintSector("red")}
+                    onAddExtraBed={() => handleAddExtraBed("red")}
+                    selectionMode={selectionMode}
+                    selectedPatients={selectedPatients}
+                    onToggleSelection={handleToggleSelection}
+                    onReorderPatients={(reordered) => handleReorderPatients("red", reordered)}
+                    onTransfer={handleTransferPatient}
+                    onPrintPatient={handlePrintPatient}
+                    onRefetch={refetch}
+                  />
+                  <SectorSection 
+                    sector="yellow" 
+                    patients={yellowPatients} 
+                    onUpdatePatient={handleUpdatePatient}
+                    onDeletePatient={handleDeletePatient}
+                    onUndeletePatient={handleUndeletePatient}
+                    onPrintSector={() => handlePrintSector("yellow")}
+                    onAddExtraBed={() => handleAddExtraBed("yellow")}
+                    selectionMode={selectionMode}
+                    selectedPatients={selectedPatients}
+                    onToggleSelection={handleToggleSelection}
+                    onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
+                    onTransfer={handleTransferPatient}
+                    onPrintPatient={handlePrintPatient}
+                    onRefetch={refetch}
+                  />
+                  <SectorSection 
+                    sector="blue" 
+                    patients={bluePatients} 
+                    onUpdatePatient={handleUpdatePatient}
+                    onDeletePatient={handleDeletePatient}
+                    onUndeletePatient={handleUndeletePatient}
+                    onPrintSector={() => handlePrintSector("blue")}
+                    onAddExtraBed={() => handleAddExtraBed("blue")}
+                    selectionMode={selectionMode}
+                    selectedPatients={selectedPatients}
+                    onToggleSelection={handleToggleSelection}
+                    onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
+                    onTransfer={handleTransferPatient}
+                    onPrintPatient={handlePrintPatient}
+                    onRefetch={refetch}
+                  />
 
                   {/* Pacientes Fora das Alas Section */}
-                  <div className="mt-6 print:hidden">
-                    <Collapsible open={isOutsideSectionOpen} onOpenChange={setIsOutsideSectionOpen}>
+                  <Collapsible open={isOutsideSectionOpen} onOpenChange={setIsOutsideSectionOpen} className="space-y-3 mb-4 print:hidden">
                       <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
                         <div className="flex items-center justify-between w-full">
                           <CollapsibleTrigger asChild>
@@ -1219,34 +1212,31 @@ const Index = () => {
                           )}
                         </div>
                       </CollapsibleContent>
-                    </Collapsible>
-                  </div>
+                  </Collapsible>
                 </>
               )}
 
               {/* Anotações e Lembretes Section */}
-              <div className="mt-6 print:hidden">
-                <Collapsible open={isNotesSectionOpen} onOpenChange={setIsNotesSectionOpen}>
-                  <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
-                    <div className="flex items-center justify-between w-full">
-                      <CollapsibleTrigger asChild>
-                        <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                          <ChevronDown className={`h-5 w-5 transition-transform ${isNotesSectionOpen ? '' : '-rotate-90'}`} />
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">📝</span>
-                            <h2 className="text-lg font-bold text-foreground uppercase">Anotações, Lembretes e Check-lists</h2>
-                          </div>
-                        </button>
-                      </CollapsibleTrigger>
-                    </div>
+              <Collapsible open={isNotesSectionOpen} onOpenChange={setIsNotesSectionOpen} className="space-y-3 mb-4 print:hidden">
+                <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
+                  <div className="flex items-center justify-between w-full">
+                    <CollapsibleTrigger asChild>
+                      <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                        <ChevronDown className={`h-5 w-5 transition-transform ${isNotesSectionOpen ? '' : '-rotate-90'}`} />
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">📝</span>
+                          <h2 className="text-lg font-bold text-foreground uppercase">Anotações, Lembretes e Check-lists</h2>
+                        </div>
+                      </button>
+                    </CollapsibleTrigger>
                   </div>
-                  <CollapsibleContent>
-                    <div className="mt-3">
-                      <NotesTabOptimized />
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
+                </div>
+                <CollapsibleContent>
+                  <div className="mt-3">
+                    <NotesTabOptimized />
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             </div>
           </main>
 
