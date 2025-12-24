@@ -284,6 +284,18 @@
     overflow: visible !important;
   }
 
+  /* MainLayout uses overflow-auto; during print this can render scrollbars into the PDF */
+  main {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  main::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+  }
+
   .print-layout-container {
     overflow: visible !important;
   }
