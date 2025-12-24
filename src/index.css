@@ -250,11 +250,9 @@
 }
 
 @media print {
-  @page {
-    size: A4 landscape;
-    margin: 0.5cm 0.6cm;
-  }
-  
+  /* Page size/margins are defined by the specific print components (portrait/landscape).
+     Keeping this global block without forcing a single orientation prevents overflow/scrollbars. */
+
   * {
     print-color-adjust: exact !important;
     -webkit-print-color-adjust: exact !important;
