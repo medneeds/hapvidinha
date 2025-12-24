@@ -4,6 +4,7 @@ import { UtiSectorSection } from "@/components/UtiSectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
+import { PrintPatientPreviewDialog } from "@/components/PrintPatientPreviewDialog";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
@@ -179,6 +180,7 @@ const Index = () => {
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
   const [printingPatientId, setPrintingPatientId] = useState<string | null>(null);
+  const [previewPatientId, setPreviewPatientId] = useState<string | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
@@ -721,13 +723,19 @@ const Index = () => {
   };
 
   const handlePrintPatient = (patientId: string) => {
-    setPrintingPatientId(patientId);
-    setTimeout(() => {
-      window.print();
+    // On mobile, open the preview dialog for better PDF generation
+    // On desktop, use the traditional print approach
+    if (isMobile) {
+      setPreviewPatientId(patientId);
+    } else {
+      setPrintingPatientId(patientId);
       setTimeout(() => {
-        setPrintingPatientId(null);
-      }, 500);
-    }, 100);
+        window.print();
+        setTimeout(() => {
+          setPrintingPatientId(null);
+        }, 500);
+      }, 100);
+    }
   };
 
   return (
@@ -753,6 +761,17 @@ const Index = () => {
             <div className="print-layout-container">
               <PrintPatientLayout patient={patient} />
             </div>
+          ) : null;
+        })()}
+
+        {/* Mobile preview dialog for patient PDF */}
+        {previewPatientId && (() => {
+          const patient = patients.find(p => p.id === previewPatientId);
+          return patient ? (
+            <PrintPatientPreviewDialog 
+              patient={patient} 
+              onClose={() => setPreviewPatientId(null)} 
+            />
           ) : null;
         })()}
         
