@@ -265,6 +265,8 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
+    height: auto !important;
+    overflow: visible !important;
   }
   
   body {
@@ -274,6 +276,30 @@
     position: relative;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Prevent scrollbars from being rendered into PDF */
+  #root {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .print-layout-container {
+    overflow: visible !important;
+  }
+
+  .print-layout-container,
+  .print-layout-container * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .print-layout-container *::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
   }
   
   /* Marca d'água - Logo HapMap à esquerda */
