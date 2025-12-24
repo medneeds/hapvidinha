@@ -208,19 +208,19 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-slate-100 dark:bg-slate-900 overflow-auto">
+    <div className="fixed inset-0 z-[9999] bg-slate-100 overflow-auto">
       {/* Screen Controls */}
-      <div className="sticky top-0 z-10 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 p-3 sm:p-4 flex items-center justify-between shadow-sm gap-2">
-        <h2 className="text-sm sm:text-lg font-semibold text-slate-800 dark:text-white truncate">
+      <div className="sticky top-0 z-10 bg-white border-b border-slate-200 p-3 sm:p-4 flex items-center justify-between shadow-sm gap-2">
+        <h2 className="text-sm sm:text-lg font-semibold text-slate-800 truncate">
           Caso Clínico - {patient.name}
         </h2>
         <div className="flex gap-2 flex-shrink-0">
-          <Button onClick={handlePrint} size="sm" className="gap-1 sm:gap-2 bg-emerald-600 hover:bg-emerald-700">
+          <Button onClick={handlePrint} size="sm" className="gap-1 sm:gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
             <Download className="h-4 w-4" />
             <span className="hidden sm:inline">Gerar PDF</span>
             <span className="sm:hidden">PDF</span>
           </Button>
-          <Button variant="outline" size="sm" onClick={onClose} className="gap-1 sm:gap-2">
+          <Button variant="outline" size="sm" onClick={onClose} className="gap-1 sm:gap-2 bg-white border-slate-300 text-slate-700 hover:bg-slate-50">
             <X className="h-4 w-4" />
             <span className="hidden sm:inline">Fechar</span>
           </Button>
@@ -228,11 +228,10 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
       </div>
 
       {/* Document Preview */}
-      <div className="flex justify-center py-4 sm:py-8 px-2 sm:px-4">
+      <div className="flex justify-center py-4 sm:py-8 px-2 sm:px-4 bg-slate-100">
         <div className="bg-white rounded-lg shadow-2xl overflow-hidden w-full max-w-[210mm]">
           <div 
             ref={printRef}
-            className="bg-white text-black"
             style={{ 
               width: '100%',
               minHeight: '297mm',
@@ -240,6 +239,8 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
               paddingBottom: '24mm',
               position: 'relative',
               boxSizing: 'border-box',
+              backgroundColor: '#ffffff',
+              color: '#1f2937',
             }}
           >
             {/* Watermark */}
