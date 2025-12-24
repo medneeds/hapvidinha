@@ -49,21 +49,23 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
   const colors = sectorColors[patient.sector] || sectorColors.outside;
   
   const containerStyle: React.CSSProperties = {
-    padding: '10mm 8mm',
-    paddingTop: '12mm',
+    padding: '12mm 12mm 20mm 12mm',
     fontSize: '8.5pt',
     lineHeight: '1.35',
     backgroundColor: '#ffffff',
     minHeight: '297mm',
     width: '210mm',
     color: '#1f2937',
-    position: 'relative'
+    position: 'relative',
+    boxSizing: 'border-box',
+    border: `2px solid ${colors.border}`,
+    borderRadius: '4px'
   };
 
   const pageStyle = `
     @page {
       size: A4 portrait;
-      margin: 0;
+      margin: 8mm;
     }
     
     @media print {
@@ -79,6 +81,7 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
+        box-sizing: border-box !important;
       }
       
       /* Mobile Safari specific fixes */
@@ -332,30 +335,23 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
           </SectionCard>
         )}
 
-        {/* Footer */}
+        {/* Footer - Fixed at bottom */}
         <div style={{ 
-          fontSize: '6pt', 
-          textAlign: 'center', 
-          color: '#9ca3af', 
-          marginTop: '12px', 
-          paddingTop: '6px', 
-          borderTop: '1px solid #e5e7eb'
-        }}>
-          Hospital Guarás • Documento Confidencial • {new Date().toLocaleDateString('pt-BR')} {new Date().toLocaleTimeString('pt-BR')}
-        </div>
-        
-        {/* Developer Signature - Fixed Bottom Right */}
-        <div style={{
-          position: 'fixed',
+          position: 'absolute',
           bottom: '8mm',
-          right: '8mm',
-          fontSize: '5.5pt',
-          fontStyle: 'italic',
-          color: '#9ca3af',
-          opacity: 0.4,
-          zIndex: 1000
+          left: '12mm',
+          right: '12mm',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '6pt', 
+          color: '#9ca3af', 
+          paddingTop: '6px', 
+          borderTop: `1px solid ${colors.border}`
         }}>
-          Desenvolvido por Artur Batista
+          <span>Hospital Guarás • Documento Confidencial</span>
+          <span>{new Date().toLocaleDateString('pt-BR')} {new Date().toLocaleTimeString('pt-BR')}</span>
+          <span style={{ fontStyle: 'italic', opacity: 0.6 }}>Dev. por Artur Batista</span>
         </div>
       </div>
     </>
