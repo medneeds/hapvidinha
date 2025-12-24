@@ -1350,52 +1350,54 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 />
               </div>
             )}
-            <div className="flex-1 grid grid-cols-18 gap-1.5 items-start">
-              {/* Leito - ultra compacto */}
-              <div className="flex flex-col md:col-span-1 gap-1">
-                <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                <Badge className={cn("w-fit text-sm md:text-[10px] py-1 md:py-0 px-2 md:px-1 font-bold leading-tight", config.badgeColor)}>
-                  {patient.bedNumber}
-                </Badge>
-                <div className="flex flex-col gap-0.5">
-                  {localMedicalResponsibility?.type ? (
-                    <MedicalResponsibilityIndicator
-                      responsibility={localMedicalResponsibility}
-                      sectorColor={sectorColorMap[patient.sector]}
-                      onClick={() => setMedicalResponsibilityDialogOpen(true)}
-                      compact
-                    />
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setMedicalResponsibilityDialogOpen(true)}
-                      className="h-5 w-5 p-0 print:hidden rounded-full border border-dashed transition-all duration-300 flex items-center justify-center hover:scale-125 hover:rotate-90 dark:border-opacity-60"
-                      style={{
-                        color: sectorColorMap[patient.sector],
-                        borderColor: sectorColorMap[patient.sector],
-                        opacity: 0.5,
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.opacity = '1';
-                        e.currentTarget.style.backgroundColor = `${sectorColorMap[patient.sector]}30`;
-                        e.currentTarget.style.borderStyle = 'solid';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.opacity = '0.5';
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.borderStyle = 'dashed';
-                      }}
-                      title="Adicionar responsável médico"
-                    >
-                      <span className="text-sm font-bold transition-transform duration-300">+</span>
-                    </Button>
-                  )}
+            <div className="flex-1 flex flex-col gap-3 md:grid md:grid-cols-18 md:gap-1.5 md:items-start">
+              {/* Mobile: Leito + Paciente na mesma linha */}
+              <div className="flex items-start gap-3 md:contents">
+                {/* Leito - ultra compacto */}
+                <div className="flex flex-col shrink-0 md:col-span-1">
+                  <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
+                  <Badge className={cn("w-fit text-sm md:text-[10px] py-1 md:py-0 px-2 md:px-1 font-bold leading-tight", config.badgeColor)}>
+                    {patient.bedNumber}
+                  </Badge>
+                  <div className="flex flex-col gap-0.5 mt-1">
+                    {localMedicalResponsibility?.type ? (
+                      <MedicalResponsibilityIndicator
+                        responsibility={localMedicalResponsibility}
+                        sectorColor={sectorColorMap[patient.sector]}
+                        onClick={() => setMedicalResponsibilityDialogOpen(true)}
+                        compact
+                      />
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setMedicalResponsibilityDialogOpen(true)}
+                        className="h-5 w-5 p-0 print:hidden rounded-full border border-dashed transition-all duration-300 flex items-center justify-center hover:scale-125 hover:rotate-90 dark:border-opacity-60"
+                        style={{
+                          color: sectorColorMap[patient.sector],
+                          borderColor: sectorColorMap[patient.sector],
+                          opacity: 0.5,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.opacity = '1';
+                          e.currentTarget.style.backgroundColor = `${sectorColorMap[patient.sector]}30`;
+                          e.currentTarget.style.borderStyle = 'solid';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.opacity = '0.5';
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.borderStyle = 'dashed';
+                        }}
+                        title="Adicionar responsável médico"
+                      >
+                        <span className="text-sm font-bold transition-transform duration-300">+</span>
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              {/* Nome e Idade - mais espaço para nome completo */}
-              <div className="flex flex-col md:col-span-3">
+                {/* Nome e Idade - mais espaço para nome completo */}
+                <div className="flex flex-col flex-1 min-w-0 md:col-span-3">
                 <span className="text-xs md:text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
                 <div className="group/name relative">
                   <div className="flex items-start gap-0.5">
@@ -1538,15 +1540,17 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       </Button>
                     )}
                   </div>
+                </div>
               </div>
-            </div>
+              </div>
+              {/* Fim do wrapper mobile Leito+Paciente */}
 
             {/* UTI - Campos específicos logo após nome do paciente */}
             {currentDepartment === "UTI" && (
               <>
                 {/* Bloco Administrativo - Linha 1 */}
-                <div className="md:col-span-12 border-l-2 border-primary/20 pl-3 py-2 bg-muted/5 rounded-r">
-                  <div className="grid grid-cols-12 gap-2">
+                <div className="w-full md:col-span-12 border-l-2 border-primary/20 pl-3 py-2 bg-muted/5 rounded-r">
+                  <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:gap-2">
                     {/* Setor de Origem */}
                     <div className="flex flex-col md:col-span-4">
                   <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0">Setor de Origem</span>
@@ -1912,8 +1916,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Bloco Investigação - Linha 2 */}
-                <div className="md:col-span-12 border-l-2 border-muted-foreground/20 pl-3 py-2 bg-muted/10 rounded-r">
-                  <div className="grid grid-cols-12 gap-2">
+                <div className="w-full md:col-span-12 border-l-2 border-muted-foreground/20 pl-3 py-2 bg-muted/10 rounded-r">
+                  <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:gap-2">
                     {/* Motivo da Admissão */}
                     <div className="flex flex-col md:col-span-2">
                   <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Motivo da Admissão</span>
@@ -2300,8 +2304,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Bloco Clínico - Linha 3 */}
-                <div className="md:col-span-12 border-l-2 border-accent/30 pl-3 py-2 bg-accent/5 rounded-r">
-                  <div className="grid grid-cols-12 gap-2">
+                <div className="w-full md:col-span-12 border-l-2 border-accent/30 pl-3 py-2 bg-accent/5 rounded-r">
+                  <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:gap-2">
                     {/* Dispositivos */}
                     <div className="flex flex-col md:col-span-2">
                   <span className="text-[10px] font-medium text-muted-foreground mb-0.5">Dispositivos</span>
