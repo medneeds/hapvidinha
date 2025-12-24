@@ -127,7 +127,27 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
+  /* Force light tokens inside print previews / PDF dialogs */
+  .print-light {
+    color-scheme: light;
+    --background: 0 0% 100%;
+    --foreground: 210 20% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 20% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 20% 12%;
+    --secondary: 210 15% 92%;
+    --secondary-foreground: 210 20% 12%;
+    --muted: 210 15% 95%;
+    --muted-foreground: 210 10% 45%;
+    --accent: 210 60% 88%;
+    --accent-foreground: 210 80% 28%;
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 210 80% 42%;
+  }
+
   /* Hide print layout on screen */
   .print-layout-container {
     display: none;

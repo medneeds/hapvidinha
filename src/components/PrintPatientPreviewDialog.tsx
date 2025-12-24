@@ -48,11 +48,14 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
     const printContent = printRef.current;
     if (!printContent) return;
 
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    const printWindow = window.open("", "_blank", "width=800,height=600");
     if (!printWindow) {
-      alert('Por favor, permita pop-ups para imprimir o documento.');
+      alert("Por favor, permita pop-ups para imprimir o documento.");
       return;
     }
+
+    // Use outerHTML to preserve the white page container styling even in production builds
+    const htmlToPrint = printContent.outerHTML;
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -68,11 +71,15 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
             }
+            html {
+              color-scheme: light;
+              background: #ffffff;
+            }
             html, body {
               width: 100%;
               height: auto;
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              background: #ffffff;
+              background: #ffffff !important;
               overflow: visible !important;
             }
             @page {
@@ -83,22 +90,11 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
               html, body {
                 overflow: visible !important;
                 height: auto !important;
+                background: #ffffff !important;
               }
               body {
                 padding: 0;
               }
-            }
-            .container {
-              padding: 12mm;
-              padding-bottom: 24mm;
-              font-size: 8.5pt;
-              line-height: 1.35;
-              background-color: #ffffff;
-              color: #1f2937;
-              position: relative;
-              box-sizing: border-box;
-              width: 100%;
-              max-width: 100%;
             }
             .watermark {
               position: absolute;
@@ -194,13 +190,13 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
           </style>
         </head>
         <body>
-          ${printContent.innerHTML}
+          ${htmlToPrint}
         </body>
       </html>
     `);
 
     printWindow.document.close();
-    
+
     setTimeout(() => {
       printWindow.focus();
       printWindow.print();
@@ -208,10 +204,10 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-slate-100 overflow-auto">
+    <div className="fixed inset-0 z-[9999] overflow-auto print-light bg-background text-foreground">
       {/* Screen Controls */}
-      <div className="sticky top-0 z-10 bg-white border-b border-slate-200 p-3 sm:p-4 flex items-center justify-between shadow-sm gap-2">
-        <h2 className="text-sm sm:text-lg font-semibold text-slate-800 truncate">
+      <div className="sticky top-0 z-10 bg-card border-b border-border p-3 sm:p-4 flex items-center justify-between shadow-sm gap-2">
+        <h2 className="text-sm sm:text-lg font-semibold text-foreground truncate">
           Caso Clínico - {patient.name}
         </h2>
         <div className="flex gap-2 flex-shrink-0">
@@ -220,7 +216,7 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
             <span className="hidden sm:inline">Gerar PDF</span>
             <span className="sm:hidden">PDF</span>
           </Button>
-          <Button variant="outline" size="sm" onClick={onClose} className="gap-1 sm:gap-2 bg-white border-slate-300 text-slate-700 hover:bg-slate-50">
+          <Button variant="outline" size="sm" onClick={onClose} className="gap-1 sm:gap-2 bg-card border-border text-foreground hover:bg-muted">
             <X className="h-4 w-4" />
             <span className="hidden sm:inline">Fechar</span>
           </Button>
@@ -228,19 +224,19 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
       </div>
 
       {/* Document Preview */}
-      <div className="flex justify-center py-4 sm:py-8 px-2 sm:px-4 bg-slate-100">
-        <div className="bg-white rounded-lg shadow-2xl overflow-hidden w-full max-w-[210mm]">
-          <div 
+      <div className="flex justify-center py-4 sm:py-8 px-2 sm:px-4 bg-background">
+        <div className="bg-card rounded-lg shadow-2xl overflow-hidden w-full max-w-[210mm]">
+          <div
             ref={printRef}
-            style={{ 
-              width: '100%',
-              minHeight: '297mm',
-              padding: '12mm',
-              paddingBottom: '24mm',
-              position: 'relative',
-              boxSizing: 'border-box',
-              backgroundColor: '#ffffff',
-              color: '#1f2937',
+            style={{
+              width: "100%",
+              minHeight: "297mm",
+              padding: "12mm",
+              paddingBottom: "24mm",
+              position: "relative",
+              boxSizing: "border-box",
+              backgroundColor: "#ffffff",
+              color: "#1f2937",
             }}
           >
             {/* Watermark */}
