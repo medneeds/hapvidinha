@@ -54,12 +54,12 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
     fontSize: '8.5pt',
     lineHeight: '1.35',
     backgroundColor: '#ffffff',
-    minHeight: '297mm',
-    width: '210mm',
     color: '#1f2937',
     position: 'relative',
     boxSizing: 'border-box',
-    overflow: 'hidden'
+    width: '100%',
+    maxWidth: '100%',
+    overflow: 'visible'
   };
 
   const pageStyle = `
@@ -72,11 +72,12 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
       html, body {
         margin: 0 !important;
         padding: 0 !important;
+        overflow: visible !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
       }
-      
+
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
