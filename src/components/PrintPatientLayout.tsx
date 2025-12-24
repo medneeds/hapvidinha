@@ -49,7 +49,8 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
   const colors = sectorColors[patient.sector] || sectorColors.outside;
   
   const containerStyle: React.CSSProperties = {
-    padding: '12mm 12mm 20mm 12mm',
+    padding: '12mm',
+    paddingBottom: '24mm',
     fontSize: '8.5pt',
     lineHeight: '1.35',
     backgroundColor: '#ffffff',
@@ -58,8 +59,7 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
     color: '#1f2937',
     position: 'relative',
     boxSizing: 'border-box',
-    border: `2px solid ${colors.border}`,
-    borderRadius: '4px'
+    overflow: 'hidden'
   };
 
   const pageStyle = `
