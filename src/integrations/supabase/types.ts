@@ -495,6 +495,7 @@ export type Database = {
           medical_responsibility: Json | null
           name: string
           pendencies: string | null
+          psm_status: string | null
           relevant_exams: string | null
           schedule: string | null
           sector: string
@@ -531,6 +532,7 @@ export type Database = {
           medical_responsibility?: Json | null
           name?: string
           pendencies?: string | null
+          psm_status?: string | null
           relevant_exams?: string | null
           schedule?: string | null
           sector: string
@@ -567,6 +569,7 @@ export type Database = {
           medical_responsibility?: Json | null
           name?: string
           pendencies?: string | null
+          psm_status?: string | null
           relevant_exams?: string | null
           schedule?: string | null
           sector?: string

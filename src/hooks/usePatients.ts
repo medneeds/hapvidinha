@@ -78,6 +78,7 @@ export function usePatients(department?: Department) {
         isDoorPatient: p.is_door_patient ?? false,
         allocationStatus: p.allocation_status as Patient['allocationStatus'],
         createdBy: p.created_by || undefined,
+        psmStatus: p.psm_status as Patient['psmStatus'],
       }));
 
       setPatients(mappedPatients);
@@ -143,6 +144,7 @@ export function usePatients(department?: Department) {
       if (updates.utiCulturesAntibiotics !== undefined) dbUpdates.uti_cultures_antibiotics = updates.utiCulturesAntibiotics.length > 0 ? updates.utiCulturesAntibiotics.join('\n') : null;
       if (updates.utiSpecialties !== undefined) dbUpdates.uti_specialties = updates.utiSpecialties.length > 0 ? updates.utiSpecialties.join('\n') : null;
       if (updates.utiOriginSector !== undefined) dbUpdates.uti_origin_sector = updates.utiOriginSector.length > 0 ? updates.utiOriginSector.join('\n') : null;
+      if (updates.psmStatus !== undefined) dbUpdates.psm_status = updates.psmStatus;
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 
