@@ -1470,13 +1470,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             return null;
                           })()}
                           
-                          {/* PSM Desfavorável Alert Icon */}
-                          {patient.psmStatus === 'desfavoravel' && (
+                          {/* PSM Desfavorável Alert Icon - Manual or Auto-detected */}
+                          {(patient.psmStatus === 'desfavoravel' || 
+                            patient.pendencies.some(p => 
+                              p.toUpperCase().includes('PSM DESFAVORAVEL') || 
+                              p.toUpperCase().includes('PSM DESFAVORÁVEL')
+                            )
+                          ) && (
                             <div 
                               title="PSM Desfavorável: Auditoria não indica internação no momento"
                               className="flex items-center"
                             >
-                              <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 animate-pulse" />
+                              <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0 animate-pulse" />
                             </div>
                           )}
                            
@@ -3540,17 +3545,17 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       }}
                       className={cn(
                         "flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer",
-                        patient.psmStatus === 'desfavoravel' && "bg-amber-50 dark:bg-amber-950/30"
+                        patient.psmStatus === 'desfavoravel' && "bg-red-50 dark:bg-red-950/30"
                       )}
                     >
                       <AlertTriangle className={cn(
                         "h-4 w-4",
                         patient.psmStatus === 'desfavoravel' 
-                          ? "text-amber-500" 
+                          ? "text-red-500" 
                           : "text-muted-foreground"
                       )} />
                       <span className={cn(
-                        patient.psmStatus === 'desfavoravel' && "text-amber-600 dark:text-amber-400"
+                        patient.psmStatus === 'desfavoravel' && "text-red-600 dark:text-red-400"
                       )}>
                         {patient.psmStatus === 'desfavoravel' ? 'Remover PSM Desfavorável' : 'Marcar PSM Desfavorável'}
                       </span>
