@@ -3533,7 +3533,64 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>Liberar Dieta</span>
                     </DropdownMenuItem>
 
-                    {/* PSM DESFAVORÁVEL - Toggle */}
+                    {/* PSM STATUS - Three options: Favorável, Aguardando, Desfavorável */}
+                    <DropdownMenuLabel className="text-xs font-medium text-muted-foreground px-3 py-1.5">
+                      Status do PSM
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const newStatus = patient.psmStatus === 'favoravel' ? null : 'favoravel';
+                        onUpdate({ ...patient, psmStatus: newStatus });
+                        toast.success(newStatus === 'favoravel' 
+                          ? 'PSM marcado como favorável' 
+                          : 'Status PSM removido');
+                      }}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer",
+                        patient.psmStatus === 'favoravel' && "bg-green-50 dark:bg-green-950/30"
+                      )}
+                    >
+                      <CheckCircle2 className={cn(
+                        "h-4 w-4",
+                        patient.psmStatus === 'favoravel' 
+                          ? "text-green-500" 
+                          : "text-muted-foreground"
+                      )} />
+                      <span className={cn(
+                        patient.psmStatus === 'favoravel' && "text-green-600 dark:text-green-400 font-medium"
+                      )}>
+                        PSM Favorável
+                      </span>
+                      {patient.psmStatus === 'favoravel' && <Check className="h-4 w-4 ml-auto text-green-500" />}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const newStatus = patient.psmStatus === 'aguardando' ? null : 'aguardando';
+                        onUpdate({ ...patient, psmStatus: newStatus });
+                        toast.success(newStatus === 'aguardando' 
+                          ? 'PSM marcado como aguardando' 
+                          : 'Status PSM removido');
+                      }}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer",
+                        patient.psmStatus === 'aguardando' && "bg-amber-50 dark:bg-amber-950/30"
+                      )}
+                    >
+                      <Clock className={cn(
+                        "h-4 w-4",
+                        patient.psmStatus === 'aguardando' 
+                          ? "text-amber-500" 
+                          : "text-muted-foreground"
+                      )} />
+                      <span className={cn(
+                        patient.psmStatus === 'aguardando' && "text-amber-600 dark:text-amber-400 font-medium"
+                      )}>
+                        PSM Aguardando
+                      </span>
+                      {patient.psmStatus === 'aguardando' && <Check className="h-4 w-4 ml-auto text-amber-500" />}
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
@@ -3541,25 +3598,27 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onUpdate({ ...patient, psmStatus: newStatus });
                         toast.success(newStatus === 'desfavoravel' 
                           ? 'PSM marcado como desfavorável' 
-                          : 'PSM desfavorável removido');
+                          : 'Status PSM removido');
                       }}
                       className={cn(
                         "flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer",
                         patient.psmStatus === 'desfavoravel' && "bg-red-50 dark:bg-red-950/30"
                       )}
                     >
-                      <AlertTriangle className={cn(
+                      <XCircle className={cn(
                         "h-4 w-4",
                         patient.psmStatus === 'desfavoravel' 
                           ? "text-red-500" 
                           : "text-muted-foreground"
                       )} />
                       <span className={cn(
-                        patient.psmStatus === 'desfavoravel' && "text-red-600 dark:text-red-400"
+                        patient.psmStatus === 'desfavoravel' && "text-red-600 dark:text-red-400 font-medium"
                       )}>
-                        {patient.psmStatus === 'desfavoravel' ? 'Remover PSM Desfavorável' : 'Marcar PSM Desfavorável'}
+                        PSM Desfavorável
                       </span>
+                      {patient.psmStatus === 'desfavoravel' && <Check className="h-4 w-4 ml-auto text-red-500" />}
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
 
                     {onDelete && (
                       <>
