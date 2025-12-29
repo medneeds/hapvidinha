@@ -42,4 +42,6 @@ export interface Patient {
   utiCulturesAntibiotics?: string[];
   utiSpecialties?: string[];
   utiOriginSector?: string[];
+  // PSM (Parecer de Solicitação Médica) status
+  psmStatus?: 'favoravel' | 'desfavoravel' | null;
 }
