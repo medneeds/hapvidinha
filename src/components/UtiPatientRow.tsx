@@ -153,6 +153,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, isEditing, onStartEd
               if (e.key === 'Enter') handleSave();
               if (e.key === 'Escape') onStopEdit();
             }}
+            onBlur={handleSave}
             onClick={(e) => e.stopPropagation()}
           />
           <Button size="icon" variant="ghost" className="h-5 w-5" onClick={handleSave}>
@@ -346,6 +347,7 @@ function FieldCell({ field, patient, onUpdateField }: FieldCellProps) {
                       setNewItemValue("");
                     }
                   }}
+                  onBlur={handleAddItem}
                 />
                 <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleAddItem}>
                   <Check className="h-3.5 w-3.5 text-green-600" />
@@ -378,6 +380,7 @@ function FieldCell({ field, patient, onUpdateField }: FieldCellProps) {
                   if (e.key === 'Enter') handleSaveSingle();
                   if (e.key === 'Escape') setIsEditingSingle(false);
                 }}
+                onBlur={handleSaveSingle}
               />
               <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleSaveSingle}>
                 <Check className="h-3.5 w-3.5 text-green-600" />
