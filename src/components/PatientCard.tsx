@@ -135,12 +135,13 @@ interface AutoResizeTextareaProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onBlur?: () => void;
   placeholder?: string;
   className?: string;
   inputRef?: React.RefObject<HTMLTextAreaElement>;
 }
 
-const AutoResizeTextarea = memo(({ value, onChange, onKeyDown, placeholder, className, inputRef }: AutoResizeTextareaProps) => {
+const AutoResizeTextarea = memo(({ value, onChange, onKeyDown, onBlur, placeholder, className, inputRef }: AutoResizeTextareaProps) => {
   const textareaRef = inputRef || useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -157,6 +158,7 @@ const AutoResizeTextarea = memo(({ value, onChange, onKeyDown, placeholder, clas
       value={value}
       onChange={onChange}
       onKeyDown={onKeyDown}
+      onBlur={onBlur}
       placeholder={placeholder}
       className={cn(
         "resize-none overflow-hidden w-full min-h-[20px] text-[10px] uppercase text-foreground border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:outline-none",
@@ -510,6 +512,7 @@ const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollap
             value={editValue}
             onChange={(e) => onEditValueChange(e.target.value)}
             onKeyDown={onKeyDown}
+            onBlur={onSave}
             className="flex-1"
           />
         </div>
@@ -1417,6 +1420,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="h-6 text-sm font-semibold uppercase"
                           />
                           <Button
@@ -1492,6 +1496,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="h-5 text-[11px] w-32"
                             placeholder="Idade ou data nasc."
                             disabled={isCalculating}
@@ -1611,6 +1616,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO SETOR"
                           />
@@ -1891,6 +1897,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVA ALERGIA"
                           />
@@ -1978,6 +1985,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO MOTIVO"
                           />
@@ -2066,6 +2074,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVA HIPÓTESE/DIAGNÓSTICO"
                           />
@@ -2165,6 +2174,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO STATUS"
                           />
@@ -2263,6 +2273,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVA ESPECIALIDADE"
                           />
@@ -2366,6 +2377,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO DISPOSITIVO"
                           />
@@ -2476,6 +2488,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVO EXAME"
                           />
@@ -2575,6 +2588,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               });
                             }}
                             onKeyDown={handleKeyDown}
+                            onBlur={saveInlineEdit}
                             className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                             placeholder="NOVA CULTURA/ATB"
                           />
@@ -2687,6 +2701,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                       cancelEditing();
                                     }
                                   }}
+                                  onBlur={saveInlineEdit}
                                   className="min-h-[40px] text-[10px] flex-1 uppercase text-foreground resize-y border-0 bg-transparent p-0 focus-visible:ring-0"
                                   rows={2}
                                 />
@@ -2753,6 +2768,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                 });
                               }}
                               onKeyDown={handleKeyDown}
+                              onBlur={saveInlineEdit}
                               className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                               placeholder="NOVA PENDÊNCIA"
                             />
@@ -3200,6 +3216,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                   cancelEditing();
                                 }
                               }}
+                              onBlur={saveInlineEdit}
                               className="min-h-[40px] text-[10px] flex-1 uppercase text-foreground resize-y border-0 bg-transparent p-0 focus-visible:ring-0"
                               rows={2}
                             />
@@ -3267,6 +3284,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             });
                           }}
                           onKeyDown={handleKeyDown}
+                          onBlur={saveInlineEdit}
                           className="text-[10px] uppercase text-foreground flex-1 border-0 bg-transparent p-0 focus-visible:ring-0 resize-none"
                           placeholder="NOVA PENDÊNCIA"
                         />
