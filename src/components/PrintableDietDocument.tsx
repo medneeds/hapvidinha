@@ -19,6 +19,12 @@ interface PrintableDietDocumentProps {
   crm: string;
   onClose: () => void;
 }
+const sectorLabels: Record<string, string> = {
+  red: "Sala de Cuidados Especiais",
+  yellow: "Observação Amarela",
+  blue: "Observação Azul",
+  outside: "Fora das Alas"
+};
 
 export function PrintableDietDocument({
   patient,
@@ -34,6 +40,7 @@ export function PrintableDietDocument({
   const currentDate = new Date();
   const formattedDate = format(currentDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
   const formattedTime = format(currentDate, "HH:mm");
+  const sectorLabel = sectorLabels[patient.sector] || patient.sector;
 
   const handlePrint = () => {
     const printContent = printRef.current;
@@ -349,6 +356,10 @@ export function PrintableDietDocument({
                 <div>
                   <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>Leito</span>
                   <p style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', margin: '4px 0 0 0' }}>{patient.bedNumber}</p>
+                </div>
+                <div>
+                  <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>Setor</span>
+                  <p style={{ fontSize: '14px', fontWeight: '600', color: '#1e293b', margin: '4px 0 0 0' }}>{sectorLabel}</p>
                 </div>
                 {birthDate && (
                   <div>
