@@ -193,13 +193,13 @@ export function PrintMapPreviewDialog({
         </div>
       </div>
 
-      {/* Document Preview */}
-      <div className="flex justify-center py-4 sm:py-8 px-2 sm:px-4 bg-background">
-        <div className="bg-card rounded-lg shadow-2xl overflow-hidden w-full max-w-[297mm]">
+      {/* Document Preview - Landscape orientation */}
+      <div className="flex justify-center py-4 sm:py-8 px-2 sm:px-4 bg-background overflow-x-auto">
+        <div className="bg-card rounded-lg shadow-2xl overflow-hidden" style={{ width: '297mm', minWidth: '297mm', maxWidth: '100vw' }}>
           <div
             ref={printRef}
             style={{
-              width: "100%",
+              width: "297mm",
               minHeight: "210mm",
               padding: isCompact ? '12mm 15mm' : '15mm 18mm',
               paddingTop: isCompact ? '15mm' : '18mm',
@@ -209,6 +209,7 @@ export function PrintMapPreviewDialog({
               color: "#1f2937",
               fontSize: isCompact ? '9pt' : '10pt',
               lineHeight: isCompact ? '1.3' : '1.4',
+              aspectRatio: '297/210', /* A4 Landscape ratio */
             }}
           >
             {/* Watermark */}
