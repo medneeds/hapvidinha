@@ -5,6 +5,7 @@ import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
 import { PrintPatientPreviewDialog } from "@/components/PrintPatientPreviewDialog";
+import { PrintMapPreviewDialog } from "@/components/PrintMapPreviewDialog";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
@@ -181,6 +182,7 @@ const Index = () => {
   const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
   const [printingPatientId, setPrintingPatientId] = useState<string | null>(null);
   const [previewPatientId, setPreviewPatientId] = useState<string | null>(null);
+  const [previewMapMode, setPreviewMapMode] = useState<'compact' | 'detailed' | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
@@ -656,13 +658,18 @@ const Index = () => {
   };
 
   const handlePrint = () => {
-    // Imprime direto no modo detalhado
-    setPrintMode('detailed');
-    setPrintingSector(null);
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => setPrintMode(null), 500);
-    }, 100);
+    // On mobile, open the preview dialog for better PDF generation
+    if (isMobile) {
+      setPreviewMapMode('detailed');
+    } else {
+      // Desktop: use traditional print approach
+      setPrintMode('detailed');
+      setPrintingSector(null);
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => setPrintMode(null), 500);
+      }, 100);
+    }
   };
 
   const handleRefreshMap = async () => {
@@ -685,13 +692,18 @@ const Index = () => {
   };
 
   const handlePrintCompact = () => {
-    // Imprime direto no modo compacto
-    setPrintMode('compact');
-    setPrintingSector(null);
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => setPrintMode(null), 500);
-    }, 300);
+    // On mobile, open the preview dialog for better PDF generation
+    if (isMobile) {
+      setPreviewMapMode('compact');
+    } else {
+      // Desktop: use traditional print approach
+      setPrintMode('compact');
+      setPrintingSector(null);
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => setPrintMode(null), 500);
+      }, 300);
+    }
   };
 
   const handlePrintSector = (sector: string) => {
@@ -774,6 +786,18 @@ const Index = () => {
             />
           ) : null;
         })()}
+
+        {/* Mobile preview dialog for map PDF */}
+        {previewMapMode && (
+          <PrintMapPreviewDialog
+            redPatients={redPatients}
+            yellowPatients={yellowPatients}
+            bluePatients={bluePatients}
+            outsidePatients={outsidePatients}
+            mode={previewMapMode}
+            onClose={() => setPreviewMapMode(null)}
+          />
+        )}
         
         <div className={printMode ? 'print-hide' : ''}>
           {/* Header */}
