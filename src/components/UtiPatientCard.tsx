@@ -88,10 +88,12 @@ interface SortableItemProps {
   showDragHandle?: boolean;
   isHighlighted?: boolean;
   onToggleHighlight?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
+  autoFocus?: boolean;
 }
 
-function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight }: SortableItemProps) {
-  const [isEditing, setIsEditing] = useState(false);
+function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus }: SortableItemProps) {
+  const [isEditing, setIsEditing] = useState(autoFocus || false);
   const [localValue, setLocalValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -120,11 +122,31 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     setLocalValue(value);
   }, [value]);
 
+  useEffect(() => {
+    if (autoFocus) {
+      setIsEditing(true);
+    }
+  }, [autoFocus]);
+
   const handleSave = () => {
     if (localValue.trim()) {
       onEdit(localValue.trim().toUpperCase());
     }
     setIsEditing(false);
+  };
+
+  const handleKeyDownInternal = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSave();
+      onKeyDown?.(e);
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      handleSave();
+      onKeyDown?.(e);
+    } else if (e.key === 'Escape') {
+      setIsEditing(false);
+    }
   };
 
   return (
@@ -159,10 +181,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
             value={localValue}
             onChange={(e) => setLocalValue(e.target.value.toUpperCase())}
             className="flex-1 text-sm bg-background border border-primary/30 rounded px-1.5 py-0.5 outline-none uppercase"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSave();
-              if (e.key === 'Escape') setIsEditing(false);
-            }}
+            onKeyDown={handleKeyDownInternal}
             onBlur={handleSave}
             onClick={(e) => e.stopPropagation()}
           />
@@ -227,6 +246,10 @@ interface InlineEditableArrayProps {
   alwaysShowAll?: boolean;
   highlightedIndices?: number[];
   onUpdateHighlights?: (indices: number[]) => void;
+  onEnterPress?: () => void;
+  onTabPress?: () => void;
+  fieldId?: string;
+  isActive?: boolean;
 }
 
 function InlineEditableArray({ 
@@ -240,7 +263,11 @@ function InlineEditableArray({
   icon,
   alwaysShowAll = false,
   highlightedIndices = [],
-  onUpdateHighlights
+  onUpdateHighlights,
+  onEnterPress,
+  onTabPress,
+  fieldId,
+  isActive
 }: InlineEditableArrayProps) {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
@@ -250,6 +277,13 @@ function InlineEditableArray({
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
+
+  // Activate adding mode when this column becomes active
+  useEffect(() => {
+    if (isActive) {
+      setIsAddingNew(true);
+    }
+  }, [isActive]);
 
   useEffect(() => {
     if (isAddingNew && newInputRef.current) {
@@ -279,13 +313,42 @@ function InlineEditableArray({
     }
   };
 
-  const handleAddItem = () => {
+  const handleAddItem = (continueAdding: boolean = false) => {
     if (newItemValue.trim()) {
       onUpdate([...items, newItemValue.trim().toUpperCase()]);
       setNewItemValue("");
-      setIsAddingNew(false);
+      if (!continueAdding) {
+        setIsAddingNew(false);
+      }
     } else {
       setIsAddingNew(false);
+    }
+  };
+
+  const handleNewItemKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Enter: salva e continua adicionando na mesma coluna
+      handleAddItem(true);
+      onEnterPress?.();
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      // Tab: salva e move para próxima coluna
+      handleAddItem(false);
+      onTabPress?.();
+    } else if (e.key === 'Escape') {
+      setIsAddingNew(false);
+      setNewItemValue("");
+    }
+  };
+
+  const handleItemKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      // Enter pressed on existing item - start adding new
+      setIsAddingNew(true);
+    } else if (e.key === 'Tab') {
+      // Tab pressed - move to next column
+      onTabPress?.();
     }
   };
 
@@ -356,6 +419,7 @@ function InlineEditableArray({
                   showDragHandle={showNumbers}
                   isHighlighted={highlightedIndices.includes(idx)}
                   onToggleHighlight={onUpdateHighlights ? () => toggleHighlight(idx) : undefined}
+                  onKeyDown={handleItemKeyDown}
                 />
               ))}
             </SortableContext>
@@ -382,16 +446,10 @@ function InlineEditableArray({
               onChange={(e) => setNewItemValue(e.target.value.toUpperCase())}
               placeholder="NOVO ITEM..."
               className="flex-1 text-sm bg-background border border-primary/30 rounded px-2 py-1 outline-none uppercase"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleAddItem();
-                if (e.key === 'Escape') {
-                  setIsAddingNew(false);
-                  setNewItemValue("");
-                }
-              }}
-              onBlur={handleAddItem}
+              onKeyDown={handleNewItemKeyDown}
+              onBlur={() => handleAddItem(false)}
             />
-            <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleAddItem}>
+            <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => handleAddItem(false)}>
               <Check className="h-3.5 w-3.5 text-green-600" />
             </Button>
             <Button 
@@ -557,6 +615,7 @@ export function UtiPatientCard({
 }: UtiPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [activeColumn, setActiveColumn] = useState<'diagnoses' | 'quadro' | 'condutas' | 'pendencias' | null>(null);
 
   const daysInUti = useMemo(() => calculateDaysInUti(patient.utiAdmissionDate), [patient.utiAdmissionDate]);
 
@@ -573,6 +632,14 @@ export function UtiPatientCard({
       ...patient,
       [key]: value
     });
+  };
+
+  // Tab navigation between columns: diagnoses → quadro → condutas → pendencias
+  const handleTabFromColumn = (column: 'diagnoses' | 'quadro' | 'condutas' | 'pendencias') => {
+    const columnOrder: ('diagnoses' | 'quadro' | 'condutas' | 'pendencias')[] = ['diagnoses', 'quadro', 'condutas', 'pendencias'];
+    const currentIndex = columnOrder.indexOf(column);
+    const nextIndex = (currentIndex + 1) % columnOrder.length;
+    setActiveColumn(columnOrder[nextIndex]);
   };
 
   // Field data
@@ -734,6 +801,10 @@ export function UtiPatientCard({
                     label="HIPÓTESES / DIAGNÓSTICOS"
                     icon={<Stethoscope className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
+                    fieldId="diagnoses"
+                    isActive={activeColumn === 'diagnoses'}
+                    onTabPress={() => handleTabFromColumn('diagnoses')}
+                    onEnterPress={() => setActiveColumn('diagnoses')}
                   />
                 </div>
                 <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
@@ -743,6 +814,10 @@ export function UtiPatientCard({
                     label="QUADRO CLÍNICO"
                     icon={<Activity className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
+                    fieldId="quadro"
+                    isActive={activeColumn === 'quadro'}
+                    onTabPress={() => handleTabFromColumn('quadro')}
+                    onEnterPress={() => setActiveColumn('quadro')}
                   />
                 </div>
                 <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
@@ -752,6 +827,10 @@ export function UtiPatientCard({
                     label="CONDUTAS"
                     icon={<FileText className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
+                    fieldId="condutas"
+                    isActive={activeColumn === 'condutas'}
+                    onTabPress={() => handleTabFromColumn('condutas')}
+                    onEnterPress={() => setActiveColumn('condutas')}
                   />
                 </div>
                 <div className="bg-gradient-to-br from-amber-50/80 to-card dark:from-amber-950/30 dark:to-card/80 rounded-lg p-1.5 shadow-lg border-2 border-amber-400/40 dark:border-amber-500/30 backdrop-blur-sm ring-2 ring-amber-300/20 dark:ring-amber-600/15 hover:shadow-xl hover:border-amber-400/60 transition-all">
@@ -763,6 +842,10 @@ export function UtiPatientCard({
                     alwaysShowAll
                     highlightedIndices={patient.highlightedPendencies || []}
                     onUpdateHighlights={(indices) => handleUpdateField("highlightedPendencies", indices)}
+                    fieldId="pendencias"
+                    isActive={activeColumn === 'pendencias'}
+                    onTabPress={() => handleTabFromColumn('pendencias')}
+                    onEnterPress={() => setActiveColumn('pendencias')}
                   />
                 </div>
               </div>
