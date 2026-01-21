@@ -1,7 +1,24 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, ChevronDown, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity } from "lucide-react";
+import { Edit, ChevronDown, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// Clinical status options with colors
+const CLINICAL_STATUS_OPTIONS = [
+  { value: "gravissimo", label: "Gravíssimo", color: "bg-red-600 text-white", borderColor: "border-red-600" },
+  { value: "grave", label: "Grave", color: "bg-red-500 text-white", borderColor: "border-red-500" },
+  { value: "grave_estavel", label: "Grave estável", color: "bg-orange-500 text-white", borderColor: "border-orange-500" },
+  { value: "potencialmente_grave", label: "Pot. Grave", color: "bg-yellow-500 text-black", borderColor: "border-yellow-500" },
+  { value: "regular", label: "Regular", color: "bg-blue-500 text-white", borderColor: "border-blue-500" },
+  { value: "paliativado", label: "Paliativado", color: "bg-purple-500 text-white", borderColor: "border-purple-500" },
+] as const;
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -503,50 +520,98 @@ export function UtiPatientCard({
                 </div>
                 
                 {/* Patient Name - Editable */}
-                <div className="flex-1 min-w-[120px]">
+                <div className="flex items-center gap-1.5 min-w-[100px]">
                   <InlineEditableField
                     value={patient.name}
                     onUpdate={(v) => handleUpdateField("name", v)}
-                    placeholder="Nome do paciente"
+                    placeholder="Nome"
                     className="text-sm font-medium"
                   />
+                  {/* Age */}
+                  {patient.age && (
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      ({patient.age})
+                    </span>
+                  )}
                 </div>
 
+                {/* Clinical Status Selector */}
+                <Select
+                  value={patient.clinicalStatus || ""}
+                  onValueChange={(v) => handleUpdateField("clinicalStatus", v)}
+                >
+                  <SelectTrigger 
+                    className={cn(
+                      "h-5 w-auto min-w-[70px] max-w-[90px] px-1.5 text-[10px] font-medium border",
+                      patient.clinicalStatus 
+                        ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.color || "bg-muted"
+                        : "bg-muted/50 border-dashed"
+                    )}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <SelectValue placeholder="Status">
+                      {patient.clinicalStatus 
+                        ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.label 
+                        : <Heart className="h-3 w-3" />
+                      }
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CLINICAL_STATUS_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        <div className="flex items-center gap-2">
+                          <div className={cn("w-2 h-2 rounded-full", option.color)} />
+                          <span>{option.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
                 {/* Days in UTI */}
-                <div className="flex items-center gap-1 px-1.5 py-0.5 bg-warning/10 rounded border border-warning/30">
-                  <Clock className="h-3 w-3 text-warning" />
-                  <span className="text-xs font-semibold text-warning">
+                <div className="flex items-center gap-1 px-1 py-0.5 bg-warning/10 rounded border border-warning/30">
+                  <Clock className="h-2.5 w-2.5 text-warning" />
+                  <span className="text-[10px] font-semibold text-warning">
                     {daysInUti}d
                   </span>
                 </div>
 
                 {/* Discharge Prediction - Editable */}
                 <div className="flex items-center gap-0.5">
-                  <span className="text-[9px] text-muted-foreground">Alta:</span>
+                  <span className="text-[8px] text-muted-foreground">Alta:</span>
                   <InlineEditableField
                     value={previsaoAlta[0] || ""}
                     onUpdate={(v) => handleUpdateField("utiDischargePrediction", v ? [v] : [])}
                     placeholder="-"
-                    className="text-xs font-medium"
+                    className="text-[10px] font-medium"
                   />
                 </div>
 
                 {/* Critical badge */}
                 {criticalCount > 0 && (
-                  <Badge variant="destructive" className="h-4 gap-0.5 text-[10px] px-1">
-                    <AlertTriangle className="h-2.5 w-2.5" />
+                  <Badge variant="destructive" className="h-4 gap-0.5 text-[9px] px-1">
+                    <AlertTriangle className="h-2 w-2" />
                     {criticalCount}
                   </Badge>
                 )}
               </div>
 
-              {/* Row 2: 3 columns - Quadro Atual | Condutas do Dia | Pendências */}
-              <div className="grid grid-cols-3 gap-1.5">
+              {/* Row 2: 4 columns - HD | Quadro Atual | Condutas do Dia | Pendências */}
+              <div className="grid grid-cols-4 gap-1">
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200/50 dark:border-blue-700/30 p-1">
+                  <InlineEditableArray
+                    items={diagnosticos}
+                    onUpdate={(items) => handleUpdateField("diagnoses", items)}
+                    label="HD"
+                    icon={<Stethoscope className="h-2.5 w-2.5 text-blue-600" />}
+                    alwaysShowAll
+                  />
+                </div>
                 <div className="bg-muted/30 rounded border border-border/30 p-1">
                   <InlineEditableArray
                     items={quadroAtual}
                     onUpdate={(items) => handleUpdateField("utiCurrentStatus", items)}
-                    label="Quadro Atual"
+                    label="Quadro"
                     icon={<Activity className="h-2.5 w-2.5 text-blue-500" />}
                     alwaysShowAll
                   />

@@ -45,4 +45,6 @@ export interface Patient {
   utiDailyConducts?: string[]; // Condutas instituídas do dia na UTI
   // PSM (Parecer de Solicitação Médica) status
   psmStatus?: 'favoravel' | 'aguardando' | 'desfavoravel' | null;
+  // Clinical status for UTI patients
+  clinicalStatus?: 'gravissimo' | 'grave' | 'grave_estavel' | 'potencialmente_grave' | 'regular' | 'paliativado' | null;
 }
