@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, ChevronDown, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User } from "lucide-react";
+import { Edit, ChevronDown, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -78,7 +78,7 @@ function calculateDaysInUti(admissionDate: string[] | undefined): number {
   return Math.floor((Date.now() - parsed.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-// Sortable Item for drag-and-drop
+// Sortable Item for drag-and-drop with optional highlight
 interface SortableItemProps {
   id: string;
   index: number;
@@ -86,9 +86,11 @@ interface SortableItemProps {
   onEdit: (newValue: string) => void;
   onDelete: () => void;
   showDragHandle?: boolean;
+  isHighlighted?: boolean;
+  onToggleHighlight?: () => void;
 }
 
-function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true }: SortableItemProps) {
+function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight }: SortableItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -130,8 +132,9 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       ref={setNodeRef} 
       style={style} 
       className={cn(
-        "flex items-center gap-1 group py-0.5",
-        isDragging && "z-50"
+        "flex items-center gap-1 group py-0.5 rounded px-1 -mx-1 transition-colors",
+        isDragging && "z-50",
+        isHighlighted && "bg-amber-100/80 dark:bg-amber-900/30 border border-amber-300/50 dark:border-amber-700/40"
       )}
     >
       {showDragHandle && (
@@ -143,7 +146,10 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
           <GripVertical className="h-3 w-3 text-muted-foreground" />
         </button>
       )}
-      <span className="text-primary/70 font-medium text-xs min-w-[16px]">{index + 1}.</span>
+      <span className={cn(
+        "font-medium text-xs min-w-[16px]",
+        isHighlighted ? "text-amber-600 dark:text-amber-400" : "text-primary/70"
+      )}>{index + 1}.</span>
       
       {isEditing ? (
         <div className="flex-1 flex items-center gap-1">
@@ -164,7 +170,10 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       ) : (
         <>
           <span 
-            className="flex-1 text-sm break-words cursor-pointer hover:text-primary transition-colors"
+            className={cn(
+              "flex-1 text-sm break-words cursor-pointer hover:text-primary transition-colors",
+              isHighlighted && "font-semibold text-amber-800 dark:text-amber-200"
+            )}
             onClick={(e) => {
               e.stopPropagation();
               setIsEditing(true);
@@ -172,6 +181,22 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
           >
             {value}
           </span>
+          {onToggleHighlight && (
+            <Button 
+              size="icon" 
+              variant="ghost" 
+              className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleHighlight();
+              }}
+            >
+              <Star className={cn(
+                "h-3 w-3 transition-colors",
+                isHighlighted ? "fill-amber-500 text-amber-500" : "text-muted-foreground"
+              )} />
+            </Button>
+          )}
           <Button 
             size="icon" 
             variant="ghost" 
@@ -200,6 +225,8 @@ interface InlineEditableArrayProps {
   label?: string;
   icon?: React.ReactNode;
   alwaysShowAll?: boolean;
+  highlightedIndices?: number[];
+  onUpdateHighlights?: (indices: number[]) => void;
 }
 
 function InlineEditableArray({ 
@@ -211,7 +238,9 @@ function InlineEditableArray({
   maxCollapsedItems,
   label,
   icon,
-  alwaysShowAll = false
+  alwaysShowAll = false,
+  highlightedIndices = [],
+  onUpdateHighlights
 }: InlineEditableArrayProps) {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
@@ -234,6 +263,19 @@ function InlineEditableArray({
       const oldIndex = items.findIndex((_, i) => `item-${i}` === active.id);
       const newIndex = items.findIndex((_, i) => `item-${i}` === over.id);
       onUpdate(arrayMove(items, oldIndex, newIndex));
+      // Also reorder highlights
+      if (onUpdateHighlights && highlightedIndices.length > 0) {
+        const newHighlights = highlightedIndices.map(idx => {
+          if (idx === oldIndex) return newIndex;
+          if (oldIndex < newIndex) {
+            if (idx > oldIndex && idx <= newIndex) return idx - 1;
+          } else {
+            if (idx >= newIndex && idx < oldIndex) return idx + 1;
+          }
+          return idx;
+        });
+        onUpdateHighlights(newHighlights);
+      }
     }
   };
 
@@ -244,6 +286,16 @@ function InlineEditableArray({
       setIsAddingNew(false);
     } else {
       setIsAddingNew(false);
+    }
+  };
+
+  const toggleHighlight = (index: number) => {
+    if (!onUpdateHighlights) return;
+    const isHighlighted = highlightedIndices.includes(index);
+    if (isHighlighted) {
+      onUpdateHighlights(highlightedIndices.filter(i => i !== index));
+    } else {
+      onUpdateHighlights([...highlightedIndices, index]);
     }
   };
 
@@ -290,8 +342,20 @@ function InlineEditableArray({
                     newItems[idx] = newValue;
                     onUpdate(newItems);
                   }}
-                  onDelete={() => onUpdate(items.filter((_, i) => i !== idx))}
+                  onDelete={() => {
+                    onUpdate(items.filter((_, i) => i !== idx));
+                    // Update highlight indices when deleting
+                    if (onUpdateHighlights) {
+                      onUpdateHighlights(
+                        highlightedIndices
+                          .filter(i => i !== idx)
+                          .map(i => i > idx ? i - 1 : i)
+                      );
+                    }
+                  }}
                   showDragHandle={showNumbers}
+                  isHighlighted={highlightedIndices.includes(idx)}
+                  onToggleHighlight={onUpdateHighlights ? () => toggleHighlight(idx) : undefined}
                 />
               ))}
             </SortableContext>
@@ -504,7 +568,7 @@ export function UtiPatientCard({
     return value ? [value as string] : [];
   };
 
-  const handleUpdateField = (key: keyof Patient, value: string | string[]) => {
+  const handleUpdateField = (key: keyof Patient, value: string | string[] | number[]) => {
     onUpdate({
       ...patient,
       [key]: value
@@ -690,13 +754,15 @@ export function UtiPatientCard({
                     alwaysShowAll
                   />
                 </div>
-                <div className="bg-card dark:bg-card/80 rounded-lg p-1.5 shadow-md border border-primary/20 dark:border-primary/15 backdrop-blur-sm ring-1 ring-primary/10 hover:shadow-lg transition-shadow">
+                <div className="bg-gradient-to-br from-amber-50/80 to-card dark:from-amber-950/30 dark:to-card/80 rounded-lg p-1.5 shadow-lg border-2 border-amber-400/40 dark:border-amber-500/30 backdrop-blur-sm ring-2 ring-amber-300/20 dark:ring-amber-600/15 hover:shadow-xl hover:border-amber-400/60 transition-all">
                   <InlineEditableArray
                     items={pendencias}
                     onUpdate={(items) => handleUpdateField("pendencies", items)}
                     label="PENDÊNCIAS"
-                    icon={<ClipboardList className="h-2.5 w-2.5 text-primary" />}
+                    icon={<ClipboardList className="h-2.5 w-2.5 text-amber-600 dark:text-amber-400" />}
                     alwaysShowAll
+                    highlightedIndices={patient.highlightedPendencies || []}
+                    onUpdateHighlights={(indices) => handleUpdateField("highlightedPendencies", indices)}
                   />
                 </div>
               </div>
