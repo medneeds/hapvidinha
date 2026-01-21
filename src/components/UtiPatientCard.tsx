@@ -17,7 +17,7 @@ const CLINICAL_STATUS_OPTIONS = [
   { value: "grave_estavel", label: "GRAVE ESTÁVEL", color: "bg-amber-600 text-white", borderColor: "border-amber-600" },
   { value: "potencialmente_grave", label: "POT. GRAVE", color: "bg-amber-500 text-white", borderColor: "border-amber-500" },
   { value: "regular", label: "REGULAR", color: "bg-slate-500 text-white", borderColor: "border-slate-500" },
-  { value: "paliativado", label: "PALIATIVADO", color: "bg-violet-600 text-white", borderColor: "border-violet-600" },
+  { value: "paliativado", label: "CUIDADOS PALIATIVOS", color: "bg-violet-600 text-white", borderColor: "border-violet-600" },
 ] as const;
 
 // Helper to force uppercase on all text inputs
