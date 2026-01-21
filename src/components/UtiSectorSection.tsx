@@ -1,5 +1,5 @@
 import { Patient, SectorType } from "@/types/patient";
-import { UtiPatientRow } from "./UtiPatientRow";
+import { UtiPatientCard } from "./UtiPatientCard";
 import { Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -114,7 +114,7 @@ function SortableUtiRow(props: SortableUtiRowProps) {
         <GripVertical className="h-4 w-4 text-muted-foreground" />
       </button>
       <div className="flex-1">
-        <UtiPatientRow
+        <UtiPatientCard
           patient={props.patient}
           onUpdate={props.onUpdate}
           onDelete={props.onDelete}
@@ -260,10 +260,10 @@ export function UtiSectorSection({
       </div>
 
       <CollapsibleContent className="space-y-2 print:space-y-0.5">
-        {/* Field Labels Header */}
+        {/* Hint for expandable cards */}
         <div className="hidden md:flex items-center gap-2 px-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-          <div className="w-[72px]"></div> {/* Space for actions + drag handle */}
-          <div className="flex-1 text-center">← Arraste para ver todos os campos →</div>
+          <div className="w-[72px]"></div>
+          <div className="flex-1 text-center">Clique no chevron para expandir detalhes do paciente</div>
         </div>
 
         {displayPatients.length === 0 ? (
