@@ -453,21 +453,21 @@ export function UtiPatientCard({
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
           {/* Header - Collapsed View - FULLY EDITABLE */}
           <div className="flex items-stretch">
-            {/* Left Actions */}
-            <div className="flex flex-col items-center justify-center gap-1 px-2 py-2 border-r border-border/30 bg-muted/30">
+            {/* Left Actions - Compact */}
+            <div className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 border-r border-border/30 bg-muted/30">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsEditDialogOpen(true)}
-                className="h-7 w-7 text-muted-foreground hover:text-primary"
+                className="h-6 w-6 text-muted-foreground hover:text-primary"
                 title="Edição avançada"
               >
-                <Edit className="h-3.5 w-3.5" />
+                <Edit className="h-3 w-3" />
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
-                    <MoreVertical className="h-3.5 w-3.5" />
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
+                    <MoreVertical className="h-3 w-3" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="bg-popover border shadow-lg z-50">
@@ -489,22 +489,21 @@ export function UtiPatientCard({
             </div>
 
             {/* Main Content - Collapsed View */}
-            <div className="flex-1 p-2 space-y-2">
+            <div className="flex-1 p-1.5 space-y-1.5">
               {/* Row 1: Identification + Time metrics */}
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2">
                 {/* Bed Number - Editable */}
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-md border border-primary/20">
+                <div className="flex items-center gap-1 px-1.5 py-0.5 bg-primary/10 rounded border border-primary/20">
                   <InlineEditableField
                     value={patient.bedNumber}
                     onUpdate={(v) => handleUpdateField("bedNumber", v)}
                     placeholder="Leito"
-                    className="text-base font-bold text-primary"
+                    className="text-sm font-bold text-primary"
                   />
                 </div>
                 
                 {/* Patient Name - Editable */}
-                <div className="flex-1 min-w-[150px]">
-                  <span className="text-[10px] text-muted-foreground block">Paciente</span>
+                <div className="flex-1 min-w-[120px]">
                   <InlineEditableField
                     value={patient.name}
                     onUpdate={(v) => handleUpdateField("name", v)}
@@ -514,64 +513,63 @@ export function UtiPatientCard({
                 </div>
 
                 {/* Days in UTI */}
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-warning/10 rounded-md border border-warning/30">
-                  <Clock className="h-3.5 w-3.5 text-warning" />
-                  <span className="text-sm font-semibold text-warning">
-                    {daysInUti}d UTI
+                <div className="flex items-center gap-1 px-1.5 py-0.5 bg-warning/10 rounded border border-warning/30">
+                  <Clock className="h-3 w-3 text-warning" />
+                  <span className="text-xs font-semibold text-warning">
+                    {daysInUti}d
                   </span>
                 </div>
 
                 {/* Discharge Prediction - Editable */}
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] text-muted-foreground">Alta:</span>
+                <div className="flex items-center gap-0.5">
+                  <span className="text-[9px] text-muted-foreground">Alta:</span>
                   <InlineEditableField
                     value={previsaoAlta[0] || ""}
                     onUpdate={(v) => handleUpdateField("utiDischargePrediction", v ? [v] : [])}
-                    placeholder="DD/MM"
-                    className="text-sm font-medium"
+                    placeholder="-"
+                    className="text-xs font-medium"
                   />
                 </div>
 
                 {/* Critical badge */}
                 {criticalCount > 0 && (
-                  <Badge variant="destructive" className="h-5 gap-1">
-                    <AlertTriangle className="h-3 w-3" />
+                  <Badge variant="destructive" className="h-4 gap-0.5 text-[10px] px-1">
+                    <AlertTriangle className="h-2.5 w-2.5" />
                     {criticalCount}
                   </Badge>
                 )}
               </div>
-
-              {/* Row 2: Quadro Atual - Editable */}
-              <div className="bg-muted/30 rounded-md border border-border/30 p-2">
-                <InlineEditableArray
-                  items={quadroAtual}
-                  onUpdate={(items) => handleUpdateField("utiCurrentStatus", items)}
-                  label="Quadro Atual"
-                  icon={<Activity className="h-3 w-3 text-blue-500" />}
-                  alwaysShowAll
-                />
               </div>
 
-              {/* Row 3: Condutas do Dia - NEW FIELD - Editable */}
-              <div className="bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200/50 dark:border-green-700/30 p-2">
-                <InlineEditableArray
-                  items={condutasDia}
-                  onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
-                  label="Condutas do Dia"
-                  icon={<FileText className="h-3 w-3 text-green-600" />}
-                  alwaysShowAll
-                />
-              </div>
-
-              {/* Row 4: Pendências - Full list - Editable */}
-              <div className="bg-amber-50 dark:bg-amber-900/20 rounded-md border border-amber-200/50 dark:border-amber-700/30 p-2">
-                <InlineEditableArray
-                  items={pendencias}
-                  onUpdate={(items) => handleUpdateField("pendencies", items)}
-                  label="Programações / Pendências"
-                  icon={<ClipboardList className="h-3 w-3 text-amber-600" />}
-                  alwaysShowAll
-                />
+              {/* Row 2: 3 columns - Quadro Atual | Condutas do Dia | Pendências */}
+              <div className="grid grid-cols-3 gap-1.5">
+                <div className="bg-muted/30 rounded border border-border/30 p-1">
+                  <InlineEditableArray
+                    items={quadroAtual}
+                    onUpdate={(items) => handleUpdateField("utiCurrentStatus", items)}
+                    label="Quadro Atual"
+                    icon={<Activity className="h-2.5 w-2.5 text-blue-500" />}
+                    alwaysShowAll
+                  />
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/20 rounded border border-green-200/50 dark:border-green-700/30 p-1">
+                  <InlineEditableArray
+                    items={condutasDia}
+                    onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
+                    label="Condutas"
+                    icon={<FileText className="h-2.5 w-2.5 text-green-600" />}
+                    alwaysShowAll
+                  />
+                </div>
+                <div className="bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200/50 dark:border-amber-700/30 p-1">
+                  <InlineEditableArray
+                    items={pendencias}
+                    onUpdate={(items) => handleUpdateField("pendencies", items)}
+                    label="Pendências"
+                    icon={<ClipboardList className="h-2.5 w-2.5 text-amber-600" />}
+                    alwaysShowAll
+                  />
+                </div>
               </div>
             </div>
 
