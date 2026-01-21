@@ -539,7 +539,6 @@ export function UtiPatientCard({
                   </Badge>
                 )}
               </div>
-              </div>
 
               {/* Row 2: 3 columns - Quadro Atual | Condutas do Dia | Pendências */}
               <div className="grid grid-cols-3 gap-1.5">
