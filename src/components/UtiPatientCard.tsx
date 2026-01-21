@@ -833,7 +833,7 @@ export function UtiPatientCard({
                     onEnterPress={() => setActiveColumn('condutas')}
                   />
                 </div>
-                <div className="bg-gradient-to-br from-amber-50/80 to-card dark:from-amber-950/30 dark:to-card/80 rounded-lg p-1.5 shadow-lg border-2 border-amber-400/40 dark:border-amber-500/30 backdrop-blur-sm ring-2 ring-amber-300/20 dark:ring-amber-600/15 hover:shadow-xl hover:border-amber-400/60 transition-all">
+                <div className="bg-gradient-to-br from-amber-50/40 to-card dark:from-amber-950/20 dark:to-card/80 rounded-lg p-1.5 shadow-sm border border-amber-300/30 dark:border-amber-600/20 backdrop-blur-sm ring-1 ring-amber-200/15 dark:ring-amber-700/10 hover:shadow-md hover:border-amber-300/50 transition-all">
                   <InlineEditableArray
                     items={pendencias}
                     onUpdate={(items) => handleUpdateField("pendencies", items)}
