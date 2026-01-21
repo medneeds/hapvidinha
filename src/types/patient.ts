@@ -42,6 +42,7 @@ export interface Patient {
   utiCulturesAntibiotics?: string[];
   utiSpecialties?: string[];
   utiOriginSector?: string[];
+  utiDailyConducts?: string[]; // Condutas instituídas do dia na UTI
   // PSM (Parecer de Solicitação Médica) status
   psmStatus?: 'favoravel' | 'aguardando' | 'desfavoravel' | null;
 }
