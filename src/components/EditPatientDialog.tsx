@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { X, Sparkles, Star, TrendingUp, Plus } from "lucide-react";
+import { X, Sparkles, Star, TrendingUp, Plus, ChevronDown, Activity } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ExamCurvesDialog } from './ExamCurvesDialog';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -577,6 +578,348 @@ export function EditPatientDialog({
             {/* Programações / Pendências */}
             {renderArrayField("pendencies", "Programações / Pendências")}
           </div>
+
+          {/* UTI Specific Fields - Collapsible Section */}
+          {(currentDepartment === "UTI" || patient.sector === "red") && (
+            <Collapsible defaultOpen={false}>
+              <CollapsibleTrigger asChild>
+                <Button variant="outline" className="w-full justify-between h-9 text-sm">
+                  <span className="flex items-center gap-2">
+                    <Activity className="h-4 w-4" />
+                    Campos Específicos UTI
+                  </span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-3 space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Quadro Atual */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-semibold">Quadro Atual</Label>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const newArray = [...(formData.utiCurrentStatus || []), ""];
+                          setFormData({ ...formData, utiCurrentStatus: newArray });
+                        }}
+                        className="h-7 px-2 text-xs"
+                      >
+                        + Adicionar
+                      </Button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {(formData.utiCurrentStatus || []).map((item, idx) => (
+                        <div key={idx} className="flex gap-1.5">
+                          <Input
+                            value={item}
+                            onChange={(e) => {
+                              const updated = [...(formData.utiCurrentStatus || [])];
+                              updated[idx] = e.target.value.toUpperCase();
+                              setFormData({ ...formData, utiCurrentStatus: updated });
+                            }}
+                            placeholder={`Quadro ${idx + 1}`}
+                            className="h-9 text-sm uppercase"
+                          />
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => {
+                              const updated = (formData.utiCurrentStatus || []).filter((_, i) => i !== idx);
+                              setFormData({ ...formData, utiCurrentStatus: updated });
+                            }}
+                            className="h-9 w-9 flex-shrink-0"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Condutas do Dia */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-semibold">Condutas do Dia</Label>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const newArray = [...(formData.utiDailyConducts || []), ""];
+                          setFormData({ ...formData, utiDailyConducts: newArray });
+                        }}
+                        className="h-7 px-2 text-xs"
+                      >
+                        + Adicionar
+                      </Button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {(formData.utiDailyConducts || []).map((item, idx) => (
+                        <div key={idx} className="flex gap-1.5">
+                          <Input
+                            value={item}
+                            onChange={(e) => {
+                              const updated = [...(formData.utiDailyConducts || [])];
+                              updated[idx] = e.target.value.toUpperCase();
+                              setFormData({ ...formData, utiDailyConducts: updated });
+                            }}
+                            placeholder={`Conduta ${idx + 1}`}
+                            className="h-9 text-sm uppercase"
+                          />
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => {
+                              const updated = (formData.utiDailyConducts || []).filter((_, i) => i !== idx);
+                              setFormData({ ...formData, utiDailyConducts: updated });
+                            }}
+                            className="h-9 w-9 flex-shrink-0"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Dispositivos */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-semibold text-red-600">Dispositivos</Label>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const newArray = [...(formData.utiDevices || []), ""];
+                          setFormData({ ...formData, utiDevices: newArray });
+                        }}
+                        className="h-7 px-2 text-xs"
+                      >
+                        + Adicionar
+                      </Button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {(formData.utiDevices || []).map((item, idx) => (
+                        <div key={idx} className="flex gap-1.5">
+                          <Input
+                            value={item}
+                            onChange={(e) => {
+                              const updated = [...(formData.utiDevices || [])];
+                              updated[idx] = e.target.value.toUpperCase();
+                              setFormData({ ...formData, utiDevices: updated });
+                            }}
+                            placeholder={`Dispositivo ${idx + 1}`}
+                            className="h-9 text-sm uppercase border-red-200"
+                          />
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => {
+                              const updated = (formData.utiDevices || []).filter((_, i) => i !== idx);
+                              setFormData({ ...formData, utiDevices: updated });
+                            }}
+                            className="h-9 w-9 flex-shrink-0"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Alergias */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-semibold text-red-600">Alergias</Label>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const newArray = [...(formData.utiAllergies || []), ""];
+                          setFormData({ ...formData, utiAllergies: newArray });
+                        }}
+                        className="h-7 px-2 text-xs"
+                      >
+                        + Adicionar
+                      </Button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {(formData.utiAllergies || []).map((item, idx) => (
+                        <div key={idx} className="flex gap-1.5">
+                          <Input
+                            value={item}
+                            onChange={(e) => {
+                              const updated = [...(formData.utiAllergies || [])];
+                              updated[idx] = e.target.value.toUpperCase();
+                              setFormData({ ...formData, utiAllergies: updated });
+                            }}
+                            placeholder={`Alergia ${idx + 1}`}
+                            className="h-9 text-sm uppercase border-red-200"
+                          />
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => {
+                              const updated = (formData.utiAllergies || []).filter((_, i) => i !== idx);
+                              setFormData({ ...formData, utiAllergies: updated });
+                            }}
+                            className="h-9 w-9 flex-shrink-0"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Culturas / ATB */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-semibold text-red-600">Culturas / ATB</Label>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const newArray = [...(formData.utiCulturesAntibiotics || []), ""];
+                          setFormData({ ...formData, utiCulturesAntibiotics: newArray });
+                        }}
+                        className="h-7 px-2 text-xs"
+                      >
+                        + Adicionar
+                      </Button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {(formData.utiCulturesAntibiotics || []).map((item, idx) => (
+                        <div key={idx} className="flex gap-1.5">
+                          <Input
+                            value={item}
+                            onChange={(e) => {
+                              const updated = [...(formData.utiCulturesAntibiotics || [])];
+                              updated[idx] = e.target.value.toUpperCase();
+                              setFormData({ ...formData, utiCulturesAntibiotics: updated });
+                            }}
+                            placeholder={`Cultura/ATB ${idx + 1}`}
+                            className="h-9 text-sm uppercase border-red-200"
+                          />
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => {
+                              const updated = (formData.utiCulturesAntibiotics || []).filter((_, i) => i !== idx);
+                              setFormData({ ...formData, utiCulturesAntibiotics: updated });
+                            }}
+                            className="h-9 w-9 flex-shrink-0"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Especialidades */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-semibold">Especialidades</Label>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const newArray = [...(formData.utiSpecialties || []), ""];
+                          setFormData({ ...formData, utiSpecialties: newArray });
+                        }}
+                        className="h-7 px-2 text-xs"
+                      >
+                        + Adicionar
+                      </Button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {(formData.utiSpecialties || []).map((item, idx) => (
+                        <div key={idx} className="flex gap-1.5">
+                          <Input
+                            value={item}
+                            onChange={(e) => {
+                              const updated = [...(formData.utiSpecialties || [])];
+                              updated[idx] = e.target.value.toUpperCase();
+                              setFormData({ ...formData, utiSpecialties: updated });
+                            }}
+                            placeholder={`Especialidade ${idx + 1}`}
+                            className="h-9 text-sm uppercase"
+                          />
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => {
+                              const updated = (formData.utiSpecialties || []).filter((_, i) => i !== idx);
+                              setFormData({ ...formData, utiSpecialties: updated });
+                            }}
+                            className="h-9 w-9 flex-shrink-0"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* UTI Dates */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-semibold">Setor de Origem</Label>
+                    <Input
+                      value={(formData.utiOriginSector || [])[0] || ""}
+                      onChange={(e) => setFormData({ ...formData, utiOriginSector: [e.target.value.toUpperCase()] })}
+                      placeholder="Setor de origem"
+                      className="h-9 text-sm uppercase"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-semibold">Admissão UTI</Label>
+                    <Input
+                      value={(formData.utiAdmissionDate || [])[0] || ""}
+                      onChange={(e) => setFormData({ ...formData, utiAdmissionDate: [e.target.value.toUpperCase()] })}
+                      placeholder="DD/MM/AAAA"
+                      className="h-9 text-sm uppercase"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-semibold">Previsão de Alta</Label>
+                    <Input
+                      value={(formData.utiDischargePrediction || [])[0] || ""}
+                      onChange={(e) => setFormData({ ...formData, utiDischargePrediction: [e.target.value.toUpperCase()] })}
+                      placeholder="DD/MM/AAAA"
+                      className="h-9 text-sm uppercase"
+                    />
+                  </div>
+                </div>
+
+                {/* Motivo da Admissão */}
+                <div className="space-y-1.5">
+                  <Label className="text-sm font-semibold">Motivo da Admissão UTI</Label>
+                  <Textarea
+                    value={(formData.utiAdmissionReason || [])[0] || ""}
+                    onChange={(e) => setFormData({ ...formData, utiAdmissionReason: [e.target.value.toUpperCase()] })}
+                    placeholder="Motivo da admissão na UTI..."
+                    className="h-20 text-sm uppercase resize-none"
+                  />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
 
           {/* História Admissional */}
           <div className="space-y-1.5 pb-20">

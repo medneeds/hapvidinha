@@ -420,6 +420,70 @@ function InlineEditableField({ value, onUpdate, placeholder = "-", className }: 
   );
 }
 
+// Inline editable textarea for longer content
+interface InlineEditableTextareaProps {
+  value: string;
+  onUpdate: (value: string) => void;
+  placeholder?: string;
+}
+
+function InlineEditableTextarea({ value, onUpdate, placeholder = "-" }: InlineEditableTextareaProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [localValue, setLocalValue] = useState(value);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+      // Auto-resize
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [isEditing]);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const handleSave = () => {
+    onUpdate(localValue.toUpperCase());
+    setIsEditing(false);
+  };
+
+  if (isEditing) {
+    return (
+      <textarea
+        ref={textareaRef}
+        value={localValue}
+        onChange={(e) => {
+          setLocalValue(e.target.value.toUpperCase());
+          // Auto-resize on change
+          e.target.style.height = 'auto';
+          e.target.style.height = `${e.target.scrollHeight}px`;
+        }}
+        className="w-full bg-background border border-primary/30 rounded px-2 py-1 outline-none text-sm uppercase min-h-[60px] resize-none"
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') setIsEditing(false);
+        }}
+        onBlur={handleSave}
+        onClick={(e) => e.stopPropagation()}
+      />
+    );
+  }
+
+  return (
+    <div 
+      className="cursor-pointer hover:text-primary transition-colors text-sm min-h-[40px] whitespace-pre-wrap"
+      onClick={(e) => {
+        e.stopPropagation();
+        setIsEditing(true);
+      }}
+    >
+      {value || <span className="text-muted-foreground/50">{placeholder}</span>}
+    </div>
+  );
+}
+
 export function UtiPatientCard({ 
   patient, 
   onUpdate, 
@@ -650,11 +714,11 @@ export function UtiPatientCard({
             </CollapsibleTrigger>
           </div>
 
-          {/* Expanded Content - Clean organized sections */}
+          {/* Expanded Content - Complete UTI fields */}
           <CollapsibleContent>
             <div className="border-t border-border/30 p-3 space-y-3 bg-muted/5">
               
-              {/* 🔴 CRÍTICO - Only section with alert colors */}
+              {/* 🔴 CRÍTICO - Patient safety items */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-3.5 w-3.5 text-red-500" />
@@ -686,7 +750,7 @@ export function UtiPatientCard({
                 </div>
               </div>
 
-              {/* 🔵 CLÍNICO - Neutral with subtle accent */}
+              {/* 🔵 CLÍNICO - Clinical evolution (without HD duplicate) */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Stethoscope className="h-3.5 w-3.5 text-slate-500" />
@@ -694,9 +758,9 @@ export function UtiPatientCard({
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <InlineEditableArray
-                    items={diagnosticos}
-                    onUpdate={(items) => handleUpdateField("diagnoses", items)}
-                    label="HIPÓTESES / DIAGNÓSTICOS"
+                    items={getFieldArray("medicalHistory")}
+                    onUpdate={(items) => handleUpdateField("medicalHistory", items)}
+                    label="ANTECEDENTES"
                     colorClass="bg-muted/50 border border-border/50"
                     alwaysShowAll
                   />
@@ -717,13 +781,28 @@ export function UtiPatientCard({
                 />
               </div>
 
-              {/* 📁 ADMINISTRATIVO - Most neutral */}
+              {/* 📝 HISTÓRIA - Admission history */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-3.5 w-3.5 text-slate-400" />
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">HISTÓRIA ADMISSIONAL</span>
+                </div>
+                <div className="bg-muted/30 border border-border/30 rounded-md p-2">
+                  <InlineEditableTextarea
+                    value={patient.admissionHistory || ""}
+                    onUpdate={(v) => handleUpdateField("admissionHistory", v)}
+                    placeholder="HISTÓRIA ADMISSIONAL / ANAMNESE..."
+                  />
+                </div>
+              </div>
+
+              {/* 📁 ADMINISTRATIVO */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <FolderOpen className="h-3.5 w-3.5 text-slate-400" />
                   <span className="text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">ADMINISTRATIVO</span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                   <InlineEditableArray
                     items={setorOrigem}
                     onUpdate={(items) => handleUpdateField("utiOriginSector", items)}
@@ -738,6 +817,15 @@ export function UtiPatientCard({
                     colorClass="bg-muted/30 border border-border/30"
                     alwaysShowAll
                   />
+                  <div className="bg-muted/30 border border-border/30 rounded-md p-2">
+                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide block mb-1">ADMISSÃO UTI</span>
+                    <InlineEditableField
+                      value={getFieldArray("utiAdmissionDate")[0] || ""}
+                      onUpdate={(v) => handleUpdateField("utiAdmissionDate", v ? [v] : [])}
+                      placeholder="DD/MM/AAAA"
+                      className="text-sm"
+                    />
+                  </div>
                   <div className="bg-muted/30 border border-border/30 rounded-md p-2">
                     <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide block mb-1">PREVISÃO DE ALTA</span>
                     <InlineEditableField
