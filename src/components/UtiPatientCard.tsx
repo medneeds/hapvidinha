@@ -661,41 +661,41 @@ export function UtiPatientCard({
                 )}
               </div>
 
-              {/* Row 2: 4 columns - Elegant elevated cards */}
+              {/* Row 2: 4 columns - Elegant tonal elevation */}
               <div className="grid grid-cols-4 gap-1.5">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/40 dark:to-blue-900/20 rounded-lg p-1.5 shadow-sm border border-blue-200/50 dark:border-blue-800/30 backdrop-blur-sm">
+                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
                     items={diagnosticos}
                     onUpdate={(items) => handleUpdateField("diagnoses", items)}
                     label="HD"
-                    icon={<Stethoscope className="h-2.5 w-2.5 text-blue-600 dark:text-blue-400" />}
+                    icon={<Stethoscope className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
                   />
                 </div>
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-900/40 dark:to-slate-800/20 rounded-lg p-1.5 shadow-sm border border-slate-200/50 dark:border-slate-700/30 backdrop-blur-sm">
+                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
                     items={quadroAtual}
                     onUpdate={(items) => handleUpdateField("utiCurrentStatus", items)}
                     label="QUADRO"
-                    icon={<Activity className="h-2.5 w-2.5 text-slate-600 dark:text-slate-400" />}
+                    icon={<Activity className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
                   />
                 </div>
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/40 dark:to-emerald-900/20 rounded-lg p-1.5 shadow-sm border border-emerald-200/50 dark:border-emerald-800/30 backdrop-blur-sm">
+                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
                     items={condutasDia}
                     onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
                     label="CONDUTAS"
-                    icon={<FileText className="h-2.5 w-2.5 text-emerald-600 dark:text-emerald-400" />}
+                    icon={<FileText className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
                   />
                 </div>
-                <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/40 dark:to-amber-900/20 rounded-lg p-1.5 shadow-sm border border-amber-300/60 dark:border-amber-700/40 backdrop-blur-sm ring-1 ring-amber-200/30 dark:ring-amber-800/20">
+                <div className="bg-card dark:bg-card/80 rounded-lg p-1.5 shadow-md border border-primary/20 dark:border-primary/15 backdrop-blur-sm ring-1 ring-primary/10 hover:shadow-lg transition-shadow">
                   <InlineEditableArray
                     items={pendencias}
                     onUpdate={(items) => handleUpdateField("pendencies", items)}
                     label="PENDÊNCIAS"
-                    icon={<ClipboardList className="h-2.5 w-2.5 text-amber-600 dark:text-amber-400" />}
+                    icon={<ClipboardList className="h-2.5 w-2.5 text-primary" />}
                     alwaysShowAll
                   />
                 </div>
