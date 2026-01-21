@@ -530,11 +530,12 @@ export function UtiPatientCard({
                     placeholder="NOME DO PACIENTE"
                     className="text-sm font-semibold truncate"
                   />
-                  {patient.age && (
-                    <span className="shrink-0 text-xs text-muted-foreground">
-                      {patient.age}
-                    </span>
-                  )}
+                  <InlineEditableField
+                    value={String(patient.age || "")}
+                    onUpdate={(v) => handleUpdateField("age", v)}
+                    placeholder="IDADE"
+                    className="shrink-0 text-xs text-muted-foreground"
+                  />
                 </div>
 
                 {/* Clinical Status Selector - Only this uses color */}
