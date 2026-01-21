@@ -731,7 +731,7 @@ export function UtiPatientCard({
                   <InlineEditableArray
                     items={diagnosticos}
                     onUpdate={(items) => handleUpdateField("diagnoses", items)}
-                    label="HD"
+                    label="HIPÓTESES / DIAGNÓSTICOS"
                     icon={<Stethoscope className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
                   />
@@ -740,7 +740,7 @@ export function UtiPatientCard({
                   <InlineEditableArray
                     items={quadroAtual}
                     onUpdate={(items) => handleUpdateField("utiCurrentStatus", items)}
-                    label="QUADRO"
+                    label="QUADRO CLÍNICO"
                     icon={<Activity className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
                   />
@@ -758,7 +758,7 @@ export function UtiPatientCard({
                   <InlineEditableArray
                     items={pendencias}
                     onUpdate={(items) => handleUpdateField("pendencies", items)}
-                    label="PENDÊNCIAS"
+                    label="PENDÊNCIAS / PROGRAMAÇÕES"
                     icon={<ClipboardList className="h-2.5 w-2.5 text-amber-600 dark:text-amber-400" />}
                     alwaysShowAll
                     highlightedIndices={patient.highlightedPendencies || []}
