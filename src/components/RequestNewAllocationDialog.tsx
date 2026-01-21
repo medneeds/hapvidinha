@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Bed, Send, Plus } from "lucide-react";
+import { Bed, Send, ChevronDown, User, Stethoscope, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +12,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
 import { usePatients } from "@/hooks/usePatients";
 import { useDepartment } from "@/contexts/DepartmentContext";
@@ -19,6 +25,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Patient } from "@/types/patient";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface RequestNewAllocationDialogProps {
   open: boolean;
@@ -37,10 +44,24 @@ export function RequestNewAllocationDialog({
   onOpenChange,
   targetSector,
 }: RequestNewAllocationDialogProps) {
-  const [patientName, setPatientName] = useState("");
-  const [patientAge, setPatientAge] = useState("");
+  // Doctor info
   const [doctorName, setDoctorName] = useState("");
   const [officeNumber, setOfficeNumber] = useState("");
+  
+  // Patient identification
+  const [patientName, setPatientName] = useState("");
+  const [patientAge, setPatientAge] = useState("");
+  
+  // Clinical data
+  const [diagnoses, setDiagnoses] = useState("");
+  const [medicalHistory, setMedicalHistory] = useState("");
+  const [relevantExams, setRelevantExams] = useState("");
+  const [pendencies, setPendencies] = useState("");
+  const [admissionHistory, setAdmissionHistory] = useState("");
+  
+  // Section states
+  const [clinicalOpen, setClinicalOpen] = useState(true);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createRequest } = useBedAllocationRequests();
   const { createPatient } = usePatients();
@@ -48,6 +69,18 @@ export function RequestNewAllocationDialog({
   const { currentHospital, currentState } = useHospital();
   const { user } = useAuth();
   const { toast } = useToast();
+
+  const resetForm = () => {
+    setPatientName("");
+    setPatientAge("");
+    setDoctorName("");
+    setOfficeNumber("");
+    setDiagnoses("");
+    setMedicalHistory("");
+    setRelevantExams("");
+    setPendencies("");
+    setAdmissionHistory("");
+  };
 
   const handleSubmit = async () => {
     if (!patientName.trim()) {
@@ -97,7 +130,13 @@ export function RequestNewAllocationDialog({
       const maxBedNumber = bedNumbers.length > 0 ? Math.max(...bedNumbers) : 0;
       const newBedNumber = `${sectorPrefix}${String(maxBedNumber + 1).padStart(2, '0')}`;
 
-      // Create the door patient
+      // Parse text fields into arrays (split by newlines)
+      const parseTextToArray = (text: string): string | null => {
+        const items = text.split('\n').map(item => item.trim()).filter(Boolean);
+        return items.length > 0 ? items.join('\n') : null;
+      };
+
+      // Create the door patient with all clinical data
       const { data: newPatient, error: createError } = await supabase
         .from('patients')
         .insert({
@@ -112,6 +151,12 @@ export function RequestNewAllocationDialog({
           allocation_status: 'pending',
           medical_responsibility: { type: 'porta' },
           created_by: user?.id || null,
+          // Clinical data
+          diagnoses: parseTextToArray(diagnoses),
+          medical_history: parseTextToArray(medicalHistory),
+          relevant_exams: parseTextToArray(relevantExams),
+          pendencies: parseTextToArray(pendencies),
+          admission_history: admissionHistory.trim() || null,
         })
         .select()
         .single();
@@ -133,10 +178,7 @@ export function RequestNewAllocationDialog({
           description: `Paciente ${patientName} cadastrado e solicitação de alocação em ${targetSector} enviada ao líder.`,
         });
         onOpenChange(false);
-        setPatientName("");
-        setPatientAge("");
-        setDoctorName("");
-        setOfficeNumber("");
+        resetForm();
       }
     } catch (error) {
       console.error('Error creating allocation request:', error);
@@ -159,91 +201,192 @@ export function RequestNewAllocationDialog({
     }
   };
 
+  const getSectorBgColor = () => {
+    switch (targetSector) {
+      case "Cuidados Especiais": return "bg-red-500/10 border-red-500/30";
+      case "Observação Amarela": return "bg-yellow-500/10 border-yellow-500/30";
+      case "Observação Azul": return "bg-blue-500/10 border-blue-500/30";
+      default: return "bg-muted/50";
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6 pb-2">
           <DialogTitle className="flex items-center gap-2">
             <Bed className="h-5 w-5 text-primary" />
             Solicitar Alocação de Leito
           </DialogTitle>
           <DialogDescription>
-            Cadastre o paciente e solicite alocação em{" "}
+            Cadastre o paciente com todos os dados clínicos e solicite alocação em{" "}
             <span className={`font-semibold ${getSectorColor()}`}>{targetSector}</span>.
-            O líder será notificado para aprovar.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {/* Doctor Info Section */}
-          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
-            <p className="text-xs font-semibold text-primary uppercase tracking-wide">Médico Solicitante</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="doctor-name" className="text-xs">Nome do Médico *</Label>
-                <Input
-                  id="doctor-name"
-                  value={doctorName}
-                  onChange={(e) => setDoctorName(e.target.value.toUpperCase())}
-                  placeholder="DR. NOME"
-                  className="uppercase h-9 text-sm"
-                />
+        <ScrollArea className="flex-1 px-6">
+          <div className="space-y-4 py-4">
+            {/* Target Sector Banner */}
+            <div className={`p-3 rounded-lg border ${getSectorBgColor()}`}>
+              <p className="text-sm font-medium">
+                <strong>Setor solicitado:</strong>{" "}
+                <span className={`font-semibold ${getSectorColor()}`}>{targetSector}</span>
+              </p>
+            </div>
+
+            {/* Doctor Info Section */}
+            <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-primary" />
+                <p className="text-sm font-semibold text-primary uppercase tracking-wide">Médico Solicitante</p>
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="office-number" className="text-xs">Nº Consultório</Label>
-                <Input
-                  id="office-number"
-                  value={officeNumber}
-                  onChange={(e) => setOfficeNumber(e.target.value)}
-                  placeholder="Ex: 01"
-                  className="h-9 text-sm"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="doctor-name" className="text-xs">Nome do Médico *</Label>
+                  <Input
+                    id="doctor-name"
+                    value={doctorName}
+                    onChange={(e) => setDoctorName(e.target.value.toUpperCase())}
+                    placeholder="DR. NOME"
+                    className="uppercase h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="office-number" className="text-xs">Nº Consultório</Label>
+                  <Input
+                    id="office-number"
+                    value={officeNumber}
+                    onChange={(e) => setOfficeNumber(e.target.value)}
+                    placeholder="Ex: 01"
+                    className="h-9 text-sm"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Patient Info Section */}
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="patient-name">Nome do Paciente *</Label>
-              <Input
-                id="patient-name"
-                value={patientName}
-                onChange={(e) => setPatientName(e.target.value.toUpperCase())}
-                placeholder="NOME COMPLETO DO PACIENTE"
-                className="uppercase"
-              />
+            {/* Patient Identification Section */}
+            <div className="p-4 rounded-lg bg-muted/30 border space-y-3">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Identificação do Paciente</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="patient-name" className="text-xs">Nome do Paciente *</Label>
+                  <Input
+                    id="patient-name"
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value.toUpperCase())}
+                    placeholder="NOME COMPLETO"
+                    className="uppercase h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="patient-age" className="text-xs">Idade</Label>
+                  <Input
+                    id="patient-age"
+                    value={patientAge}
+                    onChange={(e) => setPatientAge(e.target.value)}
+                    placeholder="Ex: 45 anos"
+                    className="h-9 text-sm"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="patient-age">Idade (opcional)</Label>
-              <Input
-                id="patient-age"
-                value={patientAge}
-                onChange={(e) => setPatientAge(e.target.value)}
-                placeholder="Ex: 45 anos"
-              />
-            </div>
-          </div>
+            {/* Clinical Data Section - Collapsible */}
+            <Collapsible open={clinicalOpen} onOpenChange={setClinicalOpen}>
+              <div className="rounded-lg border overflow-hidden">
+                <CollapsibleTrigger asChild>
+                  <button className="w-full p-4 flex items-center justify-between bg-accent/30 hover:bg-accent/50 transition-colors">
+                    <div className="flex items-center gap-2">
+                      <Stethoscope className="h-4 w-4 text-accent-foreground" />
+                      <span className="text-sm font-semibold text-accent-foreground uppercase tracking-wide">
+                        Dados Clínicos
+                      </span>
+                    </div>
+                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${clinicalOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-4 space-y-4 bg-background">
+                    {/* Diagnoses */}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="diagnoses" className="text-xs font-medium">
+                        Hipóteses / Diagnósticos
+                      </Label>
+                      <Textarea
+                        id="diagnoses"
+                        value={diagnoses}
+                        onChange={(e) => setDiagnoses(e.target.value)}
+                        placeholder="Digite cada diagnóstico em uma linha..."
+                        className="min-h-[60px] text-sm resize-none"
+                      />
+                    </div>
 
-          <div className="p-3 rounded-lg bg-muted/50 border">
-            <p className="text-sm text-muted-foreground">
-              <strong>Setor solicitado:</strong>{" "}
-              <span className={`font-semibold ${getSectorColor()}`}>{targetSector}</span>
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              O paciente será cadastrado em "Fora das Alas" até a aprovação do líder.
-            </p>
-          </div>
+                    {/* Medical History */}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="medical-history" className="text-xs font-medium">
+                        Antecedentes
+                      </Label>
+                      <Textarea
+                        id="medical-history"
+                        value={medicalHistory}
+                        onChange={(e) => setMedicalHistory(e.target.value)}
+                        placeholder="Digite cada antecedente em uma linha..."
+                        className="min-h-[60px] text-sm resize-none"
+                      />
+                    </div>
 
-          <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
-            <p className="text-sm text-amber-500">
-              💡 Após criar, você pode editar os detalhes do paciente (história, diagnósticos, etc.) na Edição Avançada.
-            </p>
-          </div>
-        </div>
+                    {/* Relevant Exams */}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="relevant-exams" className="text-xs font-medium">
+                        Exames
+                      </Label>
+                      <Textarea
+                        id="relevant-exams"
+                        value={relevantExams}
+                        onChange={(e) => setRelevantExams(e.target.value)}
+                        placeholder="Digite cada exame em uma linha..."
+                        className="min-h-[60px] text-sm resize-none"
+                      />
+                    </div>
 
-        <DialogFooter>
+                    {/* Pendencies */}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="pendencies" className="text-xs font-medium">
+                        Programações / Pendências
+                      </Label>
+                      <Textarea
+                        id="pendencies"
+                        value={pendencies}
+                        onChange={(e) => setPendencies(e.target.value)}
+                        placeholder="Digite cada item em uma linha..."
+                        className="min-h-[60px] text-sm resize-none"
+                      />
+                    </div>
+
+                    {/* Admission History */}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="admission-history" className="text-xs font-medium">
+                        História Admissional / Anamnese
+                      </Label>
+                      <Textarea
+                        id="admission-history"
+                        value={admissionHistory}
+                        onChange={(e) => setAdmissionHistory(e.target.value)}
+                        placeholder="Descreva a história admissional do paciente..."
+                        className="min-h-[100px] text-sm resize-none"
+                      />
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+          </div>
+        </ScrollArea>
+
+        <DialogFooter className="px-6 py-4 border-t bg-muted/30">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
