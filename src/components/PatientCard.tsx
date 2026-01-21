@@ -1459,7 +1459,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             if (pendenciesText.includes('PSM FAVORÁVEL') || 
                                 pendenciesText.includes('PSM FAVORAVEL') ||
                                 pendenciesText.includes('IR PARA LEITO DE UTI') ||
-                                pendenciesText.includes('IR PARA LEITO DE ENFERMARIA')) {
+                                pendenciesText.includes('IR PARA LEITO DE ENFERMARIA') ||
+                                pendenciesText.includes('IR PARA O CENTRO CIRÚRGICO') ||
+                                pendenciesText.includes('IR PARA O CENTRO CIRURGICO')) {
                               return (
                                 <div title="Solicitação de Internação Aprovada">
                                   <CircleCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
