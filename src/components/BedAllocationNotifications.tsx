@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Check, Clock, X, User, Bed, FileText, Stethoscope, Building } from "lucide-react";
+import { Bell, Check, Clock, X, User, Bed, FileText, Stethoscope, Building, ChevronDown, Activity, ClipboardList, FlaskConical, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -15,6 +15,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useBedAllocationRequests, BedAllocationRequest } from "@/hooks/useBedAllocationRequests";
@@ -23,6 +28,88 @@ import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+
+// Clinical section component for reusability
+interface ClinicalSectionProps {
+  title: string;
+  icon: React.ReactNode;
+  content: string | null | undefined;
+  defaultOpen?: boolean;
+  accentColor?: string;
+}
+
+function ClinicalSection({ title, icon, content, defaultOpen = false, accentColor = "primary" }: ClinicalSectionProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  
+  if (!content) return null;
+  
+  const lines = content.split('\n').filter(Boolean);
+  
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div className="rounded-lg border overflow-hidden">
+        <CollapsibleTrigger asChild>
+          <button className={`w-full p-3 flex items-center justify-between bg-${accentColor}/5 hover:bg-${accentColor}/10 transition-colors border-b border-transparent ${isOpen ? 'border-border/50' : ''}`}>
+            <div className="flex items-center gap-2">
+              {icon}
+              <span className="text-sm font-semibold">{title}</span>
+              <Badge variant="secondary" className="text-xs h-5">
+                {lines.length} {lines.length === 1 ? 'item' : 'itens'}
+              </Badge>
+            </div>
+            <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          </button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="p-3 bg-muted/20 space-y-1.5">
+            {lines.map((line, index) => (
+              <div key={index} className="flex items-start gap-2 text-sm">
+                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50 mt-2 shrink-0" />
+                <span className="leading-relaxed">{line}</span>
+              </div>
+            ))}
+          </div>
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
+  );
+}
+
+// Admission history section (special handling for longer text)
+interface AdmissionHistorySectionProps {
+  content: string | null | undefined;
+}
+
+function AdmissionHistorySection({ content }: AdmissionHistorySectionProps) {
+  const [isOpen, setIsOpen] = useState(true);
+  
+  if (!content) return null;
+  
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div className="rounded-lg border overflow-hidden border-primary/30">
+        <CollapsibleTrigger asChild>
+          <button className="w-full p-3 flex items-center justify-between bg-primary/10 hover:bg-primary/15 transition-colors">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold text-primary">História Admissional / Anamnese</span>
+            </div>
+            <ChevronDown className={`h-4 w-4 text-primary transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          </button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <ScrollArea className="max-h-48">
+            <div className="p-4 bg-primary/5">
+              <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                {content}
+              </p>
+            </div>
+          </ScrollArea>
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
+  );
+}
 
 export function BedAllocationNotifications() {
   const { role } = useAuth();
@@ -108,6 +195,27 @@ export function BedAllocationNotifications() {
       default:
         return "bg-muted text-muted-foreground";
     }
+  };
+
+  const getSectorBorderColor = (sector: string) => {
+    switch (sector) {
+      case "Cuidados Especiais": return "border-l-red-500";
+      case "Observação Amarela": return "border-l-yellow-500";
+      case "Observação Azul": return "border-l-blue-500";
+      default: return "border-l-muted";
+    }
+  };
+
+  // Check if patient has any clinical data
+  const hasAnyClinicalData = (patient: BedAllocationRequest['patient']) => {
+    if (!patient) return false;
+    return !!(
+      patient.diagnoses || 
+      patient.medical_history || 
+      patient.relevant_exams || 
+      patient.pendencies || 
+      patient.admission_history
+    );
   };
 
   return (
@@ -288,18 +396,18 @@ export function BedAllocationNotifications() {
         </PopoverContent>
       </Popover>
 
-      {/* Request detail dialog */}
+      {/* Request detail dialog - OPTIMIZED with collapsible sections */}
       <Dialog open={!!selectedRequest && !showRejectDialog} onOpenChange={() => setSelectedRequest(null)}>
-        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] p-0 overflow-hidden flex flex-col">
           {selectedRequest && (
             <>
               {/* Header with patient name and sector badge */}
-              <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 border-b">
+              <div className={`bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-5 border-b border-l-4 ${getSectorBorderColor(selectedRequest.requested_sector)}`}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
-                        <User className="h-5 w-5 text-primary" />
+                      <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                        <User className="h-6 w-6 text-primary" />
                       </div>
                       <div>
                         <h2 className="text-xl font-bold truncate">
@@ -323,7 +431,7 @@ export function BedAllocationNotifications() {
                 {/* Requesting Doctor Info */}
                 {(selectedRequest.requesting_doctor_name || selectedRequest.requesting_office_number) && (
                   <div className="mt-3 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                    <div className="flex items-center gap-3 text-sm">
+                    <div className="flex items-center gap-3 text-sm flex-wrap">
                       <Stethoscope className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <span className="text-muted-foreground">Solicitante:</span>
                       <span className="font-semibold text-emerald-700 dark:text-emerald-300">
@@ -331,7 +439,7 @@ export function BedAllocationNotifications() {
                       </span>
                       {selectedRequest.requesting_office_number && (
                         <>
-                          <span className="text-muted-foreground mx-1">|</span>
+                          <span className="text-muted-foreground">|</span>
                           <Building className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                           <span className="text-muted-foreground">Consultório:</span>
                           <span className="font-semibold text-emerald-700 dark:text-emerald-300">
@@ -348,51 +456,65 @@ export function BedAllocationNotifications() {
                 </p>
               </div>
 
-              {/* Content area */}
-              <div className="p-6 space-y-5">
-                {/* Diagnoses */}
-                {selectedRequest.patient?.diagnoses && (
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                      Hipóteses / Diagnósticos
-                    </h3>
-                    <div className="bg-muted/30 rounded-lg p-3 border border-border/50">
-                      <p className="text-sm whitespace-pre-wrap leading-relaxed">
-                        {selectedRequest.patient.diagnoses}
+              {/* Content area with clinical data - scrollable */}
+              <ScrollArea className="flex-1 max-h-[50vh]">
+                <div className="p-5 space-y-3">
+                  {/* No clinical data warning */}
+                  {!hasAnyClinicalData(selectedRequest.patient) && (
+                    <div className="text-center py-8 px-4 rounded-lg border-2 border-dashed border-muted-foreground/20">
+                      <AlertCircle className="h-10 w-10 mx-auto mb-3 text-amber-500/60" />
+                      <p className="text-sm text-muted-foreground font-medium">
+                        Nenhuma informação clínica cadastrada
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        O médico da porta pode adicionar dados clínicos na "Edição Avançada" do paciente
                       </p>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Admission History */}
-                {selectedRequest.patient?.admission_history && (
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" />
-                      História Admissional / Anamnese
-                    </h3>
-                    <ScrollArea className="h-40 rounded-lg border border-border/50 bg-muted/30">
-                      <div className="p-3">
-                        <p className="text-sm whitespace-pre-wrap leading-relaxed">
-                          {selectedRequest.patient.admission_history}
-                        </p>
-                      </div>
-                    </ScrollArea>
-                  </div>
-                )}
+                  {/* Admission History - Priority section, always open by default */}
+                  <AdmissionHistorySection content={selectedRequest.patient?.admission_history} />
 
-                {/* Empty state if no clinical data */}
-                {!selectedRequest.patient?.diagnoses && !selectedRequest.patient?.admission_history && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <FileText className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">Nenhuma informação clínica adicional disponível</p>
-                  </div>
-                )}
-              </div>
+                  {/* Diagnoses */}
+                  <ClinicalSection
+                    title="Hipóteses / Diagnósticos"
+                    icon={<Activity className="h-4 w-4 text-amber-500" />}
+                    content={selectedRequest.patient?.diagnoses}
+                    defaultOpen={true}
+                    accentColor="amber-500"
+                  />
+
+                  {/* Medical History */}
+                  <ClinicalSection
+                    title="Antecedentes"
+                    icon={<ClipboardList className="h-4 w-4 text-purple-500" />}
+                    content={selectedRequest.patient?.medical_history}
+                    defaultOpen={false}
+                    accentColor="purple-500"
+                  />
+
+                  {/* Relevant Exams */}
+                  <ClinicalSection
+                    title="Exames"
+                    icon={<FlaskConical className="h-4 w-4 text-cyan-500" />}
+                    content={selectedRequest.patient?.relevant_exams}
+                    defaultOpen={false}
+                    accentColor="cyan-500"
+                  />
+
+                  {/* Pendencies */}
+                  <ClinicalSection
+                    title="Programações / Pendências"
+                    icon={<AlertCircle className="h-4 w-4 text-orange-500" />}
+                    content={selectedRequest.patient?.pendencies}
+                    defaultOpen={false}
+                    accentColor="orange-500"
+                  />
+                </div>
+              </ScrollArea>
 
               {/* Action buttons */}
-              <div className="border-t bg-muted/20 p-4">
+              <div className="border-t bg-muted/20 p-4 mt-auto">
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button
                     variant="outline"

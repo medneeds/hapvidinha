@@ -28,6 +28,9 @@ export interface BedAllocationRequest {
     name: string;
     age: string | null;
     diagnoses: string | null;
+    medical_history: string | null;
+    relevant_exams: string | null;
+    pendencies: string | null;
     admission_history: string | null;
     bed_number: string;
     sector: string;
@@ -50,7 +53,7 @@ export function useBedAllocationRequests() {
         .from("bed_allocation_requests")
         .select(`
           *,
-          patient:patients(id, name, age, diagnoses, admission_history, bed_number, sector)
+          patient:patients(id, name, age, diagnoses, medical_history, relevant_exams, pendencies, admission_history, bed_number, sector)
         `)
         .eq("hospital_unit_id", currentHospital.id)
         .eq("state_id", currentState.id)
