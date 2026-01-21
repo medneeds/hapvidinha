@@ -96,7 +96,7 @@ function SortableUtiRow(props: SortableUtiRowProps) {
     <div 
       ref={setNodeRef} 
       style={style} 
-      className="flex items-center gap-2"
+      className="flex items-center gap-1 md:gap-2"
       data-patient-id={props.patient.id}
     >
       {props.selectionMode && (
@@ -107,13 +107,13 @@ function SortableUtiRow(props: SortableUtiRowProps) {
         />
       )}
       <button
-        className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden"
+        className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden hidden md:block"
         {...attributes}
         {...listeners}
       >
         <GripVertical className="h-4 w-4 text-muted-foreground" />
       </button>
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <UtiPatientCard
           patient={props.patient}
           onUpdate={props.onUpdate}

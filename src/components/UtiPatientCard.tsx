@@ -704,101 +704,104 @@ export function UtiPatientCard({
             </div>
 
             {/* Main Content - Collapsed View */}
-            <div className="flex-1 p-1.5 space-y-1">
-              {/* Row 1: Identification Header - Optimized spacing */}
-              <div className="flex items-center gap-1.5">
+            <div className="flex-1 p-1.5 md:p-1.5 space-y-1.5 md:space-y-1 min-w-0">
+              {/* Row 1: Identification Header - Mobile optimized */}
+              <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
                 {/* Bed Number - Compact */}
                 <div className="shrink-0 px-1.5 py-0.5 bg-primary/10 rounded border border-primary/20">
                   <InlineEditableField
                     value={patient.bedNumber}
                     onUpdate={(v) => handleUpdateField("bedNumber", v)}
                     placeholder="LEITO"
-                    className="text-xs font-bold text-primary w-10 text-center"
+                    className="text-xs font-bold text-primary w-8 md:w-10 text-center"
                   />
                 </div>
                 
                 {/* Patient Name + Age - Flexible grow */}
-                <div className="flex-1 flex items-baseline gap-1.5 min-w-0">
+                <div className="flex-1 flex items-baseline gap-1 md:gap-1.5 min-w-0">
                   <InlineEditableField
                     value={patient.name}
                     onUpdate={(v) => handleUpdateField("name", v)}
                     placeholder="NOME DO PACIENTE"
-                    className="text-sm font-semibold truncate"
+                    className="text-xs md:text-sm font-semibold truncate"
                   />
                   <InlineEditableField
                     value={String(patient.age || "")}
                     onUpdate={(v) => handleUpdateField("age", v)}
                     placeholder="IDADE"
-                    className="shrink-0 text-xs text-muted-foreground"
+                    className="shrink-0 text-[10px] md:text-xs text-muted-foreground"
                   />
                 </div>
 
-                {/* Clinical Status Selector - Only this uses color */}
-                <Select
-                  value={patient.clinicalStatus || ""}
-                  onValueChange={(v) => handleUpdateField("clinicalStatus", v)}
-                >
-                  <SelectTrigger 
-                    className={cn(
-                      "shrink-0 h-5 w-auto px-2 text-[9px] font-bold border-0 rounded",
-                      patient.clinicalStatus 
-                        ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.color || "bg-muted"
-                        : "bg-muted text-muted-foreground"
-                    )}
-                    onClick={(e) => e.stopPropagation()}
+                {/* Mobile: Chips wrap to second line */}
+                <div className="flex items-center gap-1 flex-wrap md:flex-nowrap w-full md:w-auto mt-1 md:mt-0">
+                  {/* Clinical Status Selector */}
+                  <Select
+                    value={patient.clinicalStatus || ""}
+                    onValueChange={(v) => handleUpdateField("clinicalStatus", v)}
                   >
-                    <SelectValue placeholder="STATUS">
-                      {patient.clinicalStatus 
-                        ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.label 
-                        : "STATUS"
-                      }
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CLINICAL_STATUS_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        <div className="flex items-center gap-2">
-                          <div className={cn("w-2.5 h-2.5 rounded-full", option.color)} />
-                          <span className="text-xs font-medium">{option.label}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    <SelectTrigger 
+                      className={cn(
+                        "shrink-0 h-5 w-auto px-1.5 md:px-2 text-[8px] md:text-[9px] font-bold border-0 rounded",
+                        patient.clinicalStatus 
+                          ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.color || "bg-muted"
+                          : "bg-muted text-muted-foreground"
+                      )}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <SelectValue placeholder="STATUS">
+                        {patient.clinicalStatus 
+                          ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.label 
+                          : "STATUS"
+                        }
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CLINICAL_STATUS_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          <div className="flex items-center gap-2">
+                            <div className={cn("w-2.5 h-2.5 rounded-full", option.color)} />
+                            <span className="text-xs font-medium">{option.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                {/* Days in UTI - Neutral chip */}
-                <div className="shrink-0 flex items-center gap-0.5 px-1.5 py-0.5 bg-muted rounded text-muted-foreground">
-                  <Clock className="h-2.5 w-2.5" />
-                  <span className="text-[10px] font-semibold">{daysInUti}d</span>
+                  {/* Days in UTI - Neutral chip */}
+                  <div className="shrink-0 flex items-center gap-0.5 px-1 md:px-1.5 py-0.5 bg-muted rounded text-muted-foreground">
+                    <Clock className="h-2 md:h-2.5 w-2 md:w-2.5" />
+                    <span className="text-[9px] md:text-[10px] font-semibold">{daysInUti}d</span>
+                  </div>
+
+                  {/* Discharge - Hidden on mobile to save space */}
+                  <div className="hidden md:flex shrink-0 items-center gap-0.5 text-muted-foreground">
+                    <span className="text-[9px]">ALTA:</span>
+                    <InlineEditableField
+                      value={previsaoAlta[0] || ""}
+                      onUpdate={(v) => handleUpdateField("utiDischargePrediction", v ? [v] : [])}
+                      placeholder="—"
+                      className="text-[10px] font-medium w-16"
+                    />
+                  </div>
+
+                  {/* Critical badge - Only alert when needed */}
+                  {criticalCount > 0 && (
+                    <Badge variant="destructive" className="shrink-0 h-4 gap-0.5 text-[8px] md:text-[9px] px-1">
+                      <AlertTriangle className="h-2 w-2" />
+                      {criticalCount}
+                    </Badge>
+                  )}
                 </div>
-
-                {/* Discharge - Neutral display */}
-                <div className="shrink-0 flex items-center gap-0.5 text-muted-foreground">
-                  <span className="text-[9px]">ALTA:</span>
-                  <InlineEditableField
-                    value={previsaoAlta[0] || ""}
-                    onUpdate={(v) => handleUpdateField("utiDischargePrediction", v ? [v] : [])}
-                    placeholder="—"
-                    className="text-[10px] font-medium w-16"
-                  />
-                </div>
-
-                {/* Critical badge - Only alert when needed */}
-                {criticalCount > 0 && (
-                  <Badge variant="destructive" className="shrink-0 h-4 gap-0.5 text-[9px] px-1">
-                    <AlertTriangle className="h-2 w-2" />
-                    {criticalCount}
-                  </Badge>
-                )}
               </div>
 
-              {/* Row 2: 4 columns - Elegant tonal elevation */}
-              <div className="grid grid-cols-4 gap-1.5">
-                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
+              {/* Row 2: 4 columns on desktop, 2x2 grid on mobile */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5">
+                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1 md:p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
                     items={diagnosticos}
                     onUpdate={(items) => handleUpdateField("diagnoses", items)}
-                    label="HIPÓTESES / DIAGNÓSTICOS"
+                    label="DIAGNÓSTICOS"
                     icon={<Stethoscope className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
                     fieldId="diagnoses"
@@ -807,11 +810,11 @@ export function UtiPatientCard({
                     onEnterPress={() => setActiveColumn('diagnoses')}
                   />
                 </div>
-                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
+                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1 md:p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
                     items={antecedentes}
                     onUpdate={(items) => handleUpdateField("medicalHistory", items)}
-                    label="ANTECEDENTES / COMORBIDADES"
+                    label="ANTECEDENTES"
                     icon={<Activity className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
                     fieldId="antecedentes"
@@ -820,7 +823,7 @@ export function UtiPatientCard({
                     onEnterPress={() => setActiveColumn('antecedentes')}
                   />
                 </div>
-                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
+                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1 md:p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
                     items={condutasDia}
                     onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
@@ -833,11 +836,11 @@ export function UtiPatientCard({
                     onEnterPress={() => setActiveColumn('condutas')}
                   />
                 </div>
-                <div className="bg-gradient-to-br from-amber-50/40 to-card dark:from-amber-950/20 dark:to-card/80 rounded-lg p-1.5 shadow-sm border border-amber-300/30 dark:border-amber-600/20 backdrop-blur-sm ring-1 ring-amber-200/15 dark:ring-amber-700/10 hover:shadow-md hover:border-amber-300/50 transition-all">
+                <div className="bg-gradient-to-br from-amber-50/40 to-card dark:from-amber-950/20 dark:to-card/80 rounded-lg p-1 md:p-1.5 shadow-sm border border-amber-300/30 dark:border-amber-600/20 backdrop-blur-sm ring-1 ring-amber-200/15 dark:ring-amber-700/10 hover:shadow-md hover:border-amber-300/50 transition-all">
                   <InlineEditableArray
                     items={pendencias}
                     onUpdate={(items) => handleUpdateField("pendencies", items)}
-                    label="PENDÊNCIAS / PROGRAMAÇÕES"
+                    label="PENDÊNCIAS"
                     icon={<ClipboardList className="h-2.5 w-2.5 text-amber-600 dark:text-amber-400" />}
                     alwaysShowAll
                     highlightedIndices={patient.highlightedPendencies || []}
