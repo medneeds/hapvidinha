@@ -74,6 +74,7 @@ export function usePatients(department?: Department) {
         utiCulturesAntibiotics: p.uti_cultures_antibiotics ? p.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
         utiSpecialties: p.uti_specialties ? p.uti_specialties.split('\n').filter(Boolean) : [],
         utiOriginSector: p.uti_origin_sector ? p.uti_origin_sector.split('\n').filter(Boolean) : [],
+        utiDailyConducts: (p as any).uti_daily_conducts ? (p as any).uti_daily_conducts.split('\n').filter(Boolean) : [],
         displayOrder: p.display_order ?? 0,
         isDoorPatient: p.is_door_patient ?? false,
         allocationStatus: p.allocation_status as Patient['allocationStatus'],
@@ -144,6 +145,7 @@ export function usePatients(department?: Department) {
       if (updates.utiCulturesAntibiotics !== undefined) dbUpdates.uti_cultures_antibiotics = updates.utiCulturesAntibiotics.length > 0 ? updates.utiCulturesAntibiotics.join('\n') : null;
       if (updates.utiSpecialties !== undefined) dbUpdates.uti_specialties = updates.utiSpecialties.length > 0 ? updates.utiSpecialties.join('\n') : null;
       if (updates.utiOriginSector !== undefined) dbUpdates.uti_origin_sector = updates.utiOriginSector.length > 0 ? updates.utiOriginSector.join('\n') : null;
+      if (updates.utiDailyConducts !== undefined) dbUpdates.uti_daily_conducts = updates.utiDailyConducts.length > 0 ? updates.utiDailyConducts.join('\n') : null;
       if (updates.psmStatus !== undefined) dbUpdates.psm_status = updates.psmStatus;
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
@@ -230,6 +232,7 @@ export function usePatients(department?: Department) {
       if (patient.utiCulturesAntibiotics && patient.utiCulturesAntibiotics.length > 0) dbData.uti_cultures_antibiotics = patient.utiCulturesAntibiotics.join('\n');
       if (patient.utiSpecialties && patient.utiSpecialties.length > 0) dbData.uti_specialties = patient.utiSpecialties.join('\n');
       if (patient.utiOriginSector && patient.utiOriginSector.length > 0) dbData.uti_origin_sector = patient.utiOriginSector.join('\n');
+      if (patient.utiDailyConducts && patient.utiDailyConducts.length > 0) dbData.uti_daily_conducts = patient.utiDailyConducts.join('\n');
 
       const { data, error } = await supabase
         .from('patients')
@@ -277,6 +280,7 @@ export function usePatients(department?: Department) {
         utiCulturesAntibiotics: data.uti_cultures_antibiotics ? data.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
         utiSpecialties: data.uti_specialties ? data.uti_specialties.split('\n').filter(Boolean) : [],
         utiOriginSector: data.uti_origin_sector ? data.uti_origin_sector.split('\n').filter(Boolean) : [],
+        utiDailyConducts: (data as any).uti_daily_conducts ? (data as any).uti_daily_conducts.split('\n').filter(Boolean) : [],
         createdBy: data.created_by || undefined,
       };
 

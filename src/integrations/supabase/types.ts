@@ -506,6 +506,7 @@ export type Database = {
           uti_allergies: string | null
           uti_cultures_antibiotics: string | null
           uti_current_status: string | null
+          uti_daily_conducts: string | null
           uti_devices: string | null
           uti_discharge_prediction: string | null
           uti_origin_sector: string | null
@@ -543,6 +544,7 @@ export type Database = {
           uti_allergies?: string | null
           uti_cultures_antibiotics?: string | null
           uti_current_status?: string | null
+          uti_daily_conducts?: string | null
           uti_devices?: string | null
           uti_discharge_prediction?: string | null
           uti_origin_sector?: string | null
@@ -580,6 +582,7 @@ export type Database = {
           uti_allergies?: string | null
           uti_cultures_antibiotics?: string | null
           uti_current_status?: string | null
+          uti_daily_conducts?: string | null
           uti_devices?: string | null
           uti_discharge_prediction?: string | null
           uti_origin_sector?: string | null
