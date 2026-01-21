@@ -661,41 +661,41 @@ export function UtiPatientCard({
                 )}
               </div>
 
-              {/* Row 2: 4 columns - Clean neutral backgrounds, only icons have subtle color */}
-              <div className="grid grid-cols-4 gap-1">
-                <div className="bg-muted/40 rounded p-1">
+              {/* Row 2: 4 columns - Elegant elevated cards */}
+              <div className="grid grid-cols-4 gap-1.5">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/40 dark:to-blue-900/20 rounded-lg p-1.5 shadow-sm border border-blue-200/50 dark:border-blue-800/30 backdrop-blur-sm">
                   <InlineEditableArray
                     items={diagnosticos}
                     onUpdate={(items) => handleUpdateField("diagnoses", items)}
                     label="HD"
-                    icon={<Stethoscope className="h-2.5 w-2.5 text-blue-500" />}
+                    icon={<Stethoscope className="h-2.5 w-2.5 text-blue-600 dark:text-blue-400" />}
                     alwaysShowAll
                   />
                 </div>
-                <div className="bg-muted/40 rounded p-1">
+                <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-900/40 dark:to-slate-800/20 rounded-lg p-1.5 shadow-sm border border-slate-200/50 dark:border-slate-700/30 backdrop-blur-sm">
                   <InlineEditableArray
                     items={quadroAtual}
                     onUpdate={(items) => handleUpdateField("utiCurrentStatus", items)}
                     label="QUADRO"
-                    icon={<Activity className="h-2.5 w-2.5 text-slate-500" />}
+                    icon={<Activity className="h-2.5 w-2.5 text-slate-600 dark:text-slate-400" />}
                     alwaysShowAll
                   />
                 </div>
-                <div className="bg-muted/40 rounded p-1">
+                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/40 dark:to-emerald-900/20 rounded-lg p-1.5 shadow-sm border border-emerald-200/50 dark:border-emerald-800/30 backdrop-blur-sm">
                   <InlineEditableArray
                     items={condutasDia}
                     onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
                     label="CONDUTAS"
-                    icon={<FileText className="h-2.5 w-2.5 text-emerald-600" />}
+                    icon={<FileText className="h-2.5 w-2.5 text-emerald-600 dark:text-emerald-400" />}
                     alwaysShowAll
                   />
                 </div>
-                <div className="bg-amber-50/50 dark:bg-amber-900/10 rounded border border-amber-200/30 dark:border-amber-800/20 p-1">
+                <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/40 dark:to-amber-900/20 rounded-lg p-1.5 shadow-sm border border-amber-300/60 dark:border-amber-700/40 backdrop-blur-sm ring-1 ring-amber-200/30 dark:ring-amber-800/20">
                   <InlineEditableArray
                     items={pendencias}
                     onUpdate={(items) => handleUpdateField("pendencies", items)}
                     label="PENDÊNCIAS"
-                    icon={<ClipboardList className="h-2.5 w-2.5 text-amber-600" />}
+                    icon={<ClipboardList className="h-2.5 w-2.5 text-amber-600 dark:text-amber-400" />}
                     alwaysShowAll
                   />
                 </div>
