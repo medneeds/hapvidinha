@@ -615,7 +615,7 @@ export function UtiPatientCard({
 }: UtiPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [activeColumn, setActiveColumn] = useState<'diagnoses' | 'quadro' | 'condutas' | 'pendencias' | null>(null);
+  const [activeColumn, setActiveColumn] = useState<'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias' | null>(null);
 
   const daysInUti = useMemo(() => calculateDaysInUti(patient.utiAdmissionDate), [patient.utiAdmissionDate]);
 
@@ -634,16 +634,16 @@ export function UtiPatientCard({
     });
   };
 
-  // Tab navigation between columns: diagnoses → quadro → condutas → pendencias
-  const handleTabFromColumn = (column: 'diagnoses' | 'quadro' | 'condutas' | 'pendencias') => {
-    const columnOrder: ('diagnoses' | 'quadro' | 'condutas' | 'pendencias')[] = ['diagnoses', 'quadro', 'condutas', 'pendencias'];
+  // Tab navigation between columns: diagnoses → antecedentes → condutas → pendencias
+  const handleTabFromColumn = (column: 'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias') => {
+    const columnOrder: ('diagnoses' | 'antecedentes' | 'condutas' | 'pendencias')[] = ['diagnoses', 'antecedentes', 'condutas', 'pendencias'];
     const currentIndex = columnOrder.indexOf(column);
     const nextIndex = (currentIndex + 1) % columnOrder.length;
     setActiveColumn(columnOrder[nextIndex]);
   };
 
   // Field data
-  const quadroAtual = getFieldArray("utiCurrentStatus");
+  const antecedentes = getFieldArray("medicalHistory");
   const pendencias = getFieldArray("pendencies");
   const previsaoAlta = getFieldArray("utiDischargePrediction");
   const condutasDia = getFieldArray("utiDailyConducts");
@@ -809,15 +809,15 @@ export function UtiPatientCard({
                 </div>
                 <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
-                    items={quadroAtual}
-                    onUpdate={(items) => handleUpdateField("utiCurrentStatus", items)}
-                    label="QUADRO CLÍNICO"
+                    items={antecedentes}
+                    onUpdate={(items) => handleUpdateField("medicalHistory", items)}
+                    label="ANTECEDENTES / COMORBIDADES"
                     icon={<Activity className="h-2.5 w-2.5 text-primary/70" />}
                     alwaysShowAll
-                    fieldId="quadro"
-                    isActive={activeColumn === 'quadro'}
-                    onTabPress={() => handleTabFromColumn('quadro')}
-                    onEnterPress={() => setActiveColumn('quadro')}
+                    fieldId="antecedentes"
+                    isActive={activeColumn === 'antecedentes'}
+                    onTabPress={() => handleTabFromColumn('antecedentes')}
+                    onEnterPress={() => setActiveColumn('antecedentes')}
                   />
                 </div>
                 <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
@@ -899,7 +899,7 @@ export function UtiPatientCard({
                 </div>
               </div>
 
-              {/* 🔵 CLÍNICO - Clinical evolution (without HD duplicate) */}
+              {/* 🔵 CLÍNICO - Clinical evolution */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Stethoscope className="h-3.5 w-3.5 text-slate-500" />
@@ -907,27 +907,20 @@ export function UtiPatientCard({
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <InlineEditableArray
-                    items={getFieldArray("medicalHistory")}
-                    onUpdate={(items) => handleUpdateField("medicalHistory", items)}
-                    label="ANTECEDENTES"
-                    colorClass="bg-muted/50 border border-border/50"
-                    alwaysShowAll
-                  />
-                  <InlineEditableArray
                     items={especialidades}
                     onUpdate={(items) => handleUpdateField("utiSpecialties", items)}
                     label="ESPECIALIDADES"
                     colorClass="bg-muted/50 border border-border/50"
                     alwaysShowAll
                   />
+                  <InlineEditableArray
+                    items={exames}
+                    onUpdate={(items) => handleUpdateField("relevantExams", items)}
+                    label="EXAMES"
+                    colorClass="bg-muted/50 border border-border/50"
+                    alwaysShowAll
+                  />
                 </div>
-                <InlineEditableArray
-                  items={exames}
-                  onUpdate={(items) => handleUpdateField("relevantExams", items)}
-                  label="EXAMES"
-                  colorClass="bg-muted/50 border border-border/50"
-                  alwaysShowAll
-                />
               </div>
 
               {/* 📝 HISTÓRIA - Admission history */}
