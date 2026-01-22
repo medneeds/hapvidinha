@@ -26,6 +26,7 @@ import { useBedAllocationRequests, BedAllocationRequest } from "@/hooks/useBedAl
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
+import { useNotificationSound } from "@/hooks/useNotificationSound";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -115,6 +116,7 @@ export function BedAllocationNotifications() {
   const { role } = useAuth();
   const { currentHospital } = useHospital();
   const { requests, pendingCount, approveRequest, setDiscussing, rejectRequest, refetch } = useBedAllocationRequests();
+  const { playNotificationSound } = useNotificationSound();
   const [selectedRequest, setSelectedRequest] = useState<BedAllocationRequest | null>(null);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
@@ -143,6 +145,8 @@ export function BedAllocationNotifications() {
           if (payload.new.id !== lastNotifiedId) {
             setLastNotifiedId(payload.new.id as string);
             setShowPopup(true);
+            // Play notification sound
+            playNotificationSound();
           }
         }
       )
@@ -151,7 +155,7 @@ export function BedAllocationNotifications() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [currentHospital?.id, lastNotifiedId]);
+  }, [currentHospital?.id, lastNotifiedId, playNotificationSound]);
 
   const pendingRequests = requests.filter(r => r.status === "pending");
   const discussingRequests = requests.filter(r => r.status === "discussing");
