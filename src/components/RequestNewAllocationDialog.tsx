@@ -50,6 +50,7 @@ interface EditableListItemProps {
   isLast?: boolean;
   onAddNew?: () => void;
   onEnterPress?: () => void;
+  onTabPress?: () => void;
   inputRef?: React.RefObject<HTMLInputElement>;
 }
 
@@ -62,6 +63,7 @@ function EditableListItem({
   isLast, 
   onAddNew,
   onEnterPress,
+  onTabPress,
   inputRef 
 }: EditableListItemProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -74,6 +76,10 @@ function EditableListItem({
         // Move to next section or field
         onEnterPress();
       }
+    } else if (e.key === 'Tab' && !e.shiftKey && isLast && onTabPress) {
+      // Tab on last item of section → jump to next section
+      e.preventDefault();
+      onTabPress();
     }
   };
 
@@ -553,6 +559,7 @@ export function RequestNewAllocationDialog({
                                   focusNextSection('diagnoses');
                                 }
                               }}
+                              onTabPress={() => focusNextSection('diagnoses')}
                             />
                           ))}
                         </div>
@@ -589,6 +596,7 @@ export function RequestNewAllocationDialog({
                                   focusNextSection('medicalHistory');
                                 }
                               }}
+                              onTabPress={() => focusNextSection('medicalHistory')}
                             />
                           ))}
                         </div>
@@ -625,6 +633,7 @@ export function RequestNewAllocationDialog({
                                   focusNextSection('exams');
                                 }
                               }}
+                              onTabPress={() => focusNextSection('exams')}
                             />
                           ))}
                         </div>
@@ -661,6 +670,7 @@ export function RequestNewAllocationDialog({
                                   focusNextSection('pendencies');
                                 }
                               }}
+                              onTabPress={() => focusNextSection('pendencies')}
                             />
                           ))}
                         </div>
