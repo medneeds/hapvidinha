@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Check, Clock, X, User, Bed, FileText, Stethoscope, Building, Activity, ClipboardList, FlaskConical, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -24,6 +25,45 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useNotificationSound } from "@/hooks/useNotificationSound";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+
+// Animation variants for staggered grid items
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.05
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15, scale: 0.95 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { 
+      type: "spring" as const, 
+      stiffness: 300, 
+      damping: 24 
+    }
+  }
+};
+
+const admissionVariants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      type: "spring" as const, 
+      stiffness: 400, 
+      damping: 25 
+    }
+  }
+};
 
 // Inline clinical list display for read-only view (optimized for leader review)
 interface InlineClinicalListProps {
@@ -432,10 +472,18 @@ export function BedAllocationNotifications() {
 
               {/* Content area with clinical data - optimized grid layout for quick reading */}
               <ScrollArea className="flex-1 max-h-[50vh]">
-                <div className="p-4 space-y-4">
+                <motion.div 
+                  className="p-4 space-y-4"
+                  initial="hidden"
+                  animate="visible"
+                  variants={containerVariants}
+                >
                   {/* No clinical data warning */}
                   {!hasAnyClinicalData(selectedRequest.patient) && (
-                    <div className="text-center py-6 px-4 rounded-lg border-2 border-dashed border-muted-foreground/20">
+                    <motion.div 
+                      variants={itemVariants}
+                      className="text-center py-6 px-4 rounded-lg border-2 border-dashed border-muted-foreground/20"
+                    >
                       <AlertCircle className="h-8 w-8 mx-auto mb-2 text-amber-500/60" />
                       <p className="text-sm text-muted-foreground font-medium">
                         Nenhuma informação clínica cadastrada
@@ -443,16 +491,26 @@ export function BedAllocationNotifications() {
                       <p className="text-xs text-muted-foreground mt-1">
                         O médico da porta pode adicionar dados clínicos na "Edição Avançada" do paciente
                       </p>
-                    </div>
+                    </motion.div>
                   )}
 
                   {/* Admission History - Full width priority section */}
-                  <InlineAdmissionHistory content={selectedRequest.patient?.admission_history} />
+                  {selectedRequest.patient?.admission_history && (
+                    <motion.div variants={admissionVariants}>
+                      <InlineAdmissionHistory content={selectedRequest.patient?.admission_history} />
+                    </motion.div>
+                  )}
 
                   {/* Clinical data grid - 2 columns on larger screens */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <motion.div 
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                    variants={containerVariants}
+                  >
                     {/* Left column: Diagnósticos + Antecedentes */}
-                    <div className="space-y-4 p-3 rounded-lg bg-muted/30">
+                    <motion.div 
+                      className="space-y-4 p-3 rounded-lg bg-muted/30"
+                      variants={itemVariants}
+                    >
                       <InlineClinicalList
                         title="Hipóteses / Diagnósticos"
                         icon={<Activity className="h-3.5 w-3.5 text-amber-500" />}
@@ -465,10 +523,13 @@ export function BedAllocationNotifications() {
                         content={selectedRequest.patient?.medical_history}
                         accentColor="purple-500"
                       />
-                    </div>
+                    </motion.div>
 
                     {/* Right column: Exames + Pendências */}
-                    <div className="space-y-4 p-3 rounded-lg bg-muted/30">
+                    <motion.div 
+                      className="space-y-4 p-3 rounded-lg bg-muted/30"
+                      variants={itemVariants}
+                    >
                       <InlineClinicalList
                         title="Exames"
                         icon={<FlaskConical className="h-3.5 w-3.5 text-cyan-500" />}
@@ -481,9 +542,9 @@ export function BedAllocationNotifications() {
                         content={selectedRequest.patient?.pendencies}
                         accentColor="orange-500"
                       />
-                    </div>
-                  </div>
-                </div>
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
               </ScrollArea>
 
               {/* Action buttons */}
