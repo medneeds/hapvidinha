@@ -388,143 +388,114 @@ export function usePatients(department?: Department) {
     }
   };
 
+  // Helper function to map database record to Patient object
+  const mapRecordToPatient = (record: any): Patient => ({
+    id: record.id,
+    bedNumber: record.bed_number,
+    name: record.name || '',
+    age: record.age || '',
+    sector: record.sector as 'red' | 'yellow' | 'blue' | 'outside',
+    diagnoses: record.diagnoses ? record.diagnoses.split('\n').filter(Boolean) : [],
+    medicalHistory: record.medical_history ? record.medical_history.split('\n').filter(Boolean) : [],
+    relevantExams: record.relevant_exams ? record.relevant_exams.split('\n').filter(Boolean) : [],
+    pendencies: record.pendencies ? record.pendencies.split('\n').filter(Boolean) : [],
+    highlightedPendencies: record.highlighted_pendencies || [],
+    schedule: record.schedule ? record.schedule.split('\n').filter(Boolean) : [],
+    admissionHistory: record.admission_history || '',
+    admissionDate: record.admission_date || '',
+    medicalResponsibility: (record.medical_responsibility as unknown) as Patient['medicalResponsibility'],
+    utiAdmissionDate: record.uti_admission_date ? record.uti_admission_date.split('\n').filter(Boolean).map((date: string) => {
+      try {
+        const parsedDate = new Date(date);
+        if (!isNaN(parsedDate.getTime())) {
+          const day = String(parsedDate.getDate()).padStart(2, '0');
+          const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+          const year = parsedDate.getFullYear();
+          return `${day}/${month}/${year}`;
+        }
+      } catch (e) {}
+      return date;
+    }) : [],
+    utiDischargePrediction: record.uti_discharge_prediction ? record.uti_discharge_prediction.split('\n').filter(Boolean) : [],
+    utiAllergies: record.uti_allergies ? record.uti_allergies.split('\n').filter(Boolean) : [],
+    utiAdmissionReason: record.uti_admission_reason ? record.uti_admission_reason.split('\n').filter(Boolean) : [],
+    utiCurrentStatus: record.uti_current_status ? record.uti_current_status.split('\n').filter(Boolean) : [],
+    utiDevices: record.uti_devices ? record.uti_devices.split('\n').filter(Boolean) : [],
+    utiCulturesAntibiotics: record.uti_cultures_antibiotics ? record.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
+    utiSpecialties: record.uti_specialties ? record.uti_specialties.split('\n').filter(Boolean) : [],
+    utiOriginSector: record.uti_origin_sector ? record.uti_origin_sector.split('\n').filter(Boolean) : [],
+    utiDailyConducts: record.uti_daily_conducts ? record.uti_daily_conducts.split('\n').filter(Boolean) : [],
+    displayOrder: record.display_order ?? 0,
+    isDoorPatient: record.is_door_patient ?? false,
+    allocationStatus: record.allocation_status as Patient['allocationStatus'],
+    createdBy: record.created_by || undefined,
+    psmStatus: record.psm_status as Patient['psmStatus'],
+  });
+
   useEffect(() => {
     if (!currentHospital || !currentState) return;
 
     fetchPatients();
 
-    // Subscribe to realtime changes
+    // Subscribe to realtime changes with simplified filter
+    const channelName = `patients-changes-${currentHospital.id}-${department || 'all'}`;
     const channel = supabase
-      .channel('patients-changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'patients',
-          filter: department ? `department=eq.${department}&hospital_unit_id=eq.${currentHospital.id}` : `hospital_unit_id=eq.${currentHospital.id}`,
+          filter: `hospital_unit_id=eq.${currentHospital.id}`,
         },
         (payload) => {
-          console.log('Realtime INSERT:', payload);
-          const newRecord = payload.new as any;
-          const newPatient: Patient = {
-            id: newRecord.id,
-            bedNumber: newRecord.bed_number,
-            name: newRecord.name || '',
-            age: newRecord.age || '',
-            sector: newRecord.sector as 'red' | 'yellow' | 'blue' | 'outside',
-            diagnoses: newRecord.diagnoses ? newRecord.diagnoses.split('\n').filter(Boolean) : [],
-            medicalHistory: newRecord.medical_history ? newRecord.medical_history.split('\n').filter(Boolean) : [],
-            relevantExams: newRecord.relevant_exams ? newRecord.relevant_exams.split('\n').filter(Boolean) : [],
-            pendencies: newRecord.pendencies ? newRecord.pendencies.split('\n').filter(Boolean) : [],
-            highlightedPendencies: newRecord.highlighted_pendencies || [],
-            schedule: newRecord.schedule ? newRecord.schedule.split('\n').filter(Boolean) : [],
-            admissionHistory: newRecord.admission_history || '',
-            admissionDate: newRecord.admission_date || '',
-            medicalResponsibility: (newRecord.medical_responsibility as unknown) as Patient['medicalResponsibility'],
-            // UTI fields
-            utiAdmissionDate: newRecord.uti_admission_date ? newRecord.uti_admission_date.split('\n').filter(Boolean).map(date => {
-              try {
-                const parsedDate = new Date(date);
-                if (!isNaN(parsedDate.getTime())) {
-                  const day = String(parsedDate.getDate()).padStart(2, '0');
-                  const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-                  const year = parsedDate.getFullYear();
-                  return `${day}/${month}/${year}`;
-                }
-              } catch (e) {
-                // If parsing fails, return as is
-              }
-              return date;
-            }) : [],
-            utiDischargePrediction: newRecord.uti_discharge_prediction ? newRecord.uti_discharge_prediction.split('\n').filter(Boolean) : [],
-            utiAllergies: newRecord.uti_allergies ? newRecord.uti_allergies.split('\n').filter(Boolean) : [],
-            utiAdmissionReason: newRecord.uti_admission_reason ? newRecord.uti_admission_reason.split('\n').filter(Boolean) : [],
-            utiCurrentStatus: newRecord.uti_current_status ? newRecord.uti_current_status.split('\n').filter(Boolean) : [],
-            utiDevices: newRecord.uti_devices ? newRecord.uti_devices.split('\n').filter(Boolean) : [],
-            utiCulturesAntibiotics: newRecord.uti_cultures_antibiotics ? newRecord.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
-            utiSpecialties: newRecord.uti_specialties ? newRecord.uti_specialties.split('\n').filter(Boolean) : [],
-            utiOriginSector: newRecord.uti_origin_sector ? newRecord.uti_origin_sector.split('\n').filter(Boolean) : [],
-            createdBy: newRecord.created_by || undefined,
-          };
-          setPatients(prev => {
-            // Check if patient already exists (avoid duplicates)
-            if (prev.some(p => p.id === newPatient.id)) {
-              return prev;
+          console.log('Realtime patient change:', payload.eventType, payload);
+          
+          const eventType = payload.eventType;
+          
+          if (eventType === 'INSERT') {
+            const newRecord = payload.new as any;
+            // Filter by department if needed
+            if (department && newRecord.department !== department) return;
+            
+            const newPatient = mapRecordToPatient(newRecord);
+            setPatients(prev => {
+              if (prev.some(p => p.id === newPatient.id)) return prev;
+              return [...prev, newPatient].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+            });
+          } else if (eventType === 'UPDATE') {
+            const updatedRecord = payload.new as any;
+            // Filter by department if needed
+            if (department && updatedRecord.department !== department) {
+              // Patient was moved to another department, remove from list
+              setPatients(prev => prev.filter(p => p.id !== updatedRecord.id));
+              return;
             }
-            return [...prev, newPatient].sort((a, b) => a.bedNumber.localeCompare(b.bedNumber));
-          });
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'patients',
-          filter: department ? `department=eq.${department}&hospital_unit_id=eq.${currentHospital.id}` : `hospital_unit_id=eq.${currentHospital.id}`,
-        },
-        (payload) => {
-          console.log('Realtime UPDATE:', payload);
-          const updatedRecord = payload.new as any;
-          const updatedPatient: Patient = {
-            id: updatedRecord.id,
-            bedNumber: updatedRecord.bed_number,
-            name: updatedRecord.name || '',
-            age: updatedRecord.age || '',
-            sector: updatedRecord.sector as 'red' | 'yellow' | 'blue' | 'outside',
-            diagnoses: updatedRecord.diagnoses ? updatedRecord.diagnoses.split('\n').filter(Boolean) : [],
-            medicalHistory: updatedRecord.medical_history ? updatedRecord.medical_history.split('\n').filter(Boolean) : [],
-            relevantExams: updatedRecord.relevant_exams ? updatedRecord.relevant_exams.split('\n').filter(Boolean) : [],
-            pendencies: updatedRecord.pendencies ? updatedRecord.pendencies.split('\n').filter(Boolean) : [],
-            highlightedPendencies: updatedRecord.highlighted_pendencies || [],
-            schedule: updatedRecord.schedule ? updatedRecord.schedule.split('\n').filter(Boolean) : [],
-            admissionHistory: updatedRecord.admission_history || '',
-            admissionDate: updatedRecord.admission_date || '',
-            medicalResponsibility: (updatedRecord.medical_responsibility as unknown) as Patient['medicalResponsibility'],
-            // UTI fields
-            utiAdmissionDate: updatedRecord.uti_admission_date ? updatedRecord.uti_admission_date.split('\n').filter(Boolean).map(date => {
-              try {
-                const parsedDate = new Date(date);
-                if (!isNaN(parsedDate.getTime())) {
-                  const day = String(parsedDate.getDate()).padStart(2, '0');
-                  const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-                  const year = parsedDate.getFullYear();
-                  return `${day}/${month}/${year}`;
-                }
-              } catch (e) {
-                // If parsing fails, return as is
+            
+            const updatedPatient = mapRecordToPatient(updatedRecord);
+            setPatients(prev => {
+              // Check if patient exists in current list
+              const exists = prev.some(p => p.id === updatedPatient.id);
+              if (exists) {
+                // Update existing patient and re-sort
+                return prev
+                  .map(p => p.id === updatedPatient.id ? updatedPatient : p)
+                  .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+              } else {
+                // Patient was moved to this department, add to list
+                return [...prev, updatedPatient].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
               }
-              return date;
-            }) : [],
-            utiDischargePrediction: updatedRecord.uti_discharge_prediction ? updatedRecord.uti_discharge_prediction.split('\n').filter(Boolean) : [],
-            utiAllergies: updatedRecord.uti_allergies ? updatedRecord.uti_allergies.split('\n').filter(Boolean) : [],
-            utiAdmissionReason: updatedRecord.uti_admission_reason ? updatedRecord.uti_admission_reason.split('\n').filter(Boolean) : [],
-            utiCurrentStatus: updatedRecord.uti_current_status ? updatedRecord.uti_current_status.split('\n').filter(Boolean) : [],
-            utiDevices: updatedRecord.uti_devices ? updatedRecord.uti_devices.split('\n').filter(Boolean) : [],
-            utiCulturesAntibiotics: updatedRecord.uti_cultures_antibiotics ? updatedRecord.uti_cultures_antibiotics.split('\n').filter(Boolean) : [],
-            utiSpecialties: updatedRecord.uti_specialties ? updatedRecord.uti_specialties.split('\n').filter(Boolean) : [],
-            utiOriginSector: updatedRecord.uti_origin_sector ? updatedRecord.uti_origin_sector.split('\n').filter(Boolean) : [],
-            createdBy: updatedRecord.created_by || undefined,
-          };
-          setPatients(prev => prev.map(p => p.id === updatedPatient.id ? updatedPatient : p));
+            });
+          } else if (eventType === 'DELETE') {
+            const deletedId = (payload.old as any).id;
+            setPatients(prev => prev.filter(p => p.id !== deletedId));
+          }
         }
       )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'patients',
-          filter: department ? `department=eq.${department}&hospital_unit_id=eq.${currentHospital.id}` : `hospital_unit_id=eq.${currentHospital.id}`,
-        },
-        (payload) => {
-          console.log('Realtime DELETE:', payload);
-          const deletedId = (payload.old as any).id;
-          setPatients(prev => prev.filter(p => p.id !== deletedId));
-        }
-      )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Patients realtime subscription status:', status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
