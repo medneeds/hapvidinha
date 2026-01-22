@@ -368,7 +368,8 @@ export function RequestNewAllocationDialog({
                   </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="p-4 space-y-4 bg-background">
+                  <ScrollArea className="max-h-[300px]">
+                    <div className="p-4 space-y-4 bg-background">
                     {/* Diagnoses */}
                     <div className="space-y-1.5">
                       <Label htmlFor="diagnoses" className="text-xs font-medium">
@@ -439,7 +440,8 @@ export function RequestNewAllocationDialog({
                         className="min-h-[100px] text-sm resize-none"
                       />
                     </div>
-                  </div>
+                    </div>
+                  </ScrollArea>
                 </CollapsibleContent>
               </div>
             </Collapsible>
