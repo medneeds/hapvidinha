@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
-import { Bed, Send, ChevronDown, User, Stethoscope, FileText } from "lucide-react";
+import { Bed, Send, ChevronDown, User, Stethoscope, FileText, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +26,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Patient } from "@/types/patient";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface RequestNewAllocationDialogProps {
   open: boolean;
@@ -39,6 +40,51 @@ const sectorToInternalSector: Record<string, Patient['sector']> = {
   "Observação Azul": "blue",
 };
 
+// Editable list item component (similar to PatientCard style)
+interface EditableListItemProps {
+  index: number;
+  value: string;
+  onChange: (value: string) => void;
+  onRemove: () => void;
+  placeholder?: string;
+  isLast?: boolean;
+  onAddNew?: () => void;
+}
+
+function EditableListItem({ index, value, onChange, onRemove, placeholder, isLast, onAddNew }: EditableListItemProps) {
+  return (
+    <div className="flex items-start gap-1.5 group/item">
+      <span className="text-[10px] font-semibold text-muted-foreground pt-2 w-4 flex-shrink-0">{index + 1}.</span>
+      <Input
+        value={value}
+        onChange={(e) => onChange(e.target.value.toUpperCase())}
+        placeholder={placeholder}
+        className="h-8 text-xs uppercase flex-1"
+      />
+      <Button
+        type="button"
+        size="icon"
+        variant="ghost"
+        onClick={onRemove}
+        className="h-8 w-8 text-muted-foreground hover:text-destructive flex-shrink-0"
+      >
+        <X className="h-3.5 w-3.5" />
+      </Button>
+      {isLast && onAddNew && (
+        <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          onClick={onAddNew}
+          className="h-8 w-8 text-muted-foreground hover:text-primary flex-shrink-0"
+        >
+          <Plus className="h-3.5 w-3.5" />
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export function RequestNewAllocationDialog({
   open,
   onOpenChange,
@@ -49,7 +95,6 @@ export function RequestNewAllocationDialog({
   const officeNumberRef = useRef<HTMLInputElement>(null);
   const patientNameRef = useRef<HTMLInputElement>(null);
   const patientAgeRef = useRef<HTMLInputElement>(null);
-  const diagnosesRef = useRef<HTMLTextAreaElement>(null);
   
   // Doctor info
   const [doctorName, setDoctorName] = useState("");
@@ -59,11 +104,11 @@ export function RequestNewAllocationDialog({
   const [patientName, setPatientName] = useState("");
   const [patientAge, setPatientAge] = useState("");
   
-  // Clinical data
-  const [diagnoses, setDiagnoses] = useState("");
-  const [medicalHistory, setMedicalHistory] = useState("");
-  const [relevantExams, setRelevantExams] = useState("");
-  const [pendencies, setPendencies] = useState("");
+  // Clinical data - using arrays for list-style editing
+  const [diagnosesList, setDiagnosesList] = useState<string[]>([""]);
+  const [medicalHistoryList, setMedicalHistoryList] = useState<string[]>([""]);
+  const [relevantExamsList, setRelevantExamsList] = useState<string[]>([""]);
+  const [pendenciesList, setPendenciesList] = useState<string[]>([""]);
   const [admissionHistory, setAdmissionHistory] = useState("");
   
   // Section states - clinical data collapsed by default for faster workflow
@@ -101,11 +146,45 @@ export function RequestNewAllocationDialog({
     setPatientAge("");
     setDoctorName("");
     setOfficeNumber("");
-    setDiagnoses("");
-    setMedicalHistory("");
-    setRelevantExams("");
-    setPendencies("");
+    setDiagnosesList([""]);
+    setMedicalHistoryList([""]);
+    setRelevantExamsList([""]);
+    setPendenciesList([""]);
     setAdmissionHistory("");
+  };
+
+  // Helper functions for list management
+  const updateListItem = (
+    list: string[], 
+    setList: React.Dispatch<React.SetStateAction<string[]>>, 
+    index: number, 
+    value: string
+  ) => {
+    const newList = [...list];
+    newList[index] = value;
+    setList(newList);
+  };
+
+  const removeListItem = (
+    list: string[], 
+    setList: React.Dispatch<React.SetStateAction<string[]>>, 
+    index: number
+  ) => {
+    if (list.length === 1) {
+      setList([""]);
+    } else {
+      setList(list.filter((_, i) => i !== index));
+    }
+  };
+
+  const addListItem = (setList: React.Dispatch<React.SetStateAction<string[]>>) => {
+    setList(prev => [...prev, ""]);
+  };
+
+  // Convert list to string for database storage
+  const listToString = (list: string[]): string | null => {
+    const filtered = list.map(item => item.trim()).filter(Boolean);
+    return filtered.length > 0 ? filtered.join('\n') : null;
   };
 
   const handleSubmit = async () => {
@@ -156,11 +235,17 @@ export function RequestNewAllocationDialog({
       const maxBedNumber = bedNumbers.length > 0 ? Math.max(...bedNumbers) : 0;
       const newBedNumber = `${sectorPrefix}${String(maxBedNumber + 1).padStart(2, '0')}`;
 
-      // Parse text fields into arrays (split by newlines)
+      // Parse text fields into arrays (split by newlines) - legacy helper for other uses
       const parseTextToArray = (text: string): string | null => {
         const items = text.split('\n').map(item => item.trim()).filter(Boolean);
         return items.length > 0 ? items.join('\n') : null;
       };
+
+      // Convert lists to database format
+      const diagnosesData = listToString(diagnosesList);
+      const medicalHistoryData = listToString(medicalHistoryList);
+      const relevantExamsData = listToString(relevantExamsList);
+      const pendenciesData = listToString(pendenciesList);
 
       // Create the door patient with all clinical data
       const { data: newPatient, error: createError } = await supabase
@@ -177,11 +262,11 @@ export function RequestNewAllocationDialog({
           allocation_status: 'pending',
           medical_responsibility: { type: 'porta' },
           created_by: user?.id || null,
-          // Clinical data
-          diagnoses: parseTextToArray(diagnoses),
-          medical_history: parseTextToArray(medicalHistory),
-          relevant_exams: parseTextToArray(relevantExams),
-          pendencies: parseTextToArray(pendencies),
+          // Clinical data from lists
+          diagnoses: diagnosesData,
+          medical_history: medicalHistoryData,
+          relevant_exams: relevantExamsData,
+          pendencies: pendenciesData,
           admission_history: admissionHistory.trim() || null,
         })
         .select()
@@ -338,7 +423,6 @@ export function RequestNewAllocationDialog({
                       if (e.key === 'Enter') {
                         e.preventDefault();
                         setClinicalOpen(true);
-                        setTimeout(() => diagnosesRef.current?.focus(), 150);
                       }
                     }}
                     placeholder="Ex: 45 anos"
@@ -369,78 +453,141 @@ export function RequestNewAllocationDialog({
                   </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="max-h-[280px] overflow-y-auto">
+                  <div className="max-h-[350px] overflow-y-auto">
                     <div className="p-4 space-y-4 bg-background">
-                    {/* Diagnoses */}
-                    <div className="space-y-1.5">
-                      <Label htmlFor="diagnoses" className="text-xs font-medium">
-                        Hipóteses / Diagnósticos
-                      </Label>
-                      <Textarea
-                        ref={diagnosesRef}
-                        id="diagnoses"
-                        value={diagnoses}
-                        onChange={(e) => setDiagnoses(e.target.value)}
-                        placeholder="Digite cada diagnóstico em uma linha..."
-                        className="min-h-[60px] text-sm resize-none"
-                      />
-                    </div>
+                      {/* Diagnoses - List style */}
+                      <div className="space-y-2">
+                        <Label className="text-xs font-medium flex items-center gap-2">
+                          Hipóteses / Diagnósticos
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => addListItem(setDiagnosesList)}
+                            className="h-5 w-5 text-muted-foreground hover:text-primary"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </Label>
+                        <div className="space-y-1.5">
+                          {diagnosesList.map((item, index) => (
+                            <EditableListItem
+                              key={index}
+                              index={index}
+                              value={item}
+                              onChange={(value) => updateListItem(diagnosesList, setDiagnosesList, index, value)}
+                              onRemove={() => removeListItem(diagnosesList, setDiagnosesList, index)}
+                              placeholder="Digite o diagnóstico..."
+                              isLast={index === diagnosesList.length - 1}
+                              onAddNew={() => addListItem(setDiagnosesList)}
+                            />
+                          ))}
+                        </div>
+                      </div>
 
-                    {/* Medical History */}
-                    <div className="space-y-1.5">
-                      <Label htmlFor="medical-history" className="text-xs font-medium">
-                        Antecedentes
-                      </Label>
-                      <Textarea
-                        id="medical-history"
-                        value={medicalHistory}
-                        onChange={(e) => setMedicalHistory(e.target.value)}
-                        placeholder="Digite cada antecedente em uma linha..."
-                        className="min-h-[60px] text-sm resize-none"
-                      />
-                    </div>
+                      {/* Medical History - List style */}
+                      <div className="space-y-2">
+                        <Label className="text-xs font-medium flex items-center gap-2">
+                          Antecedentes
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => addListItem(setMedicalHistoryList)}
+                            className="h-5 w-5 text-muted-foreground hover:text-primary"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </Label>
+                        <div className="space-y-1.5">
+                          {medicalHistoryList.map((item, index) => (
+                            <EditableListItem
+                              key={index}
+                              index={index}
+                              value={item}
+                              onChange={(value) => updateListItem(medicalHistoryList, setMedicalHistoryList, index, value)}
+                              onRemove={() => removeListItem(medicalHistoryList, setMedicalHistoryList, index)}
+                              placeholder="Digite o antecedente..."
+                              isLast={index === medicalHistoryList.length - 1}
+                              onAddNew={() => addListItem(setMedicalHistoryList)}
+                            />
+                          ))}
+                        </div>
+                      </div>
 
-                    {/* Relevant Exams */}
-                    <div className="space-y-1.5">
-                      <Label htmlFor="relevant-exams" className="text-xs font-medium">
-                        Exames
-                      </Label>
-                      <Textarea
-                        id="relevant-exams"
-                        value={relevantExams}
-                        onChange={(e) => setRelevantExams(e.target.value)}
-                        placeholder="Digite cada exame em uma linha..."
-                        className="min-h-[60px] text-sm resize-none"
-                      />
-                    </div>
+                      {/* Relevant Exams - List style */}
+                      <div className="space-y-2">
+                        <Label className="text-xs font-medium flex items-center gap-2">
+                          Exames
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => addListItem(setRelevantExamsList)}
+                            className="h-5 w-5 text-muted-foreground hover:text-primary"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </Label>
+                        <div className="space-y-1.5">
+                          {relevantExamsList.map((item, index) => (
+                            <EditableListItem
+                              key={index}
+                              index={index}
+                              value={item}
+                              onChange={(value) => updateListItem(relevantExamsList, setRelevantExamsList, index, value)}
+                              onRemove={() => removeListItem(relevantExamsList, setRelevantExamsList, index)}
+                              placeholder="Digite o exame..."
+                              isLast={index === relevantExamsList.length - 1}
+                              onAddNew={() => addListItem(setRelevantExamsList)}
+                            />
+                          ))}
+                        </div>
+                      </div>
 
-                    {/* Pendencies */}
-                    <div className="space-y-1.5">
-                      <Label htmlFor="pendencies" className="text-xs font-medium">
-                        Programações / Pendências
-                      </Label>
-                      <Textarea
-                        id="pendencies"
-                        value={pendencies}
-                        onChange={(e) => setPendencies(e.target.value)}
-                        placeholder="Digite cada item em uma linha..."
-                        className="min-h-[60px] text-sm resize-none"
-                      />
-                    </div>
+                      {/* Pendencies - List style */}
+                      <div className="space-y-2">
+                        <Label className="text-xs font-medium flex items-center gap-2">
+                          Programações / Pendências
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => addListItem(setPendenciesList)}
+                            className="h-5 w-5 text-muted-foreground hover:text-primary"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </Label>
+                        <div className="space-y-1.5">
+                          {pendenciesList.map((item, index) => (
+                            <EditableListItem
+                              key={index}
+                              index={index}
+                              value={item}
+                              onChange={(value) => updateListItem(pendenciesList, setPendenciesList, index, value)}
+                              onRemove={() => removeListItem(pendenciesList, setPendenciesList, index)}
+                              placeholder="Digite a pendência..."
+                              isLast={index === pendenciesList.length - 1}
+                              onAddNew={() => addListItem(setPendenciesList)}
+                            />
+                          ))}
+                        </div>
+                      </div>
 
-                    {/* Admission History */}
-                    <div className="space-y-1.5">
-                      <Label htmlFor="admission-history" className="text-xs font-medium">
-                        História Admissional / Anamnese
-                      </Label>
-                      <Textarea
-                        id="admission-history"
-                        value={admissionHistory}
-                        onChange={(e) => setAdmissionHistory(e.target.value)}
-                        placeholder="Descreva a história admissional do paciente..."
-                        className="min-h-[100px] text-sm resize-none"
-                      />
-                    </div>
+                      {/* Admission History - Textarea for longer text */}
+                      <div className="space-y-1.5">
+                        <Label htmlFor="admission-history" className="text-xs font-medium">
+                          História Admissional / Anamnese
+                        </Label>
+                        <Textarea
+                          id="admission-history"
+                          value={admissionHistory}
+                          onChange={(e) => setAdmissionHistory(e.target.value)}
+                          placeholder="Descreva a história admissional do paciente..."
+                          className="min-h-[100px] text-sm resize-none"
+                        />
+                      </div>
                     </div>
                   </div>
                 </CollapsibleContent>
