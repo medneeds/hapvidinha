@@ -25,7 +25,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Patient } from "@/types/patient";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 
 interface RequestNewAllocationDialogProps {
@@ -239,20 +238,22 @@ export function RequestNewAllocationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col p-0">
-        <DialogHeader className="px-6 pt-6 pb-2">
-          <DialogTitle className="flex items-center gap-2">
-            <Bed className="h-5 w-5 text-primary" />
-            Solicitar Alocação de Leito
-          </DialogTitle>
-          <DialogDescription>
-            Cadastre o paciente com todos os dados clínicos e solicite alocação em{" "}
-            <span className={`font-semibold ${getSectorColor()}`}>{targetSector}</span>.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] p-0">
+        {/* Allow scrolling the entire popup (header + content + footer) */}
+        <div className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="px-6 pt-6 pb-2">
+            <DialogTitle className="flex items-center gap-2">
+              <Bed className="h-5 w-5 text-primary" />
+              Solicitar Alocação de Leito
+            </DialogTitle>
+            <DialogDescription>
+              Cadastre o paciente com todos os dados clínicos e solicite alocação em{" "}
+              <span className={`font-semibold ${getSectorColor()}`}>{targetSector}</span>.
+            </DialogDescription>
+          </DialogHeader>
 
-        <ScrollArea className="flex-1 px-6">
-          <div className="space-y-4 py-4">
+          <div className="px-6">
+            <div className="space-y-4 py-4">
             {/* Target Sector Banner */}
             <div className={`p-3 rounded-lg border ${getSectorBgColor()}`}>
               <p className="text-sm font-medium">
@@ -445,22 +446,23 @@ export function RequestNewAllocationDialog({
                 </CollapsibleContent>
               </div>
             </Collapsible>
+            </div>
           </div>
-        </ScrollArea>
 
-        <DialogFooter className="px-6 py-4 border-t bg-muted/30">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button 
-            onClick={handleSubmit} 
-            disabled={!patientName.trim() || !doctorName.trim() || isSubmitting}
-            className="bg-primary"
-          >
-            <Send className="h-4 w-4 mr-2" />
-            {isSubmitting ? "Enviando..." : "Criar e Solicitar"}
-          </Button>
-        </DialogFooter>
+          <DialogFooter className="px-6 py-4 border-t bg-muted/30">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleSubmit} 
+              disabled={!patientName.trim() || !doctorName.trim() || isSubmitting}
+              className="bg-primary"
+            >
+              <Send className="h-4 w-4 mr-2" />
+              {isSubmitting ? "Enviando..." : "Criar e Solicitar"}
+            </Button>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
