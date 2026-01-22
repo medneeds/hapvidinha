@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import { Bed, Send, ChevronDown, User, Stethoscope, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Patient } from "@/types/patient";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 interface RequestNewAllocationDialogProps {
   open: boolean;
@@ -44,6 +45,13 @@ export function RequestNewAllocationDialog({
   onOpenChange,
   targetSector,
 }: RequestNewAllocationDialogProps) {
+  // Refs for keyboard navigation
+  const doctorNameRef = useRef<HTMLInputElement>(null);
+  const officeNumberRef = useRef<HTMLInputElement>(null);
+  const patientNameRef = useRef<HTMLInputElement>(null);
+  const patientAgeRef = useRef<HTMLInputElement>(null);
+  const diagnosesRef = useRef<HTMLTextAreaElement>(null);
+  
   // Doctor info
   const [doctorName, setDoctorName] = useState("");
   const [officeNumber, setOfficeNumber] = useState("");
@@ -59,8 +67,8 @@ export function RequestNewAllocationDialog({
   const [pendencies, setPendencies] = useState("");
   const [admissionHistory, setAdmissionHistory] = useState("");
   
-  // Section states
-  const [clinicalOpen, setClinicalOpen] = useState(true);
+  // Section states - clinical data collapsed by default for faster workflow
+  const [clinicalOpen, setClinicalOpen] = useState(false);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createRequest } = useBedAllocationRequests();
@@ -69,6 +77,25 @@ export function RequestNewAllocationDialog({
   const { currentHospital, currentState } = useHospital();
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Auto-focus on doctor name when dialog opens
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        doctorNameRef.current?.focus();
+      }, 100);
+    }
+  }, [open]);
+
+  // Keyboard navigation handler
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, nextRef: React.RefObject<HTMLInputElement | HTMLTextAreaElement | null>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (nextRef.current) {
+        nextRef.current.focus();
+      }
+    }
+  };
 
   const resetForm = () => {
     setPatientName("");
@@ -242,21 +269,31 @@ export function RequestNewAllocationDialog({
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="doctor-name" className="text-xs">Nome do Médico *</Label>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="doctor-name" className="text-xs">Nome do Médico</Label>
+                    <Badge variant="destructive" className="h-4 text-[10px] px-1.5">Obrigatório</Badge>
+                  </div>
                   <Input
+                    ref={doctorNameRef}
                     id="doctor-name"
                     value={doctorName}
                     onChange={(e) => setDoctorName(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => handleKeyDown(e, officeNumberRef)}
                     placeholder="DR. NOME"
                     className="uppercase h-9 text-sm"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="office-number" className="text-xs">Nº Consultório</Label>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="office-number" className="text-xs">Nº Consultório</Label>
+                    <Badge variant="secondary" className="h-4 text-[10px] px-1.5 opacity-60">Opcional</Badge>
+                  </div>
                   <Input
+                    ref={officeNumberRef}
                     id="office-number"
                     value={officeNumber}
                     onChange={(e) => setOfficeNumber(e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, patientNameRef)}
                     placeholder="Ex: 01"
                     className="h-9 text-sm"
                   />
@@ -272,21 +309,37 @@ export function RequestNewAllocationDialog({
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="patient-name" className="text-xs">Nome do Paciente *</Label>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="patient-name" className="text-xs">Nome do Paciente</Label>
+                    <Badge variant="destructive" className="h-4 text-[10px] px-1.5">Obrigatório</Badge>
+                  </div>
                   <Input
+                    ref={patientNameRef}
                     id="patient-name"
                     value={patientName}
                     onChange={(e) => setPatientName(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => handleKeyDown(e, patientAgeRef)}
                     placeholder="NOME COMPLETO"
                     className="uppercase h-9 text-sm"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="patient-age" className="text-xs">Idade</Label>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="patient-age" className="text-xs">Idade</Label>
+                    <Badge variant="secondary" className="h-4 text-[10px] px-1.5 opacity-60">Opcional</Badge>
+                  </div>
                   <Input
+                    ref={patientAgeRef}
                     id="patient-age"
                     value={patientAge}
                     onChange={(e) => setPatientAge(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        setClinicalOpen(true);
+                        setTimeout(() => diagnosesRef.current?.focus(), 150);
+                      }
+                    }}
                     placeholder="Ex: 45 anos"
                     className="h-9 text-sm"
                   />
@@ -294,7 +347,7 @@ export function RequestNewAllocationDialog({
               </div>
             </div>
 
-            {/* Clinical Data Section - Collapsible */}
+            {/* Clinical Data Section - Collapsible (collapsed by default for faster workflow) */}
             <Collapsible open={clinicalOpen} onOpenChange={setClinicalOpen}>
               <div className="rounded-lg border overflow-hidden">
                 <CollapsibleTrigger asChild>
@@ -304,8 +357,14 @@ export function RequestNewAllocationDialog({
                       <span className="text-sm font-semibold text-accent-foreground uppercase tracking-wide">
                         Dados Clínicos
                       </span>
+                      <Badge variant="secondary" className="h-4 text-[10px] px-1.5 opacity-60">Opcional</Badge>
                     </div>
-                    <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${clinicalOpen ? 'rotate-180' : ''}`} />
+                    <div className="flex items-center gap-2">
+                      {!clinicalOpen && (
+                        <span className="text-xs text-muted-foreground">Clique para expandir</span>
+                      )}
+                      <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${clinicalOpen ? 'rotate-180' : ''}`} />
+                    </div>
                   </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
@@ -316,6 +375,7 @@ export function RequestNewAllocationDialog({
                         Hipóteses / Diagnósticos
                       </Label>
                       <Textarea
+                        ref={diagnosesRef}
                         id="diagnoses"
                         value={diagnoses}
                         onChange={(e) => setDiagnoses(e.target.value)}
