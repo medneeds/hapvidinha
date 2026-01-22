@@ -49,15 +49,42 @@ interface EditableListItemProps {
   placeholder?: string;
   isLast?: boolean;
   onAddNew?: () => void;
+  onEnterPress?: () => void;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
-function EditableListItem({ index, value, onChange, onRemove, placeholder, isLast, onAddNew }: EditableListItemProps) {
+function EditableListItem({ 
+  index, 
+  value, 
+  onChange, 
+  onRemove, 
+  placeholder, 
+  isLast, 
+  onAddNew,
+  onEnterPress,
+  inputRef 
+}: EditableListItemProps) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // If has content and is last item, add new item
+      if (value.trim() && isLast && onAddNew) {
+        onAddNew();
+      } else if (onEnterPress) {
+        // Move to next section or field
+        onEnterPress();
+      }
+    }
+  };
+
   return (
     <div className="flex items-start gap-1.5 group/item">
       <span className="text-[10px] font-semibold text-muted-foreground pt-2 w-4 flex-shrink-0">{index + 1}.</span>
       <Input
+        ref={inputRef}
         value={value}
         onChange={(e) => onChange(e.target.value.toUpperCase())}
+        onKeyDown={handleKeyDown}
         placeholder={placeholder}
         className="h-8 text-xs uppercase flex-1"
       />
@@ -95,6 +122,13 @@ export function RequestNewAllocationDialog({
   const officeNumberRef = useRef<HTMLInputElement>(null);
   const patientNameRef = useRef<HTMLInputElement>(null);
   const patientAgeRef = useRef<HTMLInputElement>(null);
+  const admissionHistoryRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Refs for list sections (to focus first input of each section)
+  const diagnosesFirstRef = useRef<HTMLInputElement>(null);
+  const medicalHistoryFirstRef = useRef<HTMLInputElement>(null);
+  const examsFirstRef = useRef<HTMLInputElement>(null);
+  const pendenciesFirstRef = useRef<HTMLInputElement>(null);
   
   // Doctor info
   const [doctorName, setDoctorName] = useState("");
@@ -177,8 +211,41 @@ export function RequestNewAllocationDialog({
     }
   };
 
-  const addListItem = (setList: React.Dispatch<React.SetStateAction<string[]>>) => {
+  const addListItem = (
+    setList: React.Dispatch<React.SetStateAction<string[]>>,
+    focusRef?: React.RefObject<HTMLInputElement>
+  ) => {
     setList(prev => [...prev, ""]);
+    // Focus the new input after state updates
+    setTimeout(() => {
+      // Find the last input in the container
+      const container = focusRef?.current?.closest('.space-y-1\\.5');
+      if (container) {
+        const inputs = container.querySelectorAll('input');
+        const lastInput = inputs[inputs.length - 1] as HTMLInputElement;
+        lastInput?.focus();
+      }
+    }, 50);
+  };
+
+  // Focus next section helper
+  const focusNextSection = (currentSection: 'diagnoses' | 'medicalHistory' | 'exams' | 'pendencies') => {
+    setTimeout(() => {
+      switch (currentSection) {
+        case 'diagnoses':
+          medicalHistoryFirstRef.current?.focus();
+          break;
+        case 'medicalHistory':
+          examsFirstRef.current?.focus();
+          break;
+        case 'exams':
+          pendenciesFirstRef.current?.focus();
+          break;
+        case 'pendencies':
+          admissionHistoryRef.current?.focus();
+          break;
+      }
+    }, 50);
   };
 
   // Convert list to string for database storage
@@ -463,7 +530,7 @@ export function RequestNewAllocationDialog({
                             type="button"
                             size="icon"
                             variant="ghost"
-                            onClick={() => addListItem(setDiagnosesList)}
+                            onClick={() => addListItem(setDiagnosesList, diagnosesFirstRef)}
                             className="h-5 w-5 text-muted-foreground hover:text-primary"
                           >
                             <Plus className="h-3 w-3" />
@@ -475,11 +542,17 @@ export function RequestNewAllocationDialog({
                               key={index}
                               index={index}
                               value={item}
+                              inputRef={index === 0 ? diagnosesFirstRef : undefined}
                               onChange={(value) => updateListItem(diagnosesList, setDiagnosesList, index, value)}
                               onRemove={() => removeListItem(diagnosesList, setDiagnosesList, index)}
                               placeholder="Digite o diagnóstico..."
                               isLast={index === diagnosesList.length - 1}
-                              onAddNew={() => addListItem(setDiagnosesList)}
+                              onAddNew={() => addListItem(setDiagnosesList, diagnosesFirstRef)}
+                              onEnterPress={() => {
+                                if (!item.trim()) {
+                                  focusNextSection('diagnoses');
+                                }
+                              }}
                             />
                           ))}
                         </div>
@@ -493,7 +566,7 @@ export function RequestNewAllocationDialog({
                             type="button"
                             size="icon"
                             variant="ghost"
-                            onClick={() => addListItem(setMedicalHistoryList)}
+                            onClick={() => addListItem(setMedicalHistoryList, medicalHistoryFirstRef)}
                             className="h-5 w-5 text-muted-foreground hover:text-primary"
                           >
                             <Plus className="h-3 w-3" />
@@ -505,11 +578,17 @@ export function RequestNewAllocationDialog({
                               key={index}
                               index={index}
                               value={item}
+                              inputRef={index === 0 ? medicalHistoryFirstRef : undefined}
                               onChange={(value) => updateListItem(medicalHistoryList, setMedicalHistoryList, index, value)}
                               onRemove={() => removeListItem(medicalHistoryList, setMedicalHistoryList, index)}
                               placeholder="Digite o antecedente..."
                               isLast={index === medicalHistoryList.length - 1}
-                              onAddNew={() => addListItem(setMedicalHistoryList)}
+                              onAddNew={() => addListItem(setMedicalHistoryList, medicalHistoryFirstRef)}
+                              onEnterPress={() => {
+                                if (!item.trim()) {
+                                  focusNextSection('medicalHistory');
+                                }
+                              }}
                             />
                           ))}
                         </div>
@@ -523,7 +602,7 @@ export function RequestNewAllocationDialog({
                             type="button"
                             size="icon"
                             variant="ghost"
-                            onClick={() => addListItem(setRelevantExamsList)}
+                            onClick={() => addListItem(setRelevantExamsList, examsFirstRef)}
                             className="h-5 w-5 text-muted-foreground hover:text-primary"
                           >
                             <Plus className="h-3 w-3" />
@@ -535,11 +614,17 @@ export function RequestNewAllocationDialog({
                               key={index}
                               index={index}
                               value={item}
+                              inputRef={index === 0 ? examsFirstRef : undefined}
                               onChange={(value) => updateListItem(relevantExamsList, setRelevantExamsList, index, value)}
                               onRemove={() => removeListItem(relevantExamsList, setRelevantExamsList, index)}
                               placeholder="Digite o exame..."
                               isLast={index === relevantExamsList.length - 1}
-                              onAddNew={() => addListItem(setRelevantExamsList)}
+                              onAddNew={() => addListItem(setRelevantExamsList, examsFirstRef)}
+                              onEnterPress={() => {
+                                if (!item.trim()) {
+                                  focusNextSection('exams');
+                                }
+                              }}
                             />
                           ))}
                         </div>
@@ -553,7 +638,7 @@ export function RequestNewAllocationDialog({
                             type="button"
                             size="icon"
                             variant="ghost"
-                            onClick={() => addListItem(setPendenciesList)}
+                            onClick={() => addListItem(setPendenciesList, pendenciesFirstRef)}
                             className="h-5 w-5 text-muted-foreground hover:text-primary"
                           >
                             <Plus className="h-3 w-3" />
@@ -565,11 +650,17 @@ export function RequestNewAllocationDialog({
                               key={index}
                               index={index}
                               value={item}
+                              inputRef={index === 0 ? pendenciesFirstRef : undefined}
                               onChange={(value) => updateListItem(pendenciesList, setPendenciesList, index, value)}
                               onRemove={() => removeListItem(pendenciesList, setPendenciesList, index)}
                               placeholder="Digite a pendência..."
                               isLast={index === pendenciesList.length - 1}
-                              onAddNew={() => addListItem(setPendenciesList)}
+                              onAddNew={() => addListItem(setPendenciesList, pendenciesFirstRef)}
+                              onEnterPress={() => {
+                                if (!item.trim()) {
+                                  focusNextSection('pendencies');
+                                }
+                              }}
                             />
                           ))}
                         </div>
@@ -581,6 +672,7 @@ export function RequestNewAllocationDialog({
                           História Admissional / Anamnese
                         </Label>
                         <Textarea
+                          ref={admissionHistoryRef}
                           id="admission-history"
                           value={admissionHistory}
                           onChange={(e) => setAdmissionHistory(e.target.value)}
