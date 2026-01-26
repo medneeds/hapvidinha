@@ -297,15 +297,32 @@ function InlineEditableArray({
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
   const newInputRef = useRef<HTMLInputElement>(null);
-  
-  // Generate stable IDs for items based on content + original index
-  const itemIds = useMemo(() => 
-    items.map((item, idx) => `${fieldId || 'item'}-${idx}-${item.slice(0, 8).replace(/\s/g, '_')}`),
-    [items, fieldId]
-  );
+
+  // Stable IDs per item (required by dnd-kit). We keep an internal parallel array of ids
+  // and reorder it together with items.
+  const makeId = () => {
+    const prefix = fieldId || 'item';
+    return `${prefix}-${Math.random().toString(36).slice(2, 10)}-${Date.now().toString(36)}`;
+  };
+
+  const [itemIds, setItemIds] = useState<string[]>(() => items.map(() => makeId()));
+
+  // Keep ids array length in sync with items length (adds append-only ids when needed)
+  useEffect(() => {
+    setItemIds((prev) => {
+      if (prev.length === items.length) return prev;
+      if (prev.length < items.length) {
+        const toAdd = items.length - prev.length;
+        return [...prev, ...Array.from({ length: toAdd }, () => makeId())];
+      }
+      // Fallback: trim (most deletes are handled explicitly below, but keep it safe)
+      return prev.slice(0, items.length);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.length]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
@@ -331,6 +348,7 @@ function InlineEditableArray({
       if (oldIndex === -1 || newIndex === -1) return;
       
       const newItems = arrayMove(items, oldIndex, newIndex);
+      const newIds = arrayMove(itemIds, oldIndex, newIndex);
       
       // Reorder highlights correctly: map old highlight indices to new positions
       let newHighlights: number[] = [];
@@ -349,6 +367,7 @@ function InlineEditableArray({
       }
       
       // Update both items and highlights in a single batch
+      setItemIds(newIds);
       onUpdate(newItems);
       if (onUpdateHighlights && highlightedIndices.length > 0) {
         onUpdateHighlights(newHighlights);
@@ -358,6 +377,7 @@ function InlineEditableArray({
 
   const handleAddItem = (continueAdding: boolean = false) => {
     if (newItemValue.trim()) {
+      setItemIds((prev) => [...prev, makeId()]);
       onUpdate([...items, newItemValue.trim().toUpperCase()]);
       setNewItemValue("");
       if (!continueAdding) {
@@ -449,6 +469,7 @@ function InlineEditableArray({
                     onUpdate(newItems);
                   }}
                   onDelete={() => {
+                    setItemIds((prev) => prev.filter((_, i) => i !== idx));
                     const newItems = items.filter((_, i) => i !== idx);
                     const newHighlights = highlightedIndices
                       .filter(i => i !== idx)
