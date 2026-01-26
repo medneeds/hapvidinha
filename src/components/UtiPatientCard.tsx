@@ -820,48 +820,45 @@ export function UtiPatientCard({
             </div>
 
             {/* Right Actions + Expand Button */}
-            <div className="flex items-center border-l border-border/30 bg-muted/20">
-              <div className="flex flex-col items-center justify-center gap-0.5 px-1 py-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsEditDialogOpen(true)}
-                  className="h-6 w-6 text-muted-foreground hover:text-primary"
-                  title="Edição avançada"
-                >
-                  <Edit className="h-3 w-3" />
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
-                      <MoreVertical className="h-3 w-3" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50">
-                    {onPrintPatient && (
-                      <DropdownMenuItem onClick={() => onPrintPatient(patient.id)}>
-                        Imprimir
-                      </DropdownMenuItem>
-                    )}
-                    {onDelete && (
-                      <DropdownMenuItem 
-                        onClick={() => onDelete(patient.id)}
-                        className="text-destructive"
-                      >
-                        Excluir
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              
+            <div className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 border-l border-border/30 bg-muted/20">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsEditDialogOpen(true)}
+                className="h-6 w-6 text-muted-foreground hover:text-primary"
+                title="Edição avançada"
+              >
+                <Edit className="h-3 w-3" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
+                    <MoreVertical className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50">
+                  {onPrintPatient && (
+                    <DropdownMenuItem onClick={() => onPrintPatient(patient.id)}>
+                      Imprimir
+                    </DropdownMenuItem>
+                  )}
+                  {onDelete && (
+                    <DropdownMenuItem 
+                      onClick={() => onDelete(patient.id)}
+                      className="text-destructive"
+                    >
+                      Excluir
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
               <CollapsibleTrigger asChild>
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  className="self-center h-full px-3 rounded-none border-l border-border/30 hover:bg-muted/50"
+                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
                 >
-                  <ChevronDown className={cn("h-5 w-5 transition-transform", isExpanded && "rotate-180")} />
+                  <ChevronDown className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")} />
                 </Button>
               </CollapsibleTrigger>
             </div>
