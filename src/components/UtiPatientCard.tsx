@@ -776,9 +776,11 @@ export function UtiPatientCard({
                       ? "bg-amber-100 dark:bg-amber-900/40 border-amber-400/50 dark:border-amber-600/50" 
                       : "bg-primary/15 dark:bg-primary/25 border-primary/30"
                   )}>
-                    <Clock className={cn("h-3 w-3", daysInUti > 4 ? "text-amber-600 dark:text-amber-400" : "text-primary")} />
+                    <span className={cn("text-[9px] font-bold", daysInUti > 4 ? "text-amber-700 dark:text-amber-300" : "text-primary")}>
+                      DIH:
+                    </span>
                     <span className={cn("text-xs font-bold", daysInUti > 4 ? "text-amber-700 dark:text-amber-300" : "text-primary")}>
-                      {daysInUti} dias
+                      {daysInUti}
                     </span>
                     {daysInUti > 4 && (
                       <span title="Longa permanência">
