@@ -942,8 +942,11 @@ export function UtiPatientCard({
               )}
             </div>
 
-            {/* Right Actions + Expand Button */}
-            <div className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 border-l border-border/30 bg-muted/20">
+            {/* Right Actions + Expand Button - Horizontal when collapsed, Vertical when expanded */}
+            <div className={cn(
+              "flex items-center justify-center gap-0.5 px-1 py-1 border-l border-border/30 bg-muted/20 transition-all",
+              isCollapsed ? "flex-row" : "flex-col"
+            )}>
               <Button
                 variant="ghost"
                 size="icon"
