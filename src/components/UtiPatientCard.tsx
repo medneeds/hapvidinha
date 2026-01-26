@@ -769,10 +769,22 @@ export function UtiPatientCard({
                     </SelectContent>
                   </Select>
 
-                  {/* Days in UTI - More prominent */}
-                  <div className="shrink-0 flex items-center gap-1 px-2 py-0.5 bg-primary/15 dark:bg-primary/25 border border-primary/30 rounded-md">
-                    <Clock className="h-3 w-3 text-primary" />
-                    <span className="text-xs font-bold text-primary">{daysInUti} dias</span>
+                  {/* Days in UTI - More prominent, with long stay alert */}
+                  <div className={cn(
+                    "shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-md border",
+                    daysInUti > 4 
+                      ? "bg-amber-100 dark:bg-amber-900/40 border-amber-400/50 dark:border-amber-600/50" 
+                      : "bg-primary/15 dark:bg-primary/25 border-primary/30"
+                  )}>
+                    <Clock className={cn("h-3 w-3", daysInUti > 4 ? "text-amber-600 dark:text-amber-400" : "text-primary")} />
+                    <span className={cn("text-xs font-bold", daysInUti > 4 ? "text-amber-700 dark:text-amber-300" : "text-primary")}>
+                      {daysInUti} dias
+                    </span>
+                    {daysInUti > 4 && (
+                      <span title="Longa permanência">
+                        <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                      </span>
+                    )}
                   </div>
 
                   {/* UTI Admission Date */}
