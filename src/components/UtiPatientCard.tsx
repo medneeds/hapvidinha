@@ -267,6 +267,8 @@ interface InlineEditableArrayProps {
   alwaysShowAll?: boolean;
   highlightedIndices?: number[];
   onUpdateHighlights?: (indices: number[]) => void;
+  // Combined update for items + highlights (prevents race conditions on delete)
+  onUpdateBoth?: (items: string[], highlights: number[]) => void;
   onEnterPress?: () => void;
   onTabPress?: () => void;
   fieldId?: string;
@@ -287,6 +289,7 @@ function InlineEditableArray({
   alwaysShowAll = false,
   highlightedIndices = [],
   onUpdateHighlights,
+  onUpdateBoth,
   onEnterPress,
   onTabPress,
   fieldId,
@@ -383,9 +386,15 @@ function InlineEditableArray({
       // Update both items and highlights in a single batch
       isInternalChangeRef.current = true;
       setItemIds(newIds);
-      onUpdate(newItems);
-      if (onUpdateHighlights && highlightedIndices.length > 0) {
-        onUpdateHighlights(newHighlights);
+      
+      // Use combined update to prevent race conditions
+      if (onUpdateBoth && highlightedIndices.length > 0) {
+        onUpdateBoth(newItems, newHighlights);
+      } else {
+        onUpdate(newItems);
+        if (onUpdateHighlights && highlightedIndices.length > 0) {
+          onUpdateHighlights(newHighlights);
+        }
       }
     }
   };
@@ -496,9 +505,15 @@ function InlineEditableArray({
                       const newHighlights = highlightedIndices
                         .filter(i => i !== realIdx)
                         .map(i => i > realIdx ? i - 1 : i);
-                      onUpdate(newItems);
-                      if (onUpdateHighlights) {
-                        onUpdateHighlights(newHighlights);
+                      
+                      // Use combined update to prevent race conditions
+                      if (onUpdateBoth) {
+                        onUpdateBoth(newItems, newHighlights);
+                      } else {
+                        onUpdate(newItems);
+                        if (onUpdateHighlights) {
+                          onUpdateHighlights(newHighlights);
+                        }
                       }
                     }}
                     showDragHandle={showNumbers}
@@ -758,6 +773,20 @@ export function UtiPatientCard({
     });
   };
 
+  // Combined update for items + highlights to prevent race conditions on delete/drag
+  const handleUpdateBothFields = (
+    itemsKey: keyof Patient, 
+    items: string[], 
+    highlightsKey: keyof Patient, 
+    highlights: number[]
+  ) => {
+    onUpdate({
+      ...patient,
+      [itemsKey]: items,
+      [highlightsKey]: highlights
+    });
+  };
+
   // Tab navigation between columns: diagnoses → antecedentes → condutas → pendencias
   const handleTabFromColumn = (column: 'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias') => {
     const columnOrder: ('diagnoses' | 'antecedentes' | 'condutas' | 'pendencias')[] = ['diagnoses', 'antecedentes', 'condutas', 'pendencias'];
@@ -958,6 +987,7 @@ export function UtiPatientCard({
                       alwaysShowAll
                       highlightedIndices={patient.highlightedDiagnoses || []}
                       onUpdateHighlights={(indices) => handleUpdateField("highlightedDiagnoses", indices)}
+                      onUpdateBoth={(items, highlights) => handleUpdateBothFields("diagnoses", items, "highlightedDiagnoses", highlights)}
                       fieldId="diagnoses"
                       isActive={activeColumn === 'diagnoses'}
                       onTabPress={() => handleTabFromColumn('diagnoses')}
@@ -975,6 +1005,7 @@ export function UtiPatientCard({
                       alwaysShowAll
                       highlightedIndices={patient.highlightedMedicalHistory || []}
                       onUpdateHighlights={(indices) => handleUpdateField("highlightedMedicalHistory", indices)}
+                      onUpdateBoth={(items, highlights) => handleUpdateBothFields("medicalHistory", items, "highlightedMedicalHistory", highlights)}
                       fieldId="antecedentes"
                       isActive={activeColumn === 'antecedentes'}
                       onTabPress={() => handleTabFromColumn('antecedentes')}
@@ -992,6 +1023,7 @@ export function UtiPatientCard({
                       alwaysShowAll
                       highlightedIndices={patient.highlightedConducts || []}
                       onUpdateHighlights={(indices) => handleUpdateField("highlightedConducts", indices)}
+                      onUpdateBoth={(items, highlights) => handleUpdateBothFields("utiDailyConducts", items, "highlightedConducts", highlights)}
                       fieldId="condutas"
                       isActive={activeColumn === 'condutas'}
                       onTabPress={() => handleTabFromColumn('condutas')}
@@ -1009,6 +1041,7 @@ export function UtiPatientCard({
                       alwaysShowAll
                       highlightedIndices={patient.highlightedPendencies || []}
                       onUpdateHighlights={(indices) => handleUpdateField("highlightedPendencies", indices)}
+                      onUpdateBoth={(items, highlights) => handleUpdateBothFields("pendencies", items, "highlightedPendencies", highlights)}
                       fieldId="pendencias"
                       isActive={activeColumn === 'pendencias'}
                       onTabPress={() => handleTabFromColumn('pendencias')}
