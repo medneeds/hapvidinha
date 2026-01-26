@@ -1,4 +1,5 @@
 import { Patient, SectorType } from "@/types/patient";
+import { ReactNode } from "react";
 import { UtiPatientCard } from "./UtiPatientCard";
 import { Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ interface UtiSectorSectionProps {
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   customTitle?: string;
-  customIcon?: string;
+  customIcon?: ReactNode;
   onRefetch?: () => void;
   colorVariant?: ColorVariant;
 }
