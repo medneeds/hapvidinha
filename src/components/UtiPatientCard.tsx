@@ -775,14 +775,14 @@ export function UtiPatientCard({
 
                 {/* Mobile: Chips wrap to second line */}
                 <div className="flex items-center gap-1 flex-wrap md:flex-nowrap w-full md:w-auto mt-1 md:mt-0">
-                  {/* Clinical Status Selector */}
+                  {/* Clinical Status Selector - Fixed width */}
                   <Select
                     value={patient.clinicalStatus || ""}
                     onValueChange={(v) => handleUpdateField("clinicalStatus", v)}
                   >
                     <SelectTrigger 
                       className={cn(
-                        "shrink-0 h-5 w-auto px-1.5 md:px-2 text-[8px] md:text-[9px] font-bold border-0 rounded",
+                        "shrink-0 h-5 w-[120px] md:w-[140px] px-1.5 md:px-2 text-[8px] md:text-[9px] font-bold border-0 rounded",
                         patient.clinicalStatus 
                           ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.color || "bg-muted"
                           : "bg-muted text-muted-foreground"
