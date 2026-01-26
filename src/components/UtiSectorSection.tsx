@@ -159,10 +159,17 @@ export function UtiSectorSection({
 
   // Header color schemes based on colorVariant
   const headerStyles = {
-    blue: "bg-primary/15 dark:bg-primary/25 border-l-4 border-l-primary",
-    yellow: "bg-amber-100/60 dark:bg-amber-900/30 border-l-4 border-l-amber-500"
+    blue: {
+      bg: "bg-primary/15 dark:bg-primary/25 border-l-4 border-l-primary",
+      title: "text-primary dark:text-primary"
+    },
+    yellow: {
+      bg: "bg-amber-100/60 dark:bg-amber-900/30 border-l-4 border-l-amber-500",
+      title: "text-amber-700 dark:text-amber-400"
+    }
   };
-  const headerClass = headerStyles[colorVariant];
+  const headerClass = headerStyles[colorVariant].bg;
+  const titleClass = headerStyles[colorVariant].title;
   
   useEffect(() => {
     if (controlledIsOpen === undefined) {
@@ -239,7 +246,7 @@ export function UtiSectorSection({
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
               <div className="flex items-center gap-2 print:gap-1">
                 <span className="text-lg print:text-sm">{displayIcon}</span>
-                <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">{displayTitle}</h2>
+                <h2 className={`text-lg font-bold print:text-[10px] uppercase ${titleClass}`}>{displayTitle}</h2>
               </div>
             </button>
           </CollapsibleTrigger>
