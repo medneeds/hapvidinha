@@ -406,6 +406,9 @@ export function usePatients(department?: Department) {
     relevantExams: record.relevant_exams ? record.relevant_exams.split('\n').filter(Boolean) : [],
     pendencies: record.pendencies ? record.pendencies.split('\n').filter(Boolean) : [],
     highlightedPendencies: record.highlighted_pendencies || [],
+    highlightedDiagnoses: record.highlighted_diagnoses || [],
+    highlightedMedicalHistory: record.highlighted_medical_history || [],
+    highlightedConducts: record.highlighted_conducts || [],
     schedule: record.schedule ? record.schedule.split('\n').filter(Boolean) : [],
     admissionHistory: record.admission_history || '',
     admissionDate: record.admission_date || '',
@@ -436,6 +439,7 @@ export function usePatients(department?: Department) {
     allocationStatus: record.allocation_status as Patient['allocationStatus'],
     createdBy: record.created_by || undefined,
     psmStatus: record.psm_status as Patient['psmStatus'],
+    clinicalStatus: record.clinical_status as Patient['clinicalStatus'],
   });
 
   useEffect(() => {
