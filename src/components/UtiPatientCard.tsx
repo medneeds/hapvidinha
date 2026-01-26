@@ -50,12 +50,15 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+type ColorVariant = 'blue' | 'yellow';
+
 interface UtiPatientCardProps {
   patient: Patient;
   onUpdate: (patient: Patient) => void;
   onDelete?: (patientId: string) => void;
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
+  colorVariant?: ColorVariant;
 }
 
 // Calculate days in UTI
@@ -611,11 +614,40 @@ export function UtiPatientCard({
   onUpdate, 
   onDelete,
   onPrintPatient,
-  onRefetch 
+  onRefetch,
+  colorVariant = 'blue'
 }: UtiPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [activeColumn, setActiveColumn] = useState<'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias' | null>(null);
+
+  // Color schemes based on variant
+  const colorSchemes = {
+    blue: {
+      card: "bg-slate-100 dark:bg-slate-900/80 border-primary/20",
+      col1: "bg-blue-50/80 dark:bg-blue-950/40 border-blue-200/60 dark:border-blue-800/50",
+      col1Icon: "text-blue-600 dark:text-blue-400",
+      col2: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
+      col2Icon: "text-blue-500 dark:text-blue-300",
+      col3: "bg-blue-100/60 dark:bg-blue-900/30 border-blue-200/50 dark:border-blue-700/40",
+      col3Icon: "text-blue-500 dark:text-blue-300",
+      col4: "bg-gradient-to-br from-amber-50/40 to-card dark:from-amber-950/20 dark:to-card/80 border-amber-300/30 dark:border-amber-600/20 ring-1 ring-amber-200/15 dark:ring-amber-700/10",
+      col4Icon: "text-amber-600 dark:text-amber-400",
+    },
+    yellow: {
+      card: "bg-amber-50/50 dark:bg-amber-950/30 border-amber-400/30",
+      col1: "bg-amber-50/80 dark:bg-amber-950/40 border-amber-200/60 dark:border-amber-800/50",
+      col1Icon: "text-amber-600 dark:text-amber-400",
+      col2: "bg-amber-100/70 dark:bg-amber-900/35 border-amber-300/50 dark:border-amber-700/45",
+      col2Icon: "text-amber-500 dark:text-amber-300",
+      col3: "bg-amber-100/60 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
+      col3Icon: "text-amber-500 dark:text-amber-300",
+      col4: "bg-gradient-to-br from-blue-50/40 to-card dark:from-blue-950/20 dark:to-card/80 border-blue-300/30 dark:border-blue-600/20 ring-1 ring-blue-200/15 dark:ring-blue-700/10",
+      col4Icon: "text-blue-600 dark:text-blue-400",
+    }
+  };
+
+  const colors = colorSchemes[colorVariant];
 
   const daysInUti = useMemo(() => calculateDaysInUti(patient.utiAdmissionDate), [patient.utiAdmissionDate]);
 
@@ -662,7 +694,7 @@ export function UtiPatientCard({
   return (
     <>
       <div 
-        className="bg-slate-100 dark:bg-slate-900/80 border border-primary/20 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200"
+        className={cn("border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200", colors.card)}
         data-patient-id={patient.id}
       >
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
@@ -762,12 +794,12 @@ export function UtiPatientCard({
 
               {/* Row 2: 4 columns on desktop, 2x2 grid on mobile */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5">
-                <div className="bg-blue-50/80 dark:bg-blue-950/40 rounded-lg p-1 md:p-1.5 shadow-sm border border-blue-200/60 dark:border-blue-800/50 backdrop-blur-sm hover:shadow-md transition-shadow">
+                <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col1)}>
                   <InlineEditableArray
                     items={diagnosticos}
                     onUpdate={(items) => handleUpdateField("diagnoses", items)}
                     label="HIPÓTESES / DIAGNÓSTICOS"
-                    icon={<Stethoscope className="h-2.5 w-2.5 text-blue-600 dark:text-blue-400" />}
+                    icon={<Stethoscope className={cn("h-2.5 w-2.5", colors.col1Icon)} />}
                     alwaysShowAll
                     fieldId="diagnoses"
                     isActive={activeColumn === 'diagnoses'}
@@ -775,12 +807,12 @@ export function UtiPatientCard({
                     onEnterPress={() => setActiveColumn('diagnoses')}
                   />
                 </div>
-                <div className="bg-blue-100/70 dark:bg-blue-900/35 rounded-lg p-1 md:p-1.5 shadow-sm border border-blue-300/50 dark:border-blue-700/45 backdrop-blur-sm hover:shadow-md transition-shadow">
+                <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col2)}>
                   <InlineEditableArray
                     items={antecedentes}
                     onUpdate={(items) => handleUpdateField("medicalHistory", items)}
                     label="ANTECEDENTES / COMORBIDADES"
-                    icon={<Activity className="h-2.5 w-2.5 text-blue-500 dark:text-blue-300" />}
+                    icon={<Activity className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
                     alwaysShowAll
                     fieldId="antecedentes"
                     isActive={activeColumn === 'antecedentes'}
@@ -788,12 +820,12 @@ export function UtiPatientCard({
                     onEnterPress={() => setActiveColumn('antecedentes')}
                   />
                 </div>
-                <div className="bg-blue-100/60 dark:bg-blue-900/30 rounded-lg p-1 md:p-1.5 shadow-sm border border-blue-200/50 dark:border-blue-700/40 backdrop-blur-sm hover:shadow-md transition-shadow">
+                <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col3)}>
                   <InlineEditableArray
                     items={condutasDia}
                     onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
                     label="PLANO TERAPÊUTICO"
-                    icon={<FileText className="h-2.5 w-2.5 text-blue-500 dark:text-blue-300" />}
+                    icon={<FileText className={cn("h-2.5 w-2.5", colors.col3Icon)} />}
                     alwaysShowAll
                     fieldId="condutas"
                     isActive={activeColumn === 'condutas'}
@@ -801,12 +833,12 @@ export function UtiPatientCard({
                     onEnterPress={() => setActiveColumn('condutas')}
                   />
                 </div>
-                <div className="bg-gradient-to-br from-amber-50/40 to-card dark:from-amber-950/20 dark:to-card/80 rounded-lg p-1 md:p-1.5 shadow-sm border border-amber-300/30 dark:border-amber-600/20 backdrop-blur-sm ring-1 ring-amber-200/15 dark:ring-amber-700/10 hover:shadow-md hover:border-amber-300/50 transition-all">
+                <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-all", colors.col4)}>
                   <InlineEditableArray
                     items={pendencias}
                     onUpdate={(items) => handleUpdateField("pendencies", items)}
                     label="PROGRAMAÇÕES / PENDÊNCIAS"
-                    icon={<ClipboardList className="h-2.5 w-2.5 text-amber-600 dark:text-amber-400" />}
+                    icon={<ClipboardList className={cn("h-2.5 w-2.5", colors.col4Icon)} />}
                     alwaysShowAll
                     highlightedIndices={patient.highlightedPendencies || []}
                     onUpdateHighlights={(indices) => handleUpdateField("highlightedPendencies", indices)}
