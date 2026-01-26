@@ -93,9 +93,10 @@ interface SortableItemProps {
   onToggleHighlight?: () => void;
   onKeyDown?: (e: React.KeyboardEvent) => void;
   autoFocus?: boolean;
+  highlightColorVariant?: 'blue' | 'yellow';
 }
 
-function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus }: SortableItemProps) {
+function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus, highlightColorVariant = 'blue' }: SortableItemProps) {
   const [isEditing, setIsEditing] = useState(autoFocus || false);
   const [localValue, setLocalValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -152,6 +153,23 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     }
   };
 
+  // Highlight color styles based on variant
+  const highlightStyles = {
+    blue: {
+      bg: "bg-blue-100/80 dark:bg-blue-900/30 border border-blue-300/50 dark:border-blue-700/40",
+      number: "text-blue-600 dark:text-blue-400",
+      text: "font-semibold text-blue-800 dark:text-blue-200",
+      star: "fill-blue-500 text-blue-500"
+    },
+    yellow: {
+      bg: "bg-amber-100/80 dark:bg-amber-900/30 border border-amber-300/50 dark:border-amber-700/40",
+      number: "text-amber-600 dark:text-amber-400",
+      text: "font-semibold text-amber-800 dark:text-amber-200",
+      star: "fill-amber-500 text-amber-500"
+    }
+  };
+  const hStyles = highlightStyles[highlightColorVariant];
+
   return (
     <div 
       ref={setNodeRef} 
@@ -159,7 +177,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       className={cn(
         "flex items-center gap-0.5 group py-0 rounded px-0.5 -mx-0.5 transition-colors",
         isDragging && "z-50",
-        isHighlighted && "bg-amber-100/80 dark:bg-amber-900/30 border border-amber-300/50 dark:border-amber-700/40"
+        isHighlighted && hStyles.bg
       )}
     >
       {showDragHandle && (
@@ -173,7 +191,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       )}
       <span className={cn(
         "font-medium text-xs min-w-[14px]",
-        isHighlighted ? "text-amber-600 dark:text-amber-400" : "text-primary/70"
+        isHighlighted ? hStyles.number : "text-primary/70"
       )}>{index + 1}.</span>
       
       {isEditing ? (
@@ -194,7 +212,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
           <span 
             className={cn(
               "flex-1 text-xs break-words cursor-pointer hover:text-primary transition-colors leading-tight",
-              isHighlighted && "font-semibold text-amber-800 dark:text-amber-200"
+              isHighlighted && hStyles.text
             )}
             onClick={(e) => {
               e.stopPropagation();
@@ -215,7 +233,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
             >
               <Star className={cn(
                 "h-2.5 w-2.5 transition-colors",
-                isHighlighted ? "fill-amber-500 text-amber-500" : "text-muted-foreground"
+                isHighlighted ? hStyles.star : "text-muted-foreground"
               )} />
             </Button>
           )}
@@ -254,6 +272,7 @@ interface InlineEditableArrayProps {
   fieldId?: string;
   isActive?: boolean;
   iconColorClass?: string;
+  highlightColorVariant?: 'blue' | 'yellow';
 }
 
 function InlineEditableArray({ 
@@ -272,7 +291,8 @@ function InlineEditableArray({
   onTabPress,
   fieldId,
   isActive,
-  iconColorClass = "text-primary/60 hover:text-primary"
+  iconColorClass = "text-primary/60 hover:text-primary",
+  highlightColorVariant = 'blue'
 }: InlineEditableArrayProps) {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
@@ -425,6 +445,7 @@ function InlineEditableArray({
                   isHighlighted={highlightedIndices.includes(idx)}
                   onToggleHighlight={onUpdateHighlights ? () => toggleHighlight(idx) : undefined}
                   onKeyDown={handleItemKeyDown}
+                  highlightColorVariant={highlightColorVariant}
                 />
               ))}
             </SortableContext>
@@ -897,6 +918,7 @@ export function UtiPatientCard({
                     isActive={activeColumn === 'pendencias'}
                     onTabPress={() => handleTabFromColumn('pendencias')}
                     onEnterPress={() => setActiveColumn('pendencias')}
+                    highlightColorVariant={colorVariant}
                   />
                 </div>
               </div>
