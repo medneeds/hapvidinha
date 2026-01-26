@@ -1109,10 +1109,10 @@ const Index = () => {
           <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1 pt-[120px] sm:pt-[110px] print:pt-3">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
               {currentDepartment === "UTI" ? (
-                <div>
+                <div className="space-y-4">
                   <UtiSectorSection 
                     sector="blue" 
-                    patients={patients.map(p => ({ ...p, sector: 'blue' as const }))}
+                    patients={patients.filter(p => p.sector === 'blue' || p.sector === 'red').map(p => ({ ...p, sector: 'blue' as const }))}
                     onUpdatePatient={handleUpdatePatient}
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
@@ -1125,8 +1125,28 @@ const Index = () => {
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
                     onRefetch={refetch}
-                    customTitle="UTI - 10 LEITOS"
+                    customTitle="UNIDADE DE TERAPIA INTENSIVA 1"
                     customIcon="🏥"
+                    colorVariant="blue"
+                  />
+                  <UtiSectorSection 
+                    sector="yellow" 
+                    patients={patients.filter(p => p.sector === 'yellow').map(p => ({ ...p, sector: 'yellow' as const }))}
+                    onUpdatePatient={handleUpdatePatient}
+                    onDeletePatient={handleDeletePatient}
+                    onUndeletePatient={handleUndeletePatient}
+                    onPrintSector={() => handlePrintSector("yellow")}
+                    onAddExtraBed={() => handleAddExtraBed("yellow")}
+                    selectionMode={selectionMode}
+                    selectedPatients={selectedPatients}
+                    onToggleSelection={handleToggleSelection}
+                    onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
+                    onTransfer={handleTransferPatient}
+                    onPrintPatient={handlePrintPatient}
+                    onRefetch={refetch}
+                    customTitle="UNIDADE DE TERAPIA INTENSIVA 2"
+                    customIcon="🏥"
+                    colorVariant="yellow"
                   />
                 </div>
               ) : (

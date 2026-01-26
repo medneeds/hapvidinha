@@ -23,6 +23,8 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+type ColorVariant = 'blue' | 'yellow';
+
 interface UtiSectorSectionProps {
   sector: SectorType;
   patients: Patient[];
@@ -42,6 +44,7 @@ interface UtiSectorSectionProps {
   customTitle?: string;
   customIcon?: string;
   onRefetch?: () => void;
+  colorVariant?: ColorVariant;
 }
 
 const sectorInfo = {
@@ -74,6 +77,7 @@ interface SortableUtiRowProps {
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
+  colorVariant?: ColorVariant;
 }
 
 function SortableUtiRow(props: SortableUtiRowProps) {
@@ -120,6 +124,7 @@ function SortableUtiRow(props: SortableUtiRowProps) {
           onDelete={props.onDelete}
           onPrintPatient={props.onPrintPatient}
           onRefetch={props.onRefetch}
+          colorVariant={props.colorVariant}
         />
       </div>
     </div>
@@ -144,7 +149,8 @@ export function UtiSectorSection({
   onOpenChange,
   customTitle,
   customIcon,
-  onRefetch
+  onRefetch,
+  colorVariant = 'blue'
 }: UtiSectorSectionProps) {
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
@@ -286,6 +292,7 @@ export function UtiSectorSection({
                   selectionMode={selectionMode}
                   isSelected={selectedPatients.has(patient.id)}
                   onToggleSelection={onToggleSelection}
+                  colorVariant={colorVariant}
                 />
               ))}
             </SortableContext>
