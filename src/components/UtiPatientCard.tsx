@@ -808,9 +808,9 @@ export function UtiPatientCard({
                     </SelectContent>
                   </Select>
 
-                  {/* Days in UTI - More prominent, with long stay alert */}
+                  {/* Days in UTI - Fixed width for consistent alignment */}
                   <div className={cn(
-                    "shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-md border",
+                    "shrink-0 flex items-center justify-center gap-1 w-[70px] md:w-[80px] px-2 py-0.5 rounded-md border",
                     daysInUti > 4 
                       ? "bg-red-100 dark:bg-red-900/40 border-red-400/50 dark:border-red-600/50" 
                       : colorVariant === 'yellow' 
@@ -828,7 +828,7 @@ export function UtiPatientCard({
                       DIH:
                     </span>
                     <span className={cn(
-                      "text-xs font-bold", 
+                      "text-xs font-bold min-w-[20px] text-center", 
                       daysInUti > 4 
                         ? "text-red-700 dark:text-red-300" 
                         : colorVariant === 'yellow' 
@@ -837,10 +837,12 @@ export function UtiPatientCard({
                     )}>
                       {daysInUti}
                     </span>
-                    {daysInUti > 4 && (
+                    {daysInUti > 4 ? (
                       <span title="Longa permanência">
                         <AlertTriangle className="h-3 w-3 text-red-600 dark:text-red-400" />
                       </span>
+                    ) : (
+                      <span className="w-3" /> 
                     )}
                   </div>
 
