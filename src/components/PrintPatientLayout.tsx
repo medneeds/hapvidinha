@@ -241,6 +241,94 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
           </div>
         </div>
 
+        {/* UTI-specific header info */}
+        {(patient.utiAdmissionDate?.[0] || patient.utiOriginSector?.[0]) && (
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            marginBottom: '10px',
+            padding: '8px 10px',
+            backgroundColor: colors.light,
+            borderRadius: '4px',
+            fontSize: '7.5pt'
+          }}>
+            {patient.utiOriginSector?.[0] && (
+              <div>
+                <span style={{ color: '#6b7280', fontWeight: '600' }}>Setor de Origem: </span>
+                <span style={{ color: '#111827' }}>{patient.utiOriginSector[0]}</span>
+              </div>
+            )}
+            {patient.utiAdmissionDate?.[0] && (
+              <div>
+                <span style={{ color: '#6b7280', fontWeight: '600' }}>Admissão UTI: </span>
+                <span style={{ color: '#111827' }}>{patient.utiAdmissionDate[0]}</span>
+              </div>
+            )}
+            {patient.utiDischargePrediction?.[0] && (
+              <div>
+                <span style={{ color: '#6b7280', fontWeight: '600' }}>Previsão Alta: </span>
+                <span style={{ color: '#111827' }}>{patient.utiDischargePrediction[0]}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* UTI Critical Fields - Devices, Allergies, Cultures */}
+        {((patient.utiDevices?.length || 0) > 0 || (patient.utiAllergies?.length || 0) > 0 || (patient.utiCulturesAntibiotics?.length || 0) > 0) && (
+          <div style={{
+            padding: '8px 10px',
+            marginBottom: '8px',
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fca5a5',
+            borderRadius: '4px'
+          }}>
+            <div style={{ 
+              fontSize: '7pt', 
+              fontWeight: '600', 
+              color: '#991b1b', 
+              marginBottom: '6px',
+              textTransform: 'uppercase',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              ⚠ Informações Críticas
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+              {(patient.utiDevices?.length || 0) > 0 && (
+                <div>
+                  <div style={{ fontSize: '7pt', color: '#991b1b', fontWeight: '600', marginBottom: '3px' }}>DISPOSITIVOS</div>
+                  <ul style={{ margin: 0, paddingLeft: '14px', listStyleType: 'disc' }}>
+                    {patient.utiDevices!.map((d, idx) => (
+                      <li key={idx} style={{ fontSize: '7.5pt', color: '#374151', marginBottom: '2px' }}>{d}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {(patient.utiAllergies?.length || 0) > 0 && (
+                <div>
+                  <div style={{ fontSize: '7pt', color: '#991b1b', fontWeight: '600', marginBottom: '3px' }}>ALERGIAS</div>
+                  <ul style={{ margin: 0, paddingLeft: '14px', listStyleType: 'disc' }}>
+                    {patient.utiAllergies!.map((a, idx) => (
+                      <li key={idx} style={{ fontSize: '7.5pt', color: '#374151', marginBottom: '2px' }}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {(patient.utiCulturesAntibiotics?.length || 0) > 0 && (
+                <div>
+                  <div style={{ fontSize: '7pt', color: '#991b1b', fontWeight: '600', marginBottom: '3px' }}>CULTURAS / ATB</div>
+                  <ul style={{ margin: 0, paddingLeft: '14px', listStyleType: 'disc' }}>
+                    {patient.utiCulturesAntibiotics!.map((c, idx) => (
+                      <li key={idx} style={{ fontSize: '7.5pt', color: '#374151', marginBottom: '2px' }}>{c}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Clinical Sections - Minimalista */}
         {patient.diagnoses.length > 0 && (
           <SectionCard title="Hipóteses Diagnósticas">
@@ -270,6 +358,24 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
                   lineHeight: '1.35'
                 }}>
                   {history}
+                </li>
+              ))}
+            </ul>
+          </SectionCard>
+        )}
+
+        {/* UTI-specific: Plano Terapêutico */}
+        {(patient.utiDailyConducts?.length || 0) > 0 && (
+          <SectionCard title="Plano Terapêutico">
+            <ul style={{ margin: 0, paddingLeft: '16px', listStyleType: 'decimal' }}>
+              {patient.utiDailyConducts!.map((conduct, idx) => (
+                <li key={idx} style={{ 
+                  fontSize: '8pt', 
+                  color: '#374151', 
+                  marginBottom: '3px', 
+                  lineHeight: '1.35'
+                }}>
+                  {conduct}
                 </li>
               ))}
             </ul>
@@ -319,6 +425,20 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
                 );
               })}
             </ul>
+          </SectionCard>
+        )}
+
+        {/* UTI Admission Reason */}
+        {patient.utiAdmissionReason?.[0] && (
+          <SectionCard title="Motivo da Admissão UTI">
+            <div style={{ 
+              fontSize: '8pt', 
+              color: '#374151', 
+              lineHeight: '1.4',
+              whiteSpace: 'pre-wrap'
+            }}>
+              {patient.utiAdmissionReason[0]}
+            </div>
           </SectionCard>
         )}
 

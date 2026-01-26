@@ -1,5 +1,6 @@
 import { Patient } from "@/types/patient";
 import { PrintablePatientCard } from "./PrintablePatientCard";
+import { PrintableUtiPatientCard } from "./PrintableUtiPatientCard";
 
 interface PrintableSectorSectionProps {
   patients: Patient[];
@@ -8,6 +9,8 @@ interface PrintableSectorSectionProps {
   borderColor: string;
   textColor: string;
   mode: 'compact' | 'detailed';
+  isUti?: boolean;
+  utiColorVariant?: 'blue' | 'yellow';
 }
 
 export function PrintableSectorSection({
@@ -16,7 +19,9 @@ export function PrintableSectorSection({
   bgColor,
   borderColor,
   textColor,
-  mode
+  mode,
+  isUti = false,
+  utiColorVariant = 'blue'
 }: PrintableSectorSectionProps) {
   if (patients.length === 0) return null;
   
@@ -52,12 +57,21 @@ export function PrintableSectorSection({
       </div>
       <div>
         {patients.map(patient => (
-          <PrintablePatientCard 
-            key={patient.id} 
-            patient={patient} 
-            mode={mode}
-            bedColor={borderColor}
-          />
+          isUti ? (
+            <PrintableUtiPatientCard 
+              key={patient.id} 
+              patient={patient} 
+              mode={mode}
+              colorVariant={utiColorVariant}
+            />
+          ) : (
+            <PrintablePatientCard 
+              key={patient.id} 
+              patient={patient} 
+              mode={mode}
+              bedColor={borderColor}
+            />
+          )
         ))}
       </div>
     </div>
