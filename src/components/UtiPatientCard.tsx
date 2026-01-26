@@ -153,16 +153,16 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     }
   };
 
-  // Highlight color styles based on variant - HIGH CONTRAST
+  // Highlight color styles based on variant - HIGH CONTRAST, subtle borders
   const highlightStyles = {
     blue: {
-      bg: "bg-blue-200/90 dark:bg-blue-800/50 border-2 border-blue-400 dark:border-blue-500",
+      bg: "bg-blue-200/80 dark:bg-blue-700/40 border-l-2 border-l-blue-500 dark:border-l-blue-400",
       number: "text-blue-700 dark:text-blue-300 font-bold",
       text: "font-bold text-blue-900 dark:text-blue-100",
       star: "fill-blue-600 text-blue-600"
     },
     yellow: {
-      bg: "bg-amber-200/90 dark:bg-amber-800/50 border-2 border-amber-400 dark:border-amber-500",
+      bg: "bg-amber-200/80 dark:bg-amber-700/40 border-l-2 border-l-amber-500 dark:border-l-amber-400",
       number: "text-amber-700 dark:text-amber-300 font-bold",
       text: "font-bold text-amber-900 dark:text-amber-100",
       star: "fill-amber-600 text-amber-600"
