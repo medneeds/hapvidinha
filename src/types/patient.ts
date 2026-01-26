@@ -19,7 +19,10 @@ export interface Patient {
   medicalHistory: string[];
   relevantExams: string[];
   pendencies: string[];
-  highlightedPendencies?: number[]; // Índices dos itens destacados
+  highlightedPendencies?: number[]; // Índices dos itens destacados em Programações/Pendências
+  highlightedDiagnoses?: number[]; // Índices dos itens destacados em Hipóteses/Diagnósticos
+  highlightedMedicalHistory?: number[]; // Índices dos itens destacados em Antecedentes/Comorbidades
+  highlightedConducts?: number[]; // Índices dos itens destacados em Plano Terapêutico
   schedule: string[];
   admissionHistory: string;
   admissionDate: string;

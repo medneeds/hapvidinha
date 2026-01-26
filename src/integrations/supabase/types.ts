@@ -485,6 +485,9 @@ export type Database = {
           department: string
           diagnoses: string | null
           display_order: number | null
+          highlighted_conducts: number[] | null
+          highlighted_diagnoses: number[] | null
+          highlighted_medical_history: number[] | null
           highlighted_pendencies: number[] | null
           hospital_unit_id: string
           id: string
@@ -523,6 +526,9 @@ export type Database = {
           department?: string
           diagnoses?: string | null
           display_order?: number | null
+          highlighted_conducts?: number[] | null
+          highlighted_diagnoses?: number[] | null
+          highlighted_medical_history?: number[] | null
           highlighted_pendencies?: number[] | null
           hospital_unit_id: string
           id?: string
@@ -561,6 +567,9 @@ export type Database = {
           department?: string
           diagnoses?: string | null
           display_order?: number | null
+          highlighted_conducts?: number[] | null
+          highlighted_diagnoses?: number[] | null
+          highlighted_medical_history?: number[] | null
           highlighted_pendencies?: number[] | null
           hospital_unit_id?: string
           id?: string

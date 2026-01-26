@@ -892,10 +892,13 @@ export function UtiPatientCard({
                       icon={<Stethoscope className={cn("h-2.5 w-2.5", colors.col1Icon)} />}
                       iconColorClass={colors.col1Icon}
                       alwaysShowAll
+                      highlightedIndices={patient.highlightedDiagnoses || []}
+                      onUpdateHighlights={(indices) => handleUpdateField("highlightedDiagnoses", indices)}
                       fieldId="diagnoses"
                       isActive={activeColumn === 'diagnoses'}
                       onTabPress={() => handleTabFromColumn('diagnoses')}
                       onEnterPress={() => setActiveColumn('diagnoses')}
+                      highlightColorVariant={colorVariant}
                     />
                   </div>
                   <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col2)}>
@@ -906,10 +909,13 @@ export function UtiPatientCard({
                       icon={<Activity className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
                       iconColorClass={colors.col2Icon}
                       alwaysShowAll
+                      highlightedIndices={patient.highlightedMedicalHistory || []}
+                      onUpdateHighlights={(indices) => handleUpdateField("highlightedMedicalHistory", indices)}
                       fieldId="antecedentes"
                       isActive={activeColumn === 'antecedentes'}
                       onTabPress={() => handleTabFromColumn('antecedentes')}
                       onEnterPress={() => setActiveColumn('antecedentes')}
+                      highlightColorVariant={colorVariant}
                     />
                   </div>
                   <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col3)}>
@@ -920,10 +926,13 @@ export function UtiPatientCard({
                       icon={<FileText className={cn("h-2.5 w-2.5", colors.col3Icon)} />}
                       iconColorClass={colors.col3Icon}
                       alwaysShowAll
+                      highlightedIndices={patient.highlightedConducts || []}
+                      onUpdateHighlights={(indices) => handleUpdateField("highlightedConducts", indices)}
                       fieldId="condutas"
                       isActive={activeColumn === 'condutas'}
                       onTabPress={() => handleTabFromColumn('condutas')}
                       onEnterPress={() => setActiveColumn('condutas')}
+                      highlightColorVariant={colorVariant}
                     />
                   </div>
                   <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-all", colors.col4)}>
