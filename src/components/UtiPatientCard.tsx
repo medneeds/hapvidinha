@@ -769,20 +769,31 @@ export function UtiPatientCard({
                     </SelectContent>
                   </Select>
 
-                  {/* Days in UTI - Neutral chip */}
-                  <div className="shrink-0 flex items-center gap-0.5 px-1 md:px-1.5 py-0.5 bg-muted rounded text-muted-foreground">
-                    <Clock className="h-2 md:h-2.5 w-2 md:w-2.5" />
-                    <span className="text-[9px] md:text-[10px] font-semibold">{daysInUti}d</span>
+                  {/* Days in UTI - More prominent */}
+                  <div className="shrink-0 flex items-center gap-1 px-2 py-0.5 bg-primary/15 dark:bg-primary/25 border border-primary/30 rounded-md">
+                    <Clock className="h-3 w-3 text-primary" />
+                    <span className="text-xs font-bold text-primary">{daysInUti} dias</span>
                   </div>
 
-                  {/* Discharge - Hidden on mobile to save space */}
-                  <div className="hidden md:flex shrink-0 items-center gap-0.5 text-muted-foreground">
-                    <span className="text-[9px]">ALTA:</span>
+                  {/* UTI Admission Date */}
+                  <div className="hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
+                    <span className="text-[9px]">Admissão:</span>
+                    <InlineEditableField
+                      value={patient.utiAdmissionDate?.[0] || ""}
+                      onUpdate={(v) => handleUpdateField("utiAdmissionDate", v ? [v] : [])}
+                      placeholder="DD/MM/AAAA"
+                      className="text-[10px] font-medium w-20"
+                    />
+                  </div>
+
+                  {/* Discharge Prediction */}
+                  <div className="hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
+                    <span className="text-[9px]">Previsão de Alta:</span>
                     <InlineEditableField
                       value={previsaoAlta[0] || ""}
                       onUpdate={(v) => handleUpdateField("utiDischargePrediction", v ? [v] : [])}
-                      placeholder="—"
-                      className="text-[10px] font-medium w-16"
+                      placeholder="DD/MM/AAAA"
+                      className="text-[10px] font-medium w-20"
                     />
                   </div>
 
