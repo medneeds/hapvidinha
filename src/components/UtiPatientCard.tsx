@@ -172,7 +172,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
         </button>
       )}
       <span className={cn(
-        "font-medium text-[10px] min-w-[12px]",
+        "font-medium text-xs min-w-[14px]",
         isHighlighted ? "text-amber-600 dark:text-amber-400" : "text-primary/70"
       )}>{index + 1}.</span>
       
@@ -183,7 +183,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
             type="text"
             value={localValue}
             onChange={(e) => setLocalValue(e.target.value.toUpperCase())}
-            className="flex-1 text-[10px] bg-background border border-primary/30 rounded px-1 py-0 outline-none uppercase"
+            className="flex-1 text-xs bg-background border border-primary/30 rounded px-1 py-0.5 outline-none uppercase"
             onKeyDown={handleKeyDownInternal}
             onBlur={handleSave}
             onClick={(e) => e.stopPropagation()}
@@ -193,7 +193,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
         <>
           <span 
             className={cn(
-              "flex-1 text-[10px] break-words cursor-pointer hover:text-primary transition-colors leading-tight",
+              "flex-1 text-xs break-words cursor-pointer hover:text-primary transition-colors leading-tight",
               isHighlighted && "font-semibold text-amber-800 dark:text-amber-200"
             )}
             onClick={(e) => {
@@ -429,7 +429,7 @@ function InlineEditableArray({
           </DndContext>
         ) : !isAddingNew ? (
           <span 
-            className="text-[10px] text-muted-foreground/50 cursor-pointer hover:text-muted-foreground"
+            className="text-xs text-muted-foreground/50 cursor-pointer hover:text-muted-foreground"
             onClick={() => setIsAddingNew(true)}
           >
             {placeholder}
@@ -437,7 +437,7 @@ function InlineEditableArray({
         ) : null}
         
         {hiddenCount > 0 && (
-          <span className="text-[9px] text-muted-foreground pl-4">+{hiddenCount} mais</span>
+          <span className="text-[10px] text-muted-foreground pl-4">+{hiddenCount} mais</span>
         )}
         
         {isAddingNew && (
@@ -448,7 +448,7 @@ function InlineEditableArray({
               value={newItemValue}
               onChange={(e) => setNewItemValue(e.target.value.toUpperCase())}
               placeholder="NOVO ITEM..."
-              className="flex-1 text-[10px] bg-background border border-primary/30 rounded px-1 py-0 outline-none uppercase"
+              className="flex-1 text-xs bg-background border border-primary/30 rounded px-1 py-0.5 outline-none uppercase"
               onKeyDown={handleNewItemKeyDown}
               onBlur={() => handleAddItem(false)}
             />
