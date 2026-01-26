@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, ChevronDown, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star } from "lucide-react";
+import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -641,6 +641,7 @@ export function UtiPatientCard({
   colorVariant = 'blue'
 }: UtiPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [activeColumn, setActiveColumn] = useState<'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias' | null>(null);
 
@@ -731,6 +732,21 @@ export function UtiPatientCard({
             <div className="flex-1 p-1.5 md:p-1.5 space-y-1.5 md:space-y-1 min-w-0">
               {/* Row 1: Identification Header - Mobile optimized */}
               <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
+                {/* Collapse/Expand Toggle Button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  className="shrink-0 h-5 w-5 p-0 text-muted-foreground hover:text-foreground transition-colors"
+                  title={isCollapsed ? "Expandir subseções" : "Retrair subseções"}
+                >
+                  {isCollapsed ? (
+                    <ChevronRight className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </Button>
+                
                 {/* Bed Number - Compact */}
                 <div className={cn("shrink-0 px-1.5 py-0.5 rounded border", colors.bedBg)}>
                   <InlineEditableField
@@ -860,68 +876,70 @@ export function UtiPatientCard({
                 </div>
               </div>
 
-              {/* Row 2: 4 columns on desktop, 2x2 grid on mobile */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5">
-                <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col1)}>
-                  <InlineEditableArray
-                    items={diagnosticos}
-                    onUpdate={(items) => handleUpdateField("diagnoses", items)}
-                    label="Hipóteses / Diagnósticos"
-                    icon={<Stethoscope className={cn("h-2.5 w-2.5", colors.col1Icon)} />}
-                    iconColorClass={colors.col1Icon}
-                    alwaysShowAll
-                    fieldId="diagnoses"
-                    isActive={activeColumn === 'diagnoses'}
-                    onTabPress={() => handleTabFromColumn('diagnoses')}
-                    onEnterPress={() => setActiveColumn('diagnoses')}
-                  />
+              {/* Row 2: 4 columns on desktop, 2x2 grid on mobile - Collapsible */}
+              {!isCollapsed && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col1)}>
+                    <InlineEditableArray
+                      items={diagnosticos}
+                      onUpdate={(items) => handleUpdateField("diagnoses", items)}
+                      label="Hipóteses / Diagnósticos"
+                      icon={<Stethoscope className={cn("h-2.5 w-2.5", colors.col1Icon)} />}
+                      iconColorClass={colors.col1Icon}
+                      alwaysShowAll
+                      fieldId="diagnoses"
+                      isActive={activeColumn === 'diagnoses'}
+                      onTabPress={() => handleTabFromColumn('diagnoses')}
+                      onEnterPress={() => setActiveColumn('diagnoses')}
+                    />
+                  </div>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col2)}>
+                    <InlineEditableArray
+                      items={antecedentes}
+                      onUpdate={(items) => handleUpdateField("medicalHistory", items)}
+                      label="Antecedentes / Comorbidades"
+                      icon={<Activity className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
+                      iconColorClass={colors.col2Icon}
+                      alwaysShowAll
+                      fieldId="antecedentes"
+                      isActive={activeColumn === 'antecedentes'}
+                      onTabPress={() => handleTabFromColumn('antecedentes')}
+                      onEnterPress={() => setActiveColumn('antecedentes')}
+                    />
+                  </div>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col3)}>
+                    <InlineEditableArray
+                      items={condutasDia}
+                      onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
+                      label="Plano Terapêutico"
+                      icon={<FileText className={cn("h-2.5 w-2.5", colors.col3Icon)} />}
+                      iconColorClass={colors.col3Icon}
+                      alwaysShowAll
+                      fieldId="condutas"
+                      isActive={activeColumn === 'condutas'}
+                      onTabPress={() => handleTabFromColumn('condutas')}
+                      onEnterPress={() => setActiveColumn('condutas')}
+                    />
+                  </div>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-all", colors.col4)}>
+                    <InlineEditableArray
+                      items={pendencias}
+                      onUpdate={(items) => handleUpdateField("pendencies", items)}
+                      label="Programações / Pendências"
+                      icon={<ClipboardList className={cn("h-2.5 w-2.5", colors.col4Icon)} />}
+                      iconColorClass={colors.col4Icon}
+                      alwaysShowAll
+                      highlightedIndices={patient.highlightedPendencies || []}
+                      onUpdateHighlights={(indices) => handleUpdateField("highlightedPendencies", indices)}
+                      fieldId="pendencias"
+                      isActive={activeColumn === 'pendencias'}
+                      onTabPress={() => handleTabFromColumn('pendencias')}
+                      onEnterPress={() => setActiveColumn('pendencias')}
+                      highlightColorVariant={colorVariant}
+                    />
+                  </div>
                 </div>
-                <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col2)}>
-                  <InlineEditableArray
-                    items={antecedentes}
-                    onUpdate={(items) => handleUpdateField("medicalHistory", items)}
-                    label="Antecedentes / Comorbidades"
-                    icon={<Activity className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
-                    iconColorClass={colors.col2Icon}
-                    alwaysShowAll
-                    fieldId="antecedentes"
-                    isActive={activeColumn === 'antecedentes'}
-                    onTabPress={() => handleTabFromColumn('antecedentes')}
-                    onEnterPress={() => setActiveColumn('antecedentes')}
-                  />
-                </div>
-                <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-shadow", colors.col3)}>
-                  <InlineEditableArray
-                    items={condutasDia}
-                    onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
-                    label="Plano Terapêutico"
-                    icon={<FileText className={cn("h-2.5 w-2.5", colors.col3Icon)} />}
-                    iconColorClass={colors.col3Icon}
-                    alwaysShowAll
-                    fieldId="condutas"
-                    isActive={activeColumn === 'condutas'}
-                    onTabPress={() => handleTabFromColumn('condutas')}
-                    onEnterPress={() => setActiveColumn('condutas')}
-                  />
-                </div>
-                <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border backdrop-blur-sm hover:shadow-md transition-all", colors.col4)}>
-                  <InlineEditableArray
-                    items={pendencias}
-                    onUpdate={(items) => handleUpdateField("pendencies", items)}
-                    label="Programações / Pendências"
-                    icon={<ClipboardList className={cn("h-2.5 w-2.5", colors.col4Icon)} />}
-                    iconColorClass={colors.col4Icon}
-                    alwaysShowAll
-                    highlightedIndices={patient.highlightedPendencies || []}
-                    onUpdateHighlights={(indices) => handleUpdateField("highlightedPendencies", indices)}
-                    fieldId="pendencias"
-                    isActive={activeColumn === 'pendencias'}
-                    onTabPress={() => handleTabFromColumn('pendencias')}
-                    onEnterPress={() => setActiveColumn('pendencias')}
-                    highlightColorVariant={colorVariant}
-                  />
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Right Actions + Expand Button */}
