@@ -664,13 +664,13 @@ export function UtiPatientCard({
       card: "bg-amber-50/50 dark:bg-amber-950/30 border-amber-400/30",
       bedBg: "bg-amber-100 dark:bg-amber-900/40 border-amber-300/50 dark:border-amber-700/40",
       bedText: "text-amber-700 dark:text-amber-400",
-      col1: "bg-amber-50/60 dark:bg-amber-900/25 border-amber-200/40 dark:border-amber-700/35",
+      col1: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
       col1Icon: "text-amber-500 dark:text-amber-300",
-      col2: "bg-amber-50/60 dark:bg-amber-900/25 border-amber-200/40 dark:border-amber-700/35",
+      col2: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
       col2Icon: "text-amber-500 dark:text-amber-300",
-      col3: "bg-amber-50/60 dark:bg-amber-900/25 border-amber-200/40 dark:border-amber-700/35",
+      col3: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
       col3Icon: "text-amber-500 dark:text-amber-300",
-      col4: "bg-amber-50/60 dark:bg-amber-900/25 border-amber-200/40 dark:border-amber-700/35",
+      col4: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
       col4Icon: "text-amber-500 dark:text-amber-300",
     }
   };
