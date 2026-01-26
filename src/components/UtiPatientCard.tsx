@@ -457,35 +457,41 @@ function InlineEditableArray({
         {items.length > 0 ? (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={itemIds.slice(0, displayItems.length)} strategy={verticalListSortingStrategy}>
-              {displayItems.map((item, idx) => (
-                <SortableItem
-                  key={itemIds[idx]}
-                  id={itemIds[idx]}
-                  index={idx}
-                  value={item}
-                  onEdit={(newValue) => {
-                    const newItems = [...items];
-                    newItems[idx] = newValue;
-                    onUpdate(newItems);
-                  }}
-                  onDelete={() => {
-                    setItemIds((prev) => prev.filter((_, i) => i !== idx));
-                    const newItems = items.filter((_, i) => i !== idx);
-                    const newHighlights = highlightedIndices
-                      .filter(i => i !== idx)
-                      .map(i => i > idx ? i - 1 : i);
-                    onUpdate(newItems);
-                    if (onUpdateHighlights) {
-                      onUpdateHighlights(newHighlights);
-                    }
-                  }}
-                  showDragHandle={showNumbers}
-                  isHighlighted={highlightedIndices.includes(idx)}
-                  onToggleHighlight={onUpdateHighlights ? () => toggleHighlight(idx) : undefined}
-                  onKeyDown={handleItemKeyDown}
-                  highlightColorVariant={highlightColorVariant}
-                />
-              ))}
+              {displayItems.map((item, displayIdx) => {
+                // displayIdx is the index in displayItems, which may be limited
+                // For all operations, we need the real index in the full items array
+                const realIdx = displayIdx; // Since displayItems = items.slice(0, maxCollapsedItems), displayIdx === realIdx for displayed items
+                
+                return (
+                  <SortableItem
+                    key={itemIds[realIdx]}
+                    id={itemIds[realIdx]}
+                    index={realIdx}
+                    value={item}
+                    onEdit={(newValue) => {
+                      const newItems = [...items];
+                      newItems[realIdx] = newValue;
+                      onUpdate(newItems);
+                    }}
+                    onDelete={() => {
+                      setItemIds((prev) => prev.filter((_, i) => i !== realIdx));
+                      const newItems = items.filter((_, i) => i !== realIdx);
+                      const newHighlights = highlightedIndices
+                        .filter(i => i !== realIdx)
+                        .map(i => i > realIdx ? i - 1 : i);
+                      onUpdate(newItems);
+                      if (onUpdateHighlights) {
+                        onUpdateHighlights(newHighlights);
+                      }
+                    }}
+                    showDragHandle={showNumbers}
+                    isHighlighted={highlightedIndices.includes(realIdx)}
+                    onToggleHighlight={onUpdateHighlights ? () => toggleHighlight(realIdx) : undefined}
+                    onKeyDown={handleItemKeyDown}
+                    highlightColorVariant={highlightColorVariant}
+                  />
+                );
+              })}
             </SortableContext>
           </DndContext>
         ) : !isAddingNew ? (
