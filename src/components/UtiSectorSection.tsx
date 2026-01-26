@@ -162,15 +162,24 @@ export function UtiSectorSection({
   const headerStyles = {
     blue: {
       bg: "bg-primary/15 dark:bg-primary/25 border-l-4 border-l-primary",
-      title: "text-primary dark:text-primary"
+      title: "text-primary dark:text-primary",
+      button: "border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50",
+      chevron: "text-primary",
+      counter: "border-primary/30 bg-primary/10"
     },
     yellow: {
       bg: "bg-amber-100/60 dark:bg-amber-900/30 border-l-4 border-l-amber-500",
-      title: "text-amber-700 dark:text-amber-400"
+      title: "text-amber-700 dark:text-amber-400",
+      button: "border-amber-400/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:border-amber-400/50",
+      chevron: "text-amber-600 dark:text-amber-400",
+      counter: "border-amber-400/30 bg-amber-500/10"
     }
   };
   const headerClass = headerStyles[colorVariant].bg;
   const titleClass = headerStyles[colorVariant].title;
+  const buttonClass = headerStyles[colorVariant].button;
+  const chevronClass = headerStyles[colorVariant].chevron;
+  const counterClass = headerStyles[colorVariant].counter;
   
   useEffect(() => {
     if (controlledIsOpen === undefined) {
@@ -244,7 +253,7 @@ export function UtiSectorSection({
           )}
           <CollapsibleTrigger asChild>
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
-              <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
+              <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${chevronClass} ${isOpen ? '' : '-rotate-90'}`} />
               <div className="flex items-center gap-2 print:gap-1">
                 <span className="text-lg print:text-sm">{displayIcon}</span>
                 <h2 className={`text-lg font-bold print:text-[10px] uppercase ${titleClass}`}>{displayTitle}</h2>
@@ -257,7 +266,7 @@ export function UtiSectorSection({
                 variant="outline"
                 size="icon"
                 onClick={onAddExtraBed}
-                className="h-8 w-8 print:hidden"
+                className={`h-8 w-8 print:hidden ${buttonClass}`}
                 title="Adicionar leito extra"
               >
                 <Plus className="h-3.5 w-3.5" />
@@ -268,13 +277,13 @@ export function UtiSectorSection({
                 variant="outline"
                 size="icon"
                 onClick={onPrintSector}
-                className="h-8 w-8 print:hidden"
+                className={`h-8 w-8 print:hidden ${buttonClass}`}
               >
                 <Printer className="h-3.5 w-3.5" />
               </Button>
             )}
-            <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:w-6">
-              <p className="text-base font-bold text-foreground print:text-[10px]">{patients.length}</p>
+            <div className={`flex items-center justify-center h-8 w-8 backdrop-blur-sm rounded-lg border print:h-6 print:w-6 ${counterClass}`}>
+              <p className={`text-base font-bold print:text-[10px] ${titleClass}`}>{patients.length}</p>
             </div>
           </div>
         </div>
