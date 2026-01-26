@@ -848,7 +848,7 @@ export function UtiPatientCard({
 
                   {/* UTI Admission Date */}
                   <div className="hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
-                    <span className="text-[9px]">Admissão:</span>
+                    <span className="text-[9px]">Admissão UTI:</span>
                     <InlineEditableField
                       value={patient.utiAdmissionDate?.[0] || ""}
                       onUpdate={(v) => handleUpdateField("utiAdmissionDate", v ? [v] : [])}
