@@ -635,8 +635,8 @@ export function UtiPatientCard({
       col2Icon: "text-blue-500 dark:text-blue-300",
       col3: "bg-blue-100/60 dark:bg-blue-900/30 border-blue-200/50 dark:border-blue-700/40",
       col3Icon: "text-blue-500 dark:text-blue-300",
-      col4: "bg-gradient-to-br from-amber-50/40 to-card dark:from-amber-950/20 dark:to-card/80 border-amber-300/30 dark:border-amber-600/20 ring-1 ring-amber-200/15 dark:ring-amber-700/10",
-      col4Icon: "text-amber-600 dark:text-amber-400",
+      col4: "bg-blue-50/60 dark:bg-blue-950/30 border-blue-200/50 dark:border-blue-700/40 ring-1 ring-blue-200/30 dark:ring-blue-700/20",
+      col4Icon: "text-blue-600 dark:text-blue-400",
     },
     yellow: {
       card: "bg-amber-50/50 dark:bg-amber-950/30 border-amber-400/30",
@@ -648,8 +648,8 @@ export function UtiPatientCard({
       col2Icon: "text-amber-500 dark:text-amber-300",
       col3: "bg-amber-100/60 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
       col3Icon: "text-amber-500 dark:text-amber-300",
-      col4: "bg-gradient-to-br from-blue-50/40 to-card dark:from-blue-950/20 dark:to-card/80 border-blue-300/30 dark:border-blue-600/20 ring-1 ring-blue-200/15 dark:ring-blue-700/10",
-      col4Icon: "text-blue-600 dark:text-blue-400",
+      col4: "bg-amber-50/60 dark:bg-amber-950/30 border-amber-200/50 dark:border-amber-700/40 ring-1 ring-amber-200/30 dark:ring-amber-700/20",
+      col4Icon: "text-amber-600 dark:text-amber-400",
     }
   };
 
