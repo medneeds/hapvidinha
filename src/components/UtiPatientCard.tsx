@@ -253,6 +253,7 @@ interface InlineEditableArrayProps {
   onTabPress?: () => void;
   fieldId?: string;
   isActive?: boolean;
+  iconColorClass?: string;
 }
 
 function InlineEditableArray({ 
@@ -270,7 +271,8 @@ function InlineEditableArray({
   onEnterPress,
   onTabPress,
   fieldId,
-  isActive
+  isActive,
+  iconColorClass = "text-primary/60 hover:text-primary"
 }: InlineEditableArrayProps) {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
@@ -382,7 +384,7 @@ function InlineEditableArray({
           <Button
             size="icon"
             variant="ghost"
-            className="h-4 w-4 text-primary/60 hover:text-primary"
+            className={cn("h-4 w-4", iconColorClass)}
             onClick={(e) => {
               e.stopPropagation();
               setIsAddingNew(true);
@@ -473,7 +475,7 @@ function InlineEditableArray({
           <Button
             size="sm"
             variant="ghost"
-            className="h-5 text-xs text-primary/60 hover:text-primary p-0 mt-1"
+            className={cn("h-5 text-xs p-0 mt-1", iconColorClass)}
             onClick={(e) => {
               e.stopPropagation();
               setIsAddingNew(true);
@@ -845,6 +847,7 @@ export function UtiPatientCard({
                     onUpdate={(items) => handleUpdateField("diagnoses", items)}
                     label="Hipóteses / Diagnósticos"
                     icon={<Stethoscope className={cn("h-2.5 w-2.5", colors.col1Icon)} />}
+                    iconColorClass={colors.col1Icon}
                     alwaysShowAll
                     fieldId="diagnoses"
                     isActive={activeColumn === 'diagnoses'}
@@ -858,6 +861,7 @@ export function UtiPatientCard({
                     onUpdate={(items) => handleUpdateField("medicalHistory", items)}
                     label="Antecedentes / Comorbidades"
                     icon={<Activity className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
+                    iconColorClass={colors.col2Icon}
                     alwaysShowAll
                     fieldId="antecedentes"
                     isActive={activeColumn === 'antecedentes'}
@@ -871,6 +875,7 @@ export function UtiPatientCard({
                     onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
                     label="Plano Terapêutico"
                     icon={<FileText className={cn("h-2.5 w-2.5", colors.col3Icon)} />}
+                    iconColorClass={colors.col3Icon}
                     alwaysShowAll
                     fieldId="condutas"
                     isActive={activeColumn === 'condutas'}
@@ -884,6 +889,7 @@ export function UtiPatientCard({
                     onUpdate={(items) => handleUpdateField("pendencies", items)}
                     label="Programações / Pendências"
                     icon={<ClipboardList className={cn("h-2.5 w-2.5", colors.col4Icon)} />}
+                    iconColorClass={colors.col4Icon}
                     alwaysShowAll
                     highlightedIndices={patient.highlightedPendencies || []}
                     onUpdateHighlights={(indices) => handleUpdateField("highlightedPendencies", indices)}
