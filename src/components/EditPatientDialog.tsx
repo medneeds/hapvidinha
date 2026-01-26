@@ -1,29 +1,97 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Patient } from "@/types/patient";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { X, Sparkles, Star, TrendingUp, Plus, ChevronDown, Activity } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ExamCurvesDialog } from './ExamCurvesDialog';
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useAgeCalculator } from "@/hooks/useAgeCalculator";
+import { X, FileText, AlertTriangle, Activity, Pill, Stethoscope, Plus, Trash2 } from "lucide-react";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { cn } from "@/lib/utils";
 
 interface EditPatientDialogProps {
   patient: Patient;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (updatedPatient: Patient) => void;
+}
+
+// Helper component for array field editing
+interface ArrayFieldEditorProps {
+  items: string[];
+  onUpdate: (items: string[]) => void;
+  label: string;
+  placeholder: string;
+  icon?: React.ReactNode;
+  accentColor?: string;
+}
+
+function ArrayFieldEditor({ items, onUpdate, label, placeholder, icon, accentColor }: ArrayFieldEditorProps) {
+  const addItem = () => {
+    onUpdate([...items, ""]);
+  };
+
+  const updateItem = (index: number, value: string) => {
+    const updated = [...items];
+    updated[index] = value.toUpperCase();
+    onUpdate(updated);
+  };
+
+  const removeItem = (index: number) => {
+    onUpdate(items.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <Label className={cn("text-sm font-semibold flex items-center gap-2", accentColor)}>
+          {icon}
+          {label}
+        </Label>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={addItem}
+          className="h-7 px-2 text-xs gap-1"
+        >
+          <Plus className="h-3 w-3" />
+          Adicionar
+        </Button>
+      </div>
+      <div className="space-y-1.5">
+        {items.length === 0 ? (
+          <p className="text-xs text-muted-foreground italic py-2">Nenhum item cadastrado</p>
+        ) : (
+          items.map((item, idx) => (
+            <div key={idx} className="flex gap-1.5">
+              <Input
+                value={item}
+                onChange={(e) => updateItem(idx, e.target.value)}
+                placeholder={`${placeholder} ${idx + 1}`}
+                className={cn("h-9 text-sm uppercase", accentColor && "border-red-200/50")}
+              />
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                onClick={() => removeItem(idx)}
+                className="h-9 w-9 flex-shrink-0"
+              >
+                <X className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
 }
 
 export function EditPatientDialog({
@@ -33,97 +101,25 @@ export function EditPatientDialog({
   onSave,
 }: EditPatientDialogProps) {
   const [formData, setFormData] = useState(patient);
-  const [focusField, setFocusField] = useState<{field: string, index: number} | null>(null);
   const [admissionHistoryLocal, setAdmissionHistoryLocal] = useState("");
-  const [loadingCid, setLoadingCid] = useState<number | null>(null);
-  const [ageInput, setAgeInput] = useState("");
-  const [isFormattingAge, setIsFormattingAge] = useState(false);
-  const [showExamCurvesDialog, setShowExamCurvesDialog] = useState(false);
   const { currentDepartment } = useDepartment();
-  const isPediatric = currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA";
-  const { calculateAge, isCalculating } = useAgeCalculator(isPediatric);
-  const inputRefs = useRef<{[key: string]: HTMLInputElement[]}>({});
+  const isUti = currentDepartment === "UTI";
 
   // Reset form data when patient changes or dialog opens
   useEffect(() => {
     if (open) {
       setFormData(patient);
-      setAdmissionHistoryLocal(patient.admissionHistory);
-      const ageValue = typeof patient.age === 'number' ? (patient.age > 0 ? patient.age.toString() : "") : patient.age;
-      setAgeInput(ageValue);
-      inputRefs.current = {};
+      setAdmissionHistoryLocal(patient.admissionHistory || "");
     }
   }, [open, patient]);
 
-  // Handle focus when focusField changes
-  useEffect(() => {
-    if (focusField) {
-      const inputs = inputRefs.current[focusField.field];
-      if (inputs && inputs[focusField.index]) {
-        inputs[focusField.index].focus();
-        setFocusField(null);
-      }
-    }
-  }, [focusField, formData]);
-
   const handleSave = () => {
-    // Sincronizar estado local do admissionHistory antes de salvar
     const finalFormData = {
       ...formData,
-      admissionHistory: admissionHistoryLocal
+      admissionHistory: admissionHistoryLocal.toUpperCase()
     };
-    
-    // Garantir que todos os campos de texto estejam em uppercase
-    const uppercaseData = {
-      ...finalFormData,
-      name: finalFormData.name.toUpperCase(),
-      bedNumber: finalFormData.bedNumber.toUpperCase(),
-      diagnoses: finalFormData.diagnoses.map(d => d.toUpperCase()),
-      medicalHistory: finalFormData.medicalHistory.map(m => m.toUpperCase()),
-      relevantExams: finalFormData.relevantExams.map(e => e.toUpperCase()),
-      pendencies: finalFormData.pendencies.map(p => p.toUpperCase()),
-      schedule: finalFormData.schedule.map(s => s.toUpperCase()),
-      admissionHistory: finalFormData.admissionHistory.toUpperCase(),
-    };
-    console.log('Saving patient data:', uppercaseData);
-    onSave(uppercaseData);
+    onSave(finalFormData);
     onOpenChange(false);
-  };
-
-  const addItem = (field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">) => {
-    const newArray = [...formData[field], ""];
-    setFormData({
-      ...formData,
-      [field]: newArray,
-    });
-    // Set focus to the new last item
-    setFocusField({ field, index: newArray.length - 1 });
-  };
-
-  const updateItem = (
-    field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">,
-    index: number,
-    value: string
-  ) => {
-    const updated = [...formData[field]];
-    updated[index] = value;
-    setFormData({ ...formData, [field]: updated });
-  };
-
-  const removeItem = (
-    field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">,
-    index: number
-  ) => {
-    const updated = formData[field].filter((_, i) => i !== index);
-    setFormData({ ...formData, [field]: updated });
-  };
-
-  const clearField = (field: keyof Patient) => {
-    if (Array.isArray(formData[field])) {
-      setFormData({ ...formData, [field]: [] });
-    } else if (typeof formData[field] === "string") {
-      setFormData({ ...formData, [field]: "" });
-    }
   };
 
   const clearAllFields = () => {
@@ -138,201 +134,19 @@ export function EditPatientDialog({
       schedule: [],
       admissionHistory: "",
       admissionDate: new Date().toISOString().slice(0, 16).replace("T", " "),
+      utiDevices: [],
+      utiAllergies: [],
+      utiCulturesAntibiotics: [],
+      utiSpecialties: [],
+      utiCurrentStatus: [],
+      utiDailyConducts: [],
+      utiOriginSector: [],
+      utiAdmissionDate: [],
+      utiDischargePrediction: [],
+      utiAdmissionReason: [],
     });
     setAdmissionHistoryLocal("");
   };
-
-  const getCidCode = async (diagnosis: string, index: number) => {
-    if (!diagnosis.trim()) {
-      toast.error("Digite um diagnóstico antes de buscar o CID");
-      return;
-    }
-
-    setLoadingCid(index);
-    try {
-      const { data, error } = await supabase.functions.invoke('get-cid-code', {
-        body: { diagnosis }
-      });
-
-      if (error) throw error;
-
-      if (data?.cidCode) {
-        const diagnosisWithCid = `${diagnosis} (${data.cidCode})`;
-        updateItem("diagnoses", index, diagnosisWithCid);
-        toast.success(`CID ${data.cidCode} adicionado`);
-      }
-    } catch (error) {
-      console.error('Error getting CID code:', error);
-      toast.error("Erro ao buscar código CID");
-    } finally {
-      setLoadingCid(null);
-    }
-  };
-
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">,
-    index: number
-  ) => {
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      e.preventDefault();
-      const isLastItem = index === formData[field].length - 1;
-      const currentValue = formData[field][index].trim();
-      
-      // Se for o último item e tiver conteúdo, adiciona um novo campo
-      if (isLastItem && currentValue) {
-        addItem(field);
-      } else if (!isLastItem) {
-        // Se não for o último, foca no próximo campo existente
-        setFocusField({ field, index: index + 1 });
-      }
-    }
-  };
-
-  const handleAddExamCurves = (curves: string[]) => {
-    const currentExams = formData.relevantExams || [];
-    setFormData({
-      ...formData,
-      relevantExams: [...currentExams, ...curves],
-    });
-  };
-
-  const handleAddValueToCurve = (examIndex: number) => {
-    const currentExams = formData.relevantExams || [];
-    const examText = currentExams[examIndex];
-    
-    // Check if it's already a curve format (contains ":")
-    if (examText && examText.includes(':')) {
-      const newValue = prompt('Digite o novo valor para adicionar à curva:');
-      if (newValue && newValue.trim() !== '') {
-        const updatedExam = `${examText} > ${newValue.trim().toUpperCase()}`;
-        const updatedExams = currentExams.map((exam, idx) =>
-          idx === examIndex ? updatedExam : exam
-        );
-        setFormData({
-          ...formData,
-          relevantExams: updatedExams,
-        });
-      }
-    }
-  };
-
-  const renderArrayField = (
-    field: keyof Pick<Patient, "diagnoses" | "medicalHistory" | "relevantExams" | "pendencies" | "schedule">,
-    label: string
-  ) => (
-    <div className="space-y-1.5">
-      <div className="flex items-center justify-between">
-        <Label className="text-sm font-semibold">{label}</Label>
-        <div className="flex gap-1">
-          {field === "relevantExams" && (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => setShowExamCurvesDialog(true)}
-              className="h-7 px-2 text-xs gap-1"
-              title="Adicionar Curva de Exames"
-            >
-              <TrendingUp className="h-3 w-3" />
-              Curvas
-            </Button>
-          )}
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            onClick={() => addItem(field)}
-            className="h-7 px-2 text-xs"
-          >
-            + Adicionar
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            onClick={() => clearField(field)}
-            className="h-7 px-2 text-xs"
-          >
-            Limpar
-          </Button>
-        </div>
-      </div>
-      <div className="space-y-1.5">
-        {formData[field].map((item, idx) => (
-          <div key={idx} className="flex gap-1.5">
-            <Input
-              ref={(el) => {
-                if (el) {
-                  if (!inputRefs.current[field]) {
-                    inputRefs.current[field] = [];
-                  }
-                  inputRefs.current[field][idx] = el;
-                }
-              }}
-              value={item}
-              onChange={(e) => updateItem(field, idx, e.target.value.toUpperCase())}
-              onKeyDown={(e) => handleKeyDown(e, field, idx)}
-              placeholder={`${label} ${idx + 1}`}
-              className="h-9 text-sm uppercase"
-            />
-            {field === "diagnoses" && (
-              <Button
-                type="button"
-                size="icon"
-                variant="outline"
-                onClick={() => getCidCode(item, idx)}
-                disabled={loadingCid === idx}
-                className="h-9 w-9 flex-shrink-0"
-                title="Buscar código CID"
-              >
-                <Sparkles className={`h-3.5 w-3.5 ${loadingCid === idx ? 'animate-pulse' : ''}`} />
-              </Button>
-            )}
-            {field === "relevantExams" && item.includes(':') && (
-              <Button
-                type="button"
-                size="icon"
-                variant="outline"
-                onClick={() => handleAddValueToCurve(idx)}
-                className="h-9 w-9 flex-shrink-0"
-                title="Adicionar valor à curva"
-              >
-                <Plus className="h-3.5 w-3.5 text-primary" />
-              </Button>
-            )}
-            {field === "pendencies" && (
-              <Button
-                type="button"
-                size="icon"
-                variant="outline"
-                onClick={() => {
-                  const highlighted = formData.highlightedPendencies || [];
-                  const updatedHighlighted = highlighted.includes(idx)
-                    ? highlighted.filter(i => i !== idx)
-                    : [...highlighted, idx];
-                  setFormData({ ...formData, highlightedPendencies: updatedHighlighted });
-                }}
-                className="h-9 w-9 flex-shrink-0"
-                title="Destacar item"
-              >
-                <Star className={`h-3.5 w-3.5 ${formData.highlightedPendencies?.includes(idx) ? 'fill-amber-500 text-amber-500' : 'text-muted-foreground'}`} />
-              </Button>
-            )}
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              onClick={() => removeItem(field, idx)}
-              className="h-9 w-9 flex-shrink-0"
-            >
-              <X className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 
   const sectorLabel = patient.sector === 'outside' ? 'Fora das Alas' : 
                         patient.sector === 'red' ? 'Sala Vermelha' :
@@ -340,555 +154,84 @@ export function EditPatientDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <DialogTitle className="text-base sm:text-lg truncate">
-                Editar Paciente - Leito {patient.bedNumber}
+              <DialogTitle className="text-base sm:text-lg truncate flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                Edição Avançada - Leito {patient.bedNumber}
               </DialogTitle>
-              <p className="text-xs text-muted-foreground mt-1">
-                {sectorLabel}
-              </p>
+              <DialogDescription className="text-xs mt-1">
+                {patient.name} • {sectorLabel}
+              </DialogDescription>
             </div>
             <Button
               type="button"
               variant="destructive"
               size="sm"
               onClick={clearAllFields}
-              className="flex-shrink-0 h-8 px-3"
+              className="flex-shrink-0 h-8 px-3 gap-1"
             >
+              <Trash2 className="h-3.5 w-3.5" />
               Limpar Tudo
             </Button>
           </div>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto px-1 -mx-1">
-          <div className="space-y-3 py-3">
-            {/* Informações Básicas em Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-muted/30 rounded-lg">
-            {/* Paciente - Nome */}
-            <div className="space-y-1.5 md:col-span-2">
+          <div className="space-y-4 py-3">
+            
+            {/* Seção Principal: História Admissional */}
+            <div className="space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/20">
               <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold">Paciente</Label>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => clearField("name")}
-                  className="h-6 px-2 text-xs"
-                >
-                  Limpar
-                </Button>
-              </div>
-              <Input
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value.toUpperCase() })}
-                className="h-9 uppercase"
-              />
-            </div>
-
-            {/* Idade */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold flex items-center gap-2">
-                  Idade
-                  {(isCalculating || isFormattingAge) && <Sparkles className="h-3 w-3 animate-pulse text-primary" />}
+                <Label className="text-sm font-semibold flex items-center gap-2 text-primary">
+                  <FileText className="h-4 w-4" />
+                  História Admissional / Anamnese
                 </Label>
                 <Button
                   type="button"
                   size="sm"
                   variant="ghost"
-                  onClick={() => {
-                    setFormData({ ...formData, age: "" });
-                    setAgeInput("");
-                  }}
-                  className="h-6 px-2 text-xs"
-                  disabled={isCalculating || isFormattingAge}
-                >
-                  Limpar
-                </Button>
-              </div>
-              <div className="space-y-2">
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    value={ageInput}
-                    onChange={(e) => setAgeInput(e.target.value)}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter' && ageInput.trim()) {
-                        e.preventDefault();
-                        
-                        if (isPediatric) {
-                          setIsFormattingAge(true);
-                          try {
-                            const { data, error } = await supabase.functions.invoke('format-pediatric-age', {
-                              body: { input: ageInput.trim() }
-                            });
-
-                            if (error) {
-                              console.error('Error formatting age:', error);
-                              toast.error("Erro ao formatar idade");
-                              const formatted = ageInput.trim().toUpperCase();
-                              setFormData({ ...formData, age: formatted });
-                              setAgeInput(formatted);
-                            } else if (data?.formatted_age) {
-                              setFormData({ ...formData, age: data.formatted_age });
-                              setAgeInput(data.formatted_age);
-                              if (data.explanation) {
-                                toast.success(data.explanation);
-                              }
-                            }
-                          } catch (err) {
-                            console.error('Error:', err);
-                            toast.error("Erro ao processar idade");
-                          } finally {
-                            setIsFormattingAge(false);
-                          }
-                        } else {
-                          const calculatedAge = await calculateAge(ageInput);
-                          if (calculatedAge !== null) {
-                            setFormData({ ...formData, age: calculatedAge });
-                            setAgeInput(calculatedAge);
-                          }
-                        }
-                      }
-                    }}
-                    placeholder={isPediatric ? "Ex: 15/03/2023 ou 2 anos, 3 meses (Enter)" : "Ex: 25 ou 15/03/1999 (Enter)"}
-                    className="h-9 flex-1"
-                    disabled={isCalculating || isFormattingAge}
-                  />
-                  {isPediatric && ageInput.trim() && (
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="default"
-                      onClick={async () => {
-                        setIsFormattingAge(true);
-                        try {
-                          const { data, error } = await supabase.functions.invoke('format-pediatric-age', {
-                            body: { input: ageInput.trim() }
-                          });
-
-                          if (error) {
-                            console.error('Error formatting age:', error);
-                            toast.error("Erro ao formatar idade");
-                            const formatted = ageInput.trim().toUpperCase();
-                            setFormData({ ...formData, age: formatted });
-                            setAgeInput(formatted);
-                          } else if (data?.formatted_age) {
-                            setFormData({ ...formData, age: data.formatted_age });
-                            setAgeInput(data.formatted_age);
-                            if (data.explanation) {
-                              toast.success(data.explanation);
-                            }
-                          }
-                        } catch (err) {
-                          console.error('Error:', err);
-                          toast.error("Erro ao processar idade");
-                        } finally {
-                          setIsFormattingAge(false);
-                        }
-                      }}
-                      disabled={isFormattingAge}
-                      className="h-9 w-9 flex-shrink-0"
-                      title="Formatar idade"
-                    >
-                      <Sparkles className={`h-4 w-4 ${isFormattingAge ? 'animate-pulse' : ''}`} />
-                    </Button>
-                  )}
-                </div>
-                {!isPediatric && typeof formData.age === 'number' && formData.age > 0 && (
-                  <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Sparkles className="h-3 w-3" />
-                    Idade calculada: {formData.age} ano{formData.age !== 1 ? 's' : ''}
-                  </div>
-                )}
-                {isPediatric && formData.age && formData.age !== "" && formData.age !== "0" && (
-                  <div className="text-xs text-primary font-medium flex items-center gap-1">
-                    <Sparkles className="h-3 w-3" />
-                    ✓ {formData.age}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Leito */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold">Leito</Label>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => clearField("bedNumber")}
+                  onClick={() => setAdmissionHistoryLocal("")}
                   className="h-6 px-2 text-xs"
                 >
                   Limpar
                 </Button>
               </div>
-              <Input
-                value={formData.bedNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, bedNumber: e.target.value.toUpperCase() })
-                }
-                className="h-9 uppercase"
+              <Textarea
+                value={admissionHistoryLocal}
+                onChange={(e) => setAdmissionHistoryLocal(e.target.value.toUpperCase())}
+                rows={8}
+                placeholder="HISTÓRIA CLÍNICA DETALHADA, QUEIXA PRINCIPAL, HDA, EXAME FÍSICO ADMISSIONAL..."
+                className="text-sm resize-y uppercase min-h-[180px]"
               />
+              <p className="text-[10px] text-muted-foreground">
+                Este campo é ideal para textos longos. Os demais campos clínicos (Diagnósticos, Antecedentes, Pendências) são editáveis diretamente no card do paciente.
+              </p>
             </div>
 
-            {/* Data de Admissão */}
-            <div className="space-y-1.5 md:col-span-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-semibold">Data/Hora de Admissão</Label>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => clearField("admissionDate")}
-                  className="h-6 px-2 text-xs"
-                >
-                  Limpar
-                </Button>
-              </div>
-              <Input
-                type="datetime-local"
-                value={formData.admissionDate.replace(" ", "T")}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    admissionDate: e.target.value.replace("T", " "),
-                  })
-                }
-                className="h-9"
-              />
-            </div>
-          </div>
-
-          {/* Campos de Array em Grid Duplo */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Hipóteses / Diagnósticos */}
-            {renderArrayField("diagnoses", "Hipóteses / Diagnósticos")}
-
-            {/* Antecedentes */}
-            {renderArrayField("medicalHistory", "Antecedentes")}
-
-            {/* Exames */}
-            {renderArrayField("relevantExams", "Exames")}
-
-            {/* Programações / Pendências */}
-            {renderArrayField("pendencies", "Programações / Pendências")}
-          </div>
-
-          {/* UTI Specific Fields - Collapsible Section */}
-          {(currentDepartment === "UTI" || patient.sector === "red") && (
-            <Collapsible defaultOpen={false}>
-              <CollapsibleTrigger asChild>
-                <Button variant="outline" className="w-full justify-between h-9 text-sm">
-                  <span className="flex items-center gap-2">
-                    <Activity className="h-4 w-4" />
-                    Campos Específicos UTI
-                  </span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="pt-3 space-y-3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {/* Quadro Atual */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold">Quadro Atual</Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const newArray = [...(formData.utiCurrentStatus || []), ""];
-                          setFormData({ ...formData, utiCurrentStatus: newArray });
-                        }}
-                        className="h-7 px-2 text-xs"
-                      >
-                        + Adicionar
-                      </Button>
-                    </div>
-                    <div className="space-y-1.5">
-                      {(formData.utiCurrentStatus || []).map((item, idx) => (
-                        <div key={idx} className="flex gap-1.5">
-                          <Input
-                            value={item}
-                            onChange={(e) => {
-                              const updated = [...(formData.utiCurrentStatus || [])];
-                              updated[idx] = e.target.value.toUpperCase();
-                              setFormData({ ...formData, utiCurrentStatus: updated });
-                            }}
-                            placeholder={`Quadro ${idx + 1}`}
-                            className="h-9 text-sm uppercase"
-                          />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => {
-                              const updated = (formData.utiCurrentStatus || []).filter((_, i) => i !== idx);
-                              setFormData({ ...formData, utiCurrentStatus: updated });
-                            }}
-                            className="h-9 w-9 flex-shrink-0"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Condutas do Dia */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold">Condutas do Dia</Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const newArray = [...(formData.utiDailyConducts || []), ""];
-                          setFormData({ ...formData, utiDailyConducts: newArray });
-                        }}
-                        className="h-7 px-2 text-xs"
-                      >
-                        + Adicionar
-                      </Button>
-                    </div>
-                    <div className="space-y-1.5">
-                      {(formData.utiDailyConducts || []).map((item, idx) => (
-                        <div key={idx} className="flex gap-1.5">
-                          <Input
-                            value={item}
-                            onChange={(e) => {
-                              const updated = [...(formData.utiDailyConducts || [])];
-                              updated[idx] = e.target.value.toUpperCase();
-                              setFormData({ ...formData, utiDailyConducts: updated });
-                            }}
-                            placeholder={`Conduta ${idx + 1}`}
-                            className="h-9 text-sm uppercase"
-                          />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => {
-                              const updated = (formData.utiDailyConducts || []).filter((_, i) => i !== idx);
-                              setFormData({ ...formData, utiDailyConducts: updated });
-                            }}
-                            className="h-9 w-9 flex-shrink-0"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Dispositivos */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold text-red-600">Dispositivos</Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const newArray = [...(formData.utiDevices || []), ""];
-                          setFormData({ ...formData, utiDevices: newArray });
-                        }}
-                        className="h-7 px-2 text-xs"
-                      >
-                        + Adicionar
-                      </Button>
-                    </div>
-                    <div className="space-y-1.5">
-                      {(formData.utiDevices || []).map((item, idx) => (
-                        <div key={idx} className="flex gap-1.5">
-                          <Input
-                            value={item}
-                            onChange={(e) => {
-                              const updated = [...(formData.utiDevices || [])];
-                              updated[idx] = e.target.value.toUpperCase();
-                              setFormData({ ...formData, utiDevices: updated });
-                            }}
-                            placeholder={`Dispositivo ${idx + 1}`}
-                            className="h-9 text-sm uppercase border-red-200"
-                          />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => {
-                              const updated = (formData.utiDevices || []).filter((_, i) => i !== idx);
-                              setFormData({ ...formData, utiDevices: updated });
-                            }}
-                            className="h-9 w-9 flex-shrink-0"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Alergias */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold text-red-600">Alergias</Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const newArray = [...(formData.utiAllergies || []), ""];
-                          setFormData({ ...formData, utiAllergies: newArray });
-                        }}
-                        className="h-7 px-2 text-xs"
-                      >
-                        + Adicionar
-                      </Button>
-                    </div>
-                    <div className="space-y-1.5">
-                      {(formData.utiAllergies || []).map((item, idx) => (
-                        <div key={idx} className="flex gap-1.5">
-                          <Input
-                            value={item}
-                            onChange={(e) => {
-                              const updated = [...(formData.utiAllergies || [])];
-                              updated[idx] = e.target.value.toUpperCase();
-                              setFormData({ ...formData, utiAllergies: updated });
-                            }}
-                            placeholder={`Alergia ${idx + 1}`}
-                            className="h-9 text-sm uppercase border-red-200"
-                          />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => {
-                              const updated = (formData.utiAllergies || []).filter((_, i) => i !== idx);
-                              setFormData({ ...formData, utiAllergies: updated });
-                            }}
-                            className="h-9 w-9 flex-shrink-0"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Culturas / ATB */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold text-red-600">Culturas / ATB</Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const newArray = [...(formData.utiCulturesAntibiotics || []), ""];
-                          setFormData({ ...formData, utiCulturesAntibiotics: newArray });
-                        }}
-                        className="h-7 px-2 text-xs"
-                      >
-                        + Adicionar
-                      </Button>
-                    </div>
-                    <div className="space-y-1.5">
-                      {(formData.utiCulturesAntibiotics || []).map((item, idx) => (
-                        <div key={idx} className="flex gap-1.5">
-                          <Input
-                            value={item}
-                            onChange={(e) => {
-                              const updated = [...(formData.utiCulturesAntibiotics || [])];
-                              updated[idx] = e.target.value.toUpperCase();
-                              setFormData({ ...formData, utiCulturesAntibiotics: updated });
-                            }}
-                            placeholder={`Cultura/ATB ${idx + 1}`}
-                            className="h-9 text-sm uppercase border-red-200"
-                          />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => {
-                              const updated = (formData.utiCulturesAntibiotics || []).filter((_, i) => i !== idx);
-                              setFormData({ ...formData, utiCulturesAntibiotics: updated });
-                            }}
-                            className="h-9 w-9 flex-shrink-0"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Especialidades */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-semibold">Especialidades</Label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const newArray = [...(formData.utiSpecialties || []), ""];
-                          setFormData({ ...formData, utiSpecialties: newArray });
-                        }}
-                        className="h-7 px-2 text-xs"
-                      >
-                        + Adicionar
-                      </Button>
-                    </div>
-                    <div className="space-y-1.5">
-                      {(formData.utiSpecialties || []).map((item, idx) => (
-                        <div key={idx} className="flex gap-1.5">
-                          <Input
-                            value={item}
-                            onChange={(e) => {
-                              const updated = [...(formData.utiSpecialties || [])];
-                              updated[idx] = e.target.value.toUpperCase();
-                              setFormData({ ...formData, utiSpecialties: updated });
-                            }}
-                            placeholder={`Especialidade ${idx + 1}`}
-                            className="h-9 text-sm uppercase"
-                          />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => {
-                              const updated = (formData.utiSpecialties || []).filter((_, i) => i !== idx);
-                              setFormData({ ...formData, utiSpecialties: updated });
-                            }}
-                            className="h-9 w-9 flex-shrink-0"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+            {/* Campos UTI Específicos - Apenas para UTI */}
+            {isUti && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground border-b pb-2">
+                  <Activity className="h-4 w-4" />
+                  Campos Específicos UTI
                 </div>
 
-                {/* UTI Dates */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                {/* Dados Administrativos UTI */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-muted/30 rounded-lg">
                   <div className="space-y-1.5">
-                    <Label className="text-sm font-semibold">Setor de Origem</Label>
+                    <Label className="text-xs font-semibold">Setor de Origem</Label>
                     <Input
                       value={(formData.utiOriginSector || [])[0] || ""}
                       onChange={(e) => setFormData({ ...formData, utiOriginSector: [e.target.value.toUpperCase()] })}
-                      placeholder="Setor de origem"
+                      placeholder="Ex: EMERGÊNCIA"
                       className="h-9 text-sm uppercase"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-sm font-semibold">Admissão UTI</Label>
+                    <Label className="text-xs font-semibold">Admissão UTI</Label>
                     <Input
                       value={(formData.utiAdmissionDate || [])[0] || ""}
                       onChange={(e) => setFormData({ ...formData, utiAdmissionDate: [e.target.value.toUpperCase()] })}
@@ -897,7 +240,7 @@ export function EditPatientDialog({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-sm font-semibold">Previsão de Alta</Label>
+                    <Label className="text-xs font-semibold">Previsão de Alta</Label>
                     <Input
                       value={(formData.utiDischargePrediction || [])[0] || ""}
                       onChange={(e) => setFormData({ ...formData, utiDischargePrediction: [e.target.value.toUpperCase()] })}
@@ -909,47 +252,77 @@ export function EditPatientDialog({
 
                 {/* Motivo da Admissão */}
                 <div className="space-y-1.5">
-                  <Label className="text-sm font-semibold">Motivo da Admissão UTI</Label>
+                  <Label className="text-sm font-semibold flex items-center gap-2">
+                    <Stethoscope className="h-4 w-4 text-primary" />
+                    Motivo da Admissão UTI
+                  </Label>
                   <Textarea
                     value={(formData.utiAdmissionReason || [])[0] || ""}
                     onChange={(e) => setFormData({ ...formData, utiAdmissionReason: [e.target.value.toUpperCase()] })}
-                    placeholder="Motivo da admissão na UTI..."
+                    placeholder="MOTIVO DA ADMISSÃO NA UTI..."
                     className="h-20 text-sm uppercase resize-none"
                   />
                 </div>
-              </CollapsibleContent>
-            </Collapsible>
-          )}
 
-          {/* História Admissional */}
-          <div className="space-y-1.5 pb-20">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-semibold">História Admissional / Anamnese</Label>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={() => {
-                  setAdmissionHistoryLocal("");
-                  setFormData({ ...formData, admissionHistory: "" });
-                }}
-                className="h-6 px-2 text-xs"
-              >
-                Limpar
-              </Button>
+                {/* Campos Críticos - Grid 2 colunas */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 bg-red-50/50 dark:bg-red-950/20 rounded-lg border border-red-200/50 dark:border-red-800/30">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-red-600 dark:text-red-400 col-span-full">
+                    <AlertTriangle className="h-4 w-4" />
+                    Campos Críticos
+                  </div>
+                  
+                  <ArrayFieldEditor
+                    items={formData.utiDevices || []}
+                    onUpdate={(items) => setFormData({ ...formData, utiDevices: items })}
+                    label="Dispositivos"
+                    placeholder="Dispositivo"
+                    accentColor="text-red-600 dark:text-red-400"
+                  />
+
+                  <ArrayFieldEditor
+                    items={formData.utiAllergies || []}
+                    onUpdate={(items) => setFormData({ ...formData, utiAllergies: items })}
+                    label="Alergias"
+                    placeholder="Alergia"
+                    accentColor="text-red-600 dark:text-red-400"
+                  />
+
+                  <ArrayFieldEditor
+                    items={formData.utiCulturesAntibiotics || []}
+                    onUpdate={(items) => setFormData({ ...formData, utiCulturesAntibiotics: items })}
+                    label="Culturas / ATB"
+                    placeholder="Cultura/ATB"
+                    icon={<Pill className="h-3.5 w-3.5" />}
+                    accentColor="text-red-600 dark:text-red-400"
+                  />
+
+                  <ArrayFieldEditor
+                    items={formData.utiSpecialties || []}
+                    onUpdate={(items) => setFormData({ ...formData, utiSpecialties: items })}
+                    label="Especialidades"
+                    placeholder="Especialidade"
+                  />
+                </div>
+
+                {/* Quadro Atual */}
+                <ArrayFieldEditor
+                  items={formData.utiCurrentStatus || []}
+                  onUpdate={(items) => setFormData({ ...formData, utiCurrentStatus: items })}
+                  label="Quadro Atual"
+                  placeholder="Status"
+                  icon={<Activity className="h-3.5 w-3.5 text-primary" />}
+                />
+              </div>
+            )}
+
+            {/* Informação sobre edição inline */}
+            <div className="p-3 bg-muted/50 rounded-lg border border-border/50">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong className="text-foreground">💡 Dica:</strong> Os campos de rotina clínica 
+                (Diagnósticos, Antecedentes, Plano Terapêutico, Pendências) são editáveis diretamente 
+                no card do paciente para agilizar o fluxo de trabalho durante os rounds.
+              </p>
             </div>
-            <Textarea
-              value={admissionHistoryLocal}
-              onChange={(e) => setAdmissionHistoryLocal(e.target.value)}
-              onBlur={(e) => {
-                const upperValue = e.target.value.toUpperCase();
-                setAdmissionHistoryLocal(upperValue);
-                setFormData({ ...formData, admissionHistory: upperValue });
-              }}
-              rows={5}
-              className="text-sm resize-y uppercase min-h-[120px]"
-            />
-          </div>
           </div>
         </div>
 
@@ -960,13 +333,6 @@ export function EditPatientDialog({
           <Button onClick={handleSave} className="h-9">Salvar Alterações</Button>
         </div>
       </DialogContent>
-
-      <ExamCurvesDialog
-        open={showExamCurvesDialog}
-        onOpenChange={setShowExamCurvesDialog}
-        onAddCurves={handleAddExamCurves}
-        patientName={patient?.name}
-      />
     </Dialog>
   );
 }
