@@ -82,8 +82,8 @@ function InlineClinicalList({ title, icon, content, accentColor }: InlineClinica
     <div className="space-y-1.5">
       <div className="flex items-center gap-1.5">
         {icon}
-        <span className={`text-xs font-semibold uppercase tracking-wide text-${accentColor}`}>{title}</span>
-        <Badge variant="secondary" className="text-[10px] h-4 px-1.5">
+        <span className={`text-[10px] font-medium uppercase tracking-wide text-${accentColor}`}>{title}</span>
+        <Badge variant="secondary" className="text-[9px] h-3.5 px-1">
           {lines.length}
         </Badge>
       </div>
@@ -518,7 +518,7 @@ export function BedAllocationNotifications() {
                         accentColor="amber-500"
                       />
                       <InlineClinicalList
-                        title="Antecedentes"
+                        title="Antecedentes / Comorbidades"
                         icon={<ClipboardList className="h-3.5 w-3.5 text-purple-500" />}
                         content={selectedRequest.patient?.medical_history}
                         accentColor="purple-500"
@@ -531,7 +531,7 @@ export function BedAllocationNotifications() {
                       variants={itemVariants}
                     >
                       <InlineClinicalList
-                        title="Exames"
+                        title="Plano Terapêutico"
                         icon={<FlaskConical className="h-3.5 w-3.5 text-cyan-500" />}
                         content={selectedRequest.patient?.relevant_exams}
                         accentColor="cyan-500"
