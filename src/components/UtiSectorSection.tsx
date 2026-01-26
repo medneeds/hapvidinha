@@ -260,11 +260,6 @@ export function UtiSectorSection({
       </div>
 
       <CollapsibleContent className="space-y-2 print:space-y-0.5">
-        {/* Hint for expandable cards */}
-        <div className="hidden md:flex items-center gap-2 px-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-          <div className="w-[72px]"></div>
-          <div className="flex-1 text-center">Clique no chevron para expandir detalhes do paciente</div>
-        </div>
 
         {displayPatients.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
