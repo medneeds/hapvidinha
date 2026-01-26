@@ -785,7 +785,7 @@ export function UtiPatientCard({
                   >
                     <SelectTrigger 
                       className={cn(
-                        "shrink-0 h-5 w-[120px] md:w-[140px] px-1.5 md:px-2 text-[8px] md:text-[9px] font-bold border-0 rounded",
+                        "shrink-0 h-5 w-[145px] md:w-[170px] px-1.5 md:px-2 text-[8px] md:text-[9px] font-bold border-0 rounded",
                         patient.clinicalStatus 
                           ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.color || "bg-muted"
                           : "bg-muted text-muted-foreground"
