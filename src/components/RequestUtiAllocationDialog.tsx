@@ -341,14 +341,14 @@ export function RequestUtiAllocationDialog({ open, onOpenChange }: RequestUtiAll
               <SelectContent>
                 <SelectItem value="UTI 1">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary" />
-                    <span>UTI 1 (Azul)</span>
+                    <span className="text-[10px] font-bold text-primary border border-primary/40 bg-primary/10 px-1.5 py-0.5 rounded">1</span>
+                    <span>UTI 1</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="UTI 2">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-amber-500" />
-                    <span>UTI 2 (Amarela)</span>
+                    <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 border border-amber-400/40 bg-amber-500/10 px-1.5 py-0.5 rounded">2</span>
+                    <span>UTI 2</span>
                   </div>
                 </SelectItem>
               </SelectContent>
