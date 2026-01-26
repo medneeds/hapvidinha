@@ -1128,7 +1128,7 @@ const Index = () => {
                     onPrintPatient={handlePrintPatient}
                     onRefetch={refetch}
                     customTitle="UNIDADE DE TERAPIA INTENSIVA 1"
-                    customIcon={<span className="text-[11px] font-bold text-primary border border-primary/40 bg-primary/10 px-1.5 py-0.5 rounded">1</span>}
+                    customIcon={<span className="w-3 h-3 rounded-full bg-primary/80 border border-primary/40" />}
                     colorVariant="blue"
                   />
                   <UtiSectorSection 
@@ -1147,7 +1147,7 @@ const Index = () => {
                     onPrintPatient={handlePrintPatient}
                     onRefetch={refetch}
                     customTitle="UNIDADE DE TERAPIA INTENSIVA 2"
-                    customIcon={<span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 border border-amber-400/40 bg-amber-500/10 px-1.5 py-0.5 rounded">2</span>}
+                    customIcon={<span className="w-3 h-3 rounded-full bg-amber-500/80 border border-amber-400/40" />}
                     colorVariant="yellow"
                   />
 
