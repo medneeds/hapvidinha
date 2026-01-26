@@ -714,10 +714,10 @@ export function UtiPatientCard({
                       )}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <SelectValue placeholder="STATUS">
+                      <SelectValue placeholder="CLASSIFICAÇÃO">
                         {patient.clinicalStatus 
                           ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.label 
-                          : "STATUS"
+                          : "CLASSIFICAÇÃO"
                         }
                       </SelectValue>
                     </SelectTrigger>
