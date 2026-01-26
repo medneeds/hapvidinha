@@ -15,6 +15,7 @@ import { NotificationCenter } from "@/components/NotificationCenter";
 import { BedAllocationNotifications } from "@/components/BedAllocationNotifications";
 import { DoorPatientNotifications } from "@/components/DoorPatientNotifications";
 import { RequestNewAllocationDialog } from "@/components/RequestNewAllocationDialog";
+import { RequestUtiAllocationDialog } from "@/components/RequestUtiAllocationDialog";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -190,6 +191,7 @@ const Index = () => {
   const [handoverDialogOpen, setHandoverDialogOpen] = useState(false);
   const [allocationDialogOpen, setAllocationDialogOpen] = useState(false);
   const [allocationTargetSector, setAllocationTargetSector] = useState<"Cuidados Especiais" | "Observação Amarela" | "Observação Azul">("Cuidados Especiais");
+  const [utiAllocationDialogOpen, setUtiAllocationDialogOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
@@ -1148,6 +1150,79 @@ const Index = () => {
                     customIcon="🏥"
                     colorVariant="yellow"
                   />
+
+                  {/* UTI Outside Patients Section - Bed Allocation Requests */}
+                  {(() => {
+                    const utiOutsidePatients = patients.filter(p => p.sector === 'outside');
+                    const isUtiOutsideSectionOpen = utiOutsidePatients.length > 0;
+                    return (
+                      <Collapsible open={isUtiOutsideSectionOpen} className="space-y-3 mb-4 print:hidden">
+                        <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
+                          <div className="flex items-center justify-between w-full">
+                            <CollapsibleTrigger asChild>
+                              <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                                <ChevronDown className={`h-5 w-5 transition-transform ${isUtiOutsideSectionOpen ? '' : '-rotate-90'}`} />
+                                <div className="flex items-center gap-2">
+                                  <span className="text-lg">📋</span>
+                                  <h2 className="text-lg font-bold text-foreground uppercase">Solicitações de Leito UTI</h2>
+                                </div>
+                              </button>
+                            </CollapsibleTrigger>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setUtiAllocationDialogOpen(true)}
+                                className="h-8 gap-1"
+                              >
+                                <Plus className="h-3.5 w-3.5" />
+                                Nova Solicitação
+                              </Button>
+                              <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
+                                <p className="text-base font-bold text-foreground">{utiOutsidePatients.length}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <CollapsibleContent>
+                          <div className="space-y-2 mt-3">
+                            {utiOutsidePatients.length === 0 ? (
+                              <p className="text-sm text-muted-foreground text-center py-4">
+                                Nenhuma solicitação de leito pendente
+                              </p>
+                            ) : (
+                              utiOutsidePatients.map((patient) => (
+                                <div key={patient.id} className="relative">
+                                  {/* Status bar showing requested UTI */}
+                                  {patient.allocationStatus === 'pending' && (
+                                    <div className="mb-1 px-3 py-1 rounded-t-lg bg-amber-100/80 dark:bg-amber-900/40 border border-amber-300/50 dark:border-amber-700/40 text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-2">
+                                      <span>⏳</span>
+                                      <span>AGUARDANDO APROVAÇÃO</span>
+                                      <span className="ml-auto text-[10px] text-muted-foreground">
+                                        Origem: {patient.utiOriginSector?.[0] || 'Não informado'}
+                                      </span>
+                                    </div>
+                                  )}
+                                  <PatientCard
+                                    patient={patient}
+                                    onUpdate={handleUpdatePatient}
+                                    onDelete={handleDeletePatient}
+                                    onUndelete={handleUndeletePatient}
+                                    selectionMode={selectionMode}
+                                    isSelected={selectedPatients.has(patient.id)}
+                                    onToggleSelection={handleToggleSelection}
+                                    onTransfer={handleTransferPatient}
+                                    onPrintPatient={handlePrintPatient}
+                                    onRefetch={refetch}
+                                  />
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    );
+                  })()}
                 </div>
               ) : (
                 <>
@@ -1328,6 +1403,12 @@ const Index = () => {
         open={allocationDialogOpen}
         onOpenChange={setAllocationDialogOpen}
         targetSector={allocationTargetSector}
+      />
+
+      {/* Request UTI Allocation Dialog */}
+      <RequestUtiAllocationDialog
+        open={utiAllocationDialogOpen}
+        onOpenChange={setUtiAllocationDialogOpen}
       />
 
       {/* Department Change Password Dialog - Removido, apenas admin pode trocar */}
