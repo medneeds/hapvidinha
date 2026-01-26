@@ -156,6 +156,13 @@ export function UtiSectorSection({
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
+
+  // Header color schemes based on colorVariant
+  const headerStyles = {
+    blue: "bg-primary/15 dark:bg-primary/25 border-l-4 border-l-primary",
+    yellow: "bg-amber-100/60 dark:bg-amber-900/30 border-l-4 border-l-amber-500"
+  };
+  const headerClass = headerStyles[colorVariant];
   
   useEffect(() => {
     if (controlledIsOpen === undefined) {
@@ -209,7 +216,7 @@ export function UtiSectorSection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
-      <div className={`${info.gradientClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center`}>
+      <div className={`${headerClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center`}>
         <div className="flex items-center justify-between w-full gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
