@@ -46,6 +46,9 @@ export function usePatients(department?: Department) {
         relevantExams: p.relevant_exams ? p.relevant_exams.split('\n').filter(Boolean) : [],
         pendencies: p.pendencies ? p.pendencies.split('\n').filter(Boolean) : [],
         highlightedPendencies: p.highlighted_pendencies || [],
+        highlightedDiagnoses: (p as any).highlighted_diagnoses || [],
+        highlightedMedicalHistory: (p as any).highlighted_medical_history || [],
+        highlightedConducts: (p as any).highlighted_conducts || [],
         schedule: p.schedule ? p.schedule.split('\n').filter(Boolean) : [],
         admissionHistory: p.admission_history || '',
         admissionDate: p.admission_date || '',
@@ -108,6 +111,9 @@ export function usePatients(department?: Department) {
       if (updates.relevantExams !== undefined) dbUpdates.relevant_exams = updates.relevantExams.join('\n');
       if (updates.pendencies !== undefined) dbUpdates.pendencies = updates.pendencies.join('\n');
       if (updates.highlightedPendencies !== undefined) dbUpdates.highlighted_pendencies = updates.highlightedPendencies;
+      if (updates.highlightedDiagnoses !== undefined) dbUpdates.highlighted_diagnoses = updates.highlightedDiagnoses;
+      if (updates.highlightedMedicalHistory !== undefined) dbUpdates.highlighted_medical_history = updates.highlightedMedicalHistory;
+      if (updates.highlightedConducts !== undefined) dbUpdates.highlighted_conducts = updates.highlightedConducts;
       if (updates.schedule !== undefined) dbUpdates.schedule = updates.schedule.join('\n');
       if (updates.admissionHistory !== undefined) dbUpdates.admission_history = updates.admissionHistory || null;
       if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate && updates.admissionDate !== '' ? updates.admissionDate : null;
