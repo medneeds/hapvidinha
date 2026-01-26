@@ -765,12 +765,15 @@ export function UtiPatientCard({
                     placeholder="NOME DO PACIENTE"
                     className="text-xs md:text-sm font-semibold truncate"
                   />
-                  <InlineEditableField
-                    value={String(patient.age || "")}
-                    onUpdate={(v) => handleUpdateField("age", v)}
-                    placeholder="IDADE"
-                    className="shrink-0 text-[10px] md:text-xs text-muted-foreground"
-                  />
+                  <div className="shrink-0 flex items-center gap-1 text-[10px] md:text-xs text-muted-foreground">
+                    <InlineEditableField
+                      value={String(patient.age || "").replace(/\s*anos?\s*$/i, "")}
+                      onUpdate={(v) => handleUpdateField("age", v)}
+                      placeholder="IDADE"
+                      className="w-8 text-center"
+                    />
+                    {patient.age && <span>anos</span>}
+                  </div>
                 </div>
 
                 {/* Mobile: Chips wrap to second line */}
