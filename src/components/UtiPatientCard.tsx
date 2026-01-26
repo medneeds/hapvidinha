@@ -306,18 +306,32 @@ function InlineEditableArray({
   };
 
   const [itemIds, setItemIds] = useState<string[]>(() => items.map(() => makeId()));
+  
+  // Track previous items length to detect external changes vs internal changes
+  const prevItemsLengthRef = useRef(items.length);
+  const isInternalChangeRef = useRef(false);
 
-  // Keep ids array length in sync with items length (adds append-only ids when needed)
+  // Keep ids array length in sync with items length
   useEffect(() => {
+    // If this is an internal change (we already handled it), skip
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      prevItemsLengthRef.current = items.length;
+      return;
+    }
+    
     setItemIds((prev) => {
       if (prev.length === items.length) return prev;
       if (prev.length < items.length) {
+        // Items were added externally
         const toAdd = items.length - prev.length;
         return [...prev, ...Array.from({ length: toAdd }, () => makeId())];
       }
-      // Fallback: trim (most deletes are handled explicitly below, but keep it safe)
+      // Items were removed externally - trim from end
       return prev.slice(0, items.length);
     });
+    
+    prevItemsLengthRef.current = items.length;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items.length]);
 
@@ -367,6 +381,7 @@ function InlineEditableArray({
       }
       
       // Update both items and highlights in a single batch
+      isInternalChangeRef.current = true;
       setItemIds(newIds);
       onUpdate(newItems);
       if (onUpdateHighlights && highlightedIndices.length > 0) {
@@ -377,6 +392,7 @@ function InlineEditableArray({
 
   const handleAddItem = (continueAdding: boolean = false) => {
     if (newItemValue.trim()) {
+      isInternalChangeRef.current = true;
       setItemIds((prev) => [...prev, makeId()]);
       onUpdate([...items, newItemValue.trim().toUpperCase()]);
       setNewItemValue("");
@@ -474,6 +490,7 @@ function InlineEditableArray({
                       onUpdate(newItems);
                     }}
                     onDelete={() => {
+                      isInternalChangeRef.current = true;
                       setItemIds((prev) => prev.filter((_, i) => i !== realIdx));
                       const newItems = items.filter((_, i) => i !== realIdx);
                       const newHighlights = highlightedIndices
@@ -727,6 +744,9 @@ export function UtiPatientCard({
     const value = patient[key];
     if (Array.isArray(value)) {
       return value.filter((v): v is string => typeof v === 'string');
+    }
+    if (typeof value === 'string' && value.includes('\n')) {
+      return value.split('\n').filter(v => v.trim() !== '');
     }
     return value ? [value as string] : [];
   };
