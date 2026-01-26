@@ -662,7 +662,7 @@ export function UtiPatientCard({
   return (
     <>
       <div 
-        className="bg-card border border-border/50 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all duration-200"
+        className="bg-slate-100 dark:bg-slate-900/80 border border-primary/20 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200"
         data-patient-id={patient.id}
       >
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
@@ -797,12 +797,12 @@ export function UtiPatientCard({
 
               {/* Row 2: 4 columns on desktop, 2x2 grid on mobile */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5">
-                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1 md:p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
+                <div className="bg-sky-100/70 dark:bg-sky-900/30 rounded-lg p-1 md:p-1.5 shadow-sm border border-sky-300/50 dark:border-sky-700/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
                     items={diagnosticos}
                     onUpdate={(items) => handleUpdateField("diagnoses", items)}
                     label="HIPÓTESES / DIAGNÓSTICOS"
-                    icon={<Stethoscope className="h-2.5 w-2.5 text-primary/70" />}
+                    icon={<Stethoscope className="h-2.5 w-2.5 text-sky-600 dark:text-sky-400" />}
                     alwaysShowAll
                     fieldId="diagnoses"
                     isActive={activeColumn === 'diagnoses'}
@@ -810,12 +810,12 @@ export function UtiPatientCard({
                     onEnterPress={() => setActiveColumn('diagnoses')}
                   />
                 </div>
-                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1 md:p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
+                <div className="bg-blue-100/70 dark:bg-blue-900/30 rounded-lg p-1 md:p-1.5 shadow-sm border border-blue-300/50 dark:border-blue-700/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
                     items={antecedentes}
                     onUpdate={(items) => handleUpdateField("medicalHistory", items)}
                     label="ANTECEDENTES / COMORBIDADES"
-                    icon={<Activity className="h-2.5 w-2.5 text-primary/70" />}
+                    icon={<Activity className="h-2.5 w-2.5 text-blue-600 dark:text-blue-400" />}
                     alwaysShowAll
                     fieldId="antecedentes"
                     isActive={activeColumn === 'antecedentes'}
@@ -823,12 +823,12 @@ export function UtiPatientCard({
                     onEnterPress={() => setActiveColumn('antecedentes')}
                   />
                 </div>
-                <div className="bg-card/80 dark:bg-card/60 rounded-lg p-1 md:p-1.5 shadow-sm border border-border/60 dark:border-border/40 backdrop-blur-sm hover:shadow-md transition-shadow">
+                <div className="bg-indigo-100/70 dark:bg-indigo-900/30 rounded-lg p-1 md:p-1.5 shadow-sm border border-indigo-300/50 dark:border-indigo-700/40 backdrop-blur-sm hover:shadow-md transition-shadow">
                   <InlineEditableArray
                     items={condutasDia}
                     onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
                     label="PLANO TERAPÊUTICO"
-                    icon={<FileText className="h-2.5 w-2.5 text-primary/70" />}
+                    icon={<FileText className="h-2.5 w-2.5 text-indigo-600 dark:text-indigo-400" />}
                     alwaysShowAll
                     fieldId="condutas"
                     isActive={activeColumn === 'condutas'}
