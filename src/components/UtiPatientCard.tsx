@@ -374,7 +374,7 @@ function InlineEditableArray({
         <div className="flex items-center justify-between mb-0.5">
           <div className="flex items-center gap-1">
             {icon}
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{label}</span>
+            <span className="text-[10px] font-semibold text-muted-foreground tracking-wide">{label}</span>
             {items.length > 0 && (
               <Badge variant="secondary" className="h-3.5 px-1 text-[9px]">{items.length}</Badge>
             )}
@@ -802,7 +802,7 @@ export function UtiPatientCard({
                   <InlineEditableArray
                     items={diagnosticos}
                     onUpdate={(items) => handleUpdateField("diagnoses", items)}
-                    label="HIPÓTESES / DIAGNÓSTICOS"
+                    label="Hipóteses / Diagnósticos"
                     icon={<Stethoscope className={cn("h-2.5 w-2.5", colors.col1Icon)} />}
                     alwaysShowAll
                     fieldId="diagnoses"
@@ -815,7 +815,7 @@ export function UtiPatientCard({
                   <InlineEditableArray
                     items={antecedentes}
                     onUpdate={(items) => handleUpdateField("medicalHistory", items)}
-                    label="ANTECEDENTES / COMORBIDADES"
+                    label="Antecedentes / Comorbidades"
                     icon={<Activity className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
                     alwaysShowAll
                     fieldId="antecedentes"
@@ -828,7 +828,7 @@ export function UtiPatientCard({
                   <InlineEditableArray
                     items={condutasDia}
                     onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
-                    label="PLANO TERAPÊUTICO"
+                    label="Plano Terapêutico"
                     icon={<FileText className={cn("h-2.5 w-2.5", colors.col3Icon)} />}
                     alwaysShowAll
                     fieldId="condutas"
@@ -841,7 +841,7 @@ export function UtiPatientCard({
                   <InlineEditableArray
                     items={pendencias}
                     onUpdate={(items) => handleUpdateField("pendencies", items)}
-                    label="PROGRAMAÇÕES / PENDÊNCIAS"
+                    label="Programações / Pendências"
                     icon={<ClipboardList className={cn("h-2.5 w-2.5", colors.col4Icon)} />}
                     alwaysShowAll
                     highlightedIndices={patient.highlightedPendencies || []}
