@@ -319,20 +319,32 @@ function InlineEditableArray({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const oldIndex = items.findIndex((_, i) => `item-${i}` === active.id);
-      const newIndex = items.findIndex((_, i) => `item-${i}` === over.id);
-      onUpdate(arrayMove(items, oldIndex, newIndex));
-      // Also reorder highlights
+      const oldIndex = parseInt(String(active.id).replace('item-', ''));
+      const newIndex = parseInt(String(over.id).replace('item-', ''));
+      
+      if (isNaN(oldIndex) || isNaN(newIndex)) return;
+      
+      const newItems = arrayMove(items, oldIndex, newIndex);
+      
+      // Reorder highlights correctly: map old highlight indices to new positions
+      let newHighlights: number[] = [];
       if (onUpdateHighlights && highlightedIndices.length > 0) {
-        const newHighlights = highlightedIndices.map(idx => {
+        newHighlights = highlightedIndices.map(idx => {
           if (idx === oldIndex) return newIndex;
           if (oldIndex < newIndex) {
+            // Item moved down: indices between shift up by 1
             if (idx > oldIndex && idx <= newIndex) return idx - 1;
           } else {
+            // Item moved up: indices between shift down by 1
             if (idx >= newIndex && idx < oldIndex) return idx + 1;
           }
           return idx;
         });
+      }
+      
+      // Update both items and highlights in a single batch
+      onUpdate(newItems);
+      if (onUpdateHighlights && highlightedIndices.length > 0) {
         onUpdateHighlights(newHighlights);
       }
     }
@@ -421,7 +433,7 @@ function InlineEditableArray({
             <SortableContext items={displayItems.map((_, i) => `item-${i}`)} strategy={verticalListSortingStrategy}>
               {displayItems.map((item, idx) => (
                 <SortableItem
-                  key={`item-${idx}`}
+                  key={`sortable-${idx}-${item.substring(0, 10)}`}
                   id={`item-${idx}`}
                   index={idx}
                   value={item}
@@ -431,14 +443,13 @@ function InlineEditableArray({
                     onUpdate(newItems);
                   }}
                   onDelete={() => {
-                    onUpdate(items.filter((_, i) => i !== idx));
-                    // Update highlight indices when deleting
+                    const newItems = items.filter((_, i) => i !== idx);
+                    const newHighlights = highlightedIndices
+                      .filter(i => i !== idx)
+                      .map(i => i > idx ? i - 1 : i);
+                    onUpdate(newItems);
                     if (onUpdateHighlights) {
-                      onUpdateHighlights(
-                        highlightedIndices
-                          .filter(i => i !== idx)
-                          .map(i => i > idx ? i - 1 : i)
-                      );
+                      onUpdateHighlights(newHighlights);
                     }
                   }}
                   showDragHandle={showNumbers}
