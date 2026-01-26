@@ -773,18 +773,34 @@ export function UtiPatientCard({
                   <div className={cn(
                     "shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-md border",
                     daysInUti > 4 
-                      ? "bg-amber-100 dark:bg-amber-900/40 border-amber-400/50 dark:border-amber-600/50" 
-                      : "bg-primary/15 dark:bg-primary/25 border-primary/30"
+                      ? "bg-red-100 dark:bg-red-900/40 border-red-400/50 dark:border-red-600/50" 
+                      : colorVariant === 'yellow' 
+                        ? "bg-amber-100 dark:bg-amber-900/30 border-amber-300/50 dark:border-amber-600/40" 
+                        : "bg-primary/15 dark:bg-primary/25 border-primary/30"
                   )}>
-                    <span className={cn("text-[9px] font-bold", daysInUti > 4 ? "text-amber-700 dark:text-amber-300" : "text-primary")}>
+                    <span className={cn(
+                      "text-[9px] font-bold", 
+                      daysInUti > 4 
+                        ? "text-red-700 dark:text-red-300" 
+                        : colorVariant === 'yellow' 
+                          ? "text-amber-700 dark:text-amber-400" 
+                          : "text-primary"
+                    )}>
                       DIH:
                     </span>
-                    <span className={cn("text-xs font-bold", daysInUti > 4 ? "text-amber-700 dark:text-amber-300" : "text-primary")}>
+                    <span className={cn(
+                      "text-xs font-bold", 
+                      daysInUti > 4 
+                        ? "text-red-700 dark:text-red-300" 
+                        : colorVariant === 'yellow' 
+                          ? "text-amber-700 dark:text-amber-400" 
+                          : "text-primary"
+                    )}>
                       {daysInUti}
                     </span>
                     {daysInUti > 4 && (
                       <span title="Longa permanência">
-                        <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+                        <AlertTriangle className="h-3 w-3 text-red-600 dark:text-red-400" />
                       </span>
                     )}
                   </div>
