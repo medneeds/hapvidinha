@@ -297,6 +297,12 @@ function InlineEditableArray({
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
   const newInputRef = useRef<HTMLInputElement>(null);
+  
+  // Generate stable IDs for items based on content + original index
+  const itemIds = useMemo(() => 
+    items.map((item, idx) => `${fieldId || 'item'}-${idx}-${item.slice(0, 8).replace(/\s/g, '_')}`),
+    [items, fieldId]
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -319,10 +325,10 @@ function InlineEditableArray({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const oldIndex = parseInt(String(active.id).replace('item-', ''));
-      const newIndex = parseInt(String(over.id).replace('item-', ''));
+      const oldIndex = itemIds.findIndex(id => id === active.id);
+      const newIndex = itemIds.findIndex(id => id === over.id);
       
-      if (isNaN(oldIndex) || isNaN(newIndex)) return;
+      if (oldIndex === -1 || newIndex === -1) return;
       
       const newItems = arrayMove(items, oldIndex, newIndex);
       
@@ -430,11 +436,11 @@ function InlineEditableArray({
       <div className="space-y-0">
         {items.length > 0 ? (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={displayItems.map((_, i) => `item-${i}`)} strategy={verticalListSortingStrategy}>
+            <SortableContext items={itemIds.slice(0, displayItems.length)} strategy={verticalListSortingStrategy}>
               {displayItems.map((item, idx) => (
                 <SortableItem
-                  key={`sortable-${idx}-${item.substring(0, 10)}`}
-                  id={`item-${idx}`}
+                  key={itemIds[idx]}
+                  id={itemIds[idx]}
                   index={idx}
                   value={item}
                   onEdit={(newValue) => {
