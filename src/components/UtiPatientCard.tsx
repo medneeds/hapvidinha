@@ -59,6 +59,7 @@ interface UtiPatientCardProps {
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
   colorVariant?: ColorVariant;
+  forceCollapsed?: boolean;
 }
 
 // Calculate days in UTI
@@ -714,11 +715,19 @@ export function UtiPatientCard({
   onDelete,
   onPrintPatient,
   onRefetch,
-  colorVariant = 'blue'
+  colorVariant = 'blue',
+  forceCollapsed
 }: UtiPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  // Sync with forceCollapsed prop when it changes
+  useEffect(() => {
+    if (forceCollapsed !== undefined) {
+      setIsCollapsed(forceCollapsed);
+    }
+  }, [forceCollapsed]);
   const [activeColumn, setActiveColumn] = useState<'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias' | null>(null);
 
   // Color schemes based on variant

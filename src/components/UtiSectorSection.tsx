@@ -1,7 +1,7 @@
 import { Patient, SectorType } from "@/types/patient";
 import { ReactNode } from "react";
 import { UtiPatientCard } from "./UtiPatientCard";
-import { Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
+import { Printer, Plus, ChevronDown, GripVertical, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -79,6 +79,7 @@ interface SortableUtiRowProps {
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
   colorVariant?: ColorVariant;
+  forceCollapsed?: boolean;
 }
 
 function SortableUtiRow(props: SortableUtiRowProps) {
@@ -126,6 +127,7 @@ function SortableUtiRow(props: SortableUtiRowProps) {
           onPrintPatient={props.onPrintPatient}
           onRefetch={props.onRefetch}
           colorVariant={props.colorVariant}
+          forceCollapsed={props.forceCollapsed}
         />
       </div>
     </div>
@@ -157,6 +159,7 @@ export function UtiSectorSection({
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
+  const [allCardsCollapsed, setAllCardsCollapsed] = useState(false);
 
   // Header color schemes based on colorVariant
   const headerStyles = {
@@ -261,6 +264,21 @@ export function UtiSectorSection({
             </button>
           </CollapsibleTrigger>
           <div className="flex items-center gap-2">
+            {patients.length > 0 && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setAllCardsCollapsed(!allCardsCollapsed)}
+                className={`h-8 w-8 print:hidden ${buttonClass}`}
+                title={allCardsCollapsed ? "Expandir todos os pacientes" : "Retrair todos os pacientes"}
+              >
+                {allCardsCollapsed ? (
+                  <ChevronsUpDown className="h-3.5 w-3.5" />
+                ) : (
+                  <ChevronsDownUp className="h-3.5 w-3.5" />
+                )}
+              </Button>
+            )}
             {onAddExtraBed && (
               <Button
                 variant="outline"
@@ -317,6 +335,7 @@ export function UtiSectorSection({
                   isSelected={selectedPatients.has(patient.id)}
                   onToggleSelection={onToggleSelection}
                   colorVariant={colorVariant}
+                  forceCollapsed={allCardsCollapsed}
                 />
               ))}
             </SortableContext>
