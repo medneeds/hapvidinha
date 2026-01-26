@@ -625,6 +625,8 @@ export function UtiPatientCard({
   const colorSchemes = {
     blue: {
       card: "bg-slate-100 dark:bg-slate-900/80 border-primary/20",
+      bedBg: "bg-primary/10 border-primary/20",
+      bedText: "text-primary",
       col1: "bg-blue-50/80 dark:bg-blue-950/40 border-blue-200/60 dark:border-blue-800/50",
       col1Icon: "text-blue-600 dark:text-blue-400",
       col2: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
@@ -636,6 +638,8 @@ export function UtiPatientCard({
     },
     yellow: {
       card: "bg-amber-50/50 dark:bg-amber-950/30 border-amber-400/30",
+      bedBg: "bg-amber-100 dark:bg-amber-900/40 border-amber-300/50 dark:border-amber-700/40",
+      bedText: "text-amber-700 dark:text-amber-400",
       col1: "bg-amber-50/80 dark:bg-amber-950/40 border-amber-200/60 dark:border-amber-800/50",
       col1Icon: "text-amber-600 dark:text-amber-400",
       col2: "bg-amber-100/70 dark:bg-amber-900/35 border-amber-300/50 dark:border-amber-700/45",
@@ -705,12 +709,12 @@ export function UtiPatientCard({
               {/* Row 1: Identification Header - Mobile optimized */}
               <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
                 {/* Bed Number - Compact */}
-                <div className="shrink-0 px-1.5 py-0.5 bg-primary/10 rounded border border-primary/20">
+                <div className={cn("shrink-0 px-1.5 py-0.5 rounded border", colors.bedBg)}>
                   <InlineEditableField
                     value={patient.bedNumber}
                     onUpdate={(v) => handleUpdateField("bedNumber", v)}
                     placeholder="LEITO"
-                    className="text-xs font-bold text-primary w-8 md:w-10 text-center"
+                    className={cn("text-xs font-bold w-8 md:w-10 text-center", colors.bedText)}
                   />
                 </div>
                 
