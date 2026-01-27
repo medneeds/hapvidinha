@@ -213,10 +213,18 @@ export default function AuthPage() {
                 </div>
               </div>
               
-              {/* Brand Name */}
-              <h1 className="text-5xl xl:text-6xl font-black text-white mb-3 tracking-tight animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
-                Hap<span className="text-white/90">Map</span>
-              </h1>
+              {/* Brand Name - Logo Style */}
+              <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-4">
+                <h1 className="text-5xl xl:text-6xl tracking-tighter inline-flex items-baseline">
+                  <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
+                    Hap
+                  </span>
+                  <span className="font-light text-white/80 -ml-0.5">
+                    Map
+                  </span>
+                </h1>
+                <div className="h-1 w-20 mx-auto mt-2 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full" />
+              </div>
               
               {/* Slogan */}
               <p className="text-white/60 text-base xl:text-lg font-light tracking-wide animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 mb-12 italic">
@@ -487,9 +495,17 @@ export default function AuthPage() {
               </div>
             </div>
             
-            <h1 className="text-4xl font-black text-white mb-2 tracking-tight animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
-              Hap<span className="text-white/90">Map</span>
-            </h1>
+            <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3">
+              <h1 className="text-4xl tracking-tighter inline-flex items-baseline">
+                <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
+                  Hap
+                </span>
+                <span className="font-light text-white/80 -ml-0.5">
+                  Map
+                </span>
+              </h1>
+              <div className="h-0.5 w-14 mx-auto mt-1.5 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full" />
+            </div>
             <p className="text-white/50 text-xs font-light tracking-wide animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 italic px-4">
               Tecnologia que valoriza seu tempo. Inteligência que salva vidas.
             </p>
