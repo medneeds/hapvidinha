@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Sparkles } from "lucide-react";
 import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
 
 interface LoadingScreenProps {
@@ -6,82 +7,191 @@ interface LoadingScreenProps {
   duration?: number;
 }
 
-export function LoadingScreen({ onComplete, duration = 2000 }: LoadingScreenProps) {
+export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProps) {
   const [isVisible, setIsVisible] = useState(true);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    // Smooth progress animation
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 2;
+      });
+    }, duration / 60);
+
     const timer = setTimeout(() => {
       setIsVisible(false);
       setTimeout(() => {
         onComplete?.();
-      }, 500); // Wait for fade out animation
+      }, 400);
     }, duration);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(progressInterval);
+    };
   }, [duration, onComplete]);
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] transition-opacity duration-500 ${
-        isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] transition-all duration-400 ${
+        isVisible ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
       }`}
     >
-      {/* Animated background elements */}
+      {/* Animated background orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 -right-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse [animation-delay:1.5s]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/3 rounded-full blur-3xl animate-pulse [animation-delay:3s]" />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center gap-8 animate-fade-in">
-        {/* Logo Container with scale animation */}
-        <div className="relative animate-scale-in">
-          <div className="absolute inset-0 bg-white/20 rounded-3xl blur-2xl animate-pulse" />
-          <div className="relative bg-white/95 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/30">
-            <img
-              src={hapvidaLogo}
-              alt="Hapvida Notre Dame"
-              className="h-16 sm:h-20 md:h-24 w-auto object-contain"
-            />
-          </div>
-        </div>
-
-        {/* Title with elegant animation */}
-        <div className="flex flex-col items-center gap-3 animate-fade-in [animation-delay:300ms]">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-wider">
-            <span className="inline-block animate-fade-in [animation-delay:400ms]">H</span>
-            <span className="inline-block animate-fade-in [animation-delay:500ms]">a</span>
-            <span className="inline-block animate-fade-in [animation-delay:600ms]">p</span>
-            <span className="inline-block animate-fade-in [animation-delay:700ms]">M</span>
-            <span className="inline-block animate-fade-in [animation-delay:800ms]">a</span>
-            <span className="inline-block animate-fade-in [animation-delay:900ms]">p</span>
-          </h1>
-          <div className="h-1 w-32 bg-gradient-to-r from-transparent via-white to-transparent animate-fade-in [animation-delay:1000ms]" />
-          <p className="text-sm sm:text-base text-white/80 font-medium tracking-wide animate-fade-in [animation-delay:1100ms]">
-            Sistema de Gestão Hospitalar
-          </p>
-        </div>
-
-        {/* Loading indicator */}
-        <div className="flex flex-col items-center gap-3 animate-fade-in [animation-delay:1200ms]">
-          <div className="flex gap-2">
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse [animation-delay:200ms]" />
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse [animation-delay:400ms]" />
-          </div>
-          <p className="text-xs text-white/60 font-medium">Carregando...</p>
-        </div>
+        <div 
+          className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl"
+          style={{ animation: 'pulse 4s ease-in-out infinite' }}
+        />
+        <div 
+          className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl"
+          style={{ animation: 'pulse 4s ease-in-out infinite 1s' }}
+        />
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-white/3 rounded-full blur-3xl"
+          style={{ animation: 'pulse 5s ease-in-out infinite 2s' }}
+        />
       </div>
 
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[20%] left-[15%] w-2 h-2 bg-white/40 rounded-full animate-[float_6s_ease-in-out_infinite]" />
-        <div className="absolute top-[40%] right-[20%] w-1.5 h-1.5 bg-white/30 rounded-full animate-[float_8s_ease-in-out_infinite_1s]" />
-        <div className="absolute bottom-[30%] left-[25%] w-1 h-1 bg-white/50 rounded-full animate-[float_7s_ease-in-out_infinite_2s]" />
-        <div className="absolute top-[60%] right-[30%] w-2 h-2 bg-white/35 rounded-full animate-[float_9s_ease-in-out_infinite_1.5s]" />
-        <div className="absolute bottom-[20%] right-[15%] w-1.5 h-1.5 bg-white/45 rounded-full animate-[float_5s_ease-in-out_infinite_0.5s]" />
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute bg-white/30 rounded-full"
+            style={{
+              width: `${4 + Math.random() * 4}px`,
+              height: `${4 + Math.random() * 4}px`,
+              left: `${10 + Math.random() * 80}%`,
+              top: `${10 + Math.random() * 80}%`,
+              animation: `float ${5 + Math.random() * 5}s ease-in-out infinite ${Math.random() * 3}s`
+            }}
+          />
+        ))}
       </div>
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center gap-10">
+        {/* Logo Container */}
+        <div 
+          className="relative"
+          style={{ 
+            animation: 'fadeSlideUp 0.8s ease-out forwards',
+            opacity: 0
+          }}
+        >
+          <div className="absolute inset-0 bg-white/20 rounded-2xl blur-2xl scale-110" />
+          <div className="relative bg-white/95 backdrop-blur-xl px-6 py-4 rounded-2xl shadow-2xl border border-white/30">
+            <img
+              src={hapvidaLogo}
+              alt="Hapvida Notre Dame"
+              className="h-12 sm:h-14 object-contain"
+            />
+          </div>
+        </div>
+
+        {/* Brand Name - HapMap 2.0 */}
+        <div 
+          className="flex flex-col items-center gap-4"
+          style={{ 
+            animation: 'fadeSlideUp 0.8s ease-out 0.2s forwards',
+            opacity: 0
+          }}
+        >
+          <div className="inline-flex items-baseline gap-2">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl tracking-tighter inline-flex items-baseline">
+              <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
+                Hap
+              </span>
+              <span className="font-light text-white/80 -ml-0.5">
+                Map
+              </span>
+            </h1>
+            <span className="text-[10px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-2 py-0.5 self-start mt-2">
+              2.0
+            </span>
+          </div>
+          
+          {/* Elegant divider */}
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/40" />
+            <Sparkles className="h-3 w-3 text-white/50" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-white/40" />
+          </div>
+          
+          {/* Slogan */}
+          <p className="text-white/50 text-sm sm:text-base font-light tracking-wide italic text-center px-4">
+            Tecnologia que valoriza seu tempo. Inteligência que salva vidas.
+          </p>
+        </div>
+
+        {/* Loading Progress */}
+        <div 
+          className="flex flex-col items-center gap-4 w-64"
+          style={{ 
+            animation: 'fadeSlideUp 0.8s ease-out 0.4s forwards',
+            opacity: 0
+          }}
+        >
+          {/* Progress bar */}
+          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-white/60 via-white to-white/60 rounded-full transition-all duration-100 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          
+          {/* Loading text */}
+          <p className="text-xs text-white/40 font-light tracking-widest uppercase">
+            Carregando
+          </p>
+        </div>
+      </div>
+
+      {/* Custom keyframes */}
+      <style>{`
+        @keyframes fadeSlideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0) translateX(0);
+          }
+          25% {
+            transform: translateY(-15px) translateX(5px);
+          }
+          50% {
+            transform: translateY(-5px) translateX(-5px);
+          }
+          75% {
+            transform: translateY(-20px) translateX(3px);
+          }
+        }
+        
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 0.5;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.8;
+            transform: scale(1.05);
+          }
+        }
+      `}</style>
     </div>
   );
 }
