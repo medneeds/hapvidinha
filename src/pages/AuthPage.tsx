@@ -161,310 +161,536 @@ export default function AuthPage() {
       
       <div className={cn(
         "min-h-screen bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] flex items-center justify-center p-4 relative overflow-hidden transition-opacity duration-500",
+        "lg:p-0",
         showLoadingScreen && "opacity-0"
       )}>
-      {/* Animated background elements with enhanced effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 -right-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse [animation-delay:1.5s]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/3 rounded-full blur-3xl animate-pulse [animation-delay:3s]" />
-        
-        {/* Floating particles */}
-        <div className="absolute top-[20%] left-[15%] w-2 h-2 bg-white/40 rounded-full animate-[float_6s_ease-in-out_infinite]" />
-        <div className="absolute top-[40%] right-[20%] w-1.5 h-1.5 bg-white/30 rounded-full animate-[float_8s_ease-in-out_infinite_1s]" />
-        <div className="absolute bottom-[30%] left-[25%] w-1 h-1 bg-white/50 rounded-full animate-[float_7s_ease-in-out_infinite_2s]" />
-        <div className="absolute top-[60%] right-[30%] w-2 h-2 bg-white/35 rounded-full animate-[float_9s_ease-in-out_infinite_1.5s]" />
-        <div className="absolute bottom-[20%] right-[15%] w-1.5 h-1.5 bg-white/45 rounded-full animate-[float_5s_ease-in-out_infinite_0.5s]" />
-      </div>
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 -right-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse [animation-delay:1.5s]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/3 rounded-full blur-3xl animate-pulse [animation-delay:3s]" />
+          
+          {/* Floating particles */}
+          <div className="absolute top-[20%] left-[15%] w-2 h-2 bg-white/40 rounded-full animate-[float_6s_ease-in-out_infinite]" />
+          <div className="absolute top-[40%] right-[20%] w-1.5 h-1.5 bg-white/30 rounded-full animate-[float_8s_ease-in-out_infinite_1s]" />
+          <div className="absolute bottom-[30%] left-[25%] w-1 h-1 bg-white/50 rounded-full animate-[float_7s_ease-in-out_infinite_2s]" />
+          <div className="absolute top-[60%] right-[30%] w-2 h-2 bg-white/35 rounded-full animate-[float_9s_ease-in-out_infinite_1.5s]" />
+          <div className="absolute bottom-[20%] right-[15%] w-1.5 h-1.5 bg-white/45 rounded-full animate-[float_5s_ease-in-out_infinite_0.5s]" />
+        </div>
 
-      {/* Enhanced grid pattern */}
-      <div 
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)
-          `,
-          backgroundSize: '50px 50px',
-          animation: 'drift 60s linear infinite'
-        }}
-      />
+        {/* Enhanced grid pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px',
+            animation: 'drift 60s linear infinite'
+          }}
+        />
 
-      {/* Gradient orbs */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-gradient-radial from-white/10 to-transparent rounded-full blur-2xl animate-[float_10s_ease-in-out_infinite]" />
-        <div className="absolute bottom-[15%] right-[10%] w-80 h-80 bg-gradient-radial from-white/8 to-transparent rounded-full blur-3xl animate-[float_12s_ease-in-out_infinite_2s]" />
-      </div>
-
-      <div className="w-full max-w-[480px] relative z-10">
-        {/* Logo Section with enhanced animation */}
-        <div className="text-center mb-8 animate-in fade-in-0 slide-in-from-top-8 duration-1000">
-          <div className="inline-block relative group">
-            {/* Glow effect behind logo */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-3xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        {/* DESKTOP: Split-screen layout */}
+        <div className="hidden lg:flex w-full h-screen relative z-10">
+          {/* Left Panel - Branding */}
+          <div className="w-1/2 flex flex-col items-center justify-center p-12 xl:p-16 relative">
+            {/* Gradient orbs for left panel */}
+            <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-gradient-radial from-white/10 to-transparent rounded-full blur-2xl animate-[float_10s_ease-in-out_infinite]" />
+            <div className="absolute bottom-[15%] right-[10%] w-80 h-80 bg-gradient-radial from-white/8 to-transparent rounded-full blur-3xl animate-[float_12s_ease-in-out_infinite_2s]" />
             
-            <div className="relative bg-white rounded-3xl p-6 shadow-2xl shadow-black/30 mb-6 transform transition-all duration-500 group-hover:scale-110 group-hover:shadow-3xl group-hover:shadow-white/20">
-              <img 
-                src={hapvidaLogo} 
-                alt="Hapvida NotreDame Intermédica" 
-                className="h-16 w-auto transition-all duration-500 group-hover:brightness-110"
-              />
+            <div className="relative z-10 text-center max-w-md animate-in fade-in-0 slide-in-from-left-8 duration-1000">
+              {/* Logo */}
+              <div className="inline-block relative group mb-10">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-3xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative bg-white rounded-3xl p-8 shadow-2xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-white/20">
+                  <img 
+                    src={hapvidaLogo} 
+                    alt="Hapvida NotreDame Intermédica" 
+                    className="h-20 w-auto transition-all duration-500 group-hover:brightness-110"
+                  />
+                  <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
+                </div>
+              </div>
               
-              {/* Sparkle effect on hover */}
-              <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
+              <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 tracking-tight uppercase animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
+                MAPA DE PACIENTES
+              </h1>
+              <p className="text-white/80 text-lg uppercase tracking-wider font-medium animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 mb-8">
+                HOSPITAL GUARÁS - URGÊNCIA E EMERGÊNCIA
+              </p>
+              
+              {/* Feature highlights */}
+              <div className="space-y-4 text-left animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-500">
+                <div className="flex items-center gap-3 text-white/70">
+                  <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center">
+                    <Building2 className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-sm font-medium">Gestão integrada de leitos por setor</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/70">
+                  <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center">
+                    <User className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-sm font-medium">Monitoramento em tempo real de pacientes</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/70">
+                  <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center">
+                    <Sparkles className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-sm font-medium">Inteligência artificial para apoio clínico</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Footer on left panel */}
+            <div className="absolute bottom-6 left-0 right-0 text-center">
+              <p className="text-[10px] text-white/30 italic">
+                Desenvolvido por Artur Batista
+              </p>
             </div>
           </div>
           
-          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 uppercase">
-            MAPA DE PACIENTES
-          </h1>
-          <p className="text-white/80 text-sm uppercase tracking-wider font-medium animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300">
-            HOSPITAL GUARÁS - URGÊNCIA E EMERGÊNCIA
-          </p>
-        </div>
-
-        {/* Login Card with enhanced glass morphism */}
-        <div className="bg-white backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/30 p-10 border border-white/40 relative overflow-hidden animate-in fade-in-0 zoom-in-95 duration-1000 delay-500">
-          {/* Shimmer effect */}
-          <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#013ba6]/10 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
-          </div>
-          <div className="mb-8 relative z-10">
-            <div className="flex items-center justify-center gap-3">
-              <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] flex items-center justify-center shadow-lg shadow-[#013ba6]/50 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <LogIn className="h-7 w-7 text-white relative z-10 transform group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-300" />
+          {/* Right Panel - Form */}
+          <div className="w-1/2 bg-white flex items-center justify-center p-8 xl:p-12 relative overflow-hidden">
+            {/* Subtle background pattern for form panel */}
+            <div className="absolute inset-0 opacity-[0.02]" style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, #013ba6 1px, transparent 0)`,
+              backgroundSize: '24px 24px'
+            }} />
+            
+            {/* Decorative corner accent */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#013ba6]/5 to-transparent" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#013ba6]/5 to-transparent" />
+            
+            <div className="w-full max-w-md relative z-10 animate-in fade-in-0 slide-in-from-right-8 duration-1000 delay-300">
+              {/* Form header */}
+              <div className="mb-8 text-center">
+                <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] shadow-lg shadow-[#013ba6]/30 mb-4">
+                  <LogIn className="h-8 w-8 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 uppercase">Acesse sua conta</h2>
+                <p className="text-gray-500 text-sm mt-1">Preencha os dados para continuar</p>
               </div>
-            </div>
-          </div>
 
-          <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-5 relative z-10">
-            {/* Hierarchical Selection Section */}
-            <div className="space-y-4 pb-5 border-b-2 border-gray-200">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">SELECIONE SUA LOCALIZAÇÃO</p>
-              
-              {/* State Selection */}
-              <div className="space-y-2 group">
-                <Label 
-                  htmlFor="state-select" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
-                >
-                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                    <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
-                  </div>
-                  ESTADO
-                </Label>
-                <Select
-                  value={selectedState}
-                  onValueChange={(value) => {
-                    setSelectedState(value);
-                    setSelectedHospitalId(""); // Reset hospital when state changes
-                  }}
-                  disabled={loading || hospitalLoading}
-                >
-                  <SelectTrigger 
-                    id="state-select"
-                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl uppercase"
-                  >
-                    <SelectValue placeholder="SELECIONE O ESTADO" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
-                    {states.map((state) => (
-                      <SelectItem 
-                        key={state.id} 
-                        value={state.id}
-                        className="text-sm font-semibold !text-gray-900 bg-white hover:!bg-[#013ba6] hover:!text-white focus:!bg-[#013ba6] focus:!text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
+              {/* Form content - same as mobile but styled for desktop */}
+              <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-5">
+                {/* Hierarchical Selection Section */}
+                <div className="space-y-4 pb-5 border-b border-gray-200">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Localização</p>
+                  
+                  {/* State Selection */}
+                  <div className="space-y-1.5 group">
+                    <Label htmlFor="state-select-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                      Estado
+                    </Label>
+                    <Select
+                      value={selectedState}
+                      onValueChange={(value) => {
+                        setSelectedState(value);
+                        setSelectedHospitalId("");
+                      }}
+                      disabled={loading || hospitalLoading}
+                    >
+                      <SelectTrigger 
+                        id="state-select-desktop"
+                        className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm font-medium uppercase"
                       >
-                        {state.name} ({state.abbreviation})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Hospital Unit Selection */}
-              <div className="space-y-2 group">
-                <Label 
-                  htmlFor="hospital-select" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
-                >
-                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                    <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                        <SelectValue placeholder="Selecione o estado" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-xl">
+                        {states.map((state) => (
+                          <SelectItem key={state.id} value={state.id} className="text-sm font-medium py-2.5">
+                            {state.name} ({state.abbreviation})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  UNIDADE HOSPITALAR
-                </Label>
-                <Select
-                  value={selectedHospitalId}
-                  onValueChange={setSelectedHospitalId}
-                  disabled={loading || hospitalLoading || !selectedState}
-                >
-                  <SelectTrigger 
-                    id="hospital-select"
-                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed uppercase"
-                  >
-                    <SelectValue placeholder={selectedState ? "SELECIONE A UNIDADE" : "PRIMEIRO SELECIONE UM ESTADO"} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
-                    {filteredHospitals.map((hospital) => (
-                      <SelectItem 
-                        key={hospital.id} 
-                        value={hospital.id}
-                        className="text-sm font-semibold !text-gray-900 bg-white hover:!bg-[#013ba6] hover:!text-white focus:!bg-[#013ba6] focus:!text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
+
+                  {/* Hospital Unit Selection */}
+                  <div className="space-y-1.5 group">
+                    <Label htmlFor="hospital-select-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                      Unidade Hospitalar
+                    </Label>
+                    <Select
+                      value={selectedHospitalId}
+                      onValueChange={setSelectedHospitalId}
+                      disabled={loading || hospitalLoading || !selectedState}
+                    >
+                      <SelectTrigger 
+                        id="hospital-select-desktop"
+                        className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm font-medium uppercase disabled:opacity-50"
                       >
-                        {hospital.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Department Selection */}
-              <div className="space-y-2 group">
-                <Label 
-                  htmlFor="department-select" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
-                >
-                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                    <Building2 className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
+                        <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Primeiro selecione um estado"} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-xl">
+                        {filteredHospitals.map((hospital) => (
+                          <SelectItem key={hospital.id} value={hospital.id} className="text-sm font-medium py-2.5">
+                            {hospital.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  SETOR
-                </Label>
-                <Select
-                  value={selectedDepartment}
-                  onValueChange={(value: Department) => setSelectedDepartment(value)}
+
+                  {/* Department Selection */}
+                  <div className="space-y-1.5 group">
+                    <Label htmlFor="department-select-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                      Setor
+                    </Label>
+                    <Select
+                      value={selectedDepartment}
+                      onValueChange={(value: Department) => setSelectedDepartment(value)}
+                      disabled={loading}
+                    >
+                      <SelectTrigger 
+                        id="department-select-desktop"
+                        className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm font-medium uppercase"
+                      >
+                        <SelectValue placeholder="Selecione o setor" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-xl">
+                        {DEPARTMENTS.map((dept) => (
+                          <SelectItem key={dept} value={dept} className="text-sm font-medium py-2.5">
+                            {dept}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Authentication Fields Section */}
+                <div className="space-y-4 pt-2">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Dados de Acesso</p>
+                  
+                  {/* Username Field */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="login-username-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                      Usuário
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="login-username-desktop"
+                        type="text"
+                        value={loginData.username}
+                        onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
+                        placeholder="Digite seu usuário"
+                        className="h-11 pl-10 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm"
+                        disabled={loading}
+                        maxLength={50}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Password Field */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="login-password-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                      Senha
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="login-password-desktop"
+                        type={showPassword ? "text" : "password"}
+                        value={loginData.password}
+                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                        placeholder="Digite sua senha"
+                        className="h-11 pl-10 pr-10 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm"
+                        disabled={loading}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-gray-400 hover:text-gray-600"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
                   disabled={loading}
+                  className="w-full h-12 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d80] hover:to-[#013ba6] text-white font-bold uppercase rounded-xl shadow-lg shadow-[#013ba6]/30 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
                 >
-                  <SelectTrigger 
-                    id="department-select"
-                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white text-sm font-medium text-gray-900 hover:shadow-lg focus:shadow-xl uppercase"
-                  >
-                    <SelectValue placeholder="SELECIONE O SETOR" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
-                    {DEPARTMENTS.map((dept) => (
-                      <SelectItem 
-                        key={dept} 
-                        value={dept}
-                        className="text-sm font-semibold !text-gray-900 bg-white hover:!bg-[#013ba6] hover:!text-white focus:!bg-[#013ba6] focus:!text-white cursor-pointer transition-colors py-3 px-4 rounded-lg mx-1 my-0.5"
-                      >
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processando...</span>
+                    </div>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <LogIn className="h-4 w-4" />
+                      {isSignUp ? "Criar Conta" : "Entrar no Sistema"}
+                    </span>
+                  )}
+                </Button>
 
-            {/* Authentication Fields Section */}
-            <div className="space-y-4 pt-2">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">DADOS DE ACESSO</p>
-              
-              {/* Username Field */}
-              <div className="space-y-2 group">
-                <Label 
-                  htmlFor="login-username" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
-                >
-                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                    <User className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
-                  </div>
-                  USUÁRIO
-                </Label>
-                <Input
-                  id="login-username"
-                  type="text"
-                  placeholder="DIGITE SEU USUÁRIO"
-                  className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white uppercase placeholder:uppercase"
-                  value={loginData.username}
-                  onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
-                  disabled={loading}
-                  autoComplete="username"
-                />
-              </div>
-
-              {/* Password Field */}
-              <div className="space-y-2 group">
-                <Label 
-                  htmlFor="login-password" 
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-2 transition-colors duration-200 group-focus-within:text-[#013ba6] uppercase"
-                >
-                  <div className="h-5 w-5 rounded-lg bg-gray-100 flex items-center justify-center group-focus-within:bg-[#013ba6]/10 transition-colors duration-200">
-                    <Lock className="h-3 w-3 text-gray-600 transition-all duration-200 group-focus-within:scale-110 group-focus-within:text-[#013ba6]" />
-                  </div>
-                  SENHA
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="login-password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="DIGITE SUA SENHA"
-                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] focus:ring-4 focus:ring-[#013ba6]/10 rounded-xl transition-all duration-300 hover:border-[#013ba6]/50 hover:bg-white pl-4 pr-12 text-sm font-medium text-gray-900 placeholder:text-gray-400 placeholder:font-normal hover:shadow-lg focus:shadow-xl focus:bg-white placeholder:uppercase"
-                    value={loginData.password}
-                    onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                    disabled={loading}
-                    autoComplete="current-password"
-                  />
-                  <button
+                {/* Toggle Sign Up / Sign In */}
+                <div className="text-center pt-2">
+                  <Button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#013ba6] transition-colors duration-200"
-                    tabIndex={-1}
+                    variant="ghost"
+                    onClick={() => setIsSignUp(!isSignUp)}
+                    className="text-[#013ba6] hover:text-[#012d80] font-semibold text-sm uppercase hover:bg-[#013ba6]/5"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
+                    {isSignUp ? "Já tenho conta" : "Criar nova conta"}
+                  </Button>
+                </div>
+
+                {/* Security note */}
+                <div className="flex items-center justify-center gap-2 pt-2 text-gray-400">
+                  <Lock className="h-3 w-3" />
+                  <span className="text-[10px] uppercase tracking-wider">Conexão segura e criptografada</span>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        {/* MOBILE: Original centered layout */}
+        <div className="lg:hidden w-full max-w-[480px] relative z-10">
+          {/* Gradient orbs */}
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-gradient-radial from-white/10 to-transparent rounded-full blur-2xl animate-[float_10s_ease-in-out_infinite]" />
+            <div className="absolute bottom-[15%] right-[10%] w-80 h-80 bg-gradient-radial from-white/8 to-transparent rounded-full blur-3xl animate-[float_12s_ease-in-out_infinite_2s]" />
+          </div>
+
+          {/* Logo Section */}
+          <div className="text-center mb-8 animate-in fade-in-0 slide-in-from-top-8 duration-1000">
+            <div className="inline-block relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-3xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative bg-white rounded-3xl p-6 shadow-2xl shadow-black/30 mb-6 transform transition-all duration-500 group-hover:scale-110 group-hover:shadow-3xl group-hover:shadow-white/20">
+                <img 
+                  src={hapvidaLogo} 
+                  alt="Hapvida NotreDame Intermédica" 
+                  className="h-16 w-auto transition-all duration-500 group-hover:brightness-110"
+                />
+                <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
+              </div>
+            </div>
+            
+            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 uppercase">
+              MAPA DE PACIENTES
+            </h1>
+            <p className="text-white/80 text-sm uppercase tracking-wider font-medium animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300">
+              HOSPITAL GUARÁS - URGÊNCIA E EMERGÊNCIA
+            </p>
+          </div>
+
+          {/* Login Card */}
+          <div className="bg-white backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/30 p-10 border border-white/40 relative overflow-hidden animate-in fade-in-0 zoom-in-95 duration-1000 delay-500">
+            <div className="absolute inset-0 opacity-20 pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#013ba6]/10 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
+            </div>
+            <div className="mb-8 relative z-10">
+              <div className="flex items-center justify-center gap-3">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] flex items-center justify-center shadow-lg shadow-[#013ba6]/50 relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <LogIn className="h-7 w-7 text-white relative z-10 transform group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-300" />
                 </div>
               </div>
             </div>
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full h-14 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-base rounded-2xl shadow-xl shadow-[#013ba6]/40 transition-all duration-300 hover:shadow-2xl hover:shadow-[#013ba6]/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mt-8 relative overflow-hidden group uppercase"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-              {loading ? (
-                <div className="flex items-center gap-3 relative z-10">
-                  <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>{isSignUp ? "CADASTRANDO..." : "ENTRANDO..."}</span>
+            <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-5 relative z-10">
+              {/* Hierarchical Selection Section */}
+              <div className="space-y-4 pb-5 border-b-2 border-gray-200">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">SELECIONE SUA LOCALIZAÇÃO</p>
+                
+                {/* State Selection */}
+                <div className="space-y-2 group">
+                  <Label 
+                    htmlFor="state-select-mobile" 
+                    className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase"
+                  >
+                    <Building2 className="h-3 w-3 text-gray-600" />
+                    ESTADO
+                  </Label>
+                  <Select
+                    value={selectedState}
+                    onValueChange={(value) => {
+                      setSelectedState(value);
+                      setSelectedHospitalId("");
+                    }}
+                    disabled={loading || hospitalLoading}
+                  >
+                    <SelectTrigger 
+                      id="state-select-mobile"
+                      className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl text-sm font-medium uppercase"
+                    >
+                      <SelectValue placeholder="SELECIONE O ESTADO" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
+                      {states.map((state) => (
+                        <SelectItem key={state.id} value={state.id} className="text-sm font-semibold py-3">
+                          {state.name} ({state.abbreviation})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              ) : (
-                <div className="flex items-center gap-3 relative z-10">
-                  <LogIn className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                  <span>{isSignUp ? "CADASTRAR USUÁRIO" : "ENTRAR NO SISTEMA"}</span>
+
+                {/* Hospital Unit Selection */}
+                <div className="space-y-2 group">
+                  <Label 
+                    htmlFor="hospital-select-mobile" 
+                    className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase"
+                  >
+                    <Building2 className="h-3 w-3 text-gray-600" />
+                    UNIDADE HOSPITALAR
+                  </Label>
+                  <Select
+                    value={selectedHospitalId}
+                    onValueChange={setSelectedHospitalId}
+                    disabled={loading || hospitalLoading || !selectedState}
+                  >
+                    <SelectTrigger 
+                      id="hospital-select-mobile"
+                      className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl text-sm font-medium uppercase disabled:opacity-50"
+                    >
+                      <SelectValue placeholder={selectedState ? "SELECIONE A UNIDADE" : "PRIMEIRO SELECIONE UM ESTADO"} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
+                      {filteredHospitals.map((hospital) => (
+                        <SelectItem key={hospital.id} value={hospital.id} className="text-sm font-semibold py-3">
+                          {hospital.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              )}
-            </Button>
-          </form>
 
-          <div className="mt-6 pt-6 border-t-2 border-gray-200 relative z-10">
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="w-full text-center text-sm text-[#013ba6] hover:text-[#012d7a] font-semibold uppercase tracking-wide transition-colors duration-200"
-            >
-              {isSignUp ? "JÁ TENHO CONTA - FAZER LOGIN" : "CRIAR NOVA CONTA"}
-            </button>
-          </div>
+                {/* Department Selection */}
+                <div className="space-y-2 group">
+                  <Label 
+                    htmlFor="department-select-mobile" 
+                    className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase"
+                  >
+                    <Building2 className="h-3 w-3 text-gray-600" />
+                    SETOR
+                  </Label>
+                  <Select
+                    value={selectedDepartment}
+                    onValueChange={(value: Department) => setSelectedDepartment(value)}
+                    disabled={loading}
+                  >
+                    <SelectTrigger 
+                      id="department-select-mobile"
+                      className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl text-sm font-medium uppercase"
+                    >
+                      <SelectValue placeholder="SELECIONE O SETOR" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
+                      {DEPARTMENTS.map((dept) => (
+                        <SelectItem key={dept} value={dept} className="text-sm font-semibold py-3">
+                          {dept}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-          <div className="mt-4 pt-4 border-t border-gray-100 relative z-10">
-            <div className="flex items-center justify-center gap-2 text-xs text-gray-500 font-medium uppercase">
-              <div className="h-6 w-6 rounded-lg bg-gray-100 flex items-center justify-center">
+              {/* Authentication Fields Section */}
+              <div className="space-y-4 pt-2">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">DADOS DE ACESSO</p>
+                
+                {/* Username Field */}
+                <div className="space-y-2">
+                  <Label htmlFor="login-username-mobile" className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase">
+                    <User className="h-3 w-3 text-gray-600" />
+                    USUÁRIO
+                  </Label>
+                  <Input
+                    id="login-username-mobile"
+                    type="text"
+                    placeholder="DIGITE SEU USUÁRIO"
+                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl text-sm font-medium uppercase"
+                    value={loginData.username}
+                    onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
+                    disabled={loading}
+                    autoComplete="username"
+                  />
+                </div>
+
+                {/* Password Field */}
+                <div className="space-y-2">
+                  <Label htmlFor="login-password-mobile" className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase">
+                    <Lock className="h-3 w-3 text-gray-600" />
+                    SENHA
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="login-password-mobile"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="DIGITE SUA SENHA"
+                      className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl pr-12 text-sm font-medium"
+                      value={loginData.password}
+                      onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                      disabled={loading}
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#013ba6]"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-14 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-base rounded-2xl shadow-xl shadow-[#013ba6]/40 mt-6 uppercase"
+              >
+                {loading ? (
+                  <div className="flex items-center gap-3">
+                    <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>{isSignUp ? "CADASTRANDO..." : "ENTRANDO..."}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <LogIn className="h-5 w-5" />
+                    <span>{isSignUp ? "CADASTRAR USUÁRIO" : "ENTRAR NO SISTEMA"}</span>
+                  </div>
+                )}
+              </Button>
+            </form>
+
+            <div className="mt-6 pt-6 border-t-2 border-gray-200 relative z-10">
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="w-full text-center text-sm text-[#013ba6] hover:text-[#012d7a] font-semibold uppercase"
+              >
+                {isSignUp ? "JÁ TENHO CONTA - FAZER LOGIN" : "CRIAR NOVA CONTA"}
+              </button>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-gray-100 relative z-10">
+              <div className="flex items-center justify-center gap-2 text-xs text-gray-500 font-medium uppercase">
                 <Lock className="h-3 w-3 text-gray-600" />
+                <span>CONEXÃO SEGURA E CRIPTOGRAFADA</span>
               </div>
-              <span className="tracking-wide">CONEXÃO SEGURA E CRIPTOGRAFADA</span>
             </div>
           </div>
-        </div>
 
-        {/* Footer with animation */}
-        <div className="text-center mt-6 animate-in fade-in-0 duration-1000 delay-700">
-          <p className="text-white/40 text-[10px] italic uppercase">DESENVOLVIDO POR ARTUR BATISTA</p>
+          {/* Footer */}
+          <div className="text-center mt-6">
+            <p className="text-white/40 text-[10px] italic uppercase">DESENVOLVIDO POR ARTUR BATISTA</p>
+          </div>
         </div>
-      </div>
       </div>
     </>
   );
