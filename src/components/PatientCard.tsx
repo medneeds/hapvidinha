@@ -16,6 +16,7 @@ import { MedicalResponsibilityIndicator } from "./MedicalResponsibilityIndicator
 import { InternmentStatusDialog } from "./InternmentStatusDialog";
 import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
+import { ExaminusAIDialog } from "./ExaminusAIDialog";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
 import { DietReleaseDialog } from "./DietReleaseDialog";
@@ -631,6 +632,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [internmentStatusDialogOpen, setInternmentStatusDialogOpen] = useState(false);
   const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
+  const [examinusAIDialogOpen, setExaminusAIDialogOpen] = useState(false);
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
   const [dietDialogOpen, setDietDialogOpen] = useState(false);
   const { role, user } = useAuth();
@@ -3058,6 +3060,27 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <Button
                   size="icon"
                   variant="ghost"
+                  onClick={() => setExaminusAIDialogOpen(true)}
+                  className="h-4 w-4 p-0.5 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110 hover:shadow-lg print:hidden group"
+                  title="Examinus AI - Importar exames com IA"
+                  style={{ color: sectorColorMap[patient.sector] }}
+                >
+                  <Sparkles 
+                    className="h-3.5 w-3.5 transition-all duration-300" 
+                    style={{
+                      filter: 'drop-shadow(0 0 0px transparent)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.filter = `drop-shadow(0 0 8px ${sectorColorMap[patient.sector]})`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.filter = 'drop-shadow(0 0 0px transparent)';
+                    }}
+                  />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
                   onClick={() => setExamCurvesDialogOpen(true)}
                   className="h-4 w-4 p-0.5 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110 hover:shadow-lg print:hidden group"
                   title="Adicionar Curva de Exames"
@@ -4579,6 +4602,74 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           } catch (error) {
             console.error('Error:', error);
             toast.error('Erro ao adicionar curvas de exames');
+          }
+        }}
+      />
+
+      {/* Examinus AI Dialog */}
+      <ExaminusAIDialog
+        open={examinusAIDialogOpen}
+        onOpenChange={setExaminusAIDialogOpen}
+        currentExams={patient.relevantExams}
+        sectorColor={sectorColorMap[patient.sector]}
+        onImportExams={async (newExams: string[]) => {
+          try {
+            const examsString = newExams.join('\n');
+
+            // Update database
+            const { error } = await supabase
+              .from('patients')
+              .update({ 
+                relevant_exams: examsString,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', patient.id);
+
+            if (error) throw error;
+
+            // Fetch the updated patient data
+            const { data: updatedPatient, error: fetchError } = await supabase
+              .from('patients')
+              .select('*')
+              .eq('id', patient.id)
+              .maybeSingle();
+
+            if (fetchError) throw fetchError;
+
+            // Update UI with fresh data
+            if (updatedPatient) {
+              const mappedPatient: Patient = {
+                id: updatedPatient.id,
+                bedNumber: updatedPatient.bed_number,
+                name: updatedPatient.name,
+                age: updatedPatient.age,
+                sector: updatedPatient.sector as SectorType,
+                diagnoses: parseTextArray(updatedPatient.diagnoses),
+                medicalHistory: parseTextArray(updatedPatient.medical_history),
+                relevantExams: parseTextArray(updatedPatient.relevant_exams),
+                pendencies: parseTextArray(updatedPatient.pendencies),
+                schedule: parseTextArray(updatedPatient.schedule),
+                admissionHistory: updatedPatient.admission_history || '',
+                admissionDate: updatedPatient.admission_date || '',
+                internmentStatus: updatedPatient.internment_status as 'SOLICITACAO_PENDENTE' | 'PSM_FAVORAVEL' | 'AGUARDANDO_VAGA' | 'IR_PARA_UTI' | 'IR_PARA_ENFERMARIA' | null,
+                internmentNotes: updatedPatient.internment_notes,
+                medicalResponsibility: updatedPatient.medical_responsibility as unknown as MedicalResponsibility | undefined,
+                highlightedPendencies: updatedPatient.highlighted_pendencies || [],
+                utiAdmissionDate: parseTextArray(updatedPatient.uti_admission_date),
+                utiAdmissionReason: parseTextArray(updatedPatient.uti_admission_reason),
+                utiDischargePrediction: parseTextArray(updatedPatient.uti_discharge_prediction),
+                utiAllergies: parseTextArray(updatedPatient.uti_allergies),
+                utiCurrentStatus: parseTextArray(updatedPatient.uti_current_status),
+                utiDevices: parseTextArray(updatedPatient.uti_devices),
+                utiSpecialties: parseTextArray(updatedPatient.uti_specialties),
+                utiCulturesAntibiotics: parseTextArray(updatedPatient.uti_cultures_antibiotics),
+                utiOriginSector: parseTextArray(updatedPatient.uti_origin_sector)
+              };
+              onUpdate(mappedPatient);
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            toast.error('Erro ao importar exames');
           }
         }}
       />
