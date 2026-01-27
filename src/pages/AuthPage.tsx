@@ -531,29 +531,29 @@ export default function AuthPage() {
           </div>
 
           {/* Login Card */}
-          <div className="bg-white backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/30 p-10 border border-white/40 relative overflow-hidden animate-in fade-in-0 zoom-in-95 duration-1000 delay-500">
+          <div className="bg-white backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/30 p-6 border border-white/40 relative overflow-hidden animate-in fade-in-0 zoom-in-95 duration-1000 delay-500">
             <div className="absolute inset-0 opacity-20 pointer-events-none">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#013ba6]/10 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
             </div>
-            <div className="mb-8 relative z-10">
+            <div className="mb-4 relative z-10">
               <div className="flex items-center justify-center gap-3">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] flex items-center justify-center shadow-lg shadow-[#013ba6]/50 relative overflow-hidden group">
+                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] flex items-center justify-center shadow-lg shadow-[#013ba6]/50 relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <LogIn className="h-7 w-7 text-white relative z-10 transform group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-300" />
+                  <LogIn className="h-6 w-6 text-white relative z-10 transform group-hover:scale-110 group-hover:rotate-[-5deg] transition-all duration-300" />
                 </div>
               </div>
             </div>
 
-            <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-5 relative z-10">
+            <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-3 relative z-10">
               {/* Hierarchical Selection Section */}
-              <div className="space-y-4 pb-5 border-b-2 border-gray-200">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">SELECIONE SUA LOCALIZAÇÃO</p>
+              <div className="space-y-3 pb-3 border-b border-gray-200">
+                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">SELECIONE SUA LOCALIZAÇÃO</p>
                 
                 {/* State Selection */}
-                <div className="space-y-2 group">
+                <div className="space-y-1 group">
                   <Label 
                     htmlFor="state-select-mobile" 
-                    className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase"
+                    className="text-xs font-semibold text-gray-700 flex items-center gap-1.5 uppercase"
                   >
                     <Building2 className="h-3 w-3 text-gray-600" />
                     ESTADO
@@ -568,13 +568,13 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="state-select-mobile"
-                      className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl text-sm font-medium uppercase"
+                      className="h-10 bg-gray-50 border border-gray-300 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase"
                     >
                       <SelectValue placeholder="SELECIONE O ESTADO" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
+                    <SelectContent className="bg-white border border-gray-300 shadow-xl z-[200] rounded-lg">
                       {states.map((state) => (
-                        <SelectItem key={state.id} value={state.id} className="text-sm font-semibold py-3">
+                        <SelectItem key={state.id} value={state.id} className="text-xs font-semibold py-2">
                           {state.name} ({state.abbreviation})
                         </SelectItem>
                       ))}
@@ -583,10 +583,10 @@ export default function AuthPage() {
                 </div>
 
                 {/* Hospital Unit Selection */}
-                <div className="space-y-2 group">
+                <div className="space-y-1 group">
                   <Label 
                     htmlFor="hospital-select-mobile" 
-                    className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase"
+                    className="text-xs font-semibold text-gray-700 flex items-center gap-1.5 uppercase"
                   >
                     <Building2 className="h-3 w-3 text-gray-600" />
                     UNIDADE HOSPITALAR
@@ -598,13 +598,13 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="hospital-select-mobile"
-                      className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl text-sm font-medium uppercase disabled:opacity-50"
+                      className="h-10 bg-gray-50 border border-gray-300 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase disabled:opacity-50"
                     >
                       <SelectValue placeholder={selectedState ? "SELECIONE A UNIDADE" : "PRIMEIRO SELECIONE UM ESTADO"} />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
+                    <SelectContent className="bg-white border border-gray-300 shadow-xl z-[200] rounded-lg">
                       {filteredHospitals.map((hospital) => (
-                        <SelectItem key={hospital.id} value={hospital.id} className="text-sm font-semibold py-3">
+                        <SelectItem key={hospital.id} value={hospital.id} className="text-xs font-semibold py-2">
                           {hospital.name}
                         </SelectItem>
                       ))}
@@ -613,10 +613,10 @@ export default function AuthPage() {
                 </div>
 
                 {/* Department Selection */}
-                <div className="space-y-2 group">
+                <div className="space-y-1 group">
                   <Label 
                     htmlFor="department-select-mobile" 
-                    className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase"
+                    className="text-xs font-semibold text-gray-700 flex items-center gap-1.5 uppercase"
                   >
                     <Building2 className="h-3 w-3 text-gray-600" />
                     SETOR
@@ -628,13 +628,13 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="department-select-mobile"
-                      className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl text-sm font-medium uppercase"
+                      className="h-10 bg-gray-50 border border-gray-300 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase"
                     >
                       <SelectValue placeholder="SELECIONE O SETOR" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border-2 border-gray-300 shadow-2xl z-[200] rounded-xl">
+                    <SelectContent className="bg-white border border-gray-300 shadow-xl z-[200] rounded-lg">
                       {DEPARTMENTS.map((dept) => (
-                        <SelectItem key={dept} value={dept} className="text-sm font-semibold py-3">
+                        <SelectItem key={dept} value={dept} className="text-xs font-semibold py-2">
                           {dept}
                         </SelectItem>
                       ))}
@@ -644,12 +644,12 @@ export default function AuthPage() {
               </div>
 
               {/* Authentication Fields Section */}
-              <div className="space-y-4 pt-2">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">DADOS DE ACESSO</p>
+              <div className="space-y-3 pt-2">
+                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">DADOS DE ACESSO</p>
                 
                 {/* Username Field */}
-                <div className="space-y-2">
-                  <Label htmlFor="login-username-mobile" className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase">
+                <div className="space-y-1">
+                  <Label htmlFor="login-username-mobile" className="text-xs font-semibold text-gray-700 flex items-center gap-1.5 uppercase">
                     <User className="h-3 w-3 text-gray-600" />
                     USUÁRIO
                   </Label>
@@ -657,7 +657,7 @@ export default function AuthPage() {
                     id="login-username-mobile"
                     type="text"
                     placeholder="DIGITE SEU USUÁRIO"
-                    className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl text-sm font-medium uppercase"
+                    className="h-10 bg-gray-50 border border-gray-300 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase"
                     value={loginData.username}
                     onChange={(e) => {
                       const newUsername = e.target.value;
@@ -675,8 +675,8 @@ export default function AuthPage() {
                 </div>
 
                 {/* Password Field */}
-                <div className="space-y-2">
-                  <Label htmlFor="login-password-mobile" className="text-sm font-semibold text-gray-700 flex items-center gap-2 uppercase">
+                <div className="space-y-1">
+                  <Label htmlFor="login-password-mobile" className="text-xs font-semibold text-gray-700 flex items-center gap-1.5 uppercase">
                     <Lock className="h-3 w-3 text-gray-600" />
                     SENHA
                   </Label>
@@ -685,7 +685,7 @@ export default function AuthPage() {
                       id="login-password-mobile"
                       type={showPassword ? "text" : "password"}
                       placeholder="DIGITE SUA SENHA"
-                      className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl pr-12 text-sm font-medium"
+                      className="h-10 bg-gray-50 border border-gray-300 focus:border-[#013ba6] rounded-lg pr-10 text-xs font-medium"
                       value={loginData.password}
                       onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
                       disabled={loading}
@@ -706,36 +706,36 @@ export default function AuthPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-14 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-base rounded-2xl shadow-xl shadow-[#013ba6]/40 mt-6 uppercase"
+                className="w-full h-12 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-sm rounded-xl shadow-lg shadow-[#013ba6]/40 mt-4 uppercase"
               >
                 {loading ? (
-                  <div className="flex items-center gap-3">
-                    <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     <span>{isSignUp ? "CADASTRANDO..." : "ENTRANDO..."}</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <LogIn className="h-5 w-5" />
+                  <div className="flex items-center gap-2">
+                    <LogIn className="h-4 w-4" />
                     <span>{isSignUp ? "CADASTRAR USUÁRIO" : "ENTRAR NO SISTEMA"}</span>
                   </div>
                 )}
               </Button>
             </form>
 
-            <div className="mt-6 pt-6 border-t-2 border-gray-200 relative z-10">
+            <div className="mt-4 pt-4 border-t border-gray-200 relative z-10">
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="w-full text-center text-sm text-[#013ba6] hover:text-[#012d7a] font-semibold uppercase"
+                className="w-full text-center text-xs text-[#013ba6] hover:text-[#012d7a] font-semibold uppercase"
               >
                 {isSignUp ? "JÁ TENHO CONTA - FAZER LOGIN" : "CRIAR NOVA CONTA"}
               </button>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-100 relative z-10">
-              <div className="flex items-center justify-center gap-2 text-xs text-gray-500 font-medium uppercase">
-                <Lock className="h-3 w-3 text-gray-600" />
-                <span>CONEXÃO SEGURA E CRIPTOGRAFADA</span>
+            <div className="mt-3 pt-3 border-t border-gray-100 relative z-10">
+              <div className="flex items-center justify-center gap-1.5 text-[10px] text-gray-500 font-medium uppercase">
+                <Lock className="h-2.5 w-2.5 text-gray-600" />
+                <span>CONEXÃO SEGURA</span>
               </div>
             </div>
           </div>
