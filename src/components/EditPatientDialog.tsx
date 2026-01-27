@@ -39,6 +39,12 @@ function ArrayFieldEditor({ items, onUpdate, label, placeholder, icon, accentCol
 
   const updateItem = (index: number, value: string) => {
     const updated = [...items];
+    updated[index] = value;
+    onUpdate(updated);
+  };
+
+  const finalizeItem = (index: number, value: string) => {
+    const updated = [...items];
     updated[index] = value.toUpperCase();
     onUpdate(updated);
   };
@@ -74,6 +80,7 @@ function ArrayFieldEditor({ items, onUpdate, label, placeholder, icon, accentCol
               <Input
                 value={item}
                 onChange={(e) => updateItem(idx, e.target.value)}
+                onBlur={(e) => finalizeItem(idx, e.target.value)}
                 placeholder={`${placeholder} ${idx + 1}`}
                 className={cn("h-9 text-sm uppercase", accentColor && "border-red-200/50")}
               />
@@ -201,7 +208,8 @@ export function EditPatientDialog({
               </div>
               <Textarea
                 value={admissionHistoryLocal}
-                onChange={(e) => setAdmissionHistoryLocal(e.target.value.toUpperCase())}
+                onChange={(e) => setAdmissionHistoryLocal(e.target.value)}
+                onBlur={(e) => setAdmissionHistoryLocal(e.target.value.toUpperCase())}
                 rows={8}
                 placeholder="HISTÓRIA CLÍNICA DETALHADA, QUEIXA PRINCIPAL, HDA, EXAME FÍSICO ADMISSIONAL..."
                 className="text-sm resize-y uppercase min-h-[180px]"
@@ -225,7 +233,8 @@ export function EditPatientDialog({
                     <Label className="text-xs font-semibold">Setor de Origem</Label>
                     <Input
                       value={(formData.utiOriginSector || [])[0] || ""}
-                      onChange={(e) => setFormData({ ...formData, utiOriginSector: [e.target.value.toUpperCase()] })}
+                      onChange={(e) => setFormData({ ...formData, utiOriginSector: [e.target.value] })}
+                      onBlur={(e) => setFormData({ ...formData, utiOriginSector: [e.target.value.toUpperCase()] })}
                       placeholder="Ex: EMERGÊNCIA"
                       className="h-9 text-sm uppercase"
                     />
@@ -234,7 +243,8 @@ export function EditPatientDialog({
                     <Label className="text-xs font-semibold">Admissão UTI</Label>
                     <Input
                       value={(formData.utiAdmissionDate || [])[0] || ""}
-                      onChange={(e) => setFormData({ ...formData, utiAdmissionDate: [e.target.value.toUpperCase()] })}
+                      onChange={(e) => setFormData({ ...formData, utiAdmissionDate: [e.target.value] })}
+                      onBlur={(e) => setFormData({ ...formData, utiAdmissionDate: [e.target.value.toUpperCase()] })}
                       placeholder="DD/MM/AAAA"
                       className="h-9 text-sm uppercase"
                     />
@@ -243,7 +253,8 @@ export function EditPatientDialog({
                     <Label className="text-xs font-semibold">Previsão de Alta</Label>
                     <Input
                       value={(formData.utiDischargePrediction || [])[0] || ""}
-                      onChange={(e) => setFormData({ ...formData, utiDischargePrediction: [e.target.value.toUpperCase()] })}
+                      onChange={(e) => setFormData({ ...formData, utiDischargePrediction: [e.target.value] })}
+                      onBlur={(e) => setFormData({ ...formData, utiDischargePrediction: [e.target.value.toUpperCase()] })}
                       placeholder="DD/MM/AAAA"
                       className="h-9 text-sm uppercase"
                     />
@@ -258,7 +269,8 @@ export function EditPatientDialog({
                   </Label>
                   <Textarea
                     value={(formData.utiAdmissionReason || [])[0] || ""}
-                    onChange={(e) => setFormData({ ...formData, utiAdmissionReason: [e.target.value.toUpperCase()] })}
+                    onChange={(e) => setFormData({ ...formData, utiAdmissionReason: [e.target.value] })}
+                    onBlur={(e) => setFormData({ ...formData, utiAdmissionReason: [e.target.value.toUpperCase()] })}
                     placeholder="MOTIVO DA ADMISSÃO NA UTI..."
                     className="h-20 text-sm uppercase resize-none"
                   />
