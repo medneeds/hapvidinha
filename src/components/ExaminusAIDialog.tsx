@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sparkles, Loader2, Check, X, Plus, Trash2, RefreshCw } from "lucide-react";
+import { Sparkles, Loader2, Check, X, Plus, RefreshCw, AlertTriangle, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -29,8 +29,11 @@ export function ExaminusAIDialog({
 }: ExaminusAIDialogProps) {
   const [inputText, setInputText] = useState("");
   const [extractedExams, setExtractedExams] = useState<string[]>([]);
+  const [filteredCriticalExams, setFilteredCriticalExams] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isFilteringCritical, setIsFilteringCritical] = useState(false);
+  const [showOnlyCritical, setShowOnlyCritical] = useState(false);
   const [streamContent, setStreamContent] = useState("");
 
   const processWithAI = useCallback(async () => {
@@ -43,6 +46,8 @@ export function ExaminusAIDialog({
     setIsStreaming(true);
     setStreamContent("");
     setExtractedExams([]);
+    setFilteredCriticalExams([]);
+    setShowOnlyCritical(false);
 
     try {
       const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/examinus-chat`;
@@ -140,22 +145,124 @@ export function ExaminusAIDialog({
     }
   }, [inputText]);
 
+  const filterCriticalValues = useCallback(async () => {
+    if (extractedExams.length === 0) {
+      toast.error("Nenhum exame para filtrar");
+      return;
+    }
+
+    setIsFilteringCritical(true);
+
+    try {
+      const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/examinus-chat`;
+      
+      const response = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "user",
+              content: `Analise os exames abaixo e retorne APENAS UMA LINHA RESUMIDA com os valores ALTERADOS ou CRÍTICOS mais relevantes para decisão médica.
+
+REGRAS:
+1. Identifique valores fora da normalidade (anemia, leucocitose, leucopenia, plaquetopenia, IRA, distúrbios eletrolíticos, acidose, alcalose, coagulopatia, PCR elevado, lactato elevado, etc.)
+2. Retorne APENAS UMA LINHA no formato: "DD/MM: [valores alterados resumidos]"
+3. Seja extremamente conciso - apenas valores críticos
+4. Se houver gasometria alterada, inclua os dados relevantes
+5. Se não houver alterações significativas, retorne: "SEM ALTERAÇÕES CRÍTICAS"
+
+EXAMES:
+${extractedExams.join('\n')}`
+            }
+          ]
+        }),
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error("Falha ao filtrar valores críticos");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let fullContent = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) {
+              fullContent += content;
+            }
+          } catch {
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
+      }
+
+      const criticalLine = fullContent.trim().toUpperCase();
+      if (criticalLine && criticalLine !== "SEM ALTERAÇÕES CRÍTICAS") {
+        setFilteredCriticalExams([criticalLine]);
+        setShowOnlyCritical(true);
+        toast.success("Valores críticos identificados!");
+      } else {
+        toast.info("Nenhuma alteração crítica identificada nos exames");
+      }
+      
+      setIsFilteringCritical(false);
+    } catch (error) {
+      console.error("Erro ao filtrar críticos:", error);
+      toast.error("Erro ao identificar valores críticos");
+      setIsFilteringCritical(false);
+    }
+  }, [extractedExams]);
+
   const handleRemoveExtracted = (index: number) => {
-    setExtractedExams(prev => prev.filter((_, i) => i !== index));
+    if (showOnlyCritical) {
+      setFilteredCriticalExams(prev => prev.filter((_, i) => i !== index));
+    } else {
+      setExtractedExams(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
   const handleEditExtracted = (index: number, value: string) => {
-    setExtractedExams(prev => prev.map((item, i) => i === index ? value.toUpperCase() : item));
+    if (showOnlyCritical) {
+      setFilteredCriticalExams(prev => prev.map((item, i) => i === index ? value.toUpperCase() : item));
+    } else {
+      setExtractedExams(prev => prev.map((item, i) => i === index ? value.toUpperCase() : item));
+    }
   };
 
   const handleConfirmImport = () => {
-    if (extractedExams.length === 0) {
+    const examsToImport = showOnlyCritical ? filteredCriticalExams : extractedExams;
+    if (examsToImport.length === 0) {
       toast.error("Nenhum exame para importar");
       return;
     }
     
-    onImportExams([...currentExams, ...extractedExams]);
-    toast.success(`${extractedExams.length} exame(s) adicionado(s)!`);
+    onImportExams([...currentExams, ...examsToImport]);
+    toast.success(`${examsToImport.length} exame(s) adicionado(s)!`);
     handleReset();
     onOpenChange(false);
   };
@@ -163,9 +270,13 @@ export function ExaminusAIDialog({
   const handleReset = () => {
     setInputText("");
     setExtractedExams([]);
+    setFilteredCriticalExams([]);
     setStreamContent("");
     setIsStreaming(false);
+    setShowOnlyCritical(false);
   };
+
+  const displayedExams = showOnlyCritical ? filteredCriticalExams : extractedExams;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -248,21 +359,65 @@ export function ExaminusAIDialog({
           {/* Results Section */}
           {extractedExams.length > 0 && !isStreaming && (
             <div className="flex-1 flex flex-col gap-2 overflow-hidden">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <label className="text-sm font-medium text-muted-foreground">
-                  Exames extraídos ({extractedExams.length})
+                  {showOnlyCritical ? (
+                    <span className="flex items-center gap-1">
+                      <AlertTriangle className="h-3.5 w-3.5 text-warning" />
+                      Valores críticos ({filteredCriticalExams.length})
+                    </span>
+                  ) : (
+                    `Exames extraídos (${extractedExams.length})`
+                  )}
                 </label>
-                <span className="text-xs text-muted-foreground">
-                  Clique para editar, X para remover
-                </span>
+                <div className="flex items-center gap-2">
+                  {!showOnlyCritical && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={filterCriticalValues}
+                      disabled={isFilteringCritical}
+                      className="h-7 text-xs gap-1.5 border-warning/50 text-warning hover:bg-warning/10 hover:text-warning"
+                    >
+                      {isFilteringCritical ? (
+                        <>
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Analisando...
+                        </>
+                      ) : (
+                        <>
+                          <AlertTriangle className="h-3 w-3" />
+                          Apenas Críticos
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  {showOnlyCritical && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowOnlyCritical(false)}
+                      className="h-7 text-xs gap-1.5"
+                    >
+                      <Filter className="h-3 w-3" />
+                      Ver Todos ({extractedExams.length})
+                    </Button>
+                  )}
+                  <span className="text-xs text-muted-foreground hidden sm:block">
+                    Clique para editar
+                  </span>
+                </div>
               </div>
               
               <ScrollArea className="flex-1 border rounded-lg p-2 max-h-[200px]">
                 <div className="space-y-1">
-                  {extractedExams.map((exam, idx) => (
+                  {displayedExams.map((exam, idx) => (
                     <div
                       key={idx}
-                      className="flex items-start gap-2 p-2 rounded hover:bg-accent/50 group"
+                      className={cn(
+                        "flex items-start gap-2 p-2 rounded hover:bg-accent/50 group",
+                        showOnlyCritical && "bg-warning/10 border border-warning/30"
+                      )}
                     >
                       <span className="text-xs font-semibold text-muted-foreground flex-shrink-0 mt-0.5">
                         {idx + 1}.
@@ -300,12 +455,12 @@ export function ExaminusAIDialog({
                   onClick={handleConfirmImport}
                   className="flex-1"
                   style={{ 
-                    backgroundColor: sectorColor,
-                    color: 'white'
+                    backgroundColor: showOnlyCritical ? "hsl(var(--warning))" : sectorColor,
+                    color: showOnlyCritical ? "hsl(var(--warning-foreground))" : 'white'
                   }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Adicionar {extractedExams.length} exame(s)
+                  Adicionar {displayedExams.length} exame(s)
                 </Button>
               </div>
             </div>
