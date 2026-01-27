@@ -215,14 +215,19 @@ export default function AuthPage() {
               
               {/* Brand Name - Logo Style */}
               <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-4">
-                <h1 className="text-5xl xl:text-6xl tracking-tighter inline-flex items-baseline">
-                  <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-                    Hap
+                <div className="inline-flex items-baseline gap-2">
+                  <h1 className="text-5xl xl:text-6xl tracking-tighter inline-flex items-baseline">
+                    <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
+                      Hap
+                    </span>
+                    <span className="font-light text-white/80 -ml-0.5">
+                      Map
+                    </span>
+                  </h1>
+                  <span className="text-[10px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-2 py-0.5 self-start mt-2">
+                    2.0
                   </span>
-                  <span className="font-light text-white/80 -ml-0.5">
-                    Map
-                  </span>
-                </h1>
+                </div>
                 <div className="h-1 w-20 mx-auto mt-2 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full" />
               </div>
               
@@ -496,14 +501,19 @@ export default function AuthPage() {
             </div>
             
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3">
-              <h1 className="text-4xl tracking-tighter inline-flex items-baseline">
-                <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-                  Hap
+              <div className="inline-flex items-baseline gap-1.5">
+                <h1 className="text-4xl tracking-tighter inline-flex items-baseline">
+                  <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
+                    Hap
+                  </span>
+                  <span className="font-light text-white/80 -ml-0.5">
+                    Map
+                  </span>
+                </h1>
+                <span className="text-[8px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-1.5 py-0.5 self-start mt-1">
+                  2.0
                 </span>
-                <span className="font-light text-white/80 -ml-0.5">
-                  Map
-                </span>
-              </h1>
+              </div>
               <div className="h-0.5 w-14 mx-auto mt-1.5 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full" />
             </div>
             <p className="text-white/50 text-xs font-light tracking-wide animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 italic px-4">
