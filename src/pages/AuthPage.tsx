@@ -199,46 +199,56 @@ export default function AuthPage() {
             <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-gradient-radial from-white/10 to-transparent rounded-full blur-2xl animate-[float_10s_ease-in-out_infinite]" />
             <div className="absolute bottom-[15%] right-[10%] w-80 h-80 bg-gradient-radial from-white/8 to-transparent rounded-full blur-3xl animate-[float_12s_ease-in-out_infinite_2s]" />
             
-            <div className="relative z-10 text-center max-w-md animate-in fade-in-0 slide-in-from-left-8 duration-1000">
+            <div className="relative z-10 text-center max-w-lg animate-in fade-in-0 slide-in-from-left-8 duration-1000">
               {/* Logo */}
-              <div className="inline-block relative group mb-10">
+              <div className="inline-block relative group mb-8">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-3xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative bg-white rounded-3xl p-8 shadow-2xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-white/20">
+                <div className="relative bg-white rounded-2xl px-6 py-4 shadow-2xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-white/20">
                   <img 
                     src={hapvidaLogo} 
                     alt="Hapvida NotreDame Intermédica" 
-                    className="h-20 w-auto transition-all duration-500 group-hover:brightness-110"
+                    className="h-12 object-contain transition-all duration-500 group-hover:brightness-110"
                   />
-                  <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
+                  <Sparkles className="absolute -top-2 -right-2 h-5 w-5 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
                 </div>
               </div>
               
-              <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 tracking-tight uppercase animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
-                MAPA DE PACIENTES
+              {/* Brand Name */}
+              <h1 className="text-5xl xl:text-6xl font-black text-white mb-3 tracking-tight animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
+                Hap<span className="text-white/90">Map</span>
               </h1>
-              <p className="text-white/80 text-lg uppercase tracking-wider font-medium animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 mb-8">
-                HOSPITAL GUARÁS - URGÊNCIA E EMERGÊNCIA
+              
+              {/* Slogan */}
+              <p className="text-white/60 text-base xl:text-lg font-light tracking-wide animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 mb-12 italic">
+                Tecnologia que valoriza seu tempo. Inteligência que salva vidas.
               </p>
               
-              {/* Feature highlights */}
-              <div className="space-y-4 text-left animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-500">
-                <div className="flex items-center gap-3 text-white/70">
-                  <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center">
-                    <Building2 className="h-4 w-4 text-white" />
+              {/* Elegant divider */}
+              <div className="flex items-center justify-center gap-4 mb-10 animate-in fade-in-0 duration-1000 delay-400">
+                <div className="h-px w-16 bg-gradient-to-r from-transparent to-white/30" />
+                <Sparkles className="h-4 w-4 text-white/40" />
+                <div className="h-px w-16 bg-gradient-to-l from-transparent to-white/30" />
+              </div>
+              
+              {/* Feature highlights - more elegant */}
+              <div className="space-y-5 text-left animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-500">
+                <div className="flex items-center gap-4 text-white/60 hover:text-white/90 transition-colors duration-300 group">
+                  <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
+                    <Building2 className="h-5 w-5" />
                   </div>
-                  <span className="text-sm font-medium">Gestão integrada de leitos por setor</span>
+                  <span className="text-sm font-light tracking-wide">Gestão inteligente de leitos em tempo real</span>
                 </div>
-                <div className="flex items-center gap-3 text-white/70">
-                  <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
+                <div className="flex items-center gap-4 text-white/60 hover:text-white/90 transition-colors duration-300 group">
+                  <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
+                    <User className="h-5 w-5" />
                   </div>
-                  <span className="text-sm font-medium">Monitoramento em tempo real de pacientes</span>
+                  <span className="text-sm font-light tracking-wide">Visão completa do paciente em um clique</span>
                 </div>
-                <div className="flex items-center gap-3 text-white/70">
-                  <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center">
-                    <Sparkles className="h-4 w-4 text-white" />
+                <div className="flex items-center gap-4 text-white/60 hover:text-white/90 transition-colors duration-300 group">
+                  <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
+                    <Sparkles className="h-5 w-5" />
                   </div>
-                  <span className="text-sm font-medium">Inteligência artificial para apoio clínico</span>
+                  <span className="text-sm font-light tracking-wide">IA integrada para suporte à decisão clínica</span>
                 </div>
               </div>
             </div>
@@ -465,23 +475,23 @@ export default function AuthPage() {
 
           {/* Logo Section */}
           <div className="text-center mb-8 animate-in fade-in-0 slide-in-from-top-8 duration-1000">
-            <div className="inline-block relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-3xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-white rounded-3xl p-6 shadow-2xl shadow-black/30 mb-6 transform transition-all duration-500 group-hover:scale-110 group-hover:shadow-3xl group-hover:shadow-white/20">
+            <div className="inline-block relative group mb-4">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-2xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative bg-white rounded-2xl px-5 py-3 shadow-2xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105">
                 <img 
                   src={hapvidaLogo} 
                   alt="Hapvida NotreDame Intermédica" 
-                  className="h-16 w-auto transition-all duration-500 group-hover:brightness-110"
+                  className="h-10 object-contain transition-all duration-500 group-hover:brightness-110"
                 />
-                <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
+                <Sparkles className="absolute -top-1.5 -right-1.5 h-4 w-4 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
               </div>
             </div>
             
-            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 uppercase">
-              MAPA DE PACIENTES
+            <h1 className="text-4xl font-black text-white mb-2 tracking-tight animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
+              Hap<span className="text-white/90">Map</span>
             </h1>
-            <p className="text-white/80 text-sm uppercase tracking-wider font-medium animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300">
-              HOSPITAL GUARÁS - URGÊNCIA E EMERGÊNCIA
+            <p className="text-white/50 text-xs font-light tracking-wide animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 italic px-4">
+              Tecnologia que valoriza seu tempo. Inteligência que salva vidas.
             </p>
           </div>
 
