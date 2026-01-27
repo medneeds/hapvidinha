@@ -399,7 +399,16 @@ export default function AuthPage() {
                         id="login-username-desktop"
                         type="text"
                         value={loginData.username}
-                        onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
+                        onChange={(e) => {
+                          const newUsername = e.target.value;
+                          setLoginData({ ...loginData, username: newUsername });
+                          // Auto-select department based on username
+                          if (newUsername.toUpperCase() === 'MEDICOUTI') {
+                            setSelectedDepartment('UTI');
+                          } else if (newUsername.toUpperCase() === 'MEDICOPORTA') {
+                            setSelectedDepartment('URGÊNCIA E EMERGÊNCIA ADULTO');
+                          }
+                        }}
                         placeholder="Digite seu usuário"
                         className="h-11 pl-10 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm"
                         disabled={loading}
@@ -650,7 +659,16 @@ export default function AuthPage() {
                     placeholder="DIGITE SEU USUÁRIO"
                     className="h-12 bg-gray-50 border-2 border-gray-300 focus:border-[#013ba6] rounded-xl text-sm font-medium uppercase"
                     value={loginData.username}
-                    onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
+                    onChange={(e) => {
+                      const newUsername = e.target.value;
+                      setLoginData(prev => ({ ...prev, username: newUsername }));
+                      // Auto-select department based on username
+                      if (newUsername.toUpperCase() === 'MEDICOUTI') {
+                        setSelectedDepartment('UTI');
+                      } else if (newUsername.toUpperCase() === 'MEDICOPORTA') {
+                        setSelectedDepartment('URGÊNCIA E EMERGÊNCIA ADULTO');
+                      }
+                    }}
                     disabled={loading}
                     autoComplete="username"
                   />
