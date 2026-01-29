@@ -41,8 +41,9 @@ const signUpSchema = z.object({
     .regex(/^[A-Z0-9/\-\s]+$/, { message: "CRM: APENAS MAIÚSCULAS E NÚMEROS" }),
   specialty: z.string()
     .trim()
-    .min(2, { message: "ESPECIALIDADE OBRIGATÓRIA" })
-    .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s]+$/, { message: "ESPECIALIDADE: APENAS LETRAS MAIÚSCULAS" }),
+    .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s]*$/, { message: "ESPECIALIDADE: APENAS LETRAS MAIÚSCULAS" })
+    .optional()
+    .or(z.literal("")),
   phone: z.string().optional(),
   username: z.string()
     .trim()
@@ -370,7 +371,7 @@ export function IndividualSignUpForm({
         </div>
 
         <div className="space-y-1">
-          <Label className="text-[10px] font-semibold text-gray-600 uppercase">Especialidade *</Label>
+          <Label className="text-[10px] font-semibold text-gray-600 uppercase">Especialidade</Label>
           <div className="relative">
             <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
