@@ -50,9 +50,8 @@ const signUpSchema = z.object({
     .min(10, { message: "TELEFONE OBRIGATÓRIO" }),
   email: z.string()
     .trim()
-    .email({ message: "E-MAIL INVÁLIDO" })
-    .optional()
-    .or(z.literal("")),
+    .min(1, { message: "E-MAIL OBRIGATÓRIO" })
+    .email({ message: "E-MAIL INVÁLIDO" }),
   username: z.string()
     .trim()
     .min(3, { message: "USUÁRIO OBRIGATÓRIO (MIN. 3 CARACTERES)" })
@@ -396,7 +395,7 @@ export function IndividualSignUpForm({
         </div>
 
         <div className="space-y-1">
-          <Label className="text-[10px] font-semibold text-gray-600 uppercase">E-mail (Opcional)</Label>
+          <Label className="text-[10px] font-semibold text-gray-600 uppercase">E-mail *</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
