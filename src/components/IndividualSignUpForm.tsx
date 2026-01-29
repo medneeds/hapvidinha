@@ -454,7 +454,7 @@ export function IndividualSignUpForm({
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value.toUpperCase().replace(/[^A-Z0-9.]/g, '') })}
               onBlur={(e) => setFormData({ ...formData, username: e.target.value.toUpperCase() })}
-              placeholder="JOAO.SILVA"
+              placeholder="ESCOLHA SEU NOME DE USUÁRIO PARA LOGIN"
               className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
               disabled={loading}
               maxLength={30}
