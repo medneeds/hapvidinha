@@ -151,6 +151,24 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
             Carregando
           </p>
         </div>
+
+        {/* Developer Badge - Medneeds */}
+        <div 
+          className="mt-6"
+          style={{ 
+            animation: 'fadeSlideUp 0.8s ease-out 0.6s forwards',
+            opacity: 0
+          }}
+        >
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-[10px] text-white/30 uppercase tracking-widest">Desenvolvido por</p>
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-2">
+              <p className="text-sm font-semibold text-white/70 tracking-wide">
+                Medneeds
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Custom keyframes */}

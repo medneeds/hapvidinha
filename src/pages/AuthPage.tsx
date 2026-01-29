@@ -287,9 +287,8 @@ export default function AuthPage() {
             
             {/* Footer on left panel */}
             <div className="absolute bottom-6 left-0 right-0 text-center">
-              <p className="text-[10px] text-white/30 italic">
-                Desenvolvido por Artur Batista
-              </p>
+              <p className="text-[10px] text-white/30 uppercase tracking-widest">Desenvolvido por</p>
+              <p className="text-xs text-white/50 font-semibold mt-0.5">Medneeds</p>
             </div>
           </div>
           
@@ -768,7 +767,8 @@ export default function AuthPage() {
 
           {/* Footer */}
           <div className="text-center mt-3">
-            <p className="text-white/30 text-[9px] italic uppercase">DESENVOLVIDO POR ARTUR BATISTA</p>
+            <p className="text-white/30 text-[9px] uppercase tracking-widest">Desenvolvido por</p>
+            <p className="text-white/50 text-[10px] font-semibold mt-0.5">Medneeds</p>
           </div>
         </div>
       </div>
