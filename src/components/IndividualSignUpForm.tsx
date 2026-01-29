@@ -20,6 +20,7 @@ import {
   Building2,
   CheckCircle,
   Shield,
+  Mail,
 } from "lucide-react";
 import {
   Select,
@@ -44,7 +45,14 @@ const signUpSchema = z.object({
     .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s]*$/, { message: "ESPECIALIDADE: APENAS LETRAS MAIÚSCULAS" })
     .optional()
     .or(z.literal("")),
-  phone: z.string().optional(),
+  phone: z.string()
+    .trim()
+    .min(10, { message: "TELEFONE OBRIGATÓRIO" }),
+  email: z.string()
+    .trim()
+    .email({ message: "E-MAIL INVÁLIDO" })
+    .optional()
+    .or(z.literal("")),
   username: z.string()
     .trim()
     .min(3, { message: "USUÁRIO OBRIGATÓRIO (MIN. 3 CARACTERES)" })
@@ -93,6 +101,7 @@ export function IndividualSignUpForm({
     rqe: "",
     specialty: "",
     phone: "",
+    email: "",
     username: "",
     password: "",
     confirmPassword: "",
@@ -372,7 +381,7 @@ export function IndividualSignUpForm({
         </div>
 
         <div className="space-y-1">
-          <Label className="text-[10px] font-semibold text-gray-600 uppercase">Telefone</Label>
+          <Label className="text-[10px] font-semibold text-gray-600 uppercase">Telefone (WhatsApp) *</Label>
           <div className="relative">
             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -380,6 +389,21 @@ export function IndividualSignUpForm({
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="(99) 99999-9999"
+              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+              disabled={loading}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <Label className="text-[10px] font-semibold text-gray-600 uppercase">E-mail (Opcional)</Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="seu.email@exemplo.com"
               className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
               disabled={loading}
             />
