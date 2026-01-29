@@ -309,37 +309,37 @@ export default function AuthPage() {
             </div>
           </div>
           
-          {/* Right Panel - Form - more compact */}
-          <div className="w-[55%] xl:w-1/2 bg-white flex items-center justify-center p-6 xl:p-8 relative overflow-hidden">
+          {/* Right Panel - Form - ultra compact & perfectly centered */}
+          <div className="w-[55%] xl:w-1/2 bg-white flex items-center justify-center py-4 px-6 xl:py-6 xl:px-8 relative overflow-y-auto">
             {/* Subtle background pattern for form panel */}
             <div className="absolute inset-0 opacity-[0.02]" style={{
               backgroundImage: `radial-gradient(circle at 1px 1px, #013ba6 1px, transparent 0)`,
               backgroundSize: '24px 24px'
             }} />
             
-            {/* Decorative corner accent - smaller */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#013ba6]/5 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-[#013ba6]/5 to-transparent" />
+            {/* Decorative corner accent */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#013ba6]/5 to-transparent" />
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#013ba6]/5 to-transparent" />
             
-            <div className="w-full max-w-sm relative z-10 animate-in fade-in-0 slide-in-from-right-8 duration-1000 delay-300">
-              {/* Form header - more compact */}
-              <div className="mb-5 text-center">
-                <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] shadow-lg shadow-[#013ba6]/30 mb-3">
-                  <LogIn className="h-6 w-6 text-white" />
+            <div className="w-full max-w-[340px] relative z-10 animate-in fade-in-0 slide-in-from-right-8 duration-1000 delay-300">
+              {/* Form header - ultra compact */}
+              <div className="mb-4 text-center">
+                <div className="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-gradient-to-br from-[#013ba6] to-[#0152d4] shadow-lg shadow-[#013ba6]/30 mb-2">
+                  <LogIn className="h-5 w-5 text-white" />
                 </div>
-                <h2 className="text-xl font-bold text-gray-900 uppercase">Acesse sua conta</h2>
-                <p className="text-gray-500 text-xs mt-0.5">Preencha os dados para continuar</p>
+                <h2 className="text-lg font-bold text-gray-900 uppercase">Acesse sua conta</h2>
+                <p className="text-gray-500 text-[11px] mt-0.5">Preencha os dados para continuar</p>
               </div>
 
-              {/* Form content - more compact spacing */}
-              <form onSubmit={handleLogin} className="space-y-3">
+              {/* Form content - ultra compact spacing */}
+              <form onSubmit={handleLogin} className="space-y-2.5">
                 {/* Hierarchical Selection Section */}
-                <div className="space-y-2.5 pb-3 border-b border-gray-200">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Localização</p>
+                <div className="space-y-2 pb-2.5 border-b border-gray-200">
+                  <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Localização</p>
                   
                   {/* State Selection */}
-                  <div className="space-y-1 group">
-                    <Label htmlFor="state-select-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
+                  <div className="space-y-0.5 group">
+                    <Label htmlFor="state-select-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
                       Estado
                     </Label>
                     <Select
@@ -352,7 +352,7 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="state-select-desktop"
-                        className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs font-medium uppercase text-gray-900"
+                        className="h-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] font-medium uppercase text-gray-900"
                       >
                         <SelectValue placeholder="Selecione o estado" />
                       </SelectTrigger>
@@ -367,8 +367,8 @@ export default function AuthPage() {
                   </div>
 
                   {/* Hospital Unit Selection */}
-                  <div className="space-y-1 group">
-                    <Label htmlFor="hospital-select-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
+                  <div className="space-y-0.5 group">
+                    <Label htmlFor="hospital-select-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
                       Unidade Hospitalar
                     </Label>
                     <Select
@@ -378,7 +378,7 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="hospital-select-desktop"
-                        className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs font-medium uppercase text-gray-900 disabled:opacity-50"
+                        className="h-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] font-medium uppercase text-gray-900 disabled:opacity-50"
                       >
                         <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Primeiro selecione um estado"} />
                       </SelectTrigger>
@@ -393,8 +393,8 @@ export default function AuthPage() {
                   </div>
 
                   {/* Department Selection */}
-                  <div className="space-y-1 group">
-                    <Label htmlFor="department-select-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
+                  <div className="space-y-0.5 group">
+                    <Label htmlFor="department-select-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
                       Setor
                     </Label>
                     <Select
@@ -404,7 +404,7 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="department-select-desktop"
-                        className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs font-medium uppercase text-gray-900"
+                        className="h-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] font-medium uppercase text-gray-900"
                       >
                         <SelectValue placeholder="Selecione o setor" />
                       </SelectTrigger>
@@ -419,17 +419,17 @@ export default function AuthPage() {
                   </div>
                 </div>
 
-                {/* Authentication Fields Section - more compact */}
-                <div className="space-y-2.5 pt-2">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Dados de Acesso</p>
+                {/* Authentication Fields Section - ultra compact */}
+                <div className="space-y-2 pt-2">
+                  <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Dados de Acesso</p>
                   
                   {/* Username Field */}
-                  <div className="space-y-1">
-                    <Label htmlFor="login-username-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="login-username-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
                       Usuário
                     </Label>
                     <div className="relative">
-                      <User className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                      <User className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
                       <Input
                         id="login-username-desktop"
                         type="text"
@@ -446,7 +446,7 @@ export default function AuthPage() {
                           }
                         }}
                         placeholder="DIGITE SEU USUÁRIO"
-                        className="h-9 pl-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs uppercase font-medium"
+                        className="h-8 pl-7 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] uppercase font-medium"
                         disabled={loading}
                         maxLength={50}
                       />
@@ -454,12 +454,12 @@ export default function AuthPage() {
                   </div>
                   
                   {/* Password Field */}
-                  <div className="space-y-1">
-                    <Label htmlFor="login-password-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="login-password-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
                       Senha (6 caracteres)
                     </Label>
                     <div className="relative">
-                      <Lock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                      <Lock className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
                       <Input
                         id="login-password-desktop"
                         type={showPassword ? "text" : "password"}
@@ -470,7 +470,7 @@ export default function AuthPage() {
                           setLoginData({ ...loginData, password: newPassword });
                         }}
                         placeholder="EX: ABC123"
-                        className="h-9 pl-8 pr-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs uppercase font-mono tracking-widest"
+                        className="h-8 pl-7 pr-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] uppercase font-mono tracking-widest"
                         disabled={loading}
                         maxLength={6}
                       />
@@ -478,59 +478,59 @@ export default function AuthPage() {
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-0.5 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-400 hover:text-gray-600"
+                        className="absolute right-0.5 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 hover:text-gray-600"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                        {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                       </Button>
                     </div>
                     <p className="text-[8px] text-gray-400">{loginData.password.length}/6 • Letras maiúsculas e números</p>
                   </div>
                 </div>
 
-                {/* Submit Button - slightly smaller */}
+                {/* Submit Button */}
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-10 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d80] hover:to-[#013ba6] text-white font-bold uppercase rounded-lg text-sm shadow-lg shadow-[#013ba6]/30 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]"
+                  className="w-full h-9 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d80] hover:to-[#013ba6] text-white font-bold uppercase rounded-md text-xs shadow-lg shadow-[#013ba6]/30 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]"
                 >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span className="text-xs">Processando...</span>
+                {loading ? (
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span className="text-[11px]">Processando...</span>
                     </div>
                   ) : (
-                    <span className="flex items-center gap-2">
-                      <LogIn className="h-4 w-4" />
+                    <span className="flex items-center gap-1.5">
+                      <LogIn className="h-3.5 w-3.5" />
                       Entrar no Sistema
                     </span>
                   )}
                 </Button>
 
-                {/* Toggle Sign Up / Sign In - more compact */}
-                <div className="flex flex-col items-center gap-1 pt-1">
+                {/* Toggle Sign Up / Sign In - ultra compact */}
+                <div className="flex flex-col items-center gap-0.5 pt-1">
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={() => setAuthMode("individual-signup")}
-                    className="text-[#013ba6] hover:text-[#012d80] font-semibold text-xs uppercase hover:bg-[#013ba6]/5 gap-1.5 h-8"
+                    className="text-[#013ba6] hover:text-[#012d80] font-semibold text-[11px] uppercase hover:bg-[#013ba6]/5 gap-1 h-7"
                   >
-                    <UserPlus className="h-3.5 w-3.5" />
+                    <UserPlus className="h-3 w-3" />
                     Criar conta individual
                   </Button>
                   <button
                     type="button"
                     onClick={() => setAuthMode("forgot-password")}
-                    className="text-[10px] text-gray-500 hover:text-[#013ba6] transition-colors"
+                    className="text-[9px] text-gray-500 hover:text-[#013ba6] transition-colors"
                   >
                     Esqueci minha senha
                   </button>
                 </div>
 
-                {/* Security note - smaller */}
-                <div className="flex items-center justify-center gap-1.5 pt-1 text-gray-400">
-                  <Lock className="h-2.5 w-2.5" />
-                  <span className="text-[9px] uppercase tracking-wider">Conexão segura e criptografada</span>
+                {/* Security note */}
+                <div className="flex items-center justify-center gap-1 text-gray-400">
+                  <Lock className="h-2 w-2" />
+                  <span className="text-[8px] uppercase tracking-wider">Conexão segura e criptografada</span>
                 </div>
               </form>
             </div>
