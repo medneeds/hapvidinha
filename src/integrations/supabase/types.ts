@@ -168,6 +168,78 @@ export type Database = {
           },
         ]
       }
+      data_requests: {
+        Row: {
+          created_at: string
+          export_expires_at: string | null
+          export_url: string | null
+          id: string
+          notes: string | null
+          processed_at: string | null
+          processed_by: string | null
+          request_type: string
+          requested_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          export_expires_at?: string | null
+          export_url?: string | null
+          id?: string
+          notes?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          request_type: string
+          requested_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          export_expires_at?: string | null
+          export_url?: string | null
+          id?: string
+          notes?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          request_type?: string
+          requested_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      data_retention_policies: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          legal_basis: string | null
+          retention_years: number
+          table_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          legal_basis?: string | null
+          retention_years?: number
+          table_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          legal_basis?: string | null
+          retention_years?: number
+          table_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dhd_patients: {
         Row: {
           created_at: string
@@ -695,12 +767,16 @@ export type Database = {
           approved_by: string | null
           created_at: string
           crm: string | null
+          data_deletion_requested_at: string | null
+          data_export_requested_at: string | null
           email: string | null
           full_name: string | null
           id: string
           phone: string | null
           specialty: string | null
           status: string
+          terms_accepted_at: string | null
+          terms_version: string | null
           updated_at: string
         }
         Insert: {
@@ -708,12 +784,16 @@ export type Database = {
           approved_by?: string | null
           created_at?: string
           crm?: string | null
+          data_deletion_requested_at?: string | null
+          data_export_requested_at?: string | null
           email?: string | null
           full_name?: string | null
           id: string
           phone?: string | null
           specialty?: string | null
           status?: string
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           updated_at?: string
         }
         Update: {
@@ -721,12 +801,16 @@ export type Database = {
           approved_by?: string | null
           created_at?: string
           crm?: string | null
+          data_deletion_requested_at?: string | null
+          data_export_requested_at?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null
           specialty?: string | null
           status?: string
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -1005,6 +1089,45 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      user_consents: {
+        Row: {
+          accepted_at: string
+          consent_type: string
+          consent_version: string
+          created_at: string
+          id: string
+          ip_address: unknown
+          revoked_at: string | null
+          revoked_reason: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          consent_type: string
+          consent_version: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          revoked_at?: string | null
+          revoked_reason?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          consent_type?: string
+          consent_version?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          revoked_at?: string | null
+          revoked_reason?: string | null
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }

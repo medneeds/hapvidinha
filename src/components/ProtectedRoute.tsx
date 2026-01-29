@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { LoadingScreen } from "./LoadingScreen";
 import { SessionTimeoutProvider } from "./SessionTimeoutProvider";
 import { PendingApprovalScreen } from "./PendingApprovalScreen";
+import { ConsentTermsDialog, CURRENT_TERMS_VERSION } from "./ConsentTermsDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 // Logins genéricos que não precisam de aprovação (período de transição)
 const LEGACY_GENERIC_USERS = [
@@ -20,9 +22,46 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [hasShownLoading, setHasShownLoading] = useState(false);
+  const [showTermsDialog, setShowTermsDialog] = useState(false);
+  const [checkingTerms, setCheckingTerms] = useState(true);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
-  // Verificar se é um usuário genérico legado (não precisa de aprovação)
+  // Verificar se é um usuário genérico legado (não precisa de aprovação nem termos)
   const isLegacyGenericUser = user?.email && LEGACY_GENERIC_USERS.includes(user.email.toLowerCase());
+
+  // Verificar se usuário já aceitou os termos
+  useEffect(() => {
+    const checkTermsAcceptance = async () => {
+      if (!user || isLegacyGenericUser) {
+        setCheckingTerms(false);
+        setTermsAccepted(true);
+        return;
+      }
+
+      try {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("terms_version, terms_accepted_at")
+          .eq("id", user.id)
+          .single();
+
+        if (profile?.terms_version === CURRENT_TERMS_VERSION && profile?.terms_accepted_at) {
+          setTermsAccepted(true);
+        } else {
+          setShowTermsDialog(true);
+        }
+      } catch (error) {
+        console.error("Erro ao verificar termos:", error);
+        setShowTermsDialog(true);
+      } finally {
+        setCheckingTerms(false);
+      }
+    };
+
+    if (user && !loading) {
+      checkTermsAcceptance();
+    }
+  }, [user, loading, isLegacyGenericUser]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -33,7 +72,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
   }, [user, loading, navigate, hasShownLoading]);
 
-  if (loading) {
+  if (loading || checkingTerms) {
     return null;
   }
 
@@ -43,6 +82,20 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (showLoadingScreen) {
     return <LoadingScreen onComplete={() => setShowLoadingScreen(false)} />;
+  }
+
+  // Mostrar diálogo de termos se ainda não aceitou
+  if (showTermsDialog && !termsAccepted) {
+    return (
+      <ConsentTermsDialog
+        open={true}
+        userId={user.id}
+        onAccept={() => {
+          setTermsAccepted(true);
+          setShowTermsDialog(false);
+        }}
+      />
+    );
   }
 
   // Usuários genéricos legados têm acesso direto (período de transição)
