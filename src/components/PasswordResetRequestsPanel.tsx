@@ -116,12 +116,15 @@ export function PasswordResetRequestsPanel() {
       return;
     }
 
+    if (!selectedRequest.user_id) {
+      toast.error("Usuário não encontrado no sistema");
+      return;
+    }
+
     setProcessing(true);
     try {
-      // Atualizar senha via API Admin (requer edge function)
-      // Por enquanto, vamos apenas marcar como aprovado e o coordenador define a senha manualmente
-      
-      const { error } = await supabase
+      // Primeiro, atualizar status para aprovado
+      const { error: approveError } = await supabase
         .from("password_reset_requests")
         .update({
           status: "approved",
@@ -131,17 +134,40 @@ export function PasswordResetRequestsPanel() {
         })
         .eq("id", selectedRequest.id);
 
-      if (error) throw error;
+      if (approveError) throw approveError;
 
-      toast.success(`Solicitação aprovada! Informe ao usuário ${selectedRequest.username} que a nova senha é: ${newPassword}`);
+      // Chamar edge function para resetar a senha
+      const { data, error: resetError } = await supabase.functions.invoke(
+        "reset-user-password",
+        {
+          body: {
+            userId: selectedRequest.user_id,
+            newPassword: newPassword,
+            requestId: selectedRequest.id,
+          },
+        }
+      );
+
+      if (resetError) {
+        console.error("Erro da edge function:", resetError);
+        throw new Error(resetError.message || "Erro ao redefinir senha");
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      toast.success(
+        `Senha redefinida com sucesso! Informe ao usuário ${selectedRequest.username} que a nova senha é: ${newPassword}`
+      );
       setShowResetDialog(false);
       setSelectedRequest(null);
       setNewPassword("");
       setConfirmPassword("");
       fetchRequests();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao aprovar solicitação:", error);
-      toast.error("Erro ao processar aprovação");
+      toast.error(error.message || "Erro ao processar aprovação");
     } finally {
       setProcessing(false);
     }
