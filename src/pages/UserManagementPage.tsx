@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { MainLayout } from "@/components/MainLayout";
 import { PasswordResetRequestsPanel } from "@/components/PasswordResetRequestsPanel";
+import { UserMonitoringPanel } from "@/components/UserMonitoringPanel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -483,6 +484,9 @@ export default function UserManagementPage() {
             </TableBody>
           </Table>
         </div>
+
+        {/* User Monitoring Panel */}
+        <UserMonitoringPanel />
 
         {/* Password Reset Requests Panel */}
         <PasswordResetRequestsPanel />

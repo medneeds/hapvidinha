@@ -1,7 +1,8 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useUserPresence } from "@/hooks/useUserPresence";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -9,6 +10,9 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
+  // Initialize user presence tracking
+  useUserPresence();
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background relative">
