@@ -503,6 +503,48 @@ export type Database = {
           },
         ]
       }
+      password_reset_requests: {
+        Row: {
+          created_at: string
+          crm: string
+          id: string
+          new_password_set_at: string | null
+          requested_at: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_notes: string | null
+          status: string
+          user_id: string | null
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          crm: string
+          id?: string
+          new_password_set_at?: string | null
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          user_id?: string | null
+          username: string
+        }
+        Update: {
+          created_at?: string
+          crm?: string
+          id?: string
+          new_password_set_at?: string | null
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          user_id?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
       patient_movements: {
         Row: {
           created_at: string
