@@ -35,6 +35,10 @@ import DhdHistoryPage from "./pages/DhdHistoryPage";
 import AuditLogsPage from "./pages/AuditLogsPage";
 import UserManagementPage from "./pages/UserManagementPage";
 import PrivacyPage from "./pages/PrivacyPage";
+import AdminStatesPage from "./pages/AdminStatesPage";
+import AdminUnitsPage from "./pages/AdminUnitsPage";
+import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -306,6 +310,30 @@ const App = () => {
           element={
             <ProtectedRoute>
               <PrivacyPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/states"
+          element={
+            <ProtectedRoute>
+              <AdminStatesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/units"
+          element={
+            <ProtectedRoute>
+              <AdminUnitsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/coordinators"
+          element={
+            <ProtectedRoute>
+              <AdminCoordinatorsPage />
             </ProtectedRoute>
           }
         />
