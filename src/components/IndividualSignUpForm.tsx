@@ -389,6 +389,20 @@ export function IndividualSignUpForm({
       <div className="space-y-3">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">CREDENCIAIS DE ACESSO</p>
         
+        {/* Password Requirements Box */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 space-y-2">
+          <p className="text-[10px] font-bold text-blue-800 uppercase flex items-center gap-1.5">
+            <Shield className="h-3.5 w-3.5" />
+            Requisitos de Segurança
+          </p>
+          <ul className="text-[10px] text-blue-700 space-y-1 pl-5 list-disc">
+            <li><strong>Usuário:</strong> Apenas letras maiúsculas, números e ponto (.)</li>
+            <li><strong>Senha:</strong> Exatamente 6 caracteres</li>
+            <li>Deve conter <strong>letras</strong> E <strong>números</strong> (ex: ABC123)</li>
+            <li>Todos os campos marcados com <strong>*</strong> são obrigatórios</li>
+          </ul>
+        </div>
+        
         <div className="space-y-1">
           <Label className="text-[10px] font-semibold text-gray-600 uppercase">Usuário *</Label>
           <div className="relative">
@@ -396,14 +410,15 @@ export function IndividualSignUpForm({
             <Input
               type="text"
               value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase().replace(/\s/g, '') })}
-              placeholder="joao.silva"
-              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+              onChange={(e) => setFormData({ ...formData, username: e.target.value.toUpperCase().replace(/[^A-Z0-9.]/g, '') })}
+              onBlur={(e) => setFormData({ ...formData, username: e.target.value.toUpperCase() })}
+              placeholder="JOAO.SILVA"
+              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
               disabled={loading}
               maxLength={30}
             />
           </div>
-          <p className="text-[9px] text-gray-400">Será seu login no sistema</p>
+          <p className="text-[9px] text-gray-500">Este será seu login no sistema (ex: JOAO.SILVA)</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -414,10 +429,11 @@ export function IndividualSignUpForm({
               <Input
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="••••••"
-                className="h-9 pl-10 pr-9 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                onChange={(e) => setFormData({ ...formData, password: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6) })}
+                placeholder="ABC123"
+                className="h-9 pl-10 pr-9 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase tracking-widest"
                 disabled={loading}
+                maxLength={6}
               />
               <Button
                 type="button"
@@ -429,6 +445,7 @@ export function IndividualSignUpForm({
                 {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
               </Button>
             </div>
+            <p className="text-[9px] text-gray-500">{formData.password.length}/6 caracteres</p>
           </div>
 
           <div className="space-y-1">
@@ -438,10 +455,11 @@ export function IndividualSignUpForm({
               <Input
                 type={showConfirmPassword ? "text" : "password"}
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                placeholder="••••••"
-                className="h-9 pl-10 pr-9 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6) })}
+                placeholder="ABC123"
+                className="h-9 pl-10 pr-9 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase tracking-widest"
                 disabled={loading}
+                maxLength={6}
               />
               <Button
                 type="button"
@@ -453,8 +471,26 @@ export function IndividualSignUpForm({
                 {showConfirmPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
               </Button>
             </div>
+            <p className="text-[9px] text-gray-500">{formData.confirmPassword.length}/6 caracteres</p>
           </div>
         </div>
+        
+        {/* Password match indicator */}
+        {formData.password.length === 6 && formData.confirmPassword.length > 0 && (
+          <div className={`flex items-center gap-1.5 text-[10px] ${formData.password === formData.confirmPassword ? 'text-emerald-600' : 'text-red-500'}`}>
+            {formData.password === formData.confirmPassword ? (
+              <>
+                <CheckCircle className="h-3.5 w-3.5" />
+                <span>Senhas conferem</span>
+              </>
+            ) : (
+              <>
+                <Lock className="h-3.5 w-3.5" />
+                <span>Senhas não conferem</span>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Submit Button */}
