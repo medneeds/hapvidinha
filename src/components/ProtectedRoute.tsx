@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { LoadingScreen } from "./LoadingScreen";
+import { SessionTimeoutProvider } from "./SessionTimeoutProvider";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -30,5 +31,10 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <LoadingScreen onComplete={() => setShowLoadingScreen(false)} />;
   }
 
-  return <>{children}</>;
+  // Envolver com SessionTimeoutProvider para ativar timeout LGPD/CFM
+  return (
+    <SessionTimeoutProvider>
+      {children}
+    </SessionTimeoutProvider>
+  );
 }

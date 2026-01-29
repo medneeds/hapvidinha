@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: Database["public"]["Enums"]["audit_action"]
+          changed_fields: string[] | null
+          created_at: string
+          department: string | null
+          hospital_unit_id: string | null
+          id: string
+          ip_address: unknown
+          new_data: Json | null
+          old_data: Json | null
+          record_id: string | null
+          session_id: string | null
+          state_id: string | null
+          table_name: string
+          user_agent: string | null
+          user_email: string | null
+          user_id: string | null
+          user_role: string | null
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["audit_action"]
+          changed_fields?: string[] | null
+          created_at?: string
+          department?: string | null
+          hospital_unit_id?: string | null
+          id?: string
+          ip_address?: unknown
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          session_id?: string | null
+          state_id?: string | null
+          table_name: string
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["audit_action"]
+          changed_fields?: string[] | null
+          created_at?: string
+          department?: string | null
+          hospital_unit_id?: string | null
+          id?: string
+          ip_address?: unknown
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          session_id?: string | null
+          state_id?: string | null
+          table_name?: string
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bed_allocation_requests: {
         Row: {
           created_at: string
@@ -1001,6 +1076,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "medico" | "porta" | "visitante"
+      audit_action:
+        | "INSERT"
+        | "UPDATE"
+        | "DELETE"
+        | "SELECT"
+        | "LOGIN"
+        | "LOGOUT"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1129,6 +1211,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "medico", "porta", "visitante"],
+      audit_action: ["INSERT", "UPDATE", "DELETE", "SELECT", "LOGIN", "LOGOUT"],
     },
   },
 } as const
