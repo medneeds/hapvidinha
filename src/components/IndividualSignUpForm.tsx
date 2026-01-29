@@ -330,9 +330,9 @@ export function IndividualSignUpForm({
             <Input
               type="text"
               value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              placeholder="Dr. João da Silva"
-              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+              onChange={(e) => setFormData({ ...formData, fullName: e.target.value.toUpperCase() })}
+              placeholder="DR. JOÃO DA SILVA"
+              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
               disabled={loading}
             />
           </div>
@@ -377,9 +377,9 @@ export function IndividualSignUpForm({
             <Input
               type="text"
               value={formData.specialty}
-              onChange={(e) => setFormData({ ...formData, specialty: e.target.value })}
-              placeholder="Clínico Geral, Cardiologista..."
-              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+              onChange={(e) => setFormData({ ...formData, specialty: e.target.value.toUpperCase() })}
+              placeholder="CLÍNICO GERAL, CARDIOLOGISTA..."
+              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
               disabled={loading}
             />
           </div>
