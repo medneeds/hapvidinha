@@ -117,6 +117,7 @@ export function AppSidebar({
       requiresPassword: true,
       items: [
         { name: "DASHBOARD DE GESTÃO", link: "/dashboard" },
+        { name: "GESTÃO DE USUÁRIOS", link: "/user-management" },
         { name: "TRILHA DE AUDITORIA", link: "/audit-logs" },
         { name: "CADASTRAR ESTADOS", link: "/admin/states" },
         { name: "CADASTRAR UNIDADES", link: "/admin/units" },

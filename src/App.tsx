@@ -33,6 +33,7 @@ import DhdDashboardPage from "./pages/DhdDashboardPage";
 import DhdRegistrationPage from "./pages/DhdRegistrationPage";
 import DhdHistoryPage from "./pages/DhdHistoryPage";
 import AuditLogsPage from "./pages/AuditLogsPage";
+import UserManagementPage from "./pages/UserManagementPage";
 
 const queryClient = new QueryClient();
 
@@ -289,6 +290,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <AuditLogsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user-management"
+          element={
+            <ProtectedRoute>
+              <UserManagementPage />
             </ProtectedRoute>
           }
         />
