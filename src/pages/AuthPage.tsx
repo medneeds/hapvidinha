@@ -13,6 +13,7 @@ import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { cn } from "@/lib/utils";
 import { IndividualSignUpForm } from "@/components/IndividualSignUpForm";
+import { ForgotPasswordForm } from "@/components/ForgotPasswordForm";
 import {
   Select,
   SelectContent,
@@ -21,12 +22,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// Validação: username só aceita letras maiúsculas (A-Z) e números
 const loginSchema = z.object({
-  username: z.string().trim().min(1, { message: "LOGIN OBRIGATÓRIO" }).max(50),
-  password: z.string().min(1, { message: "SENHA OBRIGATÓRIA" }),
+  username: z.string()
+    .trim()
+    .min(1, { message: "LOGIN OBRIGATÓRIO" })
+    .max(50)
+    .regex(/^[A-Z0-9.]+$/, { message: "APENAS LETRAS MAIÚSCULAS E NÚMEROS" }),
+  password: z.string()
+    .min(6, { message: "SENHA DEVE TER 6 CARACTERES" })
+    .max(6, { message: "SENHA DEVE TER 6 CARACTERES" })
+    .regex(/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{6}$/, { message: "SENHA: 6 CARACTERES COM LETRAS E NÚMEROS" }),
 });
 
-type AuthMode = "login" | "individual-signup";
+type AuthMode = "login" | "individual-signup" | "forgot-password";
 
 export default function AuthPage() {
   const { user, signIn } = useAuth();
@@ -130,6 +139,28 @@ export default function AuthPage() {
               onHospitalChange={setSelectedHospitalId}
               onDepartmentChange={setSelectedDepartment}
             />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Render forgot password form if that mode is selected
+  if (authMode === "forgot-password") {
+    return (
+      <div className={cn(
+        "min-h-screen bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] flex items-center justify-center p-4 relative overflow-hidden",
+        "lg:p-0"
+      )}>
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 -right-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse [animation-delay:1.5s]" />
+        </div>
+
+        <div className="w-full max-w-md relative z-10">
+          <div className="bg-white backdrop-blur-2xl rounded-2xl shadow-2xl shadow-black/30 p-6 border border-white/40">
+            <ForgotPasswordForm onBack={() => setAuthMode("login")} />
           </div>
         </div>
       </div>
@@ -404,27 +435,29 @@ export default function AuthPage() {
                         type="text"
                         value={loginData.username}
                         onChange={(e) => {
-                          const newUsername = e.target.value;
+                          // Forçar uppercase e só permitir A-Z, 0-9 e ponto
+                          const newUsername = e.target.value.toUpperCase().replace(/[^A-Z0-9.]/g, '');
                           setLoginData({ ...loginData, username: newUsername });
                           // Auto-select department based on username
-                          if (newUsername.toUpperCase() === 'MEDICOUTI') {
+                          if (newUsername === 'MEDICOUTI') {
                             setSelectedDepartment('UTI');
-                          } else if (newUsername.toUpperCase() === 'MEDICOPORTA') {
+                          } else if (newUsername === 'MEDICOPORTA') {
                             setSelectedDepartment('URGÊNCIA E EMERGÊNCIA ADULTO');
                           }
                         }}
-                        placeholder="Digite seu usuário"
-                        className="h-11 pl-10 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm"
+                        placeholder="DIGITE SEU USUÁRIO"
+                        className="h-11 pl-10 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm uppercase font-medium"
                         disabled={loading}
                         maxLength={50}
                       />
                     </div>
+                    <p className="text-[9px] text-gray-400">Apenas letras maiúsculas e números</p>
                   </div>
                   
                   {/* Password Field */}
                   <div className="space-y-1.5">
                     <Label htmlFor="login-password-desktop" className="text-xs font-semibold text-gray-600 uppercase">
-                      Senha
+                      Senha (6 caracteres)
                     </Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -432,10 +465,15 @@ export default function AuthPage() {
                         id="login-password-desktop"
                         type={showPassword ? "text" : "password"}
                         value={loginData.password}
-                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                        placeholder="Digite sua senha"
-                        className="h-11 pl-10 pr-10 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm"
+                        onChange={(e) => {
+                          // Forçar uppercase e só permitir A-Z e 0-9, max 6 caracteres
+                          const newPassword = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+                          setLoginData({ ...loginData, password: newPassword });
+                        }}
+                        placeholder="EX: ABC123"
+                        className="h-11 pl-10 pr-10 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm uppercase font-mono tracking-widest"
                         disabled={loading}
+                        maxLength={6}
                       />
                       <Button
                         type="button"
@@ -447,6 +485,7 @@ export default function AuthPage() {
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>
+                    <p className="text-[9px] text-gray-400">{loginData.password.length}/6 • Letras maiúsculas e números</p>
                   </div>
                 </div>
 
@@ -470,7 +509,7 @@ export default function AuthPage() {
                 </Button>
 
                 {/* Toggle Sign Up / Sign In */}
-                <div className="text-center pt-2">
+                <div className="flex flex-col items-center gap-2 pt-2">
                   <Button
                     type="button"
                     variant="ghost"
@@ -480,6 +519,13 @@ export default function AuthPage() {
                     <UserPlus className="h-4 w-4" />
                     Criar conta individual
                   </Button>
+                  <button
+                    type="button"
+                    onClick={() => setAuthMode("forgot-password")}
+                    className="text-xs text-gray-500 hover:text-[#013ba6] transition-colors"
+                  >
+                    Esqueci minha senha
+                  </button>
                 </div>
 
                 {/* Security note */}
@@ -664,35 +710,43 @@ export default function AuthPage() {
                     className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase"
                     value={loginData.username}
                     onChange={(e) => {
-                      const newUsername = e.target.value;
+                      // Forçar uppercase e só permitir A-Z, 0-9 e ponto
+                      const newUsername = e.target.value.toUpperCase().replace(/[^A-Z0-9.]/g, '');
                       setLoginData(prev => ({ ...prev, username: newUsername }));
-                      if (newUsername.toUpperCase() === 'MEDICOUTI') {
+                      if (newUsername === 'MEDICOUTI') {
                         setSelectedDepartment('UTI');
-                      } else if (newUsername.toUpperCase() === 'MEDICOPORTA') {
+                      } else if (newUsername === 'MEDICOPORTA') {
                         setSelectedDepartment('URGÊNCIA E EMERGÊNCIA ADULTO');
                       }
                     }}
                     disabled={loading}
                     autoComplete="username"
+                    maxLength={50}
                   />
+                  <p className="text-[8px] text-gray-400">Apenas maiúsculas e números</p>
                 </div>
 
                 {/* Password Field */}
                 <div className="space-y-0.5">
                   <Label htmlFor="login-password-mobile" className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase">
                     <Lock className="h-2.5 w-2.5 text-gray-500" />
-                    SENHA
+                    SENHA (6 CARACTERES)
                   </Label>
                   <div className="relative">
                     <Input
                       id="login-password-mobile"
                       type={showPassword ? "text" : "password"}
-                      placeholder="DIGITE SUA SENHA"
-                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg pr-9 text-xs font-medium"
+                      placeholder="EX: ABC123"
+                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg pr-9 text-xs font-mono uppercase tracking-widest"
                       value={loginData.password}
-                      onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                      onChange={(e) => {
+                        // Forçar uppercase e só permitir A-Z e 0-9, max 6 caracteres
+                        const newPassword = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+                        setLoginData(prev => ({ ...prev, password: newPassword }));
+                      }}
                       disabled={loading}
                       autoComplete="current-password"
+                      maxLength={6}
                     />
                     <button
                       type="button"
@@ -703,6 +757,7 @@ export default function AuthPage() {
                       {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                     </button>
                   </div>
+                  <p className="text-[8px] text-gray-400">{loginData.password.length}/6 • Letras e números</p>
                 </div>
               </div>
 
@@ -725,22 +780,31 @@ export default function AuthPage() {
               </Button>
             </form>
 
-            <div className="mt-3 pt-3 border-t border-gray-100 relative z-10 flex items-center justify-between">
+            <div className="mt-3 pt-3 border-t border-gray-100 relative z-10 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setAuthMode("individual-signup")}
+                  className="text-[10px] text-[#013ba6] hover:text-[#012d7a] font-semibold uppercase flex items-center gap-1"
+                >
+                  <UserPlus className="h-3 w-3" />
+                  CRIAR CONTA
+                </button>
+                <div className="flex items-center gap-1.5 text-[9px] text-gray-400">
+                  <Shield className="h-2.5 w-2.5 text-green-600" />
+                  <span className="text-green-600 font-medium">LGPD</span>
+                  <span className="mx-1">•</span>
+                  <Lock className="h-2.5 w-2.5" />
+                  <span>SEGURO</span>
+                </div>
+              </div>
               <button
                 type="button"
-                onClick={() => setAuthMode("individual-signup")}
-                className="text-[10px] text-[#013ba6] hover:text-[#012d7a] font-semibold uppercase flex items-center gap-1"
+                onClick={() => setAuthMode("forgot-password")}
+                className="text-[9px] text-gray-500 hover:text-[#013ba6] transition-colors text-center"
               >
-                <UserPlus className="h-3 w-3" />
-                CRIAR CONTA
+                Esqueci minha senha
               </button>
-              <div className="flex items-center gap-1.5 text-[9px] text-gray-400">
-                <Shield className="h-2.5 w-2.5 text-green-600" />
-                <span className="text-green-600 font-medium">LGPD</span>
-                <span className="mx-1">•</span>
-                <Lock className="h-2.5 w-2.5" />
-                <span>SEGURO</span>
-              </div>
             </div>
           </div>
           
