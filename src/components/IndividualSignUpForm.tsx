@@ -387,7 +387,7 @@ export function IndividualSignUpForm({
         </div>
 
         <div className="space-y-1">
-          <Label className="text-[10px] font-semibold text-gray-600 uppercase">Especialidade</Label>
+          <Label className="text-[10px] font-semibold text-gray-600 uppercase">Especialidade (Opcional)</Label>
           <div className="relative">
             <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
