@@ -397,6 +397,7 @@ export function IndividualSignUpForm({
             Requisitos de Segurança
           </p>
           <ul className="text-[10px] text-blue-700 space-y-1 pl-5 list-disc">
+            <li><strong>CRM:</strong> Apenas números</li>
             <li><strong>Usuário:</strong> Apenas letras maiúsculas, números e ponto (.)</li>
             <li><strong>Senha:</strong> Exatamente 6 caracteres</li>
             <li>Deve conter <strong>letras</strong> E <strong>números</strong> (ex: ABC123)</li>
