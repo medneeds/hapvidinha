@@ -67,6 +67,9 @@ export function AppSidebar({
   // Check if user is COORDENADOR
   const isCoordinator = user?.email === "coordenador@sistema.local";
   
+  // Check if user is Gestor Master (full access without password)
+  const isGestorMaster = user?.email === "artur.batista@sistema.local";
+  
   // Check if user is BIGDOOR (porta role)
   const isDoorUser = role === "porta";
 
@@ -136,6 +139,13 @@ export function AppSidebar({
   const [unlockedSections, setUnlockedSections] = useState<string[]>([]);
 
   const handleAdminSectionClick = (sectionTitle: string) => {
+    // Gestor Master has instant access without password
+    if (isGestorMaster) {
+      if (!unlockedSections.includes(sectionTitle)) {
+        setUnlockedSections(prev => [...prev, sectionTitle]);
+      }
+      return;
+    }
     setSelectedSection(sectionTitle);
     setShowPasswordDialog(true);
   };
@@ -169,8 +179,8 @@ export function AppSidebar({
   };
 
   const handleItemClick = (item: string | { name: string; link?: string | null; action?: string; subsections?: any[] }, parentSection?: any) => {
-    // Check if parent section requires password
-    if (parentSection?.requiresPassword) {
+    // Check if parent section requires password (Gestor Master bypasses)
+    if (parentSection?.requiresPassword && !isGestorMaster) {
       setPendingNavigation(typeof item === 'string' ? item : (item.link || null));
       setSelectedSection(parentSection.title);
       setShowPasswordDialog(true);
@@ -253,16 +263,16 @@ export function AppSidebar({
             {section.items && (
             <Collapsible
               defaultOpen={section.title === "MAPA"}
-              open={section.requiresPassword ? unlockedSections.includes(section.title) : undefined}
+              open={section.requiresPassword ? (isGestorMaster || unlockedSections.includes(section.title)) : undefined}
               onOpenChange={(isOpen) => {
-                if (section.requiresPassword && !unlockedSections.includes(section.title) && isOpen) {
+                if (section.requiresPassword && !isGestorMaster && !unlockedSections.includes(section.title) && isOpen) {
                   handleAdminSectionClick(section.title);
                 }
               }}
               className="group/collapsible"
             >
               <SidebarGroup className="py-0 my-0">
-                {section.requiresPassword && !unlockedSections.includes(section.title) ? (
+                {section.requiresPassword && !isGestorMaster && !unlockedSections.includes(section.title) ? (
                   // Locked: show button that triggers password dialog
                   <SidebarGroupLabel 
                     className={cn(
