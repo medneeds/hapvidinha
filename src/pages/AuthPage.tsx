@@ -438,8 +438,8 @@ export default function AuthPage() {
                             setSelectedDepartment('URGÊNCIA E EMERGÊNCIA ADULTO');
                           }
                         }}
-                        placeholder="DIGITE SEU USUÁRIO"
-                        className="h-7 pl-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-medium placeholder:text-[10px] placeholder:font-medium placeholder:text-gray-400"
+                        placeholder="Digite seu usuário"
+                        className="h-7 pl-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-medium placeholder:text-[9px] placeholder:normal-case placeholder:font-normal placeholder:text-gray-400"
                         disabled={loading}
                         maxLength={50}
                       />
@@ -461,8 +461,8 @@ export default function AuthPage() {
                           const newPassword = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
                           setLoginData({ ...loginData, password: newPassword });
                         }}
-                        placeholder="6 CARACTERES"
-                        className="h-7 pl-7 pr-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-mono tracking-wider placeholder:text-[10px] placeholder:font-medium placeholder:text-gray-400 placeholder:tracking-normal placeholder:font-sans"
+                        placeholder="Ex: ABC123"
+                        className="h-7 pl-7 pr-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-mono tracking-wider placeholder:text-[9px] placeholder:normal-case placeholder:font-normal placeholder:font-sans placeholder:tracking-normal placeholder:text-gray-400"
                         disabled={loading}
                         maxLength={6}
                       />
