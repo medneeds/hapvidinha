@@ -11,6 +11,7 @@ import {
   Sparkles,
   BarChart3,
   LockKeyhole,
+  Shield,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
@@ -116,6 +117,7 @@ export function AppSidebar({
       requiresPassword: true,
       items: [
         { name: "DASHBOARD DE GESTÃO", link: "/dashboard" },
+        { name: "TRILHA DE AUDITORIA", link: "/audit-logs" },
         { name: "CADASTRAR ESTADOS", link: "/admin/states" },
         { name: "CADASTRAR UNIDADES", link: "/admin/units" },
         { name: "GERENCIAR COORDENADORES", link: "/admin/coordinators" },
