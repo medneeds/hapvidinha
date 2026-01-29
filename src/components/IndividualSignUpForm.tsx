@@ -347,7 +347,7 @@ export function IndividualSignUpForm({
                 type="text"
                 value={formData.crm}
                 onChange={(e) => setFormData({ ...formData, crm: e.target.value.toUpperCase() })}
-                placeholder="CRM/MA 12345"
+                placeholder="12345"
                 className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                 disabled={loading}
               />
