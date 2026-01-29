@@ -340,7 +340,7 @@ export function IndividualSignUpForm({
               type="text"
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value.toUpperCase() })}
-              placeholder="DR. JOÃO DA SILVA"
+              placeholder="SEU NOME COMPLETO AQUI"
               className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
               disabled={loading}
             />
