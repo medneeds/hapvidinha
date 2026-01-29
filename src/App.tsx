@@ -32,6 +32,7 @@ import FluxoPaliativacaoPage from "./pages/FluxoPaliativacaoPage";
 import DhdDashboardPage from "./pages/DhdDashboardPage";
 import DhdRegistrationPage from "./pages/DhdRegistrationPage";
 import DhdHistoryPage from "./pages/DhdHistoryPage";
+import AuditLogsPage from "./pages/AuditLogsPage";
 
 const queryClient = new QueryClient();
 
@@ -280,6 +281,14 @@ const App = () => {
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <DhdHistoryPage />
               </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/audit-logs"
+          element={
+            <ProtectedRoute>
+              <AuditLogsPage />
             </ProtectedRoute>
           }
         />
