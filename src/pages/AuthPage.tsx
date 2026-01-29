@@ -208,32 +208,32 @@ export default function AuthPage() {
           }}
         />
 
-        {/* DESKTOP: Split-screen layout */}
+        {/* DESKTOP: Split-screen layout - more compact */}
         <div className="hidden lg:flex w-full h-screen relative z-10">
-          {/* Left Panel - Branding */}
-          <div className="w-1/2 flex flex-col items-center justify-center p-12 xl:p-16 relative">
+          {/* Left Panel - Branding - more compact */}
+          <div className="w-[45%] xl:w-1/2 flex flex-col items-center justify-center p-6 xl:p-10 relative">
             {/* Gradient orbs for left panel */}
-            <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-gradient-radial from-white/10 to-transparent rounded-full blur-2xl animate-[float_10s_ease-in-out_infinite]" />
-            <div className="absolute bottom-[15%] right-[10%] w-80 h-80 bg-gradient-radial from-white/8 to-transparent rounded-full blur-3xl animate-[float_12s_ease-in-out_infinite_2s]" />
+            <div className="absolute top-[10%] left-[5%] w-48 h-48 bg-gradient-radial from-white/10 to-transparent rounded-full blur-2xl animate-[float_10s_ease-in-out_infinite]" />
+            <div className="absolute bottom-[15%] right-[10%] w-64 h-64 bg-gradient-radial from-white/8 to-transparent rounded-full blur-3xl animate-[float_12s_ease-in-out_infinite_2s]" />
             
-            <div className="relative z-10 text-center max-w-lg animate-in fade-in-0 slide-in-from-left-8 duration-1000">
+            <div className="relative z-10 text-center max-w-md animate-in fade-in-0 slide-in-from-left-8 duration-1000">
               {/* Logo */}
-              <div className="inline-block relative group mb-8">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-3xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative bg-white rounded-2xl px-6 py-4 shadow-2xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-white/20">
+              <div className="inline-block relative group mb-5">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-2xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative bg-white rounded-xl px-4 py-3 shadow-xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-white/20">
                   <img 
                     src={hapvidaLogo} 
                     alt="Hapvida NotreDame Intermédica" 
-                    className="h-12 object-contain transition-all duration-500 group-hover:brightness-110"
+                    className="h-9 xl:h-10 object-contain transition-all duration-500 group-hover:brightness-110"
                   />
-                  <Sparkles className="absolute -top-2 -right-2 h-5 w-5 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
+                  <Sparkles className="absolute -top-1.5 -right-1.5 h-4 w-4 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
                 </div>
               </div>
               
-              {/* Brand Name - Logo Style */}
-              <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-4">
-                <div className="inline-flex items-baseline gap-2">
-                  <h1 className="text-5xl xl:text-6xl tracking-tighter inline-flex items-baseline">
+              {/* Brand Name - Logo Style - smaller */}
+              <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3">
+                <div className="inline-flex items-baseline gap-1.5">
+                  <h1 className="text-4xl xl:text-5xl tracking-tighter inline-flex items-baseline">
                     <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
                       Hap
                     </span>
@@ -241,105 +241,105 @@ export default function AuthPage() {
                       Map
                     </span>
                   </h1>
-                  <span className="text-[10px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-2 py-0.5 self-start mt-2">
+                  <span className="text-[9px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-1.5 py-0.5 self-start mt-1.5">
                     2.0
                   </span>
                 </div>
-                <div className="h-1 w-20 mx-auto mt-2 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full" />
+                <div className="h-0.5 w-16 mx-auto mt-1.5 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full" />
               </div>
               
-              {/* Slogan */}
-              <p className="text-white/60 text-base xl:text-lg font-light tracking-wide animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 mb-12 italic">
+              {/* Slogan - smaller */}
+              <p className="text-white/60 text-sm xl:text-base font-light tracking-wide animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 mb-6 italic">
                 Tecnologia que valoriza seu tempo. Inteligência que salva vidas.
               </p>
               
-              {/* Elegant divider */}
-              <div className="flex items-center justify-center gap-4 mb-10 animate-in fade-in-0 duration-1000 delay-400">
-                <div className="h-px w-16 bg-gradient-to-r from-transparent to-white/30" />
-                <Sparkles className="h-4 w-4 text-white/40" />
-                <div className="h-px w-16 bg-gradient-to-l from-transparent to-white/30" />
+              {/* Elegant divider - smaller */}
+              <div className="flex items-center justify-center gap-3 mb-5 animate-in fade-in-0 duration-1000 delay-400">
+                <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/30" />
+                <Sparkles className="h-3 w-3 text-white/40" />
+                <div className="h-px w-12 bg-gradient-to-l from-transparent to-white/30" />
               </div>
               
-              {/* Feature highlights - more elegant */}
-              <div className="space-y-5 text-left animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-500">
-                <div className="flex items-center gap-4 text-white/60 hover:text-white/90 transition-colors duration-300 group">
-                  <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
-                    <Building2 className="h-5 w-5" />
+              {/* Feature highlights - more compact */}
+              <div className="space-y-3 text-left animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-500">
+                <div className="flex items-center gap-3 text-white/60 hover:text-white/90 transition-colors duration-300 group">
+                  <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
+                    <Building2 className="h-4 w-4" />
                   </div>
-                  <span className="text-sm font-light tracking-wide">Gestão inteligente de leitos em tempo real</span>
+                  <span className="text-xs font-light tracking-wide">Gestão inteligente de leitos em tempo real</span>
                 </div>
-                <div className="flex items-center gap-4 text-white/60 hover:text-white/90 transition-colors duration-300 group">
-                  <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
-                    <User className="h-5 w-5" />
+                <div className="flex items-center gap-3 text-white/60 hover:text-white/90 transition-colors duration-300 group">
+                  <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
+                    <User className="h-4 w-4" />
                   </div>
-                  <span className="text-sm font-light tracking-wide">Visão completa do paciente em um clique</span>
+                  <span className="text-xs font-light tracking-wide">Visão completa do paciente em um clique</span>
                 </div>
-                <div className="flex items-center gap-4 text-white/60 hover:text-white/90 transition-colors duration-300 group">
-                  <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
-                    <Sparkles className="h-5 w-5" />
+                <div className="flex items-center gap-3 text-white/60 hover:text-white/90 transition-colors duration-300 group">
+                  <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
+                    <Sparkles className="h-4 w-4" />
                   </div>
-                  <span className="text-sm font-light tracking-wide">IA integrada para suporte à decisão clínica</span>
+                  <span className="text-xs font-light tracking-wide">IA integrada para suporte à decisão clínica</span>
                 </div>
-                <div className="flex items-center gap-4 text-white/60 hover:text-white/90 transition-colors duration-300 group">
-                  <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
-                    <Shield className="h-5 w-5" />
+                <div className="flex items-center gap-3 text-white/60 hover:text-white/90 transition-colors duration-300 group">
+                  <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
+                    <Shield className="h-4 w-4" />
                   </div>
-                  <span className="text-sm font-light tracking-wide">Conformidade LGPD e CFM 1.821/2007</span>
+                  <span className="text-xs font-light tracking-wide">Conformidade LGPD e CFM 1.821/2007</span>
                 </div>
               </div>
               
-              {/* LGPD Compliance Badge */}
-              <div className="mt-10 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-700">
-                <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3">
-                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-400/30 flex items-center justify-center">
-                    <FileCheck className="h-5 w-5 text-green-400" />
+              {/* LGPD Compliance Badge - smaller */}
+              <div className="mt-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-700">
+                <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2">
+                  <div className="h-8 w-8 rounded-md bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-400/30 flex items-center justify-center">
+                    <FileCheck className="h-4 w-4 text-green-400" />
                   </div>
                   <div className="text-left">
-                    <p className="text-xs font-semibold text-white/90 uppercase tracking-wide">Em Conformidade</p>
-                    <p className="text-[10px] text-white/50">Lei 13.709/2018 (LGPD) • Resolução CFM 1.821/2007</p>
+                    <p className="text-[10px] font-semibold text-white/90 uppercase tracking-wide">Em Conformidade</p>
+                    <p className="text-[9px] text-white/50">Lei 13.709/2018 (LGPD) • CFM 1.821/2007</p>
                   </div>
                 </div>
               </div>
             </div>
             
-            {/* Footer on left panel */}
-            <div className="absolute bottom-6 left-0 right-0 text-center">
-              <p className="text-[10px] text-white/30 uppercase tracking-widest">Desenvolvido por</p>
-              <p className="text-xs text-white/50 font-semibold mt-0.5">Medneeds</p>
+            {/* Footer on left panel - smaller */}
+            <div className="absolute bottom-4 left-0 right-0 text-center">
+              <p className="text-[9px] text-white/30 uppercase tracking-widest">Desenvolvido por</p>
+              <p className="text-[10px] text-white/50 font-semibold mt-0.5">Medneeds</p>
             </div>
           </div>
           
-          {/* Right Panel - Form */}
-          <div className="w-1/2 bg-white flex items-center justify-center p-8 xl:p-12 relative overflow-hidden">
+          {/* Right Panel - Form - more compact */}
+          <div className="w-[55%] xl:w-1/2 bg-white flex items-center justify-center p-6 xl:p-8 relative overflow-hidden">
             {/* Subtle background pattern for form panel */}
             <div className="absolute inset-0 opacity-[0.02]" style={{
               backgroundImage: `radial-gradient(circle at 1px 1px, #013ba6 1px, transparent 0)`,
               backgroundSize: '24px 24px'
             }} />
             
-            {/* Decorative corner accent */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#013ba6]/5 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#013ba6]/5 to-transparent" />
+            {/* Decorative corner accent - smaller */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#013ba6]/5 to-transparent" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-[#013ba6]/5 to-transparent" />
             
-            <div className="w-full max-w-md relative z-10 animate-in fade-in-0 slide-in-from-right-8 duration-1000 delay-300">
-              {/* Form header */}
-              <div className="mb-8 text-center">
-                <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] shadow-lg shadow-[#013ba6]/30 mb-4">
-                  <LogIn className="h-8 w-8 text-white" />
+            <div className="w-full max-w-sm relative z-10 animate-in fade-in-0 slide-in-from-right-8 duration-1000 delay-300">
+              {/* Form header - more compact */}
+              <div className="mb-5 text-center">
+                <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-[#013ba6] to-[#0152d4] shadow-lg shadow-[#013ba6]/30 mb-3">
+                  <LogIn className="h-6 w-6 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 uppercase">Acesse sua conta</h2>
-                <p className="text-gray-500 text-sm mt-1">Preencha os dados para continuar</p>
+                <h2 className="text-xl font-bold text-gray-900 uppercase">Acesse sua conta</h2>
+                <p className="text-gray-500 text-xs mt-0.5">Preencha os dados para continuar</p>
               </div>
 
-              {/* Form content - same as mobile but styled for desktop */}
-              <form onSubmit={handleLogin} className="space-y-5">
+              {/* Form content - more compact spacing */}
+              <form onSubmit={handleLogin} className="space-y-3">
                 {/* Hierarchical Selection Section */}
-                <div className="space-y-4 pb-5 border-b border-gray-200">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Localização</p>
+                <div className="space-y-2.5 pb-3 border-b border-gray-200">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Localização</p>
                   
                   {/* State Selection */}
-                  <div className="space-y-1.5 group">
-                    <Label htmlFor="state-select-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                  <div className="space-y-1 group">
+                    <Label htmlFor="state-select-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
                       Estado
                     </Label>
                     <Select
@@ -352,13 +352,13 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="state-select-desktop"
-                        className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm font-medium uppercase text-gray-900"
+                        className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs font-medium uppercase text-gray-900"
                       >
                         <SelectValue placeholder="Selecione o estado" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-xl">
+                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-lg">
                         {states.map((state) => (
-                          <SelectItem key={state.id} value={state.id} className="text-sm font-medium py-2.5 text-gray-900 hover:bg-gray-100">
+                          <SelectItem key={state.id} value={state.id} className="text-xs font-medium py-2 text-gray-900 hover:bg-gray-100">
                             {state.name} ({state.abbreviation})
                           </SelectItem>
                         ))}
@@ -367,8 +367,8 @@ export default function AuthPage() {
                   </div>
 
                   {/* Hospital Unit Selection */}
-                  <div className="space-y-1.5 group">
-                    <Label htmlFor="hospital-select-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                  <div className="space-y-1 group">
+                    <Label htmlFor="hospital-select-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
                       Unidade Hospitalar
                     </Label>
                     <Select
@@ -378,13 +378,13 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="hospital-select-desktop"
-                        className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm font-medium uppercase text-gray-900 disabled:opacity-50"
+                        className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs font-medium uppercase text-gray-900 disabled:opacity-50"
                       >
                         <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Primeiro selecione um estado"} />
                       </SelectTrigger>
-                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-xl">
+                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-lg">
                         {filteredHospitals.map((hospital) => (
-                          <SelectItem key={hospital.id} value={hospital.id} className="text-sm font-medium py-2.5 text-gray-900 hover:bg-gray-100">
+                          <SelectItem key={hospital.id} value={hospital.id} className="text-xs font-medium py-2 text-gray-900 hover:bg-gray-100">
                             {hospital.name}
                           </SelectItem>
                         ))}
@@ -393,8 +393,8 @@ export default function AuthPage() {
                   </div>
 
                   {/* Department Selection */}
-                  <div className="space-y-1.5 group">
-                    <Label htmlFor="department-select-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                  <div className="space-y-1 group">
+                    <Label htmlFor="department-select-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
                       Setor
                     </Label>
                     <Select
@@ -404,13 +404,13 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="department-select-desktop"
-                        className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm font-medium uppercase text-gray-900"
+                        className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs font-medium uppercase text-gray-900"
                       >
                         <SelectValue placeholder="Selecione o setor" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-xl">
+                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-lg">
                         {DEPARTMENTS.map((dept) => (
-                          <SelectItem key={dept} value={dept} className="text-sm font-medium py-2.5 text-gray-900 hover:bg-gray-100">
+                          <SelectItem key={dept} value={dept} className="text-xs font-medium py-2 text-gray-900 hover:bg-gray-100">
                             {dept}
                           </SelectItem>
                         ))}
@@ -419,17 +419,17 @@ export default function AuthPage() {
                   </div>
                 </div>
 
-                {/* Authentication Fields Section */}
-                <div className="space-y-4 pt-2">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Dados de Acesso</p>
+                {/* Authentication Fields Section - more compact */}
+                <div className="space-y-2.5 pt-2">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Dados de Acesso</p>
                   
                   {/* Username Field */}
-                  <div className="space-y-1.5">
-                    <Label htmlFor="login-username-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                  <div className="space-y-1">
+                    <Label htmlFor="login-username-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
                       Usuário
                     </Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <User className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                       <Input
                         id="login-username-desktop"
                         type="text"
@@ -446,21 +446,20 @@ export default function AuthPage() {
                           }
                         }}
                         placeholder="DIGITE SEU USUÁRIO"
-                        className="h-11 pl-10 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm uppercase font-medium"
+                        className="h-9 pl-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs uppercase font-medium"
                         disabled={loading}
                         maxLength={50}
                       />
                     </div>
-                    <p className="text-[9px] text-gray-400">Apenas letras maiúsculas e números</p>
                   </div>
                   
                   {/* Password Field */}
-                  <div className="space-y-1.5">
-                    <Label htmlFor="login-password-desktop" className="text-xs font-semibold text-gray-600 uppercase">
+                  <div className="space-y-1">
+                    <Label htmlFor="login-password-desktop" className="text-[10px] font-semibold text-gray-600 uppercase">
                       Senha (6 caracteres)
                     </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                       <Input
                         id="login-password-desktop"
                         type={showPassword ? "text" : "password"}
@@ -471,7 +470,7 @@ export default function AuthPage() {
                           setLoginData({ ...loginData, password: newPassword });
                         }}
                         placeholder="EX: ABC123"
-                        className="h-11 pl-10 pr-10 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-xl text-sm uppercase font-mono tracking-widest"
+                        className="h-9 pl-8 pr-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-lg text-xs uppercase font-mono tracking-widest"
                         disabled={loading}
                         maxLength={6}
                       />
@@ -479,26 +478,26 @@ export default function AuthPage() {
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-gray-400 hover:text-gray-600"
+                        className="absolute right-0.5 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-400 hover:text-gray-600"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                       </Button>
                     </div>
-                    <p className="text-[9px] text-gray-400">{loginData.password.length}/6 • Letras maiúsculas e números</p>
+                    <p className="text-[8px] text-gray-400">{loginData.password.length}/6 • Letras maiúsculas e números</p>
                   </div>
                 </div>
 
-                {/* Submit Button */}
+                {/* Submit Button - slightly smaller */}
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-12 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d80] hover:to-[#013ba6] text-white font-bold uppercase rounded-xl shadow-lg shadow-[#013ba6]/30 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+                  className="w-full h-10 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d80] hover:to-[#013ba6] text-white font-bold uppercase rounded-lg text-sm shadow-lg shadow-[#013ba6]/30 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]"
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Processando...</span>
+                      <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span className="text-xs">Processando...</span>
                     </div>
                   ) : (
                     <span className="flex items-center gap-2">
@@ -508,30 +507,30 @@ export default function AuthPage() {
                   )}
                 </Button>
 
-                {/* Toggle Sign Up / Sign In */}
-                <div className="flex flex-col items-center gap-2 pt-2">
+                {/* Toggle Sign Up / Sign In - more compact */}
+                <div className="flex flex-col items-center gap-1 pt-1">
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={() => setAuthMode("individual-signup")}
-                    className="text-[#013ba6] hover:text-[#012d80] font-semibold text-sm uppercase hover:bg-[#013ba6]/5 gap-2"
+                    className="text-[#013ba6] hover:text-[#012d80] font-semibold text-xs uppercase hover:bg-[#013ba6]/5 gap-1.5 h-8"
                   >
-                    <UserPlus className="h-4 w-4" />
+                    <UserPlus className="h-3.5 w-3.5" />
                     Criar conta individual
                   </Button>
                   <button
                     type="button"
                     onClick={() => setAuthMode("forgot-password")}
-                    className="text-xs text-gray-500 hover:text-[#013ba6] transition-colors"
+                    className="text-[10px] text-gray-500 hover:text-[#013ba6] transition-colors"
                   >
                     Esqueci minha senha
                   </button>
                 </div>
 
-                {/* Security note */}
-                <div className="flex items-center justify-center gap-2 pt-2 text-gray-400">
-                  <Lock className="h-3 w-3" />
-                  <span className="text-[10px] uppercase tracking-wider">Conexão segura e criptografada</span>
+                {/* Security note - smaller */}
+                <div className="flex items-center justify-center gap-1.5 pt-1 text-gray-400">
+                  <Lock className="h-2.5 w-2.5" />
+                  <span className="text-[9px] uppercase tracking-wider">Conexão segura e criptografada</span>
                 </div>
               </form>
             </div>
