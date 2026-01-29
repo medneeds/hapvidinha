@@ -697,7 +697,7 @@ export default function AuthPage() {
                     id="login-username-mobile"
                     type="text"
                     placeholder="DIGITE SEU USUÁRIO"
-                    className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase"
+                    className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 placeholder:text-gray-400"
                     value={loginData.username}
                     onChange={(e) => {
                       // Forçar uppercase e só permitir A-Z, 0-9 e ponto
@@ -727,7 +727,7 @@ export default function AuthPage() {
                       id="login-password-mobile"
                       type={showPassword ? "text" : "password"}
                       placeholder="EX: ABC123"
-                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg pr-9 text-xs font-mono uppercase tracking-widest"
+                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg pr-9 text-xs font-mono uppercase tracking-widest text-gray-900 placeholder:text-gray-400"
                       value={loginData.password}
                       onChange={(e) => {
                         // Forçar uppercase e só permitir A-Z e 0-9, max 6 caracteres
