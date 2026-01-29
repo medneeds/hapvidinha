@@ -3,9 +3,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { LoadingScreen } from "./LoadingScreen";
 import { SessionTimeoutProvider } from "./SessionTimeoutProvider";
+import { PendingApprovalScreen } from "./PendingApprovalScreen";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, status } = useAuth();
   const navigate = useNavigate();
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [hasShownLoading, setHasShownLoading] = useState(false);
@@ -29,6 +30,11 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (showLoadingScreen) {
     return <LoadingScreen onComplete={() => setShowLoadingScreen(false)} />;
+  }
+
+  // Se o usuário está pendente de aprovação, mostrar tela de espera
+  if (status === "pending") {
+    return <PendingApprovalScreen />;
   }
 
   // Envolver com SessionTimeoutProvider para ativar timeout LGPD/CFM
