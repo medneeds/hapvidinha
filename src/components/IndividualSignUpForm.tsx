@@ -90,6 +90,7 @@ export function IndividualSignUpForm({
   const [formData, setFormData] = useState({
     fullName: "",
     crm: "",
+    rqe: "",
     specialty: "",
     phone: "",
     username: "",
@@ -346,7 +347,7 @@ export function IndividualSignUpForm({
               <Input
                 type="text"
                 value={formData.crm}
-                onChange={(e) => setFormData({ ...formData, crm: e.target.value.toUpperCase() })}
+                onChange={(e) => setFormData({ ...formData, crm: e.target.value.replace(/\D/g, "") })}
                 placeholder="12345"
                 className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                 disabled={loading}
@@ -355,18 +356,33 @@ export function IndividualSignUpForm({
           </div>
 
           <div className="space-y-1">
-            <Label className="text-[10px] font-semibold text-gray-600 uppercase">Telefone</Label>
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">RQE (Opcional)</Label>
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="(99) 99999-9999"
+                type="text"
+                value={formData.rqe}
+                onChange={(e) => setFormData({ ...formData, rqe: e.target.value.replace(/\D/g, "") })}
+                placeholder="12345"
                 className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                 disabled={loading}
               />
             </div>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <Label className="text-[10px] font-semibold text-gray-600 uppercase">Telefone</Label>
+          <div className="relative">
+            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              placeholder="(99) 99999-9999"
+              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+              disabled={loading}
+            />
           </div>
         </div>
 
@@ -398,6 +414,7 @@ export function IndividualSignUpForm({
           </p>
           <ul className="text-[10px] text-blue-700 space-y-1 pl-5 list-disc">
             <li><strong>CRM:</strong> Apenas números</li>
+            <li><strong>RQE:</strong> Apenas números (opcional)</li>
             <li><strong>Usuário:</strong> Apenas letras maiúsculas, números e ponto (.)</li>
             <li><strong>Senha:</strong> Exatamente 6 caracteres</li>
             <li>Deve conter <strong>letras</strong> E <strong>números</strong> (ex: ABC123)</li>
