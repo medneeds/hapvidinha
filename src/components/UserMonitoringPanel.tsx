@@ -1,12 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPresence, OnlineUser } from "@/hooks/useUserPresence";
-import { format, formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow, subHours } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { toast } from "sonner";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import {
   Users,
   Activity,
@@ -26,6 +36,7 @@ import {
   History,
   LogIn,
   LogOut,
+  Bell,
 } from "lucide-react";
 
 interface AuditLogEntry {
@@ -41,6 +52,11 @@ interface LoginStats {
   weekLogins: number;
   uniqueUsersToday: number;
   peakHour: string;
+}
+
+interface HourlyLoginData {
+  hour: string;
+  logins: number;
 }
 
 const ROLE_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -75,7 +91,36 @@ export function UserMonitoringPanel() {
     uniqueUsersToday: 0,
     peakHour: "—",
   });
+  const [hourlyData, setHourlyData] = useState<HourlyLoginData[]>([]);
   const [loading, setLoading] = useState(true);
+  const previousOnlineUsersRef = useRef<string[]>([]);
+
+  // Alert when new users come online
+  useEffect(() => {
+    const currentUserIds = onlineUsers.map((u) => u.id);
+    const previousUserIds = previousOnlineUsersRef.current;
+
+    // Find new users (present now but not before)
+    const newUsers = onlineUsers.filter(
+      (u) => !previousUserIds.includes(u.id)
+    );
+
+    // Only show toast if this isn't the initial load and there are new users
+    if (previousUserIds.length > 0 && newUsers.length > 0) {
+      newUsers.forEach((user) => {
+        const userName = user.full_name || user.email?.replace("@sistema.local", "") || "Usuário";
+        const roleConfig = user.role ? ROLE_CONFIG[user.role] : null;
+        
+        toast.info(`${userName} entrou no sistema`, {
+          description: roleConfig ? `Papel: ${roleConfig.label}` : undefined,
+          icon: <LogIn className="h-4 w-4 text-green-500" />,
+          duration: 5000,
+        });
+      });
+    }
+
+    previousOnlineUsersRef.current = currentUserIds;
+  }, [onlineUsers]);
 
   useEffect(() => {
     fetchMonitoringData();
@@ -150,6 +195,35 @@ export function UserMonitoringPanel() {
           peakHour = `${maxHour.hour}h - ${maxHour.hour + 1}h`;
         }
       }
+
+      // Fetch hourly login data for chart (last 24 hours)
+      const twentyFourHoursAgo = subHours(new Date(), 24);
+      const { data: last24hLogins } = await supabase
+        .from("audit_logs")
+        .select("created_at")
+        .eq("action", "LOGIN")
+        .gte("created_at", twentyFourHoursAgo.toISOString());
+
+      // Build hourly data for the chart
+      const hourlyChartData: HourlyLoginData[] = [];
+      for (let i = 23; i >= 0; i--) {
+        const hourDate = subHours(new Date(), i);
+        const hourStart = new Date(hourDate);
+        hourStart.setMinutes(0, 0, 0);
+        const hourEnd = new Date(hourDate);
+        hourEnd.setMinutes(59, 59, 999);
+        
+        const loginsInHour = (last24hLogins || []).filter((log) => {
+          const logDate = new Date(log.created_at);
+          return logDate >= hourStart && logDate <= hourEnd;
+        }).length;
+
+        hourlyChartData.push({
+          hour: format(hourStart, "HH:mm"),
+          logins: loginsInHour,
+        });
+      }
+      setHourlyData(hourlyChartData);
 
       setLoginStats({
         todayLogins: todayCount || 0,
@@ -399,6 +473,61 @@ export function UserMonitoringPanel() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Login History Chart */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-primary" />
+                  Histórico de Logins (Últimas 24h)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[200px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={hourlyData}>
+                      <defs>
+                        <linearGradient id="colorLogins" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis 
+                        dataKey="hour" 
+                        tick={{ fontSize: 10 }}
+                        tickLine={false}
+                        axisLine={false}
+                        interval="preserveStartEnd"
+                      />
+                      <YAxis 
+                        tick={{ fontSize: 10 }}
+                        tickLine={false}
+                        axisLine={false}
+                        allowDecimals={false}
+                      />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px',
+                          fontSize: '12px'
+                        }}
+                        labelFormatter={(label) => `Hora: ${label}`}
+                        formatter={(value: number) => [`${value} login${value !== 1 ? 's' : ''}`, 'Logins']}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="logins"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth={2}
+                        fill="url(#colorLogins)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Info notice */}
             <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg border">
