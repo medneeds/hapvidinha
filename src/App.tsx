@@ -34,7 +34,7 @@ import DhdRegistrationPage from "./pages/DhdRegistrationPage";
 import DhdHistoryPage from "./pages/DhdHistoryPage";
 import AuditLogsPage from "./pages/AuditLogsPage";
 import UserManagementPage from "./pages/UserManagementPage";
-
+import PrivacyPage from "./pages/PrivacyPage";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -298,6 +298,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <UserManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <ProtectedRoute>
+              <PrivacyPage />
             </ProtectedRoute>
           }
         />

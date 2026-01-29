@@ -122,6 +122,7 @@ export function AppSidebar({
         { name: "DASHBOARD DE GESTÃO", link: "/dashboard" },
         { name: "GESTÃO DE USUÁRIOS", link: "/user-management" },
         { name: "TRILHA DE AUDITORIA", link: "/audit-logs" },
+        { name: "PRIVACIDADE LGPD", link: "/privacy" },
         { name: "CADASTRAR ESTADOS", link: "/admin/states" },
         { name: "CADASTRAR UNIDADES", link: "/admin/units" },
         { name: "GERENCIAR COORDENADORES", link: "/admin/coordinators" },
