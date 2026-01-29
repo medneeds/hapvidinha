@@ -4,16 +4,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
 type UserRole = "admin" | "medico" | "porta" | "visitante" | null;
+type UserStatus = "pending" | "approved" | "rejected" | null;
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: UserRole;
+  status: UserStatus;
   allowedDepartments: string[];
   loading: boolean;
   signIn: (username: string, password: string) => Promise<{ error: any }>;
   signUp: (username: string, password: string, fullName: string, role?: "admin" | "medico" | "porta" | "visitante") => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  refreshUserStatus: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<UserRole>(null);
+  const [status, setStatus] = useState<UserStatus>(null);
   const [allowedDepartments, setAllowedDepartments] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -40,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }, 0);
         } else {
           setRole(null);
+          setStatus(null);
           setAllowedDepartments([]);
           setLoading(false);
         }
@@ -81,6 +86,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRole(roleData?.role as UserRole);
       }
 
+      // Fetch user status from profiles
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("status")
+        .eq("id", userId)
+        .single();
+
+      if (profileError) {
+        if (import.meta.env.DEV) {
+          console.error("Error fetching user status:", profileError);
+        }
+        setStatus("pending");
+      } else {
+        setStatus(profileData?.status as UserStatus);
+      }
+
       // Fetch allowed departments
       const { data: deptData, error: deptError } = await supabase
         .from("user_departments")
@@ -100,9 +121,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error("Error fetching user data:", error);
       }
       setRole("medico");
+      setStatus("pending");
       setAllowedDepartments([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const refreshUserStatus = async () => {
+    if (user) {
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("status")
+        .eq("id", user.id)
+        .single();
+
+      if (!profileError && profileData) {
+        setStatus(profileData.status as UserStatus);
+      }
     }
   };
 
@@ -151,12 +187,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setSession(null);
     setRole(null);
+    setStatus(null);
     setAllowedDepartments([]);
     navigate("/auth");
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, role, allowedDepartments, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, role, status, allowedDepartments, loading, signIn, signUp, signOut, refreshUserStatus }}>
       {children}
     </AuthContext.Provider>
   );
