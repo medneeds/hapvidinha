@@ -209,11 +209,16 @@ export function IndividualSignUpForm({
           <CheckCircle className="h-10 w-10 text-emerald-600" />
         </div>
         
-        <div className="space-y-2">
-          <h3 className="text-xl font-bold text-gray-900">Cadastro Realizado!</h3>
+        <div className="space-y-3">
+          <h3 className="text-xl font-bold text-gray-900">Cadastro Recebido com Sucesso!</h3>
+          
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xs mx-auto">
+            <p className="text-[10px] font-semibold text-blue-600 uppercase mb-1">Seu usuário de acesso:</p>
+            <p className="text-lg font-bold text-blue-800 tracking-wide">{formData.username}</p>
+          </div>
+          
           <p className="text-sm text-gray-600 max-w-xs mx-auto">
-            Seu cadastro foi enviado para aprovação do coordenador. 
-            Você receberá acesso assim que for aprovado.
+            Aguarde a aprovação do <strong>Administrador</strong> para liberar seu acesso ao sistema.
           </p>
         </div>
 
