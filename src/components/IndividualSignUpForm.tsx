@@ -29,13 +29,30 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// Validação com uppercase obrigatório e senha alfanumérica de 6 dígitos
 const signUpSchema = z.object({
-  fullName: z.string().trim().min(3, { message: "NOME COMPLETO OBRIGATÓRIO (MIN. 3 CARACTERES)" }),
-  crm: z.string().trim().min(4, { message: "CRM OBRIGATÓRIO" }),
-  specialty: z.string().trim().min(2, { message: "ESPECIALIDADE OBRIGATÓRIA" }),
+  fullName: z.string()
+    .trim()
+    .min(3, { message: "NOME COMPLETO OBRIGATÓRIO (MIN. 3 CARACTERES)" })
+    .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s.]+$/, { message: "NOME: APENAS LETRAS MAIÚSCULAS" }),
+  crm: z.string()
+    .trim()
+    .min(4, { message: "CRM OBRIGATÓRIO" })
+    .regex(/^[A-Z0-9/\-\s]+$/, { message: "CRM: APENAS MAIÚSCULAS E NÚMEROS" }),
+  specialty: z.string()
+    .trim()
+    .min(2, { message: "ESPECIALIDADE OBRIGATÓRIA" })
+    .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s]+$/, { message: "ESPECIALIDADE: APENAS LETRAS MAIÚSCULAS" }),
   phone: z.string().optional(),
-  username: z.string().trim().min(3, { message: "USUÁRIO OBRIGATÓRIO (MIN. 3 CARACTERES)" }).max(30),
-  password: z.string().min(6, { message: "SENHA MÍNIMA DE 6 CARACTERES" }),
+  username: z.string()
+    .trim()
+    .min(3, { message: "USUÁRIO OBRIGATÓRIO (MIN. 3 CARACTERES)" })
+    .max(30)
+    .regex(/^[A-Z0-9.]+$/, { message: "USUÁRIO: APENAS MAIÚSCULAS E NÚMEROS" }),
+  password: z.string()
+    .min(6, { message: "SENHA DEVE TER 6 CARACTERES" })
+    .max(6, { message: "SENHA DEVE TER 6 CARACTERES" })
+    .regex(/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{6}$/, { message: "SENHA: 6 CARACTERES COM LETRAS E NÚMEROS" }),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "SENHAS NÃO CONFEREM",

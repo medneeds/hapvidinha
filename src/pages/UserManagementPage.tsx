@@ -46,9 +46,11 @@ import {
   Mail,
   Calendar,
   Building2,
+  KeyRound,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { ResetUserPasswordDialog } from "@/components/ResetUserPasswordDialog";
 
 interface UserProfile {
   id: string;
@@ -105,6 +107,8 @@ export default function UserManagementPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [resetPasswordOpen, setResetPasswordOpen] = useState(false);
+  const [userToResetPassword, setUserToResetPassword] = useState<UserWithRole | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
@@ -586,57 +590,85 @@ export default function UserManagementPage() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2 pt-4 border-t">
-                {selectedUser.status === "pending" && (
-                  <>
+              <div className="flex flex-col gap-2 pt-4 border-t">
+                {/* Password Reset Button - Always visible */}
+                <Button
+                  variant="outline"
+                  className="w-full text-amber-600 border-amber-600 hover:bg-amber-50"
+                  onClick={() => {
+                    setUserToResetPassword(selectedUser);
+                    setResetPasswordOpen(true);
+                  }}
+                  disabled={actionLoading}
+                >
+                  <KeyRound className="h-4 w-4 mr-2" />
+                  Redefinir Senha
+                </Button>
+
+                <div className="flex gap-2">
+                  {selectedUser.status === "pending" && (
+                    <>
+                      <Button
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                        onClick={() => handleApprove(selectedUser.id)}
+                        disabled={actionLoading}
+                      >
+                        <UserCheck className="h-4 w-4 mr-2" />
+                        Aprovar
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        className="flex-1"
+                        onClick={() => handleReject(selectedUser.id)}
+                        disabled={actionLoading}
+                      >
+                        <UserX className="h-4 w-4 mr-2" />
+                        Rejeitar
+                      </Button>
+                    </>
+                  )}
+                  
+                  {selectedUser.status === "approved" && (
                     <Button
-                      className="flex-1 bg-emerald-600 hover:bg-emerald-700"
-                      onClick={() => handleApprove(selectedUser.id)}
+                      variant="outline"
+                      className="flex-1 text-gray-600 border-gray-400 hover:bg-gray-50"
+                      onClick={() => handleSuspend(selectedUser.id)}
                       disabled={actionLoading}
                     >
-                      <UserCheck className="h-4 w-4 mr-2" />
-                      Aprovar
+                      <Ban className="h-4 w-4 mr-2" />
+                      Suspender
                     </Button>
+                  )}
+                  
+                  {(selectedUser.status === "suspended" || selectedUser.status === "rejected") && (
                     <Button
-                      variant="destructive"
-                      className="flex-1"
-                      onClick={() => handleReject(selectedUser.id)}
+                      variant="outline"
+                      className="flex-1 text-emerald-600 border-emerald-600 hover:bg-emerald-50"
+                      onClick={() => handleReactivate(selectedUser.id)}
                       disabled={actionLoading}
                     >
-                      <UserX className="h-4 w-4 mr-2" />
-                      Rejeitar
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Reativar
                     </Button>
-                  </>
-                )}
-                
-                {selectedUser.status === "approved" && (
-                  <Button
-                    variant="outline"
-                    className="flex-1 text-amber-600 border-amber-600 hover:bg-amber-50"
-                    onClick={() => handleSuspend(selectedUser.id)}
-                    disabled={actionLoading}
-                  >
-                    <Ban className="h-4 w-4 mr-2" />
-                    Suspender
-                  </Button>
-                )}
-                
-                {(selectedUser.status === "suspended" || selectedUser.status === "rejected") && (
-                  <Button
-                    variant="outline"
-                    className="flex-1 text-emerald-600 border-emerald-600 hover:bg-emerald-50"
-                    onClick={() => handleReactivate(selectedUser.id)}
-                    disabled={actionLoading}
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Reativar
-                  </Button>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Reset Password Dialog */}
+      {userToResetPassword && (
+        <ResetUserPasswordDialog
+          open={resetPasswordOpen}
+          onOpenChange={setResetPasswordOpen}
+          userId={userToResetPassword.id}
+          userName={userToResetPassword.full_name || ""}
+          userEmail={userToResetPassword.email || ""}
+          onSuccess={fetchUsers}
+        />
+      )}
     </MainLayout>
   );
 }
