@@ -28,7 +28,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Eye,
+  Trash2,
 } from "lucide-react";
 
 interface Consent {
@@ -61,6 +61,8 @@ export function DataPrivacyPanel() {
   const [retentionPolicies, setRetentionPolicies] = useState<RetentionPolicy[]>([]);
   const [loading, setLoading] = useState(true);
   const [requestingExport, setRequestingExport] = useState(false);
+  const [downloadingExport, setDownloadingExport] = useState(false);
+  const [requestingDeletion, setRequestingDeletion] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -107,21 +109,70 @@ export function DataPrivacyPanel() {
 
     setRequestingExport(true);
     try {
-      const { error } = await supabase.from("data_requests").insert({
+      // Create the request record first
+      const { data: requestData, error } = await supabase.from("data_requests").insert({
         user_id: user.id,
         request_type: "export",
+        status: "processing",
+      }).select().single();
+
+      if (error) throw error;
+
+      // Call the edge function to generate the export
+      setDownloadingExport(true);
+      const { data, error: exportError } = await supabase.functions.invoke("export-user-data", {
+        body: { request_id: requestData.id },
+      });
+
+      if (exportError) {
+        // Update request to failed
+        await supabase.from("data_requests").update({ status: "pending", notes: "Falha ao gerar - tentando novamente" }).eq("id", requestData.id);
+        throw exportError;
+      }
+
+      // Create a downloadable file
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `dados-lgpd-${user.id.slice(0, 8)}-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success("Dados exportados com sucesso! Arquivo baixado.");
+      fetchPrivacyData();
+    } catch (error) {
+      console.error("Erro ao exportar dados:", error);
+      toast.error("Erro ao exportar dados. Tente novamente.");
+    } finally {
+      setRequestingExport(false);
+      setDownloadingExport(false);
+    }
+  };
+
+  const handleRequestDeletion = async () => {
+    if (!user) return;
+
+    setRequestingDeletion(true);
+    try {
+      const { error } = await supabase.from("data_requests").insert({
+        user_id: user.id,
+        request_type: "deletion",
         status: "pending",
+        notes: "Solicitação de exclusão de dados conforme Art. 18, VI LGPD",
       });
 
       if (error) throw error;
 
-      toast.success("Solicitação de exportação registrada! Você será notificado quando estiver pronta.");
+      toast.success("Solicitação de exclusão registrada. Será analisada pela equipe de acordo com a legislação vigente.");
       fetchPrivacyData();
     } catch (error) {
-      console.error("Erro ao solicitar exportação:", error);
+      console.error("Erro ao solicitar exclusão:", error);
       toast.error("Erro ao registrar solicitação. Tente novamente.");
     } finally {
-      setRequestingExport(false);
+      setRequestingDeletion(false);
     }
   };
 
@@ -157,6 +208,26 @@ export function DataPrivacyPanel() {
       data_requests: "Solicitações de Dados",
     };
     return labels[tableName] || tableName;
+  };
+
+  const getRequestTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      export: "Exportação de Dados",
+      deletion: "Exclusão de Dados",
+      correction: "Correção de Dados",
+    };
+    return labels[type] || type;
+  };
+
+  const getRequestTypeIcon = (type: string) => {
+    switch (type) {
+      case "export":
+        return <Download className="h-4 w-4 text-blue-600" />;
+      case "deletion":
+        return <Trash2 className="h-4 w-4 text-red-600" />;
+      default:
+        return <FileText className="h-4 w-4 text-orange-600" />;
+    }
   };
 
   if (loading) {
@@ -275,14 +346,10 @@ export function DataPrivacyPanel() {
                         className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
                       >
                         <div className="flex items-center gap-3">
-                          {request.request_type === "export" ? (
-                            <Download className="h-4 w-4 text-blue-600" />
-                          ) : (
-                            <FileText className="h-4 w-4 text-orange-600" />
-                          )}
+                          {getRequestTypeIcon(request.request_type)}
                           <div>
                             <p className="text-sm font-medium">
-                              {request.request_type === "export" ? "Exportação" : "Outro"}
+                              {getRequestTypeLabel(request.request_type)}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               {format(new Date(request.requested_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
@@ -297,6 +364,74 @@ export function DataPrivacyPanel() {
               </div>
             </>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Exclusão de Dados */}
+      <Card className="border-red-200 dark:border-red-800">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Trash2 className="h-5 w-5 text-red-600" />
+            Exclusão de Dados (Art. 18, VI LGPD)
+          </CardTitle>
+          <CardDescription>
+            Solicite a exclusão dos seus dados pessoais do sistema
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
+            <p className="text-sm text-red-800 dark:text-red-200">
+              <strong>Atenção:</strong> A exclusão de dados é irreversível. Alguns dados podem ser 
+              mantidos por obrigação legal (ex: prontuários médicos por 20 anos conforme CFM 1.821/2007). 
+              Sua solicitação será analisada pela equipe de conformidade.
+            </p>
+          </div>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" disabled={requestingDeletion}>
+                {requestingDeletion ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Solicitando...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Solicitar Exclusão de Dados
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-red-600">Solicitar Exclusão de Dados</AlertDialogTitle>
+                <AlertDialogDescription className="space-y-2">
+                  <p>
+                    Você está solicitando a exclusão dos seus dados pessoais do sistema. 
+                    Esta ação é irreversível.
+                  </p>
+                  <p>
+                    <strong>Importante:</strong> Alguns dados podem ser mantidos por obrigação legal, 
+                    como registros médicos (20 anos conforme CFM) e logs de auditoria (5 anos conforme LGPD).
+                  </p>
+                  <p>
+                    Sua solicitação será analisada pela equipe de conformidade e você será 
+                    notificado sobre o resultado.
+                  </p>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={handleRequestDeletion}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Confirmar Solicitação de Exclusão
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
 
