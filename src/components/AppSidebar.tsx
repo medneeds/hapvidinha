@@ -12,6 +12,7 @@ import {
   BarChart3,
   LockKeyhole,
   Shield,
+  Bell,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
@@ -49,6 +50,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePendingPasswordResets } from "@/hooks/usePendingPasswordResets";
 
 
 export function AppSidebar({ 
@@ -63,6 +65,9 @@ export function AppSidebar({
   const isCollapsed = state === "collapsed";
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [password, setPassword] = useState("");
+  
+  // Hook for pending password reset requests
+  const { pendingCount: pendingResets } = usePendingPasswordResets();
   
   // Check if user is COORDENADOR
   const isCoordinator = user?.email === "coordenador@sistema.local";
@@ -120,7 +125,7 @@ export function AppSidebar({
       requiresPassword: true,
       items: [
         { name: "DASHBOARD DE GESTÃO", link: "/dashboard" },
-        { name: "GESTÃO DE USUÁRIOS", link: "/user-management" },
+        { name: "GESTÃO DE USUÁRIOS", link: "/user-management", badge: pendingResets > 0 ? pendingResets : undefined },
         { name: "TRILHA DE AUDITORIA", link: "/audit-logs" },
         { name: "PRIVACIDADE LGPD", link: "/privacy" },
         { name: "CADASTRAR ESTADOS", link: "/admin/states" },
@@ -382,6 +387,8 @@ export function AppSidebar({
                         }
                         
                         // Regular item without subsections
+                        const itemBadge = typeof item === 'object' && 'badge' in item ? item.badge : undefined;
+                        
                         return (
                           <SidebarMenuItem key={itemKey}>
                                      <SidebarMenuButton
@@ -393,6 +400,14 @@ export function AppSidebar({
                               <span className="flex-1 text-left font-medium ml-1 animate-fade-in">
                                 {itemName}
                               </span>
+                              {itemBadge !== undefined && (
+                                <Badge 
+                                  variant="destructive" 
+                                  className="h-5 min-w-5 px-1.5 text-[10px] font-bold animate-pulse"
+                                >
+                                  {itemBadge}
+                                </Badge>
+                              )}
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                         );
