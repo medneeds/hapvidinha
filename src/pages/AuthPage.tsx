@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { LogIn, User, Lock, Sparkles, Building2, Eye, EyeOff, Shield, FileCheck } from "lucide-react";
+import { LogIn, User, Lock, Sparkles, Building2, Eye, EyeOff, Shield, FileCheck, UserPlus } from "lucide-react";
 import { z } from "zod";
 import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { cn } from "@/lib/utils";
+import { IndividualSignUpForm } from "@/components/IndividualSignUpForm";
 import {
   Select,
   SelectContent,
@@ -25,15 +26,17 @@ const loginSchema = z.object({
   password: z.string().min(1, { message: "SENHA OBRIGATÓRIA" }),
 });
 
+type AuthMode = "login" | "individual-signup";
+
 export default function AuthPage() {
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn } = useAuth();
   const { setCurrentDepartment } = useDepartment();
   const { states, hospitals, setCurrentHospital, isLoading: hospitalLoading } = useHospital();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [authMode, setAuthMode] = useState<AuthMode>("login");
   
   const [loginData, setLoginData] = useState({
     username: "",
@@ -102,53 +105,36 @@ export default function AuthPage() {
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Render individual signup form if that mode is selected
+  if (authMode === "individual-signup") {
+    return (
+      <div className={cn(
+        "min-h-screen bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] flex items-center justify-center p-4 relative overflow-hidden",
+        "lg:p-0"
+      )}>
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 -right-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse [animation-delay:1.5s]" />
+        </div>
 
-    // Validate selections
-    if (!selectedState) {
-      toast.error("SELECIONE UM ESTADO");
-      return;
-    }
-    if (!selectedHospitalId) {
-      toast.error("SELECIONE UMA UNIDADE HOSPITALAR");
-      return;
-    }
-    
-    setLoading(true);
-
-    try {
-      const validated = loginSchema.parse(loginData);
-      const { error } = await signUp(validated.username, validated.password, validated.username);
-
-      if (error) {
-        if (error.message.includes("User already registered")) {
-          toast.error("USUÁRIO JÁ CADASTRADO");
-        } else {
-          toast.error("ERRO AO CADASTRAR: " + error.message.toUpperCase());
-        }
-        setLoading(false);
-      } else {
-        // Set hospital and department after successful signup
-        const selectedHospital = hospitals.find(h => h.id === selectedHospitalId);
-        if (selectedHospital) {
-          setCurrentHospital(selectedHospital);
-        }
-        setCurrentDepartment(selectedDepartment);
-        toast.success("CADASTRO REALIZADO COM SUCESSO");
-        
-        // Show loading screen before navigation
-        setShowLoadingScreen(true);
-      }
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        toast.error(err.errors[0].message);
-      } else {
-        toast.error("ERRO AO VALIDAR DADOS");
-      }
-      setLoading(false);
-    }
-  };
+        <div className="w-full max-w-md relative z-10">
+          <div className="bg-white backdrop-blur-2xl rounded-2xl shadow-2xl shadow-black/30 p-6 border border-white/40">
+            <IndividualSignUpForm
+              onBack={() => setAuthMode("login")}
+              onSuccess={() => setAuthMode("login")}
+              selectedState={selectedState}
+              selectedHospitalId={selectedHospitalId}
+              selectedDepartment={selectedDepartment}
+              onStateChange={setSelectedState}
+              onHospitalChange={setSelectedHospitalId}
+              onDepartmentChange={setSelectedDepartment}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -315,7 +301,7 @@ export default function AuthPage() {
               </div>
 
               {/* Form content - same as mobile but styled for desktop */}
-              <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-5">
+              <form onSubmit={handleLogin} className="space-y-5">
                 {/* Hierarchical Selection Section */}
                 <div className="space-y-4 pb-5 border-b border-gray-200">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Localização</p>
@@ -478,7 +464,7 @@ export default function AuthPage() {
                   ) : (
                     <span className="flex items-center gap-2">
                       <LogIn className="h-4 w-4" />
-                      {isSignUp ? "Criar Conta" : "Entrar no Sistema"}
+                      Entrar no Sistema
                     </span>
                   )}
                 </Button>
@@ -488,10 +474,11 @@ export default function AuthPage() {
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-[#013ba6] hover:text-[#012d80] font-semibold text-sm uppercase hover:bg-[#013ba6]/5"
+                    onClick={() => setAuthMode("individual-signup")}
+                    className="text-[#013ba6] hover:text-[#012d80] font-semibold text-sm uppercase hover:bg-[#013ba6]/5 gap-2"
                   >
-                    {isSignUp ? "Já tenho conta" : "Criar nova conta"}
+                    <UserPlus className="h-4 w-4" />
+                    Criar conta individual
                   </Button>
                 </div>
 
@@ -561,7 +548,7 @@ export default function AuthPage() {
               </div>
             </div>
 
-            <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-2.5 relative z-10">
+            <form onSubmit={handleLogin} className="space-y-2.5 relative z-10">
               {/* Hierarchical Selection Section */}
               <div className="space-y-2.5 pb-2.5 border-b border-gray-200">
                 <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">LOCALIZAÇÃO</p>
@@ -727,12 +714,12 @@ export default function AuthPage() {
                 {loading ? (
                   <div className="flex items-center gap-2">
                     <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>{isSignUp ? "CADASTRANDO..." : "ENTRANDO..."}</span>
+                    <span>ENTRANDO...</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <LogIn className="h-3.5 w-3.5" />
-                    <span>{isSignUp ? "CADASTRAR" : "ENTRAR"}</span>
+                    <span>ENTRAR</span>
                   </div>
                 )}
               </Button>
@@ -741,10 +728,11 @@ export default function AuthPage() {
             <div className="mt-3 pt-3 border-t border-gray-100 relative z-10 flex items-center justify-between">
               <button
                 type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-[10px] text-[#013ba6] hover:text-[#012d7a] font-semibold uppercase"
+                onClick={() => setAuthMode("individual-signup")}
+                className="text-[10px] text-[#013ba6] hover:text-[#012d7a] font-semibold uppercase flex items-center gap-1"
               >
-                {isSignUp ? "JÁ TENHO CONTA" : "CRIAR CONTA"}
+                <UserPlus className="h-3 w-3" />
+                CRIAR CONTA
               </button>
               <div className="flex items-center gap-1.5 text-[9px] text-gray-400">
                 <Shield className="h-2.5 w-2.5 text-green-600" />

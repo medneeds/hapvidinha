@@ -691,24 +691,42 @@ export type Database = {
       }
       profiles: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           created_at: string
+          crm: string | null
           email: string | null
           full_name: string | null
           id: string
+          phone: string | null
+          specialty: string | null
+          status: string
           updated_at: string
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
+          crm?: string | null
           email?: string | null
           full_name?: string | null
           id: string
+          phone?: string | null
+          specialty?: string | null
+          status?: string
           updated_at?: string
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
+          crm?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
+          phone?: string | null
+          specialty?: string | null
+          status?: string
           updated_at?: string
         }
         Relationships: []
