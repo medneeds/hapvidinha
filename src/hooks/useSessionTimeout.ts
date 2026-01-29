@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 // Tempo de inatividade em minutos (LGPD/CFM recomenda 15-30 minutos)
-const INACTIVITY_TIMEOUT_MINUTES = 15;
+const INACTIVITY_TIMEOUT_MINUTES = 30;
 const WARNING_BEFORE_TIMEOUT_MINUTES = 2;
 
 // Converter para milissegundos
