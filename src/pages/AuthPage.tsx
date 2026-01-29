@@ -309,37 +309,34 @@ export default function AuthPage() {
             </div>
           </div>
           
-          {/* Right Panel - Form - ultra compact & perfectly centered */}
-          <div className="w-[55%] xl:w-1/2 bg-white flex items-center justify-center py-4 px-6 xl:py-6 xl:px-8 relative overflow-y-auto">
+          {/* Right Panel - Form - perfectly centered with breathing room */}
+          <div className="w-[55%] xl:w-1/2 bg-white flex items-center justify-center p-8 xl:p-12 relative">
             {/* Subtle background pattern for form panel */}
-            <div className="absolute inset-0 opacity-[0.02]" style={{
+            <div className="absolute inset-0 opacity-[0.015]" style={{
               backgroundImage: `radial-gradient(circle at 1px 1px, #013ba6 1px, transparent 0)`,
-              backgroundSize: '24px 24px'
+              backgroundSize: '20px 20px'
             }} />
             
             {/* Decorative corner accent */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#013ba6]/5 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#013ba6]/5 to-transparent" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#013ba6]/5 to-transparent" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-[#013ba6]/5 to-transparent" />
             
-            <div className="w-full max-w-[340px] relative z-10 animate-in fade-in-0 slide-in-from-right-8 duration-1000 delay-300">
-              {/* Form header - ultra compact */}
-              <div className="mb-4 text-center">
-                <div className="inline-flex items-center justify-center h-10 w-10 rounded-lg bg-gradient-to-br from-[#013ba6] to-[#0152d4] shadow-lg shadow-[#013ba6]/30 mb-2">
-                  <LogIn className="h-5 w-5 text-white" />
+            <div className="w-full max-w-[320px] relative z-10 animate-in fade-in-0 slide-in-from-right-8 duration-1000 delay-300">
+              {/* Form header - minimal */}
+              <div className="mb-3 text-center">
+                <div className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-gradient-to-br from-[#013ba6] to-[#0152d4] shadow-md shadow-[#013ba6]/25 mb-1.5">
+                  <LogIn className="h-4 w-4 text-white" />
                 </div>
-                <h2 className="text-lg font-bold text-gray-900 uppercase">Acesse sua conta</h2>
-                <p className="text-gray-500 text-[11px] mt-0.5">Preencha os dados para continuar</p>
+                <h2 className="text-base font-bold text-gray-900 uppercase">Acesse sua conta</h2>
               </div>
 
-              {/* Form content - ultra compact spacing */}
-              <form onSubmit={handleLogin} className="space-y-2.5">
+              {/* Form content - minimal spacing */}
+              <form onSubmit={handleLogin} className="space-y-2">
                 {/* Hierarchical Selection Section */}
-                <div className="space-y-2 pb-2.5 border-b border-gray-200">
-                  <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Localização</p>
-                  
+                <div className="space-y-1.5 pb-2 border-b border-gray-100">
                   {/* State Selection */}
-                  <div className="space-y-0.5 group">
-                    <Label htmlFor="state-select-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
+                  <div className="group">
+                    <Label htmlFor="state-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
                       Estado
                     </Label>
                     <Select
@@ -352,13 +349,13 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="state-select-desktop"
-                        className="h-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] font-medium uppercase text-gray-900"
+                        className="h-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900"
                       >
                         <SelectValue placeholder="Selecione o estado" />
                       </SelectTrigger>
                       <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-lg">
                         {states.map((state) => (
-                          <SelectItem key={state.id} value={state.id} className="text-xs font-medium py-2 text-gray-900 hover:bg-gray-100">
+                          <SelectItem key={state.id} value={state.id} className="text-xs font-medium py-1.5 text-gray-900 hover:bg-gray-100">
                             {state.name} ({state.abbreviation})
                           </SelectItem>
                         ))}
@@ -367,9 +364,9 @@ export default function AuthPage() {
                   </div>
 
                   {/* Hospital Unit Selection */}
-                  <div className="space-y-0.5 group">
-                    <Label htmlFor="hospital-select-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
-                      Unidade Hospitalar
+                  <div className="group">
+                    <Label htmlFor="hospital-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
+                      Unidade
                     </Label>
                     <Select
                       value={selectedHospitalId}
@@ -378,13 +375,13 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="hospital-select-desktop"
-                        className="h-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] font-medium uppercase text-gray-900 disabled:opacity-50"
+                        className="h-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 disabled:opacity-50"
                       >
-                        <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Primeiro selecione um estado"} />
+                        <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Selecione o estado primeiro"} />
                       </SelectTrigger>
                       <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-lg">
                         {filteredHospitals.map((hospital) => (
-                          <SelectItem key={hospital.id} value={hospital.id} className="text-xs font-medium py-2 text-gray-900 hover:bg-gray-100">
+                          <SelectItem key={hospital.id} value={hospital.id} className="text-xs font-medium py-1.5 text-gray-900 hover:bg-gray-100">
                             {hospital.name}
                           </SelectItem>
                         ))}
@@ -393,8 +390,8 @@ export default function AuthPage() {
                   </div>
 
                   {/* Department Selection */}
-                  <div className="space-y-0.5 group">
-                    <Label htmlFor="department-select-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
+                  <div className="group">
+                    <Label htmlFor="department-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
                       Setor
                     </Label>
                     <Select
@@ -404,13 +401,13 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="department-select-desktop"
-                        className="h-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] font-medium uppercase text-gray-900"
+                        className="h-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900"
                       >
                         <SelectValue placeholder="Selecione o setor" />
                       </SelectTrigger>
                       <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-lg">
                         {DEPARTMENTS.map((dept) => (
-                          <SelectItem key={dept} value={dept} className="text-xs font-medium py-2 text-gray-900 hover:bg-gray-100">
+                          <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 hover:bg-gray-100">
                             {dept}
                           </SelectItem>
                         ))}
@@ -419,13 +416,11 @@ export default function AuthPage() {
                   </div>
                 </div>
 
-                {/* Authentication Fields Section - ultra compact */}
-                <div className="space-y-2 pt-2">
-                  <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Dados de Acesso</p>
-                  
+                {/* Authentication Fields Section */}
+                <div className="space-y-1.5 pt-1.5">
                   {/* Username Field */}
-                  <div className="space-y-0.5">
-                    <Label htmlFor="login-username-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
+                  <div>
+                    <Label htmlFor="login-username-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
                       Usuário
                     </Label>
                     <div className="relative">
@@ -435,10 +430,8 @@ export default function AuthPage() {
                         type="text"
                         value={loginData.username}
                         onChange={(e) => {
-                          // Forçar uppercase e só permitir A-Z, 0-9 e ponto
                           const newUsername = e.target.value.toUpperCase().replace(/[^A-Z0-9.]/g, '');
                           setLoginData({ ...loginData, username: newUsername });
-                          // Auto-select department based on username
                           if (newUsername === 'MEDICOUTI') {
                             setSelectedDepartment('UTI');
                           } else if (newUsername === 'MEDICOPORTA') {
@@ -446,7 +439,7 @@ export default function AuthPage() {
                           }
                         }}
                         placeholder="DIGITE SEU USUÁRIO"
-                        className="h-8 pl-7 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] uppercase font-medium"
+                        className="h-7 pl-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-medium"
                         disabled={loading}
                         maxLength={50}
                       />
@@ -454,9 +447,9 @@ export default function AuthPage() {
                   </div>
                   
                   {/* Password Field */}
-                  <div className="space-y-0.5">
-                    <Label htmlFor="login-password-desktop" className="text-[9px] font-semibold text-gray-600 uppercase">
-                      Senha (6 caracteres)
+                  <div>
+                    <Label htmlFor="login-password-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
+                      Senha
                     </Label>
                     <div className="relative">
                       <Lock className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
@@ -465,12 +458,11 @@ export default function AuthPage() {
                         type={showPassword ? "text" : "password"}
                         value={loginData.password}
                         onChange={(e) => {
-                          // Forçar uppercase e só permitir A-Z e 0-9, max 6 caracteres
                           const newPassword = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
                           setLoginData({ ...loginData, password: newPassword });
                         }}
-                        placeholder="EX: ABC123"
-                        className="h-8 pl-7 pr-8 bg-gray-50 border border-gray-200 focus:border-[#013ba6] focus:ring-2 focus:ring-[#013ba6]/10 rounded-md text-[11px] uppercase font-mono tracking-widest"
+                        placeholder="6 CARACTERES"
+                        className="h-7 pl-7 pr-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-mono tracking-wider"
                         disabled={loading}
                         maxLength={6}
                       />
@@ -478,13 +470,12 @@ export default function AuthPage() {
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-0.5 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400 hover:text-gray-600"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-400 hover:text-gray-600"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                       </Button>
                     </div>
-                    <p className="text-[8px] text-gray-400">{loginData.password.length}/6 • Letras maiúsculas e números</p>
                   </div>
                 </div>
 
@@ -492,45 +483,45 @@ export default function AuthPage() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-9 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d80] hover:to-[#013ba6] text-white font-bold uppercase rounded-md text-xs shadow-lg shadow-[#013ba6]/30 transition-all duration-300 hover:shadow-xl hover:scale-[1.01]"
+                  className="w-full h-8 mt-1 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d80] hover:to-[#013ba6] text-white font-bold uppercase rounded text-[11px] shadow-md shadow-[#013ba6]/25 transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
                 >
-                {loading ? (
+                  {loading ? (
                     <div className="flex items-center gap-1.5">
                       <div className="h-3 w-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span className="text-[11px]">Processando...</span>
+                      <span>Processando...</span>
                     </div>
                   ) : (
                     <span className="flex items-center gap-1.5">
                       <LogIn className="h-3.5 w-3.5" />
-                      Entrar no Sistema
+                      Entrar
                     </span>
                   )}
                 </Button>
 
-                {/* Toggle Sign Up / Sign In - ultra compact */}
-                <div className="flex flex-col items-center gap-0.5 pt-1">
+                {/* Actions row - inline */}
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setAuthMode("forgot-password")}
+                    className="text-[9px] text-gray-400 hover:text-[#013ba6] transition-colors"
+                  >
+                    Esqueci minha senha
+                  </button>
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={() => setAuthMode("individual-signup")}
-                    className="text-[#013ba6] hover:text-[#012d80] font-semibold text-[11px] uppercase hover:bg-[#013ba6]/5 gap-1 h-7"
+                    className="text-[#013ba6] hover:text-[#012d80] font-semibold text-[10px] uppercase hover:bg-[#013ba6]/5 gap-1 h-6 px-2"
                   >
                     <UserPlus className="h-3 w-3" />
-                    Criar conta individual
+                    Criar conta
                   </Button>
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode("forgot-password")}
-                    className="text-[9px] text-gray-500 hover:text-[#013ba6] transition-colors"
-                  >
-                    Esqueci minha senha
-                  </button>
                 </div>
 
                 {/* Security note */}
-                <div className="flex items-center justify-center gap-1 text-gray-400">
+                <div className="flex items-center justify-center gap-1 pt-1 text-gray-300">
                   <Lock className="h-2 w-2" />
-                  <span className="text-[8px] uppercase tracking-wider">Conexão segura e criptografada</span>
+                  <span className="text-[7px] uppercase tracking-wider">Conexão criptografada</span>
                 </div>
               </form>
             </div>
