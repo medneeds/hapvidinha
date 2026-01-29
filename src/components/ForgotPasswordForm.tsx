@@ -68,9 +68,39 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
         return;
       }
 
-      // Criar solicitação de reset de senha (coordenador irá aprovar)
-      // Por enquanto, apenas mostrar mensagem de sucesso
+      // Verificar se já existe solicitação pendente
+      const { data: existingRequest } = await supabase
+        .from("password_reset_requests")
+        .select("id")
+        .eq("username", validated.username.toUpperCase())
+        .eq("status", "pending")
+        .single();
+
+      if (existingRequest) {
+        toast.error("JÁ EXISTE UMA SOLICITAÇÃO PENDENTE PARA ESTE USUÁRIO");
+        setLoading(false);
+        return;
+      }
+
+      // Criar solicitação de reset de senha
+      const { error: insertError } = await supabase
+        .from("password_reset_requests")
+        .insert({
+          user_id: profile.id,
+          username: validated.username.toUpperCase(),
+          crm: validated.crm.toUpperCase(),
+          status: "pending",
+        });
+
+      if (insertError) {
+        console.error("Erro ao criar solicitação:", insertError);
+        toast.error("ERRO AO REGISTRAR SOLICITAÇÃO");
+        setLoading(false);
+        return;
+      }
+
       setSuccess(true);
+      toast.success("SOLICITAÇÃO REGISTRADA COM SUCESSO");
       
     } catch (err) {
       if (err instanceof z.ZodError) {

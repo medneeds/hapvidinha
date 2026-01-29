@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { MainLayout } from "@/components/MainLayout";
+import { PasswordResetRequestsPanel } from "@/components/PasswordResetRequestsPanel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -482,6 +483,9 @@ export default function UserManagementPage() {
             </TableBody>
           </Table>
         </div>
+
+        {/* Password Reset Requests Panel */}
+        <PasswordResetRequestsPanel />
 
         {/* LGPD Notice */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-lg p-3">
