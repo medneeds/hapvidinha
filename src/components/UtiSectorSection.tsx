@@ -159,7 +159,7 @@ export function UtiSectorSection({
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
-  const [allCardsCollapsed, setAllCardsCollapsed] = useState(false);
+  const [allCardsCollapsed, setAllCardsCollapsed] = useState(true);
 
   // Header color schemes based on colorVariant
   const headerStyles = {
