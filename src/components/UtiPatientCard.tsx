@@ -719,7 +719,7 @@ export function UtiPatientCard({
   forceCollapsed
 }: UtiPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   // Sync with forceCollapsed prop when it changes
