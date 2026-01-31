@@ -645,7 +645,7 @@ function InlineEditableField({ value, onUpdate, placeholder = "-", className }: 
   );
 }
 
-// Inline editable textarea for longer content
+// Collapsible inline editable textarea for longer text - optimized for space
 interface InlineEditableTextareaProps {
   value: string;
   onUpdate: (value: string) => void;
@@ -654,15 +654,26 @@ interface InlineEditableTextareaProps {
 
 function InlineEditableTextarea({ value, onUpdate, placeholder = "-" }: InlineEditableTextareaProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isTextExpanded, setIsTextExpanded] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Check if content overflows the collapsed height
+  const [hasOverflow, setHasOverflow] = useState(false);
+  
+  useEffect(() => {
+    if (contentRef.current && !isEditing) {
+      const element = contentRef.current;
+      // Check if content height exceeds collapsed max height (48px = ~3 lines)
+      setHasOverflow(element.scrollHeight > 48);
+    }
+  }, [value, isEditing]);
 
   useEffect(() => {
     if (isEditing && textareaRef.current) {
       textareaRef.current.focus();
-      // Auto-resize
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.setSelectionRange(textareaRef.current.value.length, textareaRef.current.value.length);
     }
   }, [isEditing]);
 
@@ -682,29 +693,63 @@ function InlineEditableTextarea({ value, onUpdate, placeholder = "-" }: InlineEd
         value={localValue}
         onChange={(e) => {
           setLocalValue(e.target.value.toUpperCase());
-          // Auto-resize on change
-          e.target.style.height = 'auto';
-          e.target.style.height = `${e.target.scrollHeight}px`;
         }}
-        className="w-full bg-background border border-primary/30 rounded px-2 py-1 outline-none text-sm uppercase min-h-[60px] resize-none"
+        className="w-full bg-background border border-primary/30 rounded px-2 py-1.5 outline-none text-xs uppercase min-h-[80px] max-h-[300px] resize-y overflow-auto"
         onKeyDown={(e) => {
           if (e.key === 'Escape') setIsEditing(false);
         }}
         onBlur={handleSave}
         onClick={(e) => e.stopPropagation()}
+        style={{ resize: 'vertical' }}
       />
     );
   }
 
   return (
-    <div 
-      className="cursor-pointer hover:text-primary transition-colors text-sm min-h-[40px] whitespace-pre-wrap"
-      onClick={(e) => {
-        e.stopPropagation();
-        setIsEditing(true);
-      }}
-    >
-      {value || <span className="text-muted-foreground/50">{placeholder}</span>}
+    <div className="relative">
+      <div 
+        ref={contentRef}
+        className={cn(
+          "cursor-pointer hover:text-primary transition-all duration-200 text-xs whitespace-pre-wrap overflow-hidden",
+          !isTextExpanded && hasOverflow ? "max-h-[48px]" : "max-h-none"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsEditing(true);
+        }}
+      >
+        {value || <span className="text-muted-foreground/50 italic text-xs">{placeholder}</span>}
+      </div>
+      
+      {/* Gradient fade when collapsed with overflow */}
+      {hasOverflow && !isTextExpanded && !isEditing && (
+        <div className="absolute bottom-5 left-0 right-0 h-4 bg-gradient-to-t from-muted/30 to-transparent pointer-events-none" />
+      )}
+      
+      {/* Expand/Collapse button - only show if content overflows */}
+      {hasOverflow && !isEditing && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-5 px-1.5 text-[10px] font-medium text-muted-foreground hover:text-primary mt-0.5"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsTextExpanded(!isTextExpanded);
+          }}
+        >
+          {isTextExpanded ? (
+            <>
+              <ChevronDown className="h-3 w-3 mr-0.5 rotate-180" />
+              Retrair
+            </>
+          ) : (
+            <>
+              <ChevronDown className="h-3 w-3 mr-0.5" />
+              Expandir
+            </>
+          )}
+        </Button>
+      )}
     </div>
   );
 }
