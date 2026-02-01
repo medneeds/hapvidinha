@@ -85,7 +85,17 @@ export function usePatients(department?: Department) {
         psmStatus: p.psm_status as Patient['psmStatus'],
       }));
 
-      setPatients(mappedPatients);
+      // Sort patients by bed number numerically (extract number from "U01", "U02", etc.)
+      const sortedPatients = mappedPatients.sort((a, b) => {
+        // Extract numeric part from bed number (e.g., "U01" -> 1, "U10" -> 10)
+        const extractNumber = (bedNumber: string) => {
+          const match = bedNumber.match(/\d+/);
+          return match ? parseInt(match[0], 10) : 0;
+        };
+        return extractNumber(a.bedNumber) - extractNumber(b.bedNumber);
+      });
+
+      setPatients(sortedPatients);
     } catch (error) {
       console.error('Error fetching patients:', error);
       toast({
