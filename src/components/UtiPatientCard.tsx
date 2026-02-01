@@ -154,19 +154,19 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     }
   };
 
-  // Highlight color styles based on variant - HIGH CONTRAST, subtle borders
+  // Highlight color styles based on variant - subtle background with colored left border, NO bold
   const highlightStyles = {
     blue: {
-      bg: "bg-blue-200/80 dark:bg-blue-700/40 border-l-2 border-l-blue-500 dark:border-l-blue-400",
-      number: "text-blue-700 dark:text-blue-300 font-bold",
-      text: "font-bold text-blue-900 dark:text-blue-100",
-      star: "fill-blue-600 text-blue-600"
+      bg: "bg-blue-100/60 dark:bg-blue-800/30 border-l-2 border-l-blue-500 dark:border-l-blue-400 pl-1.5",
+      number: "text-blue-600 dark:text-blue-300",
+      text: "text-blue-800 dark:text-blue-100",
+      star: "fill-blue-500 text-blue-500"
     },
     yellow: {
-      bg: "bg-amber-200/80 dark:bg-amber-700/40 border-l-2 border-l-amber-500 dark:border-l-amber-400",
-      number: "text-amber-700 dark:text-amber-300 font-bold",
-      text: "font-bold text-amber-900 dark:text-amber-100",
-      star: "fill-amber-600 text-amber-600"
+      bg: "bg-amber-100/60 dark:bg-amber-800/30 border-l-2 border-l-amber-500 dark:border-l-amber-400 pl-1.5",
+      number: "text-amber-600 dark:text-amber-300",
+      text: "text-amber-800 dark:text-amber-100",
+      star: "fill-amber-500 text-amber-500"
     }
   };
   const hStyles = highlightStyles[highlightColorVariant];
