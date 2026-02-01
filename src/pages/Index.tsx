@@ -1141,6 +1141,8 @@ const Index = () => {
                     customTitle="UNIDADE DE TERAPIA INTENSIVA 1"
                     customIcon={<span className="w-3 h-3 rounded-full bg-primary/80 border border-primary/40" />}
                     colorVariant="blue"
+                    allPatients={patients}
+                    currentUtiUnit="UTI 1"
                   />
                   <UtiSectorSection 
                     sector="yellow" 
@@ -1160,6 +1162,8 @@ const Index = () => {
                     customTitle="UNIDADE DE TERAPIA INTENSIVA 2"
                     customIcon={<span className="w-3 h-3 rounded-full bg-amber-500/80 border border-amber-400/40" />}
                     colorVariant="yellow"
+                    allPatients={patients}
+                    currentUtiUnit="UTI 2"
                   />
 
                   {/* UTI Outside Patients Section - Bed Allocation Requests */}

@@ -46,6 +46,8 @@ interface UtiSectorSectionProps {
   customIcon?: ReactNode;
   onRefetch?: () => void;
   colorVariant?: ColorVariant;
+  allPatients?: Patient[]; // All UTI patients for reallocation across units
+  currentUtiUnit?: string; // "UTI 1" or "UTI 2"
 }
 
 const sectorInfo = {
@@ -80,6 +82,8 @@ interface SortableUtiRowProps {
   onToggleSelection?: (patientId: string) => void;
   colorVariant?: ColorVariant;
   forceCollapsed?: boolean;
+  allPatients?: Patient[];
+  currentUtiUnit?: string;
 }
 
 function SortableUtiRow(props: SortableUtiRowProps) {
@@ -128,6 +132,8 @@ function SortableUtiRow(props: SortableUtiRowProps) {
           onRefetch={props.onRefetch}
           colorVariant={props.colorVariant}
           forceCollapsed={props.forceCollapsed}
+          allPatients={props.allPatients}
+          currentUtiUnit={props.currentUtiUnit}
         />
       </div>
     </div>
@@ -153,7 +159,9 @@ export function UtiSectorSection({
   customTitle,
   customIcon,
   onRefetch,
-  colorVariant = 'blue'
+  colorVariant = 'blue',
+  allPatients = [],
+  currentUtiUnit
 }: UtiSectorSectionProps) {
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
@@ -336,6 +344,8 @@ export function UtiSectorSection({
                   onToggleSelection={onToggleSelection}
                   colorVariant={colorVariant}
                   forceCollapsed={allCardsCollapsed}
+                  allPatients={allPatients}
+                  currentUtiUnit={currentUtiUnit}
                 />
               ))}
             </SortableContext>

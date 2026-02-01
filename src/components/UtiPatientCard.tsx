@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star } from "lucide-react";
+import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -24,12 +24,16 @@ const CLINICAL_STATUS_OPTIONS = [
 const toUpperCase = (value: string) => value.toUpperCase();
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
+import { PatientMovementDialog } from "./PatientMovementDialog";
+import { UtiReallocationDialog } from "./UtiReallocationDialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -60,6 +64,8 @@ interface UtiPatientCardProps {
   onRefetch?: () => void;
   colorVariant?: ColorVariant;
   forceCollapsed?: boolean;
+  allPatients?: Patient[]; // All UTI patients for reallocation
+  currentUtiUnit?: string; // "UTI 1" or "UTI 2"
 }
 
 // Calculate days in UTI
@@ -761,11 +767,21 @@ export function UtiPatientCard({
   onPrintPatient,
   onRefetch,
   colorVariant = 'blue',
-  forceCollapsed
+  forceCollapsed,
+  allPatients = [],
+  currentUtiUnit
 }: UtiPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  
+  // Movement dialog states
+  const [movementType, setMovementType] = useState<"ALTA" | "ÓBITO" | "TRANSFERÊNCIA" | null>(null);
+  const [isMovementDialogOpen, setIsMovementDialogOpen] = useState(false);
+  const [isReallocationDialogOpen, setIsReallocationDialogOpen] = useState(false);
+
+  // Derive current UTI unit from colorVariant if not provided
+  const derivedUtiUnit = currentUtiUnit || (colorVariant === 'blue' ? 'UTI 1' : 'UTI 2');
 
   // Sync with forceCollapsed prop when it changes
   useEffect(() => {
@@ -774,6 +790,56 @@ export function UtiPatientCard({
     }
   }, [forceCollapsed]);
   const [activeColumn, setActiveColumn] = useState<'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias' | null>(null);
+
+  // Movement handlers
+  const handleMovement = (type: "ALTA" | "ÓBITO" | "TRANSFERÊNCIA") => {
+    setMovementType(type);
+    setIsMovementDialogOpen(true);
+  };
+
+  const handleMovementSuccess = async () => {
+    // Clear patient data after discharge/death/transfer (but keep the bed slot)
+    const emptyPatient: Patient = {
+      ...patient,
+      name: "",
+      age: "",
+      diagnoses: [],
+      medicalHistory: [],
+      pendencies: [],
+      relevantExams: [],
+      schedule: [],
+      admissionHistory: "",
+      admissionDate: "",
+      internmentNotes: null,
+      internmentStatus: null,
+      utiOriginSector: [],
+      utiAdmissionDate: [],
+      utiAdmissionReason: [],
+      utiAllergies: [],
+      utiCurrentStatus: [],
+      utiDevices: [],
+      utiSpecialties: [],
+      utiCulturesAntibiotics: [],
+      utiDailyConducts: [],
+      utiDischargePrediction: [],
+      highlightedDiagnoses: [],
+      highlightedMedicalHistory: [],
+      highlightedPendencies: [],
+      highlightedConducts: [],
+      medicalResponsibility: undefined,
+      clinicalStatus: null,
+      psmStatus: null,
+    };
+    onUpdate(emptyPatient);
+    setIsMovementDialogOpen(false);
+    setMovementType(null);
+    onRefetch?.();
+  };
+
+  const handleReallocationSuccess = () => {
+    setIsReallocationDialogOpen(false);
+    onRefetch?.();
+  };
 
   // Color schemes based on variant
   const colorSchemes = {
@@ -1127,19 +1193,57 @@ export function UtiPatientCard({
                     <MoreVertical className="h-3 w-3" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50">
+                <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50 w-48">
+                  {/* Print option */}
                   {onPrintPatient && (
                     <DropdownMenuItem onClick={() => onPrintPatient(patient.id)}>
-                      Imprimir
+                      <Printer className="h-4 w-4 mr-2" />
+                      Imprimir Caso
                     </DropdownMenuItem>
                   )}
+                  
+                  {/* Only show movement options if patient has data */}
+                  {patient.name && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel className="text-xs text-muted-foreground">Realocação</DropdownMenuLabel>
+                      
+                      <DropdownMenuItem onClick={() => setIsReallocationDialogOpen(true)}>
+                        <BedDouble className="h-4 w-4 mr-2 text-blue-500" />
+                        Realocar Leito/UTI
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel className="text-xs text-muted-foreground">Movimentações</DropdownMenuLabel>
+                      
+                      <DropdownMenuItem onClick={() => handleMovement("ALTA")}>
+                        <TrendingUp className="h-4 w-4 mr-2 text-green-500" />
+                        Alta
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuItem onClick={() => handleMovement("TRANSFERÊNCIA")}>
+                        <ArrowLeftRight className="h-4 w-4 mr-2 text-blue-500" />
+                        Transferência
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuItem onClick={() => handleMovement("ÓBITO")}>
+                        <Skull className="h-4 w-4 mr-2 text-red-500" />
+                        Óbito
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  
                   {onDelete && (
-                    <DropdownMenuItem 
-                      onClick={() => onDelete(patient.id)}
-                      className="text-destructive"
-                    >
-                      Excluir
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={() => onDelete(patient.id)}
+                        className="text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Excluir Leito
+                      </DropdownMenuItem>
+                    </>
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -1284,6 +1388,28 @@ export function UtiPatientCard({
           onUpdate(updatedPatient);
           setIsEditDialogOpen(false);
         }}
+      />
+
+      {/* Movement Dialog */}
+      <PatientMovementDialog
+        patient={patient}
+        movementType={movementType}
+        isOpen={isMovementDialogOpen}
+        onClose={() => {
+          setIsMovementDialogOpen(false);
+          setMovementType(null);
+        }}
+        onSuccess={handleMovementSuccess}
+      />
+
+      {/* Reallocation Dialog */}
+      <UtiReallocationDialog
+        patient={patient}
+        isOpen={isReallocationDialogOpen}
+        onClose={() => setIsReallocationDialogOpen(false)}
+        onSuccess={handleReallocationSuccess}
+        currentUtiUnit={derivedUtiUnit}
+        allPatients={allPatients}
       />
     </>
   );
