@@ -24,7 +24,7 @@ export function PrintUtiLayout({
   const pageStyle = `
     @page {
       size: A4 landscape;
-      margin: 0;
+      margin: 12mm 15mm 18mm 15mm;
     }
     
     @media print {
@@ -43,6 +43,57 @@ export function PrintUtiLayout({
         box-sizing: border-box !important;
       }
       
+      /* Fixed header on all pages */
+      .print-header-fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        padding: 8mm 15mm 5mm 15mm;
+        background: #ffffff;
+        z-index: 1000;
+        border-bottom: 2px solid #d1d5db;
+      }
+      
+      /* Fixed footer on all pages */
+      .print-footer-fixed {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        padding: 3mm 15mm 5mm 15mm;
+        background: #ffffff;
+        z-index: 1000;
+        border-top: 1px solid #e5e7eb;
+      }
+      
+      /* Fixed watermark on all pages */
+      .print-watermark-fixed {
+        position: fixed;
+        top: 5mm;
+        right: 12mm;
+        z-index: 999;
+      }
+      
+      /* Content area with margins to avoid overlap with fixed elements */
+      .print-content-area {
+        margin-top: ${isCompact ? '32mm' : '36mm'};
+        margin-bottom: 20mm;
+      }
+      
+      /* Developer signature fixed position */
+      .print-dev-signature {
+        position: fixed;
+        bottom: 5mm;
+        right: 15mm;
+        font-size: 5.5pt;
+        font-style: italic;
+        color: #9ca3af;
+        opacity: 0.4;
+      }
+      
       /* Mobile Safari specific fixes */
       @supports (-webkit-touch-callout: none) {
         * {
@@ -56,10 +107,10 @@ export function PrintUtiLayout({
     position: 'relative',
     maxWidth: isPreview ? '297mm' : 'none',
     margin: isPreview ? '0 auto' : '0',
-    padding: isCompact ? '12mm 15mm' : '15mm 18mm',
-    paddingTop: isCompact ? '15mm' : '18mm',
-    fontSize: isCompact ? '9pt' : '10pt',
-    lineHeight: isCompact ? '1.3' : '1.4',
+    padding: isCompact ? '10mm 12mm' : '12mm 15mm',
+    paddingTop: isCompact ? '12mm' : '15mm',
+    fontSize: isCompact ? '8.5pt' : '9.5pt',
+    lineHeight: isCompact ? '1.25' : '1.35',
     backgroundColor: '#ffffff',
     minHeight: '210mm',
     boxShadow: isPreview ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none'
@@ -71,51 +122,55 @@ export function PrintUtiLayout({
     <>
       <style>{pageStyle}</style>
       <div style={containerStyle}>
-        {/* Logo as watermark */}
+        {/* Fixed Watermark - appears on all pages */}
         <img 
           src={hapvidaFullLogo} 
           alt="Hapvida NotreDame Intermédica" 
+          className="print-watermark-fixed"
           style={{ 
             position: 'absolute',
-            top: '5mm',
-            right: '10mm',
-            height: isCompact ? '35px' : '45px',
+            top: '4mm',
+            right: '8mm',
+            height: isCompact ? '30px' : '38px',
             width: 'auto',
-            opacity: 0.35,
+            opacity: 0.30,
             zIndex: 0
           }}
         />
         
-        {/* Header */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '10px', 
-          marginBottom: isCompact ? '10px' : '14px', 
-          paddingBottom: isCompact ? '8px' : '10px', 
-          borderBottom: '2px solid #d1d5db',
-          position: 'relative',
-          zIndex: 1
-        }}>
+        {/* Fixed Header - appears on all pages */}
+        <div 
+          className="print-header-fixed"
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px', 
+            marginBottom: isCompact ? '8px' : '10px', 
+            paddingBottom: isCompact ? '6px' : '8px', 
+            borderBottom: '2px solid #d1d5db',
+            position: 'relative',
+            zIndex: 1
+          }}
+        >
           <div style={{ 
-            height: isCompact ? '32px' : '36px', 
-            width: isCompact ? '32px' : '36px', 
+            height: isCompact ? '28px' : '32px', 
+            width: isCompact ? '28px' : '32px', 
             background: 'linear-gradient(135deg, #3b82f6, #eab308)', 
-            borderRadius: '6px',
+            borderRadius: '5px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0
           }}>
-            <ClipboardList style={{ height: isCompact ? '16px' : '18px', width: isCompact ? '16px' : '18px', color: '#ffffff' }} />
+            <ClipboardList style={{ height: isCompact ? '14px' : '16px', width: isCompact ? '14px' : '16px', color: '#ffffff' }} />
           </div>
           <h1 style={{ 
-            fontSize: isCompact ? '16pt' : '18pt', 
+            fontSize: isCompact ? '14pt' : '16pt', 
             fontWeight: 'bold', 
             textTransform: 'uppercase',
             margin: 0,
             color: '#000000',
-            letterSpacing: '0.5px'
+            letterSpacing: '0.4px'
           }}>
             Mapa UTI - Hospital Guarás
           </h1>
@@ -125,15 +180,15 @@ export function PrintUtiLayout({
         <div style={{ 
           display: 'grid',
           gridTemplateColumns: '1fr 1fr 1fr 1fr',
-          gap: '12px',
-          fontSize: isCompact ? '8.5pt' : '9.5pt', 
+          gap: '10px',
+          fontSize: isCompact ? '7.5pt' : '8.5pt', 
           color: '#4b5563', 
-          marginBottom: isCompact ? '10px' : '14px', 
-          paddingBottom: isCompact ? '8px' : '10px', 
+          marginBottom: isCompact ? '8px' : '10px', 
+          paddingBottom: isCompact ? '6px' : '8px', 
           borderBottom: '1px solid #e5e7eb',
           backgroundColor: '#f9fafb',
-          padding: '8px',
-          borderRadius: '4px'
+          padding: '6px 8px',
+          borderRadius: '3px'
         }}>
           <div><strong>Data:</strong> {new Date().toLocaleDateString('pt-BR')}</div>
           <div><strong>Hora:</strong> {new Date().toLocaleTimeString('pt-BR')}</div>
@@ -141,8 +196,8 @@ export function PrintUtiLayout({
           <div><strong>Modo:</strong> {mode === 'compact' ? 'Retraído' : 'Detalhado'}</div>
         </div>
         
-        {/* UTI Sectors */}
-        <div>
+        {/* UTI Sectors - Content Area */}
+        <div className="print-content-area">
           <PrintableSectorSection
             patients={uti1Patients}
             sectorName="Unidade de Terapia Intensiva 1"
@@ -177,32 +232,38 @@ export function PrintUtiLayout({
           )}
         </div>
         
-        {/* Footer */}
-        <div style={{ 
-          fontSize: isCompact ? '7.5pt' : '8.5pt',
-          fontStyle: 'italic',
-          textAlign: 'center', 
-          color: '#9ca3af', 
-          marginTop: isCompact ? '16px' : '20px', 
-          paddingTop: isCompact ? '12px' : '14px', 
-          borderTop: '1px solid #f3f4f6',
-          letterSpacing: '0.3px',
-          opacity: 0.85
-        }}>
+        {/* Fixed Footer - appears on all pages */}
+        <div 
+          className="print-footer-fixed"
+          style={{ 
+            fontSize: isCompact ? '6.5pt' : '7.5pt',
+            fontStyle: 'italic',
+            textAlign: 'center', 
+            color: '#9ca3af', 
+            marginTop: isCompact ? '12px' : '16px', 
+            paddingTop: isCompact ? '8px' : '10px', 
+            borderTop: '1px solid #f3f4f6',
+            letterSpacing: '0.2px',
+            opacity: 0.85
+          }}
+        >
           Unidade de Terapia Intensiva • Hospital Guarás • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
         </div>
         
-        {/* Developer Signature */}
-        <div style={{
-          position: 'fixed',
-          bottom: '8mm',
-          right: '10mm',
-          fontSize: '6pt',
-          fontStyle: 'italic',
-          color: '#9ca3af',
-          opacity: 0.4,
-          zIndex: 1000
-        }}>
+        {/* Developer Signature - Fixed position on all pages */}
+        <div 
+          className="print-dev-signature"
+          style={{
+            position: 'fixed',
+            bottom: '5mm',
+            right: '10mm',
+            fontSize: '5.5pt',
+            fontStyle: 'italic',
+            color: '#9ca3af',
+            opacity: 0.4,
+            zIndex: 1000
+          }}
+        >
           Desenvolvido por Artur Batista
         </div>
       </div>

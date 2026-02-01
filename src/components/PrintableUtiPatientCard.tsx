@@ -65,10 +65,10 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
           border: `1px solid ${scheme.border}`,
           borderLeft: `3px solid ${scheme.primary}`,
           borderRadius: '4px',
-          padding: '6px 8px',
-          marginBottom: '4px',
+          padding: '5px 7px',
+          marginBottom: '3px',
           backgroundColor: '#ffffff',
-          fontSize: '7.5pt',
+          fontSize: '7pt',
           pageBreakInside: 'avoid',
           breakInside: 'avoid'
         }}
@@ -77,37 +77,37 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
-          gap: '10px',
-          marginBottom: '5px',
-          paddingBottom: '4px',
+          gap: '8px',
+          marginBottom: '4px',
+          paddingBottom: '3px',
           borderBottom: '1px solid #e5e7eb'
         }}>
           <div style={{ 
             backgroundColor: scheme.primary,
             color: '#ffffff',
-            padding: '2px 8px',
-            borderRadius: '3px',
-            fontSize: '8pt',
+            padding: '1px 6px',
+            borderRadius: '2px',
+            fontSize: '7pt',
             fontWeight: 'bold',
-            minWidth: '35px',
+            minWidth: '32px',
             textAlign: 'center'
           }}>
             {patient.bedNumber}
           </div>
           <div style={{ flex: 1 }}>
-            <span style={{ fontSize: '8.5pt', fontWeight: 'bold', color: '#111827' }}>
+            <span style={{ fontSize: '7.5pt', fontWeight: 'bold', color: '#111827' }}>
               {patient.name || 'SEM NOME'}
             </span>
-            <span style={{ fontSize: '7pt', color: '#6b7280', marginLeft: '8px' }}>
+            <span style={{ fontSize: '6.5pt', color: '#6b7280', marginLeft: '6px' }}>
               {formatAgeDisplay(patient.age)}
             </span>
           </div>
           <div style={{ 
             backgroundColor: daysInUti > 4 ? '#fef2f2' : scheme.light,
             border: `1px solid ${daysInUti > 4 ? '#fca5a5' : scheme.border}`,
-            padding: '2px 6px',
-            borderRadius: '3px',
-            fontSize: '7pt',
+            padding: '1px 5px',
+            borderRadius: '2px',
+            fontSize: '6.5pt',
             fontWeight: 'bold',
             color: daysInUti > 4 ? '#991b1b' : scheme.accent
           }}>
@@ -117,9 +117,9 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
             <div style={{ 
               backgroundColor: '#fef2f2',
               border: '1px solid #fca5a5',
-              padding: '2px 6px',
-              borderRadius: '3px',
-              fontSize: '6.5pt',
+              padding: '1px 5px',
+              borderRadius: '2px',
+              fontSize: '6pt',
               fontWeight: 'bold',
               color: '#991b1b'
             }}>
@@ -132,14 +132,14 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: '1fr 1fr 1fr 1.2fr',
-          gap: '8px'
+          gap: '6px'
         }}>
           {/* Hipóteses / Diagnósticos */}
           <div>
-            <div style={{ fontSize: '6.5pt', color: scheme.accent, marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '6pt', color: scheme.accent, marginBottom: '1px', fontWeight: '600', textTransform: 'uppercase' }}>
               Hipóteses
             </div>
-            <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
+            <div style={{ fontSize: '6.5pt', color: '#374151', lineHeight: '1.35' }}>
               {patient.diagnoses.length > 0 ? (
                 patient.diagnoses.slice(0, 3).map((d, idx) => (
                   <div key={idx} style={{ marginBottom: '1px' }}>
@@ -150,17 +150,17 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
                 <span style={{ color: '#d1d5db' }}>-</span>
               )}
               {patient.diagnoses.length > 3 && (
-                <div style={{ fontSize: '6pt', color: '#9ca3af' }}>+{patient.diagnoses.length - 3} mais</div>
+                <div style={{ fontSize: '5.5pt', color: '#9ca3af' }}>+{patient.diagnoses.length - 3} mais</div>
               )}
             </div>
           </div>
 
           {/* Antecedentes */}
           <div>
-            <div style={{ fontSize: '6.5pt', color: scheme.accent, marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '6pt', color: scheme.accent, marginBottom: '1px', fontWeight: '600', textTransform: 'uppercase' }}>
               Antecedentes
             </div>
-            <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
+            <div style={{ fontSize: '6.5pt', color: '#374151', lineHeight: '1.35' }}>
               {patient.medicalHistory.length > 0 ? (
                 patient.medicalHistory.slice(0, 3).map((h, idx) => (
                   <div key={idx} style={{ marginBottom: '1px' }}>
@@ -171,17 +171,17 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
                 <span style={{ color: '#d1d5db' }}>-</span>
               )}
               {patient.medicalHistory.length > 3 && (
-                <div style={{ fontSize: '6pt', color: '#9ca3af' }}>+{patient.medicalHistory.length - 3} mais</div>
+                <div style={{ fontSize: '5.5pt', color: '#9ca3af' }}>+{patient.medicalHistory.length - 3} mais</div>
               )}
             </div>
           </div>
 
           {/* Plano Terapêutico */}
           <div>
-            <div style={{ fontSize: '6.5pt', color: scheme.accent, marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '6pt', color: scheme.accent, marginBottom: '1px', fontWeight: '600', textTransform: 'uppercase' }}>
               Plano Terapêutico
             </div>
-            <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
+            <div style={{ fontSize: '6.5pt', color: '#374151', lineHeight: '1.35' }}>
               {planoTerapeutico.length > 0 ? (
                 planoTerapeutico.slice(0, 3).map((c, idx) => (
                   <div key={idx} style={{ marginBottom: '1px' }}>
@@ -192,17 +192,17 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
                 <span style={{ color: '#d1d5db' }}>-</span>
               )}
               {planoTerapeutico.length > 3 && (
-                <div style={{ fontSize: '6pt', color: '#9ca3af' }}>+{planoTerapeutico.length - 3} mais</div>
+                <div style={{ fontSize: '5.5pt', color: '#9ca3af' }}>+{planoTerapeutico.length - 3} mais</div>
               )}
             </div>
           </div>
 
           {/* Pendências */}
           <div>
-            <div style={{ fontSize: '6.5pt', color: scheme.accent, marginBottom: '2px', fontWeight: '600', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '6pt', color: scheme.accent, marginBottom: '1px', fontWeight: '600', textTransform: 'uppercase' }}>
               Pendências
             </div>
-            <div style={{ fontSize: '7pt', color: '#374151', lineHeight: '1.4' }}>
+            <div style={{ fontSize: '6.5pt', color: '#374151', lineHeight: '1.35' }}>
               {patient.pendencies.length > 0 ? (
                 patient.pendencies.map((p, idx) => {
                   const isHighlighted = patient.highlightedPendencies?.includes(idx);
@@ -213,7 +213,7 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
                         marginBottom: '1px',
                         fontWeight: isHighlighted ? 'bold' : 'normal',
                         backgroundColor: isHighlighted ? scheme.light : 'transparent',
-                        padding: isHighlighted ? '1px 3px' : '0',
+                        padding: isHighlighted ? '1px 2px' : '0',
                         borderRadius: isHighlighted ? '2px' : '0'
                       }}
                     >
@@ -231,12 +231,12 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
         {/* Critical info row (if exists) */}
         {(dispositivos.length > 0 || culturasAtb.length > 0 || alergias.length > 0) && (
           <div style={{ 
-            marginTop: '4px',
-            paddingTop: '4px',
+            marginTop: '3px',
+            paddingTop: '3px',
             borderTop: '1px dashed #fca5a5',
             display: 'flex',
-            gap: '12px',
-            fontSize: '6.5pt'
+            gap: '10px',
+            fontSize: '6pt'
           }}>
             {dispositivos.length > 0 && (
               <div>

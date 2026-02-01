@@ -7,6 +7,7 @@ import { PrintUtiLayout } from "@/components/PrintUtiLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
 import { PrintPatientPreviewDialog } from "@/components/PrintPatientPreviewDialog";
 import { PrintMapPreviewDialog } from "@/components/PrintMapPreviewDialog";
+import { PrintUtiPreviewDialog } from "@/components/PrintUtiPreviewDialog";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
@@ -185,6 +186,7 @@ const Index = () => {
   const [printingPatientId, setPrintingPatientId] = useState<string | null>(null);
   const [previewPatientId, setPreviewPatientId] = useState<string | null>(null);
   const [previewMapMode, setPreviewMapMode] = useState<'compact' | 'detailed' | null>(null);
+  const [previewUtiMapMode, setPreviewUtiMapMode] = useState<'compact' | 'detailed' | null>(null);
   const [showOnlyOccupied, setShowOnlyOccupied] = useState(false);
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(new Set());
@@ -697,15 +699,25 @@ const Index = () => {
   const handlePrintCompact = () => {
     // On mobile, open the preview dialog for better PDF generation
     if (isMobile) {
-      setPreviewMapMode('compact');
+      // Use UTI-specific dialog for UTI department
+      if (currentDepartment === "UTI") {
+        setPreviewUtiMapMode('compact');
+      } else {
+        setPreviewMapMode('compact');
+      }
     } else {
-      // Desktop: use traditional print approach
-      setPrintMode('compact');
-      setPrintingSector(null);
-      setTimeout(() => {
-        window.print();
-        setTimeout(() => setPrintMode(null), 500);
-      }, 300);
+      // Desktop: for UTI, always use preview dialog with selection
+      if (currentDepartment === "UTI") {
+        setPreviewUtiMapMode('compact');
+      } else {
+        // Desktop: use traditional print approach for other departments
+        setPrintMode('compact');
+        setPrintingSector(null);
+        setTimeout(() => {
+          window.print();
+          setTimeout(() => setPrintMode(null), 500);
+        }, 300);
+      }
     }
   };
 
@@ -809,6 +821,17 @@ const Index = () => {
             outsidePatients={outsidePatients}
             mode={previewMapMode}
             onClose={() => setPreviewMapMode(null)}
+          />
+        )}
+
+        {/* UTI preview dialog with unit selection */}
+        {previewUtiMapMode && (
+          <PrintUtiPreviewDialog
+            uti1Patients={bluePatients}
+            uti2Patients={yellowPatients}
+            outsidePatients={outsidePatients}
+            mode={previewUtiMapMode}
+            onClose={() => setPreviewUtiMapMode(null)}
           />
         )}
         
