@@ -799,6 +799,7 @@ export function UtiPatientCard({
 
   const handleMovementSuccess = async () => {
     // Clear patient data after discharge/death/transfer (but keep the bed slot)
+    // Mark the bed as vacant after movement
     const emptyPatient: Patient = {
       ...patient,
       name: "",
@@ -829,11 +830,18 @@ export function UtiPatientCard({
       medicalResponsibility: undefined,
       clinicalStatus: null,
       psmStatus: null,
+      isVacant: true, // Mark bed as vacant after movement
     };
+    
+    // Update the patient - this persists to database
     onUpdate(emptyPatient);
+    
+    // Close dialog
     setIsMovementDialogOpen(false);
     setMovementType(null);
-    onRefetch?.();
+    
+    // Note: Don't call onRefetch here as it may race with the update
+    // The realtime subscription will handle syncing the data
   };
 
   const handleReallocationSuccess = () => {
