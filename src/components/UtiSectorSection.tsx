@@ -1,28 +1,12 @@
 import { Patient, SectorType } from "@/types/patient";
 import { ReactNode } from "react";
 import { UtiPatientCard } from "./UtiPatientCard";
-import { Printer, Plus, ChevronDown, GripVertical, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
+import { Printer, Plus, ChevronDown, ChevronsDownUp, ChevronsUpDown, DoorOpen, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { cn } from "@/lib/utils";
 
 type ColorVariant = 'blue' | 'yellow';
 
@@ -71,7 +55,7 @@ const sectorInfo = {
   }
 };
 
-interface SortableUtiRowProps {
+interface UtiRowProps {
   patient: Patient;
   onUpdate: (patient: Patient) => void;
   onDelete?: (patientId: string) => void;
@@ -86,26 +70,30 @@ interface SortableUtiRowProps {
   currentUtiUnit?: string;
 }
 
-function SortableUtiRow(props: SortableUtiRowProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: props.patient.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
+function UtiRow(props: UtiRowProps) {
+  // Toggle vacancy handler
+  const handleToggleVacancy = () => {
+    props.onUpdate({
+      ...props.patient,
+      isVacant: !props.patient.isVacant
+    });
   };
+
+  // Vacancy toggle button styles based on color variant
+  const vacancyButtonStyles = {
+    blue: {
+      vacant: "border-primary/40 text-primary hover:bg-primary/10",
+      occupied: "border-muted-foreground/30 text-muted-foreground hover:bg-muted/30"
+    },
+    yellow: {
+      vacant: "border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20",
+      occupied: "border-muted-foreground/30 text-muted-foreground hover:bg-muted/30"
+    }
+  };
+  const variantStyles = vacancyButtonStyles[props.colorVariant || 'blue'];
 
   return (
     <div 
-      ref={setNodeRef} 
-      style={style} 
       className="flex items-center gap-1 md:gap-2"
       data-patient-id={props.patient.id}
     >
@@ -116,13 +104,23 @@ function SortableUtiRow(props: SortableUtiRowProps) {
           className="flex-shrink-0"
         />
       )}
-      <button
-        className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden hidden md:block"
-        {...attributes}
-        {...listeners}
+      {/* Vacancy Toggle Button - replaces drag handle */}
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={handleToggleVacancy}
+        className={cn(
+          "h-8 w-8 flex-shrink-0 print:hidden hidden md:flex transition-all",
+          props.patient.isVacant ? variantStyles.vacant : variantStyles.occupied
+        )}
+        title={props.patient.isVacant ? "Liberar para preenchimento" : "Marcar como vago"}
       >
-        <GripVertical className="h-4 w-4 text-muted-foreground" />
-      </button>
+        {props.patient.isVacant ? (
+          <UserPlus className="h-4 w-4" />
+        ) : (
+          <DoorOpen className="h-4 w-4" />
+        )}
+      </Button>
       <div className="flex-1 min-w-0">
         <UtiPatientCard
           patient={props.patient}
@@ -219,28 +217,7 @@ export function UtiSectorSection({
     }
   };
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id && onReorderPatients) {
-      const oldIndex = displayPatients.findIndex((p) => p.id === active.id);
-      const newIndex = displayPatients.findIndex((p) => p.id === over.id);
-      
-      const reorderedPatients = arrayMove(displayPatients, oldIndex, newIndex);
-      onReorderPatients(reorderedPatients);
-    }
-  };
+  // Drag-and-drop for beds removed - beds are fixed, vacancy toggle used instead
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
@@ -322,34 +299,25 @@ export function UtiSectorSection({
             <p>Nenhum paciente neste setor</p>
           </div>
         ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={displayPatients.map(p => p.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {displayPatients.map((patient) => (
-                <SortableUtiRow
-                  key={patient.id}
-                  patient={patient}
-                  onUpdate={onUpdatePatient}
-                  onDelete={onDeletePatient}
-                  onPrintPatient={onPrintPatient}
-                  onRefetch={onRefetch}
-                  selectionMode={selectionMode}
-                  isSelected={selectedPatients.has(patient.id)}
-                  onToggleSelection={onToggleSelection}
-                  colorVariant={colorVariant}
-                  forceCollapsed={allCardsCollapsed}
-                  allPatients={allPatients}
-                  currentUtiUnit={currentUtiUnit}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
+          <div className="space-y-2">
+            {displayPatients.map((patient) => (
+              <UtiRow
+                key={patient.id}
+                patient={patient}
+                onUpdate={onUpdatePatient}
+                onDelete={onDeletePatient}
+                onPrintPatient={onPrintPatient}
+                onRefetch={onRefetch}
+                selectionMode={selectionMode}
+                isSelected={selectedPatients.has(patient.id)}
+                onToggleSelection={onToggleSelection}
+                colorVariant={colorVariant}
+                forceCollapsed={allCardsCollapsed}
+                allPatients={allPatients}
+                currentUtiUnit={currentUtiUnit}
+              />
+            ))}
+          </div>
         )}
       </CollapsibleContent>
     </Collapsible>
