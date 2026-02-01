@@ -176,14 +176,14 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       ref={setNodeRef} 
       style={style} 
       className={cn(
-        "flex items-center gap-0.5 group py-0 rounded px-0.5 -mx-0.5 transition-colors",
-        isDragging && "z-50",
-        isHighlighted && hStyles.bg
+        "flex items-center gap-1 group py-1 rounded-sm px-1 -mx-0.5 transition-all duration-150",
+        isDragging && "z-50 shadow-sm",
+        isHighlighted ? hStyles.bg : "hover:bg-muted/30"
       )}
     >
       {showDragHandle && (
         <button
-          className="cursor-grab active:cursor-grabbing p-0 opacity-40 hover:opacity-100 transition-opacity"
+          className="cursor-grab active:cursor-grabbing p-0 opacity-30 hover:opacity-80 transition-opacity flex-shrink-0"
           {...attributes}
           {...listeners}
         >
@@ -191,18 +191,18 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
         </button>
       )}
       <span className={cn(
-        "font-medium text-xs min-w-[14px]",
-        isHighlighted ? hStyles.number : "text-primary/70"
+        "font-semibold text-[10px] min-w-[14px] flex-shrink-0 tabular-nums",
+        isHighlighted ? hStyles.number : "text-muted-foreground"
       )}>{index + 1}.</span>
       
       {isEditing ? (
-        <div className="flex-1 flex items-center gap-0.5">
+        <div className="flex-1 flex items-center gap-1">
           <input
             ref={inputRef}
             type="text"
             value={localValue}
             onChange={(e) => setLocalValue(e.target.value.toUpperCase())}
-            className="flex-1 text-xs bg-background border border-primary/30 rounded px-1 py-0.5 outline-none uppercase"
+            className="flex-1 text-[11px] bg-background border border-primary/30 rounded px-1.5 py-0.5 outline-none uppercase font-medium tracking-tight"
             onKeyDown={handleKeyDownInternal}
             onBlur={handleSave}
             onClick={(e) => e.stopPropagation()}
@@ -212,8 +212,8 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
         <>
           <span 
             className={cn(
-              "flex-1 text-xs break-words cursor-pointer hover:text-primary transition-colors leading-tight",
-              isHighlighted && hStyles.text
+              "flex-1 text-[11px] break-words cursor-pointer hover:text-primary transition-colors leading-relaxed tracking-tight",
+              isHighlighted ? hStyles.text : "text-foreground/90"
             )}
             onClick={(e) => {
               e.stopPropagation();
@@ -226,7 +226,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
             <Button 
               size="icon" 
               variant="ghost" 
-              className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleHighlight();
@@ -241,7 +241,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
           <Button 
             size="icon" 
             variant="ghost" 
-            className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
             onClick={(e) => {
               e.stopPropagation();
               onDelete();
@@ -455,14 +455,14 @@ function InlineEditableArray({
   const hiddenCount = maxCollapsedItems && !alwaysShowAll ? Math.max(0, items.length - maxCollapsedItems) : 0;
 
   return (
-    <div className={cn("rounded-md p-1", colorClass)}>
+    <div className={cn("rounded-md p-1.5", colorClass)}>
       {label && (
-        <div className="flex items-center justify-between mb-0.5">
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-1.5">
             {icon}
-            <span className="text-[10px] font-semibold text-muted-foreground tracking-wide">{label}</span>
+            <span className="text-[10px] font-semibold text-muted-foreground tracking-wide uppercase">{label}</span>
             {items.length > 0 && (
-              <Badge variant="secondary" className="h-3.5 px-1 text-[9px]">{items.length}</Badge>
+              <Badge variant="secondary" className="h-3.5 px-1 text-[9px] font-medium">{items.length}</Badge>
             )}
           </div>
           <Button
@@ -479,7 +479,7 @@ function InlineEditableArray({
         </div>
       )}
       
-      <div className="space-y-0">
+      <div className="space-y-0.5">
         {items.length > 0 ? (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={itemIds.slice(0, displayItems.length)} strategy={verticalListSortingStrategy}>
@@ -529,7 +529,7 @@ function InlineEditableArray({
           </DndContext>
         ) : !isAddingNew ? (
           <span 
-            className="text-xs text-muted-foreground/50 cursor-pointer hover:text-muted-foreground"
+            className="text-[11px] text-muted-foreground/50 cursor-pointer hover:text-muted-foreground italic pl-0.5"
             onClick={() => setIsAddingNew(true)}
           >
             {placeholder}
@@ -537,34 +537,34 @@ function InlineEditableArray({
         ) : null}
         
         {hiddenCount > 0 && (
-          <span className="text-[10px] text-muted-foreground pl-4">+{hiddenCount} mais</span>
+          <span className="text-[10px] text-muted-foreground pl-5 italic">+{hiddenCount} mais</span>
         )}
         
         {isAddingNew && (
-          <div className="flex items-center gap-0.5 mt-0.5">
+          <div className="flex items-center gap-1 mt-1 pt-1 border-t border-border/30">
             <input
               ref={newInputRef}
               type="text"
               value={newItemValue}
               onChange={(e) => setNewItemValue(e.target.value.toUpperCase())}
               placeholder="NOVO ITEM..."
-              className="flex-1 text-xs bg-background border border-primary/30 rounded px-1 py-0.5 outline-none uppercase"
+              className="flex-1 text-[11px] bg-background border border-primary/30 rounded px-1.5 py-1 outline-none uppercase font-medium tracking-tight placeholder:font-normal placeholder:text-muted-foreground/50"
               onKeyDown={handleNewItemKeyDown}
               onBlur={() => handleAddItem(false)}
             />
-            <Button size="icon" variant="ghost" className="h-4 w-4" onClick={() => handleAddItem(false)}>
-              <Check className="h-2.5 w-2.5 text-green-600" />
+            <Button size="icon" variant="ghost" className="h-5 w-5" onClick={() => handleAddItem(false)}>
+              <Check className="h-3 w-3 text-green-600" />
             </Button>
             <Button 
               size="icon" 
               variant="ghost" 
-              className="h-4 w-4" 
+              className="h-5 w-5" 
               onClick={() => {
                 setIsAddingNew(false);
                 setNewItemValue("");
               }}
             >
-              <X className="h-2.5 w-2.5 text-destructive" />
+              <X className="h-3 w-3 text-destructive" />
             </Button>
           </div>
         )}
@@ -573,13 +573,13 @@ function InlineEditableArray({
           <Button
             size="sm"
             variant="ghost"
-            className={cn("h-5 text-xs p-0 mt-1", iconColorClass)}
+            className={cn("h-5 text-[10px] p-0 mt-1.5", iconColorClass)}
             onClick={(e) => {
               e.stopPropagation();
               setIsAddingNew(true);
             }}
           >
-            <Plus className="h-3 w-3 mr-1" /> Adicionar
+            <Plus className="h-3 w-3 mr-0.5" /> Adicionar
           </Button>
         )}
       </div>
