@@ -83,6 +83,7 @@ export function usePatients(department?: Department) {
         allocationStatus: p.allocation_status as Patient['allocationStatus'],
         createdBy: p.created_by || undefined,
         psmStatus: p.psm_status as Patient['psmStatus'],
+        clinicalStatus: (p as any).clinical_status as Patient['clinicalStatus'],
       }));
 
       // Sort patients by bed number numerically (extract number from "U01", "U02", etc.)
@@ -163,6 +164,7 @@ export function usePatients(department?: Department) {
       if (updates.utiOriginSector !== undefined) dbUpdates.uti_origin_sector = updates.utiOriginSector.length > 0 ? updates.utiOriginSector.join('\n') : null;
       if (updates.utiDailyConducts !== undefined) dbUpdates.uti_daily_conducts = updates.utiDailyConducts.length > 0 ? updates.utiDailyConducts.join('\n') : null;
       if (updates.psmStatus !== undefined) dbUpdates.psm_status = updates.psmStatus;
+      if (updates.clinicalStatus !== undefined) dbUpdates.clinical_status = updates.clinicalStatus;
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 
