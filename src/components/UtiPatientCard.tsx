@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble } from "lucide-react";
+import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -893,6 +893,14 @@ export function UtiPatientCard({
     });
   };
 
+  // Toggle bed vacancy status
+  const handleToggleVacancy = (isVacant: boolean) => {
+    onUpdate({
+      ...patient,
+      isVacant
+    });
+  };
+
   // Combined update for items + highlights to prevent race conditions on delete/drag
   const handleUpdateBothFields = (
     itemsKey: keyof Patient, 
@@ -938,7 +946,59 @@ export function UtiPatientCard({
         className={cn("border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200", colors.card)}
         data-patient-id={patient.id}
       >
-        <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+        {/* VACANT BED VIEW */}
+        {patient.isVacant ? (
+          <div className="flex items-center justify-between p-2 md:p-3">
+            <div className="flex items-center gap-2">
+              {/* Bed Number */}
+              <div className={cn("shrink-0 px-1.5 py-0.5 rounded border", colors.bedBg)}>
+                <span className={cn("text-xs font-bold", colors.bedText)}>{patient.bedNumber}</span>
+              </div>
+              {/* Vacant Message */}
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <DoorOpen className="h-4 w-4" />
+                <span className="text-sm font-medium italic">Leito Vago</span>
+              </div>
+            </div>
+            {/* Actions for vacant bed */}
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleToggleVacancy(false)}
+                className={cn(
+                  "h-7 text-xs gap-1.5",
+                  colorVariant === 'blue' 
+                    ? "border-primary/40 text-primary hover:bg-primary/10" 
+                    : "border-amber-500/40 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                )}
+              >
+                <UserPlus className="h-3.5 w-3.5" />
+                Liberar para Preenchimento
+              </Button>
+              {onDelete && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
+                      <MoreVertical className="h-3 w-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50 w-40">
+                    <DropdownMenuItem 
+                      onClick={() => onDelete(patient.id)}
+                      className="text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Excluir Leito
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* OCCUPIED BED VIEW - Normal card */
+          <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
           {/* Header - Collapsed View - FULLY EDITABLE */}
           <div className="flex items-stretch">
             {/* Main Content - Collapsed View */}
@@ -1201,6 +1261,13 @@ export function UtiPatientCard({
                       Imprimir Caso
                     </DropdownMenuItem>
                   )}
+
+                  {/* Mark as vacant - always visible for occupied beds */}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => handleToggleVacancy(true)}>
+                    <DoorOpen className="h-4 w-4 mr-2 text-muted-foreground" />
+                    Marcar como Vago
+                  </DropdownMenuItem>
                   
                   {/* Only show movement options if patient has data */}
                   {patient.name && (
@@ -1378,6 +1445,7 @@ export function UtiPatientCard({
             </div>
           </CollapsibleContent>
         </Collapsible>
+        )}
       </div>
 
       <EditPatientDialog
