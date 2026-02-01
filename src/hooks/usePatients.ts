@@ -84,6 +84,7 @@ export function usePatients(department?: Department) {
         createdBy: p.created_by || undefined,
         psmStatus: p.psm_status as Patient['psmStatus'],
         clinicalStatus: (p as any).clinical_status as Patient['clinicalStatus'],
+        isVacant: (p as any).is_vacant ?? false,
       }));
 
       // Sort patients by bed number numerically (extract number from "U01", "U02", etc.)
@@ -165,6 +166,7 @@ export function usePatients(department?: Department) {
       if (updates.utiDailyConducts !== undefined) dbUpdates.uti_daily_conducts = updates.utiDailyConducts.length > 0 ? updates.utiDailyConducts.join('\n') : null;
       if (updates.psmStatus !== undefined) dbUpdates.psm_status = updates.psmStatus;
       if (updates.clinicalStatus !== undefined) dbUpdates.clinical_status = updates.clinicalStatus;
+      if (updates.isVacant !== undefined) dbUpdates.is_vacant = updates.isVacant;
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 

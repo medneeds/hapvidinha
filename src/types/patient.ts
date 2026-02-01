@@ -50,4 +50,6 @@ export interface Patient {
   psmStatus?: 'favoravel' | 'aguardando' | 'desfavoravel' | null;
   // Clinical status for UTI patients
   clinicalStatus?: 'gravissimo' | 'grave' | 'grave_estavel' | 'potencialmente_grave' | 'regular' | 'paliativado' | null;
+  // UTI bed vacancy status
+  isVacant?: boolean;
 }

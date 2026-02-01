@@ -669,6 +669,7 @@ export type Database = {
           age: string | null
           allocation_status: string | null
           bed_number: string
+          clinical_status: string | null
           created_at: string
           created_by: string | null
           department: string
@@ -683,6 +684,7 @@ export type Database = {
           internment_notes: string | null
           internment_status: string | null
           is_door_patient: boolean | null
+          is_vacant: boolean | null
           medical_history: string | null
           medical_responsibility: Json | null
           name: string
@@ -710,6 +712,7 @@ export type Database = {
           age?: string | null
           allocation_status?: string | null
           bed_number: string
+          clinical_status?: string | null
           created_at?: string
           created_by?: string | null
           department?: string
@@ -724,6 +727,7 @@ export type Database = {
           internment_notes?: string | null
           internment_status?: string | null
           is_door_patient?: boolean | null
+          is_vacant?: boolean | null
           medical_history?: string | null
           medical_responsibility?: Json | null
           name?: string
@@ -751,6 +755,7 @@ export type Database = {
           age?: string | null
           allocation_status?: string | null
           bed_number?: string
+          clinical_status?: string | null
           created_at?: string
           created_by?: string | null
           department?: string
@@ -765,6 +770,7 @@ export type Database = {
           internment_notes?: string | null
           internment_status?: string | null
           is_door_patient?: boolean | null
+          is_vacant?: boolean | null
           medical_history?: string | null
           medical_responsibility?: Json | null
           name?: string
