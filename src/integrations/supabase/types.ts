@@ -1204,6 +1204,63 @@ export type Database = {
         }
         Relationships: []
       }
+      therapeutic_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          hospital_unit_id: string | null
+          id: string
+          is_global: boolean
+          items: Json
+          name: string
+          protocol_type: string
+          state_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          hospital_unit_id?: string | null
+          id?: string
+          is_global?: boolean
+          items?: Json
+          name: string
+          protocol_type: string
+          state_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          hospital_unit_id?: string | null
+          id?: string
+          is_global?: boolean
+          items?: Json
+          name?: string
+          protocol_type?: string
+          state_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "therapeutic_templates_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "therapeutic_templates_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_consents: {
         Row: {
           accepted_at: string
