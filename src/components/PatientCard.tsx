@@ -848,6 +848,29 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     
     if (editingField === "name") {
       updatedPatient.name = editValue.toUpperCase();
+      // Auto-set admission date when name is first added
+      if (!patient.admissionDate && editValue.trim()) {
+        updatedPatient.admissionDate = new Date().toISOString();
+      }
+    } else if (editingField === "admissionDate") {
+      const val = editValue.trim();
+      if (!val) {
+        updatedPatient.admissionDate = new Date().toISOString();
+      } else {
+        // Try to parse DD/MM/YYYY HH:mm
+        const parsed = parse(val, "dd/MM/yyyy HH:mm", new Date());
+        if (isValid(parsed)) {
+          updatedPatient.admissionDate = parsed.toISOString();
+        } else {
+          // Try DD/MM/YYYY
+          const parsedDate = parse(val, "dd/MM/yyyy", new Date());
+          if (isValid(parsedDate)) {
+            updatedPatient.admissionDate = parsedDate.toISOString();
+          } else {
+            updatedPatient.admissionDate = val;
+          }
+        }
+      }
     } else if (editingField === "age") {
       // Tenta formatar idade usando IA (data de nascimento ou idade simples)
       const formattedAge = await calculateAge(editValue);
@@ -3751,7 +3774,34 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           <div className="flex items-center gap-3 text-xs text-muted-foreground print:text-[8px] print:gap-1">
             <div className="flex items-center gap-1.5">
               <Calendar className="h-3 w-3 print:h-2 print:w-2" />
-              <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>
+              {editingField === "admissionDate" ? (
+                <Input
+                  autoFocus
+                  className="h-5 text-[10px] w-40 px-1 py-0 text-gray-900"
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onBlur={saveInlineEdit}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") saveInlineEdit();
+                    if (e.key === "Escape") cancelEditing();
+                  }}
+                  placeholder="DD/MM/AAAA HH:mm"
+                />
+              ) : (
+                <span
+                  className={cn("cursor-pointer hover:underline", canEdit && "hover:text-foreground")}
+                  onClick={() => {
+                    if (!canEdit) return;
+                    const formatted = patient.admissionDate
+                      ? new Date(patient.admissionDate).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                      : '';
+                    startEditing("admissionDate", formatted);
+                  }}
+                  title={canEdit ? "Clique para editar" : undefined}
+                >
+                  Admissão: {patient.admissionDate ? new Date(patient.admissionDate).toLocaleString('pt-BR') : '—'}
+                </span>
+              )}
             </div>
             {/* Detailed Stay Timer in Expanded View */}
             {stayTimer && (
