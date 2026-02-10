@@ -146,7 +146,7 @@ function DynamicHeader({ children }: { children: React.ReactNode }) {
   
   return (
     <header 
-      className="border-b border-[#013ba6]/30 bg-[#013ba6] backdrop-blur-xl fixed top-0 right-0 z-50 shadow-lg print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
+      className="border-b border-white/10 bg-gradient-to-r from-[#011d54] via-[#013ba6] to-[#0256d4] backdrop-blur-xl fixed top-0 right-0 z-50 shadow-[0_4px_20px_-4px_rgba(1,59,166,0.5)] print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
       style={{
         left: isMobile ? 0 : (state === 'collapsed' ? 'var(--sidebar-width-icon)' : 'var(--sidebar-width)')
       }}
@@ -845,7 +845,7 @@ const Index = () => {
                     <div className="print:hidden">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="inline-flex items-center gap-1.5 h-9 md:h-7 px-4 md:px-3 bg-white/15 backdrop-blur-sm border border-white/30 text-white text-sm md:text-xs font-semibold hover:bg-white/25 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                          <button className="inline-flex items-center gap-1.5 h-9 md:h-7 px-4 md:px-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm md:text-xs font-semibold hover:bg-white/20 hover:border-white/40 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
                             <Building2 className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0" />
                             <span className="md:hidden truncate">
                               {currentDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" ? "URG E EMERG..." : 
@@ -916,7 +916,7 @@ const Index = () => {
                     variant="outline"
                     size="icon"
                     onClick={() => setSearchOpen(true)}
-                    className="print:hidden h-9 w-9 sm:h-8 sm:w-8 bg-white/15 border-white/30 text-white hover:bg-white/25 hover:text-white"
+                    className="print:hidden h-9 w-9 sm:h-8 sm:w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
                     title="Buscar paciente (Ctrl+K)"
                   >
                     <Search className="h-4 w-4" />
@@ -929,7 +929,7 @@ const Index = () => {
                         variant={selectionMode ? "default" : "outline"}
                         size="icon"
                         onClick={handleToggleSelectionMode}
-                        className={`print:hidden h-11 w-11 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
+                        className={`print:hidden h-11 w-11 transition-all duration-200 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}
                         title="Modo de seleção"
                       >
                         <CheckSquare className="h-5 w-5" />
@@ -961,7 +961,7 @@ const Index = () => {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="print:hidden h-11 w-11 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                            className="print:hidden h-11 w-11 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
                           >
                             <MoreVertical className="h-5 w-5" />
                           </Button>
@@ -1016,7 +1016,7 @@ const Index = () => {
                         size="icon"
                         onClick={handleUndo}
                         disabled={history.length === 0}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200"
                         title="Desfazer última ação"
                       >
                         <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -1026,7 +1026,7 @@ const Index = () => {
                         size="icon"
                         onClick={handleRedo}
                         disabled={redoHistory.length === 0}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6] disabled:opacity-50"
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200"
                         title="Refazer ação"
                       >
                         <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -1035,7 +1035,7 @@ const Index = () => {
                         variant="outline"
                         size="icon"
                         onClick={handleSaveVersion}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
                         title="Salvar versão"
                       >
                         <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -1045,7 +1045,7 @@ const Index = () => {
                         size="icon"
                         onClick={handleRefreshMap}
                         disabled={isRefreshing}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
                         title="Atualizar mapa"
                       >
                         <RefreshCw className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -1054,7 +1054,7 @@ const Index = () => {
                         variant={selectionMode ? "default" : "outline"}
                         size="icon"
                         onClick={handleToggleSelectionMode}
-                        className={`print:hidden h-8 w-8 sm:h-10 sm:w-10 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]'}`}
+                        className={`print:hidden h-8 w-8 sm:h-10 sm:w-10 transition-all duration-200 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}
                         title="Modo de seleção múltipla"
                       >
                         <CheckSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -1094,7 +1094,7 @@ const Index = () => {
                         variant="outline"
                         size="icon"
                         onClick={toggleFullscreen}
-                        className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                        className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
                         title={isFullscreen ? "Sair da tela cheia" : "Visualização ampla (tela cheia)"}
                       >
                         {isFullscreen ? <Minimize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <Maximize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
@@ -1123,7 +1123,7 @@ const Index = () => {
                           size="icon"
                           onClick={signOut}
                           title="Sair"
-                          className="h-8 w-8 sm:h-10 sm:w-10 bg-white/90 border-white text-[#013ba6] hover:bg-white hover:text-[#013ba6]"
+                          className="h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200"
                         >
                           <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </Button>
