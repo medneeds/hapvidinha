@@ -1,4 +1,5 @@
 import { Patient, SectorType } from "@/types/patient";
+import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
 import { PatientCard } from "./PatientCard";
 import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -251,8 +252,13 @@ export function SectorSection({
                 <Printer className="h-3.5 w-3.5" />
               </Button>
             )}
-            <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:w-6">
-              <p className="text-base font-bold text-foreground print:text-[10px]">{patients.length}</p>
+            <div className="flex items-center justify-center h-8 min-w-[2rem] px-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:min-w-[1.5rem]">
+              <p className="text-base font-bold text-foreground print:text-[10px]">
+                {patients.length}
+                {SECTOR_BED_CONFIG[sector] && SECTOR_BED_CONFIG[sector].maxRegularBeds !== Infinity && (
+                  <span className="text-xs font-normal text-muted-foreground">/{SECTOR_BED_CONFIG[sector].maxRegularBeds}</span>
+                )}
+              </p>
             </div>
           </div>
         </div>

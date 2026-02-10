@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
 import { supabase } from "@/integrations/supabase/client";
+import { getNextBedNumber } from "@/utils/bedNaming";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import NotesTabOptimized from "@/components/resources/NotesTabOptimized";
@@ -381,10 +382,6 @@ const Index = () => {
     }
 
     saveToHistory(patients);
-    // Se for UTI, usa prefixo 'U', caso contrário usa os prefixos normais
-    const sectorPrefix = currentDepartment === 'UTI' 
-      ? 'U' 
-      : sector === 'red' ? 'V' : sector === 'yellow' ? 'A' : sector === 'blue' ? 'Z' : 'F';
     
     // Buscar todos os pacientes deste setor do banco de dados para garantir unicidade
     const { data: allSectorPatients } = await supabase
@@ -393,15 +390,11 @@ const Index = () => {
       .eq('sector', sector)
       .eq('department', currentDepartment);
     
-    const bedNumbers = (allSectorPatients || [])
-      .map(p => parseInt(p.bed_number.substring(1)))
-      .filter(n => !isNaN(n));
-    
-    const maxBedNumber = bedNumbers.length > 0 ? Math.max(...bedNumbers) : 0;
-    const extraBedNumber = maxBedNumber + 1;
+    const existingBedNumbers = (allSectorPatients || []).map(p => p.bed_number);
+    const newBedNumber = getNextBedNumber(sector, existingBedNumbers, currentDepartment);
     
     const newPatientData: Omit<Patient, 'id'> = {
-      bedNumber: `${sectorPrefix}${String(extraBedNumber).padStart(2, '0')}`,
+      bedNumber: newBedNumber,
       name: "",
       age: 0,
       sector: sector,
