@@ -4,6 +4,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { useUserPresence } from "@/hooks/useUserPresence";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
+import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
+import { PageTransition } from "@/components/PageTransition";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -25,7 +27,9 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
         
         <div className="flex-1 flex flex-col w-full">
           <main className="flex-1 overflow-auto">
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </main>
           
           <footer className="fixed bottom-2 right-4 z-50 pointer-events-none">
@@ -36,6 +40,7 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
         </div>
       </div>
 
+      <GlobalSearchDialog />
       <KeyboardShortcutsDialog open={showShortcuts} onOpenChange={setShowShortcuts} />
     </SidebarProvider>
   );

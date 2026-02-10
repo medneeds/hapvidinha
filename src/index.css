@@ -574,5 +574,24 @@
   .dark .allocation-status-bar .status-time {
     color: hsl(220 15% 80%);
   }
+
+  /* Tactile button feedback - ripple + scale */
+  .btn-tactile {
+    @apply relative overflow-hidden transition-transform duration-150 active:scale-95;
+  }
+
+  .btn-tactile::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), hsl(var(--primary-foreground) / 0.2) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .btn-tactile:active::after {
+    opacity: 1;
+  }
 }
 

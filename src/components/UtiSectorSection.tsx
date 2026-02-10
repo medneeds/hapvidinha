@@ -1,6 +1,7 @@
 import { Patient, SectorType } from "@/types/patient";
 import { ReactNode } from "react";
 import { UtiPatientCard } from "./UtiPatientCard";
+import { EmptySectorState } from "@/components/EmptySectorState";
 import { Printer, Plus, ChevronDown, ChevronsDownUp, ChevronsUpDown, DoorOpen, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -295,9 +296,11 @@ export function UtiSectorSection({
       <CollapsibleContent className="space-y-2 print:space-y-0.5">
 
         {displayPatients.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
-            <p>Nenhum paciente neste setor</p>
-          </div>
+          <EmptySectorState
+            sectorName={displayTitle}
+            sectorIcon={typeof customIcon === 'string' ? customIcon : "🏥"}
+            onAddBed={onAddExtraBed}
+          />
         ) : (
           <div className="space-y-2">
             {displayPatients.map((patient) => (

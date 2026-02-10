@@ -24,6 +24,7 @@ export const SHORTCUT_GROUPS: ShortcutGroup[] = [
   {
     label: "Ações Rápidas",
     shortcuts: [
+      { keys: ["Ctrl/⌘", "K"], description: "Busca global de pacientes" },
       { keys: ["Alt", "K"], description: "Exibir atalhos de teclado" },
     ],
   },
