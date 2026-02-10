@@ -1416,10 +1416,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <span className="text-xs md:text-[10px] font-medium text-muted-foreground">Paciente</span>
                   {stayTimer && currentDepartment !== "UTI" && (
                     <div 
-                      className={cn(
-                        "inline-flex items-center gap-0.5 px-1.5 py-0 rounded-full text-[8px] font-semibold border print:hidden",
-                        stayTimer.colorClasses
-                      )}
+                      className="inline-flex items-center gap-0.5 px-1.5 py-0 rounded-full text-[8px] font-semibold border print:hidden"
+                      style={{
+                        color: sectorColorMap[patient.sector],
+                        backgroundColor: `${sectorColorMap[patient.sector]}15`,
+                        borderColor: `${sectorColorMap[patient.sector]}40`,
+                      }}
                       title={`Permanência no setor: ${stayTimer.display}`}
                     >
                       <Clock className="h-2 w-2" />
@@ -3754,10 +3756,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Detailed Stay Timer in Expanded View */}
             {stayTimer && (
               <div 
-                className={cn(
-                  "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border",
-                  stayTimer.colorClasses
-                )}
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border"
+                style={{
+                  color: sectorColorMap[patient.sector],
+                  backgroundColor: `${sectorColorMap[patient.sector]}15`,
+                  borderColor: `${sectorColorMap[patient.sector]}40`,
+                }}
                 title={`Permanência total: ${stayTimer.display}`}
               >
                 <Clock className="h-3 w-3" />
