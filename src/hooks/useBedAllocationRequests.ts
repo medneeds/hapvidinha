@@ -4,6 +4,7 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { getNextBedNumber } from "@/utils/bedNaming";
 
 export interface BedAllocationRequest {
   id: string;
@@ -196,20 +197,17 @@ export function useBedAllocationRequests() {
         .eq("department", currentDepartment)
         .eq("sector", dbSector);
 
-      let maxBedNumber = 0;
       let maxDisplayOrder = 0;
+      const existingBedNumbers: string[] = [];
       if (existingPatients) {
         existingPatients.forEach((p) => {
-          const num = parseInt(p.bed_number.replace(/\D/g, ""), 10);
-          if (!isNaN(num) && num > maxBedNumber) {
-            maxBedNumber = num;
-          }
+          existingBedNumbers.push(p.bed_number);
           if (p.display_order && p.display_order > maxDisplayOrder) {
             maxDisplayOrder = p.display_order;
           }
         });
       }
-      const newBedNumber = String(maxBedNumber + 1).padStart(2, "0");
+      const newBedNumber = getNextBedNumber(dbSector, existingBedNumbers, currentDepartment);
       const newDisplayOrder = maxDisplayOrder + 1;
 
       // Update request status
