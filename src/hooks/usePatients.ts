@@ -87,9 +87,11 @@ export function usePatients(department?: Department) {
         isVacant: (p as any).is_vacant ?? false,
       }));
 
-      // Sort patients by bed number numerically (extract number from "U01", "U02", etc.)
+      // Sort by display_order first, then by bed_number as tiebreaker
       const sortedPatients = mappedPatients.sort((a, b) => {
-        // Extract numeric part from bed number (e.g., "U01" -> 1, "U10" -> 10)
+        const orderDiff = (a.displayOrder || 0) - (b.displayOrder || 0);
+        if (orderDiff !== 0) return orderDiff;
+        // Tiebreaker: sort by bed number numerically
         const extractNumber = (bedNumber: string) => {
           const match = bedNumber.match(/\d+/);
           return match ? parseInt(match[0], 10) : 0;
@@ -486,7 +488,12 @@ export function usePatients(department?: Department) {
             const newPatient = mapRecordToPatient(newRecord);
             setPatients(prev => {
               if (prev.some(p => p.id === newPatient.id)) return prev;
-              return [...prev, newPatient].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+              return [...prev, newPatient].sort((a, b) => {
+                const orderDiff = (a.displayOrder || 0) - (b.displayOrder || 0);
+                if (orderDiff !== 0) return orderDiff;
+                const extractNum = (bn: string) => { const m = bn.match(/\d+/); return m ? parseInt(m[0], 10) : 0; };
+                return extractNum(a.bedNumber) - extractNum(b.bedNumber);
+              });
             });
           } else if (eventType === 'UPDATE') {
             const updatedRecord = payload.new as any;
@@ -501,15 +508,15 @@ export function usePatients(department?: Department) {
             setPatients(prev => {
               // Check if patient exists in current list
               const exists = prev.some(p => p.id === updatedPatient.id);
-              if (exists) {
-                // Update existing patient and re-sort
-                return prev
-                  .map(p => p.id === updatedPatient.id ? updatedPatient : p)
-                  .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-              } else {
-                // Patient was moved to this department, add to list
-                return [...prev, updatedPatient].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-              }
+              const list = exists
+                ? prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
+                : [...prev, updatedPatient];
+              return list.sort((a, b) => {
+                const orderDiff = (a.displayOrder || 0) - (b.displayOrder || 0);
+                if (orderDiff !== 0) return orderDiff;
+                const extractNum = (bn: string) => { const m = bn.match(/\d+/); return m ? parseInt(m[0], 10) : 0; };
+                return extractNum(a.bedNumber) - extractNum(b.bedNumber);
+              });
             });
           } else if (eventType === 'DELETE') {
             const deletedId = (payload.old as any).id;
