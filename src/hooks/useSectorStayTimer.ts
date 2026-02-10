@@ -2,8 +2,10 @@ import { useState, useEffect, useMemo } from "react";
 import { parseISO, isValid, parse, differenceInMinutes } from "date-fns";
 
 export interface StayTimerData {
-  /** Formatted display string, e.g. "4h32min", "1d 6h", "32min" */
+  /** Full display string, e.g. "4h32min", "1d 6h" */
   display: string;
+  /** Short display without minutes when hours > 0, e.g. "4h", "1d 6h" */
+  displayShort: string;
   /** Total minutes of stay */
   totalMinutes: number;
   /** Alert level based on thresholds */
@@ -57,6 +59,15 @@ function formatDuration(totalMinutes: number): string {
   return `${minutes}min`;
 }
 
+function formatDurationShort(totalMinutes: number): string {
+  if (totalMinutes < 0) return "0min";
+  const days = Math.floor(totalMinutes / (24 * 60));
+  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+  if (days > 0) return `${days}d ${hours}h`;
+  if (hours > 0) return `${hours}h`;
+  return `${totalMinutes}min`;
+}
+
 function getLevel(totalMinutes: number): StayTimerData["level"] {
   if (totalMinutes >= THRESHOLDS.pulsing) return "pulsing";
   if (totalMinutes >= THRESHOLDS.critical) return "critical";
@@ -105,6 +116,7 @@ export function useSectorStayTimer(admissionDate: string | undefined | null): St
 
     return {
       display: formatDuration(totalMinutes),
+      displayShort: formatDurationShort(totalMinutes),
       totalMinutes,
       level,
       colorClasses: getColorClasses(level),

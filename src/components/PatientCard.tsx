@@ -1412,7 +1412,21 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
                 {/* Nome e Idade - mais espaço para nome completo */}
                 <div className="flex flex-col flex-1 min-w-0 md:col-span-3">
-                <span className="text-xs md:text-[10px] font-medium text-muted-foreground mb-0.5">Paciente</span>
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="text-xs md:text-[10px] font-medium text-muted-foreground">Paciente</span>
+                  {stayTimer && currentDepartment !== "UTI" && (
+                    <div 
+                      className={cn(
+                        "inline-flex items-center gap-0.5 px-1.5 py-0 rounded-full text-[8px] font-semibold border print:hidden",
+                        stayTimer.colorClasses
+                      )}
+                      title={`Permanência no setor: ${stayTimer.display}`}
+                    >
+                      <Clock className="h-2 w-2" />
+                      <span>{stayTimer.displayShort}</span>
+                    </div>
+                  )}
+                </div>
                 <div className="group/name relative">
                   <div className="flex items-start gap-0.5">
                     <div className="flex-1 min-w-0">
@@ -1559,19 +1573,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           {patient.age ? formatAgeDisplay(patient.age) : <span className="italic">Clique para adicionar idade</span>}
                         </p>
-                      )}
-                      {/* Compact Stay Timer Badge */}
-                      {stayTimer && currentDepartment !== "UTI" && (
-                        <div 
-                          className={cn(
-                            "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-medium border mt-0.5 print:hidden",
-                            stayTimer.colorClasses
-                          )}
-                          title={`Tempo de permanência no setor: ${stayTimer.display}`}
-                        >
-                          <Clock className="h-2.5 w-2.5" />
-                          <span>{stayTimer.display}</span>
-                        </div>
                       )}
                     </div>
                     {!editingField && (
