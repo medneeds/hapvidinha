@@ -29,6 +29,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
 import { differenceInDays, differenceInHours, differenceInMinutes, parseISO, isValid, parse } from "date-fns";
+import { useSectorStayTimer } from "@/hooks/useSectorStayTimer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
@@ -644,6 +645,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [dietDialogOpen, setDietDialogOpen] = useState(false);
   const { role, user } = useAuth();
   const { requests } = useBedAllocationRequests();
+  const stayTimer = useSectorStayTimer(patient.admissionDate);
   
   // Find allocation request for this patient and calculate elapsed time
   const allocationTimeElapsed = useMemo(() => {
@@ -1557,6 +1559,19 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           {patient.age ? formatAgeDisplay(patient.age) : <span className="italic">Clique para adicionar idade</span>}
                         </p>
+                      )}
+                      {/* Compact Stay Timer Badge */}
+                      {stayTimer && currentDepartment !== "UTI" && (
+                        <div 
+                          className={cn(
+                            "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-medium border mt-0.5 print:hidden",
+                            stayTimer.colorClasses
+                          )}
+                          title={`Tempo de permanência no setor: ${stayTimer.display}`}
+                        >
+                          <Clock className="h-2.5 w-2.5" />
+                          <span>{stayTimer.display}</span>
+                        </div>
                       )}
                     </div>
                     {!editingField && (
@@ -3730,9 +3745,24 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       {/* Expanded Content */}
       {isExpanded && (
         <div className="px-2.5 pb-2.5 space-y-2 border-t border-border/50 pt-2 bg-card/50">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground print:text-[8px] print:gap-1">
-            <Calendar className="h-3 w-3 print:h-2 print:w-2" />
-            <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground print:text-[8px] print:gap-1">
+            <div className="flex items-center gap-1.5">
+              <Calendar className="h-3 w-3 print:h-2 print:w-2" />
+              <span>Admissão: {new Date(patient.admissionDate).toLocaleString('pt-BR')}</span>
+            </div>
+            {/* Detailed Stay Timer in Expanded View */}
+            {stayTimer && (
+              <div 
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border",
+                  stayTimer.colorClasses
+                )}
+                title={`Permanência total: ${stayTimer.display}`}
+              >
+                <Clock className="h-3 w-3" />
+                <span>Permanência: {stayTimer.display}</span>
+              </div>
+            )}
           </div>
 
           {/* História Admissional */}
