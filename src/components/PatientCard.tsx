@@ -1089,6 +1089,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       updatedPatient.pendencies = [...patient.pendencies, editValue.toUpperCase()];
     }
 
+    // Record conduct history for addition
+    const trackedAddFields = ["diagnoses", "medicalHistory", "relevantExams", "pendencies", "schedule"];
+    if (editingField && trackedAddFields.includes(editingField)) {
+      recordChange({
+        fieldName: editingField,
+        oldValue: null,
+        newValue: `[ADICIONADO] ${editValue.toUpperCase()}`,
+      });
+    }
+
     onUpdate(updatedPatient);
     setEditValue("");
     // Incrementa o index para refletir o novo item adicionado
@@ -1135,6 +1145,19 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
       updatedPatient.utiCulturesAntibiotics = (patient.utiCulturesAntibiotics || []).filter((_, i) => i !== index);
     } else if (field === "utiOriginSector") {
       updatedPatient.utiOriginSector = (patient.utiOriginSector || []).filter((_, i) => i !== index);
+    }
+
+    // Record conduct history for removal
+    const trackedRemoveFields = ["diagnoses", "medicalHistory", "relevantExams", "pendencies", "schedule"];
+    if (trackedRemoveFields.includes(field)) {
+      const removedItem = (patient as any)[field]?.[index];
+      if (removedItem) {
+        recordChange({
+          fieldName: field,
+          oldValue: `[REMOVIDO] ${removedItem}`,
+          newValue: null,
+        });
+      }
     }
 
     onUpdate(updatedPatient);
