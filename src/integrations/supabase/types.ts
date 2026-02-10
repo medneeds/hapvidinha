@@ -168,6 +168,70 @@ export type Database = {
           },
         ]
       }
+      conduct_history: {
+        Row: {
+          changed_by: string | null
+          changed_by_email: string | null
+          created_at: string
+          department: string
+          field_name: string
+          hospital_unit_id: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+          patient_id: string
+          state_id: string
+        }
+        Insert: {
+          changed_by?: string | null
+          changed_by_email?: string | null
+          created_at?: string
+          department?: string
+          field_name: string
+          hospital_unit_id: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          patient_id: string
+          state_id: string
+        }
+        Update: {
+          changed_by?: string | null
+          changed_by_email?: string | null
+          created_at?: string
+          department?: string
+          field_name?: string
+          hospital_unit_id?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          patient_id?: string
+          state_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conduct_history_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conduct_history_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conduct_history_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       data_requests: {
         Row: {
           created_at: string
