@@ -2,6 +2,7 @@ import { Patient, SectorType } from "@/types/patient";
 import { PatientCard } from "./PatientCard";
 import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EmptySectorState } from "@/components/EmptySectorState";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
@@ -259,9 +260,11 @@ export function SectorSection({
 
       <CollapsibleContent className="space-y-1.5 print:space-y-0.5">
         {displayPatients.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground bg-card rounded-lg border border-border/50">
-            <p>Nenhum paciente neste setor</p>
-          </div>
+          <EmptySectorState
+            sectorName={displayTitle}
+            sectorIcon={displayIcon}
+            onAddBed={onAddExtraBed}
+          />
         ) : (
           <DndContext
             sensors={sensors}
