@@ -21,7 +21,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { CSS } from '@dnd-kit/utilities'; // kept for type compatibility
 
 interface SectorSectionProps {
   sector: SectorType;
@@ -89,8 +89,8 @@ function SortablePatientCard(props: SortablePatientCardProps) {
   } = useSortable({ id: props.patient.id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: transform ? `translate3d(${Math.round(transform.x)}px, ${Math.round(transform.y)}px, 0)` : undefined,
+    transition: isDragging ? transition : undefined,
     opacity: isDragging ? 0.5 : 1,
   };
 

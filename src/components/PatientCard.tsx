@@ -143,13 +143,20 @@ interface AutoResizeTextareaProps {
 }
 
 const AutoResizeTextarea = memo(({ value, onChange, onKeyDown, onBlur, placeholder, className, inputRef }: AutoResizeTextareaProps) => {
-  const textareaRef = inputRef || useRef<HTMLTextAreaElement>(null);
+  const internalRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = inputRef || internalRef;
 
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
+      // Save cursor position before resize
+      const { selectionStart, selectionEnd } = textarea;
       textarea.style.height = 'auto';
       textarea.style.height = `${textarea.scrollHeight}px`;
+      // Restore cursor position after resize to prevent jumping
+      if (document.activeElement === textarea) {
+        textarea.setSelectionRange(selectionStart, selectionEnd);
+      }
     }
   }, [value]);
 
