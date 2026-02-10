@@ -370,43 +370,38 @@ export function usePatients(department?: Department) {
   };
 
   const reorderPatients = async (reorderedPatients: Patient[]) => {
-    try {
-      // Update display_order for each patient based on new position
-      const updates = reorderedPatients.map((patient, index) => ({
-        id: patient.id,
-        display_order: index,
-      }));
+    // Update display_order for each patient based on new position
+    const updates = reorderedPatients.map((patient, index) => ({
+      id: patient.id,
+      display_order: index,
+    }));
 
-      // Update all patients in batch
-      for (const update of updates) {
-        const { error } = await supabase
-          .from('patients')
-          .update({ display_order: update.display_order })
-          .eq('id', update.id);
-        
-        if (error) {
-          console.error('Error updating display_order:', error);
-          throw error;
-        }
-      }
-
-      // Update local state with new order
-      setPatients(prev => {
-        const updatedPatients = prev.map(p => {
-          const orderUpdate = updates.find(u => u.id === p.id);
-          return orderUpdate ? { ...p, displayOrder: orderUpdate.display_order } : p;
-        });
-        return updatedPatients.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+    // Update local state IMMEDIATELY (optimistic update)
+    setPatients(prev => {
+      const updatedPatients = prev.map(p => {
+        const orderUpdate = updates.find(u => u.id === p.id);
+        return orderUpdate ? { ...p, displayOrder: orderUpdate.display_order } : p;
       });
+      return updatedPatients.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+    });
 
+    // Persist to database in parallel (background)
+    try {
+      await Promise.all(
+        updates.map(update =>
+          supabase
+            .from('patients')
+            .update({ display_order: update.display_order })
+            .eq('id', update.id)
+        )
+      );
     } catch (error) {
-      console.error('Error reordering patients:', error);
+      console.error('Error persisting reorder:', error);
       toast({
         title: "Erro ao reordenar",
         description: "Não foi possível salvar a nova ordem.",
         variant: "destructive",
       });
-      throw error;
     }
   };
 
