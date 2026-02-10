@@ -1,8 +1,9 @@
-import { ReactNode, useEffect } from "react";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { ReactNode, useState } from "react";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useUserPresence } from "@/hooks/useUserPresence";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -10,8 +11,12 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
-  // Initialize user presence tracking
   useUserPresence();
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
+  useKeyboardShortcuts({
+    onShowHelp: () => setShowShortcuts(true),
+  });
 
   return (
     <SidebarProvider>
@@ -19,12 +24,10 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
         <AppSidebar onOpenHandover={onOpenHandover} />
         
         <div className="flex-1 flex flex-col w-full">
-          {/* Main Content */}
           <main className="flex-1 overflow-auto">
             {children}
           </main>
           
-          {/* Footer */}
           <footer className="fixed bottom-2 right-4 z-50 pointer-events-none">
             <p className="text-[10px] text-muted-foreground/40 italic">
               Desenvolvido por Artur Batista
@@ -32,6 +35,8 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
           </footer>
         </div>
       </div>
+
+      <KeyboardShortcutsDialog open={showShortcuts} onOpenChange={setShowShortcuts} />
     </SidebarProvider>
   );
 }
