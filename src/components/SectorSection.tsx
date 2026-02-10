@@ -88,10 +88,12 @@ function SortablePatientCard(props: SortablePatientCardProps) {
     isDragging,
   } = useSortable({ id: props.patient.id });
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: transform ? `translate3d(${Math.round(transform.x)}px, ${Math.round(transform.y)}px, 0)` : undefined,
-    transition: isDragging ? transition : undefined,
+    transition: transition ?? 'transform 200ms ease',
     opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : undefined,
+    position: 'relative' as const,
   };
 
   return (
