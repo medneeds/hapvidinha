@@ -508,15 +508,19 @@ export function usePatients(department?: Department) {
             setPatients(prev => {
               // Check if patient exists in current list
               const exists = prev.some(p => p.id === updatedPatient.id);
-              const list = exists
-                ? prev.map(p => p.id === updatedPatient.id ? updatedPatient : p)
-                : [...prev, updatedPatient];
-              return list.sort((a, b) => {
-                const orderDiff = (a.displayOrder || 0) - (b.displayOrder || 0);
-                if (orderDiff !== 0) return orderDiff;
-                const extractNum = (bn: string) => { const m = bn.match(/\d+/); return m ? parseInt(m[0], 10) : 0; };
-                return extractNum(a.bedNumber) - extractNum(b.bedNumber);
-              });
+              if (exists) {
+                // Update in-place without re-sorting to preserve current position
+                return prev.map(p => p.id === updatedPatient.id ? updatedPatient : p);
+              } else {
+                // Patient was moved to this department, add to list and sort
+                const sortFn = (a: Patient, b: Patient) => {
+                  const orderDiff = (a.displayOrder || 0) - (b.displayOrder || 0);
+                  if (orderDiff !== 0) return orderDiff;
+                  const extractNum = (bn: string) => { const m = bn.match(/\d+/); return m ? parseInt(m[0], 10) : 0; };
+                  return extractNum(a.bedNumber) - extractNum(b.bedNumber);
+                };
+                return [...prev, updatedPatient].sort(sortFn);
+              }
             });
           } else if (eventType === 'DELETE') {
             const deletedId = (payload.old as any).id;
