@@ -45,14 +45,8 @@ function parseAdmissionDate(dateString: string): Date | null {
 
 function formatDuration(totalMinutes: number): string {
   if (totalMinutes < 0) return "0min";
-
-  const days = Math.floor(totalMinutes / (24 * 60));
-  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+  const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
-
-  if (days > 0) {
-    return `${days}d ${hours}h`;
-  }
   if (hours > 0) {
     return `${hours}h${minutes > 0 ? `${minutes}min` : ""}`;
   }
@@ -61,9 +55,7 @@ function formatDuration(totalMinutes: number): string {
 
 function formatDurationShort(totalMinutes: number): string {
   if (totalMinutes < 0) return "0min";
-  const days = Math.floor(totalMinutes / (24 * 60));
-  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
-  if (days > 0) return `${days}d ${hours}h`;
+  const hours = Math.floor(totalMinutes / 60);
   if (hours > 0) return `${hours}h`;
   return `${totalMinutes}min`;
 }
