@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw, CalendarIcon, Filter } from "lucide-react";
+import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw, CalendarIcon, Filter, Loader2 } from "lucide-react";
 import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -55,6 +55,8 @@ export default function MovementsPage() {
   const [filteredMovements, setFilteredMovements] = useState<PatientMovement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [pendingSearch, setPendingSearch] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("all");
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [isSnapshotDialogOpen, setIsSnapshotDialogOpen] = useState(false);
@@ -167,10 +169,17 @@ export default function MovementsPage() {
     setAppliedEndDate(undefined);
     setSelectedPeriod("all");
     setSearchTerm("");
+    setPendingSearch("");
     toast({
       title: "Filtros limpos",
       description: "Exibindo todas as movimentações.",
     });
+  };
+
+  const handleSearch = () => {
+    setIsSearching(true);
+    setSearchTerm(pendingSearch);
+    setTimeout(() => setIsSearching(false), 400);
   };
 
   const applyFilters = () => {
@@ -310,14 +319,40 @@ export default function MovementsPage() {
           </div>
 
           {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por nome do paciente..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 uppercase"
-            />
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome do paciente..."
+                value={pendingSearch}
+                onChange={(e) => {
+                  setPendingSearch(e.target.value);
+                  if (!e.target.value.trim()) {
+                    setSearchTerm("");
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && pendingSearch.trim()) {
+                    handleSearch();
+                  }
+                }}
+                className="pl-10 uppercase"
+              />
+            </div>
+            {pendingSearch.trim() && (
+              <Button
+                onClick={handleSearch}
+                disabled={isSearching}
+                className="h-10 px-5 gap-2 shrink-0 shadow-sm transition-all duration-200"
+              >
+                {isSearching ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4" />
+                )}
+                <span className="text-sm font-medium uppercase">Buscar</span>
+              </Button>
+            )}
           </div>
 
           {/* Date Filters */}
