@@ -12,8 +12,9 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
 import { Patient } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2 } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2, Search } from "lucide-react";
 import { NotificationCenter } from "@/components/NotificationCenter";
+import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
 import { BedAllocationNotifications } from "@/components/BedAllocationNotifications";
 import { DoorPatientNotifications } from "@/components/DoorPatientNotifications";
 import { RequestNewAllocationDialog } from "@/components/RequestNewAllocationDialog";
@@ -196,6 +197,7 @@ const Index = () => {
   const [allocationTargetSector, setAllocationTargetSector] = useState<"Cuidados Especiais" | "Observação Amarela" | "Observação Azul">("Cuidados Especiais");
   const [utiAllocationDialogOpen, setUtiAllocationDialogOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
   const { saveVersion, fetchVersions } = usePatientVersions();
@@ -916,6 +918,17 @@ const Index = () => {
 
                 {/* Right side: Action buttons + Theme toggle */}
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
+                  {/* Search button - always visible */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setSearchOpen(true)}
+                    className="print:hidden h-9 w-9 sm:h-8 sm:w-8 bg-white/15 border-white/30 text-white hover:bg-white/25 hover:text-white"
+                    title="Buscar paciente (Ctrl+K)"
+                  >
+                    <Search className="h-4 w-4" />
+                  </Button>
+
                   {/* Mobile: Show only essential buttons + dropdown menu */}
                   {isMobile ? (
                     <>
@@ -1472,6 +1485,8 @@ const Index = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <GlobalSearchDialog externalOpen={searchOpen} onExternalOpenChange={setSearchOpen} />
     </MainLayout>
   );
 };
