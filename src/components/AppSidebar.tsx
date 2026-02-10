@@ -148,6 +148,7 @@ export function AppSidebar({
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [unlockedSections, setUnlockedSections] = useState<string[]>([]);
+  const [adminSectionOpen, setAdminSectionOpen] = useState<Record<string, boolean>>({});
 
   const handleAdminSectionClick = (sectionTitle: string) => {
     // Gestor Master has instant access without password
@@ -298,10 +299,18 @@ export function AppSidebar({
             {section.items && (
             <Collapsible
               defaultOpen={section.title === "MAPA"}
-              open={section.requiresPassword ? (isGestorMaster || unlockedSections.includes(section.title)) : undefined}
+              open={section.requiresPassword 
+                ? (isGestorMaster || unlockedSections.includes(section.title)) 
+                  ? (adminSectionOpen[section.title] ?? true)
+                  : false
+                : undefined}
               onOpenChange={(isOpen) => {
-                if (section.requiresPassword && !isGestorMaster && !unlockedSections.includes(section.title) && isOpen) {
-                  handleAdminSectionClick(section.title);
+                if (section.requiresPassword) {
+                  if (!isGestorMaster && !unlockedSections.includes(section.title) && isOpen) {
+                    handleAdminSectionClick(section.title);
+                  } else {
+                    setAdminSectionOpen(prev => ({ ...prev, [section.title]: isOpen }));
+                  }
                 }
               }}
               className="group/collapsible"
