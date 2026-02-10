@@ -1482,13 +1482,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <span className="text-xs md:text-[10px] font-medium text-muted-foreground">Paciente</span>
                   {stayTimer && currentDepartment !== "UTI" && (
                     <div 
-                      className="inline-flex items-center gap-0.5 px-1.5 py-0 rounded-full text-[8px] font-semibold border print:hidden"
-                      style={{
+                      className={cn(
+                        "inline-flex items-center gap-0.5 px-1.5 py-0 rounded-full text-[8px] font-semibold border print:hidden",
+                        stayTimer.level !== "normal" && stayTimer.colorClasses
+                      )}
+                      style={stayTimer.level === "normal" ? {
                         color: sectorColorMap[patient.sector],
                         backgroundColor: `${sectorColorMap[patient.sector]}15`,
                         borderColor: `${sectorColorMap[patient.sector]}40`,
-                      }}
-                      title={`Permanência no setor: ${stayTimer.display}`}
+                      } : undefined}
+                      title={`Permanência no setor: ${stayTimer.display}${stayTimer.level === "warning" ? " ⚠️ >24h" : stayTimer.level === "orange" ? " ⚠️ >48h" : stayTimer.level === "critical" || stayTimer.level === "pulsing" ? " 🚨 >72h" : ""}`}
                     >
                       <Clock className="h-2 w-2" />
                       <span>{stayTimer.displayShort}</span>
@@ -3914,13 +3917,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {/* Detailed Stay Timer in Expanded View */}
             {stayTimer && (
               <div 
-                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border"
-                style={{
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold border",
+                  stayTimer.level !== "normal" && stayTimer.colorClasses
+                )}
+                style={stayTimer.level === "normal" ? {
                   color: sectorColorMap[patient.sector],
                   backgroundColor: `${sectorColorMap[patient.sector]}15`,
                   borderColor: `${sectorColorMap[patient.sector]}40`,
-                }}
-                title={`Permanência total: ${stayTimer.display}`}
+                } : undefined}
+                title={`Permanência total: ${stayTimer.display}${stayTimer.level === "warning" ? " ⚠️ >24h" : stayTimer.level === "orange" ? " ⚠️ >48h" : stayTimer.level === "critical" || stayTimer.level === "pulsing" ? " 🚨 >72h" : ""}`}
               >
                 <Clock className="h-3 w-3" />
                 <span>Permanência: {stayTimer.display}</span>
