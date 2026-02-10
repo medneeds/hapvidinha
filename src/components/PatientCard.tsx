@@ -3775,25 +3775,68 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             <div className="flex items-center gap-1.5">
               <Calendar className="h-3 w-3 print:h-2 print:w-2" />
               {editingField === "admissionDate" ? (
-                <Input
-                  autoFocus
-                  className="h-5 text-[10px] w-40 px-1 py-0 text-gray-900"
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  onBlur={saveInlineEdit}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") saveInlineEdit();
-                    if (e.key === "Escape") cancelEditing();
-                  }}
-                  placeholder="DD/MM/AAAA HH:mm"
-                />
+                <div className="flex items-center gap-1">
+                  <Input
+                    autoFocus
+                    type="date"
+                    className="h-5 text-[10px] w-[110px] px-1 py-0 text-gray-900"
+                    value={(() => {
+                      // Extract date part from editValue (DD/MM/YYYY HH:mm -> YYYY-MM-DD)
+                      const parts = editValue.split(/[\s,]+/);
+                      const datePart = parts[0] || '';
+                      const dParts = datePart.split('/');
+                      if (dParts.length === 3) return `${dParts[2]}-${dParts[1]}-${dParts[0]}`;
+                      return '';
+                    })()}
+                    onChange={(e) => {
+                      const dateVal = e.target.value; // YYYY-MM-DD
+                      const timePart = editValue.split(/[\s,]+/)[1] || '00:00';
+                      if (dateVal) {
+                        const [y, m, d] = dateVal.split('-');
+                        setEditValue(`${d}/${m}/${y} ${timePart}`);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      // Only save if not focusing the sibling time input
+                      const related = e.relatedTarget as HTMLElement;
+                      if (!related || !related.closest('[data-admission-edit]')) {
+                        saveInlineEdit();
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") cancelEditing();
+                    }}
+                    data-admission-edit
+                  />
+                  <Input
+                    type="time"
+                    className="h-5 text-[10px] w-[80px] px-1 py-0 text-gray-900"
+                    value={editValue.split(/[\s,]+/)[1] || '00:00'}
+                    onChange={(e) => {
+                      const timeVal = e.target.value; // HH:mm
+                      const datePart = editValue.split(/[\s,]+/)[0] || '';
+                      setEditValue(`${datePart} ${timeVal}`);
+                    }}
+                    onBlur={(e) => {
+                      const related = e.relatedTarget as HTMLElement;
+                      if (!related || !related.closest('[data-admission-edit]')) {
+                        saveInlineEdit();
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") cancelEditing();
+                    }}
+                    data-admission-edit
+                  />
+                </div>
               ) : (
                 <span
                   className={cn("cursor-pointer hover:underline", canEdit && "hover:text-foreground")}
                   onClick={() => {
                     if (!canEdit) return;
-                    const formatted = patient.admissionDate
-                      ? new Date(patient.admissionDate).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                    const d = patient.admissionDate ? new Date(patient.admissionDate) : null;
+                    const formatted = d
+                      ? `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
                       : '';
                     startEditing("admissionDate", formatted);
                   }}
