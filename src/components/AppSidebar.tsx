@@ -13,6 +13,8 @@ import {
   LockKeyhole,
   Shield,
   Bell,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
@@ -233,12 +235,36 @@ export function AppSidebar({
   const sidebarContent = (
     <>
       <SidebarHeader className="border-b border-border/30 px-3 py-3 bg-white">
-        <div className="flex items-center justify-center">
-          <img 
-            src={hapvidaLogo} 
-            alt="Hapvida NotreDame Intermédica" 
-            className="w-full h-auto max-h-14 object-contain animate-fade-in"
-          />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center flex-1">
+            {!isCollapsed ? (
+              <img 
+                src={hapvidaLogo} 
+                alt="Hapvida NotreDame Intermédica" 
+                className="w-full h-auto max-h-14 object-contain animate-fade-in"
+              />
+            ) : (
+              <img 
+                src={hapvidaLogo} 
+                alt="Hapvida" 
+                className="w-8 h-8 object-contain"
+              />
+            )}
+          </div>
+          {!isCollapsed && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(false);
+              }}
+              className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-foreground"
+              title="Retrair menu"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </SidebarHeader>
 
@@ -482,11 +508,21 @@ export function AppSidebar({
       <Sidebar 
         collapsible="icon" 
         className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
-        onClick={() => {
-          if (!open) setOpen(true);
-        }}
       >
         {sidebarContent}
+        {isCollapsed && (
+          <div className="flex justify-center py-2 border-t border-border/30">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setOpen(true)}
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              title="Expandir menu"
+            >
+              <PanelLeft className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </Sidebar>
 
       <AlertDialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
