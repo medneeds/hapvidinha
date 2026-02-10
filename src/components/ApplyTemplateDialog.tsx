@@ -37,6 +37,8 @@ export function ApplyTemplateDialog({ open, onOpenChange, onApply, patientName }
   const [search, setSearch] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<TherapeuticTemplate | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [editableItems, setEditableItems] = useState<string[]>([]);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const filtered = templates.filter(
     (t) =>
@@ -46,20 +48,35 @@ export function ApplyTemplateDialog({ open, onOpenChange, onApply, patientName }
 
   const handleSelectTemplate = (template: TherapeuticTemplate) => {
     setSelectedTemplate(template);
-    setSelectedItems([...template.items]); // Select all by default
+    const items = [...template.items];
+    setEditableItems(items);
+    setSelectedItems(items.map((_, i) => String(i))); // track by index
+    setEditingIndex(null);
   };
 
-  const handleToggleItem = (item: string) => {
+  const handleToggleItem = (idx: number) => {
+    const key = String(idx);
     setSelectedItems((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+      prev.includes(key) ? prev.filter((i) => i !== key) : [...prev, key]
     );
   };
 
+  const handleEditItem = (idx: number, value: string) => {
+    setEditableItems((prev) => {
+      const next = [...prev];
+      next[idx] = value;
+      return next;
+    });
+  };
+
   const handleApply = () => {
-    if (selectedItems.length > 0) {
-      onApply(selectedItems);
+    const itemsToApply = selectedItems.map((i) => editableItems[Number(i)]).filter(Boolean);
+    if (itemsToApply.length > 0) {
+      onApply(itemsToApply);
       setSelectedTemplate(null);
       setSelectedItems([]);
+      setEditableItems([]);
+      setEditingIndex(null);
       setSearch("");
       onOpenChange(false);
     }
@@ -68,11 +85,15 @@ export function ApplyTemplateDialog({ open, onOpenChange, onApply, patientName }
   const handleBack = () => {
     setSelectedTemplate(null);
     setSelectedItems([]);
+    setEditableItems([]);
+    setEditingIndex(null);
   };
 
   const handleClose = () => {
     setSelectedTemplate(null);
     setSelectedItems([]);
+    setEditableItems([]);
+    setEditingIndex(null);
     setSearch("");
     onOpenChange(false);
   };
@@ -96,7 +117,7 @@ export function ApplyTemplateDialog({ open, onOpenChange, onApply, patientName }
           </div>
           <DialogDescription className="text-xs uppercase tracking-wider text-muted-foreground">
             {selectedTemplate
-              ? "SELECIONE OS ITENS A ADICIONAR ÀS PENDÊNCIAS"
+              ? "SELECIONE E EDITE OS ITENS ANTES DE APLICAR (DUPLO CLIQUE PARA EDITAR)"
               : "SELECIONE UM PROTOCOLO PARA APLICAR"}
           </DialogDescription>
         </DialogHeader>
@@ -164,12 +185,12 @@ export function ApplyTemplateDialog({ open, onOpenChange, onApply, patientName }
                 size="sm"
                 onClick={() =>
                   setSelectedItems(
-                    selectedItems.length === selectedTemplate.items.length ? [] : [...selectedTemplate.items]
+                    selectedItems.length === editableItems.length ? [] : editableItems.map((_, i) => String(i))
                   )
                 }
                 className="uppercase text-xs"
               >
-                {selectedItems.length === selectedTemplate.items.length ? "Desmarcar Todos" : "Selecionar Todos"}
+                {selectedItems.length === editableItems.length ? "Desmarcar Todos" : "Selecionar Todos"}
               </Button>
             </div>
 
@@ -183,19 +204,36 @@ export function ApplyTemplateDialog({ open, onOpenChange, onApply, patientName }
 
             <ScrollArea className="h-[320px]">
               <div className="space-y-1.5 pr-2">
-                {selectedTemplate.items.map((item, idx) => (
+                {editableItems.map((item, idx) => (
                   <div
                     key={idx}
                     className="group flex items-center space-x-3 p-3 rounded-xl border border-border/40 bg-card/50 hover:bg-accent/10 hover:border-primary/30 transition-all duration-200"
                   >
                     <Checkbox
                       id={`item-${idx}`}
-                      checked={selectedItems.includes(item)}
-                      onCheckedChange={() => handleToggleItem(item)}
+                      checked={selectedItems.includes(String(idx))}
+                      onCheckedChange={() => handleToggleItem(idx)}
                     />
-                    <Label htmlFor={`item-${idx}`} className="text-sm cursor-pointer flex-1 uppercase">
-                      {item}
-                    </Label>
+                    {editingIndex === idx ? (
+                      <Input
+                        value={item}
+                        onChange={(e) => handleEditItem(idx, e.target.value)}
+                        onBlur={() => setEditingIndex(null)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") setEditingIndex(null);
+                        }}
+                        autoFocus
+                        className="flex-1 text-sm uppercase h-8"
+                      />
+                    ) : (
+                      <Label
+                        htmlFor={`item-${idx}`}
+                        className="text-sm cursor-pointer flex-1 uppercase"
+                        onDoubleClick={() => setEditingIndex(idx)}
+                      >
+                        {item}
+                      </Label>
+                    )}
                     <span className="text-[10px] text-muted-foreground font-mono">
                       #{String(idx + 1).padStart(2, "0")}
                     </span>
