@@ -30,6 +30,8 @@ import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
 import { differenceInDays, differenceInHours, differenceInMinutes, parseISO, isValid, parse } from "date-fns";
 import { useSectorStayTimer } from "@/hooks/useSectorStayTimer";
+import { useConductHistory } from "@/hooks/useConductHistory";
+import { ConductHistoryDialog } from "./ConductHistoryDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
@@ -643,6 +645,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [examinusAIDialogOpen, setExaminusAIDialogOpen] = useState(false);
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
   const [dietDialogOpen, setDietDialogOpen] = useState(false);
+  const [conductHistoryDialogOpen, setConductHistoryDialogOpen] = useState(false);
+  const { history: conductHistory, isLoading: conductHistoryLoading, recordChange } = useConductHistory(patient.id);
   const { role, user } = useAuth();
   const { requests } = useBedAllocationRequests();
   const stayTimer = useSectorStayTimer(patient.admissionDate);
@@ -1042,6 +1046,20 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         updatedPatient.utiDevices = (patient.utiDevices || []).map((item, i) => 
           i === editingArrayIndex ? editValue.toUpperCase() : item
         );
+      }
+    }
+
+    // Record conduct history for tracked fields
+    const trackedFields = ["diagnoses", "medicalHistory", "relevantExams", "pendencies", "schedule", "admissionHistory"];
+    if (editingField && trackedFields.includes(editingField)) {
+      const getFieldValue = (p: typeof patient, field: string): string => {
+        const val = (p as any)[field];
+        return Array.isArray(val) ? val.join("\n") : (val || "");
+      };
+      const oldVal = getFieldValue(patient, editingField);
+      const newVal = getFieldValue(updatedPatient, editingField);
+      if (oldVal !== newVal) {
+        recordChange({ fieldName: editingField, oldValue: oldVal || null, newValue: newVal || null });
       }
     }
 
@@ -3580,6 +3598,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     {/* Elegant Divider */}
                     <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
 
+                    {/* HISTÓRICO DE CONDUTAS */}
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setConductHistoryDialogOpen(true);
+                      }}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
+                    >
+                      <Clock className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                      <span>Histórico de Condutas</span>
+                    </DropdownMenuItem>
+
                     {/* IMPRIMIR CASO - Independent Action */}
                     {onPrintPatient && (
                       <DropdownMenuItem
@@ -4819,6 +4849,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         isOpen={dietDialogOpen}
         onClose={() => setDietDialogOpen(false)}
         patient={patient}
+      />
+
+      <ConductHistoryDialog
+        open={conductHistoryDialogOpen}
+        onOpenChange={setConductHistoryDialogOpen}
+        history={conductHistory}
+        isLoading={conductHistoryLoading}
+        patientName={patient.name}
       />
     </>
   );
