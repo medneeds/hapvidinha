@@ -1009,136 +1009,112 @@ const Index = () => {
                       </div>
                     </>
                   ) : (
-                    /* Desktop: Show all buttons as before */
+                    /* Desktop: Show all buttons */
                     <>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleUndo}
-                        disabled={history.length === 0}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200"
-                        title="Desfazer última ação"
-                      >
-                        <Undo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleRedo}
-                        disabled={redoHistory.length === 0}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200"
-                        title="Refazer ação"
-                      >
-                        <Redo className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleSaveVersion}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
-                        title="Salvar versão"
-                      >
-                        <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleRefreshMap}
-                        disabled={isRefreshing}
-                        className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
-                        title="Atualizar mapa"
-                      >
-                        <RefreshCw className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                      </Button>
-                      <Button
-                        variant={selectionMode ? "default" : "outline"}
-                        size="icon"
-                        onClick={handleToggleSelectionMode}
-                        className={`print:hidden h-8 w-8 sm:h-10 sm:w-10 transition-all duration-200 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}
-                        title="Modo de seleção múltipla"
-                      >
-                        <CheckSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      </Button>
-                      {selectionMode && selectedPatients.size > 0 && (
-                        <>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={handlePrintSelected}
-                            className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
-                            title={`Imprimir ${selectedPatients.size} selecionado(s)`}
-                          >
-                            <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            onClick={handleDeleteSelected}
-                            className="print:hidden h-8 w-8 sm:h-10 sm:w-10 bg-red-600 text-white hover:bg-red-700 border-0"
-                            title={`Deletar ${selectedPatients.size} selecionado(s)`}
-                          >
-                            <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                          </Button>
-                        </>
-                      )}
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handlePrintCompact}
-                        className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
-                        title="Imprimir"
-                      >
-                        <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={toggleFullscreen}
-                        className="print:hidden hidden sm:flex h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
-                        title={isFullscreen ? "Sair da tela cheia" : "Visualização ampla (tela cheia)"}
-                      >
-                        {isFullscreen ? <Minimize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <Maximize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
-                      </Button>
-                      <div className="hidden md:flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all hover:scale-[1.02]">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-md bg-white/10 border border-white/20">
-                          <Users className="h-4 w-4 text-white" />
+                      {/* Action buttons group */}
+                      <div className="flex items-center gap-1 print:hidden">
+                        <Button variant="outline" size="icon" onClick={handleUndo} disabled={history.length === 0}
+                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200"
+                          title="Desfazer última ação">
+                          <Undo className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={handleRedo} disabled={redoHistory.length === 0}
+                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200"
+                          title="Refazer ação">
+                          <Redo className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={handleSaveVersion}
+                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
+                          title="Salvar versão">
+                          <Save className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={handleRefreshMap} disabled={isRefreshing}
+                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
+                          title="Atualizar mapa">
+                          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        </Button>
+                      </div>
+
+                      {/* Separator */}
+                      <div className="h-6 w-px bg-white/20 print:hidden hidden sm:block" />
+
+                      {/* Selection & Print group */}
+                      <div className="flex items-center gap-1 print:hidden">
+                        <Button
+                          variant={selectionMode ? "default" : "outline"}
+                          size="icon"
+                          onClick={handleToggleSelectionMode}
+                          className={`h-8 w-8 transition-all duration-200 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}
+                          title="Modo de seleção múltipla">
+                          <CheckSquare className="h-4 w-4" />
+                        </Button>
+                        {selectionMode && selectedPatients.size > 0 && (
+                          <>
+                            <Button variant="outline" size="icon" onClick={handlePrintSelected}
+                              className="h-8 w-8 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
+                              title={`Imprimir ${selectedPatients.size} selecionado(s)`}>
+                              <Printer className="h-4 w-4" />
+                            </Button>
+                            <Button variant="destructive" size="icon" onClick={handleDeleteSelected}
+                              className="h-8 w-8 bg-red-600 text-white hover:bg-red-700 border-0"
+                              title={`Deletar ${selectedPatients.size} selecionado(s)`}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
+                        <Button variant="outline" size="icon" onClick={handlePrintCompact}
+                          className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
+                          title="Imprimir">
+                          <Printer className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={toggleFullscreen}
+                          className="hidden sm:flex h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
+                          title={isFullscreen ? "Sair da tela cheia" : "Tela cheia"}>
+                          {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                        </Button>
+                      </div>
+
+                      {/* Separator */}
+                      <div className="h-6 w-px bg-white/20 print:hidden hidden sm:block" />
+
+                      {/* Notifications & Info group */}
+                      <div className="flex items-center gap-1 print:hidden">
+                        <NotificationCenter />
+                        <BedAllocationNotifications />
+                        <DoorPatientNotifications />
+                      </div>
+
+                      {/* Separator */}
+                      <div className="h-6 w-px bg-white/20 print:hidden hidden md:block" />
+
+                      {/* Patient count + User info */}
+                      <div className="hidden md:flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/20">
+                        <div className="flex items-center justify-center w-7 h-7 rounded-md bg-white/10 border border-white/20">
+                          <Users className="h-3.5 w-3.5 text-white" />
                         </div>
                         <div className="flex flex-col justify-center">
-                          <p className="text-[9px] text-white/70 uppercase leading-none tracking-wide font-medium">Total</p>
-                          <p className="text-lg font-bold text-white leading-tight mt-0.5">{totalPatients}</p>
+                          <p className="text-[8px] text-white/70 uppercase leading-none tracking-wide font-medium">Total</p>
+                          <p className="text-base font-bold text-white leading-tight">{totalPatients}</p>
                         </div>
                       </div>
-                      <div className="h-6 sm:h-8 w-px bg-white/20 mx-1 sm:mx-2 print:hidden hidden lg:block" />
-                      <div className="hidden lg:flex items-center gap-2 sm:gap-3 print:hidden">
+
+                      <div className="hidden lg:flex items-center gap-2 print:hidden">
                         <div className="text-right">
-                          <p className="text-[10px] sm:text-xs font-semibold text-white uppercase tracking-tight">
+                          <p className="text-[10px] font-semibold text-white uppercase tracking-tight">
                             {user?.user_metadata?.username || user?.email?.split('@')[0]}
                           </p>
-                          <p className="text-[9px] sm:text-[10px] text-white/80 uppercase">
+                          <p className="text-[9px] text-white/70 uppercase">
                             {role === 'admin' ? 'Administrador' : 'Médico'}
                           </p>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={signOut}
-                          title="Sair"
-                          className="h-8 w-8 sm:h-10 sm:w-10 bg-white/10 border-white/20 text-white hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200"
-                        >
-                          <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <Button variant="outline" size="icon" onClick={signOut} title="Sair"
+                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200">
+                          <LogOut className="h-4 w-4" />
                         </Button>
-                        <div className="print:hidden">
-                          <NotificationCenter />
-                        </div>
-                        <div className="print:hidden">
-                          <BedAllocationNotifications />
-                        </div>
-                        <div className="print:hidden">
-                          <DoorPatientNotifications />
-                        </div>
-                        <div className="print:hidden">
-                          <ThemeToggle />
-                        </div>
+                      </div>
+
+                      <div className="print:hidden">
+                        <ThemeToggle />
                       </div>
                     </>
                   )}
