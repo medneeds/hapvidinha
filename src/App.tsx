@@ -38,6 +38,7 @@ import PrivacyPage from "./pages/PrivacyPage";
 import AdminStatesPage from "./pages/AdminStatesPage";
 import AdminUnitsPage from "./pages/AdminUnitsPage";
 import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
+import TherapeuticTemplatesPage from "./pages/TherapeuticTemplatesPage";
 
 const queryClient = new QueryClient();
 
@@ -334,6 +335,16 @@ const App = () => {
           element={
             <ProtectedRoute>
               <AdminCoordinatorsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/therapeutic-templates"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <TherapeuticTemplatesPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />

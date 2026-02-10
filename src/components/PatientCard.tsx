@@ -15,6 +15,7 @@ import { MedicalResponsibilityDialog } from "./MedicalResponsibilityDialog";
 import { MedicalResponsibilityIndicator } from "./MedicalResponsibilityIndicator";
 import { InternmentStatusDialog } from "./InternmentStatusDialog";
 import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
+import { ApplyTemplateDialog } from "./ApplyTemplateDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
 import { ExaminusAIDialog } from "./ExaminusAIDialog";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
@@ -641,6 +642,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [localMedicalResponsibility, setLocalMedicalResponsibility] = useState(patient.medicalResponsibility);
   const [internmentStatusDialogOpen, setInternmentStatusDialogOpen] = useState(false);
   const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
+  const [applyTemplateDialogOpen, setApplyTemplateDialogOpen] = useState(false);
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
   const [examinusAIDialogOpen, setExaminusAIDialogOpen] = useState(false);
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
@@ -3293,7 +3295,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <div className="flex items-center gap-3 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
                   
-                  <Button
+                   <Button
                     size="icon"
                     variant="ghost"
                     onClick={() => setQuickTemplatesDialogOpen(true)}
@@ -3302,6 +3304,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     title="Templates Rápidos"
                    >
                     <Zap className="h-1.5 w-1.5" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setApplyTemplateDialogOpen(true)}
+                    className="h-4 w-4 p-0 hover:bg-accent transition-all print:hidden"
+                    style={{ color: sectorColorMap[patient.sector] }}
+                    title="Templates Terapêuticos (Protocolos)"
+                   >
+                    <FileText className="h-1.5 w-1.5" />
                   </Button>
               </div>
               <DndContext
@@ -4643,6 +4655,66 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         onSuccess={() => {
           // Reload patient data
           onUpdate(patient);
+        }}
+      />
+
+      {/* Apply Therapeutic Template Dialog */}
+      <ApplyTemplateDialog
+        open={applyTemplateDialogOpen}
+        onOpenChange={setApplyTemplateDialogOpen}
+        patientName={patient.name}
+        onApply={async (templateItems: string[]) => {
+          if (!templateItems || templateItems.length === 0) return;
+          try {
+            const currentPendencies = patient.pendencies || [];
+            const updatedPendencies = [...currentPendencies, ...templateItems];
+            const pendenciesString = updatedPendencies.join('\n');
+            const { error } = await supabase
+              .from('patients')
+              .update({ pendencies: pendenciesString, updated_at: new Date().toISOString() })
+              .eq('id', patient.id);
+            if (error) throw error;
+            const { data: updatedPatient, error: fetchError } = await supabase
+              .from('patients')
+              .select('*')
+              .eq('id', patient.id)
+              .maybeSingle();
+            if (fetchError) throw fetchError;
+            toast.success(`${templateItems.length} item(ns) do protocolo adicionado(s)`);
+            if (updatedPatient) {
+              const mappedPatient: Patient = {
+                id: updatedPatient.id,
+                bedNumber: updatedPatient.bed_number,
+                name: updatedPatient.name,
+                age: updatedPatient.age,
+                sector: updatedPatient.sector as SectorType,
+                diagnoses: parseTextArray(updatedPatient.diagnoses),
+                medicalHistory: parseTextArray(updatedPatient.medical_history),
+                relevantExams: parseTextArray(updatedPatient.relevant_exams),
+                pendencies: parseTextArray(updatedPatient.pendencies),
+                schedule: parseTextArray(updatedPatient.schedule),
+                admissionHistory: updatedPatient.admission_history || '',
+                admissionDate: updatedPatient.admission_date || '',
+                internmentStatus: updatedPatient.internment_status as any,
+                internmentNotes: updatedPatient.internment_notes,
+                medicalResponsibility: updatedPatient.medical_responsibility as unknown as MedicalResponsibility | undefined,
+                highlightedPendencies: updatedPatient.highlighted_pendencies || [],
+                utiAdmissionDate: parseTextArray(updatedPatient.uti_admission_date),
+                utiAdmissionReason: parseTextArray(updatedPatient.uti_admission_reason),
+                utiDischargePrediction: parseTextArray(updatedPatient.uti_discharge_prediction),
+                utiAllergies: parseTextArray(updatedPatient.uti_allergies),
+                utiCurrentStatus: parseTextArray(updatedPatient.uti_current_status),
+                utiDevices: parseTextArray(updatedPatient.uti_devices),
+                utiSpecialties: parseTextArray(updatedPatient.uti_specialties),
+                utiCulturesAntibiotics: parseTextArray(updatedPatient.uti_cultures_antibiotics),
+                utiOriginSector: parseTextArray(updatedPatient.uti_origin_sector)
+              };
+              onUpdate(mappedPatient);
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            toast.error('Erro ao aplicar template terapêutico');
+          }
         }}
       />
 
