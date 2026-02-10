@@ -15,10 +15,10 @@ export interface StayTimerData {
 }
 
 const THRESHOLDS = {
-  warning: 6 * 60,    // 6h → yellow
-  orange: 12 * 60,    // 12h → orange
-  critical: 18 * 60,  // 18h → red
-  pulsing: 24 * 60,   // 24h → red pulsing
+  warning: 24 * 60,   // 24h → yellow/warning
+  orange: 48 * 60,    // 48h → orange
+  critical: 72 * 60,  // 72h → red
+  pulsing: 96 * 60,   // 96h → red pulsing
 };
 
 function parseAdmissionDate(dateString: string): Date | null {
