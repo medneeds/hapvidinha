@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -13,6 +13,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SearchPatient {
   id: string;
@@ -40,6 +41,39 @@ const sectorLabel: Record<string, string> = {
   outside: "Fora das Alas",
 };
 
+const movementTypeLabel: Record<string, string> = {
+  admission: "Admissão",
+  discharge: "Alta",
+  transfer: "Transferência",
+  death: "Óbito",
+  evasion: "Evasão",
+};
+
+const SearchSkeleton = () => (
+  <div className="p-2 space-y-1">
+    <div className="px-2 py-1.5">
+      <Skeleton className="h-3 w-28 rounded-sm" />
+    </div>
+    {[1, 2, 3].map((i) => (
+      <div
+        key={i}
+        className="flex items-center gap-3 px-2 py-2.5"
+        style={{ animationDelay: `${i * 100}ms` }}
+      >
+        <Skeleton className="h-4 w-4 rounded flex-shrink-0" />
+        <div className="flex-1 space-y-1.5">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-3.5 w-[50%] rounded-sm" />
+            <Skeleton className="h-4 w-12 rounded-full" />
+          </div>
+          <Skeleton className="h-2.5 w-[35%] rounded-sm" />
+        </div>
+        <Skeleton className="h-3 w-3 rounded-sm flex-shrink-0" />
+      </div>
+    ))}
+  </div>
+);
+
 export interface GlobalSearchHandle {
   open: () => void;
 }
@@ -62,6 +96,7 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
     const [patients, setPatients] = useState<SearchPatient[]>([]);
     const [movements, setMovements] = useState<SearchMovement[]>([]);
     const [loading, setLoading] = useState(false);
+    const searchIdRef = useRef(0);
     const navigate = useNavigate();
     const { currentHospital, currentState } = useHospital();
 
@@ -81,53 +116,95 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
       return () => window.removeEventListener("keydown", handleKeyDown);
     }, [open]);
 
-    // Search when query changes
+    // Reset on close
+    useEffect(() => {
+      if (!open) {
+        setQuery("");
+        setPatients([]);
+        setMovements([]);
+        setLoading(false);
+        searchIdRef.current = 0;
+      }
+    }, [open]);
+
+    // Search with accent-insensitive RPC
     useEffect(() => {
       if (!query.trim() || !currentHospital || !currentState) {
         setPatients([]);
         setMovements([]);
+        setLoading(false);
         return;
       }
 
+      setLoading(true);
+      const currentSearchId = ++searchIdRef.current;
+
       const timeout = setTimeout(async () => {
-        setLoading(true);
         try {
-          const searchTerm = `%${query.trim()}%`;
+          const term = query.trim();
 
-          const { data: pData } = await supabase
-            .from("patients")
-            .select("id, name, bed_number, sector, department, diagnoses")
-            .eq("hospital_unit_id", currentHospital.id)
-            .eq("state_id", currentState.id)
-            .or(`name.ilike.${searchTerm},bed_number.ilike.${searchTerm},diagnoses.ilike.${searchTerm}`)
-            .limit(8);
+          // Use RPC for accent-insensitive search (unaccent extension)
+          const [patientsResult, movementsResult] = await Promise.all([
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (supabase.rpc as any)('search_patients_global', {
+              p_search_term: term,
+              p_hospital_unit_id: currentHospital.id,
+              p_state_id: currentState.id,
+            }),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (supabase.rpc as any)('search_movements_global', {
+              p_search_term: term,
+              p_hospital_unit_id: currentHospital.id,
+              p_state_id: currentState.id,
+            }),
+          ]);
 
-          const { data: mData } = await supabase
-            .from("patient_movements")
-            .select("id, patient_name, movement_type, destination, patient_sector, patient_bed, created_at")
-            .eq("hospital_unit_id", currentHospital.id)
-            .eq("state_id", currentState.id)
-            .or(`patient_name.ilike.${searchTerm},destination.ilike.${searchTerm},patient_bed.ilike.${searchTerm}`)
-            .order("created_at", { ascending: false })
-            .limit(6);
+          // Ignore stale results
+          if (currentSearchId !== searchIdRef.current) return;
 
-          setPatients(
-            (pData || []).filter((p) => p.name && p.name.trim() !== "")
-          );
-          setMovements(mData || []);
+          if (patientsResult.error || movementsResult.error) {
+            console.error("Search RPC error:", patientsResult.error || movementsResult.error);
+            // Fallback to basic ilike search if RPC fails
+            const searchTerm = `%${term}%`;
+            const [fallbackP, fallbackM] = await Promise.all([
+              supabase
+                .from("patients")
+                .select("id, name, bed_number, sector, department, diagnoses")
+                .eq("hospital_unit_id", currentHospital.id)
+                .eq("state_id", currentState.id)
+                .or(`name.ilike.${searchTerm},bed_number.ilike.${searchTerm},diagnoses.ilike.${searchTerm}`)
+                .limit(8),
+              supabase
+                .from("patient_movements")
+                .select("id, patient_name, movement_type, destination, patient_sector, patient_bed, created_at")
+                .eq("hospital_unit_id", currentHospital.id)
+                .eq("state_id", currentState.id)
+                .or(`patient_name.ilike.${searchTerm},destination.ilike.${searchTerm},patient_bed.ilike.${searchTerm}`)
+                .order("created_at", { ascending: false })
+                .limit(6),
+            ]);
+
+            if (currentSearchId !== searchIdRef.current) return;
+            setPatients((fallbackP.data || []).filter((p) => p.name && p.name.trim() !== ""));
+            setMovements(fallbackM.data || []);
+          } else {
+            setPatients((patientsResult.data || []) as SearchPatient[]);
+            setMovements((movementsResult.data || []) as SearchMovement[]);
+          }
         } catch (err) {
           console.error("Search error:", err);
         } finally {
-          setLoading(false);
+          if (currentSearchId === searchIdRef.current) {
+            setLoading(false);
+          }
         }
-      }, 250);
+      }, 200);
 
       return () => clearTimeout(timeout);
     }, [query, currentHospital, currentState]);
 
     const handleSelectPatient = (patient: SearchPatient) => {
       setOpen(false);
-      setQuery("");
       navigate("/");
       setTimeout(() => {
         const el = document.querySelector(`[data-patient-id="${patient.id}"]`);
@@ -141,7 +218,6 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
 
     const handleSelectMovement = () => {
       setOpen(false);
-      setQuery("");
       navigate("/movements");
     };
 
@@ -150,13 +226,7 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
       return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
     };
 
-    const movementTypeLabel: Record<string, string> = {
-      admission: "Admissão",
-      discharge: "Alta",
-      transfer: "Transferência",
-      death: "Óbito",
-      evasion: "Evasão",
-    };
+    const hasResults = patients.length > 0 || movements.length > 0;
 
     return (
       <CommandDialog open={open} onOpenChange={setOpen}>
@@ -168,20 +238,22 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
         <CommandList>
           <CommandEmpty>
             {loading ? (
-              <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                Buscando...
+              <div className="text-left -mx-2 -my-4">
+                <SearchSkeleton />
               </div>
             ) : query.trim() ? (
               "Nenhum resultado encontrado."
             ) : (
-              <div className="text-center py-6 text-muted-foreground">
+              <div className="text-center py-2 text-muted-foreground">
                 <Search className="h-8 w-8 mx-auto mb-2 opacity-40" />
                 <p className="text-sm">Digite para buscar pacientes alocados e histórico de movimentações</p>
-                <p className="text-xs mt-1 opacity-60">
-                  <kbd className="px-1 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">Ctrl</kbd>
+                <p className="text-xs mt-1.5 opacity-70">
+                  ✨ Busca inteligente: ignora acentos, ç e ~
+                </p>
+                <p className="text-xs mt-2 opacity-50">
+                  <kbd className="px-1.5 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">Ctrl</kbd>
                   {" + "}
-                  <kbd className="px-1 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">K</kbd>
+                  <kbd className="px-1.5 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">K</kbd>
                   {" para abrir a qualquer momento"}
                 </p>
               </div>
@@ -239,6 +311,14 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
                 </CommandItem>
               ))}
             </CommandGroup>
+          )}
+
+          {/* Subtle loading indicator during incremental search */}
+          {loading && hasResults && (
+            <div className="flex items-center justify-center gap-2 py-2 text-muted-foreground border-t border-border">
+              <div className="h-3 w-3 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <span className="text-xs">Atualizando resultados...</span>
+            </div>
           )}
         </CommandList>
       </CommandDialog>

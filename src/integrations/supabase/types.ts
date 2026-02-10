@@ -1385,6 +1385,39 @@ export type Database = {
         }
         Returns: boolean
       }
+      search_movements_global: {
+        Args: {
+          p_hospital_unit_id: string
+          p_limit?: number
+          p_search_term: string
+          p_state_id: string
+        }
+        Returns: {
+          created_at: string
+          destination: string
+          id: string
+          movement_type: string
+          patient_bed: string
+          patient_name: string
+          patient_sector: string
+        }[]
+      }
+      search_patients_global: {
+        Args: {
+          p_hospital_unit_id: string
+          p_limit?: number
+          p_search_term: string
+          p_state_id: string
+        }
+        Returns: {
+          bed_number: string
+          department: string
+          diagnoses: string
+          id: string
+          name: string
+          sector: string
+        }[]
+      }
       setup_medicoporta_user: { Args: never; Returns: undefined }
       setup_medicouti_user: { Args: never; Returns: undefined }
       setup_visitante_user: { Args: never; Returns: undefined }
