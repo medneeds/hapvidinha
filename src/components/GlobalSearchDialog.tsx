@@ -1,8 +1,8 @@
-import { useState, useEffect, forwardRef, useImperativeHandle, useRef } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
-import { Search, ArrowRight, History, BedDouble } from "lucide-react";
+import { Search, ArrowRight, History, BedDouble, Loader2 } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 interface SearchPatient {
   id: string;
@@ -116,6 +117,72 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
       return () => window.removeEventListener("keydown", handleKeyDown);
     }, [open]);
 
+    const [hasSearched, setHasSearched] = useState(false);
+
+    const performSearch = useCallback(async () => {
+      if (!query.trim() || !currentHospital || !currentState) return;
+
+      setLoading(true);
+      setHasSearched(true);
+      const currentSearchId = ++searchIdRef.current;
+
+      try {
+        const term = query.trim();
+
+        const [patientsResult, movementsResult] = await Promise.all([
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (supabase.rpc as any)('search_patients_global', {
+            p_search_term: term,
+            p_hospital_unit_id: currentHospital.id,
+            p_state_id: currentState.id,
+          }),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (supabase.rpc as any)('search_movements_global', {
+            p_search_term: term,
+            p_hospital_unit_id: currentHospital.id,
+            p_state_id: currentState.id,
+          }),
+        ]);
+
+        if (currentSearchId !== searchIdRef.current) return;
+
+        if (patientsResult.error || movementsResult.error) {
+          console.error("Search RPC error:", patientsResult.error || movementsResult.error);
+          const searchTerm = `%${term}%`;
+          const [fallbackP, fallbackM] = await Promise.all([
+            supabase
+              .from("patients")
+              .select("id, name, bed_number, sector, department, diagnoses")
+              .eq("hospital_unit_id", currentHospital.id)
+              .eq("state_id", currentState.id)
+              .or(`name.ilike.${searchTerm},bed_number.ilike.${searchTerm},diagnoses.ilike.${searchTerm}`)
+              .limit(8),
+            supabase
+              .from("patient_movements")
+              .select("id, patient_name, movement_type, destination, patient_sector, patient_bed, created_at")
+              .eq("hospital_unit_id", currentHospital.id)
+              .eq("state_id", currentState.id)
+              .or(`patient_name.ilike.${searchTerm},destination.ilike.${searchTerm},patient_bed.ilike.${searchTerm}`)
+              .order("created_at", { ascending: false })
+              .limit(6),
+          ]);
+
+          if (currentSearchId !== searchIdRef.current) return;
+          setPatients((fallbackP.data || []).filter((p) => p.name && p.name.trim() !== ""));
+          setMovements(fallbackM.data || []);
+        } else {
+          setPatients((patientsResult.data || []) as SearchPatient[]);
+          setMovements((movementsResult.data || []) as SearchMovement[]);
+        }
+      } catch (err) {
+        console.error("Search error:", err);
+      } finally {
+        if (currentSearchId === searchIdRef.current) {
+          setLoading(false);
+        }
+      }
+    }, [query, currentHospital, currentState]);
+
     // Reset on close
     useEffect(() => {
       if (!open) {
@@ -123,85 +190,10 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
         setPatients([]);
         setMovements([]);
         setLoading(false);
+        setHasSearched(false);
         searchIdRef.current = 0;
       }
     }, [open]);
-
-    // Search with accent-insensitive RPC
-    useEffect(() => {
-      if (!query.trim() || !currentHospital || !currentState) {
-        setPatients([]);
-        setMovements([]);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      const currentSearchId = ++searchIdRef.current;
-
-      const timeout = setTimeout(async () => {
-        try {
-          const term = query.trim();
-
-          // Use RPC for accent-insensitive search (unaccent extension)
-          const [patientsResult, movementsResult] = await Promise.all([
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (supabase.rpc as any)('search_patients_global', {
-              p_search_term: term,
-              p_hospital_unit_id: currentHospital.id,
-              p_state_id: currentState.id,
-            }),
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (supabase.rpc as any)('search_movements_global', {
-              p_search_term: term,
-              p_hospital_unit_id: currentHospital.id,
-              p_state_id: currentState.id,
-            }),
-          ]);
-
-          // Ignore stale results
-          if (currentSearchId !== searchIdRef.current) return;
-
-          if (patientsResult.error || movementsResult.error) {
-            console.error("Search RPC error:", patientsResult.error || movementsResult.error);
-            // Fallback to basic ilike search if RPC fails
-            const searchTerm = `%${term}%`;
-            const [fallbackP, fallbackM] = await Promise.all([
-              supabase
-                .from("patients")
-                .select("id, name, bed_number, sector, department, diagnoses")
-                .eq("hospital_unit_id", currentHospital.id)
-                .eq("state_id", currentState.id)
-                .or(`name.ilike.${searchTerm},bed_number.ilike.${searchTerm},diagnoses.ilike.${searchTerm}`)
-                .limit(8),
-              supabase
-                .from("patient_movements")
-                .select("id, patient_name, movement_type, destination, patient_sector, patient_bed, created_at")
-                .eq("hospital_unit_id", currentHospital.id)
-                .eq("state_id", currentState.id)
-                .or(`patient_name.ilike.${searchTerm},destination.ilike.${searchTerm},patient_bed.ilike.${searchTerm}`)
-                .order("created_at", { ascending: false })
-                .limit(6),
-            ]);
-
-            if (currentSearchId !== searchIdRef.current) return;
-            setPatients((fallbackP.data || []).filter((p) => p.name && p.name.trim() !== ""));
-            setMovements(fallbackM.data || []);
-          } else {
-            setPatients((patientsResult.data || []) as SearchPatient[]);
-            setMovements((movementsResult.data || []) as SearchMovement[]);
-          }
-        } catch (err) {
-          console.error("Search error:", err);
-        } finally {
-          if (currentSearchId === searchIdRef.current) {
-            setLoading(false);
-          }
-        }
-      }, 200);
-
-      return () => clearTimeout(timeout);
-    }, [query, currentHospital, currentState]);
 
     const handleSelectPatient = (patient: SearchPatient) => {
       setOpen(false);
@@ -230,23 +222,54 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
 
     return (
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput
-          placeholder="Buscar paciente por nome, leito ou diagnóstico..."
-          value={query}
-          onValueChange={setQuery}
-        />
+        <div className="flex items-center gap-2 px-3 border-b border-border">
+          <CommandInput
+            placeholder="Buscar paciente por nome, leito ou diagnóstico..."
+            value={query}
+            onValueChange={(val) => {
+              setQuery(val);
+              if (!val.trim()) {
+                setPatients([]);
+                setMovements([]);
+                setHasSearched(false);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && query.trim()) {
+                e.preventDefault();
+                performSearch();
+              }
+            }}
+            className="border-0 focus:ring-0"
+          />
+          {query.trim() && (
+            <Button
+              size="sm"
+              onClick={performSearch}
+              disabled={loading}
+              className="h-8 px-4 gap-2 shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-sm transition-all duration-200"
+            >
+              {loading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Search className="h-3.5 w-3.5" />
+              )}
+              <span className="text-xs font-medium">Buscar</span>
+            </Button>
+          )}
+        </div>
         <CommandList>
           <CommandEmpty>
             {loading ? (
               <div className="text-left -mx-2 -my-4">
                 <SearchSkeleton />
               </div>
-            ) : query.trim() ? (
+            ) : hasSearched && query.trim() ? (
               "Nenhum resultado encontrado."
             ) : (
               <div className="text-center py-2 text-muted-foreground">
                 <Search className="h-8 w-8 mx-auto mb-2 opacity-40" />
-                <p className="text-sm">Digite para buscar pacientes alocados e histórico de movimentações</p>
+                <p className="text-sm">Digite o nome e clique em <strong>Buscar</strong> ou pressione <strong>Enter</strong></p>
                 <p className="text-xs mt-1.5 opacity-70">
                   ✨ Busca inteligente: ignora acentos, ç e ~
                 </p>
