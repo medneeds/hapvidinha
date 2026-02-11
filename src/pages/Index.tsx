@@ -13,6 +13,7 @@ import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
 import { Patient } from "@/types/patient";
 import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2, Search } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
 import { BedAllocationNotifications } from "@/components/BedAllocationNotifications";
@@ -916,7 +917,7 @@ const Index = () => {
                     variant="outline"
                     size="icon"
                     onClick={() => setSearchOpen(true)}
-                    className="print:hidden h-9 w-9 sm:h-8 sm:w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
+                    className="print:hidden h-11 w-11 sm:h-8 sm:w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
                     title="Buscar paciente (Ctrl+K)"
                   >
                     <Search className="h-4 w-4" />
@@ -1011,28 +1012,45 @@ const Index = () => {
                   ) : (
                     /* Desktop: Show all buttons */
                     <>
+                      <TooltipProvider delayDuration={300}>
                       {/* Action buttons group */}
                       <div className="flex items-center gap-1 print:hidden">
-                        <Button variant="outline" size="icon" onClick={handleUndo} disabled={history.length === 0}
-                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200"
-                          title="Desfazer última ação">
-                          <Undo className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="icon" onClick={handleRedo} disabled={redoHistory.length === 0}
-                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200"
-                          title="Refazer ação">
-                          <Redo className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="icon" onClick={handleSaveVersion}
-                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
-                          title="Salvar versão">
-                          <Save className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="icon" onClick={handleRefreshMap} disabled={isRefreshing}
-                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
-                          title="Atualizar mapa">
-                          <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="outline" size="icon" onClick={handleUndo} disabled={history.length === 0}
+                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200">
+                              <Undo className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>Desfazer última ação</p></TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="outline" size="icon" onClick={handleRedo} disabled={redoHistory.length === 0}
+                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200">
+                              <Redo className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>Refazer ação</p></TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="outline" size="icon" onClick={handleSaveVersion}
+                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200">
+                              <Save className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>Salvar versão atual</p></TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="outline" size="icon" onClick={handleRefreshMap} disabled={isRefreshing}
+                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200">
+                              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>Atualizar mapa</p></TooltipContent>
+                        </Tooltip>
                       </div>
 
                       {/* Separator */}
@@ -1040,38 +1058,58 @@ const Index = () => {
 
                       {/* Selection & Print group */}
                       <div className="flex items-center gap-1 print:hidden">
-                        <Button
-                          variant={selectionMode ? "default" : "outline"}
-                          size="icon"
-                          onClick={handleToggleSelectionMode}
-                          className={`h-8 w-8 transition-all duration-200 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}
-                          title="Modo de seleção múltipla">
-                          <CheckSquare className="h-4 w-4" />
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant={selectionMode ? "default" : "outline"}
+                              size="icon"
+                              onClick={handleToggleSelectionMode}
+                              className={`h-8 w-8 transition-all duration-200 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}>
+                              <CheckSquare className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>Modo de seleção múltipla</p></TooltipContent>
+                        </Tooltip>
                         {selectionMode && selectedPatients.size > 0 && (
                           <>
-                            <Button variant="outline" size="icon" onClick={handlePrintSelected}
-                              className="h-8 w-8 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
-                              title={`Imprimir ${selectedPatients.size} selecionado(s)`}>
-                              <Printer className="h-4 w-4" />
-                            </Button>
-                            <Button variant="destructive" size="icon" onClick={handleDeleteSelected}
-                              className="h-8 w-8 bg-red-600 text-white hover:bg-red-700 border-0"
-                              title={`Deletar ${selectedPatients.size} selecionado(s)`}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="outline" size="icon" onClick={handlePrintSelected}
+                                  className="h-8 w-8 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all">
+                                  <Printer className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent><p>Imprimir {selectedPatients.size} selecionado(s)</p></TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button variant="destructive" size="icon" onClick={handleDeleteSelected}
+                                  className="h-8 w-8 bg-red-600 text-white hover:bg-red-700 border-0">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent><p>Deletar {selectedPatients.size} selecionado(s)</p></TooltipContent>
+                            </Tooltip>
                           </>
                         )}
-                        <Button variant="outline" size="icon" onClick={handlePrintCompact}
-                          className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all"
-                          title="Imprimir">
-                          <Printer className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="icon" onClick={toggleFullscreen}
-                          className="hidden sm:flex h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
-                          title={isFullscreen ? "Sair da tela cheia" : "Tela cheia"}>
-                          {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="outline" size="icon" onClick={handlePrintCompact}
+                              className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all">
+                              <Printer className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>Imprimir mapa</p></TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="outline" size="icon" onClick={toggleFullscreen}
+                              className="hidden sm:flex h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200">
+                              {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>{isFullscreen ? "Sair da tela cheia" : "Tela cheia"}</p></TooltipContent>
+                        </Tooltip>
                       </div>
 
                       {/* Separator */}
@@ -1107,12 +1145,18 @@ const Index = () => {
                             {role === 'admin' ? 'Administrador' : 'Médico'}
                           </p>
                         </div>
-                        <Button variant="outline" size="icon" onClick={signOut} title="Sair"
-                          className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200">
-                          <LogOut className="h-4 w-4" />
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="outline" size="icon" onClick={signOut}
+                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200">
+                              <LogOut className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>Sair do sistema</p></TooltipContent>
+                        </Tooltip>
                       </div>
 
+                      </TooltipProvider>
                       <div className="print:hidden">
                         <ThemeToggle />
                       </div>
