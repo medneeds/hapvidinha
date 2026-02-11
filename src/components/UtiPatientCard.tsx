@@ -53,6 +53,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 
 type ColorVariant = 'blue' | 'yellow';
 
@@ -782,6 +783,8 @@ export function UtiPatientCard({
 
   // Derive current UTI unit from colorVariant if not provided
   const derivedUtiUnit = currentUtiUnit || (colorVariant === 'blue' ? 'UTI 1' : 'UTI 2');
+  const { namesHidden } = usePrivacy();
+  const displayName = maskName(patient.name, namesHidden);
 
   // Sync with forceCollapsed prop when it changes
   useEffect(() => {
@@ -1040,12 +1043,16 @@ export function UtiPatientCard({
                 
                 {/* Patient Name + Age - Flexible grow */}
                 <div className="flex-1 flex items-baseline gap-1 md:gap-1.5 min-w-0">
-                  <InlineEditableField
-                    value={patient.name}
-                    onUpdate={(v) => handleUpdateField("name", v)}
-                    placeholder="NOME DO PACIENTE"
-                    className="text-xs md:text-sm font-semibold truncate"
-                  />
+                  {namesHidden ? (
+                    <span className="text-xs md:text-sm font-semibold truncate tracking-widest opacity-70">{displayName}</span>
+                  ) : (
+                    <InlineEditableField
+                      value={patient.name}
+                      onUpdate={(v) => handleUpdateField("name", v)}
+                      placeholder="NOME DO PACIENTE"
+                      className="text-xs md:text-sm font-semibold truncate"
+                    />
+                  )}
                   <div className="shrink-0 flex items-center gap-1 text-[10px] md:text-xs text-muted-foreground">
                     <InlineEditableField
                       value={String(patient.age || "").replace(/\s*anos?\s*$/i, "")}

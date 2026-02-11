@@ -28,14 +28,8 @@ export function maskName(name: string, hidden: boolean): string {
   if (!hidden || !name || name.trim() === "") return name;
   const parts = name.trim().split(/\s+/);
   if (parts.length === 0) return name;
-  if (parts.length === 1) {
-    return parts[0][0] + "•".repeat(Math.max(parts[0].length - 1, 2));
-  }
-  return (
-    parts[0][0] +
-    "•".repeat(Math.max(parts[0].length - 1, 2)) +
-    " " +
-    parts[parts.length - 1][0] +
-    "•".repeat(Math.max(parts[parts.length - 1].length - 1, 2))
-  );
+  // Show first initial + middle dot for each part, join with spaces
+  return parts
+    .map((p) => p[0] + "⸱".repeat(Math.min(Math.max(p.length - 1, 2), 4)))
+    .join(" ");
 }

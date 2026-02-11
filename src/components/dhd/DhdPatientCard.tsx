@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -81,6 +82,8 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
 
   const canGoPrevious = currentWeekStart > startDate;
   const canGoNext = endDate ? weekEnd < endDate : false;
+  const { namesHidden } = usePrivacy();
+  const displayName = maskName(patient.patient_name, namesHidden);
 
   return (
     <>
@@ -88,7 +91,9 @@ export function DhdPatientCard({ patient, onMedicationToggle, onRefresh }: DhdPa
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-lg mb-1 uppercase">{patient.patient_name}</CardTitle>
+              <CardTitle className="text-lg mb-1 uppercase">
+                {namesHidden ? <span className="tracking-widest opacity-70">{displayName}</span> : patient.patient_name}
+              </CardTitle>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 {patient.patient_age && <span>{patient.patient_age}</span>}
                 {patient.patient_age && patient.diagnosis && <span>•</span>}
