@@ -31,6 +31,7 @@ import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
 import { differenceInDays, differenceInHours, differenceInMinutes, parseISO, isValid, parse } from "date-fns";
 import { useSectorStayTimer } from "@/hooks/useSectorStayTimer";
+import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 import { useConductHistory } from "@/hooks/useConductHistory";
 import { ConductHistoryDialog } from "./ConductHistoryDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -652,6 +653,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const { role, user } = useAuth();
   const { requests } = useBedAllocationRequests();
   const stayTimer = useSectorStayTimer(patient.admissionDate);
+  const { namesHidden } = usePrivacy();
+  const displayName = maskName(patient.name, namesHidden);
   
   // Find allocation request for this patient and calculate elapsed time
   const allocationTimeElapsed = useMemo(() => {
@@ -1591,7 +1594,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onClick={() => canEdit && startEditing("name", patient.name)}
                             title={canEdit ? "Clique para editar" : undefined}
                           >
-                            {patient.name || <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
+                            {namesHidden ? (
+                              <span className="tracking-wider">{displayName}</span>
+                            ) : patient.name ? patient.name : <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
                           </p>
                           
                           {/* Allocation Pending Badge - Hidden when status bar is visible, kept for dialog functionality */}
@@ -4028,7 +4033,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
                 <div className="flex flex-col">
                   <span className="text-2xl font-bold uppercase tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                    {patient.name}
+                    {displayName}
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
@@ -4183,7 +4188,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
                 <div className="flex flex-col">
                   <span className="text-2xl font-bold uppercase tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                    {patient.name}
+                    {displayName}
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
@@ -4338,7 +4343,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
                 <div className="flex flex-col">
                   <span className="text-2xl font-bold uppercase tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                    {patient.name}
+                    {displayName}
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
@@ -4493,7 +4498,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
                 <div className="flex flex-col">
                   <span className="text-2xl font-bold uppercase tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                    {patient.name}
+                    {displayName}
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
