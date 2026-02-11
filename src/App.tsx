@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { MainLayout } from "@/components/MainLayout";
+import { PrivacyProvider } from "@/contexts/PrivacyContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
@@ -47,6 +48,7 @@ const App = () => {
   
   return (
     <QueryClientProvider client={queryClient}>
+      <PrivacyProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -352,6 +354,7 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </TooltipProvider>
+      </PrivacyProvider>
   </QueryClientProvider>
   );
 };

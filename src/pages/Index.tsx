@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
 import { supabase } from "@/integrations/supabase/client";
+import { usePrivacy } from "@/contexts/PrivacyContext";
 import { getNextBedNumber } from "@/utils/bedNaming";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -204,6 +205,7 @@ const Index = () => {
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
   const { saveVersion, fetchVersions } = usePatientVersions();
   const isMobile = useIsMobile();
+  const { namesHidden, toggleNamesHidden } = usePrivacy();
 
   // Sensors for drag and drop
   const sensors = useSensors(
@@ -998,6 +1000,10 @@ const Index = () => {
                             {showOnlyOccupied ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
                             {showOnlyOccupied ? "Mostrar Vazios" : "Ocultar Vazios"}
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={toggleNamesHidden}>
+                            {namesHidden ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
+                            {namesHidden ? "Mostrar Nomes" : "Ocultar Nomes (LGPD)"}
+                          </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={signOut} className="text-red-600">
                             <LogOut className="mr-2 h-4 w-4" />
@@ -1109,6 +1115,15 @@ const Index = () => {
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent><p>{isFullscreen ? "Sair da tela cheia" : "Tela cheia"}</p></TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="outline" size="icon" onClick={toggleNamesHidden}
+                              className={`hidden sm:flex h-8 w-8 transition-all duration-200 ${namesHidden ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}>
+                              {namesHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>{namesHidden ? "Mostrar nomes dos pacientes" : "Ocultar nomes (Proteção de Dados)"}</p></TooltipContent>
                         </Tooltip>
                       </div>
 
