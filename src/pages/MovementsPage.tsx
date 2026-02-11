@@ -10,6 +10,7 @@ import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw, CalendarIcon, Filter, Loader2 } from "lucide-react";
 import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
+import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useHospital } from "@/contexts/HospitalContext";
 import { Calendar } from "@/components/ui/calendar";
@@ -621,6 +622,8 @@ export default function MovementsPage() {
           </Tabs>
         </div>
       </div>
+
+      <ScrollToTopButton />
 
       <ViewPatientSnapshotDialog
         patient={selectedPatient}

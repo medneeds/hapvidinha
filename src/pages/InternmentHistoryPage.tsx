@@ -28,6 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
+import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 
 interface InternmentRequest {
   id: string;
@@ -540,6 +541,8 @@ const InternmentHistoryPage = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <ScrollToTopButton />
     </div>
   );
 };
