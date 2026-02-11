@@ -8,6 +8,7 @@ import {
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 
 interface DhdPatient {
   id: string;
@@ -27,13 +28,15 @@ interface DhdReportDialogProps {
 }
 
 export function DhdReportDialog({ open, onOpenChange, patient }: DhdReportDialogProps) {
+  const { namesHidden } = usePrivacy();
+  const displayName = maskName(patient.patient_name, namesHidden);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[85vh]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Relatório DHD</DialogTitle>
           <DialogDescription className="uppercase">
-            {patient.patient_name}
+            {namesHidden ? <span className="tracking-widest opacity-70">{displayName}</span> : patient.patient_name}
             {patient.patient_age && ` • ${patient.patient_age}`}
           </DialogDescription>
         </DialogHeader>

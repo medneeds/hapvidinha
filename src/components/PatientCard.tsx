@@ -1595,7 +1595,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             title={canEdit ? "Clique para editar" : undefined}
                           >
                             {namesHidden ? (
-                              <span className="tracking-wider">{displayName}</span>
+                              <span className="tracking-widest opacity-70 transition-all duration-300">{displayName}</span>
                             ) : patient.name ? patient.name : <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
                           </p>
                           
