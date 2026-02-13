@@ -620,15 +620,30 @@ input:-webkit-autofill:active {
   opacity: 1 !important;
 }
 
-/* Force all input text to be dark on light backgrounds */
-input[type="text"],
-input[type="password"],
-input[type="email"] {
+/* Force all input text to be dark on light backgrounds (auth page) */
+.bg-white input[type="text"],
+.bg-white input[type="password"],
+.bg-white input[type="email"],
+.bg-white input[type="tel"],
+.bg-white input[type="number"] {
   color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
   caret-color: #111827 !important;
 }
 
-input::placeholder {
-  color: #9ca3af !important;
+.bg-white input::placeholder {
+  color: #6b7280 !important;
+  -webkit-text-fill-color: #6b7280 !important;
   opacity: 1 !important;
+}
+
+/* Ensure select values are visible on white backgrounds */
+.bg-white [data-radix-select-trigger] span {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+.bg-white [data-radix-select-trigger] [data-placeholder] span {
+  color: #6b7280 !important;
+  -webkit-text-fill-color: #6b7280 !important;
 }
