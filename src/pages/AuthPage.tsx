@@ -333,13 +333,13 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="state-select-desktop"
-                        className="h-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900"
+                        className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900"
                       >
                         <SelectValue placeholder="Selecione o estado" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-lg">
+                      <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                         {states.map((state) => (
-                          <SelectItem key={state.id} value={state.id} className="text-xs font-medium py-1.5 text-gray-900 hover:bg-gray-100">
+                          <SelectItem key={state.id} value={state.id} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                             {state.name} ({state.abbreviation})
                           </SelectItem>
                         ))}
@@ -359,13 +359,13 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="hospital-select-desktop"
-                        className="h-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 disabled:opacity-50"
+                        className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-50"
                       >
                         <SelectValue placeholder={selectedState ? "Selecione a unidade" : "Selecione o estado primeiro"} />
                       </SelectTrigger>
-                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-lg">
+                      <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                         {filteredHospitals.map((hospital) => (
-                          <SelectItem key={hospital.id} value={hospital.id} className="text-xs font-medium py-1.5 text-gray-900 hover:bg-gray-100">
+                          <SelectItem key={hospital.id} value={hospital.id} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                             {hospital.name}
                           </SelectItem>
                         ))}
@@ -385,13 +385,13 @@ export default function AuthPage() {
                     >
                       <SelectTrigger 
                         id="department-select-desktop"
-                        className="h-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900"
+                        className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900"
                       >
                         <SelectValue placeholder="Selecione o setor" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white border border-gray-200 shadow-xl z-[200] rounded-lg">
+                      <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                         {DEPARTMENTS.map((dept) => (
-                          <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 hover:bg-gray-100">
+                          <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                             {dept}
                           </SelectItem>
                         ))}
@@ -592,13 +592,13 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="state-select-mobile"
-                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900"
+                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
                     >
                       <SelectValue placeholder="SELECIONE O ESTADO" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border border-gray-200 shadow-lg z-[200] rounded-lg">
+                    <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                       {states.map((state) => (
-                        <SelectItem key={state.id} value={state.id} className="text-xs font-medium py-1.5 text-gray-900 hover:bg-gray-100">
+                        <SelectItem key={state.id} value={state.id} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                           {state.name} ({state.abbreviation})
                         </SelectItem>
                       ))}
@@ -622,13 +622,13 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="hospital-select-mobile"
-                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 disabled:opacity-50"
+                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-50"
                     >
                       <SelectValue placeholder={selectedState ? "SELECIONE" : "SELECIONE ESTADO PRIMEIRO"} />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border border-gray-200 shadow-lg z-[200] rounded-lg">
+                    <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                       {filteredHospitals.map((hospital) => (
-                        <SelectItem key={hospital.id} value={hospital.id} className="text-xs font-medium py-1.5 text-gray-900 hover:bg-gray-100">
+                        <SelectItem key={hospital.id} value={hospital.id} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                           {hospital.name}
                         </SelectItem>
                       ))}
@@ -652,13 +652,13 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="department-select-mobile"
-                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900"
+                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
                     >
                       <SelectValue placeholder="SELECIONE O SETOR" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border border-gray-200 shadow-lg z-[200] rounded-lg">
+                    <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                       {DEPARTMENTS.map((dept) => (
-                        <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 hover:bg-gray-100">
+                        <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                           {dept}
                         </SelectItem>
                       ))}
