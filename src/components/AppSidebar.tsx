@@ -17,7 +17,6 @@ import {
   PanelLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useBranding } from "@/contexts/BrandingContext";
 import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
 import { useState } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
@@ -64,7 +63,6 @@ export function AppSidebar({
   const { open, setOpen, openMobile, setOpenMobile, state } = useSidebar();
   const navigate = useNavigate();
   const { signOut, user, role } = useAuth();
-  const { branding, platformName } = useBranding();
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -241,25 +239,17 @@ export function AppSidebar({
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
-              branding?.logo_url ? (
-                <img 
-                  src={branding.logo_url} 
-                  alt={platformName} 
-                  className="w-full h-auto max-h-14 object-contain animate-fade-in"
-                />
-              ) : (
-                <div className="flex items-center gap-1.5 animate-fade-in">
-                  <img 
-                    src={hapvidaLogo} 
-                    alt={platformName} 
-                    className="w-full h-auto max-h-14 object-contain"
-                  />
-                </div>
-              )
+              <img 
+                src={hapvidaLogo} 
+                alt="Hapvida NotreDame Intermédica" 
+                className="w-full h-auto max-h-14 object-contain animate-fade-in"
+              />
             ) : (
-              <div className="text-xs font-black text-primary tracking-tighter">
-                {platformName.replace("Map", "")}
-              </div>
+              <img 
+                src={hapvidaLogo} 
+                alt="Hapvida" 
+                className="w-8 h-8 object-contain"
+              />
             )}
           </div>
           {!isCollapsed && (

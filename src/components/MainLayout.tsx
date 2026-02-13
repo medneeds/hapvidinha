@@ -33,8 +33,8 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
           </main>
           
           <footer className="fixed bottom-2 right-4 z-50 pointer-events-none">
-            <p className="text-[9px] text-muted-foreground/30 tracking-wider">
-              Powered by <span className="font-semibold">Axius</span>
+            <p className="text-[10px] text-muted-foreground/40 italic">
+              Desenvolvido por Artur Batista
             </p>
           </footer>
         </div>

@@ -152,7 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     
     if (!error) {
-      navigate("/select-network");
+      navigate("/");
     }
     
     return { error };
@@ -170,13 +170,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: {
           full_name: fullName,
           username: username,
-          role: role,
+          role: role, // Passar papel nos metadados para o trigger usar
         },
       },
     });
     
     if (!error) {
-      navigate("/select-network");
+      navigate("/");
     }
     
     return { error };
