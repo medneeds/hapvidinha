@@ -844,7 +844,7 @@ const Index = () => {
                   <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:text-white hover:bg-white/25 border-white/30 hover:border-white/50 data-[state=open]:bg-white/25 transition-all duration-200" />
                   
                   <div className="min-w-0 flex-1 flex flex-col gap-1.5">
-                    <h1 className="text-base sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes - Hospital Guarás</h1>
+                    <h1 className="text-base sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes</h1>
                     <div className="print:hidden">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

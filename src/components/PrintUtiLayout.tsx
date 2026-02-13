@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { ClipboardList } from "lucide-react";
 import { PrintableSectorSection } from "./PrintableSectorSection";
-import hapvidaFullLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { whitelabel } from "@/config/whitelabel";
 
 interface PrintUtiLayoutProps {
   uti1Patients: Patient[];
@@ -124,8 +124,8 @@ export function PrintUtiLayout({
       <div style={containerStyle}>
         {/* Fixed Watermark - appears on all pages */}
         <img 
-          src={hapvidaFullLogo} 
-          alt="Hapvida NotreDame Intermédica" 
+          src={whitelabel.logos.networkFull} 
+          alt={whitelabel.institution.networkLogoAlt}
           className="print-watermark-fixed"
           style={{ 
             position: 'absolute',
@@ -172,7 +172,7 @@ export function PrintUtiLayout({
             color: '#000000',
             letterSpacing: '0.4px'
           }}>
-            Mapa UTI - Hospital Guarás
+            Mapa UTI - {whitelabel.institution.hospitalName}
           </h1>
         </div>
         
@@ -247,7 +247,7 @@ export function PrintUtiLayout({
             opacity: 0.85
           }}
         >
-          Unidade de Terapia Intensiva • Hospital Guarás • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
+          Unidade de Terapia Intensiva • {whitelabel.institution.hospitalName} • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
         </div>
         
         {/* Developer Signature - Fixed position on all pages */}
@@ -264,7 +264,7 @@ export function PrintUtiLayout({
             zIndex: 1000
           }}
         >
-          Desenvolvido por Artur Batista
+          {whitelabel.credits.authorSignature}
         </div>
       </div>
     </>

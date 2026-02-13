@@ -1,4 +1,5 @@
 import { ReactNode, useState } from "react";
+import { whitelabel } from "@/config/whitelabel";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useUserPresence } from "@/hooks/useUserPresence";
@@ -34,7 +35,7 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
           
           <footer className="fixed bottom-2 right-4 z-50 pointer-events-none">
             <p className="text-[10px] text-muted-foreground/40 italic">
-              Desenvolvido por Artur Batista
+              {whitelabel.credits.footerText}
             </p>
           </footer>
         </div>

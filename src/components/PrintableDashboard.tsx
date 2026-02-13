@@ -1,6 +1,6 @@
 import { format, isValid, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { whitelabel } from "@/config/whitelabel";
 import { TrendingUp, TrendingDown, UserPlus, Users, UserCheck, UserX, ArrowRightLeft, Bed } from "lucide-react";
 
 // Helper function to safely format dates
@@ -169,7 +169,7 @@ export function PrintableDashboard({
             </p>
           </div>
         </div>
-        <img src={hapvidaLogo} alt="Hapvida NotreDame" className="h-16 object-contain" />
+        <img src={whitelabel.logos.networkFull} alt={whitelabel.institution.networkLogoAlt} className="h-16 object-contain" />
       </div>
 
       {/* KPIs Grid */}
@@ -373,13 +373,13 @@ export function PrintableDashboard({
       {/* Footer */}
       <div className="mt-8 pt-4 border-t border-gray-300 text-center">
         <p className="text-xs text-gray-600">
-          Documento gerado automaticamente pelo sistema HapMap - Dashboard de Gestão
+          Documento gerado automaticamente pelo sistema {whitelabel.platform.fullName} - Dashboard de Gestão
         </p>
       </div>
       
       {/* Developer Signature - Fixed Bottom Right */}
       <div className="fixed bottom-8 right-10 text-[10px] text-gray-400 italic opacity-40 z-[1000]">
-        Desenvolvido por Artur Batista
+        {whitelabel.credits.authorSignature}
       </div>
     </div>
   );

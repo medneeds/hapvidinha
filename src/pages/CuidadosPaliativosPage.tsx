@@ -49,7 +49,7 @@ export default function CuidadosPaliativosPage() {
             
             <div className="flex gap-2 flex-wrap">
               <Badge variant="secondary" className="uppercase bg-pink-500/10 text-pink-700 dark:text-pink-400">
-                Hospital Guarás
+                Cuidados Paliativos
               </Badge>
               <Badge variant="secondary" className="uppercase">
                 QUALITOTAL 18.14.9

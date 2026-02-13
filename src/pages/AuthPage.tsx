@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { LogIn, User, Lock, Sparkles, Building2, Eye, EyeOff, Shield, FileCheck, UserPlus } from "lucide-react";
 import { z } from "zod";
-import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { whitelabel } from "@/config/whitelabel";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { cn } from "@/lib/utils";
 import { IndividualSignUpForm } from "@/components/IndividualSignUpForm";
@@ -222,8 +222,8 @@ export default function AuthPage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-2xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative bg-white rounded-xl px-4 py-3 shadow-xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-white/20">
                   <img 
-                    src={hapvidaLogo} 
-                    alt="Hapvida NotreDame Intermédica" 
+                    src={whitelabel.logos.networkFull} 
+                    alt={whitelabel.institution.networkLogoAlt} 
                     className="h-9 xl:h-10 object-contain transition-all duration-500 group-hover:brightness-110"
                   />
                   <Sparkles className="absolute -top-1.5 -right-1.5 h-4 w-4 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
@@ -235,14 +235,14 @@ export default function AuthPage() {
                 <div className="inline-flex items-baseline gap-1.5">
                   <h1 className="text-4xl xl:text-5xl tracking-tighter inline-flex items-baseline">
                     <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-                      Hap
+                      {whitelabel.platform.name.slice(0, 3)}
                     </span>
                     <span className="font-light text-white/80 -ml-0.5">
-                      Map
+                      {whitelabel.platform.name.slice(3)}
                     </span>
                   </h1>
                   <span className="text-[9px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-1.5 py-0.5 self-start mt-1.5">
-                    2.0
+                    {whitelabel.platform.version}
                   </span>
                 </div>
                 <div className="h-0.5 w-16 mx-auto mt-1.5 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full" />
@@ -250,7 +250,7 @@ export default function AuthPage() {
               
               {/* Slogan - smaller */}
               <p className="text-white/60 text-sm xl:text-base font-light tracking-wide animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 mb-6 italic">
-                Tecnologia que valoriza seu tempo. Inteligência que salva vidas.
+                {whitelabel.platform.slogan}
               </p>
               
               {/* Elegant divider - smaller */}
@@ -262,30 +262,14 @@ export default function AuthPage() {
               
               {/* Feature highlights - more compact */}
               <div className="space-y-3 text-left animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-500">
-                <div className="flex items-center gap-3 text-white/60 hover:text-white/90 transition-colors duration-300 group">
-                  <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
-                    <Building2 className="h-4 w-4" />
+                {whitelabel.loginFeatures.map((feature, idx) => (
+                  <div key={idx} className="flex items-center gap-3 text-white/60 hover:text-white/90 transition-colors duration-300 group">
+                    <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
+                      {idx === 0 ? <Building2 className="h-4 w-4" /> : idx === 1 ? <User className="h-4 w-4" /> : idx === 2 ? <Sparkles className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
+                    </div>
+                    <span className="text-xs font-light tracking-wide">{feature}</span>
                   </div>
-                  <span className="text-xs font-light tracking-wide">Gestão inteligente de leitos em tempo real</span>
-                </div>
-                <div className="flex items-center gap-3 text-white/60 hover:text-white/90 transition-colors duration-300 group">
-                  <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
-                    <User className="h-4 w-4" />
-                  </div>
-                  <span className="text-xs font-light tracking-wide">Visão completa do paciente em um clique</span>
-                </div>
-                <div className="flex items-center gap-3 text-white/60 hover:text-white/90 transition-colors duration-300 group">
-                  <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
-                    <Sparkles className="h-4 w-4" />
-                  </div>
-                  <span className="text-xs font-light tracking-wide">IA integrada para suporte à decisão clínica</span>
-                </div>
-                <div className="flex items-center gap-3 text-white/60 hover:text-white/90 transition-colors duration-300 group">
-                  <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
-                    <Shield className="h-4 w-4" />
-                  </div>
-                  <span className="text-xs font-light tracking-wide">Conformidade LGPD e CFM 1.821/2007</span>
-                </div>
+                ))}
               </div>
               
               {/* LGPD Compliance Badge - smaller */}
@@ -295,8 +279,8 @@ export default function AuthPage() {
                     <FileCheck className="h-4 w-4 text-green-400" />
                   </div>
                   <div className="text-left">
-                    <p className="text-[10px] font-semibold text-white/90 uppercase tracking-wide">Em Conformidade</p>
-                    <p className="text-[9px] text-white/50">Lei 13.709/2018 (LGPD) • CFM 1.821/2007</p>
+                    <p className="text-[10px] font-semibold text-white/90 uppercase tracking-wide">{whitelabel.compliance.complianceBadgeTitle}</p>
+                    <p className="text-[9px] text-white/50">{whitelabel.compliance.legalReferences}</p>
                   </div>
                 </div>
               </div>
@@ -304,8 +288,8 @@ export default function AuthPage() {
             
             {/* Footer on left panel - smaller */}
             <div className="absolute bottom-4 left-0 right-0 text-center">
-              <p className="text-[9px] text-white/30 uppercase tracking-widest">Desenvolvido por</p>
-              <p className="text-[10px] text-white/50 font-semibold mt-0.5">Medneeds</p>
+              <p className="text-[9px] text-white/30 uppercase tracking-widest">{whitelabel.credits.developerLabel}</p>
+              <p className="text-[10px] text-white/50 font-semibold mt-0.5">{whitelabel.credits.developerName}</p>
             </div>
           </div>
           
@@ -542,8 +526,8 @@ export default function AuthPage() {
               <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative bg-white rounded-xl px-4 py-2 shadow-2xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105">
                 <img 
-                  src={hapvidaLogo} 
-                  alt="Hapvida NotreDame Intermédica" 
+                  src={whitelabel.logos.networkFull} 
+                  alt={whitelabel.institution.networkLogoAlt} 
                   className="h-8 object-contain transition-all duration-500 group-hover:brightness-110"
                 />
                 <Sparkles className="absolute -top-1 -right-1 h-3 w-3 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
@@ -554,14 +538,14 @@ export default function AuthPage() {
               <div className="inline-flex items-baseline gap-1">
                 <h1 className="text-3xl tracking-tighter inline-flex items-baseline">
                   <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-                    Hap
+                    {whitelabel.platform.name.slice(0, 3)}
                   </span>
                   <span className="font-light text-white/80 -ml-0.5">
-                    Map
+                    {whitelabel.platform.name.slice(3)}
                   </span>
                 </h1>
                 <span className="text-[7px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-1 py-0.5 self-start">
-                  2.0
+                  {whitelabel.platform.version}
                 </span>
               </div>
             </div>
@@ -580,7 +564,7 @@ export default function AuthPage() {
               </div>
               <div>
                 <h2 className="text-sm font-bold text-gray-800 uppercase">Acesse sua conta</h2>
-                <p className="text-[10px] text-gray-500 italic">Tecnologia que valoriza seu tempo</p>
+                <p className="text-[10px] text-gray-500 italic">{whitelabel.platform.slogan.split('.')[0]}</p>
               </div>
             </div>
 
@@ -802,15 +786,15 @@ export default function AuthPage() {
           <div className="flex items-center justify-center gap-2 mt-3 px-3 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg mx-auto">
             <FileCheck className="h-3.5 w-3.5 text-green-400" />
             <div className="text-center">
-              <p className="text-[9px] font-medium text-white/80">Em Conformidade com LGPD</p>
-              <p className="text-[8px] text-white/40">Lei 13.709/2018 • CFM 1.821/2007</p>
+              <p className="text-[9px] font-medium text-white/80">{whitelabel.compliance.complianceBadgeTitle}</p>
+              <p className="text-[8px] text-white/40">{whitelabel.compliance.legalReferences}</p>
             </div>
           </div>
 
           {/* Footer */}
           <div className="text-center mt-3">
-            <p className="text-white/30 text-[9px] uppercase tracking-widest">Desenvolvido por</p>
-            <p className="text-white/50 text-[10px] font-semibold mt-0.5">Medneeds</p>
+            <p className="text-white/30 text-[9px] uppercase tracking-widest">{whitelabel.credits.developerLabel}</p>
+            <p className="text-white/50 text-[10px] font-semibold mt-0.5">{whitelabel.credits.developerName}</p>
           </div>
         </div>
       </div>

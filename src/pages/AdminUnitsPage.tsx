@@ -253,7 +253,7 @@ export default function AdminUnitsPage() {
                   <Label htmlFor="name">Nome da Unidade *</Label>
                   <Input
                     id="name"
-                    placeholder="Ex: Hospital Guarás"
+                    placeholder="Ex: Hospital Central"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value.toUpperCase() })
