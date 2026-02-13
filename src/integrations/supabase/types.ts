@@ -408,6 +408,53 @@ export type Database = {
           },
         ]
       }
+      institution_branding: {
+        Row: {
+          abbreviation: string
+          accent_color: string | null
+          created_at: string
+          hospital_unit_id: string
+          id: string
+          logo_url: string | null
+          primary_color: string | null
+          secondary_color: string | null
+          tagline: string | null
+          updated_at: string
+        }
+        Insert: {
+          abbreviation: string
+          accent_color?: string | null
+          created_at?: string
+          hospital_unit_id: string
+          id?: string
+          logo_url?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          tagline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          abbreviation?: string
+          accent_color?: string | null
+          created_at?: string
+          hospital_unit_id?: string
+          id?: string
+          logo_url?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          tagline?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "institution_branding_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: true
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       internment_requests: {
         Row: {
           content: string

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
-import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { useBranding } from "@/contexts/BrandingContext";
 
 interface LoadingScreenProps {
   onComplete?: () => void;
@@ -10,9 +10,22 @@ interface LoadingScreenProps {
 export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(0);
+  
+  let platformName = "HapMap";
+  let tagline = "Tecnologia que valoriza seu tempo. Inteligência que salva vidas.";
+  
+  try {
+    const branding = useBranding();
+    platformName = branding.platformName;
+    if (branding.branding?.tagline) tagline = branding.branding.tagline;
+  } catch {
+    // BrandingProvider may not be available during initial auth flow
+  }
+
+  // Split platform name into abbreviation and "Map"
+  const abbreviation = platformName.replace("Map", "");
 
   useEffect(() => {
-    // Smooth progress animation
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
@@ -38,35 +51,25 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] transition-all duration-400 ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0a0f] transition-all duration-400 ${
         isVisible ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
       }`}
     >
       {/* Animated background orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div 
-          className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl"
-          style={{ animation: 'pulse 4s ease-in-out infinite' }}
-        />
-        <div 
-          className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl"
-          style={{ animation: 'pulse 4s ease-in-out infinite 1s' }}
-        />
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-white/3 rounded-full blur-3xl"
-          style={{ animation: 'pulse 5s ease-in-out infinite 2s' }}
-        />
+        <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-white/[0.02] rounded-full blur-3xl" style={{ animation: 'pulse 4s ease-in-out infinite' }} />
+        <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-white/[0.02] rounded-full blur-3xl" style={{ animation: 'pulse 4s ease-in-out infinite 1s' }} />
       </div>
 
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(8)].map((_, i) => (
+        {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="absolute bg-white/30 rounded-full"
+            className="absolute bg-white/15 rounded-full"
             style={{
-              width: `${4 + Math.random() * 4}px`,
-              height: `${4 + Math.random() * 4}px`,
+              width: `${3 + Math.random() * 3}px`,
+              height: `${3 + Math.random() * 3}px`,
               left: `${10 + Math.random() * 80}%`,
               top: `${10 + Math.random() * 80}%`,
               animation: `float ${5 + Math.random() * 5}s ease-in-out infinite ${Math.random() * 3}s`
@@ -77,137 +80,77 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center gap-10">
-        {/* Logo Container */}
-        <div 
-          className="relative"
-          style={{ 
-            animation: 'fadeSlideUp 0.8s ease-out forwards',
-            opacity: 0
-          }}
-        >
-          <div className="absolute inset-0 bg-white/20 rounded-2xl blur-2xl scale-110" />
-          <div className="relative bg-white/95 backdrop-blur-xl px-6 py-4 rounded-2xl shadow-2xl border border-white/30">
-            <img
-              src={hapvidaLogo}
-              alt="Hapvida Notre Dame"
-              className="h-12 sm:h-14 object-contain"
-            />
-          </div>
-        </div>
-
-        {/* Brand Name - HapMap 2.0 */}
+        {/* Brand Name */}
         <div 
           className="flex flex-col items-center gap-4"
-          style={{ 
-            animation: 'fadeSlideUp 0.8s ease-out 0.2s forwards',
-            opacity: 0
-          }}
+          style={{ animation: 'fadeSlideUp 0.8s ease-out 0.2s forwards', opacity: 0 }}
         >
           <div className="inline-flex items-baseline gap-2">
             <h1 className="text-5xl sm:text-6xl md:text-7xl tracking-tighter inline-flex items-baseline">
               <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-                Hap
+                {abbreviation}
               </span>
-              <span className="font-light text-white/80 -ml-0.5">
+              <span className="font-light text-white/60 -ml-0.5">
                 Map
               </span>
             </h1>
-            <span className="text-[10px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-2 py-0.5 self-start mt-2">
-              2.0
-            </span>
           </div>
           
           {/* Elegant divider */}
           <div className="flex items-center justify-center gap-3">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/40" />
-            <Sparkles className="h-3 w-3 text-white/50" />
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-white/40" />
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/20" />
+            <Sparkles className="h-3 w-3 text-white/30" />
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-white/20" />
           </div>
           
           {/* Slogan */}
-          <p className="text-white/50 text-sm sm:text-base font-light tracking-wide italic text-center px-4">
-            Tecnologia que valoriza seu tempo. Inteligência que salva vidas.
+          <p className="text-white/30 text-sm sm:text-base font-light tracking-wide italic text-center px-4">
+            {tagline}
           </p>
         </div>
 
         {/* Loading Progress */}
         <div 
           className="flex flex-col items-center gap-4 w-64"
-          style={{ 
-            animation: 'fadeSlideUp 0.8s ease-out 0.4s forwards',
-            opacity: 0
-          }}
+          style={{ animation: 'fadeSlideUp 0.8s ease-out 0.4s forwards', opacity: 0 }}
         >
-          {/* Progress bar */}
-          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+          <div className="w-full h-0.5 bg-white/[0.06] rounded-full overflow-hidden">
             <div 
-              className="h-full bg-gradient-to-r from-white/60 via-white to-white/60 rounded-full transition-all duration-100 ease-out"
+              className="h-full bg-gradient-to-r from-white/30 via-white/60 to-white/30 rounded-full transition-all duration-100 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
-          
-          {/* Loading text */}
-          <p className="text-xs text-white/40 font-light tracking-widest uppercase">
+          <p className="text-xs text-white/20 font-light tracking-widest uppercase">
             Carregando
           </p>
         </div>
 
-        {/* Developer Badge - Medneeds */}
+        {/* Powered by Axius */}
         <div 
           className="mt-6"
-          style={{ 
-            animation: 'fadeSlideUp 0.8s ease-out 0.6s forwards',
-            opacity: 0
-          }}
+          style={{ animation: 'fadeSlideUp 0.8s ease-out 0.6s forwards', opacity: 0 }}
         >
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-[10px] text-white/30 uppercase tracking-widest">Desenvolvido por</p>
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-2">
-              <p className="text-sm font-semibold text-white/70 tracking-wide">
-                Medneeds
-              </p>
-            </div>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-[9px] text-white/15 uppercase tracking-widest">Powered by</p>
+            <p className="text-sm font-semibold text-white/30 tracking-wide">Axius</p>
           </div>
         </div>
       </div>
 
-      {/* Custom keyframes */}
       <style>{`
         @keyframes fadeSlideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        
         @keyframes float {
-          0%, 100% {
-            transform: translateY(0) translateX(0);
-          }
-          25% {
-            transform: translateY(-15px) translateX(5px);
-          }
-          50% {
-            transform: translateY(-5px) translateX(-5px);
-          }
-          75% {
-            transform: translateY(-20px) translateX(3px);
-          }
+          0%, 100% { transform: translateY(0) translateX(0); }
+          25% { transform: translateY(-15px) translateX(5px); }
+          50% { transform: translateY(-5px) translateX(-5px); }
+          75% { transform: translateY(-20px) translateX(3px); }
         }
-        
         @keyframes pulse {
-          0%, 100% {
-            opacity: 0.5;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.8;
-            transform: scale(1.05);
-          }
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.05); }
         }
       `}</style>
     </div>

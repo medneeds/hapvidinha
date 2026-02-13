@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { MainLayout } from "@/components/MainLayout";
 import { PrivacyProvider } from "@/contexts/PrivacyContext";
+import { BrandingProvider } from "@/contexts/BrandingContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
@@ -23,6 +24,7 @@ import AltoCustoPage from "./pages/AltoCustoPage";
 import SadtPage from "./pages/SadtPage";
 import MovementsPage from "./pages/MovementsPage";
 import AuthPage from "./pages/AuthPage";
+import NetworkSelectionPage from "./pages/NetworkSelectionPage";
 import IAPage from "./pages/IAPage";
 import InternmentHistoryPage from "./pages/InternmentHistoryPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -48,12 +50,18 @@ const App = () => {
   
   return (
     <QueryClientProvider client={queryClient}>
+      <BrandingProvider>
       <PrivacyProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/select-network" element={
+            <ProtectedRoute>
+              <NetworkSelectionPage />
+            </ProtectedRoute>
+          } />
           <Route
             path="/"
             element={
@@ -355,6 +363,7 @@ const App = () => {
       </Routes>
     </TooltipProvider>
       </PrivacyProvider>
+      </BrandingProvider>
   </QueryClientProvider>
   );
 };
