@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { whitelabel } from "@/config/whitelabel";
 import { motion } from "framer-motion";
 import { Shield, Clock, UserCheck, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -222,7 +223,7 @@ export function PendingApprovalScreen() {
           className="text-center mt-6"
         >
           <p className="text-white/30 text-xs">
-            Desenvolvido por <span className="text-cyan-400/60 font-medium">MedNeeds</span>
+            {whitelabel.credits.developerLabel} <span className="text-cyan-400/60 font-medium">{whitelabel.credits.developerName}</span>
           </p>
           <p className="text-white/20 text-[10px] mt-1">
             {currentTime.toLocaleDateString('pt-BR')} • {currentTime.toLocaleTimeString('pt-BR')}

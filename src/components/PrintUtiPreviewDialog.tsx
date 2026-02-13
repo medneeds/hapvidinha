@@ -2,7 +2,7 @@ import { Patient } from "@/types/patient";
 import { Button } from "@/components/ui/button";
 import { X, Download, ClipboardList, ChevronDown } from "lucide-react";
 import { useRef, useState } from "react";
-import hapvidaFullLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { whitelabel, getPrintTitle } from "@/config/whitelabel";
 import { PrintableSectorSection } from "./PrintableSectorSection";
 import {
   DropdownMenu,
@@ -57,7 +57,7 @@ export function PrintUtiPreviewDialog({
       <!DOCTYPE html>
       <html>
         <head>
-          <title>${utiTitle} - Hospital Guarás</title>
+          <title>${getPrintTitle(utiTitle)}</title>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
             * {
@@ -294,8 +294,8 @@ export function PrintUtiPreviewDialog({
           >
             {/* Watermark - Fixed position for all pages */}
             <img 
-              src={hapvidaFullLogo} 
-              alt="Hapvida NotreDame" 
+              src={whitelabel.logos.networkFull} 
+              alt={whitelabel.institution.networkLogoAlt}
               className="watermark"
               style={{ 
                 position: 'absolute',
@@ -338,7 +338,7 @@ export function PrintUtiPreviewDialog({
                 color: '#000000',
                 letterSpacing: '0.4px'
               }}>
-                {utiTitle} - Hospital Guarás
+                {getPrintTitle(utiTitle)}
               </h1>
             </div>
             
@@ -414,7 +414,7 @@ export function PrintUtiPreviewDialog({
               letterSpacing: '0.2px',
               opacity: 0.85
             }}>
-              Unidade de Terapia Intensiva • Hospital Guarás • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
+              Unidade de Terapia Intensiva • {whitelabel.institution.hospitalName} • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
             </div>
             
             {/* Developer Signature */}
@@ -427,7 +427,7 @@ export function PrintUtiPreviewDialog({
               color: '#9ca3af',
               opacity: 0.4,
             }}>
-              Desenvolvido por Artur Batista
+              {whitelabel.credits.authorSignature}
             </div>
           </div>
         </div>

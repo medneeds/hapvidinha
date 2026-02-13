@@ -111,7 +111,7 @@ export default function PriorizacaoCirurgicaPage() {
                   PRIORIZAÇÃO CIRÚRGICA
                 </h1>
                 <p className="text-muted-foreground text-lg uppercase mt-1">
-                  Hospital Guarás
+                  Priorização Cirúrgica
                 </p>
               </div>
             </div>

@@ -5,9 +5,8 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useRef } from "react";
 
-// Import logos
-import hospitalGuarasLogo from "@/assets/hospital-guaras-logo.png";
-import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
+// Import logos from whitelabel config
+import { whitelabel } from "@/config/whitelabel";
 
 interface PrintableDietDocumentProps {
   patient: Patient;
@@ -332,8 +331,8 @@ export function PrintableDietDocument({
           >
             {/* Header - Only Logos */}
             <div className="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '12px', borderBottom: '2px solid #1e40af' }}>
-              <img src={hospitalGuarasLogo} alt="Hospital Guarás" className="logo-left" style={{ height: '70px', width: 'auto', objectFit: 'contain' }} />
-              <img src={hapvidaLogo} alt="Hapvida" className="logo-right" style={{ height: '55px', width: 'auto', objectFit: 'contain' }} />
+              <img src={whitelabel.logos.hospital} alt={whitelabel.institution.hospitalLogoAlt} className="logo-left" style={{ height: '70px', width: 'auto', objectFit: 'contain' }} />
+              <img src={whitelabel.logos.networkCompact} alt={whitelabel.institution.networkShortName} className="logo-right" style={{ height: '55px', width: 'auto', objectFit: 'contain' }} />
             </div>
 
             {/* Title Section */}
@@ -431,8 +430,8 @@ export function PrintableDietDocument({
 
             {/* Footer */}
             <div style={{ position: 'absolute', bottom: '12mm', left: '0', right: '0', textAlign: 'center', borderTop: '1px solid #e2e8f0', paddingTop: '12px', marginLeft: '15mm', marginRight: '15mm' }}>
-              <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>Hospital Guarás - Rede Hapvida NotreDame Intermédica</p>
-              <p style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>Rua Armando Vieira da Silva, São Luís, MA, 65030-130</p>
+              <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>{whitelabel.institution.hospitalName} - Rede {whitelabel.institution.networkName}</p>
+              <p style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>{whitelabel.print.systemLabel}</p>
             </div>
           </div>
         </div>

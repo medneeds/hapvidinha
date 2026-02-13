@@ -17,7 +17,7 @@ import {
   PanelLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import hapvidaLogo from "@/assets/hapvida-notredame-logo.png";
+import { whitelabel } from "@/config/whitelabel";
 import { useState } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
@@ -163,7 +163,7 @@ export function AppSidebar({
   };
 
   const handlePasswordSubmit = () => {
-    if (password === "NOTREDAME") {
+    if (password === whitelabel.admin.panelPassword) {
       // Unlock the section
       if (selectedSection && !unlockedSections.includes(selectedSection)) {
         setUnlockedSections(prev => [...prev, selectedSection]);
@@ -240,14 +240,14 @@ export function AppSidebar({
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
               <img 
-                src={hapvidaLogo} 
-                alt="Hapvida NotreDame Intermédica" 
+                src={whitelabel.logos.networkCompact} 
+                alt={whitelabel.institution.networkLogoAlt} 
                 className="w-full h-auto max-h-14 object-contain animate-fade-in"
               />
             ) : (
               <img 
-                src={hapvidaLogo} 
-                alt="Hapvida" 
+                src={whitelabel.logos.networkCompact} 
+                alt={whitelabel.institution.networkShortName} 
                 className="w-8 h-8 object-contain"
               />
             )}

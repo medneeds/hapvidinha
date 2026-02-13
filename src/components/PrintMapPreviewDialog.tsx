@@ -2,7 +2,7 @@ import { Patient } from "@/types/patient";
 import { Button } from "@/components/ui/button";
 import { X, Download, ClipboardList } from "lucide-react";
 import { useRef } from "react";
-import hapvidaFullLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { whitelabel, getMainPageTitle } from "@/config/whitelabel";
 import { PrintableSectorSection } from "./PrintableSectorSection";
 
 interface PrintMapPreviewDialogProps {
@@ -41,7 +41,7 @@ export function PrintMapPreviewDialog({
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Mapa de Pacientes - Hospital Guarás</title>
+          <title>${getMainPageTitle()}</title>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
             * {
@@ -214,8 +214,8 @@ export function PrintMapPreviewDialog({
           >
             {/* Watermark */}
             <img 
-              src={hapvidaFullLogo} 
-              alt="Hapvida NotreDame" 
+              src={whitelabel.logos.networkFull} 
+              alt={whitelabel.institution.networkLogoAlt}
               className="watermark"
               style={{ 
                 position: 'absolute',
@@ -258,7 +258,7 @@ export function PrintMapPreviewDialog({
                 color: '#000000',
                 letterSpacing: '0.5px'
               }}>
-                Mapa de Pacientes - Hospital Guarás
+                {getMainPageTitle()}
               </h1>
             </div>
             
@@ -329,7 +329,7 @@ export function PrintMapPreviewDialog({
               letterSpacing: '0.3px',
               opacity: 0.85
             }}>
-              Urgência e Emergência • Hospital Guarás • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
+              Urgência e Emergência • {whitelabel.institution.hospitalName} • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
             </div>
             
             {/* Developer Signature */}
@@ -342,7 +342,7 @@ export function PrintMapPreviewDialog({
               color: '#9ca3af',
               opacity: 0.4,
             }}>
-              Desenvolvido por Artur Batista
+              {whitelabel.credits.authorSignature}
             </div>
           </div>
         </div>

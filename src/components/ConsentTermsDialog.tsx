@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { whitelabel } from "@/config/whitelabel";
 import {
   Dialog,
   DialogContent,
@@ -98,7 +99,7 @@ export function ConsentTermsDialog({ open, onAccept, userId }: ConsentTermsDialo
               </h3>
               <div className="text-sm text-muted-foreground space-y-2 pl-7">
                 <p>
-                  Este sistema de gestão hospitalar ("HapMap") é destinado exclusivamente ao uso por 
+                  Este sistema de gestão hospitalar ("{whitelabel.platform.fullName}") é destinado exclusivamente ao uso por 
                   profissionais de saúde devidamente credenciados e autorizados pela instituição.
                 </p>
                 <p><strong>1.1. Responsabilidades do Usuário:</strong></p>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
-import hapvidaLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { whitelabel } from "@/config/whitelabel";
 
 interface LoadingScreenProps {
   onComplete?: () => void;
@@ -88,8 +88,8 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
           <div className="absolute inset-0 bg-white/20 rounded-2xl blur-2xl scale-110" />
           <div className="relative bg-white/95 backdrop-blur-xl px-6 py-4 rounded-2xl shadow-2xl border border-white/30">
             <img
-              src={hapvidaLogo}
-              alt="Hapvida Notre Dame"
+              src={whitelabel.logos.networkFull}
+              alt={whitelabel.institution.networkLogoAlt}
               className="h-12 sm:h-14 object-contain"
             />
           </div>
@@ -106,14 +106,14 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
           <div className="inline-flex items-baseline gap-2">
             <h1 className="text-5xl sm:text-6xl md:text-7xl tracking-tighter inline-flex items-baseline">
               <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-                Hap
+                {whitelabel.platform.name.slice(0, 3)}
               </span>
               <span className="font-light text-white/80 -ml-0.5">
-                Map
+                {whitelabel.platform.name.slice(3)}
               </span>
             </h1>
             <span className="text-[10px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-2 py-0.5 self-start mt-2">
-              2.0
+              {whitelabel.platform.version}
             </span>
           </div>
           
@@ -126,7 +126,7 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
           
           {/* Slogan */}
           <p className="text-white/50 text-sm sm:text-base font-light tracking-wide italic text-center px-4">
-            Tecnologia que valoriza seu tempo. Inteligência que salva vidas.
+            {whitelabel.platform.slogan}
           </p>
         </div>
 
@@ -148,11 +148,11 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
           
           {/* Loading text */}
           <p className="text-xs text-white/40 font-light tracking-widest uppercase">
-            Carregando
+            {whitelabel.platform.loadingText}
           </p>
         </div>
 
-        {/* Developer Badge - Medneeds */}
+        {/* Developer Badge */}
         <div 
           className="mt-6"
           style={{ 
@@ -161,10 +161,10 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
           }}
         >
           <div className="flex flex-col items-center gap-2">
-            <p className="text-[10px] text-white/30 uppercase tracking-widest">Desenvolvido por</p>
+            <p className="text-[10px] text-white/30 uppercase tracking-widest">{whitelabel.credits.developerLabel}</p>
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-2">
               <p className="text-sm font-semibold text-white/70 tracking-wide">
-                Medneeds
+                {whitelabel.credits.developerName}
               </p>
             </div>
           </div>

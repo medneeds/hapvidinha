@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { ClipboardList } from "lucide-react";
 import { PrintableSectorSection } from "./PrintableSectorSection";
-import hapvidaFullLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { whitelabel, getMainPageTitle, getConfidentialityFooter } from "@/config/whitelabel";
 
 interface PrintLayoutProps {
   redPatients: Patient[];
@@ -73,8 +73,8 @@ export function PrintLayout({
       <div style={containerStyle}>
       {/* Logo as watermark */}
       <img 
-        src={hapvidaFullLogo} 
-        alt="Hapvida NotreDame Intermédica" 
+        src={whitelabel.logos.networkFull} 
+        alt={whitelabel.institution.networkLogoAlt}
         style={{ 
           position: 'absolute',
           top: '5mm',
@@ -117,7 +117,7 @@ export function PrintLayout({
           color: '#000000',
           letterSpacing: '0.5px'
         }}>
-          Mapa de Pacientes - Hospital Guarás
+          {getMainPageTitle()}
         </h1>
       </div>
       
@@ -188,7 +188,7 @@ export function PrintLayout({
         letterSpacing: '0.3px',
         opacity: 0.85
       }}>
-        Urgência e Emergência • Hospital Guarás • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
+        Urgência e Emergência • {whitelabel.institution.hospitalName} • Documento gerado automaticamente • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
       </div>
       
       {/* Developer Signature - Fixed Bottom Right */}
@@ -202,7 +202,7 @@ export function PrintLayout({
         opacity: 0.4,
         zIndex: 1000
       }}>
-        Desenvolvido por Artur Batista
+        {whitelabel.credits.authorSignature}
       </div>
     </div>
     </>

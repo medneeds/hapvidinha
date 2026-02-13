@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Printer, X, Download } from "lucide-react";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
 import { useRef } from "react";
-import hapvidaFullLogo from "@/assets/hapvida-notredame-full-logo.png";
+import { whitelabel, getConfidentialityFooter } from "@/config/whitelabel";
 
 interface PrintPatientPreviewDialogProps {
   patient: Patient;
@@ -241,8 +241,8 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
           >
             {/* Watermark */}
             <img 
-              src={hapvidaFullLogo} 
-              alt="Hapvida NotreDame" 
+              src={whitelabel.logos.networkFull} 
+              alt={whitelabel.institution.networkLogoAlt}
               className="watermark"
               style={{ 
                 position: 'absolute',
@@ -429,9 +429,9 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
               paddingTop: '6px',
               borderTop: `1px solid ${colors.border}`
             }}>
-              <span>Hospital Guarás • Documento Confidencial</span>
+              <span>{getConfidentialityFooter()}</span>
               <span>{new Date().toLocaleDateString('pt-BR')} {new Date().toLocaleTimeString('pt-BR')}</span>
-              <span style={{ fontStyle: 'italic', opacity: 0.6 }}>Dev. por Artur Batista</span>
+              <span style={{ fontStyle: 'italic', opacity: 0.6 }}>{whitelabel.credits.authorSignature}</span>
             </div>
           </div>
         </div>
