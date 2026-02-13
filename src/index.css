@@ -605,6 +605,8 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 30px #f9fafb inset !important;
   caret-color: #111827 !important;
   transition: background-color 5000s ease-in-out 0s;
+  font-size: inherit !important;
+  color: #111827 !important;
 }
 
 /* Ensure select triggers always show dark text */
@@ -612,3 +614,21 @@ input:-webkit-autofill:active {
   color: #111827 !important;
 }
 
+/* Force select placeholder to be visible */
+[data-radix-select-trigger] [data-placeholder] {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Force all input text to be dark on light backgrounds */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  color: #111827 !important;
+  caret-color: #111827 !important;
+}
+
+input::placeholder {
+  color: #9ca3af !important;
+  opacity: 1 !important;
+}
