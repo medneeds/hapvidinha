@@ -439,7 +439,7 @@ export default function AuthPage() {
                           }
                         }}
                         placeholder="DIGITE SEU USUÁRIO"
-                        className="h-7 pl-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-medium placeholder:text-[9px] placeholder:uppercase placeholder:font-normal placeholder:text-gray-400"
+                        className="h-7 pl-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-medium text-gray-900 placeholder:text-[9px] placeholder:uppercase placeholder:font-normal placeholder:text-gray-500"
                         disabled={loading}
                         maxLength={50}
                       />
@@ -462,7 +462,7 @@ export default function AuthPage() {
                           setLoginData({ ...loginData, password: newPassword });
                         }}
                         placeholder="EX: ABC123"
-                        className="h-7 pl-7 pr-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-mono tracking-wider placeholder:text-[9px] placeholder:uppercase placeholder:font-normal placeholder:font-sans placeholder:tracking-normal placeholder:text-gray-400"
+                        className="h-7 pl-7 pr-7 bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] uppercase font-mono tracking-wider text-gray-900 placeholder:text-[9px] placeholder:uppercase placeholder:font-normal placeholder:font-sans placeholder:tracking-normal placeholder:text-gray-500"
                         disabled={loading}
                         maxLength={6}
                       />
@@ -697,7 +697,7 @@ export default function AuthPage() {
                     id="login-username-mobile"
                     type="text"
                     placeholder="DIGITE SEU USUÁRIO"
-                    className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 placeholder:text-gray-400"
+                    className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 placeholder:text-gray-500"
                     value={loginData.username}
                     onChange={(e) => {
                       // Forçar uppercase e só permitir A-Z, 0-9 e ponto
@@ -727,7 +727,7 @@ export default function AuthPage() {
                       id="login-password-mobile"
                       type={showPassword ? "text" : "password"}
                       placeholder="EX: ABC123"
-                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg pr-9 text-xs font-mono uppercase tracking-widest text-gray-900 placeholder:text-gray-400"
+                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg pr-9 text-xs font-mono uppercase tracking-widest text-gray-900 placeholder:text-gray-500"
                       value={loginData.password}
                       onChange={(e) => {
                         // Forçar uppercase e só permitir A-Z e 0-9, max 6 caracteres
