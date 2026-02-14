@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { SectorSection } from "@/components/SectorSection";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
+import { EmptySectorState } from "@/components/EmptySectorState";
 import { UtiSectorSection } from "@/components/UtiSectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
@@ -1397,9 +1398,11 @@ const Index = () => {
                       <CollapsibleContent>
                         <div className="space-y-2 mt-3">
                           {outsidePatients.length === 0 ? (
-                            <p className="text-sm text-muted-foreground text-center py-4">
-                              Nenhum paciente fora das alas
-                            </p>
+                            <EmptySectorState
+                              sectorName="Fora das Alas"
+                              sectorIcon="📍"
+                              onAddBed={() => handleAddExtraBed("outside")}
+                            />
                           ) : (
                             <DndContext
                               sensors={sensors}
