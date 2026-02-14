@@ -2,6 +2,7 @@ import { Patient, SectorType } from "@/types/patient";
 import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
 import { PatientCard } from "./PatientCard";
 import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
+import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
 import { EmptySectorState } from "@/components/EmptySectorState";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -225,7 +226,7 @@ export function SectorSection({
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
               <div className="flex items-center gap-2 print:gap-1">
-                <span className="text-lg print:text-sm">{displayIcon}</span>
+                <SectorBedIcon sectorIcon={displayIcon} size="md" />
                 <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">{displayTitle}</h2>
               </div>
             </button>
