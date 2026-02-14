@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { SectorSection } from "@/components/SectorSection";
+import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { UtiSectorSection } from "@/components/UtiSectorSection";
 import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
@@ -1242,7 +1243,7 @@ const Index = () => {
                               <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                                 <ChevronDown className={`h-5 w-5 transition-transform ${isUtiOutsideSectionOpen ? '' : '-rotate-90'}`} />
                                 <div className="flex items-center gap-2">
-                                  <span className="text-lg">📋</span>
+                                  <SectorBedIcon sectorIcon="📋" size="md" />
                                   <h2 className="text-lg font-bold text-foreground uppercase">Solicitações de Leito UTI</h2>
                                 </div>
                               </button>
@@ -1363,7 +1364,7 @@ const Index = () => {
                             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                               <ChevronDown className={`h-5 w-5 transition-transform ${isOutsideSectionOpen ? '' : '-rotate-90'}`} />
                               <div className="flex items-center gap-2">
-                                <span className="text-lg">📍</span>
+                                <SectorBedIcon sectorIcon="📍" size="md" />
                                 <h2 className="text-lg font-bold text-foreground uppercase">Fora das Alas</h2>
                               </div>
                             </button>
