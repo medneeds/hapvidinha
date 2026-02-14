@@ -8,6 +8,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { SectorBedIcon } from "@/components/SectorBedIcon";
 
 type ColorVariant = 'blue' | 'yellow';
 
@@ -244,7 +245,7 @@ export function UtiSectorSection({
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${chevronClass} ${isOpen ? '' : '-rotate-90'}`} />
               <div className="flex items-center gap-2 print:gap-1">
-                <span className="text-lg print:text-sm">{displayIcon}</span>
+                <SectorBedIcon sectorIcon={typeof displayIcon === 'string' ? displayIcon : info.icon} size="md" />
                 <h2 className={`text-lg font-bold print:text-[10px] uppercase ${titleClass}`}>{displayTitle}</h2>
               </div>
             </button>
