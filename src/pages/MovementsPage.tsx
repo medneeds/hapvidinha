@@ -10,6 +10,7 @@ import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw, CalendarIcon, Filter, Loader2 } from "lucide-react";
 import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
+import { ReallocateFromHistoryDialog } from "@/components/ReallocateFromHistoryDialog";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -61,6 +62,8 @@ export default function MovementsPage() {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [isSnapshotDialogOpen, setIsSnapshotDialogOpen] = useState(false);
+  const [reallocateMovement, setReallocateMovement] = useState<PatientMovement | null>(null);
+  const [isReallocateDialogOpen, setIsReallocateDialogOpen] = useState(false);
   
   // Temporary filter states (before applying)
   const [tempStartDate, setTempStartDate] = useState<Date | undefined>(undefined);
@@ -252,7 +255,7 @@ export default function MovementsPage() {
 
   const counts = getMovementCounts();
 
-  const handleReallocatePatient = async (movement: PatientMovement) => {
+  const handleOpenReallocateDialog = (movement: PatientMovement) => {
     if (!movement.patient_snapshot) {
       toast({
         title: "Erro ao realocar",
@@ -261,51 +264,8 @@ export default function MovementsPage() {
       });
       return;
     }
-
-    try {
-      if (!currentHospital || !currentState) {
-        throw new Error('Hospital unit and state must be selected');
-      }
-
-      const snapshot = movement.patient_snapshot;
-      
-      // Recreate patient in patients table with original data
-      const { error: insertError } = await supabase
-        .from('patients')
-        .insert({
-          name: snapshot.name,
-          age: snapshot.age,
-          bed_number: snapshot.bedNumber,
-          sector: snapshot.sector,
-          diagnoses: snapshot.diagnoses?.join('\n') || null,
-          medical_history: snapshot.medicalHistory?.join('\n') || null,
-          relevant_exams: snapshot.relevantExams?.join('\n') || null,
-          pendencies: snapshot.pendencies?.join('\n') || null,
-          highlighted_pendencies: snapshot.highlightedPendencies || [],
-          schedule: snapshot.schedule?.join('\n') || null,
-          admission_history: snapshot.admissionHistory || null,
-          admission_date: snapshot.admissionDate || new Date().toISOString(),
-          department: currentDepartment,
-          state_id: currentState.id,
-          hospital_unit_id: currentHospital.id,
-        });
-
-      if (insertError) throw insertError;
-
-      toast({
-        title: "Paciente realocado com sucesso",
-        description: `${snapshot.name} foi realocado de volta ao setor ${snapshot.sector}.`,
-      });
-
-      fetchMovements();
-    } catch (error) {
-      console.error('Error reallocating patient:', error);
-      toast({
-        title: "Erro ao realocar paciente",
-        description: "Não foi possível realocar o paciente. Tente novamente.",
-        variant: "destructive",
-      });
-    }
+    setReallocateMovement(movement);
+    setIsReallocateDialogOpen(true);
   };
 
   return (
@@ -574,11 +534,11 @@ export default function MovementsPage() {
                                 Ver Dados
                               </Button>
                             )}
-                            {movement.movement_type === "TRANSFERÊNCIA" && movement.patient_snapshot && (
+                            {movement.patient_snapshot && (
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => handleReallocatePatient(movement)}
+                                onClick={() => handleOpenReallocateDialog(movement)}
                                 className="h-7 gap-1.5"
                               >
                                 <RotateCcw className="h-3.5 w-3.5" />
@@ -632,6 +592,16 @@ export default function MovementsPage() {
           setIsSnapshotDialogOpen(false);
           setSelectedPatient(null);
         }}
+      />
+
+      <ReallocateFromHistoryDialog
+        movement={reallocateMovement}
+        isOpen={isReallocateDialogOpen}
+        onClose={() => {
+          setIsReallocateDialogOpen(false);
+          setReallocateMovement(null);
+        }}
+        onSuccess={() => fetchMovements()}
       />
     </>
   );
