@@ -235,27 +235,46 @@ export function AppSidebar({
 
   const sidebarContent = (
     <>
-       <SidebarHeader className="border-b border-border/30 px-3 py-4 bg-background">
-        <div className="flex items-center justify-between">
+       <SidebarHeader className="border-b border-border/20 px-3 py-5 bg-background relative overflow-hidden">
+        {/* Subtle gradient accent line at top */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+        
+        <div className="flex items-center justify-between relative">
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
-              <div className="flex items-baseline gap-1 animate-fade-in">
-                <h1 className="text-2xl tracking-tighter inline-flex items-baseline">
-                  <span className="font-black text-primary drop-shadow-sm">
-                    {whitelabel.platform.name.slice(0, 3)}
+              <div className="flex flex-col items-center gap-1.5 animate-fade-in w-full">
+                {/* Main logo text */}
+                <div className="flex items-baseline gap-1.5">
+                  <h1 className="text-3xl tracking-tighter inline-flex items-baseline">
+                    <span className="font-black bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent drop-shadow-sm">
+                      {whitelabel.platform.name.slice(0, 3)}
+                    </span>
+                    <span className="font-extralight bg-gradient-to-b from-muted-foreground to-muted-foreground/50 bg-clip-text text-transparent -ml-0.5">
+                      {whitelabel.platform.name.slice(3)}
+                    </span>
+                  </h1>
+                  <span className="text-[7px] font-semibold bg-gradient-to-r from-primary/80 to-primary/50 bg-clip-text text-transparent tracking-widest border border-primary/20 rounded-full px-2 py-0.5 self-start mt-1.5 backdrop-blur-sm">
+                    {whitelabel.platform.version}
                   </span>
-                  <span className="font-light text-muted-foreground -ml-0.5">
-                    {whitelabel.platform.name.slice(3)}
-                  </span>
-                </h1>
-                <span className="text-[7px] font-medium text-muted-foreground/60 tracking-wider border border-border rounded-full px-1.5 py-0.5 self-start mt-1">
-                  {whitelabel.platform.version}
-                </span>
+                </div>
+                {/* Decorative divider */}
+                <div className="flex items-center gap-2 w-full px-2">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                  <div className="h-1 w-1 rounded-full bg-primary/30" />
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                </div>
+                {/* Slogan micro-text */}
+                <p className="text-[8px] text-muted-foreground/50 tracking-wider font-light italic text-center leading-tight px-1">
+                  {whitelabel.platform.slogan.split('.')[0]}
+                </p>
               </div>
             ) : (
-              <span className="text-lg font-black text-primary tracking-tighter">
-                {whitelabel.platform.name.slice(0, 2)}
-              </span>
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-xl font-black bg-gradient-to-br from-primary to-primary/60 bg-clip-text text-transparent tracking-tighter leading-none">
+                  {whitelabel.platform.name.slice(0, 2)}
+                </span>
+                <div className="h-0.5 w-3 rounded-full bg-gradient-to-r from-primary/40 to-primary/10" />
+              </div>
             )}
           </div>
           {!isCollapsed && (
@@ -266,10 +285,10 @@ export function AppSidebar({
                 e.stopPropagation();
                 setOpen(false);
               }}
-              className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-foreground"
+              className="h-7 w-7 flex-shrink-0 text-muted-foreground/60 hover:text-foreground absolute top-0 right-0"
               title="Retrair menu"
             >
-              <PanelLeftClose className="h-4 w-4" />
+              <PanelLeftClose className="h-3.5 w-3.5" />
             </Button>
           )}
         </div>
