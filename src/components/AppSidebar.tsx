@@ -239,17 +239,23 @@ export function AppSidebar({
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
-              <img 
-                src={whitelabel.logos.networkFull} 
-                alt={whitelabel.institution.networkLogoAlt} 
-                className="w-full h-auto max-h-20 object-contain animate-fade-in"
-              />
+              <div className="flex items-baseline gap-1 animate-fade-in">
+                <h1 className="text-2xl tracking-tighter inline-flex items-baseline">
+                  <span className="font-black text-primary drop-shadow-sm">
+                    {whitelabel.platform.name.slice(0, 3)}
+                  </span>
+                  <span className="font-light text-muted-foreground -ml-0.5">
+                    {whitelabel.platform.name.slice(3)}
+                  </span>
+                </h1>
+                <span className="text-[7px] font-medium text-muted-foreground/60 tracking-wider border border-border rounded-full px-1.5 py-0.5 self-start mt-1">
+                  {whitelabel.platform.version}
+                </span>
+              </div>
             ) : (
-              <img 
-                src={whitelabel.logos.networkFull} 
-                alt={whitelabel.institution.networkShortName} 
-                className="w-10 h-10 object-contain"
-              />
+              <span className="text-lg font-black text-primary tracking-tighter">
+                {whitelabel.platform.name.slice(0, 2)}
+              </span>
             )}
           </div>
           {!isCollapsed && (
