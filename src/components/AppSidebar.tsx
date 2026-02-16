@@ -240,14 +240,14 @@ export function AppSidebar({
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
               <img 
-                src={whitelabel.logos.networkCompact} 
-                alt={whitelabel.institution.networkLogoAlt} 
+                src={whitelabel.logos.platform} 
+                alt={whitelabel.platform.fullName} 
                 className="w-full h-auto max-h-14 object-contain animate-fade-in"
               />
             ) : (
               <img 
-                src={whitelabel.logos.networkCompact} 
-                alt={whitelabel.institution.networkShortName} 
+                src={whitelabel.logos.platform} 
+                alt={whitelabel.platform.name} 
                 className="w-8 h-8 object-contain"
               />
             )}

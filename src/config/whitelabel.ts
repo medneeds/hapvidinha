@@ -13,6 +13,7 @@
 import networkFullLogo from "@/assets/hapvida-notredame-full-logo.png";
 import networkCompactLogo from "@/assets/hapvida-notredame-logo.png";
 import hospitalLogo from "@/assets/hospital-guaras-logo.png";
+import hapmapLogo from "@/assets/hapmap-logo.png";
 
 // ─── CONFIGURAÇÃO PRINCIPAL ──────────────────────────────────────────────────
 
@@ -53,6 +54,8 @@ export const whitelabel = {
     networkCompact: networkCompactLogo,
     /** Logo do hospital (usado em cabeçalhos de documentos) */
     hospital: hospitalLogo,
+    /** Logo da plataforma HapMap (usado na sidebar) */
+    platform: hapmapLogo,
   },
 
   // ── Cores do Tema (gradiente principal) ──
