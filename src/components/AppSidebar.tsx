@@ -235,20 +235,20 @@ export function AppSidebar({
 
   const sidebarContent = (
     <>
-      <SidebarHeader className="border-b border-border/30 px-3 py-3 bg-white">
+       <SidebarHeader className="border-b border-border/30 px-3 py-4 bg-background">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
               <img 
-                src={whitelabel.logos.platform} 
-                alt={whitelabel.platform.fullName} 
-                className="w-full h-auto max-h-14 object-contain animate-fade-in"
+                src={whitelabel.logos.networkFull} 
+                alt={whitelabel.institution.networkLogoAlt} 
+                className="w-full h-auto max-h-20 object-contain animate-fade-in"
               />
             ) : (
               <img 
-                src={whitelabel.logos.platform} 
-                alt={whitelabel.platform.name} 
-                className="w-8 h-8 object-contain"
+                src={whitelabel.logos.networkFull} 
+                alt={whitelabel.institution.networkShortName} 
+                className="w-10 h-10 object-contain"
               />
             )}
           </div>
