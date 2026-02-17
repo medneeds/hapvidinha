@@ -161,7 +161,7 @@ export function EditPatientDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-4xl w-[95vw] max-h-[95vh] overflow-hidden flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -210,9 +210,9 @@ export function EditPatientDialog({
                 value={admissionHistoryLocal}
                 onChange={(e) => setAdmissionHistoryLocal(e.target.value)}
                 onBlur={(e) => setAdmissionHistoryLocal(e.target.value.toUpperCase())}
-                rows={8}
+                rows={14}
                 placeholder="HISTÓRIA CLÍNICA DETALHADA, QUEIXA PRINCIPAL, HDA, EXAME FÍSICO ADMISSIONAL..."
-                className="text-sm resize-y uppercase min-h-[180px]"
+                className="text-sm resize-y uppercase min-h-[320px]"
               />
               <p className="text-[10px] text-muted-foreground">
                 Este campo é ideal para textos longos. Os demais campos clínicos (Diagnósticos, Antecedentes, Pendências) são editáveis diretamente no card do paciente.
