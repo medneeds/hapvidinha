@@ -161,22 +161,23 @@ function CategorySubSection({
   if (patients.length === 0) return null;
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mb-1">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mb-0">
       <CollapsibleTrigger asChild>
         <button className={cn(
-          "flex items-center gap-2 w-full px-3 py-1.5 rounded-lg border transition-all text-left",
+          "flex items-center gap-2 w-full px-3 py-1 rounded-t-md border-b transition-all text-left",
           sectorColor,
-          "hover:shadow-sm"
+          "hover:shadow-sm",
+          isOpen && "rounded-b-none"
         )}>
-          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", !isOpen && "-rotate-90")} />
-          <span className="text-[11px] leading-none">{catLabel.emoji}</span>
-          <span className="text-xs font-semibold uppercase">{catLabel.label}</span>
-          <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-bold ml-auto">
+          <ChevronDown className={cn("h-3 w-3 transition-transform", !isOpen && "-rotate-90")} />
+          <span className="text-[10px] leading-none">{catLabel.emoji}</span>
+          <span className="text-[11px] font-medium">{catLabel.label}</span>
+          <Badge variant="secondary" className="h-4 px-1.5 text-[9px] font-bold ml-auto">
             {patients.length}
           </Badge>
         </button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="mt-1 space-y-1.5">
+      <CollapsibleContent className="space-y-1.5 pt-1">
         {renderPatients(patients)}
       </CollapsibleContent>
     </Collapsible>
