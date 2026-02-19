@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils, MessageSquare, XCircle } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils, MessageSquare, XCircle, Stethoscope, Scissors, Brain, LayoutList } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -1450,14 +1450,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       : patient.sector === 'yellow'
                       ? 'bg-warning/10 border-warning/30 text-warning'
                       : 'bg-stable/10 border-stable/30 text-stable';
-                    const emojiMap: Record<string, string> = { clinica_medica: '🩺', cirurgico: '🔪', psiquiatrico: '🧠', custom: '📋' };
+                    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = { clinica_medica: Stethoscope, cirurgico: Scissors, psiquiatrico: Brain, custom: LayoutList };
                     const labelMap: Record<string, string> = { clinica_medica: 'CLÍ', cirurgico: 'CIR', psiquiatrico: 'PSI', custom: 'OUT' };
+                    const Icon = iconMap[cat] || LayoutList;
                     return (
                       <span className={cn(
                         "inline-flex items-center gap-0.5 text-[7px] font-bold uppercase px-1 py-0 rounded border leading-tight mt-0.5 text-center whitespace-nowrap print:hidden",
                         sectorColor
                       )}>
-                        <span className="text-[8px] leading-none">{emojiMap[cat] || '📋'}</span>
+                        <Icon className="h-2.5 w-2.5" />
                         {labelMap[cat] || 'OUT'}
                       </span>
                     );
