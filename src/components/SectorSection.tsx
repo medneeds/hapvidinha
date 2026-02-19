@@ -8,8 +8,18 @@ import { Badge } from "@/components/ui/badge";
 import { EmptySectorState } from "@/components/EmptySectorState";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   DndContext,
   closestCenter,
@@ -209,6 +219,7 @@ export function SectorSection({
   const displayIcon = customIcon || info.icon;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+  const [categoryPrompt, setCategoryPrompt] = useState<{ patient: Patient; targetCategory: PatientCategory } | null>(null);
   
   // Check if any patients have categories set
   const hasCategories = useMemo(() => 
@@ -287,6 +298,15 @@ export function SectorSection({
       const newIndex = displayPatients.findIndex((p) => p.id === over.id);
       const reorderedPatients = arrayMove(displayPatients, oldIndex, newIndex);
       onReorderPatients(reorderedPatients);
+
+      // If sub-sections are active, check if an uncategorized patient was dropped onto a categorized one
+      if (showSubSections) {
+        const draggedPatient = patients.find(p => p.id === active.id);
+        const targetPatient = patients.find(p => p.id === over.id);
+        if (draggedPatient && !draggedPatient.patientCategory && targetPatient?.patientCategory) {
+          setCategoryPrompt({ patient: draggedPatient, targetCategory: targetPatient.patientCategory });
+        }
+      }
     }
   };
 
@@ -465,6 +485,30 @@ export function SectorSection({
           </DndContext>
         )}
       </CollapsibleContent>
+
+      {/* Category assignment prompt on drag & drop */}
+      <AlertDialog open={!!categoryPrompt} onOpenChange={(open) => !open && setCategoryPrompt(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Categorizar paciente</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja categorizar <strong>{categoryPrompt?.patient?.name || 'este paciente'}</strong> como{' '}
+              <strong>{categoryPrompt?.targetCategory ? (CATEGORY_LABELS[categoryPrompt.targetCategory]?.emoji + ' ' + CATEGORY_LABELS[categoryPrompt.targetCategory]?.label) : ''}</strong>?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              if (categoryPrompt) {
+                onUpdatePatient({ ...categoryPrompt.patient, patientCategory: categoryPrompt.targetCategory });
+                setCategoryPrompt(null);
+              }
+            }}>
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Collapsible>
   );
 }
