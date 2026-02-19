@@ -1455,8 +1455,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     const CatIcon = iconMap[cat] || LayoutList;
 
                     const respType = localMedicalResponsibility?.type;
-                    const respAbbr: Record<string, string> = { porta: 'P', lider: 'L', conjunto: 'C', obstetra: 'O', cirurgiao_geral: 'CG', traumatologista: 'T' };
-                    const officeNum = localMedicalResponsibility?.officeNumber;
+                    const respNames: Record<string, string> = { porta: 'PORTA', lider: 'LÍDER', conjunto: 'CONJUNTO', obstetra: 'OBSTETRA', cirurgiao_geral: 'CIRURGIA', traumatologista: 'TRAUMATO' };
+                    
+                    // Build responsibility label
+                    const getRespLabel = () => {
+                      if (!respType) return null;
+                      if (respType === 'conjunto' && localMedicalResponsibility?.conjuntoWith?.length) {
+                        const specNames: Record<string, string> = { porta: 'PORTA', lider: 'LÍDER', obstetra: 'OBSTETRA', cirurgiao_geral: 'CIRURGIA', traumatologista: 'TRAUMATO' };
+                        return localMedicalResponsibility.conjuntoWith.map(s => specNames[s] || s.toUpperCase()).join(' + ');
+                      }
+                      return respNames[respType] || '';
+                    };
+                    const respLabel = getRespLabel();
 
                     return (
                       <button
@@ -1465,14 +1475,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           "inline-flex items-center gap-0.5 text-[7px] font-bold uppercase px-1 py-0.5 rounded border leading-tight mt-0.5 whitespace-nowrap print:hidden cursor-pointer transition-all hover:opacity-80",
                           sectorColor
                         )}
-                        title={respType ? `${labelMap[cat]} • ${respAbbr[respType] || ''}${officeNum ? ` C${officeNum}` : ''}` : labelMap[cat]}
+                        title={respLabel ? `${labelMap[cat]} • ${respLabel}` : labelMap[cat]}
                       >
                         <CatIcon className="h-2.5 w-2.5" />
                         <span>{labelMap[cat] || 'OUT'}</span>
-                        {respType && (
+                        {respLabel && (
                           <>
                             <span className="opacity-40">·</span>
-                            <span className="font-semibold">{respAbbr[respType]}{officeNum ? officeNum : ''}</span>
+                            <span className="font-semibold">{respLabel}</span>
                           </>
                         )}
                         {!respType && (
