@@ -81,11 +81,10 @@ const sectorInfo = {
 };
 
 const CATEGORY_LABELS: Record<string, { label: string; emoji: string }> = {
-  clinico: { label: 'Clínicos', emoji: '🩺' },
+  clinica_medica: { label: 'Clínica Médica', emoji: '🩺' },
   cirurgico: { label: 'Cirurgia', emoji: '🔪' },
-  obstetrico: { label: 'Obstétricos', emoji: '🤰' },
-  trauma: { label: 'Trauma', emoji: '🦴' },
-  uncategorized: { label: 'Sem Categoria', emoji: '📋' },
+  psiquiatrico: { label: 'Psiquiátrica', emoji: '🧠' },
+  custom: { label: 'Outros', emoji: '📋' },
 };
 
 const getSectorColorClass = (sector: SectorType) => {
@@ -149,7 +148,7 @@ function SortablePatientCard(props: SortablePatientCardProps) {
   );
 }
 
-type CategoryFilter = 'all' | PatientCategory | 'uncategorized';
+type CategoryFilter = 'all' | PatientCategory;
 
 function CategorySubSection({
   categoryKey,
@@ -163,10 +162,8 @@ function CategorySubSection({
   sector: SectorType;
 }) {
   const [isOpen, setIsOpen] = useState(true);
-  const catLabel = CATEGORY_LABELS[categoryKey] || CATEGORY_LABELS.uncategorized;
-  const sectorColor = categoryKey === 'uncategorized' 
-    ? 'bg-muted/50 border-border text-muted-foreground' 
-    : getSectorColorClass(sector);
+  const catLabel = CATEGORY_LABELS[categoryKey] || CATEGORY_LABELS.custom;
+  const sectorColor = getSectorColorClass(sector);
 
   if (patients.length === 0) return null;
 
@@ -221,27 +218,23 @@ export function SectorSection({
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [categoryPrompt, setCategoryPrompt] = useState<{ patient: Patient; targetCategory: PatientCategory } | null>(null);
   
-  // Check if any patients have categories set
-  const hasCategories = useMemo(() => 
-    patients.some(p => p.patientCategory), 
-    [patients]
-  );
+  // Always show sub-sections when there are patients (default category is clinica_medica)
+  const hasCategories = patients.length > 0;
   
-  // Group patients by category
+  // Group patients by category (default to clinica_medica)
   const categorizedPatients = useMemo(() => {
     const groups: Record<string, Patient[]> = {
-      clinico: [],
+      clinica_medica: [],
       cirurgico: [],
-      obstetrico: [],
-      trauma: [],
-      uncategorized: [],
+      psiquiatrico: [],
+      custom: [],
     };
     patients.forEach(p => {
-      const cat = p.patientCategory || 'uncategorized';
+      const cat = p.patientCategory || 'clinica_medica';
       if (groups[cat]) {
         groups[cat].push(p);
       } else {
-        groups.uncategorized.push(p);
+        groups.custom.push(p);
       }
     });
     return groups;
@@ -250,8 +243,6 @@ export function SectorSection({
   // Filtered patients based on category filter
   const filteredPatients = useMemo(() => {
     if (categoryFilter === 'all') return patients;
-    if (categoryFilter === 'uncategorized') return categorizedPatients.uncategorized;
-    if (categoryFilter === null) return categorizedPatients.uncategorized;
     return categorizedPatients[categoryFilter] || [];
   }, [patients, categoryFilter, categorizedPatients]);
   
@@ -420,14 +411,12 @@ export function SectorSection({
             {Object.entries(categoryCounts).map(([key, count]) => {
               const catLabel = CATEGORY_LABELS[key];
               if (!catLabel) return null;
-              const isActive = categoryFilter === (key === 'uncategorized' ? 'uncategorized' : key);
-              const sectorColor = key === 'uncategorized' 
-                ? 'bg-muted/50 border-border text-muted-foreground' 
-                : getSectorColorClass(sector);
+              const isActive = categoryFilter === key;
+              const sectorColor = getSectorColorClass(sector);
               return (
                 <button
                   key={key}
-                  onClick={() => setCategoryFilter(key === 'uncategorized' ? 'uncategorized' : key as PatientCategory)}
+                  onClick={() => setCategoryFilter(key as PatientCategory)}
                   className={cn(
                     "px-2 py-0.5 rounded-full text-[10px] font-semibold border transition-all whitespace-nowrap",
                     isActive
@@ -463,7 +452,7 @@ export function SectorSection({
               {showSubSections ? (
                 // Render categorized sub-sections
                 <>
-                  {['clinico', 'cirurgico', 'obstetrico', 'trauma', 'uncategorized'].map(catKey => {
+                  {['clinica_medica', 'cirurgico', 'psiquiatrico', 'custom'].map(catKey => {
                     const catPatients = categorizedPatients[catKey] || [];
                     if (catPatients.length === 0) return null;
                     return (

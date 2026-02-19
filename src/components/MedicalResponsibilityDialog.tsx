@@ -63,8 +63,8 @@ export const MedicalResponsibilityDialog = ({
 
   const getSuggestedCategory = (): PatientCategory => {
     const allInvolved = [type, ...conjuntoWith];
-    if (allInvolved.includes('obstetra')) return 'obstetrico';
-    if (allInvolved.includes('traumatologista')) return 'trauma';
+    if (allInvolved.includes('obstetra')) return 'clinica_medica';
+    if (allInvolved.includes('traumatologista')) return 'cirurgico';
     if (allInvolved.includes('cirurgiao_geral')) return 'cirurgico';
     return null;
   };

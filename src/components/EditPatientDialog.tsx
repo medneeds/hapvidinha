@@ -228,11 +228,10 @@ export function EditPatientDialog({
                 </Label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {([
-                    { value: null, label: 'Não definido', emoji: '—' },
-                    { value: 'clinico' as PatientCategory, label: 'Clínico', emoji: '🩺' },
-                    { value: 'cirurgico' as PatientCategory, label: 'Cirúrgico', emoji: '🔪' },
-                    { value: 'obstetrico' as PatientCategory, label: 'Obstétrico', emoji: '🤰' },
-                    { value: 'trauma' as PatientCategory, label: 'Trauma', emoji: '🦴' },
+                    { value: 'clinica_medica' as PatientCategory, label: 'Clínica Médica', emoji: '🩺' },
+                    { value: 'cirurgico' as PatientCategory, label: 'Cirurgia', emoji: '🔪' },
+                    { value: 'psiquiatrico' as PatientCategory, label: 'Psiquiátrica', emoji: '🧠' },
+                    { value: 'custom' as PatientCategory, label: 'Outros', emoji: '📋' },
                   ] as const).map((cat) => (
                     <button
                       key={cat.label}
@@ -240,7 +239,7 @@ export function EditPatientDialog({
                       onClick={() => setFormData({ ...formData, patientCategory: cat.value as PatientCategory })}
                       className={cn(
                         "flex items-center gap-2 p-2.5 rounded-lg border-2 transition-all text-left",
-                        formData.patientCategory === cat.value
+                        formData.patientCategory === cat.value || (!formData.patientCategory && cat.value === 'clinica_medica')
                           ? "border-primary bg-primary/10 shadow-sm"
                           : "border-border hover:border-primary/30"
                       )}
@@ -248,7 +247,7 @@ export function EditPatientDialog({
                       <span className="text-base">{cat.emoji}</span>
                       <span className={cn(
                         "text-xs font-medium",
-                        formData.patientCategory === cat.value && "font-semibold text-primary"
+                        (formData.patientCategory === cat.value || (!formData.patientCategory && cat.value === 'clinica_medica')) && "font-semibold text-primary"
                       )}>{cat.label}</span>
                     </button>
                   ))}
