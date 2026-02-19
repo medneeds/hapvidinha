@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MedicalResponsibility, MedicalResponsibilityType, PatientCategory } from "@/types/patient";
-import { X, Stethoscope, UserCog, UsersRound, Check, Baby, Bone, Scissors, AlertCircle } from "lucide-react";
+import { X, Stethoscope, UserCog, UsersRound, Check, Baby, Bone, Scissors, AlertCircle, Brain, LayoutList } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MedicalResponsibilityDialogProps {
@@ -101,11 +101,18 @@ export const MedicalResponsibilityDialog = ({
 
   const suggestedCategory = getSuggestedCategory();
 
-  const categoryLabels: Record<string, { label: string; emoji: string }> = {
-    clinico: { label: 'Clínico', emoji: '🩺' },
-    cirurgico: { label: 'Cirúrgico', emoji: '🔪' },
-    obstetrico: { label: 'Obstétrico', emoji: '🤰' },
-    trauma: { label: 'Trauma', emoji: '🦴' },
+  const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+    clinico: Stethoscope,
+    cirurgico: Scissors,
+    obstetrico: Baby,
+    trauma: Bone,
+  };
+
+  const categoryLabels: Record<string, { label: string }> = {
+    clinico: { label: 'Clínico' },
+    cirurgico: { label: 'Cirúrgico' },
+    obstetrico: { label: 'Obstétrico' },
+    trauma: { label: 'Trauma' },
   };
 
   return (
@@ -217,7 +224,7 @@ export const MedicalResponsibilityDialog = ({
                 <div className="flex items-center gap-2 p-2 rounded-md bg-accent/50 border border-border/50">
                   <AlertCircle className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
                   <span className="text-[11px] text-muted-foreground">
-                    Sugestão de categoria: <strong>{categoryLabels[suggestedCategory].emoji} {categoryLabels[suggestedCategory].label}</strong>
+                    Sugestão de categoria: <strong>{categoryLabels[suggestedCategory].label}</strong>
                   </span>
                 </div>
               )}

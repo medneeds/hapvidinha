@@ -1,7 +1,7 @@
 import { Patient, SectorType, PatientCategory } from "@/types/patient";
 import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
 import { PatientCard } from "./PatientCard";
-import { Activity, Printer, Plus, ChevronDown, GripVertical, Filter } from "lucide-react";
+import { Activity, Printer, Plus, ChevronDown, GripVertical, Filter, Stethoscope, Scissors, Brain, LayoutList } from "lucide-react";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -81,11 +81,18 @@ const sectorInfo = {
   }
 };
 
-const CATEGORY_LABELS: Record<string, { label: string; emoji: string }> = {
-  clinica_medica: { label: 'Clínica Médica', emoji: '🩺' },
-  cirurgico: { label: 'Cirurgia', emoji: '🔪' },
-  psiquiatrico: { label: 'Psiquiátrica', emoji: '🧠' },
-  custom: { label: 'Outros', emoji: '📋' },
+const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  clinica_medica: Stethoscope,
+  cirurgico: Scissors,
+  psiquiatrico: Brain,
+  custom: LayoutList,
+};
+
+const CATEGORY_LABELS: Record<string, { label: string }> = {
+  clinica_medica: { label: 'Clínica Médica' },
+  cirurgico: { label: 'Cirurgia' },
+  psiquiatrico: { label: 'Psiquiátrica' },
+  custom: { label: 'Outros' },
 };
 
 const getSectorColorClass = (sector: SectorType) => {
@@ -178,7 +185,7 @@ function CategorySubSection({
           isOpen && "rounded-b-none"
         )}>
           <ChevronDown className={cn("h-3 w-3 transition-transform", !isOpen && "-rotate-90")} />
-          <span className="text-[10px] leading-none">{catLabel.emoji}</span>
+          {(() => { const Icon = CATEGORY_ICONS[categoryKey] || LayoutList; return <Icon className="h-3 w-3" />; })()}
           <span className="text-[11px] font-medium">{catLabel.label}</span>
           <Badge variant="secondary" className="h-4 px-1.5 text-[9px] font-bold ml-auto">
             {patients.length}
@@ -427,7 +434,7 @@ export function SectorSection({
                       : "border-transparent text-muted-foreground hover:bg-accent"
                   )}
                 >
-                  {catLabel.emoji} {catLabel.label} ({count})
+                  {(() => { const Icon = CATEGORY_ICONS[key] || LayoutList; return <Icon className="h-3 w-3 inline-block mr-0.5" />; })()} {catLabel.label} ({count})
                 </button>
               );
             })}
@@ -485,7 +492,7 @@ export function SectorSection({
             <AlertDialogTitle>Categorizar paciente</AlertDialogTitle>
             <AlertDialogDescription>
               Deseja categorizar <strong>{categoryPrompt?.patient?.name || 'este paciente'}</strong> como{' '}
-              <strong>{categoryPrompt?.targetCategory ? (CATEGORY_LABELS[categoryPrompt.targetCategory]?.emoji + ' ' + CATEGORY_LABELS[categoryPrompt.targetCategory]?.label) : ''}</strong>?
+              <strong>{categoryPrompt?.targetCategory ? CATEGORY_LABELS[categoryPrompt.targetCategory]?.label : ''}</strong>?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -526,7 +533,7 @@ export function SectorSection({
                     onAddExtraBed?.(cat);
                   }}
                 >
-                  <span>{info.emoji}</span>
+                  {(() => { const Icon = CATEGORY_ICONS[cat as string] || LayoutList; return <Icon className="h-4 w-4" />; })()}
                   <span>{info.label}</span>
                 </Button>
               );

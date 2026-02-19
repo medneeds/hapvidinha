@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { X, FileText, AlertTriangle, Activity, Pill, Stethoscope, Plus, Trash2 } from "lucide-react";
+import { X, FileText, AlertTriangle, Activity, Pill, Stethoscope, Plus, Trash2, Scissors, Brain, LayoutList } from "lucide-react";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { cn } from "@/lib/utils";
 
@@ -228,10 +228,10 @@ export function EditPatientDialog({
                 </Label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {([
-                    { value: 'clinica_medica' as PatientCategory, label: 'Clínica Médica', emoji: '🩺' },
-                    { value: 'cirurgico' as PatientCategory, label: 'Cirurgia', emoji: '🔪' },
-                    { value: 'psiquiatrico' as PatientCategory, label: 'Psiquiátrica', emoji: '🧠' },
-                    { value: 'custom' as PatientCategory, label: 'Outros', emoji: '📋' },
+                    { value: 'clinica_medica' as PatientCategory, label: 'Clínica Médica', icon: Stethoscope },
+                    { value: 'cirurgico' as PatientCategory, label: 'Cirurgia', icon: Scissors },
+                    { value: 'psiquiatrico' as PatientCategory, label: 'Psiquiátrica', icon: Brain },
+                    { value: 'custom' as PatientCategory, label: 'Outros', icon: LayoutList },
                   ] as const).map((cat) => (
                     <button
                       key={cat.label}
@@ -244,7 +244,10 @@ export function EditPatientDialog({
                           : "border-border hover:border-primary/30"
                       )}
                     >
-                      <span className="text-base">{cat.emoji}</span>
+                      <cat.icon className={cn(
+                        "h-4 w-4",
+                        (formData.patientCategory === cat.value || (!formData.patientCategory && cat.value === 'clinica_medica')) ? "text-primary" : "text-muted-foreground"
+                      )} />
                       <span className={cn(
                         "text-xs font-medium",
                         (formData.patientCategory === cat.value || (!formData.patientCategory && cat.value === 'clinica_medica')) && "font-semibold text-primary"
