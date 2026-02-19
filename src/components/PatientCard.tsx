@@ -1443,24 +1443,28 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     {patient.bedNumber}
                   </Badge>
                   {/* Patient Category Badge */}
-                   {patient.patientCategory && (
-                    <span className={cn(
-                      "inline-flex items-center gap-0.5 text-[7px] font-bold uppercase px-1 py-0 rounded border leading-tight mt-0.5 text-center whitespace-nowrap print:hidden",
-                      patient.patientCategory === 'clinico' && "bg-primary/10 border-primary/30 text-primary",
-                      patient.patientCategory === 'cirurgico' && "bg-destructive/10 border-destructive/30 text-destructive",
-                      patient.patientCategory === 'obstetrico' && "bg-accent/30 border-accent-foreground/20 text-accent-foreground",
-                      patient.patientCategory === 'trauma' && "bg-warning/10 border-warning/30 text-warning",
-                    )}>
-                      <span className="text-[8px] leading-none">
-                        {patient.patientCategory === 'clinico' ? '🩺' : 
-                         patient.patientCategory === 'cirurgico' ? '🔪' :
-                         patient.patientCategory === 'obstetrico' ? '🤰' : '🦴'}
+                   {patient.patientCategory && (() => {
+                    const sectorColor = patient.sector === 'red' 
+                      ? 'bg-critical/10 border-critical/30 text-critical'
+                      : patient.sector === 'yellow'
+                      ? 'bg-warning/10 border-warning/30 text-warning'
+                      : 'bg-stable/10 border-stable/30 text-stable';
+                    const emoji = patient.patientCategory === 'clinico' ? '🩺' : 
+                      patient.patientCategory === 'cirurgico' ? '🔪' :
+                      patient.patientCategory === 'obstetrico' ? '🤰' : '🦴';
+                    const label = patient.patientCategory === 'clinico' ? 'CLÍ' : 
+                      patient.patientCategory === 'cirurgico' ? 'CIR' :
+                      patient.patientCategory === 'obstetrico' ? 'OBS' : 'TRA';
+                    return (
+                      <span className={cn(
+                        "inline-flex items-center gap-0.5 text-[7px] font-bold uppercase px-1 py-0 rounded border leading-tight mt-0.5 text-center whitespace-nowrap print:hidden",
+                        sectorColor
+                      )}>
+                        <span className="text-[8px] leading-none">{emoji}</span>
+                        {label}
                       </span>
-                      {patient.patientCategory === 'clinico' ? 'CLÍ' : 
-                       patient.patientCategory === 'cirurgico' ? 'CIR' :
-                       patient.patientCategory === 'obstetrico' ? 'OBS' : 'TRA'}
-                    </span>
-                  )}
+                    );
+                  })()}
                   <div className="flex flex-col gap-0.5 mt-1">
                     {localMedicalResponsibility?.type ? (
                       <MedicalResponsibilityIndicator

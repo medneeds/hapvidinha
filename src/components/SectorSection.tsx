@@ -70,12 +70,21 @@ const sectorInfo = {
   }
 };
 
-const CATEGORY_CONFIG: Record<string, { label: string; emoji: string; colorClass: string }> = {
-  clinico: { label: 'Clínicos', emoji: '🩺', colorClass: 'bg-primary/10 border-primary/30 text-primary dark:text-primary' },
-  cirurgico: { label: 'Cirúrgicos', emoji: '🔪', colorClass: 'bg-destructive/10 border-destructive/30 text-destructive dark:text-destructive' },
-  obstetrico: { label: 'Obstétricos', emoji: '🤰', colorClass: 'bg-accent/30 border-accent-foreground/20 text-accent-foreground' },
-  trauma: { label: 'Trauma', emoji: '🦴', colorClass: 'bg-warning/10 border-warning/30 text-warning dark:text-warning' },
-  uncategorized: { label: 'Sem Categoria', emoji: '📋', colorClass: 'bg-muted/50 border-border text-muted-foreground' },
+const CATEGORY_LABELS: Record<string, { label: string; emoji: string }> = {
+  clinico: { label: 'Clínicos', emoji: '🩺' },
+  cirurgico: { label: 'Cirúrgicos', emoji: '🔪' },
+  obstetrico: { label: 'Obstétricos', emoji: '🤰' },
+  trauma: { label: 'Trauma', emoji: '🦴' },
+  uncategorized: { label: 'Sem Categoria', emoji: '📋' },
+};
+
+const getSectorColorClass = (sector: SectorType) => {
+  switch (sector) {
+    case 'red': return 'bg-critical/10 border-critical/30 text-critical';
+    case 'yellow': return 'bg-warning/10 border-warning/30 text-warning';
+    case 'blue': return 'bg-stable/10 border-stable/30 text-stable';
+    default: return 'bg-muted/50 border-border text-muted-foreground';
+  }
 };
 
 interface SortablePatientCardProps {
@@ -136,13 +145,18 @@ function CategorySubSection({
   categoryKey,
   patients,
   renderPatients,
+  sector,
 }: {
   categoryKey: string;
   patients: Patient[];
   renderPatients: (patients: Patient[]) => React.ReactNode;
+  sector: SectorType;
 }) {
   const [isOpen, setIsOpen] = useState(true);
-  const config = CATEGORY_CONFIG[categoryKey] || CATEGORY_CONFIG.uncategorized;
+  const catLabel = CATEGORY_LABELS[categoryKey] || CATEGORY_LABELS.uncategorized;
+  const sectorColor = categoryKey === 'uncategorized' 
+    ? 'bg-muted/50 border-border text-muted-foreground' 
+    : getSectorColorClass(sector);
 
   if (patients.length === 0) return null;
 
@@ -151,12 +165,12 @@ function CategorySubSection({
       <CollapsibleTrigger asChild>
         <button className={cn(
           "flex items-center gap-2 w-full px-3 py-1.5 rounded-lg border transition-all text-left",
-          config.colorClass,
+          sectorColor,
           "hover:shadow-sm"
         )}>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", !isOpen && "-rotate-90")} />
-          <span className="text-[11px] leading-none">{config.emoji}</span>
-          <span className="text-xs font-semibold uppercase">{config.label}</span>
+          <span className="text-[11px] leading-none">{catLabel.emoji}</span>
+          <span className="text-xs font-semibold uppercase">{catLabel.label}</span>
           <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-bold ml-auto">
             {patients.length}
           </Badge>
@@ -383,9 +397,12 @@ export function SectorSection({
               Todos ({patients.length})
             </button>
             {Object.entries(categoryCounts).map(([key, count]) => {
-              const config = CATEGORY_CONFIG[key];
-              if (!config) return null;
+              const catLabel = CATEGORY_LABELS[key];
+              if (!catLabel) return null;
               const isActive = categoryFilter === (key === 'uncategorized' ? 'uncategorized' : key);
+              const sectorColor = key === 'uncategorized' 
+                ? 'bg-muted/50 border-border text-muted-foreground' 
+                : getSectorColorClass(sector);
               return (
                 <button
                   key={key}
@@ -393,11 +410,11 @@ export function SectorSection({
                   className={cn(
                     "px-2 py-0.5 rounded-full text-[10px] font-semibold border transition-all whitespace-nowrap",
                     isActive
-                      ? config.colorClass
+                      ? sectorColor
                       : "border-transparent text-muted-foreground hover:bg-accent"
                   )}
                 >
-                  {config.emoji} {config.label} ({count})
+                  {catLabel.emoji} {catLabel.label} ({count})
                 </button>
               );
             })}
@@ -434,6 +451,7 @@ export function SectorSection({
                         categoryKey={catKey}
                         patients={catPatients}
                         renderPatients={renderPatientCards}
+                        sector={sector}
                       />
                     );
                   })}
