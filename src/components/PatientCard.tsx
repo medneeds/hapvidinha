@@ -1442,8 +1442,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <Badge className={cn("w-fit text-sm md:text-[10px] py-1 md:py-0 px-2 md:px-1 font-bold leading-tight", config.badgeColor)}>
                     {patient.bedNumber}
                   </Badge>
-                  {/* Patient Category Badge */}
-                   {(() => {
+                  {/* Combined Category + Responsibility Badge */}
+                  {(() => {
                     const cat = patient.patientCategory || 'clinica_medica';
                     const sectorColor = patient.sector === 'red' 
                       ? 'bg-critical/10 border-critical/30 text-critical'
@@ -1452,52 +1452,35 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       : 'bg-stable/10 border-stable/30 text-stable';
                     const iconMap: Record<string, React.ComponentType<{ className?: string }>> = { clinica_medica: Stethoscope, cirurgico: Scissors, psiquiatrico: Brain, custom: LayoutList };
                     const labelMap: Record<string, string> = { clinica_medica: 'CLÍ', cirurgico: 'CIR', psiquiatrico: 'PSI', custom: 'OUT' };
-                    const Icon = iconMap[cat] || LayoutList;
+                    const CatIcon = iconMap[cat] || LayoutList;
+
+                    const respType = localMedicalResponsibility?.type;
+                    const respAbbr: Record<string, string> = { porta: 'P', lider: 'L', conjunto: 'C', obstetra: 'O', cirurgiao_geral: 'CG', traumatologista: 'T' };
+                    const officeNum = localMedicalResponsibility?.officeNumber;
+
                     return (
-                      <span className={cn(
-                        "inline-flex items-center gap-0.5 text-[7px] font-bold uppercase px-1 py-0 rounded border leading-tight mt-0.5 text-center whitespace-nowrap print:hidden",
-                        sectorColor
-                      )}>
-                        <Icon className="h-2.5 w-2.5" />
-                        {labelMap[cat] || 'OUT'}
-                      </span>
+                      <button
+                        onClick={() => setMedicalResponsibilityDialogOpen(true)}
+                        className={cn(
+                          "inline-flex items-center gap-0.5 text-[7px] font-bold uppercase px-1 py-0.5 rounded border leading-tight mt-0.5 whitespace-nowrap print:hidden cursor-pointer transition-all hover:opacity-80",
+                          sectorColor
+                        )}
+                        title={respType ? `${labelMap[cat]} • ${respAbbr[respType] || ''}${officeNum ? ` C${officeNum}` : ''}` : labelMap[cat]}
+                      >
+                        <CatIcon className="h-2.5 w-2.5" />
+                        <span>{labelMap[cat] || 'OUT'}</span>
+                        {respType && (
+                          <>
+                            <span className="opacity-40">·</span>
+                            <span className="font-semibold">{respAbbr[respType]}{officeNum ? officeNum : ''}</span>
+                          </>
+                        )}
+                        {!respType && (
+                          <span className="opacity-40 text-[6px]">+</span>
+                        )}
+                      </button>
                     );
                   })()}
-                  <div className="flex flex-col gap-0.5 mt-1">
-                    {localMedicalResponsibility?.type ? (
-                      <MedicalResponsibilityIndicator
-                        responsibility={localMedicalResponsibility}
-                        sectorColor={sectorColorMap[patient.sector]}
-                        onClick={() => setMedicalResponsibilityDialogOpen(true)}
-                        compact
-                      />
-                    ) : (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setMedicalResponsibilityDialogOpen(true)}
-                        className="h-5 w-5 p-0 print:hidden rounded-full border border-dashed transition-all duration-300 flex items-center justify-center hover:scale-125 hover:rotate-90 dark:border-opacity-60"
-                        style={{
-                          color: sectorColorMap[patient.sector],
-                          borderColor: sectorColorMap[patient.sector],
-                          opacity: 0.5,
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.opacity = '1';
-                          e.currentTarget.style.backgroundColor = `${sectorColorMap[patient.sector]}30`;
-                          e.currentTarget.style.borderStyle = 'solid';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.opacity = '0.5';
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.borderStyle = 'dashed';
-                        }}
-                        title="Adicionar responsável médico"
-                      >
-                        <span className="text-sm font-bold transition-transform duration-300">+</span>
-                      </Button>
-                    )}
-                  </div>
                 </div>
 
                 {/* Nome e Idade - mais espaço para nome completo */}
