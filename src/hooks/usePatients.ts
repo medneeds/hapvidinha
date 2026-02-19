@@ -228,6 +228,7 @@ export function usePatients(department?: Department) {
         hospital_unit_id: currentHospital.id,
         medical_responsibility: patient.medicalResponsibility || null,
         created_by: user?.id || null,
+        patient_category: patient.patientCategory || null,
       };
 
       // Add UTI fields if they exist
