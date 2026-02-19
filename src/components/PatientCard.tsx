@@ -1442,6 +1442,20 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <Badge className={cn("w-fit text-sm md:text-[10px] py-1 md:py-0 px-2 md:px-1 font-bold leading-tight", config.badgeColor)}>
                     {patient.bedNumber}
                   </Badge>
+                  {/* Patient Category Badge */}
+                  {patient.patientCategory && (
+                    <span className={cn(
+                      "text-[7px] font-bold uppercase px-1 py-0 rounded border leading-tight mt-0.5 text-center whitespace-nowrap print:hidden",
+                      patient.patientCategory === 'clinico' && "bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400",
+                      patient.patientCategory === 'cirurgico' && "bg-orange-500/10 border-orange-500/30 text-orange-600 dark:text-orange-400",
+                      patient.patientCategory === 'obstetrico' && "bg-pink-500/10 border-pink-500/30 text-pink-600 dark:text-pink-400",
+                      patient.patientCategory === 'trauma' && "bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400",
+                    )}>
+                      {patient.patientCategory === 'clinico' ? '🩺 CLÍ' : 
+                       patient.patientCategory === 'cirurgico' ? '🔪 CIR' :
+                       patient.patientCategory === 'obstetrico' ? '🤰 OBS' : '🦴 TRA'}
+                    </span>
+                  )}
                   <div className="flex flex-col gap-0.5 mt-1">
                     {localMedicalResponsibility?.type ? (
                       <MedicalResponsibilityIndicator
@@ -4644,9 +4658,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         open={medicalResponsibilityDialogOpen}
         onOpenChange={setMedicalResponsibilityDialogOpen}
         currentResponsibility={localMedicalResponsibility}
-        onSave={(responsibility) => {
+        onSave={(responsibility, suggestedCategory) => {
           setLocalMedicalResponsibility(responsibility);
-          onUpdate({ ...patient, medicalResponsibility: responsibility });
+          const updates: Partial<Patient> = { medicalResponsibility: responsibility };
+          // Auto-suggest category if not already set
+          if (suggestedCategory && !patient.patientCategory) {
+            updates.patientCategory = suggestedCategory;
+          }
+          onUpdate({ ...patient, ...updates });
           toastHook({
             title: "Responsabilidade atualizada",
             description: "As informações de responsabilidade médica foram salvas.",

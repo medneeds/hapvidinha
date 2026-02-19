@@ -799,6 +799,7 @@ export type Database = {
           medical_history: string | null
           medical_responsibility: Json | null
           name: string
+          patient_category: string | null
           pendencies: string | null
           psm_status: string | null
           relevant_exams: string | null
@@ -842,6 +843,7 @@ export type Database = {
           medical_history?: string | null
           medical_responsibility?: Json | null
           name?: string
+          patient_category?: string | null
           pendencies?: string | null
           psm_status?: string | null
           relevant_exams?: string | null
@@ -885,6 +887,7 @@ export type Database = {
           medical_history?: string | null
           medical_responsibility?: Json | null
           name?: string
+          patient_category?: string | null
           pendencies?: string | null
           psm_status?: string | null
           relevant_exams?: string | null

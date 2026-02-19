@@ -60,6 +60,16 @@ export const MedicalResponsibilityIndicator = ({
       if (responsibility.leaderNames) {
         parts.push(responsibility.leaderNames);
       }
+      // Show conjuntoWith specialties
+      if (responsibility.conjuntoWith && responsibility.conjuntoWith.length > 0) {
+        const specLabels: Record<string, string> = {
+          porta: 'Porta', lider: 'Líder', obstetra: 'Obs', cirurgiao_geral: 'Cirurg.', traumatologista: 'Ortop'
+        };
+        parts.push(responsibility.conjuntoWith.map(s => specLabels[s] || s).join('+'));
+      }
+      if (responsibility.conjuntoFreeText) {
+        parts.push(responsibility.conjuntoFreeText);
+      }
       return parts.join(' • ');
     } else if (responsibility.type === 'obstetra') {
       if (responsibility.portaNames) {

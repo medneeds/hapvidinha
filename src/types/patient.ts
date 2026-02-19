@@ -2,11 +2,15 @@ export type SectorType = 'red' | 'yellow' | 'blue' | 'outside';
 
 export type MedicalResponsibilityType = 'porta' | 'lider' | 'conjunto' | 'obstetra' | 'cirurgiao_geral' | 'traumatologista' | null;
 
+export type PatientCategory = 'clinico' | 'cirurgico' | 'obstetrico' | 'trauma' | null;
+
 export interface MedicalResponsibility {
   type: MedicalResponsibilityType;
   officeNumber?: string;
   leaderNames?: string;
   portaNames?: string; // Nomes dos médicos porta
+  conjuntoWith?: string[]; // Especialidades estruturadas no seguimento conjunto
+  conjuntoFreeText?: string; // Campo livre para especialidades não listadas
 }
 
 export interface Patient {
@@ -52,4 +56,6 @@ export interface Patient {
   clinicalStatus?: 'gravissimo' | 'grave' | 'grave_estavel' | 'potencialmente_grave' | 'regular' | 'paliativado' | null;
   // UTI bed vacancy status
   isVacant?: boolean;
+  // Patient category for emergency sub-segmentation
+  patientCategory?: PatientCategory;
 }

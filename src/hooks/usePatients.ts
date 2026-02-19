@@ -85,6 +85,7 @@ export function usePatients(department?: Department) {
         psmStatus: p.psm_status as Patient['psmStatus'],
         clinicalStatus: (p as any).clinical_status as Patient['clinicalStatus'],
         isVacant: (p as any).is_vacant ?? false,
+        patientCategory: (p as any).patient_category as Patient['patientCategory'],
       }));
 
       // Sort by display_order first, then by bed_number as tiebreaker
@@ -169,6 +170,7 @@ export function usePatients(department?: Department) {
       if (updates.psmStatus !== undefined) dbUpdates.psm_status = updates.psmStatus;
       if (updates.clinicalStatus !== undefined) dbUpdates.clinical_status = updates.clinicalStatus;
       if (updates.isVacant !== undefined) dbUpdates.is_vacant = updates.isVacant;
+      if (updates.patientCategory !== undefined) dbUpdates.patient_category = updates.patientCategory;
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 
@@ -451,6 +453,7 @@ export function usePatients(department?: Department) {
     createdBy: record.created_by || undefined,
     psmStatus: record.psm_status as Patient['psmStatus'],
     clinicalStatus: record.clinical_status as Patient['clinicalStatus'],
+    patientCategory: record.patient_category as Patient['patientCategory'],
   });
 
   useEffect(() => {
