@@ -2,7 +2,7 @@ export type SectorType = 'red' | 'yellow' | 'blue' | 'outside';
 
 export type MedicalResponsibilityType = 'porta' | 'lider' | 'conjunto' | 'obstetra' | 'cirurgiao_geral' | 'traumatologista' | null;
 
-export type PatientCategory = 'clinico' | 'cirurgico' | 'obstetrico' | 'trauma' | null;
+export type PatientCategory = 'clinica_medica' | 'cirurgico' | 'psiquiatrico' | 'custom' | null;
 
 export interface MedicalResponsibility {
   type: MedicalResponsibilityType;

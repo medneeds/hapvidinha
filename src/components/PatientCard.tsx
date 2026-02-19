@@ -1443,25 +1443,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     {patient.bedNumber}
                   </Badge>
                   {/* Patient Category Badge */}
-                   {patient.patientCategory && (() => {
+                   {(() => {
+                    const cat = patient.patientCategory || 'clinica_medica';
                     const sectorColor = patient.sector === 'red' 
                       ? 'bg-critical/10 border-critical/30 text-critical'
                       : patient.sector === 'yellow'
                       ? 'bg-warning/10 border-warning/30 text-warning'
                       : 'bg-stable/10 border-stable/30 text-stable';
-                    const emoji = patient.patientCategory === 'clinico' ? '🩺' : 
-                      patient.patientCategory === 'cirurgico' ? '🔪' :
-                      patient.patientCategory === 'obstetrico' ? '🤰' : '🦴';
-                    const label = patient.patientCategory === 'clinico' ? 'CLÍ' : 
-                      patient.patientCategory === 'cirurgico' ? 'CIR' :
-                      patient.patientCategory === 'obstetrico' ? 'OBS' : 'TRA';
+                    const emojiMap: Record<string, string> = { clinica_medica: '🩺', cirurgico: '🔪', psiquiatrico: '🧠', custom: '📋' };
+                    const labelMap: Record<string, string> = { clinica_medica: 'CLÍ', cirurgico: 'CIR', psiquiatrico: 'PSI', custom: 'OUT' };
                     return (
                       <span className={cn(
                         "inline-flex items-center gap-0.5 text-[7px] font-bold uppercase px-1 py-0 rounded border leading-tight mt-0.5 text-center whitespace-nowrap print:hidden",
                         sectorColor
                       )}>
-                        <span className="text-[8px] leading-none">{emoji}</span>
-                        {label}
+                        <span className="text-[8px] leading-none">{emojiMap[cat] || '📋'}</span>
+                        {labelMap[cat] || 'OUT'}
                       </span>
                     );
                   })()}
