@@ -13,7 +13,7 @@ import { PrintUtiPreviewDialog } from "@/components/PrintUtiPreviewDialog";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
-import { Patient } from "@/types/patient";
+import { Patient, PatientCategory } from "@/types/patient";
 import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2, Search } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationCenter } from "@/components/NotificationCenter";
@@ -363,7 +363,7 @@ const Index = () => {
     }
   };
 
-  const handleAddExtraBed = async (sector: Patient['sector']) => {
+  const handleAddExtraBed = async (sector: Patient['sector'], category?: PatientCategory) => {
     // Visitante users cannot add beds
     if (role === 'visitante') {
       toast({
@@ -411,6 +411,7 @@ const Index = () => {
       admissionHistory: "",
       admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' '),
       highlightedPendencies: [],
+      patientCategory: category || 'clinica_medica',
       // Add UTI fields for UTI department
       ...(currentDepartment === 'UTI' && {
         utiAdmissionDate: [],
@@ -1196,7 +1197,7 @@ const Index = () => {
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
                     onPrintSector={() => handlePrintSector("blue")}
-                    onAddExtraBed={() => handleAddExtraBed("blue")}
+                    onAddExtraBed={() => { handleAddExtraBed("blue"); }}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}
@@ -1217,7 +1218,7 @@ const Index = () => {
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
                     onPrintSector={() => handlePrintSector("yellow")}
-                    onAddExtraBed={() => handleAddExtraBed("yellow")}
+                    onAddExtraBed={() => { handleAddExtraBed("yellow"); }}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}
@@ -1315,7 +1316,7 @@ const Index = () => {
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
                     onPrintSector={() => handlePrintSector("red")}
-                    onAddExtraBed={() => handleAddExtraBed("red")}
+                    onAddExtraBed={(cat) => handleAddExtraBed("red", cat)}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}
@@ -1331,7 +1332,7 @@ const Index = () => {
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
                     onPrintSector={() => handlePrintSector("yellow")}
-                    onAddExtraBed={() => handleAddExtraBed("yellow")}
+                    onAddExtraBed={(cat) => handleAddExtraBed("yellow", cat)}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}
@@ -1347,7 +1348,7 @@ const Index = () => {
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
                     onPrintSector={() => handlePrintSector("blue")}
-                    onAddExtraBed={() => handleAddExtraBed("blue")}
+                    onAddExtraBed={(cat) => handleAddExtraBed("blue", cat)}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptySectorState } from "@/components/EmptySectorState";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -45,7 +46,7 @@ interface SectorSectionProps {
   onDeletePatient?: (patientId: string) => void;
   onUndeletePatient?: (patient: Patient) => void;
   onPrintSector?: () => void;
-  onAddExtraBed?: () => void;
+  onAddExtraBed?: (category?: PatientCategory) => void;
   selectionMode?: boolean;
   selectedPatients?: Set<string>;
   onToggleSelection?: (patientId: string) => void;
@@ -217,6 +218,8 @@ export function SectorSection({
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [categoryPrompt, setCategoryPrompt] = useState<{ patient: Patient; targetCategory: PatientCategory } | null>(null);
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+  const [customCategoryName, setCustomCategoryName] = useState('');
   
   // Always show sub-sections when there are patients (default category is clinica_medica)
   const hasCategories = patients.length > 0;
@@ -365,7 +368,7 @@ export function SectorSection({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={onAddExtraBed}
+                onClick={() => setShowCategoryPicker(true)}
                 className="h-8 w-8 print:hidden"
                 title="Adicionar leito extra"
               >
@@ -495,6 +498,71 @@ export function SectorSection({
             }}>
               Confirmar
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Category picker for new bed */}
+      <AlertDialog open={showCategoryPicker} onOpenChange={(open) => { if (!open) { setShowCategoryPicker(false); setCustomCategoryName(''); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Subcategoria do leito</AlertDialogTitle>
+            <AlertDialogDescription>
+              Em qual subcategoria deseja alocar o novo leito?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex flex-col gap-2 py-2">
+            {(['clinica_medica', 'cirurgico', 'psiquiatrico'] as PatientCategory[]).map(cat => {
+              const info = CATEGORY_LABELS[cat as string];
+              if (!info) return null;
+              return (
+                <Button
+                  key={cat}
+                  variant="outline"
+                  className="justify-start gap-2 h-10"
+                  onClick={() => {
+                    setShowCategoryPicker(false);
+                    setCustomCategoryName('');
+                    onAddExtraBed?.(cat);
+                  }}
+                >
+                  <span>{info.emoji}</span>
+                  <span>{info.label}</span>
+                </Button>
+              );
+            })}
+            <div className="flex items-center gap-2 mt-1">
+              <Input
+                placeholder="Outra subcategoria..."
+                value={customCategoryName}
+                onChange={e => setCustomCategoryName(e.target.value)}
+                className="flex-1 h-10 text-sm"
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && customCategoryName.trim()) {
+                    setShowCategoryPicker(false);
+                    // Store custom name in patientCategory as custom, name will go in observations via the caller
+                    onAddExtraBed?.('custom');
+                    setCustomCategoryName('');
+                  }
+                }}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!customCategoryName.trim()}
+                onClick={() => {
+                  setShowCategoryPicker(false);
+                  onAddExtraBed?.('custom');
+                  setCustomCategoryName('');
+                }}
+              >
+                <Plus className="h-3.5 w-3.5 mr-1" />
+                Criar
+              </Button>
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setShowCategoryPicker(false); setCustomCategoryName(''); }}>Cancelar</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
