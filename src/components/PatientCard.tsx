@@ -1472,16 +1472,16 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <button
                         onClick={() => setMedicalResponsibilityDialogOpen(true)}
                         className={cn(
-                          "inline-flex items-center gap-0.5 text-[7px] font-bold uppercase px-1 py-0.5 rounded border leading-tight mt-0.5 whitespace-nowrap print:hidden cursor-pointer transition-all hover:opacity-80",
+                          "inline-flex flex-col items-center gap-0 text-[8px] font-bold uppercase px-1 py-0.5 rounded border leading-tight mt-0.5 whitespace-nowrap print:hidden cursor-pointer transition-all hover:opacity-80",
                           sectorColor
                         )}
                         title={respLabel || labelMap[cat]}
                       >
-                        <CatIcon className="h-2.5 w-2.5" />
+                        <CatIcon className="h-3 w-3" />
                         {respLabel ? (
-                          <span className="font-semibold">{respLabel}</span>
+                          <span className="font-semibold text-[7px] leading-none">{respLabel}</span>
                         ) : (
-                          <span className="opacity-40 text-[6px]">+</span>
+                          <span className="opacity-40 text-[7px]">+</span>
                         )}
                       </button>
                     );
