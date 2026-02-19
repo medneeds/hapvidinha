@@ -1,19 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { MedicalResponsibility, MedicalResponsibilityType } from "@/types/patient";
-import { X, Stethoscope, UserCog, UsersRound, Check, Baby, Bone, Scissors } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { MedicalResponsibility, MedicalResponsibilityType, PatientCategory } from "@/types/patient";
+import { X, Stethoscope, UserCog, UsersRound, Check, Baby, Bone, Scissors, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MedicalResponsibilityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentResponsibility?: MedicalResponsibility;
-  onSave: (responsibility: MedicalResponsibility) => void;
+  onSave: (responsibility: MedicalResponsibility, suggestedCategory?: PatientCategory) => void;
   sectorColor: string;
 }
+
+const CONJUNTO_OPTIONS = [
+  { id: 'porta', label: 'Porta', icon: Stethoscope },
+  { id: 'lider', label: 'Líder', icon: UserCog },
+  { id: 'obstetra', label: 'Obstetra', icon: Baby },
+  { id: 'cirurgiao_geral', label: 'Cirurgião Geral', icon: Scissors },
+  { id: 'traumatologista', label: 'Traumatologista', icon: Bone },
+] as const;
 
 export const MedicalResponsibilityDialog = ({
   open,
@@ -34,14 +43,42 @@ export const MedicalResponsibilityDialog = ({
   const [portaNames, setPortaNames] = useState(
     currentResponsibility?.portaNames || ""
   );
+  const [conjuntoWith, setConjuntoWith] = useState<string[]>(
+    currentResponsibility?.conjuntoWith || []
+  );
+  const [conjuntoFreeText, setConjuntoFreeText] = useState(
+    currentResponsibility?.conjuntoFreeText || ""
+  );
+
+  useEffect(() => {
+    if (open) {
+      setType(currentResponsibility?.type || null);
+      setOfficeNumber(currentResponsibility?.officeNumber || "");
+      setLeaderNames(currentResponsibility?.leaderNames || "");
+      setPortaNames(currentResponsibility?.portaNames || "");
+      setConjuntoWith(currentResponsibility?.conjuntoWith || []);
+      setConjuntoFreeText(currentResponsibility?.conjuntoFreeText || "");
+    }
+  }, [open, currentResponsibility]);
+
+  const getSuggestedCategory = (): PatientCategory => {
+    const allInvolved = [type, ...conjuntoWith];
+    if (allInvolved.includes('obstetra')) return 'obstetrico';
+    if (allInvolved.includes('traumatologista')) return 'trauma';
+    if (allInvolved.includes('cirurgiao_geral')) return 'cirurgico';
+    return null;
+  };
 
   const handleSave = () => {
-    onSave({
+    const responsibility: MedicalResponsibility = {
       type,
       officeNumber: type === 'porta' || type === 'conjunto' || type === 'obstetra' || type === 'cirurgiao_geral' || type === 'traumatologista' ? officeNumber : undefined,
       leaderNames: type === 'lider' || type === 'conjunto' ? leaderNames : undefined,
       portaNames: type === 'porta' || type === 'conjunto' || type === 'obstetra' || type === 'cirurgiao_geral' || type === 'traumatologista' ? portaNames : undefined,
-    });
+      conjuntoWith: type === 'conjunto' ? conjuntoWith : undefined,
+      conjuntoFreeText: type === 'conjunto' && conjuntoFreeText ? conjuntoFreeText : undefined,
+    };
+    onSave(responsibility, getSuggestedCategory());
     onOpenChange(false);
   };
 
@@ -50,6 +87,25 @@ export const MedicalResponsibilityDialog = ({
     setOfficeNumber("");
     setLeaderNames("");
     setPortaNames("");
+    setConjuntoWith([]);
+    setConjuntoFreeText("");
+  };
+
+  const toggleConjuntoOption = (optionId: string) => {
+    setConjuntoWith(prev => 
+      prev.includes(optionId) 
+        ? prev.filter(id => id !== optionId)
+        : [...prev, optionId]
+    );
+  };
+
+  const suggestedCategory = getSuggestedCategory();
+
+  const categoryLabels: Record<string, { label: string; emoji: string }> = {
+    clinico: { label: 'Clínico', emoji: '🩺' },
+    cirurgico: { label: 'Cirúrgico', emoji: '🔪' },
+    obstetrico: { label: 'Obstétrico', emoji: '🤰' },
+    trauma: { label: 'Trauma', emoji: '🦴' },
   };
 
   return (
@@ -74,6 +130,7 @@ export const MedicalResponsibilityDialog = ({
           <div className="space-y-3">
             <Label className="text-sm font-semibold text-foreground dark:text-white">Selecione o Tipo de Acompanhamento</Label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              {/* Nenhum */}
               <button
                 type="button"
                 onClick={() => setType(null)}
@@ -90,157 +147,82 @@ export const MedicalResponsibilityDialog = ({
                 <span className="font-semibold text-xs dark:text-white">Nenhum</span>
               </button>
               
-              <button
-                type="button"
-                onClick={() => setType('porta')}
-                className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
-                  type === 'porta' && 'shadow-md dark:shadow-lg',
-                  type !== 'porta' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
-                )}
-                style={{
-                  borderColor: type === 'porta' ? sectorColor : undefined,
-                  backgroundColor: type === 'porta' ? `${sectorColor}20` : undefined,
-                }}
-              >
-                <div 
-                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: `${sectorColor}25` }}
-                >
-                  <Stethoscope className="h-5 w-5" style={{ color: sectorColor }} />
-                </div>
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-semibold text-xs dark:text-white">Porta</span>
-                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Consultório</span>
-                </div>
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => setType('lider')}
-                className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
-                  type === 'lider' && 'shadow-md dark:shadow-lg',
-                  type !== 'lider' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
-                )}
-                style={{
-                  borderColor: type === 'lider' ? sectorColor : undefined,
-                  backgroundColor: type === 'lider' ? `${sectorColor}20` : undefined,
-                }}
-              >
-                <div 
-                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: `${sectorColor}25` }}
-                >
-                  <UserCog className="h-5 w-5" style={{ color: sectorColor }} />
-                </div>
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-semibold text-xs dark:text-white">Líder</span>
-                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">100% do caso</span>
-                </div>
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => setType('conjunto')}
-                className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
-                  type === 'conjunto' && 'shadow-md dark:shadow-lg',
-                  type !== 'conjunto' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
-                )}
-                style={{
-                  borderColor: type === 'conjunto' ? sectorColor : undefined,
-                  backgroundColor: type === 'conjunto' ? `${sectorColor}20` : undefined,
-                }}
-              >
-                <div 
-                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: `${sectorColor}25` }}
-                >
-                  <UsersRound className="h-5 w-5" style={{ color: sectorColor }} />
-                </div>
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-semibold text-xs dark:text-white">Conjunto</span>
-                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Líder + Porta</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setType('obstetra')}
-                className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
-                  type === 'obstetra' && 'shadow-md dark:shadow-lg',
-                  type !== 'obstetra' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
-                )}
-                style={{
-                  borderColor: type === 'obstetra' ? sectorColor : undefined,
-                  backgroundColor: type === 'obstetra' ? `${sectorColor}20` : undefined,
-                }}
-              >
-                <div 
-                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: `${sectorColor}25` }}
-                >
-                  <Baby className="h-5 w-5" style={{ color: sectorColor }} />
-                </div>
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-semibold text-xs dark:text-white">Obstetra</span>
-                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Especialista</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setType('cirurgiao_geral')}
-                className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
-                  type === 'cirurgiao_geral' && 'shadow-md dark:shadow-lg',
-                  type !== 'cirurgiao_geral' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
-                )}
-                style={{
-                  borderColor: type === 'cirurgiao_geral' ? sectorColor : undefined,
-                  backgroundColor: type === 'cirurgiao_geral' ? `${sectorColor}20` : undefined,
-                }}
-              >
-                <div 
-                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: `${sectorColor}25` }}
-                >
-                  <Scissors className="h-5 w-5" style={{ color: sectorColor, strokeWidth: 2.5 }} />
-                </div>
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-semibold text-xs dark:text-white">Cirurgião</span>
-                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Geral</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setType('traumatologista')}
-                className={cn(
-                  "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
-                  type === 'traumatologista' && 'shadow-md dark:shadow-lg',
-                  type !== 'traumatologista' && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
-                )}
-                style={{
-                  borderColor: type === 'traumatologista' ? sectorColor : undefined,
-                  backgroundColor: type === 'traumatologista' ? `${sectorColor}20` : undefined,
-                }}
-              >
-                <div 
-                  className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: `${sectorColor}25` }}
-                >
-                  <Bone className="h-5 w-5" style={{ color: sectorColor }} />
-                </div>
-                <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-semibold text-xs dark:text-white">Traumato</span>
-                  <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">Ortopedista</span>
-                </div>
-              </button>
+              {/* Porta */}
+              {renderTypeButton('porta', 'Porta', 'Consultório', Stethoscope, type, setType, sectorColor)}
+              {/* Líder */}
+              {renderTypeButton('lider', 'Líder', '100% do caso', UserCog, type, setType, sectorColor)}
+              {/* Conjunto */}
+              {renderTypeButton('conjunto', 'Conjunto', 'Multi-seguimento', UsersRound, type, setType, sectorColor)}
+              {/* Obstetra */}
+              {renderTypeButton('obstetra', 'Obstetra', 'Especialista', Baby, type, setType, sectorColor)}
+              {/* Cirurgião */}
+              {renderTypeButton('cirurgiao_geral', 'Cirurgião', 'Geral', Scissors, type, setType, sectorColor)}
+              {/* Traumato */}
+              {renderTypeButton('traumatologista', 'Traumato', 'Ortopedista', Bone, type, setType, sectorColor)}
             </div>
           </div>
+
+          {/* Conjunto: multi-seleção de especialidades */}
+          {type === 'conjunto' && (
+            <div className="space-y-3 p-3 rounded-lg border-2 dark:border-gray-700" style={{ borderColor: `${sectorColor}30`, backgroundColor: `${sectorColor}05` }}>
+              <Label className="text-sm font-semibold flex items-center gap-2 dark:text-white">
+                <UsersRound className="h-4 w-4" style={{ color: sectorColor }} />
+                Seguimento Conjunto Com:
+              </Label>
+              <div className="grid grid-cols-2 gap-2">
+                {CONJUNTO_OPTIONS.map((option) => {
+                  const Icon = option.icon;
+                  const isChecked = conjuntoWith.includes(option.id);
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => toggleConjuntoOption(option.id)}
+                      className={cn(
+                        "flex items-center gap-2 p-2.5 rounded-lg border-2 transition-all text-left",
+                        isChecked
+                          ? 'shadow-sm dark:shadow-lg'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 hover:border-gray-300'
+                      )}
+                      style={{
+                        borderColor: isChecked ? sectorColor : undefined,
+                        backgroundColor: isChecked ? `${sectorColor}15` : undefined,
+                      }}
+                    >
+                      <div className={cn(
+                        "w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all",
+                        isChecked ? "border-transparent" : "border-gray-300 dark:border-gray-600"
+                      )}
+                        style={{ backgroundColor: isChecked ? sectorColor : undefined }}
+                      >
+                        {isChecked && <Check className="h-3 w-3 text-white" />}
+                      </div>
+                      <Icon className="h-4 w-4 flex-shrink-0" style={{ color: isChecked ? sectorColor : undefined }} />
+                      <span className={cn("text-xs font-medium dark:text-white", isChecked && "font-semibold")}>{option.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground dark:text-gray-400">Outras especialidades (campo livre)</Label>
+                <Input
+                  value={conjuntoFreeText}
+                  onChange={(e) => setConjuntoFreeText(e.target.value)}
+                  placeholder="Ex: Nefrologia, Neurologia, Cardiologia..."
+                  className="text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                />
+              </div>
+
+              {suggestedCategory && (
+                <div className="flex items-center gap-2 p-2 rounded-md bg-accent/50 border border-border/50">
+                  <AlertCircle className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                  <span className="text-[11px] text-muted-foreground">
+                    Sugestão de categoria: <strong>{categoryLabels[suggestedCategory].emoji} {categoryLabels[suggestedCategory].label}</strong>
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
 
           {(type === 'porta' || type === 'conjunto' || type === 'obstetra' || type === 'cirurgiao_geral' || type === 'traumatologista') && (
             <div className="space-y-3">
@@ -324,3 +306,41 @@ export const MedicalResponsibilityDialog = ({
     </Dialog>
   );
 };
+
+function renderTypeButton(
+  typeValue: MedicalResponsibilityType,
+  label: string,
+  subtitle: string,
+  Icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>,
+  currentType: MedicalResponsibilityType,
+  setType: (t: MedicalResponsibilityType) => void,
+  sectorColor: string
+) {
+  const isSelected = currentType === typeValue;
+  return (
+    <button
+      type="button"
+      onClick={() => setType(typeValue)}
+      className={cn(
+        "flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all hover:shadow-md dark:hover:shadow-lg animate-fade-in",
+        isSelected && 'shadow-md dark:shadow-lg',
+        !isSelected && 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50'
+      )}
+      style={{
+        borderColor: isSelected ? sectorColor : undefined,
+        backgroundColor: isSelected ? `${sectorColor}20` : undefined,
+      }}
+    >
+      <div 
+        className="flex items-center justify-center w-10 h-10 rounded-full transition-transform hover:scale-110"
+        style={{ backgroundColor: `${sectorColor}25` }}
+      >
+        <Icon className="h-5 w-5" style={{ color: sectorColor }} />
+      </div>
+      <div className="flex flex-col items-center gap-0.5">
+        <span className="font-semibold text-xs dark:text-white">{label}</span>
+        <span className="text-[10px] text-muted-foreground dark:text-gray-400 text-center leading-tight">{subtitle}</span>
+      </div>
+    </button>
+  );
+}

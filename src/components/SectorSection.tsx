@@ -1,13 +1,15 @@
-import { Patient, SectorType } from "@/types/patient";
+import { Patient, SectorType, PatientCategory } from "@/types/patient";
 import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
 import { PatientCard } from "./PatientCard";
-import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
+import { Activity, Printer, Plus, ChevronDown, GripVertical, Filter } from "lucide-react";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { EmptySectorState } from "@/components/EmptySectorState";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { cn } from "@/lib/utils";
 import {
   DndContext,
   closestCenter,
@@ -24,7 +26,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities'; // kept for type compatibility
+import { CSS } from '@dnd-kit/utilities';
 
 interface SectorSectionProps {
   sector: SectorType;
@@ -66,6 +68,14 @@ const sectorInfo = {
     icon: "🔵",
     gradientClass: "bg-gradient-stable"
   }
+};
+
+const CATEGORY_CONFIG: Record<string, { label: string; emoji: string; colorClass: string }> = {
+  clinico: { label: 'Clínicos', emoji: '🩺', colorClass: 'bg-blue-500/10 border-blue-500/30 text-blue-700 dark:text-blue-300' },
+  cirurgico: { label: 'Cirúrgicos', emoji: '🔪', colorClass: 'bg-orange-500/10 border-orange-500/30 text-orange-700 dark:text-orange-300' },
+  obstetrico: { label: 'Obstétricos', emoji: '🤰', colorClass: 'bg-pink-500/10 border-pink-500/30 text-pink-700 dark:text-pink-300' },
+  trauma: { label: 'Trauma', emoji: '🦴', colorClass: 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-300' },
+  uncategorized: { label: 'Sem Categoria', emoji: '📋', colorClass: 'bg-muted/50 border-border text-muted-foreground' },
 };
 
 interface SortablePatientCardProps {
@@ -120,6 +130,45 @@ function SortablePatientCard(props: SortablePatientCardProps) {
   );
 }
 
+type CategoryFilter = 'all' | PatientCategory | 'uncategorized';
+
+function CategorySubSection({
+  categoryKey,
+  patients,
+  renderPatients,
+}: {
+  categoryKey: string;
+  patients: Patient[];
+  renderPatients: (patients: Patient[]) => React.ReactNode;
+}) {
+  const [isOpen, setIsOpen] = useState(true);
+  const config = CATEGORY_CONFIG[categoryKey] || CATEGORY_CONFIG.uncategorized;
+
+  if (patients.length === 0) return null;
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mb-1">
+      <CollapsibleTrigger asChild>
+        <button className={cn(
+          "flex items-center gap-2 w-full px-3 py-1.5 rounded-lg border transition-all text-left",
+          config.colorClass,
+          "hover:shadow-sm"
+        )}>
+          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", !isOpen && "-rotate-90")} />
+          <span className="text-xs">{config.emoji}</span>
+          <span className="text-xs font-semibold uppercase">{config.label}</span>
+          <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-bold ml-auto">
+            {patients.length}
+          </Badge>
+        </button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-1 space-y-1.5">
+        {renderPatients(patients)}
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
 export function SectorSection({ 
   sector, 
   patients, 
@@ -144,33 +193,61 @@ export function SectorSection({
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+  
+  // Check if any patients have categories set
+  const hasCategories = useMemo(() => 
+    patients.some(p => p.patientCategory), 
+    [patients]
+  );
+  
+  // Group patients by category
+  const categorizedPatients = useMemo(() => {
+    const groups: Record<string, Patient[]> = {
+      clinico: [],
+      cirurgico: [],
+      obstetrico: [],
+      trauma: [],
+      uncategorized: [],
+    };
+    patients.forEach(p => {
+      const cat = p.patientCategory || 'uncategorized';
+      if (groups[cat]) {
+        groups[cat].push(p);
+      } else {
+        groups.uncategorized.push(p);
+      }
+    });
+    return groups;
+  }, [patients]);
+
+  // Filtered patients based on category filter
+  const filteredPatients = useMemo(() => {
+    if (categoryFilter === 'all') return patients;
+    if (categoryFilter === 'uncategorized') return categorizedPatients.uncategorized;
+    if (categoryFilter === null) return categorizedPatients.uncategorized;
+    return categorizedPatients[categoryFilter] || [];
+  }, [patients, categoryFilter, categorizedPatients]);
   
   // Auto-expand when patients are added, auto-collapse when all removed
   useEffect(() => {
-    // Só atualizar se não houver controle externo
     if (controlledIsOpen === undefined) {
       setInternalIsOpen(patients.length > 0);
     }
   }, [patients.length, controlledIsOpen]);
   
-  // Use controlled state if provided, otherwise use internal state
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
   const setIsOpen = onOpenChange || setInternalIsOpen;
   
-  const displayPatients = patients;
+  const displayPatients = filteredPatients;
 
-  // Check if all patients in this section are selected
   const allPatientsSelected = patients.length > 0 && patients.every(p => selectedPatients.has(p.id));
-  const somePatientsSelected = patients.some(p => selectedPatients.has(p.id));
 
   const handleSelectAllSection = () => {
     if (!onToggleSelection) return;
-    
     if (allPatientsSelected) {
-      // Deselect all patients in this section
       patients.forEach(p => onToggleSelection(p.id));
     } else {
-      // Select all patients in this section
       patients.forEach(p => {
         if (!selectedPatients.has(p.id)) {
           onToggleSelection(p.id);
@@ -181,9 +258,7 @@ export function SectorSection({
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
+      activationConstraint: { distance: 8 },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -192,19 +267,47 @@ export function SectorSection({
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
     if (over && active.id !== over.id && onReorderPatients) {
       const oldIndex = displayPatients.findIndex((p) => p.id === active.id);
       const newIndex = displayPatients.findIndex((p) => p.id === over.id);
-      
       const reorderedPatients = arrayMove(displayPatients, oldIndex, newIndex);
       onReorderPatients(reorderedPatients);
     }
   };
 
+  // Determine if we should show sub-sections (only when filter is 'all' and there are categorized patients)
+  const showSubSections = categoryFilter === 'all' && hasCategories;
+
+  const renderPatientCards = (patientsToRender: Patient[]) => (
+    patientsToRender.map((patient) => (
+      <SortablePatientCard
+        key={patient.id}
+        patient={patient}
+        onUpdate={onUpdatePatient}
+        onDelete={onDeletePatient}
+        onUndelete={onUndeletePatient}
+        selectionMode={selectionMode}
+        isSelected={selectedPatients.has(patient.id)}
+        onToggleSelection={onToggleSelection}
+        onTransfer={onTransfer}
+        onPrintPatient={onPrintPatient}
+        onRefetch={onRefetch}
+      />
+    ))
+  );
+
+  // Active category counts for filter badges
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    Object.entries(categorizedPatients).forEach(([key, pts]) => {
+      if (pts.length > 0) counts[key] = pts.length;
+    });
+    return counts;
+  }, [categorizedPatients]);
+
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-3 mb-4 print:space-y-0.5 print:mb-1 print:break-inside-avoid">
-      <div className={`${info.gradientClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center`}>
+      <div className={`${info.gradientClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex flex-col`}>
         <div className="flex items-center justify-between w-full gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
@@ -263,6 +366,43 @@ export function SectorSection({
             </div>
           </div>
         </div>
+
+        {/* Category filter chips - only show when categories exist */}
+        {hasCategories && isOpen && (
+          <div className="flex items-center gap-1.5 mt-2 px-1 print:hidden overflow-x-auto">
+            <Filter className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+            <button
+              onClick={() => setCategoryFilter('all')}
+              className={cn(
+                "px-2 py-0.5 rounded-full text-[10px] font-semibold border transition-all whitespace-nowrap",
+                categoryFilter === 'all'
+                  ? "bg-foreground/10 border-foreground/30 text-foreground"
+                  : "border-transparent text-muted-foreground hover:bg-accent"
+              )}
+            >
+              Todos ({patients.length})
+            </button>
+            {Object.entries(categoryCounts).map(([key, count]) => {
+              const config = CATEGORY_CONFIG[key];
+              if (!config) return null;
+              const isActive = categoryFilter === (key === 'uncategorized' ? 'uncategorized' : key);
+              return (
+                <button
+                  key={key}
+                  onClick={() => setCategoryFilter(key === 'uncategorized' ? 'uncategorized' : key as PatientCategory)}
+                  className={cn(
+                    "px-2 py-0.5 rounded-full text-[10px] font-semibold border transition-all whitespace-nowrap",
+                    isActive
+                      ? config.colorClass
+                      : "border-transparent text-muted-foreground hover:bg-accent"
+                  )}
+                >
+                  {config.emoji} {config.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <CollapsibleContent className="space-y-1.5 print:space-y-0.5">
@@ -282,21 +422,26 @@ export function SectorSection({
               items={displayPatients.map(p => p.id)}
               strategy={verticalListSortingStrategy}
             >
-              {displayPatients.map((patient) => (
-                <SortablePatientCard
-                  key={patient.id}
-                  patient={patient}
-                  onUpdate={onUpdatePatient}
-                  onDelete={onDeletePatient}
-                  onUndelete={onUndeletePatient}
-                  selectionMode={selectionMode}
-                  isSelected={selectedPatients.has(patient.id)}
-                  onToggleSelection={onToggleSelection}
-                  onTransfer={onTransfer}
-                  onPrintPatient={onPrintPatient}
-                  onRefetch={onRefetch}
-                />
-              ))}
+              {showSubSections ? (
+                // Render categorized sub-sections
+                <>
+                  {['clinico', 'cirurgico', 'obstetrico', 'trauma', 'uncategorized'].map(catKey => {
+                    const catPatients = categorizedPatients[catKey] || [];
+                    if (catPatients.length === 0) return null;
+                    return (
+                      <CategorySubSection
+                        key={catKey}
+                        categoryKey={catKey}
+                        patients={catPatients}
+                        renderPatients={renderPatientCards}
+                      />
+                    );
+                  })}
+                </>
+              ) : (
+                // Flat list (no sub-sections)
+                renderPatientCards(displayPatients)
+              )}
             </SortableContext>
           </DndContext>
         )}

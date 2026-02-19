@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Patient } from "@/types/patient";
+import { Patient, PatientCategory } from "@/types/patient";
 import {
   Dialog,
   DialogContent,
@@ -218,6 +218,43 @@ export function EditPatientDialog({
                 Este campo é ideal para textos longos. Os demais campos clínicos (Diagnósticos, Antecedentes, Pendências) são editáveis diretamente no card do paciente.
               </p>
             </div>
+
+            {/* Categoria do Paciente - Emergência */}
+            {!isUti && (
+              <div className="space-y-2 p-3 bg-muted/30 rounded-lg border border-border/50">
+                <Label className="text-sm font-semibold flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-primary" />
+                  Categoria do Paciente
+                </Label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {([
+                    { value: null, label: 'Não definido', emoji: '—' },
+                    { value: 'clinico' as PatientCategory, label: 'Clínico', emoji: '🩺' },
+                    { value: 'cirurgico' as PatientCategory, label: 'Cirúrgico', emoji: '🔪' },
+                    { value: 'obstetrico' as PatientCategory, label: 'Obstétrico', emoji: '🤰' },
+                    { value: 'trauma' as PatientCategory, label: 'Trauma', emoji: '🦴' },
+                  ] as const).map((cat) => (
+                    <button
+                      key={cat.label}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, patientCategory: cat.value as PatientCategory })}
+                      className={cn(
+                        "flex items-center gap-2 p-2.5 rounded-lg border-2 transition-all text-left",
+                        formData.patientCategory === cat.value
+                          ? "border-primary bg-primary/10 shadow-sm"
+                          : "border-border hover:border-primary/30"
+                      )}
+                    >
+                      <span className="text-base">{cat.emoji}</span>
+                      <span className={cn(
+                        "text-xs font-medium",
+                        formData.patientCategory === cat.value && "font-semibold text-primary"
+                      )}>{cat.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Campos UTI Específicos - Apenas para UTI */}
             {isUti && (
