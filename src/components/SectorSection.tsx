@@ -72,7 +72,7 @@ const sectorInfo = {
 
 const CATEGORY_LABELS: Record<string, { label: string; emoji: string }> = {
   clinico: { label: 'Clínicos', emoji: '🩺' },
-  cirurgico: { label: 'Cirúrgicos', emoji: '🔪' },
+  cirurgico: { label: 'Cirurgia', emoji: '🔪' },
   obstetrico: { label: 'Obstétricos', emoji: '🤰' },
   trauma: { label: 'Trauma', emoji: '🦴' },
   uncategorized: { label: 'Sem Categoria', emoji: '📋' },
