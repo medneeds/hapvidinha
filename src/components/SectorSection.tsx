@@ -71,10 +71,10 @@ const sectorInfo = {
 };
 
 const CATEGORY_CONFIG: Record<string, { label: string; emoji: string; colorClass: string }> = {
-  clinico: { label: 'Clínicos', emoji: '🩺', colorClass: 'bg-blue-500/10 border-blue-500/30 text-blue-700 dark:text-blue-300' },
-  cirurgico: { label: 'Cirúrgicos', emoji: '🔪', colorClass: 'bg-orange-500/10 border-orange-500/30 text-orange-700 dark:text-orange-300' },
-  obstetrico: { label: 'Obstétricos', emoji: '🤰', colorClass: 'bg-pink-500/10 border-pink-500/30 text-pink-700 dark:text-pink-300' },
-  trauma: { label: 'Trauma', emoji: '🦴', colorClass: 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-300' },
+  clinico: { label: 'Clínicos', emoji: '🩺', colorClass: 'bg-primary/10 border-primary/30 text-primary dark:text-primary' },
+  cirurgico: { label: 'Cirúrgicos', emoji: '🔪', colorClass: 'bg-destructive/10 border-destructive/30 text-destructive dark:text-destructive' },
+  obstetrico: { label: 'Obstétricos', emoji: '🤰', colorClass: 'bg-accent/30 border-accent-foreground/20 text-accent-foreground' },
+  trauma: { label: 'Trauma', emoji: '🦴', colorClass: 'bg-warning/10 border-warning/30 text-warning dark:text-warning' },
   uncategorized: { label: 'Sem Categoria', emoji: '📋', colorClass: 'bg-muted/50 border-border text-muted-foreground' },
 };
 
@@ -155,7 +155,7 @@ function CategorySubSection({
           "hover:shadow-sm"
         )}>
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", !isOpen && "-rotate-90")} />
-          <span className="text-xs">{config.emoji}</span>
+          <span className="text-[11px] leading-none">{config.emoji}</span>
           <span className="text-xs font-semibold uppercase">{config.label}</span>
           <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-bold ml-auto">
             {patients.length}

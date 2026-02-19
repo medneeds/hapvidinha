@@ -1443,17 +1443,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     {patient.bedNumber}
                   </Badge>
                   {/* Patient Category Badge */}
-                  {patient.patientCategory && (
+                   {patient.patientCategory && (
                     <span className={cn(
-                      "text-[7px] font-bold uppercase px-1 py-0 rounded border leading-tight mt-0.5 text-center whitespace-nowrap print:hidden",
-                      patient.patientCategory === 'clinico' && "bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400",
-                      patient.patientCategory === 'cirurgico' && "bg-orange-500/10 border-orange-500/30 text-orange-600 dark:text-orange-400",
-                      patient.patientCategory === 'obstetrico' && "bg-pink-500/10 border-pink-500/30 text-pink-600 dark:text-pink-400",
-                      patient.patientCategory === 'trauma' && "bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400",
+                      "inline-flex items-center gap-0.5 text-[7px] font-bold uppercase px-1 py-0 rounded border leading-tight mt-0.5 text-center whitespace-nowrap print:hidden",
+                      patient.patientCategory === 'clinico' && "bg-primary/10 border-primary/30 text-primary",
+                      patient.patientCategory === 'cirurgico' && "bg-destructive/10 border-destructive/30 text-destructive",
+                      patient.patientCategory === 'obstetrico' && "bg-accent/30 border-accent-foreground/20 text-accent-foreground",
+                      patient.patientCategory === 'trauma' && "bg-warning/10 border-warning/30 text-warning",
                     )}>
-                      {patient.patientCategory === 'clinico' ? '🩺 CLÍ' : 
-                       patient.patientCategory === 'cirurgico' ? '🔪 CIR' :
-                       patient.patientCategory === 'obstetrico' ? '🤰 OBS' : '🦴 TRA'}
+                      <span className="text-[8px] leading-none">
+                        {patient.patientCategory === 'clinico' ? '🩺' : 
+                         patient.patientCategory === 'cirurgico' ? '🔪' :
+                         patient.patientCategory === 'obstetrico' ? '🤰' : '🦴'}
+                      </span>
+                      {patient.patientCategory === 'clinico' ? 'CLÍ' : 
+                       patient.patientCategory === 'cirurgico' ? 'CIR' :
+                       patient.patientCategory === 'obstetrico' ? 'OBS' : 'TRA'}
                     </span>
                   )}
                   <div className="flex flex-col gap-0.5 mt-1">
