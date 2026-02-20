@@ -162,14 +162,6 @@ export const MedicalResponsibilityIndicator = ({
         e.currentTarget.style.transform = 'scale(1)';
       }}
     >
-      <div 
-        className={cn(
-          "rounded-full flex items-center justify-center flex-shrink-0 transition-all",
-          compact ? "h-4 w-4" : "h-5 w-5"
-        )}
-      >
-        {getIcon()}
-      </div>
       <span className="font-medium leading-none whitespace-nowrap" style={{ fontSize: compact ? '7px' : '8px', color: sectorColor }}>
         {getAbbreviation()}
       </span>
