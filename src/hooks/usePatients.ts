@@ -307,6 +307,7 @@ export function usePatients(department?: Department) {
         utiOriginSector: data.uti_origin_sector ? data.uti_origin_sector.split('\n').filter(Boolean) : [],
         utiDailyConducts: (data as any).uti_daily_conducts ? (data as any).uti_daily_conducts.split('\n').filter(Boolean) : [],
         createdBy: data.created_by || undefined,
+        patientCategory: data.patient_category as Patient['patientCategory'],
       };
 
       // Add to local state immediately for instant UI update
