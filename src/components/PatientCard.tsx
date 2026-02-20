@@ -3516,7 +3516,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
 
             {/* Actions Menu - Secondary Action */}
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button
                   size="icon"
