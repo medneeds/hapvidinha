@@ -1477,7 +1477,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         )}
                         title={respLabel || labelMap[cat]}
                       >
-                        <CatIcon className="h-3 w-3" />
+                        <span className="font-semibold text-[7px] leading-none">{labelMap[cat]}</span>
                         {respLabel ? (
                           <span className="font-semibold text-[7px] leading-none">{respLabel}</span>
                         ) : (
