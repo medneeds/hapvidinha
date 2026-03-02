@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { PrintableDashboard } from "@/components/PrintableDashboard";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ClinicalAnalyticsReport } from "@/components/ClinicalAnalyticsReport";
 
 const COLORS = ['#ef4444', '#eab308', '#3b82f6', '#6b7280', '#8b5cf6', '#ec4899'];
 
@@ -35,6 +36,7 @@ const SECTOR_COLORS: Record<string, string> = {
 const DashboardPage = () => {
   const { currentDepartment } = useDepartment();
   const [isLoading, setIsLoading] = useState(false);
+  const [showClinicalReport, setShowClinicalReport] = useState(false);
   
   // Temporary filter states (before applying)
   const [tempDateRange, setTempDateRange] = useState<{ from: Date; to: Date }>({
@@ -519,6 +521,15 @@ const DashboardPage = () => {
                 <Download className="h-4 w-4 mr-2" />
                 Exportar Excel
               </Button>
+              <Button 
+                onClick={() => setShowClinicalReport(true)} 
+                variant="secondary" 
+                size="sm"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm transition-all duration-300 hover:scale-105"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Relatório Clínico
+              </Button>
               <ThemeToggle />
             </div>
           </div>
@@ -972,6 +983,10 @@ const DashboardPage = () => {
         bedOccupancy={bedOccupancy}
         requestsByDestination={requestsByDestination}
       />
+
+      {showClinicalReport && (
+        <ClinicalAnalyticsReport onClose={() => setShowClinicalReport(false)} />
+      )}
     </div>
   );
 };
