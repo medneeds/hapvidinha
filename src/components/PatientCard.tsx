@@ -5095,7 +5095,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 disabled={!reportText.trim()}
                 onClick={() => {
                   const networkLogoUrl = new URL(whitelabel.logos.networkFull, window.location.origin).href;
-                  const platformLogoUrl = new URL(whitelabel.logos.platform, window.location.origin).href;
+                   const platformLogoUrl = new URL(whitelabel.logos.platform, window.location.origin).href;
+                   const hospitalLogoUrl = new URL(whitelabel.logos.hospital, window.location.origin).href;
                   const now = new Date();
                   const dateStr = now.toLocaleDateString('pt-BR');
                   const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -5177,12 +5178,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   <div class="watermark"><img src="${networkLogoUrl}" alt="" /></div>
 
   <div class="header-bar">
-    <div class="logo-left"><img src="${platformLogoUrl}" alt="HapMap" /></div>
+    <div class="logo-left"><img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" /></div>
     <div class="title-center">
       <h1>Relatório Médico</h1>
-      <div class="subtitle">${whitelabel.institution.networkName}</div>
+      <div class="subtitle">${whitelabel.institution.hospitalName}</div>
     </div>
-    <div class="logo-right"><img src="${networkLogoUrl}" alt="${whitelabel.institution.networkShortName}" /></div>
+    <div class="logo-right"><img src="${hospitalLogoUrl}" alt="${whitelabel.institution.hospitalName}" /></div>
   </div>
   <div class="accent-line"></div>
 
@@ -5201,9 +5202,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   </div>
 
   <div class="footer">
-    <div class="left">${whitelabel.print.confidentialityText}</div>
-    <div class="center">${whitelabel.credits.footerText}</div>
-    <div class="right">${dateStr} às ${timeStr}</div>
+    <div class="left" style="flex:1;">${whitelabel.institution.hospitalName} — Rua Armando Vieira da Silva, S/N, Bairro Fátima, São Luís/MA — CEP 65.030-130</div>
+    <div class="center" style="flex:1;">${whitelabel.credits.footerText}</div>
+    <div class="right" style="flex:1;">${dateStr} às ${timeStr}</div>
   </div>
 </div>
 </body></html>`);
