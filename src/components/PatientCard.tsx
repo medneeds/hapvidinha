@@ -5039,7 +5039,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               Emitir Relatório
             </DialogTitle>
             <div className="flex items-center gap-3 mt-2">
-              <Badge variant="outline" className="text-sm font-semibold">{privacyEnabled ? maskName(patient.name) : patient.name}</Badge>
+              <Badge variant="outline" className="text-sm font-semibold">{namesHidden ? maskName(patient.name, namesHidden) : patient.name}</Badge>
               {patient.age && <Badge variant="secondary" className="text-sm">{patient.age}</Badge>}
               <Badge variant="secondary" className="text-xs">Leito {patient.bedNumber}</Badge>
             </div>
