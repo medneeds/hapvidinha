@@ -484,9 +484,9 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
             <CommandGroup heading="Pacientes Alocados">
               {patients.map((p) => (
                 <div key={p.id}>
-                  <CommandItem
-                    className="flex items-center gap-3 cursor-pointer"
-                    onSelect={() => handleSelectPatient(p)}
+                  <div
+                    className="flex items-center gap-3 cursor-pointer px-2 py-2 rounded-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                    onClick={() => setExpandedPatientId(prev => prev === p.id ? null : p.id)}
                   >
                     <BedDouble className="h-4 w-4 text-primary flex-shrink-0" />
                     <div className="flex-1 min-w-0">
@@ -500,25 +500,34 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
                         {sectorLabel[p.sector] || p.sector} • {p.department}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 px-2 gap-1 text-[10px] text-primary hover:text-primary hover:bg-primary/10"
-                        onClick={(e) => handleToggleDetails(e, p.id)}
-                      >
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <span className="text-[10px] text-primary font-medium flex items-center gap-1">
                         <Eye className="h-3 w-3" />
+                        {expandedPatientId === p.id ? "Fechar" : "Ver Dados"}
                         {expandedPatientId === p.id ? (
                           <ChevronUp className="h-3 w-3" />
                         ) : (
                           <ChevronDown className="h-3 w-3" />
                         )}
-                      </Button>
-                      <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                      </span>
                     </div>
-                  </CommandItem>
+                  </div>
                   {expandedPatientId === p.id && (
-                    <PatientDetailPanel patientId={p.id} />
+                    <div>
+                      <PatientDetailPanel patientId={p.id} />
+                      <div className="px-4 pb-2 pt-1 bg-muted/30 border-b border-border">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 text-xs gap-1.5 w-full"
+                          onClick={() => handleSelectPatient(p)}
+                        >
+                          <MapPin className="h-3 w-3" />
+                          Ir para o leito no mapa
+                          <ArrowRight className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
                   )}
                 </div>
               ))}
