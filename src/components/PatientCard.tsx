@@ -5158,11 +5158,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   .body-content .section-title::before { content: ''; width: 3px; height: 12px; background: #013ba6; border-radius: 2px; }
   .body-text { text-align: justify; word-break: break-word; }
 
-  .watermark {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
-    opacity: 0.025; z-index: 0; pointer-events: none;
-  }
-  .watermark img { width: 280px; }
+   .watermark {
+5. The 2 fixes in the original line range:
+
+Let me re-check the line numbers after my edit.
 
   .footer { position: fixed; bottom: 0; left: 0; right: 0; width: 210mm; margin: 0 auto; background: #fff; }
   .footer-accent { height: 2px; background: linear-gradient(90deg, #013ba6, #0152d4, #38bdf8, #0152d4, #013ba6); }
