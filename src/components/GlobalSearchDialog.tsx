@@ -221,7 +221,7 @@ export const GlobalSearchDialog = forwardRef<GlobalSearchHandle, GlobalSearchDia
     const hasResults = patients.length > 0 || movements.length > 0;
 
     return (
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={open} onOpenChange={setOpen} shouldFilter={false}>
         <div className="flex items-center gap-2 px-3 border-b border-border">
           <CommandInput
             placeholder="Buscar paciente por nome, leito ou diagnóstico..."
