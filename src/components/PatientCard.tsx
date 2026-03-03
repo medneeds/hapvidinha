@@ -5178,12 +5178,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   <div class="watermark"><img src="${networkLogoUrl}" alt="" /></div>
 
   <div class="header-bar">
-    <div class="logo-left"><img src="${platformLogoUrl}" alt="HapMap" /></div>
+    <div class="logo-left"><img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" /></div>
     <div class="title-center">
       <h1>Relatório Médico</h1>
-      <div class="subtitle">${whitelabel.institution.networkName}</div>
+      <div class="subtitle">${whitelabel.institution.hospitalName}</div>
     </div>
-    <div class="logo-right"><img src="${networkLogoUrl}" alt="${whitelabel.institution.networkShortName}" /></div>
+    <div class="logo-right"><img src="${hospitalLogoUrl}" alt="${whitelabel.institution.hospitalName}" /></div>
   </div>
   <div class="accent-line"></div>
 
