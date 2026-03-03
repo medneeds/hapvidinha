@@ -42,11 +42,125 @@ export function ViewPatientSnapshotDialog({
 }: ViewPatientSnapshotDialogProps) {
   if (!patient) return null;
 
+  const handlePrintCase = () => {
+    const now = new Date();
+    const dateStr = format(now, "dd/MM/yyyy", { locale: ptBR });
+    const timeStr = format(now, "HH:mm", { locale: ptBR });
+
+    const sectorLabel = sectorNames[patient.sector] || patient.sector;
+    const admissionDateStr = patient.admissionDate
+      ? format(new Date(patient.admissionDate), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+      : "Não informada";
+
+    const listItems = (items: string[] | undefined, fallback = "Não informado") => {
+      if (!items || items.length === 0) return `<p style="color:#888;font-size:12px;">${fallback}</p>`;
+      return `<ol style="margin:0;padding-left:18px;">${items.map(i => `<li style="font-size:12px;margin-bottom:3px;text-transform:uppercase;">${i}</li>`).join("")}</ol>`;
+    };
+
+    const hapmapLogoUrl = whitelabel.logos.platform;
+    const networkLogoUrl = whitelabel.logos.networkFull;
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Caso Clínico - ${patient.name}</title>
+        <style>
+          @page { size: A4 portrait; margin: 18mm; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: 'Segoe UI', Tahoma, sans-serif; color: #1a1a1a; background: #fff; }
+          .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #013ba6; padding-bottom: 12px; margin-bottom: 18px; }
+          .header-left { display: flex; align-items: center; gap: 14px; }
+          .header-left img { height: 40px; object-fit: contain; }
+          .header-right img { height: 36px; object-fit: contain; }
+          .title { font-size: 16px; font-weight: 700; color: #013ba6; text-transform: uppercase; }
+          .subtitle { font-size: 11px; color: #666; margin-top: 2px; }
+          .patient-header { background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; }
+          .patient-name { font-size: 18px; font-weight: 700; text-transform: uppercase; color: #1e293b; }
+          .patient-meta { display: flex; gap: 20px; margin-top: 6px; font-size: 12px; color: #475569; }
+          .patient-meta span { font-weight: 600; color: #1e293b; }
+          .section { margin-bottom: 16px; }
+          .section-title { font-size: 13px; font-weight: 700; color: #013ba6; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 8px; }
+          .anamnese-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; font-size: 12px; white-space: pre-wrap; text-transform: uppercase; }
+          .footer { margin-top: 24px; padding-top: 10px; border-top: 2px solid #013ba6; display: flex; justify-content: space-between; font-size: 9px; color: #888; }
+          @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="header-left">
+            <img src="${hapmapLogoUrl}" alt="HapMap" />
+            <div>
+              <div class="title">Caso Clínico do Paciente</div>
+              <div class="subtitle">${whitelabel.institution.hospitalName}</div>
+            </div>
+          </div>
+          <div class="header-right">
+            <img src="${networkLogoUrl}" alt="${whitelabel.institution.networkName}" />
+          </div>
+        </div>
+
+        <div class="patient-header">
+          <div class="patient-name">${patient.name}</div>
+          <div class="patient-meta">
+            <div>Leito: <span>${patient.bedNumber}</span></div>
+            ${patient.age ? `<div>Idade: <span>${formatAgeDisplay(patient.age)}</span></div>` : ""}
+            <div>Setor: <span>${sectorLabel}</span></div>
+            <div>Admissão: <span>${admissionDateStr}</span></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Hipóteses / Diagnósticos</div>
+          ${listItems(patient.diagnoses)}
+        </div>
+
+        <div class="section">
+          <div class="section-title">Antecedentes</div>
+          ${listItems(patient.medicalHistory)}
+        </div>
+
+        <div class="section">
+          <div class="section-title">Exames Relevantes</div>
+          ${listItems(patient.relevantExams)}
+        </div>
+
+        <div class="section">
+          <div class="section-title">Programações / Pendências</div>
+          ${listItems(patient.pendencies)}
+        </div>
+
+        ${patient.admissionHistory ? `
+        <div class="section">
+          <div class="section-title">História Admissional / Anamnese</div>
+          <div class="anamnese-box">${patient.admissionHistory}</div>
+        </div>
+        ` : ""}
+
+        <div class="footer">
+          <span>${whitelabel.print.confidentialityText} • ${whitelabel.print.systemLabel}</span>
+          <span>${whitelabel.credits.authorSignature} • Gerado em ${dateStr} às ${timeStr}</span>
+        </div>
+      </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    setTimeout(() => printWindow.print(), 500);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[85vh]">
-        <DialogHeader>
+        <DialogHeader className="flex flex-row items-center justify-between gap-4">
           <DialogTitle className="text-2xl">Dados Históricos do Paciente</DialogTitle>
+          <Button onClick={handlePrintCase} variant="outline" size="sm" className="gap-2 shrink-0 mr-6">
+            <Printer className="h-4 w-4" />
+            Imprimir Caso
+          </Button>
         </DialogHeader>
         
         <ScrollArea className="h-[calc(85vh-8rem)] pr-4">
