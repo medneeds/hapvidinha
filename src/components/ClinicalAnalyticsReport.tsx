@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Printer, X, Loader2, CalendarRange } from "lucide-react";
+import { Printer, X, CalendarRange, Brain, Sparkles } from "lucide-react";
 import { whitelabel } from "@/config/whitelabel";
 import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -58,6 +58,14 @@ interface ReportData {
 
 type PeriodType = "mensal" | "trimestral" | "semestral";
 
+// ── Helpers ──
+function extractText(val: unknown): string {
+  if (!val) return "";
+  if (typeof val === "string") return val;
+  if (Array.isArray(val)) return val.filter(Boolean).join(" / ");
+  return String(val);
+}
+
 // ── Syndrome classifier ──
 const SYNDROME_KEYWORDS: Record<string, string[]> = {
   "Infecciosas (PNM, ITU, Sepse, IPPB)": ["pnm", "pneumonia", "itu", "sepse", "infec", "broncopneumonia", "celulite", "abscesso", "meningite", "endocardite", "pielonefrite", "erisipela"],
@@ -85,8 +93,8 @@ function classifySyndrome(text: string): string {
 
 function classifySeverity(diagnoses: string, history: string): string {
   const text = (diagnoses + " " + history).toLowerCase();
-  const grave = ["sepse", "iam", "irpa", "insuficiência respiratória", "choque", "pcr", "hemorrag", "abdome agudo", "lma", "leucemia"];
-  const gravissimo = ["óbito", "pcr", "choque séptico", "falência", "gravíssimo"];
+  const gravissimo = ["óbito", "pcr", "choque séptico", "falência", "gravíssimo", "parada cardio"];
+  const grave = ["sepse", "iam", "irpa", "insuficiência respiratória", "choque", "hemorrag", "abdome agudo", "lma", "leucemia", "grave"];
   
   for (const kw of gravissimo) {
     if (text.includes(kw)) return "GRAVÍSSIMO";
@@ -141,9 +149,10 @@ function generateInsights(data: ReportData): string[] {
   const insights: string[] = [];
   
   if (data.recurrentPatients.length > 0) {
-    const dialyticPatients = data.recurrentPatients.filter(p => 
-      p.diagnoses.toLowerCase().includes("drc") || p.diagnoses.toLowerCase().includes("diál") || p.diagnoses.toLowerCase().includes("hemodiálise")
-    );
+    const dialyticPatients = data.recurrentPatients.filter(p => {
+      const lower = p.diagnoses.toLowerCase();
+      return lower.includes("drc") || lower.includes("diál") || lower.includes("hemodiálise");
+    });
     if (dialyticPatients.length > 0) {
       const totalVisits = dialyticPatients.reduce((sum, p) => sum + p.visits, 0);
       insights.push(`FALHA DE FLUXO DIALÍTICO: ${totalVisits} visitas de ${dialyticPatients.length} pacientes DRC à emergência. Recomenda-se encaminhamento ao serviço de nefrologia ambulatorial.`);
@@ -151,39 +160,139 @@ function generateInsights(data: ReportData): string[] {
   }
   
   if (data.deaths.length > 0) {
-    const youngDeaths = data.deaths.filter(d => d.history.toLowerCase().includes("nega") || d.history === "—");
-    if (youngDeaths.length > 0) {
-      insights.push(`CASO SENTINELA — ${youngDeaths.length} óbito(s) sem comorbidades prévias. Avaliar protocolos de detecção precoce.`);
+    const sentinelDeaths = data.deaths.filter(d => {
+      const h = d.history.toLowerCase();
+      return h.includes("nega") || h === "—" || h === "";
+    });
+    if (sentinelDeaths.length > 0) {
+      insights.push(`CASO SENTINELA — ${sentinelDeaths.length} óbito(s) sem comorbidades prévias. Avaliar protocolos de detecção precoce e cobertura vacinal.`);
     }
   }
   
   if (data.utiTransfers.length > 3) {
     const cardioTransfers = data.utiTransfers.filter(t => t.syndrome.toLowerCase().includes("cardio"));
     if (cardioTransfers.length >= 2) {
-      insights.push(`ALTA DEMANDA CARDIOVASCULAR PARA UTI: ${cardioTransfers.length} transferências por SCA/ICC no período. Considerar ampliação de leitos coronarianos.`);
+      insights.push(`ALTA DEMANDA CARDIOVASCULAR PARA UTI: ${cardioTransfers.length} transferências por SCA/ICC no período. Considerar ampliação de leitos coronarianos ou protocolo fast-track.`);
     }
   }
   
-  if (data.totalObitos > 0) {
+  if (data.totalObitos > 0 && data.totalMovements > 0) {
     const taxaObito = ((data.totalObitos / data.totalMovements) * 100).toFixed(2);
     insights.push(`TAXA DE MORTALIDADE: ${taxaObito}% no período (${data.totalObitos} óbitos em ${data.totalMovements} movimentações).`);
   }
   
   const topSyndrome = data.syndromes[0];
-  if (topSyndrome) {
+  if (topSyndrome && topSyndrome.name !== "Outras / Não classificadas") {
     insights.push(`PERFIL EPIDEMIOLÓGICO DOMINANTE: ${topSyndrome.name} representando ${topSyndrome.percentage}% (${topSyndrome.count} casos) das movimentações.`);
   }
   
   if (data.recurrentPatients.filter(p => p.severity === "GRAVÍSSIMO").length > 0) {
-    insights.push(`ATENÇÃO: ${data.recurrentPatients.filter(p => p.severity === "GRAVÍSSIMO").length} paciente(s) recorrente(s) com classificação GRAVÍSSIMO. Necessário plano de acompanhamento.`);
+    insights.push(`ATENÇÃO: ${data.recurrentPatients.filter(p => p.severity === "GRAVÍSSIMO").length} paciente(s) recorrente(s) com classificação GRAVÍSSIMO. Necessário plano de acompanhamento urgente.`);
   }
   
-  if (data.totalAltas > 0) {
+  if (data.totalAltas > 0 && data.totalMovements > 0) {
     const taxaAlta = ((data.totalAltas / data.totalMovements) * 100).toFixed(1);
-    insights.push(`TAXA DE RESOLUBILIDADE: ${taxaAlta}% de altas no período. ${data.totalAltas > data.totalTransferencias ? 'Boa capacidade resolutiva.' : 'Proporção elevada de transferências.'}`);
+    insights.push(`TAXA DE RESOLUBILIDADE: ${taxaAlta}% de altas no período. ${data.totalAltas > data.totalTransferencias ? 'Boa capacidade resolutiva.' : 'Proporção elevada de transferências — avaliar gargalos.'}`);
+  }
+
+  if (data.utiTransfers.length > 0) {
+    insights.push(`DEMANDA UTI: ${data.utiTransfers.length} transferência(s) para UTI no período. Monitorar capacidade e tempo de espera por leitos de terapia intensiva.`);
   }
   
   return insights.slice(0, 8);
+}
+
+// ── Loading Animation Component ──
+function AILoadingAnimation() {
+  const [dots, setDots] = useState("");
+  const [messageIndex, setMessageIndex] = useState(0);
+  
+  const messages = [
+    "Nossa inteligência está trabalhando para entregar o melhor relatório possível...",
+    "Analisando movimentações e classificando padrões clínicos...",
+    "Identificando pacientes recorrentes e eventos sentinela...",
+    "Classificando distribuição sindrômica e gravidade...",
+    "Gerando insights estratégicos para gestão...",
+    "Você não perde por esperar! Quase lá...",
+  ];
+  
+  useEffect(() => {
+    const dotInterval = setInterval(() => {
+      setDots(prev => prev.length >= 3 ? "" : prev + ".");
+    }, 500);
+    const msgInterval = setInterval(() => {
+      setMessageIndex(prev => (prev + 1) % messages.length);
+    }, 3000);
+    return () => { clearInterval(dotInterval); clearInterval(msgInterval); };
+  }, []);
+  
+  return (
+    <div className="flex flex-col items-center justify-center py-20 px-8 animate-fade-in">
+      {/* AI Brain Animation */}
+      <div className="relative mb-8">
+        {/* Outer glow ring */}
+        <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" style={{ animationDuration: '2s' }} />
+        
+        {/* Middle ring */}
+        <div className="relative w-28 h-28 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center border border-primary/20">
+          {/* Rotating sparkles */}
+          <div className="absolute inset-0 animate-spin" style={{ animationDuration: '4s' }}>
+            <Sparkles className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 h-4 w-4 text-primary/60" />
+            <Sparkles className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1 h-3 w-3 text-primary/40" />
+            <Sparkles className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 h-3.5 w-3.5 text-primary/50" />
+            <Sparkles className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 h-3 w-3 text-primary/40" />
+          </div>
+          
+          {/* Inner brain icon */}
+          <div className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg">
+            <Brain className="h-8 w-8 text-primary-foreground animate-pulse" />
+          </div>
+        </div>
+        
+        {/* Orbiting dots */}
+        <div className="absolute inset-[-12px] animate-spin" style={{ animationDuration: '6s' }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-primary/70 shadow-sm" />
+        </div>
+        <div className="absolute inset-[-12px] animate-spin" style={{ animationDuration: '6s', animationDelay: '2s' }}>
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary/50 shadow-sm" />
+        </div>
+        <div className="absolute inset-[-12px] animate-spin" style={{ animationDuration: '6s', animationDelay: '4s' }}>
+          <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary/40 shadow-sm" />
+        </div>
+      </div>
+      
+      {/* Text */}
+      <div className="text-center max-w-md space-y-3">
+        <h3 className="text-lg font-bold text-foreground flex items-center justify-center gap-2">
+          <Sparkles className="h-5 w-5 text-primary" />
+          Inteligência Analítica
+          <Sparkles className="h-5 w-5 text-primary" />
+        </h3>
+        <p className="text-sm text-muted-foreground leading-relaxed transition-all duration-500">
+          {messages[messageIndex]}{dots}
+        </p>
+        
+        {/* Progress bar */}
+        <div className="w-full max-w-xs mx-auto h-1.5 bg-muted rounded-full overflow-hidden mt-4">
+          <div 
+            className="h-full bg-gradient-to-r from-primary via-primary/80 to-primary rounded-full" 
+            style={{ 
+              animation: 'loading-progress 3s ease-in-out infinite',
+              width: '60%',
+            }} 
+          />
+        </div>
+      </div>
+      
+      <style>{`
+        @keyframes loading-progress {
+          0% { width: 5%; margin-left: 0; }
+          50% { width: 60%; margin-left: 20%; }
+          100% { width: 5%; margin-left: 95%; }
+        }
+      `}</style>
+    </div>
+  );
 }
 
 export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
@@ -200,73 +309,87 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
     if (!currentHospital || !currentState) return;
     
     setIsLoading(true);
+    setReportData(null);
+    
+    // Minimum 2s loading for UX
+    const minLoadTime = new Promise(resolve => setTimeout(resolve, 2000));
+    
     try {
-      const { from, to, label } = getPeriodDates(periodType, parseInt(periodOffset));
+      const { from, to } = getPeriodDates(periodType, parseInt(periodOffset));
       
-      const { data: movements, error } = await supabase
-        .from("patient_movements")
-        .select("*")
-        .eq("hospital_unit_id", currentHospital.id)
-        .eq("state_id", currentState.id)
-        .eq("department", currentDepartment)
-        .gte("created_at", startOfDay(from).toISOString())
-        .lte("created_at", endOfDay(to).toISOString())
-        .order("created_at", { ascending: false });
+      const [movResult] = await Promise.all([
+        supabase
+          .from("patient_movements")
+          .select("*")
+          .eq("hospital_unit_id", currentHospital.id)
+          .eq("state_id", currentState.id)
+          .eq("department", currentDepartment)
+          .gte("created_at", startOfDay(from).toISOString())
+          .lte("created_at", endOfDay(to).toISOString())
+          .order("created_at", { ascending: false })
+          .limit(1000),
+        minLoadTime,
+      ]);
       
-      if (error) throw error;
+      if (movResult.error) throw movResult.error;
       
-      const movs = movements || [];
+      const movs = movResult.data || [];
       
-      // KPIs
-      const totalAltas = movs.filter(m => m.movement_type === "alta").length;
-      const totalTransferencias = movs.filter(m => m.movement_type === "transferencia" || m.movement_type === "transferência").length;
-      const totalObitos = movs.filter(m => m.movement_type === "obito" || m.movement_type === "óbito").length;
+      // KPIs - movement_type is uppercase in DB
+      const totalAltas = movs.filter(m => m.movement_type.toUpperCase() === "ALTA").length;
+      const totalTransferencias = movs.filter(m => m.movement_type.toUpperCase() === "TRANSFERÊNCIA" || m.movement_type.toUpperCase() === "TRANSFERENCIA").length;
+      const totalObitos = movs.filter(m => m.movement_type.toUpperCase() === "ÓBITO" || m.movement_type.toUpperCase() === "OBITO").length;
       
       // Deaths
-      const deathMovs = movs.filter(m => m.movement_type === "obito" || m.movement_type === "óbito");
+      const deathMovs = movs.filter(m => m.movement_type.toUpperCase() === "ÓBITO" || m.movement_type.toUpperCase() === "OBITO");
       const deaths: DeathRecord[] = deathMovs.map(m => {
-        const snapshot = m.patient_snapshot as any || {};
-        const diagnoses = snapshot.diagnoses || m.notes || "Sem diagnóstico registrado";
-        const history = snapshot.medical_history || "—";
+        const snapshot = (m.patient_snapshot as Record<string, unknown>) || {};
+        const diagnoses = extractText(snapshot.diagnoses) || m.notes || "Sem diagnóstico registrado";
+        const history = extractText(snapshot.medicalHistory || snapshot.medical_history) || "—";
         return {
           name: m.patient_name,
           date: format(new Date(m.created_at), "dd/MM/yyyy"),
           diagnoses,
-          history,
+          history: history || "—",
           severity: "GRAVÍSSIMO",
           syndrome: classifySyndrome(diagnoses),
-          alert: history.toLowerCase().includes("nega") ? `CASO SENTINELA — Paciente sem comorbidades prévias, óbito por ${diagnoses.split("/")[0].trim()}` : undefined,
+          alert: (history.toLowerCase().includes("nega") || history === "—" || !history.trim()) 
+            ? `CASO SENTINELA — Paciente sem comorbidades prévias, óbito por ${diagnoses.split("/")[0].trim()}`
+            : undefined,
         };
       });
       
-      // UTI Transfers
+      // UTI Transfers - check destination
       const utiMovs = movs.filter(m => {
-        const dest = (m.destination || "").toLowerCase();
-        return dest.includes("uti") || dest.includes("unidade de terapia");
+        const dest = (m.destination || "").toUpperCase();
+        return dest.includes("UTI") || dest.includes("UNIDADE DE TERAPIA");
       });
       const utiTransfers: UtiTransfer[] = utiMovs.map(m => {
-        const snapshot = m.patient_snapshot as any || {};
-        const diagnoses = snapshot.diagnoses || m.notes || "Sem diagnóstico registrado";
-        const history = snapshot.medical_history || "—";
+        const snapshot = (m.patient_snapshot as Record<string, unknown>) || {};
+        const diagnoses = extractText(snapshot.diagnoses) || m.notes || "Sem diagnóstico registrado";
+        const history = extractText(snapshot.medicalHistory || snapshot.medical_history) || "—";
         return {
           name: m.patient_name,
           date: format(new Date(m.created_at), "dd/MM"),
           diagnoses,
-          history,
+          history: history || "—",
           syndrome: classifySyndrome(diagnoses),
         };
       });
       
       // Recurrent patients
-      const patientVisits: Record<string, { count: number; diagnoses: string[]; snapshots: any[] }> = {};
+      const patientVisits: Record<string, { count: number; diagnoses: Set<string>; histories: Set<string> }> = {};
       movs.forEach(m => {
         const key = m.patient_name.toUpperCase().trim();
-        if (!patientVisits[key]) patientVisits[key] = { count: 0, diagnoses: [], snapshots: [] };
+        if (!key) return;
+        if (!patientVisits[key]) patientVisits[key] = { count: 0, diagnoses: new Set(), histories: new Set() };
         patientVisits[key].count++;
-        const snapshot = m.patient_snapshot as any || {};
-        if (snapshot.diagnoses) patientVisits[key].diagnoses.push(snapshot.diagnoses);
-        if (m.notes) patientVisits[key].diagnoses.push(m.notes);
-        patientVisits[key].snapshots.push(snapshot);
+        const snapshot = (m.patient_snapshot as Record<string, unknown>) || {};
+        const diag = extractText(snapshot.diagnoses);
+        const hist = extractText(snapshot.medicalHistory || snapshot.medical_history);
+        if (diag) patientVisits[key].diagnoses.add(diag);
+        if (m.notes) patientVisits[key].diagnoses.add(m.notes);
+        if (hist) patientVisits[key].histories.add(hist);
       });
       
       const recurrentPatients: RecurrentPatient[] = Object.entries(patientVisits)
@@ -274,46 +397,47 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
         .sort((a, b) => b[1].count - a[1].count)
         .slice(0, 15)
         .map(([name, v]) => {
-          const allDiag = [...new Set(v.diagnoses)].join(" / ") || "Sem registro";
-          const history = v.snapshots[0]?.medical_history || "";
+          const allDiag = [...v.diagnoses].join(" / ");
+          const allHist = [...v.histories].join(" ");
+          const truncDiag = allDiag.length > 150 ? allDiag.substring(0, 147) + "..." : allDiag;
           return {
             name,
             visits: v.count,
-            diagnoses: allDiag.length > 120 ? allDiag.substring(0, 117) + "..." : allDiag,
-            pattern: v.count >= 4 ? "Alta recorrência — investigar acompanhamento ambulatorial" :
-                     v.count >= 3 ? "Recorrência moderada — avaliar plano terapêutico" :
-                     "Readmissão — monitorar evolução",
-            severity: classifySeverity(allDiag, history),
+            diagnoses: truncDiag || "Sem registro",
+            pattern: v.count >= 5 ? "Altíssima recorrência — necessita acompanhamento ambulatorial urgente" :
+                     v.count >= 3 ? "Recorrência significativa — avaliar plano terapêutico" :
+                     "Readmissão — monitorar evolução clínica",
+            severity: classifySeverity(allDiag, allHist),
           };
         });
       
       // Syndromes
       const syndromeCounts: Record<string, number> = {};
       movs.forEach(m => {
-        const snapshot = m.patient_snapshot as any || {};
-        const text = (snapshot.diagnoses || "") + " " + (m.notes || "") + " " + (m.destination || "");
+        const snapshot = (m.patient_snapshot as Record<string, unknown>) || {};
+        const text = extractText(snapshot.diagnoses) + " " + (m.notes || "") + " " + (m.destination || "");
         const syndrome = classifySyndrome(text);
         syndromeCounts[syndrome] = (syndromeCounts[syndrome] || 0) + 1;
       });
       
       const totalForSyndromes = movs.length || 1;
       const syndromes: SyndromeData[] = Object.entries(syndromeCounts)
+        .filter(([name]) => name !== "Outras")
         .map(([name, count]) => ({
           name,
           count,
           percentage: Math.round((count / totalForSyndromes) * 100),
         }))
         .sort((a, b) => b.count - a.count)
-        .filter(s => s.name !== "Outras")
         .slice(0, 11);
       
-      // Add "Outras" if needed
       const classifiedCount = syndromes.reduce((sum, s) => sum + s.count, 0);
-      if (classifiedCount < movs.length) {
+      const otherCount = (syndromeCounts["Outras"] || 0) + (movs.length - classifiedCount - (syndromeCounts["Outras"] || 0));
+      if (otherCount > 0) {
         syndromes.push({
           name: "Outras / Não classificadas",
-          count: movs.length - classifiedCount,
-          percentage: Math.round(((movs.length - classifiedCount) / totalForSyndromes) * 100),
+          count: otherCount,
+          percentage: Math.round((otherCount / totalForSyndromes) * 100),
         });
       }
       
@@ -490,7 +614,6 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <span><strong>Gerado por:</strong> HapMap 2.0 — IA Analítica</span>
           </div>
           
-          <!-- KPIs -->
           <div class="kpi-row">
             <div class="kpi-card"><div class="value">${reportData.totalMovements}</div><div class="label">Movimentações Totais</div></div>
             <div class="kpi-card"><div class="value">${reportData.totalAltas}</div><div class="label">Altas</div></div>
@@ -500,7 +623,6 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <div class="kpi-card"><div class="value">${reportData.recurrentPatients.length}</div><div class="label">Pacientes Recorrentes</div></div>
           </div>
 
-          <!-- ÓBITOS -->
           <h2 class="section-title red">1. Óbitos — Eventos Sentinela</h2>
           ${reportData.deaths.length > 0 ? `
           <table>
@@ -517,7 +639,6 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             `).join('')}
           </table>` : '<p class="empty-notice">Nenhum óbito registrado no período.</p>'}
 
-          <!-- UTI -->
           <h2 class="section-title orange">2. Casos Gravíssimos — Transferências para UTI</h2>
           ${reportData.utiTransfers.length > 0 ? `
           <table>
@@ -544,7 +665,6 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" />
           </div>
 
-          <!-- RECORRÊNCIA -->
           <h2 class="section-title purple">3. Pacientes Recorrentes — Análise de Padrão</h2>
           ${reportData.recurrentPatients.length > 0 ? `
           <table>
@@ -560,7 +680,6 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             `).join('')}
           </table>` : '<p class="empty-notice">Nenhum paciente com recorrência identificada no período.</p>'}
 
-          <!-- SÍNDROMES -->
           <h2 class="section-title teal">4. Distribuição Sindrômica</h2>
           ${reportData.syndromes.length > 0 ? `
           <div style="margin-bottom: 14px;">
@@ -573,13 +692,11 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             `).join('')}
           </div>` : '<p class="empty-notice">Sem dados sindrômicos para o período.</p>'}
 
-          <!-- INSIGHTS -->
           <h2 class="section-title amber">5. Insights para Gestão</h2>
           ${reportData.managementInsights.length > 0 ? reportData.managementInsights.map((insight, i) => `
             <div class="insight-box"><strong>${i + 1}.</strong> ${insight}</div>
           `).join('') : '<p class="empty-notice">Dados insuficientes para gerar insights no período.</p>'}
 
-          <!-- FOOTER -->
           <div class="footer">
             <span>${whitelabel.platform.fullName} — ${whitelabel.institution.networkName}</span>
             <span>Documento gerado automaticamente • ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
@@ -619,58 +736,80 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/60 flex flex-col">
       {/* Sticky toolbar */}
-      <div className="sticky top-0 z-10 bg-background border-b px-4 py-3 flex items-center justify-between gap-4">
-        <h2 className="text-lg font-bold text-foreground whitespace-nowrap">Relatório Analítico Clínico</h2>
+      <div className="sticky top-0 z-10 bg-background border-b shadow-sm">
+        <div className="px-4 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-lg">
+              <Brain className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold text-primary">IA Analítica</span>
+            </div>
+          </div>
+          
+          <div className="flex gap-2">
+            <Button onClick={handlePrint} className="gap-2" disabled={isLoading || !reportData} size="sm">
+              <Printer className="h-4 w-4" /> Gerar PDF
+            </Button>
+            <Button variant="outline" onClick={onClose} size="sm">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
         
-        {/* Period Filters */}
-        <div className="flex items-center gap-2 flex-1 justify-center">
-          <CalendarRange className="h-4 w-4 text-muted-foreground" />
-          <Select value={periodType} onValueChange={(v: PeriodType) => { setPeriodType(v); setPeriodOffset("0"); }}>
-            <SelectTrigger className="w-[140px] h-9">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="mensal">Mensal</SelectItem>
-              <SelectItem value="trimestral">Trimestral</SelectItem>
-              <SelectItem value="semestral">Semestral</SelectItem>
-            </SelectContent>
-          </Select>
+        {/* Period filter bar */}
+        <div className="px-4 pb-3 flex items-center gap-3">
+          <CalendarRange className="h-4 w-4 text-muted-foreground shrink-0" />
+          <span className="text-xs text-muted-foreground font-medium shrink-0">Período:</span>
+          
+          {/* Period type tabs */}
+          <div className="flex bg-muted rounded-lg p-0.5 gap-0.5">
+            {(["mensal", "trimestral", "semestral"] as PeriodType[]).map(type => (
+              <button
+                key={type}
+                onClick={() => { setPeriodType(type); setPeriodOffset("0"); }}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${
+                  periodType === type 
+                    ? "bg-primary text-primary-foreground shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted-foreground/10"
+                }`}
+              >
+                {type === "mensal" ? "Mensal" : type === "trimestral" ? "Trimestral" : "Semestral"}
+              </button>
+            ))}
+          </div>
+          
+          <div className="h-4 w-px bg-border" />
           
           <Select value={periodOffset} onValueChange={setPeriodOffset}>
-            <SelectTrigger className="w-[200px] h-9">
+            <SelectTrigger className="w-[220px] h-8 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {periodOptions.map(opt => (
-                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                <SelectItem key={opt.value} value={opt.value} className="text-xs">{opt.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
-        </div>
-        
-        <div className="flex gap-2">
-          <Button onClick={handlePrint} className="gap-2" disabled={isLoading || !reportData}>
-            <Printer className="h-4 w-4" /> Gerar PDF
-          </Button>
-          <Button variant="outline" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
+          
+          <span className="text-xs text-muted-foreground ml-auto">
+            {currentDepartment}
+          </span>
         </div>
       </div>
 
       {/* Preview */}
       <div className="flex-1 overflow-auto bg-muted/50 p-4">
         {isLoading ? (
-          <div className="flex items-center justify-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <span className="ml-3 text-muted-foreground">Gerando relatório analítico...</span>
+          <div className="max-w-lg mx-auto mt-12 bg-background rounded-xl shadow-lg border p-8">
+            <AILoadingAnimation />
           </div>
-        ) : !reportData ? (
-          <div className="flex items-center justify-center h-64 text-muted-foreground">
-            Sem dados disponíveis para o período selecionado.
+        ) : !reportData || reportData.totalMovements === 0 ? (
+          <div className="flex flex-col items-center justify-center h-64 text-muted-foreground gap-3">
+            <CalendarRange className="h-10 w-10 text-muted-foreground/50" />
+            <p className="text-sm">Sem movimentações registradas para o período selecionado.</p>
+            <p className="text-xs">Tente selecionar um período diferente ou verifique o setor ativo.</p>
           </div>
         ) : (
-          <div ref={printRef} className="max-w-4xl mx-auto bg-white text-black rounded-lg shadow-lg p-8" style={{ fontFamily: "'Segoe UI', sans-serif" }}>
+          <div ref={printRef} className="max-w-4xl mx-auto bg-white text-black rounded-lg shadow-lg p-8 animate-fade-in" style={{ fontFamily: "'Segoe UI', sans-serif" }}>
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b-[3px] border-[#013ba6] mb-4">
               <img src={platformLogoUrl} alt="HapMap" className="h-12" />
@@ -715,7 +854,7 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <h2 className="text-sm font-bold text-red-600 border-l-4 border-red-600 pl-2 mb-2 uppercase tracking-wider">1. Óbitos — Eventos Sentinela</h2>
             {reportData.deaths.length > 0 ? (
               <table className="w-full text-xs mb-4 border-collapse">
-                <thead><tr className="bg-red-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Data</th><th className="p-1.5 text-left">Diagnóstico</th><th className="p-1.5 text-left">Síndrome</th></tr></thead>
+                <thead><tr className="bg-red-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Data</th><th className="p-1.5 text-left">Diagnóstico</th><th className="p-1.5 text-left">Antecedentes</th><th className="p-1.5 text-left">Síndrome</th></tr></thead>
                 <tbody>
                   {reportData.deaths.map((d, i) => (
                     <>
@@ -723,9 +862,10 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
                         <td className="p-1.5 font-semibold">{d.name}</td>
                         <td className="p-1.5 text-center">{d.date}</td>
                         <td className="p-1.5">{d.diagnoses}</td>
+                        <td className="p-1.5">{d.history}</td>
                         <td className="p-1.5">{d.syndrome}</td>
                       </tr>
-                      {d.alert && <tr key={`alert-${i}`}><td colSpan={4} className="px-1.5 pb-2"><div className="bg-red-50 border border-red-200 border-l-4 border-l-red-600 p-1.5 rounded text-red-800 text-[10px] font-semibold">⚠ {d.alert}</div></td></tr>}
+                      {d.alert && <tr key={`alert-${i}`}><td colSpan={5} className="px-1.5 pb-2"><div className="bg-red-50 border border-red-200 border-l-4 border-l-red-600 p-1.5 rounded text-red-800 text-[10px] font-semibold">⚠ {d.alert}</div></td></tr>}
                     </>
                   ))}
                 </tbody>
@@ -738,13 +878,14 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <h2 className="text-sm font-bold text-orange-600 border-l-4 border-orange-600 pl-2 mb-2 uppercase tracking-wider">2. Casos Gravíssimos — Transferências UTI</h2>
             {reportData.utiTransfers.length > 0 ? (
               <table className="w-full text-xs mb-4 border-collapse">
-                <thead><tr className="bg-orange-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Data</th><th className="p-1.5 text-left">Diagnóstico</th><th className="p-1.5 text-left">Síndrome</th></tr></thead>
+                <thead><tr className="bg-orange-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Data</th><th className="p-1.5 text-left">Diagnóstico</th><th className="p-1.5 text-left">Antecedentes</th><th className="p-1.5 text-left">Síndrome</th></tr></thead>
                 <tbody>
                   {reportData.utiTransfers.map((t, i) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : ''}>
                       <td className="p-1.5 font-semibold">{t.name}</td>
                       <td className="p-1.5 text-center">{t.date}</td>
                       <td className="p-1.5">{t.diagnoses}</td>
+                      <td className="p-1.5">{t.history}</td>
                       <td className="p-1.5">{t.syndrome}</td>
                     </tr>
                   ))}
