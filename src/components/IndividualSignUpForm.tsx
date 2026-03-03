@@ -21,6 +21,7 @@ import {
   CheckCircle,
   Shield,
   Mail,
+  DoorOpen,
 } from "lucide-react";
 import {
   Select,
@@ -94,6 +95,7 @@ export function IndividualSignUpForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const [selectedRole, setSelectedRole] = useState<"medico" | "porta">("medico");
   const [formData, setFormData] = useState({
     fullName: "",
     crm: "",
@@ -174,12 +176,12 @@ export function IndividualSignUpForm({
           console.error("Error updating profile:", profileError);
         }
 
-        // Assign default role as "medico"
+        // Assign selected role
         const { error: roleError } = await supabase
           .from("user_roles")
           .insert({
             user_id: authData.user.id,
-            role: "medico",
+            role: selectedRole,
           });
 
         if (roleError) {
@@ -330,6 +332,43 @@ export function IndividualSignUpForm({
               ))}
             </SelectContent>
           </Select>
+        </div>
+      </div>
+
+      {/* Role Selection */}
+      <div className="space-y-3 pb-3 border-b border-gray-200">
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">CATEGORIA PROFISSIONAL</p>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setSelectedRole("medico")}
+            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+              selectedRole === "medico"
+                ? "border-[#013ba6] bg-[#013ba6]/5 shadow-md"
+                : "border-gray-200 bg-gray-50 hover:border-gray-300"
+            }`}
+          >
+            <Stethoscope className={`h-5 w-5 ${selectedRole === "medico" ? "text-[#013ba6]" : "text-gray-400"}`} />
+            <span className={`text-xs font-bold uppercase ${selectedRole === "medico" ? "text-[#013ba6]" : "text-gray-500"}`}>
+              Líder
+            </span>
+            <span className="text-[9px] text-gray-400 text-center">Edita livremente os pacientes do mapa</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedRole("porta")}
+            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+              selectedRole === "porta"
+                ? "border-teal-600 bg-teal-50 shadow-md"
+                : "border-gray-200 bg-gray-50 hover:border-gray-300"
+            }`}
+          >
+            <DoorOpen className={`h-5 w-5 ${selectedRole === "porta" ? "text-teal-600" : "text-gray-400"}`} />
+            <span className={`text-xs font-bold uppercase ${selectedRole === "porta" ? "text-teal-600" : "text-gray-500"}`}>
+              Porta
+            </span>
+            <span className="text-[9px] text-gray-400 text-center">Edita apenas pacientes que solicitou leito</span>
+          </button>
         </div>
       </div>
 

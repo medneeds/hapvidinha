@@ -95,8 +95,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
 };
 
 const ROLE_CONFIG: Record<string, { label: string; color: string }> = {
-  admin: { label: "Coordenador", color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
-  medico: { label: "Médico", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
+  admin: { label: "Coordenador Médico", color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
+  medico: { label: "Líder", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
   porta: { label: "Porta", color: "bg-teal-500/10 text-teal-600 border-teal-500/20" },
   visitante: { label: "Visitante", color: "bg-gray-500/10 text-gray-600 border-gray-500/20" },
 };
@@ -589,10 +589,10 @@ export default function UserManagementPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="medico">Médico</SelectItem>
+                    <SelectItem value="medico">Líder</SelectItem>
                     <SelectItem value="porta">Porta</SelectItem>
+                    <SelectItem value="admin">Coordenador Médico</SelectItem>
                     <SelectItem value="visitante">Visitante</SelectItem>
-                    <SelectItem value="admin">Coordenador (Admin)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

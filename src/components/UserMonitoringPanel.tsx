@@ -61,12 +61,12 @@ interface HourlyLoginData {
 
 const ROLE_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   admin: { 
-    label: "Coordenador", 
+    label: "Coordenador Médico", 
     color: "bg-purple-500/10 text-purple-600 border-purple-500/20",
     icon: <Shield className="h-3 w-3" />
   },
   medico: { 
-    label: "Médico", 
+    label: "Líder", 
     color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
     icon: <Stethoscope className="h-3 w-3" />
   },
