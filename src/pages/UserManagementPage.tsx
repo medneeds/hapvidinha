@@ -103,6 +103,7 @@ const ROLE_CONFIG: Record<string, { label: string; color: string }> = {
 
 export default function UserManagementPage() {
   const { user, role: currentUserRole } = useAuth();
+  const isGestorMaster = user?.email === "artur.batista@sistema.local";
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -294,7 +295,7 @@ export default function UserManagementPage() {
 
   const pendingCount = users.filter(u => u.status === "pending").length;
 
-  if (currentUserRole !== "admin") {
+  if (currentUserRole !== "admin" && !isGestorMaster) {
     return (
       <MainLayout>
         <div className="flex items-center justify-center h-full">
@@ -580,21 +581,38 @@ export default function UserManagementPage() {
               {/* Role Management */}
               <div className="space-y-2 pt-4 border-t">
                 <p className="text-xs text-muted-foreground uppercase font-semibold">Papel no Sistema</p>
-                <Select
-                  value={selectedUser.role || "medico"}
-                  onValueChange={(value) => handleUpdateRole(selectedUser.id, value)}
-                  disabled={actionLoading}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="medico">Líder</SelectItem>
-                    <SelectItem value="porta">Porta</SelectItem>
-                    <SelectItem value="admin">Coordenador Médico</SelectItem>
-                    <SelectItem value="visitante">Visitante</SelectItem>
-                  </SelectContent>
-                </Select>
+                {isGestorMaster ? (
+                  <div className="space-y-3">
+                    <Select
+                      value={selectedUser.role || "medico"}
+                      onValueChange={(value) => handleUpdateRole(selectedUser.id, value)}
+                      disabled={actionLoading}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="medico">Líder</SelectItem>
+                        <SelectItem value="porta">Porta</SelectItem>
+                        <SelectItem value="admin">Coordenador Médico</SelectItem>
+                        <SelectItem value="visitante">Visitante</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                      <Shield className="h-3 w-3 text-purple-500" />
+                      Gestor Master — controle total de papéis
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <Badge variant="outline" className={ROLE_CONFIG[selectedUser.role || "medico"]?.color || ""}>
+                      {ROLE_CONFIG[selectedUser.role || "medico"]?.label || "—"}
+                    </Badge>
+                    <p className="text-[10px] text-muted-foreground mt-1">
+                      Apenas o Gestor Master pode alterar papéis
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Actions */}
