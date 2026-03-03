@@ -21,6 +21,7 @@ import {
   CheckCircle,
   Shield,
   Mail,
+  DoorOpen,
 } from "lucide-react";
 import {
   Select,

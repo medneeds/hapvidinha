@@ -463,7 +463,7 @@ export function AppSidebar({
                         }
                         
                         // Regular item without subsections
-                        const itemBadge = typeof item === 'object' && 'badge' in item ? item.badge : undefined;
+                        const itemBadge = typeof item === 'object' && 'badge' in item ? (item as any).badge : undefined;
                         
                         return (
                           <SidebarMenuItem key={itemKey}>
