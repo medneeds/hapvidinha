@@ -417,13 +417,22 @@ export default function MovementsPage() {
   return (
     <>
       <div className="p-4 md:p-6 space-y-6">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-foreground uppercase">Histórico de Movimentações</h1>
             <p className="text-sm text-muted-foreground mt-1 uppercase">
               Registro de altas, óbitos e transferências de pacientes
             </p>
           </div>
+          <Button
+            onClick={handlePrintMovements}
+            disabled={filteredMovements.length === 0}
+            className="gap-2 shrink-0"
+          >
+            <Printer className="h-4 w-4" />
+            Gerar PDF
+          </Button>
+        </div>
 
           {/* Search Bar */}
           <div className="flex items-center gap-2">
