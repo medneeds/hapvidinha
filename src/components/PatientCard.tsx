@@ -649,6 +649,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
   const [dietDialogOpen, setDietDialogOpen] = useState(false);
   const [conductHistoryDialogOpen, setConductHistoryDialogOpen] = useState(false);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [reportText, setReportText] = useState("");
   const { history: conductHistory, isLoading: conductHistoryLoading, recordChange } = useConductHistory(patient.id);
   const { role, user } = useAuth();
   const { requests } = useBedAllocationRequests();
