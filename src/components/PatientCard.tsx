@@ -3569,7 +3569,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <>
                     {/* REALOCAÇÃO - Priority Category */}
                     {onTransfer && (
-                      <Collapsible defaultOpen className="group">
+                      <Collapsible className="group">
                         <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
                           <Shuffle className="h-4 w-4 text-teal-500 dark:text-teal-400" />
                           <span className="flex-1 text-left text-foreground">Realocação</span>
@@ -3634,7 +3634,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     </Collapsible>
 
                     {/* MOVIMENTAÇÕES - Priority Category with Gradient Accent */}
-                    <Collapsible defaultOpen className="group">
+                    <Collapsible className="group">
                       <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
                         <Activity className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                         <span className="flex-1 text-left text-foreground">Movimentações</span>
