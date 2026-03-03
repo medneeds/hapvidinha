@@ -35,6 +35,7 @@ import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 import { useConductHistory } from "@/hooks/useConductHistory";
 import { ConductHistoryDialog } from "./ConductHistoryDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { whitelabel } from "@/config/whitelabel";
 import {
   Dialog,
   DialogContent,
