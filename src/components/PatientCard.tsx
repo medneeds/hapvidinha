@@ -5052,8 +5052,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
                   const admissionText = patient.admissionHistory || '';
+                  if (!admissionText.trim()) {
+                    toast.error('Nenhuma história admissional disponível');
+                    return;
+                  }
                   setReportText(prev => prev ? prev + '\n\n' + admissionText : admissionText);
                   toast.success('História admissional copiada para o relatório');
                 }}
