@@ -79,6 +79,9 @@ export function AppSidebar({
   
   // Check if user is BIGDOOR (porta role)
   const isDoorUser = role === "porta";
+  
+  // Check if user is Coordenador Médico (admin role but NOT gestor master)
+  const isCoordenadorMedico = role === "admin" && !isGestorMaster;
 
   const allMenuItems = [
     {
@@ -143,6 +146,16 @@ export function AppSidebar({
   // Filtra itens de menu baseado no papel do usuário
   const menuItems = isDoorUser 
     ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "EXAMINUS AI")
+    : isCoordenadorMedico
+    ? allMenuItems.map(item => {
+        if (item.title === "PAINEL ADMIN") {
+          return {
+            ...item,
+            items: item.items?.filter(sub => sub.name === "DASHBOARD DE GESTÃO"),
+          };
+        }
+        return item;
+      })
     : allMenuItems;
 
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
