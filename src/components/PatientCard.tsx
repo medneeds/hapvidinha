@@ -3715,6 +3715,19 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       </DropdownMenuItem>
                     )}
 
+                    {/* EMITIR RELATÓRIO */}
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setReportText("");
+                        setReportDialogOpen(true);
+                      }}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
+                    >
+                      <FileEdit className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      <span>Emitir Relatório</span>
+                    </DropdownMenuItem>
+
                     {/* LIBERAR DIETA - Diet Authorization */}
                     <DropdownMenuItem
                       onClick={(e) => {
@@ -5017,6 +5030,103 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         isLoading={conductHistoryLoading}
         patientName={patient.name}
       />
+      {/* Emitir Relatório Dialog */}
+      <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
+        <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] flex flex-col">
+          <DialogHeader className="pb-3 border-b">
+            <DialogTitle className="text-lg font-bold flex items-center gap-2">
+              <FileEdit className="h-5 w-5 text-primary" />
+              Emitir Relatório
+            </DialogTitle>
+            <div className="flex items-center gap-3 mt-2">
+              <Badge variant="outline" className="text-sm font-semibold">{privacyEnabled ? maskName(patient.name) : patient.name}</Badge>
+              {patient.age && <Badge variant="secondary" className="text-sm">{patient.age}</Badge>}
+              <Badge variant="secondary" className="text-xs">Leito {patient.bedNumber}</Badge>
+            </div>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-auto py-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-foreground">Conteúdo do Relatório</label>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const admissionText = patient.admissionHistory || '';
+                  setReportText(prev => prev ? prev + '\n\n' + admissionText : admissionText);
+                  toast.success('História admissional copiada para o relatório');
+                }}
+                className="flex items-center gap-1.5 text-xs"
+              >
+                <Copy className="h-3 w-3" />
+                Copiar História Admissional
+              </Button>
+            </div>
+            <textarea
+              value={reportText}
+              onChange={(e) => setReportText(e.target.value)}
+              placeholder="Digite ou cole o conteúdo do relatório aqui..."
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
+              style={{ minHeight: '200px', maxHeight: '60vh' }}
+            />
+          </div>
+
+          <div className="flex items-center justify-between pt-3 border-t gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                navigator.clipboard.writeText(reportText);
+                toast.success('Relatório copiado!');
+              }}
+              disabled={!reportText.trim()}
+              className="flex items-center gap-1.5"
+            >
+              <Copy className="h-3.5 w-3.5" />
+              Copiar
+            </Button>
+            <div className="flex gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setReportDialogOpen(false)}>
+                Fechar
+              </Button>
+              <Button
+                size="sm"
+                disabled={!reportText.trim()}
+                onClick={() => {
+                  const printWindow = window.open('', '_blank');
+                  if (!printWindow) return;
+                  printWindow.document.write(`
+                    <html><head><title>Relatório - ${patient.name}</title>
+                    <style>
+                      body { font-family: Arial, sans-serif; padding: 40px; color: #1a1a1a; max-width: 800px; margin: 0 auto; }
+                      .header { border-bottom: 2px solid #2563eb; padding-bottom: 16px; margin-bottom: 24px; }
+                      .patient-name { font-size: 18px; font-weight: bold; margin: 0; }
+                      .patient-info { font-size: 13px; color: #666; margin-top: 4px; }
+                      .content { font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+                      .footer { margin-top: 60px; border-top: 1px solid #ddd; padding-top: 16px; font-size: 11px; color: #999; text-align: center; }
+                      @media print { body { padding: 20px; } }
+                    </style></head><body>
+                    <div class="header">
+                      <p class="patient-name">${patient.name}</p>
+                      <p class="patient-info">${[patient.age, 'Leito ' + patient.bedNumber].filter(Boolean).join(' • ')}</p>
+                      <p class="patient-info">Data: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
+                    </div>
+                    <div class="content">${reportText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                    <div class="footer">Documento gerado pelo sistema HapMap</div>
+                    </body></html>
+                  `);
+                  printWindow.document.close();
+                  printWindow.print();
+                }}
+                className="flex items-center gap-1.5"
+              >
+                <Printer className="h-3.5 w-3.5" />
+                Imprimir Relatório
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
