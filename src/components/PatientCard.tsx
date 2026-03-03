@@ -5095,7 +5095,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 disabled={!reportText.trim()}
                 onClick={() => {
                   const networkLogoUrl = new URL(whitelabel.logos.networkFull, window.location.origin).href;
-                  const platformLogoUrl = new URL(whitelabel.logos.platform, window.location.origin).href;
+                   const platformLogoUrl = new URL(whitelabel.logos.platform, window.location.origin).href;
+                   const hospitalLogoUrl = new URL(whitelabel.logos.hospital, window.location.origin).href;
                   const now = new Date();
                   const dateStr = now.toLocaleDateString('pt-BR');
                   const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
