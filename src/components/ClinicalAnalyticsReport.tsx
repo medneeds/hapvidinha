@@ -1,104 +1,354 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Printer, X } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Printer, X, Loader2, CalendarRange } from "lucide-react";
 import { whitelabel } from "@/config/whitelabel";
+import { supabase } from "@/integrations/supabase/client";
+import { useHospital } from "@/contexts/HospitalContext";
+import { useDepartment } from "@/contexts/DepartmentContext";
+import { format, subMonths, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-// ── Data hardcoded from February 2026 analysis ──
+// ── Types ──
+interface DeathRecord {
+  name: string;
+  date: string;
+  diagnoses: string;
+  history: string;
+  severity: string;
+  syndrome: string;
+  alert?: string;
+}
 
-const REPORT_DATA = {
-  period: "01/02/2026 a 28/02/2026",
-  sector: "URGÊNCIA E EMERGÊNCIA ADULTO",
-  totalMovements: 456,
-  totalAltas: 249,
-  totalTransferencias: 205,
-  totalObitos: 2,
+interface UtiTransfer {
+  name: string;
+  date: string;
+  diagnoses: string;
+  history: string;
+  syndrome: string;
+}
 
-  deaths: [
-    {
-      name: "JOSE JOAQUIM DOS SANTOS",
-      date: "03/02/2026",
-      diagnoses: "Insuficiência Respiratória Aguda → Hipóxia → PCR / PNM Broncoaspirativa",
-      history: "HAS, DM2, DRC não dialítico",
-      severity: "GRAVÍSSIMO",
-      syndrome: "Respiratória / Infecciosa",
-    },
-    {
-      name: "THARCYLLA VICTORIA PEREIRA SOUZA",
-      date: "23/02/2026",
-      diagnoses: "Influenza A",
-      history: "Nega comorbidades",
-      severity: "GRAVÍSSIMO",
-      syndrome: "Infecciosa / Viral",
-      alert: "CASO SENTINELA — Paciente jovem, sem comorbidades, óbito por Influenza A",
-    },
-  ],
+interface RecurrentPatient {
+  name: string;
+  visits: number;
+  diagnoses: string;
+  pattern: string;
+  severity: string;
+}
 
-  utiTransfers: [
-    { name: "MARIA MOURA CUNHA", date: "01/02", diagnoses: "Sepse foco pulmonar/urinário + IRPA + IRA + IC descompensada + Acidose metabólica", history: "DM, AVC isquêmico recente, FA crônica", syndrome: "Infecciosa / Cardiovascular" },
-    { name: "LUIZ GUSTAVO DUARTE DIAS", date: "01/02", diagnoses: "IC Descompensada + Edema MMII", history: "SAAF, TVP crônica, TEP crônico, Cor Pulmonale, HP", syndrome: "Cardiovascular / Tromboembólica" },
-    { name: "FRANCIVALDO SOUSA", date: "01/02", diagnoses: "Pé diabético infectado grave com necrose", history: "Diabetes", syndrome: "Infecciosa / Metabólica" },
-    { name: "ADELIA SOARES PAVÃO", date: "03/02", diagnoses: "Bradicardia (FC 48bpm) + inversão QRS V3-V4", history: "—", syndrome: "Cardiovascular / Arritmia" },
-    { name: "ELVIRA C. LIMA MACHADO GODOIS", date: "03/02", diagnoses: "Insuficiência respiratória aguda", history: "HAS, SD Stevens-Johnson", syndrome: "Respiratória" },
-    { name: "LAURA MARIA MAIA PINHEIRO", date: "03/02", diagnoses: "Gastroenterite bacteriana (pediátrica)", history: "Nega", syndrome: "Infecciosa / Pediátrica" },
-    { name: "JOSELENA DE FATIMA LOPES", date: "03/02", diagnoses: "Exacerbação doença de base + Infecção pele/partes moles", history: "Pré-DM, Síndrome de Sweet", syndrome: "Infecciosa / Dermatológica" },
-    { name: "MARIA LILAURA PENHA SERRA", date: "03/02", diagnoses: "Sepse foco urinário + Tremores + Síndrome da Fragilidade", history: "Demência por Alzheimer", syndrome: "Infecciosa / Geriátrica" },
-    { name: "JOSÉ LEANDRO MARTINS VEIGA", date: "03/02", diagnoses: "Síndrome hemorrágica A/E + Poliglobulia", history: "—", syndrome: "Hematológica" },
-    { name: "MARIA MADALENA CORREA SILVA", date: "08/02", diagnoses: "IAM sem supra + IC descompensada + DPOC", history: "Cardiopatia, DPOC, HAS, DM2", syndrome: "Cardiovascular / SCA" },
-    { name: "EDSON MOREIRA DOS SANTOS JUNIOR", date: "11/02", diagnoses: "Sepse de foco pulmonar + Derrame pleural", history: "DRC dialítico, Cardiopatia", syndrome: "Infecciosa / Respiratória" },
-    { name: "CIRO MONTEIRO CLARINDO", date: "14/02", diagnoses: "IAM sem supra ST + SCA em SAC severa", history: "—", syndrome: "Cardiovascular / SCA" },
-    { name: "ANTONIO SERGIO SILVA CORREA", date: "19/02", diagnoses: "Abdome agudo obstrutivo + Hérnia inguinal encarcerada", history: "—", syndrome: "Cirúrgica / Abdominal" },
-    { name: "GLEUCIANE MARTINS SANTOS", date: "22/02", diagnoses: "Suspeita de LMA (Leucemia Mielóide Aguda)", history: "—", syndrome: "Hematológica / Oncológica" },
-    { name: "JOSE RIBAMAR PEREIRA DE BARROS", date: "26/02", diagnoses: "AVC isquêmico + HAS estágio III", history: "Cardiopatia", syndrome: "Neurológica / Cerebrovascular" },
-  ],
+interface SyndromeData {
+  name: string;
+  percentage: number;
+  count: number;
+}
 
-  recurrentPatients: [
-    { name: "LUIZ FRANCISCO CASTRO", visits: 6, diagnoses: "DRC dialítico — Sessões de hemodiálise", pattern: "Uso inadequado da emergência para sessões dialíticas de rotina", severity: "GRAVE" },
-    { name: "MARIO MIRANDA PIRES SOBRINHO", visits: 5, diagnoses: "DRC dialítico — Hipercalemia / Urgência dialítica", pattern: "Mesmo padrão de DRC sem acompanhamento ambulatorial", severity: "GRAVE" },
-    { name: "DIEGO MONTEIRO LOPES", visits: 4, diagnoses: "Paciente oncológico: astenia, dor, delirium, síndrome consumptiva", pattern: "Oncológico avançado sem acesso efetivo a cuidados paliativos ambulatoriais", severity: "GRAVE" },
-    { name: "HELDER SOUSA MAIA", visits: 3, diagnoses: "PNM + Derrame pleural parapneumônico", pattern: "Reinternação por evolução desfavorável da mesma infecção", severity: "POTENCIALMENTE GRAVE" },
-    { name: "CLAUDIO ANTONIO S. DE SOUSA", visits: 3, diagnoses: "ITU / Pielonefrite aguda", pattern: "Recorrência infecciosa urinária", severity: "POTENCIALMENTE GRAVE" },
-    { name: "JOANA HELENA BRITO PINTO", visits: 2, diagnoses: "Tentativa de autoextermínio (superdosagem Carbolitium)", pattern: "Recidiva psiquiátrica — paciente de risco", severity: "GRAVE" },
-    { name: "JAQUELINE CARDOSO NEVES", visits: 2, diagnoses: "Crise convulsiva / Tremores", pattern: "Escape convulsivo recorrente", severity: "POTENCIALMENTE GRAVE" },
-    { name: "JOÃO SILVA AROUCHE", visits: 2, diagnoses: "Anemia grave", pattern: "Anemia recorrente sem investigação etiológica", severity: "POTENCIALMENTE GRAVE" },
-    { name: "MARIA DO CARMO SOUZA", visits: 2, diagnoses: "ICC descompensada + PNM + DPOC agudizada / PNM nosocomial", pattern: "Cardiopata crônica descompensando em ciclo", severity: "GRAVE" },
-    { name: "MARIA HELENA ALVES DA ROCHA", visits: 2, diagnoses: "Hipocalemia + Hiponatremia + Alcalose metabólica + IRA", pattern: "DHE grave recorrente", severity: "GRAVE" },
-    { name: "ADALGIZA ROSA DE CARVALHO SILVA", visits: 2, diagnoses: "Anemia aguda grave + Sangramento retal + POI hemorroidectomia", pattern: "Complicação pós-operatória", severity: "GRAVE" },
-    { name: "CIRO MONTEIRO CLARINDO", visits: 2, diagnoses: "Broncopneumonia + Delirium / IAM sem supra + SCA severa", pattern: "Readmissão com agravo: de PNM para SCA", severity: "GRAVÍSSIMO" },
-    { name: "ELIZABET R. OLIVEIRA CHAGAS", visits: 2, diagnoses: "Luxação ombro D + PNM broncoaspirativa / Cuidados paliativos", pattern: "Paliativo com complicações traumáticas", severity: "GRAVE" },
-    { name: "MARIA IRANILDES DE SOUSA BARROS", visits: 2, diagnoses: "Deiscência de colostomia / Abdome agudo perfurativo", pattern: "Complicação cirúrgica evolutiva", severity: "GRAVÍSSIMO" },
-    { name: "MICHELE DO SOCORRO MALCHER", visits: 2, diagnoses: "Falha de acesso de hemodiálise", pattern: "Falha de acesso vascular recorrente em DRC", severity: "GRAVE" },
-  ],
+interface ReportData {
+  period: string;
+  sector: string;
+  totalMovements: number;
+  totalAltas: number;
+  totalTransferencias: number;
+  totalObitos: number;
+  deaths: DeathRecord[];
+  utiTransfers: UtiTransfer[];
+  recurrentPatients: RecurrentPatient[];
+  syndromes: SyndromeData[];
+  managementInsights: string[];
+}
 
-  syndromes: [
-    { name: "Infecciosas (PNM, ITU, Sepse, IPPB)", percentage: 37, count: 169 },
-    { name: "Cardiovasculares (ICC, SCA, IAM, FA, Arritmias)", percentage: 15, count: 68 },
-    { name: "Metabólicas/Renais (DRC, DHE, IRA, DM descompensado)", percentage: 13, count: 59 },
-    { name: "Neurológicas (AVC, Convulsões, RNC)", percentage: 9, count: 41 },
-    { name: "Traumáticas (TCE, Fraturas, Atropelamento)", percentage: 7, count: 32 },
-    { name: "Cirúrgicas (Abdome agudo, Hérnias, POI complicado)", percentage: 6, count: 27 },
-    { name: "Psiquiátricas (Autoextermínio, Agitação)", percentage: 4, count: 18 },
-    { name: "Hematológicas (Anemia grave, LMA, Síndromes hemorrágicas)", percentage: 3, count: 14 },
-    { name: "Respiratórias isoladas (DPOC, Broncoespasmo, IRPA)", percentage: 3, count: 14 },
-    { name: "Oncológicas (Astenia, Dor, Síndrome consumptiva)", percentage: 2, count: 9 },
-    { name: "Gineco-Obstétricas (Abortamento, SUA)", percentage: 1, count: 5 },
-  ],
+type PeriodType = "mensal" | "trimestral" | "semestral";
 
-  managementInsights: [
-    "FALHA DE FLUXO DIALÍTICO: 11 visitas de 2 pacientes DRC à emergência para sessões de rotina. Recomenda-se encaminhamento ao serviço de nefrologia ambulatorial e centro de diálise.",
-    "CASO SENTINELA — ÓBITO JOVEM POR INFLUENZA A: Paciente sem comorbidades. Avaliar cobertura vacinal da região e protocolos de detecção precoce de síndromes gripais graves.",
-    "ALTA DEMANDA CARDIOVASCULAR PARA UTI: 4 transferências por SCA/ICC em fevereiro. Considerar ampliação de leitos de unidade coronariana ou protocolo fast-track cardiológico.",
-    "PACIENTE ONCOLÓGICO SEM REDE DE SUPORTE: 4 visitas à emergência por astenia e dor. Necessita integração com equipe de cuidados paliativos domiciliares.",
-    "RECIDIVA PSIQUIÁTRICA: Paciente com 2 tentativas de autoextermínio no mês. Necessita follow-up psiquiátrico urgente e plano de segurança.",
-    "COMPLICAÇÕES CIRÚRGICAS EVOLUTIVAS: 2 casos de readmissão por complicações pós-operatórias (deiscência de colostomia, sangramento pós-hemorroidectomia). Revisar protocolos de alta cirúrgica.",
-  ],
+// ── Syndrome classifier ──
+const SYNDROME_KEYWORDS: Record<string, string[]> = {
+  "Infecciosas (PNM, ITU, Sepse, IPPB)": ["pnm", "pneumonia", "itu", "sepse", "infec", "broncopneumonia", "celulite", "abscesso", "meningite", "endocardite", "pielonefrite", "erisipela"],
+  "Cardiovasculares (ICC, SCA, IAM, FA, Arritmias)": ["iam", "infarto", "icc", "insuficiência cardíaca", "fa ", "fibrilação", "arritmia", "sca", "bradicardia", "taquicardia", "angina", "edema agudo", "cardio"],
+  "Metabólicas/Renais (DRC, DHE, IRA, DM descompensado)": ["drc", "renal", "dialí", "hemodiálise", "hipocalemia", "hiponatremia", "hipercalemia", "cetoacidose", "dm descomp", "ira", "dhe", "alcalose", "acidose metabólica"],
+  "Neurológicas (AVC, Convulsões, RNC)": ["avc", "convuls", "epilep", "rnc", "rebaixamento", "coma", "meningite", "encefalo", "stroke"],
+  "Traumáticas (TCE, Fraturas, Atropelamento)": ["tce", "fratura", "trauma", "atropel", "queda", "luxação", "contusão"],
+  "Cirúrgicas (Abdome agudo, Hérnias, POI complicado)": ["abdome agudo", "hérnia", "poi", "pós-operatório", "cirúrg", "apendicite", "colecistite", "obstruti", "deiscência"],
+  "Psiquiátricas (Autoextermínio, Agitação)": ["autoextermínio", "suicíd", "psiqui", "agitação", "delirium", "surto"],
+  "Hematológicas (Anemia grave, LMA, Síndromes hemorrágicas)": ["anemia", "leucemia", "lma", "hemorrág", "plaquetopenia", "trombocitopenia", "pancitopenia"],
+  "Respiratórias isoladas (DPOC, Broncoespasmo, IRPA)": ["dpoc", "broncoespasmo", "irpa", "insuficiência respiratória", "asma", "derrame pleural"],
+  "Oncológicas (Astenia, Dor, Síndrome consumptiva)": ["oncológ", "neoplasia", "câncer", "tumor", "metástase", "consumptiva", "paliativ"],
+  "Gineco-Obstétricas (Abortamento, SUA)": ["abortamento", "sua", "gineco", "obstétri", "eclâmpsia", "gravidez"],
 };
+
+function classifySyndrome(text: string): string {
+  const lower = text.toLowerCase();
+  for (const [syndrome, keywords] of Object.entries(SYNDROME_KEYWORDS)) {
+    for (const kw of keywords) {
+      if (lower.includes(kw)) return syndrome;
+    }
+  }
+  return "Outras";
+}
+
+function classifySeverity(diagnoses: string, history: string): string {
+  const text = (diagnoses + " " + history).toLowerCase();
+  const grave = ["sepse", "iam", "irpa", "insuficiência respiratória", "choque", "pcr", "hemorrag", "abdome agudo", "lma", "leucemia"];
+  const gravissimo = ["óbito", "pcr", "choque séptico", "falência", "gravíssimo"];
+  
+  for (const kw of gravissimo) {
+    if (text.includes(kw)) return "GRAVÍSSIMO";
+  }
+  for (const kw of grave) {
+    if (text.includes(kw)) return "GRAVE";
+  }
+  return "POTENCIALMENTE GRAVE";
+}
+
+function getPeriodDates(type: PeriodType, offset: number): { from: Date; to: Date; label: string } {
+  const now = new Date();
+  
+  if (type === "mensal") {
+    const target = subMonths(now, offset);
+    return {
+      from: startOfMonth(target),
+      to: endOfMonth(target),
+      label: format(target, "MMMM 'de' yyyy", { locale: ptBR }).replace(/^\w/, c => c.toUpperCase()),
+    };
+  }
+  
+  if (type === "trimestral") {
+    const endMonth = subMonths(now, offset * 3);
+    const startMonth = subMonths(endMonth, 2);
+    return {
+      from: startOfMonth(startMonth),
+      to: endOfMonth(endMonth),
+      label: `${format(startOfMonth(startMonth), "MMM", { locale: ptBR })} a ${format(endOfMonth(endMonth), "MMM yyyy", { locale: ptBR })}`,
+    };
+  }
+  
+  // semestral
+  const endMonth = subMonths(now, offset * 6);
+  const startMonth = subMonths(endMonth, 5);
+  return {
+    from: startOfMonth(startMonth),
+    to: endOfMonth(endMonth),
+    label: `${format(startOfMonth(startMonth), "MMM", { locale: ptBR })} a ${format(endOfMonth(endMonth), "MMM yyyy", { locale: ptBR })}`,
+  };
+}
+
+function getPeriodOptions(type: PeriodType): { value: string; label: string }[] {
+  const count = type === "mensal" ? 12 : type === "trimestral" ? 4 : 2;
+  return Array.from({ length: count }, (_, i) => {
+    const { label } = getPeriodDates(type, i);
+    return { value: String(i), label };
+  });
+}
+
+function generateInsights(data: ReportData): string[] {
+  const insights: string[] = [];
+  
+  if (data.recurrentPatients.length > 0) {
+    const dialyticPatients = data.recurrentPatients.filter(p => 
+      p.diagnoses.toLowerCase().includes("drc") || p.diagnoses.toLowerCase().includes("diál") || p.diagnoses.toLowerCase().includes("hemodiálise")
+    );
+    if (dialyticPatients.length > 0) {
+      const totalVisits = dialyticPatients.reduce((sum, p) => sum + p.visits, 0);
+      insights.push(`FALHA DE FLUXO DIALÍTICO: ${totalVisits} visitas de ${dialyticPatients.length} pacientes DRC à emergência. Recomenda-se encaminhamento ao serviço de nefrologia ambulatorial.`);
+    }
+  }
+  
+  if (data.deaths.length > 0) {
+    const youngDeaths = data.deaths.filter(d => d.history.toLowerCase().includes("nega") || d.history === "—");
+    if (youngDeaths.length > 0) {
+      insights.push(`CASO SENTINELA — ${youngDeaths.length} óbito(s) sem comorbidades prévias. Avaliar protocolos de detecção precoce.`);
+    }
+  }
+  
+  if (data.utiTransfers.length > 3) {
+    const cardioTransfers = data.utiTransfers.filter(t => t.syndrome.toLowerCase().includes("cardio"));
+    if (cardioTransfers.length >= 2) {
+      insights.push(`ALTA DEMANDA CARDIOVASCULAR PARA UTI: ${cardioTransfers.length} transferências por SCA/ICC no período. Considerar ampliação de leitos coronarianos.`);
+    }
+  }
+  
+  if (data.totalObitos > 0) {
+    const taxaObito = ((data.totalObitos / data.totalMovements) * 100).toFixed(2);
+    insights.push(`TAXA DE MORTALIDADE: ${taxaObito}% no período (${data.totalObitos} óbitos em ${data.totalMovements} movimentações).`);
+  }
+  
+  const topSyndrome = data.syndromes[0];
+  if (topSyndrome) {
+    insights.push(`PERFIL EPIDEMIOLÓGICO DOMINANTE: ${topSyndrome.name} representando ${topSyndrome.percentage}% (${topSyndrome.count} casos) das movimentações.`);
+  }
+  
+  if (data.recurrentPatients.filter(p => p.severity === "GRAVÍSSIMO").length > 0) {
+    insights.push(`ATENÇÃO: ${data.recurrentPatients.filter(p => p.severity === "GRAVÍSSIMO").length} paciente(s) recorrente(s) com classificação GRAVÍSSIMO. Necessário plano de acompanhamento.`);
+  }
+  
+  if (data.totalAltas > 0) {
+    const taxaAlta = ((data.totalAltas / data.totalMovements) * 100).toFixed(1);
+    insights.push(`TAXA DE RESOLUBILIDADE: ${taxaAlta}% de altas no período. ${data.totalAltas > data.totalTransferencias ? 'Boa capacidade resolutiva.' : 'Proporção elevada de transferências.'}`);
+  }
+  
+  return insights.slice(0, 8);
+}
 
 export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
   const printRef = useRef<HTMLDivElement>(null);
+  const { currentHospital, currentState } = useHospital();
+  const { currentDepartment } = useDepartment();
+  
+  const [periodType, setPeriodType] = useState<PeriodType>("mensal");
+  const [periodOffset, setPeriodOffset] = useState("0");
+  const [isLoading, setIsLoading] = useState(false);
+  const [reportData, setReportData] = useState<ReportData | null>(null);
+
+  const fetchReportData = useCallback(async () => {
+    if (!currentHospital || !currentState) return;
+    
+    setIsLoading(true);
+    try {
+      const { from, to, label } = getPeriodDates(periodType, parseInt(periodOffset));
+      
+      const { data: movements, error } = await supabase
+        .from("patient_movements")
+        .select("*")
+        .eq("hospital_unit_id", currentHospital.id)
+        .eq("state_id", currentState.id)
+        .eq("department", currentDepartment)
+        .gte("created_at", startOfDay(from).toISOString())
+        .lte("created_at", endOfDay(to).toISOString())
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      
+      const movs = movements || [];
+      
+      // KPIs
+      const totalAltas = movs.filter(m => m.movement_type === "alta").length;
+      const totalTransferencias = movs.filter(m => m.movement_type === "transferencia" || m.movement_type === "transferência").length;
+      const totalObitos = movs.filter(m => m.movement_type === "obito" || m.movement_type === "óbito").length;
+      
+      // Deaths
+      const deathMovs = movs.filter(m => m.movement_type === "obito" || m.movement_type === "óbito");
+      const deaths: DeathRecord[] = deathMovs.map(m => {
+        const snapshot = m.patient_snapshot as any || {};
+        const diagnoses = snapshot.diagnoses || m.notes || "Sem diagnóstico registrado";
+        const history = snapshot.medical_history || "—";
+        return {
+          name: m.patient_name,
+          date: format(new Date(m.created_at), "dd/MM/yyyy"),
+          diagnoses,
+          history,
+          severity: "GRAVÍSSIMO",
+          syndrome: classifySyndrome(diagnoses),
+          alert: history.toLowerCase().includes("nega") ? `CASO SENTINELA — Paciente sem comorbidades prévias, óbito por ${diagnoses.split("/")[0].trim()}` : undefined,
+        };
+      });
+      
+      // UTI Transfers
+      const utiMovs = movs.filter(m => {
+        const dest = (m.destination || "").toLowerCase();
+        return dest.includes("uti") || dest.includes("unidade de terapia");
+      });
+      const utiTransfers: UtiTransfer[] = utiMovs.map(m => {
+        const snapshot = m.patient_snapshot as any || {};
+        const diagnoses = snapshot.diagnoses || m.notes || "Sem diagnóstico registrado";
+        const history = snapshot.medical_history || "—";
+        return {
+          name: m.patient_name,
+          date: format(new Date(m.created_at), "dd/MM"),
+          diagnoses,
+          history,
+          syndrome: classifySyndrome(diagnoses),
+        };
+      });
+      
+      // Recurrent patients
+      const patientVisits: Record<string, { count: number; diagnoses: string[]; snapshots: any[] }> = {};
+      movs.forEach(m => {
+        const key = m.patient_name.toUpperCase().trim();
+        if (!patientVisits[key]) patientVisits[key] = { count: 0, diagnoses: [], snapshots: [] };
+        patientVisits[key].count++;
+        const snapshot = m.patient_snapshot as any || {};
+        if (snapshot.diagnoses) patientVisits[key].diagnoses.push(snapshot.diagnoses);
+        if (m.notes) patientVisits[key].diagnoses.push(m.notes);
+        patientVisits[key].snapshots.push(snapshot);
+      });
+      
+      const recurrentPatients: RecurrentPatient[] = Object.entries(patientVisits)
+        .filter(([, v]) => v.count >= 2)
+        .sort((a, b) => b[1].count - a[1].count)
+        .slice(0, 15)
+        .map(([name, v]) => {
+          const allDiag = [...new Set(v.diagnoses)].join(" / ") || "Sem registro";
+          const history = v.snapshots[0]?.medical_history || "";
+          return {
+            name,
+            visits: v.count,
+            diagnoses: allDiag.length > 120 ? allDiag.substring(0, 117) + "..." : allDiag,
+            pattern: v.count >= 4 ? "Alta recorrência — investigar acompanhamento ambulatorial" :
+                     v.count >= 3 ? "Recorrência moderada — avaliar plano terapêutico" :
+                     "Readmissão — monitorar evolução",
+            severity: classifySeverity(allDiag, history),
+          };
+        });
+      
+      // Syndromes
+      const syndromeCounts: Record<string, number> = {};
+      movs.forEach(m => {
+        const snapshot = m.patient_snapshot as any || {};
+        const text = (snapshot.diagnoses || "") + " " + (m.notes || "") + " " + (m.destination || "");
+        const syndrome = classifySyndrome(text);
+        syndromeCounts[syndrome] = (syndromeCounts[syndrome] || 0) + 1;
+      });
+      
+      const totalForSyndromes = movs.length || 1;
+      const syndromes: SyndromeData[] = Object.entries(syndromeCounts)
+        .map(([name, count]) => ({
+          name,
+          count,
+          percentage: Math.round((count / totalForSyndromes) * 100),
+        }))
+        .sort((a, b) => b.count - a.count)
+        .filter(s => s.name !== "Outras")
+        .slice(0, 11);
+      
+      // Add "Outras" if needed
+      const classifiedCount = syndromes.reduce((sum, s) => sum + s.count, 0);
+      if (classifiedCount < movs.length) {
+        syndromes.push({
+          name: "Outras / Não classificadas",
+          count: movs.length - classifiedCount,
+          percentage: Math.round(((movs.length - classifiedCount) / totalForSyndromes) * 100),
+        });
+      }
+      
+      const periodLabel = `${format(from, "dd/MM/yyyy")} a ${format(to, "dd/MM/yyyy")}`;
+      
+      const data: ReportData = {
+        period: periodLabel,
+        sector: currentDepartment,
+        totalMovements: movs.length,
+        totalAltas,
+        totalTransferencias,
+        totalObitos,
+        deaths,
+        utiTransfers,
+        recurrentPatients,
+        syndromes,
+        managementInsights: [],
+      };
+      
+      data.managementInsights = generateInsights(data);
+      
+      setReportData(data);
+    } catch (err) {
+      console.error("Error fetching report data:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [periodType, periodOffset, currentHospital, currentState, currentDepartment]);
+
+  useEffect(() => {
+    fetchReportData();
+  }, [fetchReportData]);
 
   const handlePrint = () => {
-    const printContent = printRef.current;
-    if (!printContent) return;
+    if (!reportData || !printRef.current) return;
 
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
@@ -108,12 +358,14 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
 
     const networkLogoUrl = new URL(whitelabel.logos.networkFull, window.location.origin).href;
     const platformLogoUrl = new URL(whitelabel.logos.platform, window.location.origin).href;
+    const { label } = getPeriodDates(periodType, parseInt(periodOffset));
+    const periodTypeLabel = periodType === "mensal" ? "Mensal" : periodType === "trimestral" ? "Trimestral" : "Semestral";
 
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Relatório Analítico Clínico - Fevereiro 2026</title>
+          <title>Relatório Analítico Clínico - ${label}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -210,6 +462,13 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
               text-align: center; font-size: 6.5pt; color: #94a3b8;
               text-transform: uppercase; letter-spacing: 1px; margin-top: 6px;
             }
+            .empty-notice {
+              text-align: center; padding: 20px; color: #94a3b8; font-style: italic; font-size: 9pt;
+            }
+            .period-badge {
+              display: inline-block; background: #013ba6; color: white; padding: 2px 10px;
+              border-radius: 12px; font-size: 7pt; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+            }
           </style>
         </head>
         <body>
@@ -219,33 +478,34 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <img src="${platformLogoUrl}" alt="HapMap" />
             <div class="header-center">
               <h1>Relatório Analítico Clínico</h1>
-              <p>Análise Epidemiológica e de Gravidade — Fevereiro 2026</p>
+              <p>Análise Epidemiológica e de Gravidade — <span class="period-badge">${periodTypeLabel}</span> ${label}</p>
             </div>
             <img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" />
           </div>
           
           <div class="meta-bar">
-            <span><strong>Setor:</strong> ${REPORT_DATA.sector}</span>
-            <span><strong>Período:</strong> ${REPORT_DATA.period}</span>
-            <span><strong>Total de Movimentações:</strong> ${REPORT_DATA.totalMovements}</span>
+            <span><strong>Setor:</strong> ${reportData.sector}</span>
+            <span><strong>Período:</strong> ${reportData.period}</span>
+            <span><strong>Total de Movimentações:</strong> ${reportData.totalMovements}</span>
             <span><strong>Gerado por:</strong> HapMap 2.0 — IA Analítica</span>
           </div>
           
           <!-- KPIs -->
           <div class="kpi-row">
-            <div class="kpi-card"><div class="value">${REPORT_DATA.totalMovements}</div><div class="label">Movimentações Totais</div></div>
-            <div class="kpi-card"><div class="value">${REPORT_DATA.totalAltas}</div><div class="label">Altas</div></div>
-            <div class="kpi-card"><div class="value">${REPORT_DATA.totalTransferencias}</div><div class="label">Transferências</div></div>
-            <div class="kpi-card death"><div class="value">${REPORT_DATA.totalObitos}</div><div class="label">Óbitos</div></div>
-            <div class="kpi-card"><div class="value">${REPORT_DATA.utiTransfers.length}</div><div class="label">Transferências UTI</div></div>
-            <div class="kpi-card"><div class="value">${REPORT_DATA.recurrentPatients.length}</div><div class="label">Pacientes Recorrentes</div></div>
+            <div class="kpi-card"><div class="value">${reportData.totalMovements}</div><div class="label">Movimentações Totais</div></div>
+            <div class="kpi-card"><div class="value">${reportData.totalAltas}</div><div class="label">Altas</div></div>
+            <div class="kpi-card"><div class="value">${reportData.totalTransferencias}</div><div class="label">Transferências</div></div>
+            <div class="kpi-card death"><div class="value">${reportData.totalObitos}</div><div class="label">Óbitos</div></div>
+            <div class="kpi-card"><div class="value">${reportData.utiTransfers.length}</div><div class="label">Transferências UTI</div></div>
+            <div class="kpi-card"><div class="value">${reportData.recurrentPatients.length}</div><div class="label">Pacientes Recorrentes</div></div>
           </div>
 
           <!-- ÓBITOS -->
           <h2 class="section-title red">1. Óbitos — Eventos Sentinela</h2>
+          ${reportData.deaths.length > 0 ? `
           <table>
             <tr><th>Paciente</th><th>Data</th><th>Diagnóstico</th><th>Antecedentes</th><th>Síndrome</th></tr>
-            ${REPORT_DATA.deaths.map(d => `
+            ${reportData.deaths.map(d => `
               <tr>
                 <td><strong>${d.name}</strong></td>
                 <td>${d.date}</td>
@@ -255,13 +515,14 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
               </tr>
               ${d.alert ? `<tr><td colspan="5"><div class="alert-box">⚠ ${d.alert}</div></td></tr>` : ''}
             `).join('')}
-          </table>
+          </table>` : '<p class="empty-notice">Nenhum óbito registrado no período.</p>'}
 
           <!-- UTI -->
           <h2 class="section-title orange">2. Casos Gravíssimos — Transferências para UTI</h2>
+          ${reportData.utiTransfers.length > 0 ? `
           <table>
             <tr><th>Paciente</th><th>Data</th><th>Diagnóstico Principal</th><th>Antecedentes</th><th>Classificação Sindrômica</th></tr>
-            ${REPORT_DATA.utiTransfers.map(t => `
+            ${reportData.utiTransfers.map(t => `
               <tr>
                 <td><strong>${t.name}</strong></td>
                 <td>${t.date}</td>
@@ -270,7 +531,7 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
                 <td>${t.syndrome}</td>
               </tr>
             `).join('')}
-          </table>
+          </table>` : '<p class="empty-notice">Nenhuma transferência para UTI registrada no período.</p>'}
 
           <div class="page-break"></div>
           
@@ -278,16 +539,17 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <img src="${platformLogoUrl}" alt="HapMap" />
             <div class="header-center">
               <h1>Relatório Analítico Clínico</h1>
-              <p>Recorrência e Distribuição Sindrômica — Fevereiro 2026</p>
+              <p>Recorrência e Distribuição Sindrômica — ${label}</p>
             </div>
             <img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" />
           </div>
 
           <!-- RECORRÊNCIA -->
           <h2 class="section-title purple">3. Pacientes Recorrentes — Análise de Padrão</h2>
+          ${reportData.recurrentPatients.length > 0 ? `
           <table>
             <tr><th>Paciente</th><th>Visitas</th><th>Diagnósticos</th><th>Padrão Identificado</th><th>Gravidade</th></tr>
-            ${REPORT_DATA.recurrentPatients.map(r => `
+            ${reportData.recurrentPatients.map(r => `
               <tr>
                 <td><strong>${r.name}</strong></td>
                 <td style="text-align:center; font-weight:700; font-size:11pt; color:#7c3aed;">${r.visits}</td>
@@ -296,25 +558,26 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
                 <td><span class="badge ${r.severity === 'GRAVÍSSIMO' ? 'badge-gravissimo' : r.severity === 'GRAVE' ? 'badge-grave' : 'badge-potencial'}">${r.severity}</span></td>
               </tr>
             `).join('')}
-          </table>
+          </table>` : '<p class="empty-notice">Nenhum paciente com recorrência identificada no período.</p>'}
 
           <!-- SÍNDROMES -->
           <h2 class="section-title teal">4. Distribuição Sindrômica</h2>
+          ${reportData.syndromes.length > 0 ? `
           <div style="margin-bottom: 14px;">
-            ${REPORT_DATA.syndromes.map(s => `
+            ${reportData.syndromes.map(s => `
               <div class="syndrome-bar">
                 <div class="bar-label">${s.name}</div>
-                <div class="bar-track"><div class="bar-fill" style="width: ${s.percentage * 2.5}%;"></div></div>
+                <div class="bar-track"><div class="bar-fill" style="width: ${Math.min(s.percentage * 2.5, 100)}%;"></div></div>
                 <div class="bar-value">${s.count} (${s.percentage}%)</div>
               </div>
             `).join('')}
-          </div>
+          </div>` : '<p class="empty-notice">Sem dados sindrômicos para o período.</p>'}
 
           <!-- INSIGHTS -->
           <h2 class="section-title amber">5. Insights para Gestão</h2>
-          ${REPORT_DATA.managementInsights.map((insight, i) => `
+          ${reportData.managementInsights.length > 0 ? reportData.managementInsights.map((insight, i) => `
             <div class="insight-box"><strong>${i + 1}.</strong> ${insight}</div>
-          `).join('')}
+          `).join('') : '<p class="empty-notice">Dados insuficientes para gerar insights no período.</p>'}
 
           <!-- FOOTER -->
           <div class="footer">
@@ -328,11 +591,24 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
     `);
 
     printWindow.document.close();
-    setTimeout(() => printWindow.print(), 500);
+    
+    const images = printWindow.document.querySelectorAll('img');
+    const imagePromises = Array.from(images).map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+      });
+    });
+    Promise.all(imagePromises).then(() => {
+      setTimeout(() => printWindow.print(), 200);
+    });
   };
 
   const networkLogoUrl = whitelabel.logos.networkFull;
   const platformLogoUrl = whitelabel.logos.platform;
+  const periodOptions = getPeriodOptions(periodType);
+  const { label: currentPeriodLabel } = getPeriodDates(periodType, parseInt(periodOffset));
 
   const getSeverityColor = (severity: string) => {
     if (severity === 'GRAVÍSSIMO') return 'bg-red-100 text-red-700 border-red-300';
@@ -343,10 +619,37 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/60 flex flex-col">
       {/* Sticky toolbar */}
-      <div className="sticky top-0 z-10 bg-background border-b px-4 py-3 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-foreground">Relatório Analítico Clínico — Fevereiro 2026</h2>
+      <div className="sticky top-0 z-10 bg-background border-b px-4 py-3 flex items-center justify-between gap-4">
+        <h2 className="text-lg font-bold text-foreground whitespace-nowrap">Relatório Analítico Clínico</h2>
+        
+        {/* Period Filters */}
+        <div className="flex items-center gap-2 flex-1 justify-center">
+          <CalendarRange className="h-4 w-4 text-muted-foreground" />
+          <Select value={periodType} onValueChange={(v: PeriodType) => { setPeriodType(v); setPeriodOffset("0"); }}>
+            <SelectTrigger className="w-[140px] h-9">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="mensal">Mensal</SelectItem>
+              <SelectItem value="trimestral">Trimestral</SelectItem>
+              <SelectItem value="semestral">Semestral</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select value={periodOffset} onValueChange={setPeriodOffset}>
+            <SelectTrigger className="w-[200px] h-9">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {periodOptions.map(opt => (
+                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
         <div className="flex gap-2">
-          <Button onClick={handlePrint} className="gap-2">
+          <Button onClick={handlePrint} className="gap-2" disabled={isLoading || !reportData}>
             <Printer className="h-4 w-4" /> Gerar PDF
           </Button>
           <Button variant="outline" onClick={onClose}>
@@ -357,124 +660,161 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
 
       {/* Preview */}
       <div className="flex-1 overflow-auto bg-muted/50 p-4">
-        <div ref={printRef} className="max-w-4xl mx-auto bg-white text-black rounded-lg shadow-lg p-8" style={{ fontFamily: "'Segoe UI', sans-serif" }}>
-          {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b-[3px] border-[#013ba6] mb-4">
-            <img src={platformLogoUrl} alt="HapMap" className="h-12" />
-            <div className="text-center flex-1 px-4">
-              <h1 className="text-xl font-extrabold text-[#013ba6] tracking-wide uppercase">Relatório Analítico Clínico</h1>
-              <p className="text-xs text-gray-500">Análise Epidemiológica e de Gravidade — Fevereiro 2026</p>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-3 text-muted-foreground">Gerando relatório analítico...</span>
+          </div>
+        ) : !reportData ? (
+          <div className="flex items-center justify-center h-64 text-muted-foreground">
+            Sem dados disponíveis para o período selecionado.
+          </div>
+        ) : (
+          <div ref={printRef} className="max-w-4xl mx-auto bg-white text-black rounded-lg shadow-lg p-8" style={{ fontFamily: "'Segoe UI', sans-serif" }}>
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b-[3px] border-[#013ba6] mb-4">
+              <img src={platformLogoUrl} alt="HapMap" className="h-12" />
+              <div className="text-center flex-1 px-4">
+                <h1 className="text-xl font-extrabold text-[#013ba6] tracking-wide uppercase">Relatório Analítico Clínico</h1>
+                <p className="text-xs text-gray-500">
+                  Análise Epidemiológica e de Gravidade — 
+                  <span className="inline-block bg-[#013ba6] text-white px-2 py-0.5 rounded-full text-[10px] font-semibold ml-1">
+                    {periodType === "mensal" ? "MENSAL" : periodType === "trimestral" ? "TRIMESTRAL" : "SEMESTRAL"}
+                  </span>
+                  {" "}{currentPeriodLabel}
+                </p>
+              </div>
+              <img src={networkLogoUrl} alt="Hapvida" className="h-10" />
             </div>
-            <img src={networkLogoUrl} alt="Hapvida" className="h-10" />
-          </div>
 
-          {/* Meta */}
-          <div className="flex justify-between bg-blue-50 px-3 py-2 rounded-md mb-4 text-xs text-gray-600">
-            <span><strong className="text-[#013ba6]">Setor:</strong> {REPORT_DATA.sector}</span>
-            <span><strong className="text-[#013ba6]">Período:</strong> {REPORT_DATA.period}</span>
-            <span><strong className="text-[#013ba6]">Total:</strong> {REPORT_DATA.totalMovements} movimentações</span>
-          </div>
+            {/* Meta */}
+            <div className="flex justify-between bg-blue-50 px-3 py-2 rounded-md mb-4 text-xs text-gray-600">
+              <span><strong className="text-[#013ba6]">Setor:</strong> {reportData.sector}</span>
+              <span><strong className="text-[#013ba6]">Período:</strong> {reportData.period}</span>
+              <span><strong className="text-[#013ba6]">Total:</strong> {reportData.totalMovements} movimentações</span>
+            </div>
 
-          {/* KPIs */}
-          <div className="grid grid-cols-6 gap-2 mb-5">
-            {[
-              { v: REPORT_DATA.totalMovements, l: "Movimentações", c: "text-[#013ba6]" },
-              { v: REPORT_DATA.totalAltas, l: "Altas", c: "text-[#013ba6]" },
-              { v: REPORT_DATA.totalTransferencias, l: "Transferências", c: "text-[#013ba6]" },
-              { v: REPORT_DATA.totalObitos, l: "Óbitos", c: "text-red-600" },
-              { v: REPORT_DATA.utiTransfers.length, l: "UTI", c: "text-[#013ba6]" },
-              { v: REPORT_DATA.recurrentPatients.length, l: "Recorrentes", c: "text-[#013ba6]" },
-            ].map((kpi, i) => (
-              <div key={i} className="border rounded-lg p-2 text-center bg-gray-50">
-                <div className={`text-2xl font-extrabold ${kpi.c}`}>{kpi.v}</div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-wide">{kpi.l}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Deaths */}
-          <h2 className="text-sm font-bold text-red-600 border-l-4 border-red-600 pl-2 mb-2 uppercase tracking-wider">1. Óbitos — Eventos Sentinela</h2>
-          <table className="w-full text-xs mb-4 border-collapse">
-            <thead><tr className="bg-red-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Data</th><th className="p-1.5 text-left">Diagnóstico</th><th className="p-1.5 text-left">Síndrome</th></tr></thead>
-            <tbody>
-              {REPORT_DATA.deaths.map((d, i) => (
-                <>
-                  <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : ''}>
-                    <td className="p-1.5 font-semibold">{d.name}</td>
-                    <td className="p-1.5 text-center">{d.date}</td>
-                    <td className="p-1.5">{d.diagnoses}</td>
-                    <td className="p-1.5">{d.syndrome}</td>
-                  </tr>
-                  {d.alert && <tr key={`alert-${i}`}><td colSpan={4} className="px-1.5 pb-2"><div className="bg-red-50 border border-red-200 border-l-4 border-l-red-600 p-1.5 rounded text-red-800 text-[10px] font-semibold">⚠ {d.alert}</div></td></tr>}
-                </>
-              ))}
-            </tbody>
-          </table>
-
-          {/* UTI Transfers */}
-          <h2 className="text-sm font-bold text-orange-600 border-l-4 border-orange-600 pl-2 mb-2 uppercase tracking-wider">2. Casos Gravíssimos — Transferências UTI</h2>
-          <table className="w-full text-xs mb-4 border-collapse">
-            <thead><tr className="bg-orange-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Data</th><th className="p-1.5 text-left">Diagnóstico</th><th className="p-1.5 text-left">Síndrome</th></tr></thead>
-            <tbody>
-              {REPORT_DATA.utiTransfers.map((t, i) => (
-                <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : ''}>
-                  <td className="p-1.5 font-semibold">{t.name}</td>
-                  <td className="p-1.5 text-center">{t.date}</td>
-                  <td className="p-1.5">{t.diagnoses}</td>
-                  <td className="p-1.5">{t.syndrome}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Recurrence */}
-          <h2 className="text-sm font-bold text-purple-600 border-l-4 border-purple-600 pl-2 mb-2 uppercase tracking-wider">3. Pacientes Recorrentes</h2>
-          <table className="w-full text-xs mb-4 border-collapse">
-            <thead><tr className="bg-purple-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Visitas</th><th className="p-1.5 text-left">Diagnósticos</th><th className="p-1.5 text-left">Padrão</th><th className="p-1.5">Gravidade</th></tr></thead>
-            <tbody>
-              {REPORT_DATA.recurrentPatients.map((r, i) => (
-                <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : ''}>
-                  <td className="p-1.5 font-semibold">{r.name}</td>
-                  <td className="p-1.5 text-center font-bold text-purple-700 text-base">{r.visits}</td>
-                  <td className="p-1.5">{r.diagnoses}</td>
-                  <td className="p-1.5 italic text-gray-600">{r.pattern}</td>
-                  <td className="p-1.5"><span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border ${getSeverityColor(r.severity)}`}>{r.severity}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Syndromes */}
-          <h2 className="text-sm font-bold text-teal-600 border-l-4 border-teal-600 pl-2 mb-2 uppercase tracking-wider">4. Distribuição Sindrômica</h2>
-          <div className="mb-4 space-y-1">
-            {REPORT_DATA.syndromes.map((s, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs">
-                <span className="w-64 text-right text-gray-700">{s.name}</span>
-                <div className="flex-1 h-3.5 bg-gray-200 rounded overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-[#013ba6] to-[#0152d4] rounded" style={{ width: `${s.percentage * 2.5}%` }} />
+            {/* KPIs */}
+            <div className="grid grid-cols-6 gap-2 mb-5">
+              {[
+                { v: reportData.totalMovements, l: "Movimentações", c: "text-[#013ba6]" },
+                { v: reportData.totalAltas, l: "Altas", c: "text-[#013ba6]" },
+                { v: reportData.totalTransferencias, l: "Transferências", c: "text-[#013ba6]" },
+                { v: reportData.totalObitos, l: "Óbitos", c: "text-red-600" },
+                { v: reportData.utiTransfers.length, l: "UTI", c: "text-[#013ba6]" },
+                { v: reportData.recurrentPatients.length, l: "Recorrentes", c: "text-[#013ba6]" },
+              ].map((kpi, i) => (
+                <div key={i} className="border rounded-lg p-2 text-center bg-gray-50">
+                  <div className={`text-2xl font-extrabold ${kpi.c}`}>{kpi.v}</div>
+                  <div className="text-[10px] text-gray-500 uppercase tracking-wide">{kpi.l}</div>
                 </div>
-                <span className="w-16 text-gray-600 font-semibold">{s.count} ({s.percentage}%)</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* Insights */}
-          <h2 className="text-sm font-bold text-amber-600 border-l-4 border-amber-600 pl-2 mb-2 uppercase tracking-wider">5. Insights para Gestão</h2>
-          <div className="space-y-1.5 mb-4">
-            {REPORT_DATA.managementInsights.map((insight, i) => (
-              <div key={i} className="bg-green-50 border border-green-200 border-l-4 border-l-green-600 px-2.5 py-1.5 rounded text-xs text-green-900">
-                <strong className="text-green-700">{i + 1}.</strong> {insight}
-              </div>
-            ))}
-          </div>
+            {/* Deaths */}
+            <h2 className="text-sm font-bold text-red-600 border-l-4 border-red-600 pl-2 mb-2 uppercase tracking-wider">1. Óbitos — Eventos Sentinela</h2>
+            {reportData.deaths.length > 0 ? (
+              <table className="w-full text-xs mb-4 border-collapse">
+                <thead><tr className="bg-red-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Data</th><th className="p-1.5 text-left">Diagnóstico</th><th className="p-1.5 text-left">Síndrome</th></tr></thead>
+                <tbody>
+                  {reportData.deaths.map((d, i) => (
+                    <>
+                      <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : ''}>
+                        <td className="p-1.5 font-semibold">{d.name}</td>
+                        <td className="p-1.5 text-center">{d.date}</td>
+                        <td className="p-1.5">{d.diagnoses}</td>
+                        <td className="p-1.5">{d.syndrome}</td>
+                      </tr>
+                      {d.alert && <tr key={`alert-${i}`}><td colSpan={4} className="px-1.5 pb-2"><div className="bg-red-50 border border-red-200 border-l-4 border-l-red-600 p-1.5 rounded text-red-800 text-[10px] font-semibold">⚠ {d.alert}</div></td></tr>}
+                    </>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-xs text-gray-400 italic mb-4 text-center py-3">Nenhum óbito registrado no período.</p>
+            )}
 
-          {/* Footer */}
-          <div className="mt-6 pt-3 border-t-2 border-[#013ba6] flex justify-between text-[9px] text-gray-400">
-            <span>{whitelabel.platform.fullName} — {whitelabel.institution.networkName}</span>
-            <span>{whitelabel.credits.authorSignature}</span>
+            {/* UTI Transfers */}
+            <h2 className="text-sm font-bold text-orange-600 border-l-4 border-orange-600 pl-2 mb-2 uppercase tracking-wider">2. Casos Gravíssimos — Transferências UTI</h2>
+            {reportData.utiTransfers.length > 0 ? (
+              <table className="w-full text-xs mb-4 border-collapse">
+                <thead><tr className="bg-orange-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Data</th><th className="p-1.5 text-left">Diagnóstico</th><th className="p-1.5 text-left">Síndrome</th></tr></thead>
+                <tbody>
+                  {reportData.utiTransfers.map((t, i) => (
+                    <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : ''}>
+                      <td className="p-1.5 font-semibold">{t.name}</td>
+                      <td className="p-1.5 text-center">{t.date}</td>
+                      <td className="p-1.5">{t.diagnoses}</td>
+                      <td className="p-1.5">{t.syndrome}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-xs text-gray-400 italic mb-4 text-center py-3">Nenhuma transferência UTI no período.</p>
+            )}
+
+            {/* Recurrence */}
+            <h2 className="text-sm font-bold text-purple-600 border-l-4 border-purple-600 pl-2 mb-2 uppercase tracking-wider">3. Pacientes Recorrentes</h2>
+            {reportData.recurrentPatients.length > 0 ? (
+              <table className="w-full text-xs mb-4 border-collapse">
+                <thead><tr className="bg-purple-600 text-white"><th className="p-1.5 text-left">Paciente</th><th className="p-1.5">Visitas</th><th className="p-1.5 text-left">Diagnósticos</th><th className="p-1.5 text-left">Padrão</th><th className="p-1.5">Gravidade</th></tr></thead>
+                <tbody>
+                  {reportData.recurrentPatients.map((r, i) => (
+                    <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : ''}>
+                      <td className="p-1.5 font-semibold">{r.name}</td>
+                      <td className="p-1.5 text-center font-bold text-purple-700 text-base">{r.visits}</td>
+                      <td className="p-1.5">{r.diagnoses}</td>
+                      <td className="p-1.5 italic text-gray-600">{r.pattern}</td>
+                      <td className="p-1.5"><span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border ${getSeverityColor(r.severity)}`}>{r.severity}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-xs text-gray-400 italic mb-4 text-center py-3">Nenhum paciente recorrente identificado.</p>
+            )}
+
+            {/* Syndromes */}
+            <h2 className="text-sm font-bold text-teal-600 border-l-4 border-teal-600 pl-2 mb-2 uppercase tracking-wider">4. Distribuição Sindrômica</h2>
+            {reportData.syndromes.length > 0 ? (
+              <div className="mb-4 space-y-1">
+                {reportData.syndromes.map((s, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs">
+                    <span className="w-64 text-right text-gray-700">{s.name}</span>
+                    <div className="flex-1 h-3.5 bg-gray-200 rounded overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#013ba6] to-[#0152d4] rounded" style={{ width: `${Math.min(s.percentage * 2.5, 100)}%` }} />
+                    </div>
+                    <span className="w-16 text-gray-600 font-semibold">{s.count} ({s.percentage}%)</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-gray-400 italic mb-4 text-center py-3">Sem dados sindrômicos.</p>
+            )}
+
+            {/* Insights */}
+            <h2 className="text-sm font-bold text-amber-600 border-l-4 border-amber-600 pl-2 mb-2 uppercase tracking-wider">5. Insights para Gestão</h2>
+            {reportData.managementInsights.length > 0 ? (
+              <div className="space-y-1.5 mb-4">
+                {reportData.managementInsights.map((insight, i) => (
+                  <div key={i} className="bg-green-50 border border-green-200 border-l-4 border-l-green-600 px-2.5 py-1.5 rounded text-xs text-green-900">
+                    <strong className="text-green-700">{i + 1}.</strong> {insight}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-gray-400 italic mb-4 text-center py-3">Dados insuficientes para insights.</p>
+            )}
+
+            {/* Footer */}
+            <div className="mt-6 pt-3 border-t-2 border-[#013ba6] flex justify-between text-[9px] text-gray-400">
+              <span>{whitelabel.platform.fullName} — {whitelabel.institution.networkName}</span>
+              <span>{whitelabel.credits.authorSignature}</span>
+            </div>
+            <p className="text-center text-[8px] text-gray-400 uppercase tracking-widest mt-1">Documento Confidencial — Uso exclusivo da coordenação médica</p>
           </div>
-          <p className="text-center text-[8px] text-gray-400 uppercase tracking-widest mt-1">Documento Confidencial — Uso exclusivo da coordenação médica</p>
-        </div>
+        )}
       </div>
     </div>
   );
