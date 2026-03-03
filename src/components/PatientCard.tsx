@@ -5202,7 +5202,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 </div>
 </body></html>`);
                   printWindow.document.close();
-                  setTimeout(() => printWindow.print(), 400);
+                  // Wait for all images to load before printing
+                  const images = printWindow.document.querySelectorAll('img');
+                  const imagePromises = Array.from(images).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise<void>((resolve) => {
+                      img.onload = () => resolve();
+                      img.onerror = () => resolve();
+                    });
+                  });
+                  Promise.all(imagePromises).then(() => {
+                    setTimeout(() => printWindow.print(), 200);
+                  });
                 }}
                 className="flex items-center gap-1.5"
               >
