@@ -35,6 +35,7 @@ import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 import { useConductHistory } from "@/hooks/useConductHistory";
 import { ConductHistoryDialog } from "./ConductHistoryDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { whitelabel } from "@/config/whitelabel";
 import {
   Dialog,
   DialogContent,
@@ -5093,30 +5094,121 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 size="sm"
                 disabled={!reportText.trim()}
                 onClick={() => {
+                  const networkLogoUrl = new URL(whitelabel.logos.networkFull, window.location.origin).href;
+                  const platformLogoUrl = new URL(whitelabel.logos.platform, window.location.origin).href;
+                  const now = new Date();
+                  const dateStr = now.toLocaleDateString('pt-BR');
+                  const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                  const escapedContent = reportText.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
+
                   const printWindow = window.open('', '_blank');
                   if (!printWindow) return;
-                  printWindow.document.write(`
-                    <html><head><title>Relatório - ${patient.name}</title>
-                    <style>
-                      body { font-family: Arial, sans-serif; padding: 40px; color: #1a1a1a; max-width: 800px; margin: 0 auto; }
-                      .header { border-bottom: 2px solid #2563eb; padding-bottom: 16px; margin-bottom: 24px; }
-                      .patient-name { font-size: 18px; font-weight: bold; margin: 0; }
-                      .patient-info { font-size: 13px; color: #666; margin-top: 4px; }
-                      .content { font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
-                      .footer { margin-top: 60px; border-top: 1px solid #ddd; padding-top: 16px; font-size: 11px; color: #999; text-align: center; }
-                      @media print { body { padding: 20px; } }
-                    </style></head><body>
-                    <div class="header">
-                      <p class="patient-name">${patient.name}</p>
-                      <p class="patient-info">${[patient.age, 'Leito ' + patient.bedNumber].filter(Boolean).join(' • ')}</p>
-                      <p class="patient-info">Data: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
-                    </div>
-                    <div class="content">${reportText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-                    <div class="footer">Documento gerado pelo sistema HapMap</div>
-                    </body></html>
-                  `);
+                  printWindow.document.write(`<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Relatório - ${patient.name}</title>
+<style>
+  @page { size: A4 portrait; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, Helvetica, sans-serif; color: #1a1a2e; background: #fff; }
+  .page { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 0; position: relative; }
+
+  /* ── HEADER BAR ── */
+  .header-bar {
+    background: linear-gradient(135deg, #013ba6 0%, #0152d4 60%, #0169f7 100%);
+    padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header-bar .logo-left img { height: 38px; filter: brightness(0) invert(1); }
+  .header-bar .title-center { text-align: center; flex: 1; }
+  .header-bar .title-center h1 { font-size: 15pt; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .header-bar .title-center .subtitle { font-size: 8pt; color: rgba(255,255,255,0.75); margin-top: 2px; letter-spacing: 0.5px; }
+  .header-bar .logo-right img { height: 32px; opacity: 0.9; }
+
+  /* ── ACCENT LINE ── */
+  .accent-line { height: 3px; background: linear-gradient(90deg, #013ba6, #0169f7, #38bdf8, #0169f7, #013ba6); }
+
+  /* ── PATIENT INFO STRIP ── */
+  .patient-strip {
+    background: #f0f4ff; border-bottom: 1px solid #dce3f0;
+    padding: 14px 32px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  }
+  .patient-strip .field { display: flex; flex-direction: column; }
+  .patient-strip .field-label { font-size: 6.5pt; color: #6b7280; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+  .patient-strip .field-value { font-size: 10pt; color: #111827; font-weight: 600; margin-top: 1px; }
+  .patient-strip .divider { width: 1px; height: 28px; background: #cbd5e1; }
+
+  /* ── BODY CONTENT ── */
+  .body-content {
+    padding: 28px 32px 80px 32px;
+    font-size: 11pt; line-height: 1.75; color: #1f2937;
+    min-height: calc(297mm - 140px);
+  }
+  .body-content .section-label {
+    font-size: 8pt; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;
+    color: #013ba6; margin-bottom: 12px; padding-bottom: 6px;
+    border-bottom: 2px solid #dbeafe;
+  }
+
+  /* ── WATERMARK ── */
+  .watermark {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
+    opacity: 0.03; z-index: 0; pointer-events: none;
+  }
+  .watermark img { width: 320px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    position: fixed; bottom: 0; left: 0; right: 0; width: 210mm; margin: 0 auto;
+    border-top: 2px solid #013ba6; padding: 10px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff;
+  }
+  .footer .left { font-size: 7pt; color: #9ca3af; }
+  .footer .center { font-size: 6.5pt; color: #b0b0b0; text-align: center; }
+  .footer .right { font-size: 7pt; color: #9ca3af; text-align: right; }
+
+  @media print {
+    html, body { margin: 0 !important; padding: 0 !important; }
+    .page { margin: 0; width: 100%; }
+    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+  }
+  @media screen { .page { box-shadow: 0 4px 24px rgba(0,0,0,0.12); margin: 20px auto; border-radius: 2px; } }
+</style></head><body>
+<div class="page">
+  <div class="watermark"><img src="${networkLogoUrl}" alt="" /></div>
+
+  <div class="header-bar">
+    <div class="logo-left"><img src="${platformLogoUrl}" alt="HapMap" /></div>
+    <div class="title-center">
+      <h1>Relatório Médico</h1>
+      <div class="subtitle">${whitelabel.institution.networkName}</div>
+    </div>
+    <div class="logo-right"><img src="${networkLogoUrl}" alt="${whitelabel.institution.networkShortName}" /></div>
+  </div>
+  <div class="accent-line"></div>
+
+  <div class="patient-strip">
+    <div class="field"><span class="field-label">Paciente</span><span class="field-value">${patient.name}</span></div>
+    <div class="divider"></div>
+    ${patient.age ? `<div class="field"><span class="field-label">Idade</span><span class="field-value">${patient.age}</span></div><div class="divider"></div>` : ''}
+    <div class="field"><span class="field-label">Leito</span><span class="field-value">${patient.bedNumber}</span></div>
+    <div class="divider"></div>
+    <div class="field"><span class="field-label">Data</span><span class="field-value">${dateStr} às ${timeStr}</span></div>
+  </div>
+
+  <div class="body-content">
+    <div class="section-label">Conteúdo do Relatório</div>
+    ${escapedContent}
+  </div>
+
+  <div class="footer">
+    <div class="left">${whitelabel.print.confidentialityText}</div>
+    <div class="center">${whitelabel.credits.footerText}</div>
+    <div class="right">${dateStr} às ${timeStr}</div>
+  </div>
+</div>
+</body></html>`);
                   printWindow.document.close();
-                  printWindow.print();
+                  setTimeout(() => printWindow.print(), 400);
                 }}
                 className="flex items-center gap-1.5"
               >
