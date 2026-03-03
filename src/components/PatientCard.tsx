@@ -5109,102 +5109,88 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 <style>
   @page { size: A4 portrait; margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Arial, Helvetica, sans-serif; color: #1a1a2e; background: #fff; }
-  .page { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 0; position: relative; }
+  body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; color: #1a1a2e; background: #fff; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .page { width: 210mm; min-height: 297mm; margin: 0 auto; position: relative; overflow: hidden; }
 
-  /* ── HEADER BAR ── */
-  .header-bar {
-    background: linear-gradient(135deg, #013ba6 0%, #0152d4 60%, #0169f7 100%);
-    padding: 18px 32px;
-    display: flex; align-items: center; justify-content: space-between;
+  .header {
+    background: linear-gradient(135deg, #002b80 0%, #013ba6 40%, #0152d4 100%);
+    padding: 20px 36px 16px; display: flex; align-items: center; justify-content: center;
+    position: relative;
   }
-  .header-bar .logo-left img { height: 38px; filter: brightness(0) invert(1); }
-  .header-bar .title-center { text-align: center; flex: 1; }
-  .header-bar .title-center h1 { font-size: 15pt; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
-  .header-bar .title-center .subtitle { font-size: 8pt; color: rgba(255,255,255,0.75); margin-top: 2px; letter-spacing: 0.5px; }
-  .header-bar .logo-right img { height: 32px; opacity: 0.9; }
+  .header::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b, #fbbf24);
+  }
+  .header .logo-main img { height: 48px; filter: brightness(0) invert(1); }
 
-  /* ── ACCENT LINE ── */
-  .accent-line { height: 3px; background: linear-gradient(90deg, #013ba6, #0169f7, #38bdf8, #0169f7, #013ba6); }
+  .title-bar {
+    background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+    padding: 10px 36px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .title-bar h1 { font-size: 10pt; font-weight: 700; color: #013ba6; text-transform: uppercase; letter-spacing: 2px; }
+  .title-bar .hospital-name { font-size: 7.5pt; color: #64748b; font-weight: 500; }
 
-  /* ── PATIENT INFO STRIP ── */
   .patient-strip {
-    background: #f0f4ff; border-bottom: 1px solid #dce3f0;
-    padding: 14px 32px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    background: #eef2ff; border-bottom: 1px solid #ddd6fe;
+    padding: 10px 36px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
   }
   .patient-strip .field { display: flex; flex-direction: column; }
-  .patient-strip .field-label { font-size: 6.5pt; color: #6b7280; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
-  .patient-strip .field-value { font-size: 10pt; color: #111827; font-weight: 600; margin-top: 1px; }
-  .patient-strip .divider { width: 1px; height: 28px; background: #cbd5e1; }
+  .patient-strip .field-label { font-size: 5.5pt; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+  .patient-strip .field-value { font-size: 8.5pt; color: #111827; font-weight: 600; margin-top: 1px; }
+  .patient-strip .divider { width: 1px; height: 24px; background: #c7d2fe; }
 
-  /* ── BODY CONTENT ── */
   .body-content {
-    padding: 28px 32px 80px 32px;
-    font-size: 11pt; line-height: 1.75; color: #1f2937;
-    min-height: calc(297mm - 140px);
+    padding: 24px 36px 90px; font-size: 9pt; line-height: 1.7; color: #334155;
+    min-height: calc(297mm - 160px);
   }
-  .body-content .section-label {
-    font-size: 8pt; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;
-    color: #013ba6; margin-bottom: 12px; padding-bottom: 6px;
-    border-bottom: 2px solid #dbeafe;
+  .body-content .section-title {
+    font-size: 7pt; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800;
+    color: #013ba6; margin-bottom: 10px; padding-bottom: 5px;
+    border-bottom: 1.5px solid #dbeafe; display: flex; align-items: center; gap: 6px;
   }
+  .body-content .section-title::before { content: ''; width: 3px; height: 12px; background: #013ba6; border-radius: 2px; }
+  .body-text { text-align: justify; word-break: break-word; }
 
-  /* ── WATERMARK ── */
   .watermark {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
-    opacity: 0.03; z-index: 0; pointer-events: none;
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
+    opacity: 0.025; z-index: 0; pointer-events: none;
   }
-  .watermark img { width: 320px; }
+  .watermark img { width: 280px; }
 
-  /* ── FOOTER ── */
-  .footer {
-    position: fixed; bottom: 0; left: 0; right: 0; width: 210mm; margin: 0 auto;
-    border-top: 2px solid #013ba6; padding: 10px 32px;
-    display: flex; align-items: center; justify-content: space-between;
-    background: #fff;
-  }
-  .footer .left { font-size: 7pt; color: #9ca3af; }
-  .footer .center { font-size: 6.5pt; color: #b0b0b0; text-align: center; }
-  .footer .right { font-size: 7pt; color: #9ca3af; text-align: right; }
+  .footer { position: fixed; bottom: 0; left: 0; right: 0; width: 210mm; margin: 0 auto; background: #fff; }
+  .footer-accent { height: 2px; background: linear-gradient(90deg, #013ba6, #0152d4, #38bdf8, #0152d4, #013ba6); }
+  .footer-content { padding: 8px 36px; display: flex; align-items: center; justify-content: space-between; }
+  .footer-content .address { font-size: 6pt; color: #94a3b8; line-height: 1.4; max-width: 55%; }
+  .footer-content .meta { font-size: 6pt; color: #94a3b8; text-align: right; line-height: 1.4; }
+  .footer-content .meta .brand { font-weight: 600; color: #cbd5e1; }
 
-  @media print {
-    html, body { margin: 0 !important; padding: 0 !important; }
-    .page { margin: 0; width: 100%; }
-    -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
-  }
-  @media screen { .page { box-shadow: 0 4px 24px rgba(0,0,0,0.12); margin: 20px auto; border-radius: 2px; } }
+  @media print { html, body { margin: 0 !important; padding: 0 !important; } .page { margin: 0; width: 100%; } }
+  @media screen { .page { box-shadow: 0 8px 32px rgba(0,0,0,0.10); margin: 20px auto; border-radius: 3px; } }
 </style></head><body>
 <div class="page">
   <div class="watermark"><img src="${networkLogoUrl}" alt="" /></div>
-
-  <div class="header-bar">
-    <div class="logo-left"><img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" /></div>
-    <div class="title-center">
-      <h1>Relatório Médico</h1>
-      <div class="subtitle">${whitelabel.institution.hospitalName}</div>
-    </div>
-    <div class="logo-right"><img src="${hospitalLogoUrl}" alt="${whitelabel.institution.hospitalName}" /></div>
-  </div>
-  <div class="accent-line"></div>
-
+  <div class="header"><div class="logo-main"><img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" /></div></div>
+  <div class="title-bar"><h1>Relatório Médico</h1><span class="hospital-name">${whitelabel.institution.hospitalName}</span></div>
   <div class="patient-strip">
     <div class="field"><span class="field-label">Paciente</span><span class="field-value">${patient.name}</span></div>
     <div class="divider"></div>
     ${patient.age ? `<div class="field"><span class="field-label">Idade</span><span class="field-value">${patient.age}</span></div><div class="divider"></div>` : ''}
     <div class="field"><span class="field-label">Leito</span><span class="field-value">${patient.bedNumber}</span></div>
     <div class="divider"></div>
-    <div class="field"><span class="field-label">Data</span><span class="field-value">${dateStr} às ${timeStr}</span></div>
+    <div class="field"><span class="field-label">Setor</span><span class="field-value">${patient.sector === 'red' ? 'Vermelho' : patient.sector === 'yellow' ? 'Amarelo' : patient.sector === 'blue' ? 'Azul' : patient.sector}</span></div>
+    <div class="divider"></div>
+    <div class="field"><span class="field-label">Emissão</span><span class="field-value">${dateStr} às ${timeStr}</span></div>
   </div>
-
   <div class="body-content">
-    <div class="section-label">Conteúdo do Relatório</div>
-    ${escapedContent}
+    <div class="section-title">Conteúdo do Relatório</div>
+    <div class="body-text">${escapedContent}</div>
   </div>
-
   <div class="footer">
-    <div class="left" style="flex:1;">${whitelabel.institution.hospitalName} — Rua Armando Vieira da Silva, S/N, Bairro Fátima, São Luís/MA — CEP 65.030-130</div>
-    <div class="center" style="flex:1;">${whitelabel.credits.footerText}</div>
-    <div class="right" style="flex:1;">${dateStr} às ${timeStr}</div>
+    <div class="footer-accent"></div>
+    <div class="footer-content">
+      <div class="address">${whitelabel.institution.hospitalName}<br/>Rua Armando Vieira da Silva, S/N — Bairro Fátima, São Luís/MA — CEP 65.030-130</div>
+      <div class="meta"><span class="brand">${whitelabel.credits.footerText}</span><br/>${dateStr} às ${timeStr}</div>
+    </div>
   </div>
 </div>
 </body></html>`);
