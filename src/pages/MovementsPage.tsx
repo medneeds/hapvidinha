@@ -8,7 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw, CalendarIcon, Filter, Loader2 } from "lucide-react";
+import { Search, TrendingUp, UserX, Skull, ArrowLeftRight, FileText, RotateCcw, CalendarIcon, Filter, Loader2, Printer } from "lucide-react";
+import { whitelabel } from "@/config/whitelabel";
 import { ViewPatientSnapshotDialog } from "@/components/ViewPatientSnapshotDialog";
 import { ReallocateFromHistoryDialog } from "@/components/ReallocateFromHistoryDialog";
 import { ScrollToTopButton } from "@/components/ScrollToTopButton";
@@ -255,6 +256,151 @@ export default function MovementsPage() {
 
   const counts = getMovementCounts();
 
+  const handlePrintMovements = () => {
+    const now = new Date();
+    const dateStr = format(now, "dd/MM/yyyy", { locale: ptBR });
+    const timeStr = format(now, "HH:mm", { locale: ptBR });
+
+    const movementTypeLabel: Record<string, string> = {
+      ALTA: "Alta",
+      ÓBITO: "Óbito",
+      TRANSFERÊNCIA: "Transferência",
+    };
+
+    const movementTypeColor: Record<string, string> = {
+      ALTA: "#16a34a",
+      ÓBITO: "#dc2626",
+      TRANSFERÊNCIA: "#2563eb",
+    };
+
+    const filterDescription = (() => {
+      const parts: string[] = [];
+      if (activeTab !== "all") parts.push(`Tipo: ${movementTypeLabel[activeTab] || activeTab}`);
+      if (searchTerm) parts.push(`Busca: "${searchTerm}"`);
+      if (appliedStartDate) parts.push(`De: ${format(appliedStartDate, "dd/MM/yyyy")}`);
+      if (appliedEndDate) parts.push(`Até: ${format(appliedEndDate, "dd/MM/yyyy")}`);
+      return parts.length > 0 ? parts.join(" • ") : "Todos os registros";
+    })();
+
+    const rows = filteredMovements.map((m) => {
+      const snapshot = m.patient_snapshot || {};
+      const diagnoses = snapshot.diagnoses || "";
+      const sector = m.patient_sector || "";
+      const bed = m.patient_bed || "";
+      const dest = m.destination || "";
+      const doctor = m.responsible_doctor || "";
+      const notes = m.notes || "";
+      const date = format(new Date(m.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR });
+      const color = movementTypeColor[m.movement_type] || "#333";
+      const label = movementTypeLabel[m.movement_type] || m.movement_type;
+
+      return `
+        <tr>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;font-weight:600;">${m.patient_name.toUpperCase()}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${sector}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${bed}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">
+            <span style="background:${color};color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;">${label}</span>
+          </td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${dest}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${doctor}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:10px;max-width:180px;overflow:hidden;text-overflow:ellipsis;">${diagnoses}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:10px;white-space:nowrap;">${date}</td>
+        </tr>
+      `;
+    }).join("");
+
+    const hapmapLogoUrl = whitelabel.logos.platform;
+    const networkLogoUrl = whitelabel.logos.networkFull;
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Histórico de Movimentações - ${dateStr}</title>
+        <style>
+          @page { size: A4 landscape; margin: 15mm; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: 'Segoe UI', Tahoma, sans-serif; color: #1a1a1a; background: #fff; }
+          .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #013ba6; padding-bottom: 12px; margin-bottom: 16px; }
+          .header-left { display: flex; align-items: center; gap: 16px; }
+          .header-left img { height: 42px; object-fit: contain; }
+          .header-right img { height: 38px; object-fit: contain; }
+          .title { font-size: 18px; font-weight: 700; color: #013ba6; }
+          .subtitle { font-size: 11px; color: #666; margin-top: 2px; }
+          .meta { display: flex; gap: 24px; margin-bottom: 14px; font-size: 11px; color: #555; }
+          .meta span { font-weight: 600; color: #1a1a1a; }
+          .stats { display: flex; gap: 12px; margin-bottom: 16px; }
+          .stat-box { padding: 8px 16px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+          table { width: 100%; border-collapse: collapse; }
+          th { background: #013ba6; color: #fff; padding: 8px; font-size: 10px; text-align: left; text-transform: uppercase; letter-spacing: 0.5px; }
+          tr:nth-child(even) { background: #f8fafc; }
+          .footer { margin-top: 20px; padding-top: 10px; border-top: 2px solid #013ba6; display: flex; justify-content: space-between; font-size: 9px; color: #888; }
+          @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="header-left">
+            <img src="${hapmapLogoUrl}" alt="HapMap" />
+            <div>
+              <div class="title">HISTÓRICO DE MOVIMENTAÇÕES</div>
+              <div class="subtitle">${currentDepartment} • ${whitelabel.institution.hospitalName}</div>
+            </div>
+          </div>
+          <div class="header-right">
+            <img src="${networkLogoUrl}" alt="${whitelabel.institution.networkName}" />
+          </div>
+        </div>
+
+        <div class="meta">
+          <div>Data: <span>${dateStr}</span></div>
+          <div>Horário: <span>${timeStr}</span></div>
+          <div>Filtros: <span>${filterDescription}</span></div>
+          <div>Total: <span>${filteredMovements.length} registros</span></div>
+        </div>
+
+        <div class="stats">
+          <div class="stat-box" style="background:#dcfce7;color:#16a34a;">Altas: ${counts.ALTA}</div>
+          <div class="stat-box" style="background:#fee2e2;color:#dc2626;">Óbitos: ${counts.ÓBITO}</div>
+          <div class="stat-box" style="background:#dbeafe;color:#2563eb;">Transferências: ${counts.TRANSFERÊNCIA}</div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Paciente</th>
+              <th>Setor</th>
+              <th>Leito</th>
+              <th>Tipo</th>
+              <th>Destino</th>
+              <th>Médico Resp.</th>
+              <th>Diagnósticos</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+
+        <div class="footer">
+          <span>${whitelabel.print.confidentialityText} • ${whitelabel.print.systemLabel}</span>
+          <span>${whitelabel.credits.authorSignature} • Gerado em ${dateStr} às ${timeStr}</span>
+        </div>
+      </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);
+  };
+
   const handleOpenReallocateDialog = (movement: PatientMovement) => {
     if (!movement.patient_snapshot) {
       toast({
@@ -272,11 +418,21 @@ export default function MovementsPage() {
     <>
       <div className="p-4 md:p-6 space-y-6">
         <div className="flex flex-col gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground uppercase">Histórico de Movimentações</h1>
-            <p className="text-sm text-muted-foreground mt-1 uppercase">
-              Registro de altas, óbitos e transferências de pacientes
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground uppercase">Histórico de Movimentações</h1>
+              <p className="text-sm text-muted-foreground mt-1 uppercase">
+                Registro de altas, óbitos e transferências de pacientes
+              </p>
+            </div>
+            <Button
+              onClick={handlePrintMovements}
+              disabled={filteredMovements.length === 0}
+              className="gap-2 shrink-0"
+            >
+              <Printer className="h-4 w-4" />
+              Gerar PDF
+            </Button>
           </div>
 
           {/* Search Bar */}
