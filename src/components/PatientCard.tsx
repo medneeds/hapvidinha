@@ -5202,9 +5202,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   </div>
 
   <div class="footer">
-    <div class="left">${whitelabel.print.confidentialityText}</div>
-    <div class="center">${whitelabel.credits.footerText}</div>
-    <div class="right">${dateStr} às ${timeStr}</div>
+    <div class="left" style="flex:1;">${whitelabel.institution.hospitalName} — Rua Armando Vieira da Silva, S/N, Bairro Fátima, São Luís/MA — CEP 65.030-130</div>
+    <div class="center" style="flex:1;">${whitelabel.credits.footerText}</div>
+    <div class="right" style="flex:1;">${dateStr} às ${timeStr}</div>
   </div>
 </div>
 </body></html>`);
