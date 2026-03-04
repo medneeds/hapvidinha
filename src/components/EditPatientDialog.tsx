@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { X, FileText, AlertTriangle, Activity, Pill, Stethoscope, Plus, Trash2, Scissors, Brain, LayoutList } from "lucide-react";
+import { X, FileText, AlertTriangle, Activity, Pill, Stethoscope, Plus, Trash2, Scissors, Brain, LayoutList, FileDown } from "lucide-react";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { cn } from "@/lib/utils";
 
@@ -196,15 +196,31 @@ export function EditPatientDialog({
                   <FileText className="h-4 w-4" />
                   História Admissional / Anamnese
                 </Label>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setAdmissionHistoryLocal("")}
-                  className="h-6 px-2 text-xs"
-                >
-                  Limpar
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const today = new Date().toLocaleDateString('pt-BR');
+                      const template = `# MEDICINA DE EMERGÊNCIA\n\n- ADMISSÃO: ${today}\n\n\n\n# HISTÓRIA DA DOENÇA ATUAL (HDA):\n\n\n\n# ANTECEDENTES MÓRBIDOS PESSOAIS (AMP):\n\n\n\n# MEDICAMENTOS DE USO CONTÍNUO (MUC):\n\n\n# ALERGIA MEDICAMENTOSA:\n\n\n\n# ANTROPOMETRIA: PESO KG / ESTATURA M\n\n\n\n# DISPOSITIVOS:\n\n\n\n# SSVV ADMISSIONAIS:\n\n> PA: MMHG | FC: BPM | FR: IRPM | SATO2: % | TAX °C | DX MG/DL\n\n\n# EXAME FÍSICO:\n\n- ESTADO GERAL:\n\n- CARDIOVASCULAR:\n\n- RESPIRATÓRIO:\n\n- ABDOMINAL:\n\n- EXTREMIDADES:\n\n\n# EXAMES LABORATORIAIS:\n\n> LAB (${today}):\n\n\n\n\n# EXAMES DE IMAGEM:\n\n> TC DE TÓRAX (${today}):\n\n\n# PARECERES/AVALIAÇÕES:\n\n> PARECER DA TELE CARDIOLOGIA (${today} – DRA BELTRANA):\n\n\n# EVOLUÇÃO/IMPRESSÃO CLÍNICA:\n\n\n# PLANO DE CUIDADOS:\n\n- MONITORIZAÇÃO MULTIPARAMÉTRICA CONTÍNUA\n\n- SUPORTE CLINICO E MULTIPROFISSIONAL\n\n- ADMISSÃO E PRESCRIÇÃO MÉDICAS\n\n- EXPANSÃO VOLÊMICA SF0,9% 30ML/KG\n\n- SOLICITO HEMOCULTURAS E UROCULTURA\n\n- ANTIBIOTICOTERAPIA ENDOVENOSA (INICIAR APÓS COLETA DE CULTURAS)\n\n- SOLICITO TC DE ABDOME TOTAL COM CONTRASTE\n\n- ACOMPANHAMENTO CONJUNTO A CIRURGIA GERAL\n\n- SOLICITO INTERNAÇÃO HOSPITALAR\n\n- ACOLHIMENTO DE PACIENTE E ACOMPANHANTES, EXPLICO SOBRE O QUADRO CLÍNICO E TERAPÊUTICA INICIAL\n\n\n# METAS TERAPÊUTICAS`;
+                      setAdmissionHistoryLocal(template);
+                    }}
+                    className="h-6 px-2 text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    <FileDown className="h-3 w-3" />
+                    Importar Modelo
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setAdmissionHistoryLocal("")}
+                    className="h-6 px-2 text-xs"
+                  >
+                    Limpar
+                  </Button>
+                </div>
               </div>
               <Textarea
                 value={admissionHistoryLocal}
