@@ -253,10 +253,8 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
               </div>
             </div>
           )}
-                </Button>
-              </div>
-            </div>
-          )}
+
+
 
           {/* FASE 2: Streaming result */}
           {phase === "result" && (
