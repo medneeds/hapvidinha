@@ -24,8 +24,9 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
   const [inputText, setInputText] = useState("");
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [phase, setPhase] = useState<"input" | "result" | "review">("input");
+  const [phase, setPhase] = useState<"input" | "disclaimer-pre" | "result" | "review">("input");
   const [acknowledged, setAcknowledged] = useState(false);
+  const [preAcknowledged, setPreAcknowledged] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   const handleGenerate = async () => {
