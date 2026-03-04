@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Brain, Loader2, Check, Copy, RotateCcw } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Brain, Loader2, Check, Copy, RotateCcw, AlertTriangle, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 
 interface ClinikusAIDialogProps {
@@ -23,7 +24,8 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
   const [inputText, setInputText] = useState("");
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [phase, setPhase] = useState<"input" | "result">("input");
+  const [phase, setPhase] = useState<"input" | "result" | "review">("input");
+  const [acknowledged, setAcknowledged] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   const handleGenerate = async () => {
@@ -35,6 +37,7 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
     setIsLoading(true);
     setResult("");
     setPhase("result");
+    setAcknowledged(false);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -104,7 +107,15 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
     }
   };
 
+  const handleProceedToReview = () => {
+    setPhase("review");
+  };
+
   const handleImport = () => {
+    if (!acknowledged) {
+      toast.error("Você precisa declarar ciência antes de importar.");
+      return;
+    }
     onImport(result);
     toast.success("História clínica importada com sucesso!");
     handleReset();
@@ -115,6 +126,7 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
     setInputText("");
     setResult("");
     setPhase("input");
+    setAcknowledged(false);
     if (abortRef.current) abortRef.current.abort();
   };
 
@@ -132,11 +144,15 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
             Clinicus IA — Estruturação Clínica
           </DialogTitle>
           <DialogDescription className="text-xs">
-            Cole o relato médico em texto livre e o Clinicus irá estruturar no modelo padrão de admissão.
+            {phase === "input" && "Cole o relato médico em texto livre e o Clinicus irá estruturar no modelo padrão de admissão."}
+            {phase === "result" && "Acompanhe a geração do documento estruturado em tempo real."}
+            {phase === "review" && "Revise o documento gerado e declare ciência antes de importar."}
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto space-y-3 py-2">
+
+          {/* FASE 1: Input */}
           {phase === "input" && (
             <div className="space-y-3">
               <Textarea
@@ -159,54 +175,117 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
             </div>
           )}
 
+          {/* FASE 2: Streaming result */}
           {phase === "result" && (
             <div className="space-y-3">
-              <div className="relative">
-                <div className="bg-muted/30 border border-border rounded-lg p-4 min-h-[300px] max-h-[60vh] overflow-y-auto">
-                  {isLoading && !result && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm">Clinicus está estruturando a história clínica...</span>
-                    </div>
-                  )}
-                  <pre className="text-sm whitespace-pre-wrap font-mono uppercase leading-relaxed text-foreground">
-                    {result}
-                  </pre>
-                  {isLoading && result && (
-                    <span className="inline-block w-2 h-4 bg-primary animate-pulse ml-0.5" />
-                  )}
-                </div>
+              <div className="bg-muted/30 border border-border rounded-lg p-4 min-h-[300px] max-h-[60vh] overflow-y-auto">
+                {isLoading && !result && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm">Clinicus está estruturando a história clínica...</span>
+                  </div>
+                )}
+                <pre className="text-sm whitespace-pre-wrap font-mono uppercase leading-relaxed text-foreground">
+                  {result}
+                </pre>
+                {isLoading && result && (
+                  <span className="inline-block w-2 h-4 bg-primary animate-pulse ml-0.5" />
+                )}
               </div>
 
               <div className="flex items-center justify-between gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleReset}
-                  className="gap-1"
-                >
+                <Button variant="outline" size="sm" onClick={handleReset} className="gap-1">
                   <RotateCcw className="h-3.5 w-3.5" />
                   Novo Relato
                 </Button>
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCopy}
-                    disabled={isLoading || !result}
-                    className="gap-1"
-                  >
+                  <Button variant="outline" size="sm" onClick={handleCopy} disabled={isLoading || !result} className="gap-1">
+                    <Copy className="h-3.5 w-3.5" />
+                    Copiar
+                  </Button>
+                  <Button size="sm" onClick={handleProceedToReview} disabled={isLoading || !result} className="gap-1">
+                    <Check className="h-3.5 w-3.5" />
+                    Revisar e Importar
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* FASE 3: Review + Disclaimer */}
+          {phase === "review" && (
+            <div className="space-y-4">
+              {/* Disclaimer box */}
+              <div className="rounded-xl border-2 border-destructive/30 bg-destructive/5 p-5 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-0.5">
+                    <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                      <ShieldAlert className="h-5 w-5 text-destructive" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-bold text-destructive flex items-center gap-1.5">
+                      <AlertTriangle className="h-4 w-4" />
+                      AVISO IMPORTANTE — LEIA COM ATENÇÃO
+                    </h3>
+                    <div className="text-xs text-foreground/80 leading-relaxed space-y-2">
+                      <p>
+                        Este documento foi gerado pelo <strong className="text-foreground">Clinicus</strong>, um assistente de inteligência artificial desenvolvido para auxiliar na organização e estruturação de informações clínicas dentro do <strong className="text-foreground">HapMap</strong>.
+                      </p>
+                      <p>
+                        O Clinicus é uma ferramenta de <strong className="text-foreground">apoio à documentação médica</strong> e <strong className="text-foreground">não substitui</strong>, em nenhuma hipótese, o raciocínio clínico, a análise crítica e a revisão detalhada do médico responsável pelo caso.
+                      </p>
+                      <p>
+                        Podem ocorrer <strong className="text-foreground">erros, omissões ou inconsistências</strong> no texto gerado. O conteúdo deve ser integralmente revisado e ajustado pelo profissional antes de qualquer utilização clínica ou documental.
+                      </p>
+                      <p className="text-destructive/90 font-medium">
+                        O HapMap e o Clinicus não se responsabilizam por eventuais incorreções. A responsabilidade técnica e legal permanece integralmente com o médico.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-destructive/20 pt-4">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <Checkbox
+                      checked={acknowledged}
+                      onCheckedChange={(v) => setAcknowledged(v === true)}
+                      className="mt-0.5 border-destructive/50 data-[state=checked]:bg-destructive data-[state=checked]:border-destructive"
+                    />
+                    <span className="text-xs leading-relaxed text-foreground/90 group-hover:text-foreground transition-colors">
+                      <strong>Declaro ciência</strong> de que revisei o conteúdo gerado pelo Clinicus, compreendo as limitações da ferramenta e assumo total responsabilidade pela utilização das informações no prontuário do paciente.
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Preview compacto */}
+              <div className="bg-muted/20 border border-border rounded-lg p-3 max-h-[30vh] overflow-y-auto">
+                <p className="text-[10px] text-muted-foreground mb-2 font-semibold uppercase tracking-wider">Prévia do documento gerado</p>
+                <pre className="text-xs whitespace-pre-wrap font-mono uppercase leading-relaxed text-foreground/80">
+                  {result}
+                </pre>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-between gap-2">
+                <Button variant="outline" size="sm" onClick={() => setPhase("result")} className="gap-1">
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Voltar
+                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1">
                     <Copy className="h-3.5 w-3.5" />
                     Copiar
                   </Button>
                   <Button
                     size="sm"
                     onClick={handleImport}
-                    disabled={isLoading || !result}
+                    disabled={!acknowledged}
                     className="gap-1"
                   >
                     <Check className="h-3.5 w-3.5" />
-                    Importar para História
+                    Importar para História Admissional
                   </Button>
                 </div>
               </div>
