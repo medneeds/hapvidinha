@@ -412,6 +412,12 @@ export function EditPatientDialog({
           <Button onClick={handleSave} className="h-9">Salvar Alterações</Button>
         </div>
       </DialogContent>
+
+      <ClinikusAIDialog
+        open={clinikusOpen}
+        onOpenChange={setClinikusOpen}
+        onImport={(text) => setAdmissionHistoryLocal(text)}
+      />
     </Dialog>
   );
 }
