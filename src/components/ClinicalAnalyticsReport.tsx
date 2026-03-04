@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Printer, X, CalendarRange, Brain, Sparkles } from "lucide-react";
+import { Printer, X, CalendarRange, Brain, Sparkles, FileSpreadsheet } from "lucide-react";
 import { whitelabel } from "@/config/whitelabel";
 import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -722,6 +722,156 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
     });
   };
 
+  const handleExportExcel = () => {
+    if (!reportData) return;
+
+    const { label } = getPeriodDates(periodType, parseInt(periodOffset));
+    const periodTypeLabel = periodType === "mensal" ? "Mensal" : periodType === "trimestral" ? "Trimestral" : "Semestral";
+
+    const escXml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const cell = (v: string | number, type: 'String' | 'Number' = 'String', styleId = '') => {
+      const style = styleId ? ` ss:StyleID="${styleId}"` : '';
+      return `<Cell${style}><Data ss:Type="${type}">${type === 'String' ? escXml(String(v)) : v}</Data></Cell>`;
+    };
+    const row = (cells: string[]) => `<Row>${cells.join('')}</Row>`;
+
+    const styles = `
+      <Styles>
+        <Style ss:ID="Default"><Font ss:FontName="Segoe UI" ss:Size="9"/></Style>
+        <Style ss:ID="Title"><Font ss:FontName="Segoe UI" ss:Size="14" ss:Bold="1" ss:Color="#013BA6"/></Style>
+        <Style ss:ID="Subtitle"><Font ss:FontName="Segoe UI" ss:Size="10" ss:Color="#64748B"/></Style>
+        <Style ss:ID="Header"><Font ss:FontName="Segoe UI" ss:Size="9" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#013BA6" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="HeaderRed"><Font ss:FontName="Segoe UI" ss:Size="9" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#DC2626" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="HeaderOrange"><Font ss:FontName="Segoe UI" ss:Size="9" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#EA580C" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="HeaderPurple"><Font ss:FontName="Segoe UI" ss:Size="9" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#7C3AED" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="HeaderTeal"><Font ss:FontName="Segoe UI" ss:Size="9" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#0D9488" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="HeaderAmber"><Font ss:FontName="Segoe UI" ss:Size="9" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#D97706" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="SectionTitle"><Font ss:FontName="Segoe UI" ss:Size="11" ss:Bold="1" ss:Color="#013BA6"/><Interior ss:Color="#F0F4FF" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="KpiValue"><Font ss:FontName="Segoe UI" ss:Size="16" ss:Bold="1" ss:Color="#013BA6"/><Alignment ss:Horizontal="Center"/></Style>
+        <Style ss:ID="KpiLabel"><Font ss:FontName="Segoe UI" ss:Size="8" ss:Color="#64748B"/><Alignment ss:Horizontal="Center"/></Style>
+        <Style ss:ID="AlertRow"><Font ss:FontName="Segoe UI" ss:Size="8" ss:Bold="1" ss:Color="#991B1B"/><Interior ss:Color="#FEF2F2" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="InsightRow"><Font ss:FontName="Segoe UI" ss:Size="9" ss:Color="#14532D"/><Interior ss:Color="#F0FDF4" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="Bold"><Font ss:FontName="Segoe UI" ss:Size="9" ss:Bold="1"/></Style>
+        <Style ss:ID="Percent"><NumberFormat ss:Format="0%"/></Style>
+        <Style ss:ID="Zebra"><Interior ss:Color="#F8FAFC" ss:Pattern="Solid"/></Style>
+        <Style ss:ID="Footer"><Font ss:FontName="Segoe UI" ss:Size="7" ss:Color="#94A3B8" ss:Italic="1"/></Style>
+      </Styles>`;
+
+    // ── Sheet 1: Resumo ──
+    let resumoRows = [
+      row([cell('RELATÓRIO ANALÍTICO CLÍNICO', 'String', 'Title')]),
+      row([cell(`${periodTypeLabel} — ${label}`, 'String', 'Subtitle')]),
+      row([cell(`Setor: ${reportData.sector} | Período: ${reportData.period}`, 'String', 'Subtitle')]),
+      row([cell(`Gerado por: ${whitelabel.platform.fullName} — IA Analítica`, 'String', 'Footer')]),
+      row([]),
+      row([cell('Indicador', 'String', 'Header'), cell('Valor', 'String', 'Header')]),
+      row([cell('Movimentações Totais'), cell(reportData.totalMovements, 'Number')]),
+      row([cell('Altas'), cell(reportData.totalAltas, 'Number')]),
+      row([cell('Transferências'), cell(reportData.totalTransferencias, 'Number')]),
+      row([cell('Óbitos'), cell(reportData.totalObitos, 'Number')]),
+      row([cell('Transferências UTI'), cell(reportData.utiTransfers.length, 'Number')]),
+      row([cell('Pacientes Recorrentes'), cell(reportData.recurrentPatients.length, 'Number')]),
+    ];
+
+    // ── Sheet 2: Óbitos ──
+    let obitosRows = [
+      row([cell('1. ÓBITOS — EVENTOS SENTINELA', 'String', 'SectionTitle')]),
+      row([]),
+      row([cell('Paciente', 'String', 'HeaderRed'), cell('Data', 'String', 'HeaderRed'), cell('Diagnóstico', 'String', 'HeaderRed'), cell('Antecedentes', 'String', 'HeaderRed'), cell('Síndrome', 'String', 'HeaderRed'), cell('Alerta Sentinela', 'String', 'HeaderRed')]),
+    ];
+    if (reportData.deaths.length > 0) {
+      reportData.deaths.forEach((d, i) => {
+        const style = i % 2 === 0 ? 'Zebra' : '';
+        obitosRows.push(row([cell(d.name, 'String', style ? 'Bold' : 'Bold'), cell(d.date, 'String', style), cell(d.diagnoses, 'String', style), cell(d.history, 'String', style), cell(d.syndrome, 'String', style), cell(d.alert || '', 'String', d.alert ? 'AlertRow' : style)]));
+      });
+    } else {
+      obitosRows.push(row([cell('Nenhum óbito registrado no período.')]));
+    }
+
+    // ── Sheet 3: UTI ──
+    let utiRows = [
+      row([cell('2. CASOS GRAVÍSSIMOS — TRANSFERÊNCIAS UTI', 'String', 'SectionTitle')]),
+      row([]),
+      row([cell('Paciente', 'String', 'HeaderOrange'), cell('Data', 'String', 'HeaderOrange'), cell('Diagnóstico', 'String', 'HeaderOrange'), cell('Antecedentes', 'String', 'HeaderOrange'), cell('Síndrome', 'String', 'HeaderOrange')]),
+    ];
+    if (reportData.utiTransfers.length > 0) {
+      reportData.utiTransfers.forEach((t, i) => {
+        const style = i % 2 === 0 ? 'Zebra' : '';
+        utiRows.push(row([cell(t.name, 'String', 'Bold'), cell(t.date, 'String', style), cell(t.diagnoses, 'String', style), cell(t.history, 'String', style), cell(t.syndrome, 'String', style)]));
+      });
+    } else {
+      utiRows.push(row([cell('Nenhuma transferência UTI no período.')]));
+    }
+
+    // ── Sheet 4: Recorrentes ──
+    let recorrentesRows = [
+      row([cell('3. PACIENTES RECORRENTES — ANÁLISE DE PADRÃO', 'String', 'SectionTitle')]),
+      row([]),
+      row([cell('Paciente', 'String', 'HeaderPurple'), cell('Visitas', 'String', 'HeaderPurple'), cell('Diagnósticos', 'String', 'HeaderPurple'), cell('Padrão Identificado', 'String', 'HeaderPurple'), cell('Gravidade', 'String', 'HeaderPurple')]),
+    ];
+    if (reportData.recurrentPatients.length > 0) {
+      reportData.recurrentPatients.forEach((r, i) => {
+        const style = i % 2 === 0 ? 'Zebra' : '';
+        recorrentesRows.push(row([cell(r.name, 'String', 'Bold'), cell(r.visits, 'Number'), cell(r.diagnoses, 'String', style), cell(r.pattern, 'String', style), cell(r.severity, 'String', style)]));
+      });
+    } else {
+      recorrentesRows.push(row([cell('Nenhum paciente recorrente identificado.')]));
+    }
+
+    // ── Sheet 5: Síndromes ──
+    let sindromesRows = [
+      row([cell('4. DISTRIBUIÇÃO SINDRÔMICA', 'String', 'SectionTitle')]),
+      row([]),
+      row([cell('Síndrome', 'String', 'HeaderTeal'), cell('Casos', 'String', 'HeaderTeal'), cell('Percentual', 'String', 'HeaderTeal')]),
+    ];
+    reportData.syndromes.forEach((s, i) => {
+      const style = i % 2 === 0 ? 'Zebra' : '';
+      sindromesRows.push(row([cell(s.name, 'String', style), cell(s.count, 'Number'), cell(`${s.percentage}%`)]));
+    });
+
+    // ── Sheet 6: Insights ──
+    let insightsRows = [
+      row([cell('5. INSIGHTS PARA GESTÃO', 'String', 'SectionTitle')]),
+      row([]),
+      row([cell('Nº', 'String', 'HeaderAmber'), cell('Insight', 'String', 'HeaderAmber')]),
+    ];
+    reportData.managementInsights.forEach((insight, i) => {
+      insightsRows.push(row([cell(i + 1, 'Number'), cell(insight, 'String', 'InsightRow')]));
+    });
+
+    const makeSheet = (name: string, rows: string[], colWidths: number[]) => `
+      <Worksheet ss:Name="${escXml(name)}">
+        <Table>${colWidths.map(w => `<Column ss:AutoFitWidth="0" ss:Width="${w}"/>`).join('')}
+          ${rows.join('\n')}
+        </Table>
+      </Worksheet>`;
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+  ${styles}
+  ${makeSheet('Resumo', resumoRows, [200, 120])}
+  ${makeSheet('Óbitos', obitosRows, [180, 80, 250, 200, 180, 250])}
+  ${makeSheet('Transferências UTI', utiRows, [180, 80, 250, 200, 180])}
+  ${makeSheet('Recorrentes', recorrentesRows, [180, 70, 250, 250, 120])}
+  ${makeSheet('Síndromes', sindromesRows, [300, 80, 80])}
+  ${makeSheet('Insights', insightsRows, [40, 600])}
+</Workbook>`;
+
+    const blob = new Blob([xml], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `relatorio-analitico-clinico-${label.replace(/\s+/g, '-').toLowerCase()}.xls`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const networkLogoUrl = whitelabel.logos.networkFull;
   const platformLogoUrl = whitelabel.logos.platform;
   const periodOptions = getPeriodOptions(periodType);
@@ -746,6 +896,9 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
           </div>
           
           <div className="flex gap-2">
+            <Button onClick={handleExportExcel} variant="outline" className="gap-2" disabled={isLoading || !reportData} size="sm">
+              <FileSpreadsheet className="h-4 w-4" /> Gerar Excel
+            </Button>
             <Button onClick={handlePrint} className="gap-2" disabled={isLoading || !reportData} size="sm">
               <Printer className="h-4 w-4" /> Gerar PDF
             </Button>
