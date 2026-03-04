@@ -1095,8 +1095,18 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
               <p className="text-xs text-gray-400 italic mb-4 text-center py-3">Dados insuficientes para insights.</p>
             )}
 
+            {/* Export buttons */}
+            <div className="flex items-center justify-center gap-3 mt-6 mb-4">
+              <Button onClick={handlePrint} className="gap-2" size="sm">
+                <Printer className="h-4 w-4" /> Gerar PDF
+              </Button>
+              <Button onClick={handleExportExcel} variant="outline" className="gap-2" size="sm">
+                <FileSpreadsheet className="h-4 w-4" /> Gerar Excel
+              </Button>
+            </div>
+
             {/* Footer */}
-            <div className="mt-6 pt-3 border-t-2 border-[#013ba6] flex justify-between text-[9px] text-gray-400">
+            <div className="pt-3 border-t-2 border-[#013ba6] flex justify-between text-[9px] text-gray-400">
               <span>{whitelabel.platform.fullName} — {whitelabel.institution.networkName}</span>
               <span>{whitelabel.credits.authorSignature}</span>
             </div>
