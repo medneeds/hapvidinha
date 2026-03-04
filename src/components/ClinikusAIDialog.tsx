@@ -24,16 +24,29 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
   const [inputText, setInputText] = useState("");
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [phase, setPhase] = useState<"input" | "result" | "review">("input");
+  const [phase, setPhase] = useState<"input" | "disclaimer-pre" | "result" | "review">("input");
   const [acknowledged, setAcknowledged] = useState(false);
+  const [preAcknowledged, setPreAcknowledged] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
-  const handleGenerate = async () => {
+  const handleRequestGenerate = () => {
     if (!inputText.trim()) {
       toast.error("Cole o relato clínico antes de gerar.");
       return;
     }
+    setPreAcknowledged(false);
+    setPhase("disclaimer-pre");
+  };
 
+  const handleConfirmAndGenerate = async () => {
+    if (!preAcknowledged) {
+      toast.error("Você precisa declarar ciência antes de prosseguir.");
+      return;
+    }
+    await handleGenerate();
+  };
+
+  const handleGenerate = async () => {
     setIsLoading(true);
     setResult("");
     setPhase("result");
@@ -127,6 +140,7 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
     setResult("");
     setPhase("input");
     setAcknowledged(false);
+    setPreAcknowledged(false);
     if (abortRef.current) abortRef.current.abort();
   };
 
@@ -145,6 +159,7 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
           </DialogTitle>
           <DialogDescription className="text-xs">
             {phase === "input" && "Cole o relato médico em texto livre e o Clinicus irá estruturar no modelo padrão de admissão."}
+            {phase === "disclaimer-pre" && "Leia o aviso importante antes de prosseguir com a geração."}
             {phase === "result" && "Acompanhe a geração do documento estruturado em tempo real."}
             {phase === "review" && "Revise o documento gerado e declare ciência antes de importar."}
           </DialogDescription>
@@ -164,7 +179,7 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
               />
               <div className="flex justify-end">
                 <Button
-                  onClick={handleGenerate}
+                  onClick={handleRequestGenerate}
                   disabled={!inputText.trim()}
                   className="gap-2"
                 >
@@ -174,6 +189,72 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
               </div>
             </div>
           )}
+
+          {/* FASE 1.5: Disclaimer pré-geração */}
+          {phase === "disclaimer-pre" && (
+            <div className="space-y-4">
+              <div className="rounded-xl border-2 border-destructive/30 bg-destructive/5 p-5 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-0.5">
+                    <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                      <ShieldAlert className="h-5 w-5 text-destructive" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-bold text-destructive flex items-center gap-1.5">
+                      <AlertTriangle className="h-4 w-4" />
+                      AVISO IMPORTANTE — LEIA COM ATENÇÃO
+                    </h3>
+                    <div className="text-xs text-foreground/80 leading-relaxed space-y-2">
+                      <p>
+                        O <strong className="text-foreground">Clinicus</strong> é um assistente de inteligência artificial desenvolvido para auxiliar na organização e estruturação de informações clínicas dentro do <strong className="text-foreground">HapMap</strong>.
+                      </p>
+                      <p>
+                        Ele é uma ferramenta de <strong className="text-foreground">apoio à documentação médica</strong> e <strong className="text-foreground">não substitui</strong>, em nenhuma hipótese, o raciocínio clínico, a análise crítica e a revisão detalhada do médico responsável pelo caso.
+                      </p>
+                      <p>
+                        Podem ocorrer <strong className="text-foreground">erros, omissões ou inconsistências</strong> no texto gerado. O conteúdo deverá ser integralmente revisado e ajustado pelo profissional antes de qualquer utilização clínica ou documental.
+                      </p>
+                      <p className="text-destructive/90 font-medium">
+                        O HapMap e o Clinicus não se responsabilizam por eventuais incorreções. A responsabilidade técnica e legal permanece integralmente com o médico.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-destructive/20 pt-4">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <Checkbox
+                      checked={preAcknowledged}
+                      onCheckedChange={(v) => setPreAcknowledged(v === true)}
+                      className="mt-0.5 border-destructive/50 data-[state=checked]:bg-destructive data-[state=checked]:border-destructive"
+                    />
+                    <span className="text-xs leading-relaxed text-foreground/90 group-hover:text-foreground transition-colors">
+                      <strong>Declaro ciência</strong> de que compreendo as limitações do Clinicus como ferramenta de IA e que sou o único responsável pela revisão e validação do conteúdo gerado antes de sua utilização no prontuário do paciente.
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2">
+                <Button variant="outline" size="sm" onClick={() => setPhase("input")} className="gap-1">
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Voltar
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleConfirmAndGenerate}
+                  disabled={!preAcknowledged}
+                  className="gap-2"
+                >
+                  <Brain className="h-4 w-4" />
+                  Prosseguir e Gerar
+                </Button>
+              </div>
+            </div>
+          )}
+
+
 
           {/* FASE 2: Streaming result */}
           {phase === "result" && (
