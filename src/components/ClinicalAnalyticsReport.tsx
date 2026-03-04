@@ -896,12 +896,6 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
           </div>
           
           <div className="flex gap-2">
-            <Button onClick={handleExportExcel} variant="outline" className="gap-2" disabled={isLoading || !reportData} size="sm">
-              <FileSpreadsheet className="h-4 w-4" /> Gerar Excel
-            </Button>
-            <Button onClick={handlePrint} className="gap-2" disabled={isLoading || !reportData} size="sm">
-              <Printer className="h-4 w-4" /> Gerar PDF
-            </Button>
             <Button variant="outline" onClick={onClose} size="sm">
               <X className="h-4 w-4" />
             </Button>
