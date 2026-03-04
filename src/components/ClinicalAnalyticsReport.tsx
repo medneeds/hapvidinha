@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Printer, X, CalendarRange, Brain, Sparkles } from "lucide-react";
+import { Printer, X, CalendarRange, Brain, Sparkles, FileSpreadsheet } from "lucide-react";
 import { whitelabel } from "@/config/whitelabel";
 import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
