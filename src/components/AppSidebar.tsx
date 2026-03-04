@@ -107,6 +107,7 @@ export function AppSidebar({
         { name: "PROCEDIMENTOS", link: "/codigos?category=procedimentos" },
         { name: "MATERIAIS", link: "/codigos?category=materiais" },
         { name: "MEDICAÇÕES", link: "/codigos?category=medicacoes" },
+        { name: "CIRÚRGICOS (CBHPM)", link: "/codigos-cirurgicos" },
       ],
     },
     {
