@@ -47,6 +47,10 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
   };
 
   const handleGenerate = async () => {
+    setIsLoading(true);
+    setResult("");
+    setPhase("result");
+    setAcknowledged(false);
 
     const controller = new AbortController();
     abortRef.current = controller;
