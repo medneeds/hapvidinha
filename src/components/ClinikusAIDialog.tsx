@@ -29,16 +29,24 @@ export function ClinikusAIDialog({ open, onOpenChange, onImport }: ClinikusAIDia
   const [preAcknowledged, setPreAcknowledged] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
-  const handleGenerate = async () => {
+  const handleRequestGenerate = () => {
     if (!inputText.trim()) {
       toast.error("Cole o relato clínico antes de gerar.");
       return;
     }
+    setPreAcknowledged(false);
+    setPhase("disclaimer-pre");
+  };
 
-    setIsLoading(true);
-    setResult("");
-    setPhase("result");
-    setAcknowledged(false);
+  const handleConfirmAndGenerate = async () => {
+    if (!preAcknowledged) {
+      toast.error("Você precisa declarar ciência antes de prosseguir.");
+      return;
+    }
+    await handleGenerate();
+  };
+
+  const handleGenerate = async () => {
 
     const controller = new AbortController();
     abortRef.current = controller;
