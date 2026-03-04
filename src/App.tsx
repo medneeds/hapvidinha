@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import { useState } from "react";
 import ResourcesPage from "./pages/ResourcesPage";
 import MedicalCodesPage from "./pages/MedicalCodesPage";
+import SurgicalCodesPage from "./pages/SurgicalCodesPage";
 import HandoversPage from "./pages/HandoversPage";
 import VersionsPage from "./pages/VersionsPage";
 import DocumentsPage from "./pages/DocumentsPage";
@@ -78,6 +79,16 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <MedicalCodesPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/codigos-cirurgicos"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <SurgicalCodesPage />
               </MainLayout>
             </ProtectedRoute>
           }
