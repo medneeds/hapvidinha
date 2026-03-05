@@ -229,13 +229,18 @@ export function PatientMovementDialog({
 
           <div className="space-y-2">
             <Label htmlFor="responsibleDoctor">Médico Responsável</Label>
-            <Input
-              id="responsibleDoctor"
-              placeholder="Digite o nome do médico responsável (opcional)"
-              value={responsibleDoctor}
-              onChange={(e) => setResponsibleDoctor(e.target.value.toUpperCase())}
-              className="uppercase"
-            />
+            <Select value={responsibleDoctor} onValueChange={setResponsibleDoctor}>
+              <SelectTrigger id="responsibleDoctor">
+                <SelectValue placeholder="Selecione o médico responsável (opcional)" />
+              </SelectTrigger>
+              <SelectContent>
+                {doctors.map((doctor) => (
+                  <SelectItem key={doctor.id} value={doctor.full_name!}>
+                    {doctor.full_name!.toUpperCase()}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
