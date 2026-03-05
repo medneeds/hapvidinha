@@ -1445,49 +1445,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <Badge className={cn("w-fit text-sm md:text-[10px] py-1 md:py-0 px-2 md:px-1 font-bold leading-tight", config.badgeColor)}>
                     {patient.bedNumber}
                   </Badge>
-                  {/* Combined Category + Responsibility Badge */}
-                  {(() => {
-                    const cat = patient.patientCategory || 'clinica_medica';
-                    const sectorColor = patient.sector === 'red' 
-                      ? 'bg-critical/10 border-critical/30 text-critical'
-                      : patient.sector === 'yellow'
-                      ? 'bg-warning/10 border-warning/30 text-warning'
-                      : 'bg-stable/10 border-stable/30 text-stable';
-                    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = { clinica_medica: Stethoscope, cirurgico: Scissors, psiquiatrico: Brain, custom: LayoutList };
-                    const labelMap: Record<string, string> = { clinica_medica: 'CLÍ', cirurgico: 'CIR', psiquiatrico: 'PSI', custom: 'OUT' };
-                    const CatIcon = iconMap[cat] || LayoutList;
-
-                    const respType = localMedicalResponsibility?.type;
-                    const respNames: Record<string, string> = { porta: 'PORTA', lider: 'LÍDER', conjunto: 'CONJUNTO', obstetra: 'OBSTETRA', cirurgiao_geral: 'CIRURGIA', traumatologista: 'TRAUMATO' };
-                    
-                    // Build responsibility label
-                    const getRespLabel = () => {
-                      if (!respType) return null;
-                      if (respType === 'conjunto' && localMedicalResponsibility?.conjuntoWith?.length) {
-                        const specNames: Record<string, string> = { porta: 'PORTA', lider: 'LÍDER', obstetra: 'OBSTETRA', cirurgiao_geral: 'CIRURGIA', traumatologista: 'TRAUMATO' };
-                        return localMedicalResponsibility.conjuntoWith.map(s => specNames[s] || s.toUpperCase()).join(' + ');
-                      }
-                      return respNames[respType] || '';
-                    };
-                    const respLabel = getRespLabel();
-
-                    return (
-                      <button
-                        onClick={() => setMedicalResponsibilityDialogOpen(true)}
-                        className={cn(
-                          "inline-flex flex-col items-center gap-0 text-[8px] font-bold uppercase px-1 py-0.5 rounded border leading-tight mt-0.5 whitespace-nowrap print:hidden cursor-pointer transition-all hover:opacity-80",
-                          sectorColor
-                        )}
-                        title={respLabel || 'Definir responsabilidade'}
-                      >
-                        {respLabel ? (
-                          <span className="font-semibold text-[7px] leading-none">{respLabel}</span>
-                        ) : (
-                          <span className="opacity-40 text-[7px]">+</span>
-                        )}
-                      </button>
-                    );
-                  })()}
                 </div>
 
                 {/* Nome e Idade - mais espaço para nome completo */}
