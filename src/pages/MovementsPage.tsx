@@ -322,7 +322,7 @@ export default function MovementsPage() {
       <head>
         <title>Histórico de Movimentações - ${dateStr}</title>
         <style>
-          @page { size: A4 landscape; margin: 15mm; }
+          @page { size: A4 landscape; margin: 18mm 15mm 15mm 15mm; }
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: 'Segoe UI', Tahoma, sans-serif; color: #1a1a1a; background: #fff; }
           .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #013ba6; padding-bottom: 12px; margin-bottom: 16px; }

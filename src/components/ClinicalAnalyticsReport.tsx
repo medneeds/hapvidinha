@@ -495,11 +495,11 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             body {
               font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
               background: white; color: #1a1a2e;
-              padding: 10mm 14mm;
+              padding: 0;
               font-size: 9pt;
               line-height: 1.4;
             }
-            @page { size: A4 portrait; margin: 6mm; }
+            @page { size: A4 portrait; margin: 18mm 12mm 15mm 12mm; }
             @media print {
               body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
               .page-break { page-break-before: always; }
