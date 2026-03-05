@@ -81,8 +81,25 @@ export function PatientMovementDialog({
   const [notes, setNotes] = useState("");
   const [responsibleDoctor, setResponsibleDoctor] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [doctors, setDoctors] = useState<{ id: string; full_name: string }[]>([]);
   const { toast } = useToast();
   const { currentState, currentHospital } = useHospital();
+
+  useEffect(() => {
+    if (isOpen) {
+      const fetchDoctors = async () => {
+        const { data } = await supabase
+          .from('profiles')
+          .select('id, full_name')
+          .not('full_name', 'is', null)
+          .order('full_name');
+        if (data) {
+          setDoctors(data.filter(d => d.full_name && d.full_name.trim() !== ''));
+        }
+      };
+      fetchDoctors();
+    }
+  }, [isOpen]);
 
   const config = movementType ? movementConfig[movementType] : null;
   const Icon = config?.icon;
