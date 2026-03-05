@@ -84,7 +84,7 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
             }
             @page {
               size: A4 portrait;
-              margin: 8mm;
+              margin: 18mm 12mm 15mm 12mm;
             }
             @media print {
               html, body {

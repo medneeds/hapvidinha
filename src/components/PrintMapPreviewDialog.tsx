@@ -64,7 +64,7 @@ export function PrintMapPreviewDialog({
             }
             @page {
               size: A4 landscape;
-              margin: 8mm;
+              margin: 18mm 12mm 15mm 12mm;
             }
             @media print {
               html, body {
