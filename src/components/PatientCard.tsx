@@ -1508,7 +1508,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           </Button>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           {/* Internment Status Icon - Based on Pendencies Content */}
                           {(() => {
                             const pendenciesText = patient.pendencies?.join(' ').toUpperCase() || '';
