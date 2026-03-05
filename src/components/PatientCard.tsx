@@ -1445,6 +1445,72 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   <Badge className={cn("w-fit text-sm md:text-[10px] py-1 md:py-0 px-2 md:px-1 font-bold leading-tight", config.badgeColor)}>
                     {patient.bedNumber}
                   </Badge>
+                  {/* Medical Responsibility Badge - Prominent chip below bed number */}
+                  {(() => {
+                    const respType = localMedicalResponsibility?.type;
+                    const sColor = sectorColorMap[patient.sector] || sectorColorMap.blue;
+                    if (!respType) {
+                      return (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
+                          className="inline-flex items-center justify-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-medium border border-dashed border-muted-foreground/30 text-muted-foreground/50 hover:border-muted-foreground/60 hover:text-muted-foreground/80 transition-all cursor-pointer print:hidden mt-1 w-fit"
+                          title="Definir responsabilidade médica"
+                        >
+                          <Stethoscope className="h-2.5 w-2.5" />
+                          <span>+</span>
+                        </button>
+                      );
+                    }
+                    
+                    const respConfig: Record<string, { label: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
+                      porta: { label: 'PORTA', icon: Stethoscope },
+                      lider: { label: 'LÍDER', icon: UserCog },
+                      conjunto: { label: 'CONJUNTO', icon: UsersRound },
+                      obstetra: { label: 'OBS', icon: Baby },
+                      cirurgiao_geral: { label: 'CIR', icon: Scissors },
+                      traumatologista: { label: 'ORTOP', icon: Bone },
+                    };
+                    
+                    const cfg = respConfig[respType] || { label: respType.toUpperCase(), icon: Stethoscope };
+                    const RespIcon = cfg.icon;
+                    
+                    let displayText = cfg.label;
+                    if (respType === 'conjunto' && localMedicalResponsibility?.conjuntoWith?.length) {
+                      const specNames: Record<string, string> = { porta: 'PRT', lider: 'LÍD', obstetra: 'OBS', cirurgiao_geral: 'CIR', traumatologista: 'ORT' };
+                      displayText = localMedicalResponsibility.conjuntoWith.map(s => specNames[s] || s.toUpperCase()).join('+');
+                    }
+                    
+                    const officeText = localMedicalResponsibility?.officeNumber ? `C${localMedicalResponsibility.officeNumber}` : '';
+                    
+                    return (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
+                        className="inline-flex flex-col items-center gap-0 px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide border-2 cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105 print:hidden mt-1 w-fit"
+                        style={{
+                          color: sColor,
+                          backgroundColor: `${sColor}12`,
+                          borderColor: `${sColor}50`,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = `${sColor}25`;
+                          e.currentTarget.style.borderColor = `${sColor}80`;
+                          e.currentTarget.style.boxShadow = `0 2px 8px ${sColor}30`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = `${sColor}12`;
+                          e.currentTarget.style.borderColor = `${sColor}50`;
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
+                        title={`Responsabilidade: ${displayText}${officeText ? ` • ${officeText}` : ''} — Clique para alterar`}
+                      >
+                        <div className="flex items-center gap-0.5">
+                          <RespIcon className="h-3 w-3" style={{ color: sColor }} />
+                          <span className="leading-none">{displayText}</span>
+                        </div>
+                        {officeText && <span className="opacity-70 text-[8px] leading-none">{officeText}</span>}
+                      </button>
+                    );
+                  })()}
                 </div>
 
                 {/* Nome e Idade - mais espaço para nome completo */}
@@ -1566,73 +1632,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               <span className="tracking-widest opacity-70 transition-all duration-300">{displayName}</span>
                             ) : patient.name ? patient.name : <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
                           </p>
-                          
-                          {/* Medical Responsibility Badge - Prominent chip next to name */}
-                          {(() => {
-                            const respType = localMedicalResponsibility?.type;
-                            if (!respType) {
-                              return (
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
-                                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-medium border border-dashed border-muted-foreground/30 text-muted-foreground/50 hover:border-muted-foreground/60 hover:text-muted-foreground/80 transition-all cursor-pointer print:hidden flex-shrink-0"
-                                  title="Definir responsabilidade médica"
-                                >
-                                  <Stethoscope className="h-3 w-3" />
-                                  <span>+</span>
-                                </button>
-                              );
-                            }
-                            
-                            const respConfig: Record<string, { label: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
-                              porta: { label: 'PORTA', icon: Stethoscope },
-                              lider: { label: 'LÍDER', icon: UserCog },
-                              conjunto: { label: 'CONJUNTO', icon: UsersRound },
-                              obstetra: { label: 'OBSTETRA', icon: Baby },
-                              cirurgiao_geral: { label: 'CIRURGIA', icon: Scissors },
-                              traumatologista: { label: 'TRAUMATO', icon: Bone },
-                            };
-                            
-                            const cfg = respConfig[respType] || { label: respType.toUpperCase(), icon: Stethoscope };
-                            const RespIcon = cfg.icon;
-                            const sColor = sectorColorMap[patient.sector] || sectorColorMap.blue;
-                            
-                            // Build display text
-                            let displayText = cfg.label;
-                            if (respType === 'conjunto' && localMedicalResponsibility?.conjuntoWith?.length) {
-                              const specNames: Record<string, string> = { porta: 'PORTA', lider: 'LÍDER', obstetra: 'OBS', cirurgiao_geral: 'CIR', traumatologista: 'ORTOP' };
-                              displayText = localMedicalResponsibility.conjuntoWith.map(s => specNames[s] || s.toUpperCase()).join('+');
-                            }
-                            
-                            // Add office number if present
-                            const officeText = localMedicalResponsibility?.officeNumber ? `C${localMedicalResponsibility.officeNumber}` : '';
-                            
-                            return (
-                              <button
-                                onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide border-2 cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105 print:hidden flex-shrink-0 whitespace-nowrap"
-                                style={{
-                                  color: sColor,
-                                  backgroundColor: `${sColor}12`,
-                                  borderColor: `${sColor}50`,
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.backgroundColor = `${sColor}25`;
-                                  e.currentTarget.style.borderColor = `${sColor}80`;
-                                  e.currentTarget.style.boxShadow = `0 2px 8px ${sColor}30`;
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.backgroundColor = `${sColor}12`;
-                                  e.currentTarget.style.borderColor = `${sColor}50`;
-                                  e.currentTarget.style.boxShadow = 'none';
-                                }}
-                                title={`Responsabilidade: ${displayText}${officeText ? ` • ${officeText}` : ''} — Clique para alterar`}
-                              >
-                                <RespIcon className="h-3.5 w-3.5" style={{ color: sColor }} />
-                                <span>{displayText}</span>
-                                {officeText && <span className="opacity-70 text-[10px]">• {officeText}</span>}
-                              </button>
-                            );
-                          })()}
                           
                           {/* Allocation Pending Badge - Hidden when status bar is visible, kept for dialog functionality */}
                           <div className={cn(allocationStatusBarConfig && "sr-only")}>
