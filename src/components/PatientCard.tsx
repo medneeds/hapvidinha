@@ -3528,6 +3528,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               : [...highlighted, idx];
                             onUpdate({ ...patient, highlightedPendencies: updatedHighlighted });
                           }}
+                          onCyclePsmStatus={(pendencyIdx, newText, newPsmStatus) => {
+                            const updatedPendencies = [...patient.pendencies];
+                            updatedPendencies[pendencyIdx] = newText;
+                            onUpdate({ ...patient, pendencies: updatedPendencies, psmStatus: newPsmStatus as any });
+                          }}
                         />
                       )
                     ))}
