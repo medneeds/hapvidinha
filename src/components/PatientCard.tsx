@@ -3187,7 +3187,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Exames - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className="flex flex-col md:col-span-3 relative">
+              <div className="flex flex-col md:col-span-2 relative">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
                 <Button
