@@ -1436,7 +1436,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 />
               </div>
             )}
-            <div className="flex-1 flex flex-col gap-3 md:grid md:grid-cols-18 md:gap-1.5 md:items-start">
+            <div className="flex-1 flex flex-col gap-3 md:grid md:grid-cols-19 md:gap-1.5 md:items-start">
               {/* Mobile: Leito + Paciente na mesma linha */}
               <div className="flex items-start gap-3 md:contents">
                 {/* Leito - ultra compacto */}
@@ -3333,7 +3333,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Programações / Pendências - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className="flex flex-col md:col-span-4 relative">
+              <div className="flex flex-col md:col-span-5 relative">
                 <div className="flex items-center gap-3 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
                   
