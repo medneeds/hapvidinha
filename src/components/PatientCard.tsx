@@ -339,6 +339,28 @@ const SortablePendencyItem = memo(function SortablePendencyItem({ id, index, pen
   );
 });
 
+// PSM status cycle configuration
+const PSM_CYCLE = [
+  { text: 'AGUARDANDO PSM', status: 'aguardando' as const, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-950/30' },
+  { text: 'PSM FAVORÁVEL', status: 'favoravel' as const, icon: CircleCheck, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-950/30' },
+  { text: 'PSM DESFAVORÁVEL', status: 'desfavoravel' as const, icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-950/30' },
+];
+
+const isPsmText = (text: string) => {
+  const upper = text.toUpperCase();
+  return upper.includes('AGUARDANDO PSM') || 
+         upper.includes('PSM FAVORÁVEL') || upper.includes('PSM FAVORAVEL') ||
+         upper.includes('PSM DESFAVORÁVEL') || upper.includes('PSM DESFAVORAVEL');
+};
+
+const getPsmCycleIndex = (text: string) => {
+  const upper = text.toUpperCase();
+  if (upper.includes('PSM DESFAVORÁVEL') || upper.includes('PSM DESFAVORAVEL')) return 2;
+  if (upper.includes('PSM FAVORÁVEL') || upper.includes('PSM FAVORAVEL')) return 1;
+  if (upper.includes('AGUARDANDO PSM')) return 0;
+  return -1;
+};
+
 interface SortablePendencyItemCollapsedProps {
   id: string;
   index: number;
@@ -351,6 +373,7 @@ interface SortablePendencyItemCollapsedProps {
   isHighlighted?: boolean;
   onToggleHighlight?: () => void;
   sector: Patient['sector'];
+  onCyclePsmStatus?: (index: number, newText: string, newPsmStatus: string | null) => void;
 }
 
 const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapsed({
@@ -364,7 +387,8 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
   editingField,
   isHighlighted,
   onToggleHighlight,
-  sector
+  sector,
+  onCyclePsmStatus
 }: SortablePendencyItemCollapsedProps) {
   const {
     attributes,
@@ -374,6 +398,8 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
     transition,
     isDragging,
   } = useSortable({ id });
+
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -393,6 +419,39 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
     yellow: "fill-warning text-warning",
     blue: "fill-stable text-stable",
     outside: "fill-muted-foreground text-muted-foreground"
+  };
+
+  const hasPsm = isPsmText(pendency);
+  const currentPsmIndex = getPsmCycleIndex(pendency);
+  const currentPsmConfig = currentPsmIndex >= 0 ? PSM_CYCLE[currentPsmIndex] : null;
+
+  const handleCyclePsm = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onCyclePsmStatus || currentPsmIndex < 0) return;
+    
+    setIsAnimating(true);
+    setTimeout(() => setIsAnimating(false), 400);
+    
+    const nextIndex = (currentPsmIndex + 1) % PSM_CYCLE.length;
+    const nextPsm = PSM_CYCLE[nextIndex];
+    
+    // Replace the PSM text in the pendency string
+    const upper = pendency.toUpperCase();
+    let newText = pendency;
+    for (const psm of PSM_CYCLE) {
+      // Also handle unaccented variants
+      const variants = [psm.text, psm.text.replace('Á', 'A').replace('É', 'E')];
+      for (const variant of variants) {
+        const idx = upper.indexOf(variant);
+        if (idx >= 0) {
+          newText = pendency.substring(0, idx) + nextPsm.text + pendency.substring(idx + variant.length);
+          break;
+        }
+      }
+      if (newText !== pendency) break;
+    }
+    
+    onCyclePsmStatus(index, newText.toUpperCase(), nextPsm.status);
   };
 
   return (
@@ -417,7 +476,28 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
         onClick={onEdit}
       >
         <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
-        <span className={cn("break-words", isHighlighted && "font-bold")}>{pendency}</span>
+        <span className={cn("break-words flex items-center gap-1", isHighlighted && "font-bold")}>
+          {hasPsm && currentPsmConfig ? (
+            <>
+              {pendency}
+              <button
+                onClick={handleCyclePsm}
+                className={cn(
+                  "inline-flex items-center gap-0.5 px-1 py-0 rounded-full border cursor-pointer print:hidden transition-all duration-300",
+                  currentPsmConfig.bg,
+                  isAnimating && "scale-110 rotate-12"
+                )}
+                title={`Clique para alternar status PSM (atual: ${currentPsmConfig.text})`}
+              >
+                <currentPsmConfig.icon className={cn(
+                  "h-3 w-3 transition-all duration-300",
+                  currentPsmConfig.color,
+                  isAnimating && "scale-125"
+                )} />
+              </button>
+            </>
+          ) : pendency}
+        </span>
       </span>
       <div className="flex items-center gap-0.5 flex-shrink-0">
         <button
@@ -2897,6 +2977,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                                   : [...highlighted, idx];
                                 onUpdate({ ...patient, highlightedPendencies: updatedHighlighted });
                               }}
+                              onCyclePsmStatus={(pendencyIdx, newText, newPsmStatus) => {
+                                const updatedPendencies = [...patient.pendencies];
+                                updatedPendencies[pendencyIdx] = newText;
+                                onUpdate({ ...patient, pendencies: updatedPendencies, psmStatus: newPsmStatus as any });
+                              }}
                             />
                           )
                         ))}
@@ -3442,6 +3527,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               ? highlighted.filter(i => i !== idx)
                               : [...highlighted, idx];
                             onUpdate({ ...patient, highlightedPendencies: updatedHighlighted });
+                          }}
+                          onCyclePsmStatus={(pendencyIdx, newText, newPsmStatus) => {
+                            const updatedPendencies = [...patient.pendencies];
+                            updatedPendencies[pendencyIdx] = newText;
+                            onUpdate({ ...patient, pendencies: updatedPendencies, psmStatus: newPsmStatus as any });
                           }}
                         />
                       )
