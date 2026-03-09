@@ -1514,7 +1514,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Nome e Idade - mais espaço para nome completo */}
-                <div className="flex flex-col flex-1 min-w-0 md:col-span-3">
+                <div className="flex flex-col flex-1 min-w-0 md:col-span-4">
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <span className="text-xs md:text-[10px] font-medium text-muted-foreground">Paciente</span>
                   {stayTimer && currentDepartment !== "UTI" && (
@@ -1575,20 +1575,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5 flex-wrap">
-                           <p 
-                            className={cn(
-                              "font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words rounded px-1 -mx-1",
-                              canEdit && "cursor-pointer hover:bg-accent/50"
-                            )}
-                            onClick={() => canEdit && startEditing("name", patient.name)}
-                            title={canEdit ? "Clique para editar" : undefined}
-                          >
-                            {namesHidden ? (
-                              <span className="tracking-widest opacity-70 transition-all duration-300">{displayName}</span>
-                            ) : patient.name ? patient.name : <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
-                          </p>
-                          
-                          {/* Internment Status Icon - Based on Pendencies Content */}
+                          {/* Internment Status Icon - Based on Pendencies Content (à esquerda do nome) */}
                           {(() => {
                             const pendenciesText = patient.pendencies?.join(' ').toUpperCase() || '';
                             
@@ -1632,6 +1619,19 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0 animate-pulse" />
                             </div>
                           )}
+
+                           <p 
+                            className={cn(
+                              "font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words rounded px-1 -mx-1",
+                              canEdit && "cursor-pointer hover:bg-accent/50"
+                            )}
+                            onClick={() => canEdit && startEditing("name", patient.name)}
+                            title={canEdit ? "Clique para editar" : undefined}
+                          >
+                            {namesHidden ? (
+                              <span className="tracking-widest opacity-70 transition-all duration-300">{displayName}</span>
+                            ) : patient.name ? patient.name : <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
+                          </p>
                           
                           {/* Allocation Pending Badge - Hidden when status bar is visible, kept for dialog functionality */}
                           <div className={cn(allocationStatusBarConfig && "sr-only")}>
@@ -3187,7 +3187,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Exames - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className="flex flex-col md:col-span-3 relative">
+              <div className="flex flex-col md:col-span-2 relative">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
                 <Button
