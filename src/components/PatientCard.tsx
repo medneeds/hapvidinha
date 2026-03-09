@@ -1514,7 +1514,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Nome e Idade - mais espaço para nome completo */}
-                <div className="flex flex-col flex-1 min-w-0 md:col-span-3">
+                <div className="flex flex-col flex-1 min-w-0 md:col-span-4">
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <span className="text-xs md:text-[10px] font-medium text-muted-foreground">Paciente</span>
                   {stayTimer && currentDepartment !== "UTI" && (
