@@ -483,9 +483,12 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
               <button
                 onClick={handleCyclePsm}
                 className={cn(
-                  "inline-flex items-center gap-0.5 px-1 py-0 rounded-full border cursor-pointer print:hidden transition-all duration-300",
-                  currentPsmConfig.bg,
-                  isAnimating && "scale-110 rotate-12"
+                  "inline-flex items-center justify-center h-5 w-5 rounded-full border cursor-pointer print:hidden transition-all duration-300",
+                  sector === 'red' && "border-critical/40 bg-critical/10 hover:bg-critical/20",
+                  sector === 'yellow' && "border-warning/40 bg-warning/10 hover:bg-warning/20",
+                  sector === 'blue' && "border-stable/40 bg-stable/10 hover:bg-stable/20",
+                  sector === 'outside' && "border-muted-foreground/40 bg-muted/50 hover:bg-muted",
+                  isAnimating && "scale-125 rotate-12"
                 )}
                 title={`Clique para alternar status PSM (atual: ${currentPsmConfig.text})`}
               >
