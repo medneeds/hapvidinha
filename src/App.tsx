@@ -41,6 +41,7 @@ import AdminStatesPage from "./pages/AdminStatesPage";
 import AdminUnitsPage from "./pages/AdminUnitsPage";
 import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
 import TherapeuticTemplatesPage from "./pages/TherapeuticTemplatesPage";
+import ReportHistoryPage from "./pages/ReportHistoryPage";
 
 const queryClient = new QueryClient();
 
@@ -104,15 +105,25 @@ const App = () => {
           }
         />
         <Route
-          path="/versions"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <VersionsPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
+           path="/versions"
+           element={
+             <ProtectedRoute>
+               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                 <VersionsPage />
+               </MainLayout>
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/report-history"
+           element={
+             <ProtectedRoute>
+               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                 <ReportHistoryPage />
+               </MainLayout>
+             </ProtectedRoute>
+           }
+         />
         <Route
           path="/documents"
           element={
