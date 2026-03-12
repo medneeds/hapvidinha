@@ -739,6 +739,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [reportText, setReportText] = useState("");
   const { history: conductHistory, isLoading: conductHistoryLoading, recordChange } = useConductHistory(patient.id);
   const { role, user } = useAuth();
+  const { currentState, currentHospital } = useHospital();
   const { requests } = useBedAllocationRequests();
   const stayTimer = useSectorStayTimer(patient.admissionDate);
   const { namesHidden } = usePrivacy();
