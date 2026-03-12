@@ -39,9 +39,10 @@ export default function ReportHistoryPage() {
   const { currentDepartment } = useDepartment();
   const { role } = useAuth();
   const { namesHidden } = usePrivacy();
+  const [searchParams] = useSearchParams();
   const [reports, setReports] = useState<MedicalReport[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("patient") || "");
   const [selectedReport, setSelectedReport] = useState<MedicalReport | null>(null);
 
   useEffect(() => {
