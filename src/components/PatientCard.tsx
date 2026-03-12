@@ -19,6 +19,7 @@ import { ApplyTemplateDialog } from "./ApplyTemplateDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
 import { ExaminusAIDialog } from "./ExaminusAIDialog";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
+import { PalliativeButterflyIcon } from "./PalliativeButterflyIcon";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
 import { DietReleaseDialog } from "./DietReleaseDialog";
 import { useToast } from "@/hooks/use-toast";
@@ -1701,6 +1702,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             >
                               <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0 animate-pulse" />
                             </div>
+                          )}
+
+                          {/* Palliative Care Butterfly Icon */}
+                          {patient.pendencies?.some(p => p.toUpperCase().includes('CUIDADOS PALIATIVOS')) && (
+                            <PalliativeButterflyIcon />
                           )}
 
                            <p 
