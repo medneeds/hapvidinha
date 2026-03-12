@@ -4126,18 +4126,40 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
           </div>
 
-          {/* História Admissional */}
-          <div className="pt-2 border-t border-border/50 print:pt-1">
-            <h4 className="font-semibold text-xs mb-1 text-foreground uppercase print:text-[8.5px] print:mb-0.5">História Admissional / Anamnese</h4>
-            <p className="text-xs leading-snug text-foreground whitespace-pre-wrap uppercase print:text-[7.5px] print:leading-tight">
-              {patient.admissionHistory}
-            </p>
-          </div>
+          {/* História Admissional - Collapsible */}
+          <Collapsible defaultOpen={false}>
+            <div className="pt-2 border-t border-border/50 print:pt-1">
+              <CollapsibleTrigger asChild>
+                <button className="w-full flex items-center justify-between group cursor-pointer">
+                  <h4 className="font-semibold text-xs text-foreground uppercase print:text-[8.5px]">História Admissional / Anamnese</h4>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-transform print:hidden data-[state=open]:rotate-180" />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <p className="text-xs leading-snug text-foreground whitespace-pre-wrap uppercase print:text-[7.5px] print:leading-tight mt-1">
+                  {patient.admissionHistory}
+                </p>
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
 
-          {/* Evoluções Clínicas */}
-          <div className="pt-2 border-t border-border/50 print:hidden">
-            <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
-          </div>
+          {/* Evoluções Clínicas - Collapsible */}
+          <Collapsible defaultOpen={false}>
+            <div className="pt-2 border-t border-border/50 print:hidden">
+              <CollapsibleTrigger asChild>
+                <button className="w-full flex items-center justify-between group cursor-pointer">
+                  <h4 className="font-semibold text-xs text-foreground uppercase flex items-center gap-1.5">
+                    <FileEdit className="h-3 w-3 text-primary" />
+                    Evoluções Clínicas
+                  </h4>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-transform data-[state=open]:rotate-180" />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-1">
+                <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
         </div>
       )}
       </Card>
