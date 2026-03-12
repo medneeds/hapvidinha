@@ -5303,10 +5303,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   printWindow.document.write(`<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Relatório - ${patient.name}</title>
 <style>
-  @page { size: A4 portrait; margin: 0; }
+  @page { size: A4 portrait; margin: 18mm 15mm 15mm 15mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; color: #1a1a2e; background: #fff; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  .page { width: 210mm; min-height: 297mm; margin: 0 auto; position: relative; overflow: hidden; }
+  body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; color: #1a1a2e; background: #fff; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; padding: 0 !important; }
+  .page { width: 100%; margin: 0 auto; position: relative; }
 
   .header {
     background: linear-gradient(135deg, #002b80 0%, #013ba6 40%, #0152d4 100%);
