@@ -33,6 +33,9 @@ interface Evolution {
   content: string;
   created_by_email: string | null;
   created_at: string;
+  suspended?: boolean;
+  suspended_at?: string | null;
+  suspended_by?: string | null;
 }
 
 interface GroupedEvolutions {
