@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { format, parseISO, isToday, isYesterday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { whitelabel } from "@/config/whitelabel";
 
 interface Evolution {
   id: string;
