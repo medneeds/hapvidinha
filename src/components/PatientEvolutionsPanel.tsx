@@ -485,6 +485,15 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
                                 >
                                   <Ban className="h-3 w-3" />
                                 </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 text-muted-foreground hover:text-primary"
+                                  onClick={() => handlePrintSingle(evo)}
+                                  title="Imprimir evolução"
+                                >
+                                  <Printer className="h-3 w-3" />
+                                </Button>
                               </div>
                             )}
                           </div>
