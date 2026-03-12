@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ChevronDown, ChevronUp, Plus, Clock, Calendar, Trash2, FileEdit, Send, ChevronsUpDown, Copy, Maximize2, Minimize2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Clock, Calendar, Ban, FileEdit, Send, ChevronsUpDown, Copy, Maximize2, Minimize2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -33,6 +33,9 @@ interface Evolution {
   content: string;
   created_by_email: string | null;
   created_at: string;
+  suspended?: boolean;
+  suspended_at?: string | null;
+  suspended_by?: string | null;
 }
 
 interface GroupedEvolutions {
@@ -62,7 +65,7 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
   const [isSaving, setIsSaving] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [allCollapsed, setAllCollapsed] = useState(false);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [suspendId, setSuspendId] = useState<string | null>(null);
   const [fieldSize, setFieldSize] = useState<FieldSize>('medium');
   const { user, role: userRole } = useAuth();
   const { currentHospital, currentState } = useHospital();
@@ -116,16 +119,24 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleSuspend = async (id: string) => {
     try {
-      const { error } = await (supabase.from as any)('patient_evolutions').delete().eq('id', id);
+      const { error } = await (supabase.from as any)('patient_evolutions')
+        .update({ 
+          suspended: true, 
+          suspended_at: new Date().toISOString(),
+          suspended_by: user?.email || null
+        })
+        .eq('id', id);
       if (error) throw error;
-      toast.success('Evolução removida');
-      setEvolutions(prev => prev.filter(e => e.id !== id));
+      toast.success('Evolução suspensa');
+      setEvolutions(prev => prev.map(e => 
+        e.id === id ? { ...e, suspended: true, suspended_at: new Date().toISOString(), suspended_by: user?.email || null } : e
+      ));
     } catch (err) {
-      toast.error('Erro ao remover evolução');
+      toast.error('Erro ao suspender evolução');
     }
-    setDeleteId(null);
+    setSuspendId(null);
   };
 
   const handleDuplicate = (content: string) => {
@@ -320,10 +331,20 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
                       {group.evolutions.map((evo) => (
                         <div
                           key={evo.id}
-                          className="relative pl-4 py-2 px-3 bg-card/80 border border-border/40 rounded-lg hover:border-border/70 transition-all group/item"
+                          className={cn(
+                            "relative pl-4 py-2 px-3 border rounded-lg transition-all group/item",
+                            evo.suspended 
+                              ? "bg-muted/40 border-border/30 opacity-60" 
+                              : "bg-card/80 border-border/40 hover:border-border/70"
+                          )}
                         >
                           {/* Timeline dot */}
-                          <div className="absolute -left-[7px] top-3.5 w-3 h-3 rounded-full bg-primary/30 border-2 border-primary/60 group-hover/item:bg-primary/50 transition-colors" />
+                          <div className={cn(
+                            "absolute -left-[7px] top-3.5 w-3 h-3 rounded-full border-2 transition-colors",
+                            evo.suspended
+                              ? "bg-muted-foreground/20 border-muted-foreground/40"
+                              : "bg-primary/30 border-primary/60 group-hover/item:bg-primary/50"
+                          )} />
                           
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 space-y-1 min-w-0">
@@ -335,40 +356,53 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
                                 <span className="text-primary/80 font-semibold">
                                   • {extractUsername(evo.created_by_email)}
                                 </span>
+                                {evo.suspended && (
+                                  <Badge variant="outline" className="text-[9px] px-1 py-0 text-destructive border-destructive/30">
+                                    SUSPENSA
+                                  </Badge>
+                                )}
                               </div>
                               {/* Scrollable read-only content with adjustable size */}
                               <div className={cn(
                                 "overflow-y-auto scrollbar-thin rounded-md p-1",
                                 currentSize.maxH
                               )}>
-                                <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap uppercase select-text">
+                                <p className={cn(
+                                  "text-xs leading-relaxed whitespace-pre-wrap uppercase select-text",
+                                  evo.suspended ? "text-muted-foreground line-through" : "text-foreground"
+                                )}>
                                   {evo.content}
                                 </p>
                               </div>
+                              {evo.suspended && evo.suspended_by && (
+                                <p className="text-[9px] text-muted-foreground italic">
+                                  Suspensa por {extractUsername(evo.suspended_by)} em {evo.suspended_at ? format(parseISO(evo.suspended_at), "dd/MM/yyyy 'às' HH:mm") : ''}
+                                </p>
+                              )}
                             </div>
-                            {/* Action buttons: copy (duplicate) and delete (admin only) */}
-                            <div className="flex flex-col gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity flex-shrink-0">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6 text-muted-foreground hover:text-primary"
-                                onClick={() => handleDuplicate(evo.content)}
-                                title="Duplicar para nova evolução"
-                              >
-                                <Copy className="h-3 w-3" />
-                              </Button>
-                              {userRole === 'admin' && (
+                            {/* Action buttons: copy and suspend */}
+                            {!evo.suspended && (
+                              <div className="flex flex-col gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity flex-shrink-0">
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-6 w-6 text-destructive/60 hover:text-destructive"
-                                  onClick={() => setDeleteId(evo.id)}
-                                  title="Excluir evolução"
+                                  className="h-6 w-6 text-muted-foreground hover:text-primary"
+                                  onClick={() => handleDuplicate(evo.content)}
+                                  title="Duplicar para nova evolução"
                                 >
-                                  <Trash2 className="h-3 w-3" />
+                                  <Copy className="h-3 w-3" />
                                 </Button>
-                              )}
-                            </div>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 text-amber-500/60 hover:text-amber-600"
+                                  onClick={() => setSuspendId(evo.id)}
+                                  title="Suspender evolução"
+                                >
+                                  <Ban className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -381,19 +415,19 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
         </ScrollArea>
       )}
 
-      {/* Delete confirmation */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+      {/* Suspend confirmation */}
+      <AlertDialog open={!!suspendId} onOpenChange={() => setSuspendId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogTitle>Confirmar suspensão</AlertDialogTitle>
             <AlertDialogDescription>
-              Deseja realmente excluir esta evolução? Esta ação não pode ser desfeita.
+              Deseja suspender esta evolução? Ela ficará visível com indicação de suspensa, mas não poderá ser reativada.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleteId && handleDelete(deleteId)}>
-              Excluir
+            <AlertDialogAction onClick={() => suspendId && handleSuspend(suspendId)}>
+              Suspender
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

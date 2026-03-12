@@ -737,6 +737,9 @@ export type Database = {
           id: string
           patient_id: string
           state_id: string
+          suspended: boolean
+          suspended_at: string | null
+          suspended_by: string | null
         }
         Insert: {
           content: string
@@ -748,6 +751,9 @@ export type Database = {
           id?: string
           patient_id: string
           state_id: string
+          suspended?: boolean
+          suspended_at?: string | null
+          suspended_by?: string | null
         }
         Update: {
           content?: string
@@ -759,6 +765,9 @@ export type Database = {
           id?: string
           patient_id?: string
           state_id?: string
+          suspended?: boolean
+          suspended_at?: string | null
+          suspended_by?: string | null
         }
         Relationships: [
           {
