@@ -5326,18 +5326,36 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 </div>
 </body></html>`);
                   printWindow.document.close();
-                  // Wait for all images to load before printing
-                  const images = printWindow.document.querySelectorAll('img');
-                  const imagePromises = Array.from(images).map(img => {
-                    if (img.complete) return Promise.resolve();
-                    return new Promise<void>((resolve) => {
-                      img.onload = () => resolve();
-                      img.onerror = () => resolve();
-                    });
-                  });
-                  Promise.all(imagePromises).then(() => {
-                    setTimeout(() => printWindow.print(), 200);
-                  });
+                   // Save report to history
+                   if (currentHospital && currentState) {
+                     supabase.from('medical_reports').insert({
+                       patient_id: patient.id,
+                       patient_name: patient.name,
+                       patient_age: patient.age || null,
+                       patient_bed: patient.bedNumber,
+                       patient_sector: patient.sector,
+                       report_content: reportText,
+                       created_by: user?.id || null,
+                       created_by_email: user?.email || null,
+                       hospital_unit_id: currentHospital.id,
+                       state_id: currentState.id,
+                       department: currentDepartment,
+                     }).then(({ error: saveError }) => {
+                       if (saveError) console.error('Erro ao salvar relatório:', saveError);
+                     });
+                   }
+                   // Wait for all images to load before printing
+                   const images = printWindow.document.querySelectorAll('img');
+                   const imagePromises = Array.from(images).map(img => {
+                     if (img.complete) return Promise.resolve();
+                     return new Promise<void>((resolve) => {
+                       img.onload = () => resolve();
+                       img.onerror = () => resolve();
+                     });
+                   });
+                   Promise.all(imagePromises).then(() => {
+                     setTimeout(() => printWindow.print(), 200);
+                   });
                 }}
                 className="flex items-center gap-1.5"
               >

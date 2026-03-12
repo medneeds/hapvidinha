@@ -111,13 +111,14 @@ export function AppSidebar({
       ],
     },
     {
-      title: "DOCUMENTOS",
-      icon: FolderOpen,
-      items: [
-        { name: "PROTOCOLOS E FORMULÁRIOS", link: "/documents" },
-        { name: "TEMPLATES TERAPÊUTICOS", link: "/therapeutic-templates" },
-      ],
-    },
+       title: "DOCUMENTOS",
+       icon: FolderOpen,
+       items: [
+         { name: "PROTOCOLOS E FORMULÁRIOS", link: "/documents" },
+         { name: "TEMPLATES TERAPÊUTICOS", link: "/therapeutic-templates" },
+         { name: "RELATÓRIOS EMITIDOS", link: "/report-history" },
+       ],
+     },
     {
       title: "EXAMINUS AI",
       icon: Sparkles,

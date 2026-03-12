@@ -105,15 +105,25 @@ const App = () => {
           }
         />
         <Route
-          path="/versions"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <VersionsPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
+           path="/versions"
+           element={
+             <ProtectedRoute>
+               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                 <VersionsPage />
+               </MainLayout>
+             </ProtectedRoute>
+           }
+         />
+         <Route
+           path="/report-history"
+           element={
+             <ProtectedRoute>
+               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                 <ReportHistoryPage />
+               </MainLayout>
+             </ProtectedRoute>
+           }
+         />
         <Route
           path="/documents"
           element={
