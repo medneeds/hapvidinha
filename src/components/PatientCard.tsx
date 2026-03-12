@@ -19,6 +19,7 @@ import { ApplyTemplateDialog } from "./ApplyTemplateDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
 import { ExaminusAIDialog } from "./ExaminusAIDialog";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
+import { PalliativeButterflyIcon } from "./PalliativeButterflyIcon";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
 import { DietReleaseDialog } from "./DietReleaseDialog";
 import { useToast } from "@/hooks/use-toast";
