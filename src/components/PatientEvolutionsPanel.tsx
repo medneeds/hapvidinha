@@ -116,16 +116,24 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleSuspend = async (id: string) => {
     try {
-      const { error } = await (supabase.from as any)('patient_evolutions').delete().eq('id', id);
+      const { error } = await (supabase.from as any)('patient_evolutions')
+        .update({ 
+          suspended: true, 
+          suspended_at: new Date().toISOString(),
+          suspended_by: user?.email || null
+        })
+        .eq('id', id);
       if (error) throw error;
-      toast.success('Evolução removida');
-      setEvolutions(prev => prev.filter(e => e.id !== id));
+      toast.success('Evolução suspensa');
+      setEvolutions(prev => prev.map(e => 
+        e.id === id ? { ...e, suspended: true, suspended_at: new Date().toISOString(), suspended_by: user?.email || null } : e
+      ));
     } catch (err) {
-      toast.error('Erro ao remover evolução');
+      toast.error('Erro ao suspender evolução');
     }
-    setDeleteId(null);
+    setSuspendId(null);
   };
 
   const handleDuplicate = (content: string) => {
