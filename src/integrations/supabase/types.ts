@@ -548,6 +548,76 @@ export type Database = {
         }
         Relationships: []
       }
+      medical_reports: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          department: string
+          hospital_unit_id: string
+          id: string
+          patient_age: string | null
+          patient_bed: string | null
+          patient_id: string | null
+          patient_name: string
+          patient_sector: string | null
+          report_content: string
+          state_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          department?: string
+          hospital_unit_id: string
+          id?: string
+          patient_age?: string | null
+          patient_bed?: string | null
+          patient_id?: string | null
+          patient_name: string
+          patient_sector?: string | null
+          report_content: string
+          state_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          department?: string
+          hospital_unit_id?: string
+          id?: string
+          patient_age?: string | null
+          patient_bed?: string | null
+          patient_id?: string | null
+          patient_name?: string
+          patient_sector?: string | null
+          report_content?: string
+          state_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_reports_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_reports_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_reports_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notes_reminders: {
         Row: {
           completed: boolean | null
