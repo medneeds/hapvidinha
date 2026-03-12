@@ -35,6 +35,7 @@ import { useSectorStayTimer } from "@/hooks/useSectorStayTimer";
 import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 import { useConductHistory } from "@/hooks/useConductHistory";
 import { ConductHistoryDialog } from "./ConductHistoryDialog";
+import { PatientEvolutionsPanel } from "./PatientEvolutionsPanel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { whitelabel } from "@/config/whitelabel";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -4132,6 +4133,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               {patient.admissionHistory}
             </p>
           </div>
+
+          {/* Evoluções Clínicas */}
+          <div className="pt-2 border-t border-border/50 print:hidden">
+            <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
+          </div>
         </div>
       )}
       </Card>
@@ -4356,6 +4362,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
             )}
+
+            {/* Evoluções Clínicas */}
+            <div className="mt-6 pt-6 border-t border-border/30">
+              <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -4511,6 +4522,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
             )}
+
+            {/* Evoluções Clínicas */}
+            <div className="mt-6 pt-6 border-t border-border/30">
+              <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -4666,6 +4682,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
             )}
+
+            {/* Evoluções Clínicas */}
+            <div className="mt-6 pt-6 border-t border-border/30">
+              <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -4821,6 +4842,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
             )}
+
+            {/* Evoluções Clínicas */}
+            <div className="mt-6 pt-6 border-t border-border/30">
+              <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
+            </div>
           </div>
         </DialogContent>
       </Dialog>
