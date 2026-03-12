@@ -361,6 +361,18 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
           )}
         </div>
         <div className="flex items-center gap-1">
+          {/* Print button */}
+          {evolutions.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handlePrint}
+              className="h-7 px-2 text-xs text-muted-foreground"
+              title="Imprimir evoluções"
+            >
+              <Printer className="h-3.5 w-3.5" />
+            </Button>
+          )}
           {/* Field size toggle */}
           <Button
             variant="ghost"
