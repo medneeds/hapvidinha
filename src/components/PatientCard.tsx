@@ -4842,6 +4842,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
             )}
+
+            {/* Evoluções Clínicas */}
+            <div className="mt-6 pt-6 border-t border-border/30">
+              <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
+            </div>
           </div>
         </DialogContent>
       </Dialog>
