@@ -4131,7 +4131,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             <div className="pt-2 border-t border-border/50 print:pt-1">
               <CollapsibleTrigger asChild>
                 <button className="w-full flex items-center justify-between group cursor-pointer">
-                  <h4 className="font-semibold text-xs text-foreground uppercase print:text-[8.5px]">História Admissional / Anamnese</h4>
+                  <h4 className="font-semibold text-xs text-foreground uppercase print:text-[8.5px] flex items-center gap-1.5">
+                    <Stethoscope className="h-3 w-3 text-primary" />
+                    História Admissional / Anamnese
+                  </h4>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-transform print:hidden data-[state=open]:rotate-180" />
                 </button>
               </CollapsibleTrigger>
