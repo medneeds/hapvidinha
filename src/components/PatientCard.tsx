@@ -37,6 +37,7 @@ import { useConductHistory } from "@/hooks/useConductHistory";
 import { ConductHistoryDialog } from "./ConductHistoryDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { whitelabel } from "@/config/whitelabel";
+import { useHospital } from "@/contexts/HospitalContext";
 import {
   Dialog,
   DialogContent,
