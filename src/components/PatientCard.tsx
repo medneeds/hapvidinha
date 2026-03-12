@@ -5328,7 +5328,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   printWindow.document.close();
                    // Save report to history
                    if (currentHospital && currentState) {
-                     supabase.from('medical_reports').insert({
+                     (supabase.from as any)('medical_reports').insert({
                        patient_id: patient.id,
                        patient_name: patient.name,
                        patient_age: patient.age || null,
@@ -5340,7 +5340,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                        hospital_unit_id: currentHospital.id,
                        state_id: currentState.id,
                        department: currentDepartment,
-                     }).then(({ error: saveError }) => {
+                     }).then(({ error: saveError }: any) => {
                        if (saveError) console.error('Erro ao salvar relatório:', saveError);
                      });
                    }
