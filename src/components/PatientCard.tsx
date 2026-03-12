@@ -1703,6 +1703,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             </div>
                           )}
 
+                          {/* Palliative Care Butterfly Icon */}
+                          {patient.pendencies?.some(p => p.toUpperCase().includes('CUIDADOS PALIATIVOS')) && (
+                            <PalliativeButterflyIcon />
+                          )}
+
                            <p 
                             className={cn(
                               "font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words rounded px-1 -mx-1",
