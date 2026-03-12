@@ -42,7 +42,8 @@ const QUICK_TEMPLATES = [
   "MEDIDAS PARA HIPOCALEMIA",
   "MEDIDAS PARA HIPERNATREMIA",
   "MEDIDAS PARA HIPERCALEMIA",
-  "SOLICITAR TERAPIA DIALÍTICA"
+  "SOLICITAR TERAPIA DIALÍTICA",
+  "CUIDADOS PALIATIVOS"
 ];
 
 export function QuickTemplatesDialog({ open, onOpenChange, onAddTemplates, patientName }: QuickTemplatesDialogProps) {
