@@ -1705,10 +1705,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           )}
 
                           {/* Palliative Care Butterfly Icon */}
-{(typeof patient.pendencies === 'string' 
-                              ? patient.pendencies.toUpperCase().includes('CUIDADOS PALIATIVOS')
-                              : Array.isArray(patient.pendencies) && patient.pendencies.some(p => p.toUpperCase().includes('CUIDADOS PALIATIVOS'))
-                            ) && (
+{(String(patient.pendencies || '')).toUpperCase().includes('CUIDADOS PALIATIVOS') && (
                             <PalliativeButterflyIcon />
                           )}
 
