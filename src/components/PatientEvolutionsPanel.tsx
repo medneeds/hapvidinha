@@ -415,19 +415,19 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
         </ScrollArea>
       )}
 
-      {/* Delete confirmation */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+      {/* Suspend confirmation */}
+      <AlertDialog open={!!suspendId} onOpenChange={() => setSuspendId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogTitle>Confirmar suspensão</AlertDialogTitle>
             <AlertDialogDescription>
-              Deseja realmente excluir esta evolução? Esta ação não pode ser desfeita.
+              Deseja suspender esta evolução? Ela ficará visível com indicação de suspensa, mas não poderá ser reativada.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleteId && handleDelete(deleteId)}>
-              Excluir
+            <AlertDialogAction onClick={() => suspendId && handleSuspend(suspendId)}>
+              Suspender
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
