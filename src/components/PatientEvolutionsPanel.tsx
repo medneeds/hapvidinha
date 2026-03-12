@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ChevronDown, ChevronUp, Plus, Clock, Calendar, Trash2, FileEdit, Send, ChevronsUpDown, Copy, Maximize2, Minimize2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Clock, Calendar, Ban, FileEdit, Send, ChevronsUpDown, Copy, Maximize2, Minimize2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHospital } from "@/contexts/HospitalContext";
