@@ -50,8 +50,7 @@ export default function ReportHistoryPage() {
   const fetchReports = async () => {
     if (!currentHospital || !currentState) return;
     setLoading(true);
-    const { data, error } = await supabase
-      .from("medical_reports")
+    const { data, error } = await (supabase.from as any)("medical_reports")
       .select("id, patient_name, patient_age, patient_bed, patient_sector, report_content, created_by_email, created_at")
       .eq("hospital_unit_id", currentHospital.id)
       .eq("state_id", currentState.id)
