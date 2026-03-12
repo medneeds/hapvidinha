@@ -55,7 +55,7 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [allCollapsed, setAllCollapsed] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const { user, userRole } = useAuth();
+  const { user, role: userRole } = useAuth();
   const { currentHospital, currentState } = useHospital();
   const { currentDepartment } = useDepartment();
 
