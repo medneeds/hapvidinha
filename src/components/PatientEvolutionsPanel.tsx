@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ChevronDown, ChevronUp, Plus, Clock, Calendar, Ban, FileEdit, Send, ChevronsUpDown, Copy, Maximize2, Minimize2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Clock, Calendar, Ban, FileEdit, Send, ChevronsUpDown, Copy, Maximize2, Minimize2, Printer } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { format, parseISO, isToday, isYesterday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { whitelabel } from "@/config/whitelabel";
 
 interface Evolution {
   id: string;
@@ -193,6 +194,155 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
     return email.split('@')[0].toUpperCase();
   };
 
+  const handlePrint = () => {
+    if (evolutions.length === 0) {
+      toast.info('Nenhuma evolução para imprimir');
+      return;
+    }
+
+    const activeEvolutions = evolutions.filter(e => !e.suspended);
+    const suspendedEvolutions = evolutions.filter(e => e.suspended);
+    const dateStr = new Date().toLocaleDateString('pt-BR');
+    const timeStr = new Date().toLocaleTimeString('pt-BR');
+    const networkLogoUrl = new URL(whitelabel.logos.networkFull, window.location.origin).href;
+
+    const evolutionRows = (evos: Evolution[], isSuspended = false) => evos.map(evo => {
+      const evoDate = format(parseISO(evo.created_at), "dd/MM/yyyy");
+      const evoTime = format(parseISO(evo.created_at), "HH:mm");
+      const author = extractUsername(evo.created_by_email);
+      return `
+        <tr style="${isSuspended ? 'opacity: 0.55;' : ''}">
+          <td style="padding: 6px 10px; border-bottom: 1px solid #e5e7eb; font-size: 8pt; color: #4b5563; white-space: nowrap; vertical-align: top;">
+            ${evoDate}<br/><strong>${evoTime}</strong>
+          </td>
+          <td style="padding: 6px 10px; border-bottom: 1px solid #e5e7eb; font-size: 8pt; color: #013ba6; font-weight: 600; white-space: nowrap; vertical-align: top;">
+            ${author}
+          </td>
+          <td style="padding: 6px 10px; border-bottom: 1px solid #e5e7eb; font-size: 8.5pt; color: #1f2937; text-align: justify; line-height: 1.55; ${isSuspended ? 'text-decoration: line-through; color: #9ca3af;' : ''}">
+            ${evo.content.replace(/\n/g, '<br/>')}
+            ${isSuspended ? '<br/><span style="font-size: 6.5pt; color: #ef4444; font-style: italic;">SUSPENSA</span>' : ''}
+          </td>
+        </tr>`;
+    }).join('');
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    printWindow.document.write(`<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Evoluções - ${patientName}</title>
+<style>
+  @page { size: A4 portrait; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; color: #1a1a2e; background: #fff; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .page { width: 210mm; min-height: 297mm; margin: 0 auto; position: relative; overflow: hidden; }
+
+  .header {
+    background: linear-gradient(135deg, #002b80 0%, #013ba6 40%, #0152d4 100%);
+    padding: 20px 36px 16px; display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .header::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b, #fbbf24);
+  }
+  .header .logo-main img { height: 48px; filter: brightness(0) invert(1); }
+
+  .title-bar {
+    background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+    padding: 10px 36px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .title-bar h1 { font-size: 10pt; font-weight: 700; color: #013ba6; text-transform: uppercase; letter-spacing: 2px; }
+  .title-bar .hospital-name { font-size: 7.5pt; color: #64748b; font-weight: 500; }
+
+  .patient-strip {
+    background: #eef2ff; border-bottom: 1px solid #ddd6fe;
+    padding: 10px 36px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  }
+  .patient-strip .field { display: flex; flex-direction: column; }
+  .patient-strip .field-label { font-size: 5.5pt; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+  .patient-strip .field-value { font-size: 8.5pt; color: #111827; font-weight: 600; margin-top: 1px; }
+  .patient-strip .divider { width: 1px; height: 24px; background: #c7d2fe; }
+
+  .body-content { padding: 20px 36px 90px; }
+  
+  .evo-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .evo-table th {
+    background: #f1f5f9; padding: 6px 10px; font-size: 7pt; text-transform: uppercase;
+    letter-spacing: 1px; font-weight: 700; color: #475569; text-align: left;
+    border-bottom: 2px solid #cbd5e1;
+  }
+
+  .section-label {
+    font-size: 7.5pt; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800;
+    color: #013ba6; margin: 16px 0 6px; padding-bottom: 4px;
+    border-bottom: 1.5px solid #dbeafe; display: flex; align-items: center; gap: 6px;
+  }
+  .section-label::before { content: ''; width: 3px; height: 12px; background: #013ba6; border-radius: 2px; display: inline-block; }
+
+  .watermark {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg);
+    opacity: 0.06; z-index: 0; pointer-events: none;
+  }
+  .watermark img { width: 320px; }
+
+  .footer { position: fixed; bottom: 0; left: 0; right: 0; width: 210mm; margin: 0 auto; background: #fff; }
+  .footer-accent { height: 2px; background: linear-gradient(90deg, #013ba6, #0152d4, #38bdf8, #0152d4, #013ba6); }
+  .footer-content { padding: 8px 36px; display: flex; align-items: center; justify-content: space-between; }
+  .footer-content .address { font-size: 6pt; color: #94a3b8; line-height: 1.4; max-width: 55%; }
+  .footer-content .meta { font-size: 6pt; color: #94a3b8; text-align: right; line-height: 1.4; }
+  .footer-content .meta .brand { font-weight: 600; color: #cbd5e1; }
+
+  @media print { html, body { margin: 0 !important; padding: 0 !important; } .page { margin: 0; width: 100%; } }
+  @media screen { .page { box-shadow: 0 8px 32px rgba(0,0,0,0.10); margin: 20px auto; border-radius: 3px; } }
+</style></head><body>
+<div class="page">
+  <div class="watermark"><img src="${networkLogoUrl}" alt="" /></div>
+  <div class="header"><div class="logo-main"><img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" /></div></div>
+  <div class="title-bar"><h1>Evoluções Clínicas</h1><span class="hospital-name">${whitelabel.institution.hospitalName}</span></div>
+  <div class="patient-strip">
+    <div class="field"><span class="field-label">Paciente</span><span class="field-value">${patientName}</span></div>
+    <div class="divider"></div>
+    <div class="field"><span class="field-label">Total Evoluções</span><span class="field-value">${activeEvolutions.length} ativa(s)${suspendedEvolutions.length > 0 ? ` / ${suspendedEvolutions.length} suspensa(s)` : ''}</span></div>
+    <div class="divider"></div>
+    <div class="field"><span class="field-label">Emissão</span><span class="field-value">${dateStr} às ${timeStr}</span></div>
+  </div>
+  <div class="body-content">
+    ${activeEvolutions.length > 0 ? `
+    <div class="section-label">Evoluções Ativas</div>
+    <table class="evo-table">
+      <thead><tr><th>Data/Hora</th><th>Autor</th><th>Evolução</th></tr></thead>
+      <tbody>${evolutionRows(activeEvolutions)}</tbody>
+    </table>` : ''}
+    ${suspendedEvolutions.length > 0 ? `
+    <div class="section-label" style="color: #9ca3af; margin-top: 24px;">Evoluções Suspensas</div>
+    <table class="evo-table">
+      <thead><tr><th>Data/Hora</th><th>Autor</th><th>Evolução</th></tr></thead>
+      <tbody>${evolutionRows(suspendedEvolutions, true)}</tbody>
+    </table>` : ''}
+  </div>
+  <div class="footer">
+    <div class="footer-accent"></div>
+    <div class="footer-content">
+      <div class="address">${whitelabel.institution.hospitalName}<br/>Urgência e Emergência — Evoluções Clínicas</div>
+      <div class="meta"><span class="brand">${whitelabel.credits.footerText}</span><br/>${dateStr} às ${timeStr}</div>
+    </div>
+  </div>
+</div>
+</body></html>`);
+    printWindow.document.close();
+
+    const images = printWindow.document.querySelectorAll('img');
+    const imagePromises = Array.from(images).map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+      });
+    });
+    Promise.all(imagePromises).then(() => {
+      setTimeout(() => printWindow.print(), 300);
+    });
+  };
+
   const currentSize = FIELD_SIZES[fieldSize];
 
   return (
@@ -211,6 +361,18 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
           )}
         </div>
         <div className="flex items-center gap-1">
+          {/* Print button */}
+          {evolutions.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handlePrint}
+              className="h-7 px-2 text-xs text-muted-foreground"
+              title="Imprimir evoluções"
+            >
+              <Printer className="h-3.5 w-3.5" />
+            </Button>
+          )}
           {/* Field size toggle */}
           <Button
             variant="ghost"
