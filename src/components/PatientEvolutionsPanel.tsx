@@ -435,7 +435,7 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
                               <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                                 <Clock className="h-3 w-3 flex-shrink-0" />
                                 <span className="font-medium">
-                                  {format(parseISO(evo.created_at), "HH:mm")}
+                                  {format(parseISO(evo.created_at), "dd/MM/yyyy 'às' HH:mm")}
                                 </span>
                                 <span className="text-primary/80 font-semibold">
                                   • {extractUsername(evo.created_by_email)}
