@@ -5204,19 +5204,33 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           </div>
 
           <div className="flex items-center justify-between pt-3 border-t gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                navigator.clipboard.writeText(reportText);
-                toast.success('Relatório copiado!');
-              }}
-              disabled={!reportText.trim()}
-              className="flex items-center gap-1.5"
-            >
-              <Copy className="h-3.5 w-3.5" />
-              Copiar
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  navigator.clipboard.writeText(reportText);
+                  toast.success('Relatório copiado!');
+                }}
+                disabled={!reportText.trim()}
+                className="flex items-center gap-1.5"
+              >
+                <Copy className="h-3.5 w-3.5" />
+                Copiar
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setReportDialogOpen(false);
+                  navigate(`/report-history?patient=${encodeURIComponent(patient.name)}`);
+                }}
+                className="flex items-center gap-1.5 text-primary"
+              >
+                <FileText className="h-3.5 w-3.5" />
+                Histórico
+              </Button>
+            </div>
             <div className="flex gap-2">
               <Button variant="ghost" size="sm" onClick={() => setReportDialogOpen(false)}>
                 Fechar

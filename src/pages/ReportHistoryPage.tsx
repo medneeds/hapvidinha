@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
@@ -38,9 +39,10 @@ export default function ReportHistoryPage() {
   const { currentDepartment } = useDepartment();
   const { role } = useAuth();
   const { namesHidden } = usePrivacy();
+  const [searchParams] = useSearchParams();
   const [reports, setReports] = useState<MedicalReport[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("patient") || "");
   const [selectedReport, setSelectedReport] = useState<MedicalReport | null>(null);
 
   useEffect(() => {
