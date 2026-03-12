@@ -225,20 +225,20 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
   .patient-strip .field-label { font-size: 5.5pt; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
   .patient-strip .field-value { font-size: 8.5pt; color: #111827; font-weight: 600; margin-top: 1px; }
   .patient-strip .divider { width: 1px; height: 24px; background: #c7d2fe; }
-  .body-content { padding: 24px 36px 90px; font-size: 9pt; line-height: 1.7; color: #334155; min-height: calc(297mm - 200px); }
+  .body-content { padding: 24px 36px 20px; font-size: 9pt; line-height: 1.7; color: #334155; }
   .section-title { font-size: 7pt; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: #013ba6; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1.5px solid #dbeafe; display: flex; align-items: center; gap: 6px; }
   .section-title::before { content: ''; width: 3px; height: 12px; background: #013ba6; border-radius: 2px; }
   .body-text { text-align: justify; word-break: break-word; white-space: pre-wrap; }
   .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg); opacity: 0.06; z-index: 0; pointer-events: none; }
   .watermark img { width: 320px; }
-  .footer { position: fixed; bottom: 0; left: 0; right: 0; width: 210mm; margin: 0 auto; background: #fff; }
+  .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; }
   .footer-accent { height: 2px; background: linear-gradient(90deg, #013ba6, #0152d4, #38bdf8, #0152d4, #013ba6); }
   .footer-content { padding: 8px 36px; display: flex; align-items: center; justify-content: space-between; }
   .footer-content .address { font-size: 6pt; color: #94a3b8; line-height: 1.4; max-width: 55%; }
   .footer-content .meta { font-size: 6pt; color: #94a3b8; text-align: right; line-height: 1.4; }
   .footer-content .meta .brand { font-weight: 600; color: #cbd5e1; }
   @media print { html, body { margin: 0 !important; padding: 0 !important; } .page { margin: 0; width: 100%; } }
-  @media screen { .page { box-shadow: 0 8px 32px rgba(0,0,0,0.10); margin: 20px auto; border-radius: 3px; } }
+  @media screen { .page { box-shadow: 0 8px 32px rgba(0,0,0,0.10); margin: 20px auto; border-radius: 3px; max-width: 210mm; min-height: 297mm; } }
 </style></head><body>
 <div class="page">
   <div class="watermark"><img src="${networkLogoUrl}" alt="" /></div>
