@@ -66,7 +66,7 @@ export default function ReportHistoryPage() {
   };
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase.from("medical_reports").delete().eq("id", id);
+    const { error } = await (supabase.from as any)("medical_reports").delete().eq("id", id);
     if (error) {
       toast.error("Erro ao excluir relatório");
     } else {
