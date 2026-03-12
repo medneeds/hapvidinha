@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ChevronDown, ChevronUp, Plus, Clock, Calendar, Trash2, FileEdit, Send, ChevronsUpDown } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Clock, Calendar, Trash2, FileEdit, Send, ChevronsUpDown, Copy, Maximize2, Minimize2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -46,6 +46,14 @@ interface PatientEvolutionsPanelProps {
   patientName: string;
 }
 
+type FieldSize = 'compact' | 'medium' | 'expanded';
+
+const FIELD_SIZES: Record<FieldSize, { label: string; maxH: string; inputH: string }> = {
+  compact: { label: 'P', maxH: 'max-h-[80px]', inputH: 'min-h-[60px] max-h-[120px]' },
+  medium: { label: 'M', maxH: 'max-h-[160px]', inputH: 'min-h-[100px] max-h-[200px]' },
+  expanded: { label: 'G', maxH: 'max-h-[400px]', inputH: 'min-h-[160px] max-h-[400px]' },
+};
+
 export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolutionsPanelProps) {
   const [evolutions, setEvolutions] = useState<Evolution[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +63,7 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [allCollapsed, setAllCollapsed] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [fieldSize, setFieldSize] = useState<FieldSize>('medium');
   const { user, role: userRole } = useAuth();
   const { currentHospital, currentState } = useHospital();
   const { currentDepartment } = useDepartment();
@@ -119,6 +128,12 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
     setDeleteId(null);
   };
 
+  const handleDuplicate = (content: string) => {
+    setNewContent(content);
+    setIsAdding(true);
+    toast.info('Evolução copiada para edição');
+  };
+
   const getDateLabel = (dateStr: string): string => {
     const date = parseISO(dateStr);
     if (isToday(date)) return "Hoje";
@@ -156,10 +171,18 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
     setAllCollapsed(!allCollapsed);
   };
 
+  const cycleFieldSize = () => {
+    const sizes: FieldSize[] = ['compact', 'medium', 'expanded'];
+    const idx = sizes.indexOf(fieldSize);
+    setFieldSize(sizes[(idx + 1) % sizes.length]);
+  };
+
   const extractUsername = (email: string | null) => {
     if (!email) return "Desconhecido";
     return email.split('@')[0].toUpperCase();
   };
+
+  const currentSize = FIELD_SIZES[fieldSize];
 
   return (
     <div className="space-y-3">
@@ -177,6 +200,23 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
           )}
         </div>
         <div className="flex items-center gap-1">
+          {/* Field size toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={cycleFieldSize}
+            className="h-7 px-2 text-xs text-muted-foreground"
+            title={`Tamanho: ${fieldSize === 'compact' ? 'Compacto' : fieldSize === 'medium' ? 'Médio' : 'Expandido'}`}
+          >
+            {fieldSize === 'compact' ? (
+              <Minimize2 className="h-3.5 w-3.5 mr-1" />
+            ) : fieldSize === 'expanded' ? (
+              <Maximize2 className="h-3.5 w-3.5 mr-1" />
+            ) : (
+              <Maximize2 className="h-3.5 w-3.5 mr-1 opacity-50" />
+            )}
+            {currentSize.label}
+          </Button>
           {groupedEvolutions.length > 0 && (
             <Button
               variant="ghost"
@@ -221,7 +261,7 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
             placeholder="Descreva a evolução clínica do paciente..."
-            className="min-h-[80px] text-xs uppercase resize-y"
+            className={cn("text-xs uppercase resize-y overflow-y-auto", currentSize.inputH)}
             autoFocus
           />
           <div className="flex justify-end">
@@ -286,9 +326,9 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
                           <div className="absolute -left-[7px] top-3.5 w-3 h-3 rounded-full bg-primary/30 border-2 border-primary/60 group-hover/item:bg-primary/50 transition-colors" />
                           
                           <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 space-y-1">
+                            <div className="flex-1 space-y-1 min-w-0">
                               <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                                <Clock className="h-3 w-3" />
+                                <Clock className="h-3 w-3 flex-shrink-0" />
                                 <span className="font-medium">
                                   {format(parseISO(evo.created_at), "HH:mm")}
                                 </span>
@@ -296,20 +336,39 @@ export function PatientEvolutionsPanel({ patientId, patientName }: PatientEvolut
                                   • {extractUsername(evo.created_by_email)}
                                 </span>
                               </div>
-                              <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap uppercase">
-                                {evo.content}
-                              </p>
+                              {/* Scrollable read-only content with adjustable size */}
+                              <div className={cn(
+                                "overflow-y-auto scrollbar-thin rounded-md p-1",
+                                currentSize.maxH
+                              )}>
+                                <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap uppercase select-text">
+                                  {evo.content}
+                                </p>
+                              </div>
                             </div>
-                            {userRole === 'admin' && (
+                            {/* Action buttons: copy (duplicate) and delete (admin only) */}
+                            <div className="flex flex-col gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity flex-shrink-0">
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 opacity-0 group-hover/item:opacity-100 transition-opacity text-destructive/60 hover:text-destructive"
-                                onClick={() => setDeleteId(evo.id)}
+                                className="h-6 w-6 text-muted-foreground hover:text-primary"
+                                onClick={() => handleDuplicate(evo.content)}
+                                title="Duplicar para nova evolução"
                               >
-                                <Trash2 className="h-3 w-3" />
+                                <Copy className="h-3 w-3" />
                               </Button>
-                            )}
+                              {userRole === 'admin' && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 text-destructive/60 hover:text-destructive"
+                                  onClick={() => setDeleteId(evo.id)}
+                                  title="Excluir evolução"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ))}
