@@ -726,6 +726,64 @@ export type Database = {
         }
         Relationships: []
       }
+      patient_evolutions: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          department: string
+          hospital_unit_id: string
+          id: string
+          patient_id: string
+          state_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          department?: string
+          hospital_unit_id: string
+          id?: string
+          patient_id: string
+          state_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          department?: string
+          hospital_unit_id?: string
+          id?: string
+          patient_id?: string
+          state_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_evolutions_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_evolutions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_evolutions_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patient_movements: {
         Row: {
           created_at: string
