@@ -525,16 +525,31 @@ export function AppSidebar({
               </div>
             </>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={signOut}
-            className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-all duration-200 flex-shrink-0"
-            title="Sair"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowChangeOwnPassword(true)}
+              className="h-9 w-9 hover:bg-primary/10 hover:text-primary transition-all duration-200 flex-shrink-0"
+              title="Alterar minha senha"
+            >
+              <KeyRound className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={signOut}
+              className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-all duration-200 flex-shrink-0"
+              title="Sair"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
+        <ChangeOwnPasswordDialog
+          open={showChangeOwnPassword}
+          onOpenChange={setShowChangeOwnPassword}
+        />
       </SidebarFooter>
     </>
   );
