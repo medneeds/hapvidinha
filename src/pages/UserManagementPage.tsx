@@ -49,10 +49,11 @@ import {
   Calendar,
   Building2,
   KeyRound,
+  UserCog,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ResetUserPasswordDialog } from "@/components/ResetUserPasswordDialog";
+import { EditUserCredentialsDialog } from "@/components/EditUserCredentialsDialog";
 
 interface UserProfile {
   id: string;
