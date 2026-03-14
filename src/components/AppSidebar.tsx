@@ -67,6 +67,7 @@ export function AppSidebar({
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [showChangeOwnPassword, setShowChangeOwnPassword] = useState(false);
   const [password, setPassword] = useState("");
   
   // Hook for pending password reset requests
