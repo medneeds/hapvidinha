@@ -54,7 +54,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePendingPasswordResets } from "@/hooks/usePendingPasswordResets";
-
+import { ChangeOwnPasswordDialog } from "@/components/ChangeOwnPasswordDialog";
 
 export function AppSidebar({ 
   onOpenHandover
