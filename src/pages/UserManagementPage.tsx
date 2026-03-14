@@ -685,14 +685,14 @@ export default function UserManagementPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Reset Password Dialog */}
-      {userToResetPassword && (
-        <ResetUserPasswordDialog
-          open={resetPasswordOpen}
-          onOpenChange={setResetPasswordOpen}
-          userId={userToResetPassword.id}
-          userName={userToResetPassword.full_name || ""}
-          userEmail={userToResetPassword.email || ""}
+      {/* Edit Credentials Dialog */}
+      {userToEdit && (
+        <EditUserCredentialsDialog
+          open={credentialsOpen}
+          onOpenChange={setCredentialsOpen}
+          userId={userToEdit.id}
+          userName={userToEdit.full_name || ""}
+          userEmail={userToEdit.email || ""}
           onSuccess={fetchUsers}
         />
       )}
