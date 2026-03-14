@@ -49,10 +49,11 @@ import {
   Calendar,
   Building2,
   KeyRound,
+  UserCog,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ResetUserPasswordDialog } from "@/components/ResetUserPasswordDialog";
+import { EditUserCredentialsDialog } from "@/components/EditUserCredentialsDialog";
 
 interface UserProfile {
   id: string;
@@ -110,8 +111,8 @@ export default function UserManagementPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [resetPasswordOpen, setResetPasswordOpen] = useState(false);
-  const [userToResetPassword, setUserToResetPassword] = useState<UserWithRole | null>(null);
+  const [credentialsOpen, setCredentialsOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState<UserWithRole | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
@@ -617,18 +618,18 @@ export default function UserManagementPage() {
 
               {/* Actions */}
               <div className="flex flex-col gap-2 pt-4 border-t">
-                {/* Password Reset Button - Always visible */}
+                {/* Credentials Edit Button */}
                 <Button
                   variant="outline"
-                  className="w-full text-amber-600 border-amber-600 hover:bg-amber-50"
+                  className="w-full text-primary border-primary hover:bg-primary/10"
                   onClick={() => {
-                    setUserToResetPassword(selectedUser);
-                    setResetPasswordOpen(true);
+                    setUserToEdit(selectedUser);
+                    setCredentialsOpen(true);
                   }}
                   disabled={actionLoading}
                 >
-                  <KeyRound className="h-4 w-4 mr-2" />
-                  Redefinir Senha
+                  <UserCog className="h-4 w-4 mr-2" />
+                  Alterar Login / Senha
                 </Button>
 
                 <div className="flex gap-2">
@@ -684,14 +685,14 @@ export default function UserManagementPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Reset Password Dialog */}
-      {userToResetPassword && (
-        <ResetUserPasswordDialog
-          open={resetPasswordOpen}
-          onOpenChange={setResetPasswordOpen}
-          userId={userToResetPassword.id}
-          userName={userToResetPassword.full_name || ""}
-          userEmail={userToResetPassword.email || ""}
+      {/* Edit Credentials Dialog */}
+      {userToEdit && (
+        <EditUserCredentialsDialog
+          open={credentialsOpen}
+          onOpenChange={setCredentialsOpen}
+          userId={userToEdit.id}
+          userName={userToEdit.full_name || ""}
+          userEmail={userToEdit.email || ""}
           onSuccess={fetchUsers}
         />
       )}
