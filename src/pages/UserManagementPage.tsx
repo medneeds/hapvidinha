@@ -693,6 +693,9 @@ export default function UserManagementPage() {
           userId={userToEdit.id}
           userName={userToEdit.full_name || ""}
           userEmail={userToEdit.email || ""}
+          userCrm={userToEdit.crm || ""}
+          userSpecialty={userToEdit.specialty || ""}
+          userPhone={userToEdit.phone || ""}
           onSuccess={fetchUsers}
         />
       )}
