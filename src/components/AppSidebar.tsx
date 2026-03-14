@@ -15,6 +15,7 @@ import {
   Bell,
   PanelLeftClose,
   PanelLeft,
+  KeyRound,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { whitelabel } from "@/config/whitelabel";
@@ -53,7 +54,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePendingPasswordResets } from "@/hooks/usePendingPasswordResets";
-
+import { ChangeOwnPasswordDialog } from "@/components/ChangeOwnPasswordDialog";
 
 export function AppSidebar({ 
   onOpenHandover
@@ -66,6 +67,7 @@ export function AppSidebar({
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [showChangeOwnPassword, setShowChangeOwnPassword] = useState(false);
   const [password, setPassword] = useState("");
   
   // Hook for pending password reset requests
@@ -523,16 +525,31 @@ export function AppSidebar({
               </div>
             </>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={signOut}
-            className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-all duration-200 flex-shrink-0"
-            title="Sair"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowChangeOwnPassword(true)}
+              className="h-9 w-9 hover:bg-primary/10 hover:text-primary transition-all duration-200 flex-shrink-0"
+              title="Alterar minha senha"
+            >
+              <KeyRound className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={signOut}
+              className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-all duration-200 flex-shrink-0"
+              title="Sair"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
+        <ChangeOwnPasswordDialog
+          open={showChangeOwnPassword}
+          onOpenChange={setShowChangeOwnPassword}
+        />
       </SidebarFooter>
     </>
   );

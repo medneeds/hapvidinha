@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,11 @@ import {
   CheckCircle,
   KeyRound,
   Mail,
+  User,
+  Stethoscope,
+  Phone,
+  Building2,
+  Save,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -29,6 +34,9 @@ interface EditUserCredentialsDialogProps {
   userId: string;
   userName: string;
   userEmail: string;
+  userCrm?: string;
+  userSpecialty?: string;
+  userPhone?: string;
   onSuccess: () => void;
 }
 
@@ -38,11 +46,20 @@ export function EditUserCredentialsDialog({
   userId,
   userName,
   userEmail,
+  userCrm = "",
+  userSpecialty = "",
+  userPhone = "",
   onSuccess,
 }: EditUserCredentialsDialogProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  // Profile data state
+  const [fullName, setFullName] = useState(userName || "");
+  const [crm, setCrm] = useState(userCrm || "");
+  const [specialty, setSpecialty] = useState(userSpecialty || "");
+  const [phone, setPhone] = useState(userPhone || "");
 
   // Login state
   const [newLogin, setNewLogin] = useState("");
@@ -54,6 +71,57 @@ export function EditUserCredentialsDialog({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const currentLogin = userEmail?.replace("@sistema.local", "") || "";
+
+  // Sync props when dialog opens
+  useEffect(() => {
+    if (open) {
+      setFullName(userName || "");
+      setCrm(userCrm || "");
+      setSpecialty(userSpecialty || "");
+      setPhone(userPhone || "");
+      setNewLogin("");
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+  }, [open, userName, userCrm, userSpecialty, userPhone]);
+
+  const handleUpdateProfile = async () => {
+    if (!fullName.trim()) {
+      toast.error("Nome completo é obrigatório");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-update-user", {
+        body: {
+          userId,
+          profileData: {
+            full_name: fullName.trim(),
+            crm: crm.trim() || null,
+            specialty: specialty.trim() || null,
+            phone: phone.trim() || null,
+          },
+        },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      setSuccess(true);
+      setSuccessMessage("Dados do perfil atualizados com sucesso!");
+      toast.success("Dados atualizados com sucesso");
+
+      setTimeout(() => {
+        resetAndClose();
+        onSuccess();
+      }, 2000);
+    } catch (err: any) {
+      toast.error("Erro ao atualizar dados: " + (err.message || "Erro desconhecido"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleUpdateLogin = async () => {
     if (!newLogin.trim()) {
@@ -140,14 +208,14 @@ export function EditUserCredentialsDialog({
 
   return (
     <Dialog open={open} onOpenChange={resetAndClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserCog className="h-5 w-5 text-primary" />
-            Alterar Credenciais
+            Editar Usuário
           </DialogTitle>
           <DialogDescription>
-            Altere o login ou a senha do usuário
+            Altere os dados cadastrais, login ou senha
           </DialogDescription>
         </DialogHeader>
 
@@ -167,18 +235,105 @@ export function EditUserCredentialsDialog({
               <p className="text-xs text-muted-foreground">Login atual: <span className="font-mono font-bold">{currentLogin}</span></p>
             </div>
 
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login" className="gap-1">
-                  <Mail className="h-3.5 w-3.5" />
-                  Alterar Login
+            <Tabs defaultValue="profile" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="profile" className="gap-1 text-xs">
+                  <User className="h-3.5 w-3.5" />
+                  Dados
                 </TabsTrigger>
-                <TabsTrigger value="password" className="gap-1">
+                <TabsTrigger value="login" className="gap-1 text-xs">
+                  <Mail className="h-3.5 w-3.5" />
+                  Login
+                </TabsTrigger>
+                <TabsTrigger value="password" className="gap-1 text-xs">
                   <KeyRound className="h-3.5 w-3.5" />
-                  Alterar Senha
+                  Senha
                 </TabsTrigger>
               </TabsList>
 
+              {/* PROFILE TAB */}
+              <TabsContent value="profile" className="space-y-4 mt-4">
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1">
+                      <User className="h-3 w-3" /> Nome Completo *
+                    </Label>
+                    <Input
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Nome completo do usuário"
+                      className="h-10"
+                      disabled={loading}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1">
+                        <Stethoscope className="h-3 w-3" /> CRM
+                      </Label>
+                      <Input
+                        value={crm}
+                        onChange={(e) => setCrm(e.target.value)}
+                        placeholder="Ex: 12345-MA"
+                        className="h-10 font-mono"
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1">
+                        <Building2 className="h-3 w-3" /> Especialidade
+                      </Label>
+                      <Input
+                        value={specialty}
+                        onChange={(e) => setSpecialty(e.target.value)}
+                        placeholder="Ex: Clínica Médica"
+                        className="h-10"
+                        disabled={loading}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1">
+                      <Phone className="h-3 w-3" /> Telefone
+                    </Label>
+                    <Input
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Ex: (99) 99999-9999"
+                      className="h-10"
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button variant="outline" onClick={resetAndClose} className="flex-1" disabled={loading}>
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleUpdateProfile}
+                    disabled={loading || !fullName.trim()}
+                    className="flex-1"
+                  >
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Salvando...
+                      </div>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <Save className="h-4 w-4" />
+                        Salvar Dados
+                      </span>
+                    )}
+                  </Button>
+                </div>
+              </TabsContent>
+
+              {/* LOGIN TAB */}
               <TabsContent value="login" className="space-y-4 mt-4">
                 <div className="space-y-1">
                   <Label className="text-xs font-semibold text-muted-foreground uppercase">Novo Login *</Label>
@@ -227,6 +382,7 @@ export function EditUserCredentialsDialog({
                 </div>
               </TabsContent>
 
+              {/* PASSWORD TAB */}
               <TabsContent value="password" className="space-y-4 mt-4">
                 <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
                   <div className="flex items-start gap-2">

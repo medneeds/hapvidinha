@@ -629,7 +629,7 @@ export default function UserManagementPage() {
                   disabled={actionLoading}
                 >
                   <UserCog className="h-4 w-4 mr-2" />
-                  Alterar Login / Senha
+                  Editar Dados / Credenciais
                 </Button>
 
                 <div className="flex gap-2">
@@ -693,6 +693,9 @@ export default function UserManagementPage() {
           userId={userToEdit.id}
           userName={userToEdit.full_name || ""}
           userEmail={userToEdit.email || ""}
+          userCrm={userToEdit.crm || ""}
+          userSpecialty={userToEdit.specialty || ""}
+          userPhone={userToEdit.phone || ""}
           onSuccess={fetchUsers}
         />
       )}
