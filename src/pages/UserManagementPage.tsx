@@ -629,7 +629,7 @@ export default function UserManagementPage() {
                   disabled={actionLoading}
                 >
                   <UserCog className="h-4 w-4 mr-2" />
-                  Alterar Login / Senha
+                  Editar Dados / Credenciais
                 </Button>
 
                 <div className="flex gap-2">
