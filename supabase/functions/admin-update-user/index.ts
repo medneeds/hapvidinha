@@ -15,7 +15,6 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Verify caller is authenticated
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Não autorizado" }), {
@@ -26,7 +25,6 @@ Deno.serve(async (req) => {
 
     const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Verify caller is admin
     const anonClient = createClient(
       supabaseUrl,
       Deno.env.get("SUPABASE_ANON_KEY")!
@@ -59,7 +57,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { userId, newEmail, newPassword } = await req.json();
+    const { userId, newEmail, newPassword, profileData } = await req.json();
 
     if (!userId) {
       return new Response(
@@ -71,19 +69,18 @@ Deno.serve(async (req) => {
       );
     }
 
-    const updatePayload: Record<string, string> = {};
+    // Handle auth updates (email/password)
+    const adminUpdate: Record<string, any> = {};
 
     if (newEmail) {
-      // Ensure @sistema.local format
       const email = newEmail.includes("@")
         ? newEmail
         : `${newEmail}@sistema.local`;
-      updatePayload.email = email;
-      updatePayload.email_confirm = "true";
+      adminUpdate.email = email;
+      adminUpdate.email_confirm = true;
     }
 
     if (newPassword) {
-      // Validate: 6 chars, uppercase + numbers
       if (!/^[A-Z0-9]{6}$/.test(newPassword)) {
         return new Response(
           JSON.stringify({
@@ -96,10 +93,58 @@ Deno.serve(async (req) => {
           }
         );
       }
-      updatePayload.password = newPassword;
+      adminUpdate.password = newPassword;
     }
 
-    if (Object.keys(updatePayload).length === 0) {
+    // Update auth if needed
+    if (Object.keys(adminUpdate).length > 0) {
+      const { error } = await supabaseClient.auth.admin.updateUserById(
+        userId,
+        adminUpdate
+      );
+
+      if (error) {
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // Handle profile updates
+    const profileUpdate: Record<string, any> = {};
+
+    if (newEmail) {
+      const email = newEmail.includes("@")
+        ? newEmail
+        : `${newEmail}@sistema.local`;
+      profileUpdate.email = email;
+    }
+
+    if (profileData) {
+      if (profileData.full_name !== undefined) profileUpdate.full_name = profileData.full_name;
+      if (profileData.crm !== undefined) profileUpdate.crm = profileData.crm;
+      if (profileData.specialty !== undefined) profileUpdate.specialty = profileData.specialty;
+      if (profileData.phone !== undefined) profileUpdate.phone = profileData.phone;
+    }
+
+    if (Object.keys(profileUpdate).length > 0) {
+      const { error: profileError } = await supabaseClient
+        .from("profiles")
+        .update(profileUpdate)
+        .eq("id", userId);
+
+      if (profileError) {
+        return new Response(JSON.stringify({ error: "Erro ao atualizar perfil: " + profileError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    const hasChanges = Object.keys(adminUpdate).length > 0 || Object.keys(profileUpdate).length > 0;
+
+    if (!hasChanges) {
       return new Response(
         JSON.stringify({ error: "Nenhuma alteração informada" }),
         {
@@ -109,39 +154,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Build admin update payload
-    const adminUpdate: Record<string, any> = {};
-    if (updatePayload.password) adminUpdate.password = updatePayload.password;
-    if (updatePayload.email) {
-      adminUpdate.email = updatePayload.email;
-      adminUpdate.email_confirm = true;
-    }
-
-    const { data, error } = await supabaseClient.auth.admin.updateUserById(
-      userId,
-      adminUpdate
-    );
-
-    if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // If email changed, also update profile
-    if (updatePayload.email) {
-      await supabaseClient
-        .from("profiles")
-        .update({ email: updatePayload.email })
-        .eq("id", userId);
-    }
-
     return new Response(
       JSON.stringify({
         success: true,
         message: "Usuário atualizado com sucesso",
-        updatedEmail: updatePayload.email || null,
       }),
       {
         status: 200,
