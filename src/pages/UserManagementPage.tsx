@@ -111,8 +111,8 @@ export default function UserManagementPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [resetPasswordOpen, setResetPasswordOpen] = useState(false);
-  const [userToResetPassword, setUserToResetPassword] = useState<UserWithRole | null>(null);
+  const [credentialsOpen, setCredentialsOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState<UserWithRole | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
