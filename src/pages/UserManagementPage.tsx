@@ -618,18 +618,18 @@ export default function UserManagementPage() {
 
               {/* Actions */}
               <div className="flex flex-col gap-2 pt-4 border-t">
-                {/* Password Reset Button - Always visible */}
+                {/* Credentials Edit Button */}
                 <Button
                   variant="outline"
-                  className="w-full text-amber-600 border-amber-600 hover:bg-amber-50"
+                  className="w-full text-primary border-primary hover:bg-primary/10"
                   onClick={() => {
-                    setUserToResetPassword(selectedUser);
-                    setResetPasswordOpen(true);
+                    setUserToEdit(selectedUser);
+                    setCredentialsOpen(true);
                   }}
                   disabled={actionLoading}
                 >
-                  <KeyRound className="h-4 w-4 mr-2" />
-                  Redefinir Senha
+                  <UserCog className="h-4 w-4 mr-2" />
+                  Alterar Login / Senha
                 </Button>
 
                 <div className="flex gap-2">
