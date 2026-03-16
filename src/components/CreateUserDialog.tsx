@@ -129,6 +129,8 @@ export function CreateUserDialog({ open, onOpenChange, onSuccess }: CreateUserDi
     { value: "porta", label: "Porta", icon: DoorOpen, description: "Edita apenas pacientes que solicitou leito" },
     { value: "prescritor", label: "Prescritor", icon: Stethoscope, description: "Acesso para prescrição médica" },
     { value: "uti", label: "UTI", icon: Stethoscope, description: "Acesso dedicado à UTI" },
+    { value: "recepcao", label: "Recepção", icon: Eye, description: "Acompanhamento — sem edição" },
+    { value: "enfermagem", label: "Enfermagem", icon: User, description: "Acompanhamento + Documentos de Enfermagem" },
     { value: "admin", label: "Coordenador Médico", icon: Shield, description: "Acesso administrativo" },
     { value: "visitante", label: "Visitante", icon: Eye, description: "Apenas visualização" },
   ];

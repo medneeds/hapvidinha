@@ -767,15 +767,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     return `${minutes}min`;
   }, [patient.id, patient.allocationStatus, patient.isDoorPatient, requests]);
   
-  // Check if porta or visitante user can edit this patient
-  const canEdit = useMemo(() => {
-    // Visitante users cannot edit any patient
-    if (role === 'visitante') return false;
-    // Porta users can only edit patients they created
-    if (role === 'porta') return patient.createdBy === user?.id;
-    // Other roles can edit all patients
-    return true;
-  }, [role, user?.id, patient.createdBy]);
+   // Check if porta or visitante user can edit this patient
+   const canEdit = useMemo(() => {
+     // Visitante, Recepção and Enfermagem users cannot edit any patient
+     if (role === 'visitante' || role === 'recepcao' || role === 'enfermagem') return false;
+     // Porta users can only edit patients they created
+     if (role === 'porta') return patient.createdBy === user?.id;
+     // Other roles can edit all patients
+     return true;
+   }, [role, user?.id, patient.createdBy]);
   
   // Sync local medical responsibility with patient prop changes
   useEffect(() => {
