@@ -493,7 +493,7 @@ export function IndividualSignUpForm({
           <div className="space-y-1">
             <Label className="text-[10px] font-semibold text-gray-600 uppercase">CREFITO *</Label>
             <div className="relative">
-              <Activity className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Dumbbell className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="text"
                 value={formData.crm}
