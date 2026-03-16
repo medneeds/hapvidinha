@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { LogIn, User, Lock, Sparkles, Building2, Eye, EyeOff, Shield, FileCheck, UserPlus } from "lucide-react";
+import { LogIn, User, Lock, Sparkles, Building2, Eye, EyeOff, Shield, FileCheck, UserPlus, Users } from "lucide-react";
 import { z } from "zod";
 import { whitelabel } from "@/config/whitelabel";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -54,6 +54,7 @@ export default function AuthPage() {
   const [selectedState, setSelectedState] = useState<string>("");
   const [selectedHospitalId, setSelectedHospitalId] = useState<string>("");
   const [selectedDepartment, setSelectedDepartment] = useState<Department>("URGÊNCIA E EMERGÊNCIA ADULTO");
+  const [selectedUserType, setSelectedUserType] = useState<string>("");
 
   // Filter hospitals by selected state
   const filteredHospitals = selectedState 
@@ -70,6 +71,10 @@ export default function AuthPage() {
     e.preventDefault();
 
     // Validate selections
+    if (!selectedUserType) {
+      toast.error("SELECIONE O TIPO DE USUÁRIO");
+      return;
+    }
     if (!selectedState) {
       toast.error("SELECIONE UM ESTADO");
       return;
@@ -398,6 +403,39 @@ export default function AuthPage() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* User Type Selection */}
+                  <div className="group">
+                    <Label htmlFor="usertype-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
+                      Tipo de Usuário
+                    </Label>
+                    <Select
+                      value={selectedUserType}
+                      onValueChange={setSelectedUserType}
+                      disabled={loading}
+                    >
+                      <SelectTrigger 
+                        id="usertype-select-desktop"
+                        className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900"
+                      >
+                        <SelectValue placeholder="Selecione o tipo de usuário" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
+                        <SelectItem value="medicina" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                          MEDICINA
+                        </SelectItem>
+                        <SelectItem value="enfermagem" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                          ENFERMAGEM
+                        </SelectItem>
+                        <SelectItem value="administrativo" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                          ADMINISTRATIVO
+                        </SelectItem>
+                        <SelectItem value="gestao" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                          GESTÃO
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 {/* Authentication Fields Section */}
@@ -662,6 +700,43 @@ export default function AuthPage() {
                           {dept}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* User Type Selection */}
+                <div className="space-y-0.5">
+                  <Label 
+                    htmlFor="usertype-select-mobile" 
+                    className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
+                  >
+                    <Users className="h-2.5 w-2.5 text-gray-500" />
+                    TIPO DE USUÁRIO
+                  </Label>
+                  <Select
+                    value={selectedUserType}
+                    onValueChange={setSelectedUserType}
+                    disabled={loading}
+                  >
+                    <SelectTrigger 
+                      id="usertype-select-mobile"
+                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
+                    >
+                      <SelectValue placeholder="SELECIONE O TIPO" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
+                      <SelectItem value="medicina" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                        MEDICINA
+                      </SelectItem>
+                      <SelectItem value="enfermagem" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                        ENFERMAGEM
+                      </SelectItem>
+                      <SelectItem value="administrativo" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                        ADMINISTRATIVO
+                      </SelectItem>
+                      <SelectItem value="gestao" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                        GESTÃO
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
