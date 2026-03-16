@@ -127,6 +127,8 @@ export function CreateUserDialog({ open, onOpenChange, onSuccess }: CreateUserDi
   const ROLE_OPTIONS = [
     { value: "medico", label: "Líder", icon: Stethoscope, description: "Edita livremente os pacientes do mapa" },
     { value: "porta", label: "Porta", icon: DoorOpen, description: "Edita apenas pacientes que solicitou leito" },
+    { value: "prescritor", label: "Prescritor", icon: Stethoscope, description: "Acesso para prescrição médica" },
+    { value: "uti", label: "UTI", icon: Stethoscope, description: "Acesso dedicado à UTI" },
     { value: "admin", label: "Coordenador Médico", icon: Shield, description: "Acesso administrativo" },
     { value: "visitante", label: "Visitante", icon: Eye, description: "Apenas visualização" },
   ];

@@ -605,6 +605,8 @@ export default function UserManagementPage() {
                       <SelectContent>
                         <SelectItem value="medico">Líder</SelectItem>
                         <SelectItem value="porta">Porta</SelectItem>
+                        <SelectItem value="prescritor">Prescritor</SelectItem>
+                        <SelectItem value="uti">UTI</SelectItem>
                         <SelectItem value="admin">Coordenador Médico</SelectItem>
                         <SelectItem value="visitante">Visitante</SelectItem>
                       </SelectContent>
