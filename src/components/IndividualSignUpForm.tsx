@@ -369,6 +369,36 @@ export function IndividualSignUpForm({
             </span>
             <span className="text-[9px] text-gray-400 text-center">Edita apenas pacientes que solicitou leito</span>
           </button>
+          <button
+            type="button"
+            onClick={() => setSelectedRole("prescritor")}
+            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+              selectedRole === "prescritor"
+                ? "border-orange-600 bg-orange-50 shadow-md"
+                : "border-gray-200 bg-gray-50 hover:border-gray-300"
+            }`}
+          >
+            <Stethoscope className={`h-5 w-5 ${selectedRole === "prescritor" ? "text-orange-600" : "text-gray-400"}`} />
+            <span className={`text-xs font-bold uppercase ${selectedRole === "prescritor" ? "text-orange-600" : "text-gray-500"}`}>
+              Prescritor
+            </span>
+            <span className="text-[9px] text-gray-400 text-center">Acesso para prescrição médica</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedRole("uti")}
+            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+              selectedRole === "uti"
+                ? "border-rose-600 bg-rose-50 shadow-md"
+                : "border-gray-200 bg-gray-50 hover:border-gray-300"
+            }`}
+          >
+            <Stethoscope className={`h-5 w-5 ${selectedRole === "uti" ? "text-rose-600" : "text-gray-400"}`} />
+            <span className={`text-xs font-bold uppercase ${selectedRole === "uti" ? "text-rose-600" : "text-gray-500"}`}>
+              UTI
+            </span>
+            <span className="text-[9px] text-gray-400 text-center">Acesso dedicado à UTI</span>
+          </button>
         </div>
       </div>
 
