@@ -421,14 +421,16 @@ export function IndividualSignUpForm({
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <Label className="text-[10px] font-semibold text-gray-600 uppercase">CRM *</Label>
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">
+              {selectedRole === "enfermagem" ? "COREN *" : selectedRole === "fisioterapia" ? "CREFITO *" : "CRM *"}
+            </Label>
             <div className="relative">
               <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="text"
                 value={formData.crm}
-                onChange={(e) => setFormData({ ...formData, crm: e.target.value.replace(/\D/g, "") })}
-                placeholder="12345"
+                onChange={(e) => setFormData({ ...formData, crm: e.target.value.toUpperCase().replace(/[^A-Z0-9/\-\s]/g, "") })}
+                placeholder={selectedRole === "enfermagem" ? "COREN-MA 12345" : selectedRole === "fisioterapia" ? "CREFITO-16 12345-F" : "12345"}
                 className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                 disabled={loading}
               />
@@ -436,7 +438,9 @@ export function IndividualSignUpForm({
           </div>
 
           <div className="space-y-1">
-            <Label className="text-[10px] font-semibold text-gray-600 uppercase">RQE (Opcional)</Label>
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">
+              {selectedRole === "enfermagem" || selectedRole === "fisioterapia" ? "Nº REGISTRO (Opcional)" : "RQE (Opcional)"}
+            </Label>
             <div className="relative">
               <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
