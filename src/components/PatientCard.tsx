@@ -350,6 +350,39 @@ const PSM_CYCLE = [
   { text: 'IR PARA', status: 'ir_para' as const, icon: ArrowRightCircle, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/30' },
 ];
 
+// Map internment context to "IR PARA" destination
+const INTERNMENT_TO_DESTINATION: { pattern: string; destination: string }[] = [
+  { pattern: 'UTI', destination: 'IR PARA LEITO DE UTI' },
+  { pattern: 'PSIQUIÁTRICA', destination: 'IR PARA O INSTITUTO VOLTA VIDA (IVV)' },
+  { pattern: 'PSIQUIATRICA', destination: 'IR PARA O INSTITUTO VOLTA VIDA (IVV)' },
+  { pattern: 'ENFERMARIA', destination: 'IR PARA ENFERMARIA' },
+  { pattern: 'CENTRO CIRÚRGICO', destination: 'IR PARA O CENTRO CIRÚRGICO' },
+  { pattern: 'CENTRO CIRURGICO', destination: 'IR PARA O CENTRO CIRÚRGICO' },
+  { pattern: 'HEMODINÂMICA', destination: 'IR PARA A HEMODINÂMICA' },
+  { pattern: 'HEMODINAMICA', destination: 'IR PARA A HEMODINÂMICA' },
+  { pattern: 'IVV', destination: 'IR PARA O INSTITUTO VOLTA VIDA (IVV)' },
+];
+
+const getIrParaDestination = (originalText: string): string => {
+  const upper = originalText.toUpperCase();
+  for (const mapping of INTERNMENT_TO_DESTINATION) {
+    if (upper.includes(mapping.pattern)) {
+      return mapping.destination;
+    }
+  }
+  return 'IR PARA LEITO';
+};
+
+// Extract the base context (e.g. "SOLICITADA INTERNAÇÃO EM UTI") from a pendency with PSM
+const extractBaseContext = (text: string): string => {
+  const upper = text.toUpperCase();
+  // Remove PSM status portions including parentheses
+  let base = upper
+    .replace(/\s*\(?\s*(AGUARDANDO PSM|PSM FAVOR[AÁ]VEL|PSM DESFAVOR[AÁ]VEL)\s*\)?\s*/g, '')
+    .trim();
+  return base;
+};
+
 const isPsmText = (text: string) => {
   const upper = text.toUpperCase();
   return upper.includes('AGUARDANDO PSM') || 
