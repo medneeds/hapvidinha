@@ -116,6 +116,7 @@ export default function UserManagementPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [credentialsOpen, setCredentialsOpen] = useState(false);
