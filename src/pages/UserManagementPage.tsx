@@ -707,6 +707,13 @@ export default function UserManagementPage() {
           onSuccess={fetchUsers}
         />
       )}
+
+      {/* Create User Dialog */}
+      <CreateUserDialog
+        open={createUserOpen}
+        onOpenChange={setCreateUserOpen}
+        onSuccess={fetchUsers}
+      />
     </MainLayout>
   );
 }
