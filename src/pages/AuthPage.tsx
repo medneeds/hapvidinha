@@ -418,7 +418,7 @@ export default function AuthPage() {
                         id="usertype-select-desktop"
                         className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900"
                       >
-                        <SelectValue placeholder="Selecione o tipo de usuário" />
+                        <SelectValue placeholder="Selecione a categoria" />
                       </SelectTrigger>
                       <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                         <SelectItem value="medicina" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
