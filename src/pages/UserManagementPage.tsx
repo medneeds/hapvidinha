@@ -50,10 +50,12 @@ import {
   Building2,
   KeyRound,
   UserCog,
+  UserPlus,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { EditUserCredentialsDialog } from "@/components/EditUserCredentialsDialog";
+import { CreateUserDialog } from "@/components/CreateUserDialog";
 
 interface UserProfile {
   id: string;
@@ -114,6 +116,7 @@ export default function UserManagementPage() {
   const [credentialsOpen, setCredentialsOpen] = useState(false);
   const [userToEdit, setUserToEdit] = useState<UserWithRole | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [createUserOpen, setCreateUserOpen] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -369,6 +372,11 @@ export default function UserManagementPage() {
           <Button variant="outline" onClick={fetchUsers} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
             Atualizar
+          </Button>
+
+          <Button onClick={() => setCreateUserOpen(true)} className="gap-2">
+            <UserPlus className="h-4 w-4" />
+            Criar Usuário
           </Button>
         </div>
 
@@ -699,6 +707,13 @@ export default function UserManagementPage() {
           onSuccess={fetchUsers}
         />
       )}
+
+      {/* Create User Dialog */}
+      <CreateUserDialog
+        open={createUserOpen}
+        onOpenChange={setCreateUserOpen}
+        onSuccess={fetchUsers}
+      />
     </MainLayout>
   );
 }
