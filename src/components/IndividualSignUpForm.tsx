@@ -512,8 +512,8 @@ export function IndividualSignUpForm({
             Requisitos de Segurança
           </p>
           <ul className="text-[10px] text-blue-700 space-y-1 pl-5 list-disc">
-            <li><strong>CRM:</strong> Apenas números</li>
-            <li><strong>RQE:</strong> Apenas números (opcional)</li>
+           <li><strong>{selectedRole === "enfermagem" ? "COREN" : selectedRole === "fisioterapia" ? "CREFITO" : "CRM"}:</strong> Registro profissional obrigatório</li>
+            <li><strong>{selectedRole === "enfermagem" || selectedRole === "fisioterapia" ? "Nº Registro" : "RQE"}:</strong> Apenas números (opcional)</li>
             <li><strong>Usuário:</strong> Apenas letras maiúsculas, números e ponto (.)</li>
             <li><strong>Senha:</strong> Exatamente 6 caracteres</li>
             <li>Deve conter <strong>letras</strong> E <strong>números</strong> (ex: ABC123)</li>
