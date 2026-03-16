@@ -121,9 +121,11 @@ export function IndividualSignUpForm({
   const isMedicina = ["medico", "porta", "prescritor", "uti"].includes(selectedRole);
   const isEnfermagem = selectedRole === "enfermagem";
   const isFisioterapia = selectedRole === "fisioterapia";
+  const isAdministrativo = selectedRole === "recepcao";
+  const isGestao = selectedRole === "admin";
+  const needsCouncil = isMedicina || isEnfermagem || isFisioterapia;
 
-  const categoryLabel = isMedicina ? "Medicina" : isEnfermagem ? "Enfermagem" : "Fisioterapia";
-  const councilLabel = isMedicina ? "CRM" : isEnfermagem ? "COREN" : "CREFITO";
+  const councilLabel = isMedicina ? "CRM" : isEnfermagem ? "COREN" : isFisioterapia ? "CREFITO" : "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
