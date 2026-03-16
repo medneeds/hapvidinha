@@ -711,7 +711,7 @@ export default function AuthPage() {
                     className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
                   >
                     <Users className="h-2.5 w-2.5 text-gray-500" />
-                    TIPO DE USUÁRIO
+                    CATEGORIA DE USUÁRIO
                   </Label>
                   <Select
                     value={selectedUserType}
