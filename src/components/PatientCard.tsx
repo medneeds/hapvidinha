@@ -1669,6 +1669,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           {(() => {
                             const pendenciesText = patient.pendencies?.join(' ').toUpperCase() || '';
                             
+                            // Check for IR PARA - show blue arrow icon (audit approved, waiting transfer)
+                            if (pendenciesText.includes('IR PARA')) {
+                              return (
+                                <div title="Auditoria aprovou — Aguardando transferência">
+                                  <ArrowRightCircle className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                                </div>
+                              );
+                            }
+                            
                             // Check for AGUARDANDO PSM - show clock icon
                             if (pendenciesText.includes('AGUARDANDO PSM')) {
                               return (
@@ -1680,13 +1689,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             
                             // Check for approved internment statuses - show green check
                             if (pendenciesText.includes('PSM FAVORÁVEL') || 
-                                pendenciesText.includes('PSM FAVORAVEL') ||
-                                pendenciesText.includes('IR PARA LEITO DE UTI') ||
-                                pendenciesText.includes('IR PARA LEITO DE ENFERMARIA') ||
-                                pendenciesText.includes('IR PARA O CENTRO CIRÚRGICO') ||
-                                pendenciesText.includes('IR PARA O CENTRO CIRURGICO')) {
+                                pendenciesText.includes('PSM FAVORAVEL')) {
                               return (
-                                <div title="Solicitação de Internação Aprovada">
+                                <div title="PSM Favorável">
                                   <CircleCheck className="h-4 w-4 text-green-500 flex-shrink-0" />
                                 </div>
                               );
