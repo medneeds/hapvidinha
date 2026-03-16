@@ -85,6 +85,11 @@ export function AppSidebar({
   // Check if user is Coordenador Médico (admin role but NOT gestor master)
   const isCoordenadorMedico = role === "admin" && !isGestorMaster;
 
+  // Check if user is Recepção or Enfermagem (view-only roles)
+  const isRecepcao = role === "recepcao";
+  const isEnfermagem = role === "enfermagem";
+  const isViewOnlyRole = isRecepcao || isEnfermagem;
+
   const allMenuItems = [
     {
       title: "MAPA",
