@@ -368,7 +368,7 @@ export function IndividualSignUpForm({
         </div>
 
         {/* Subcategory Roles - Only for Medicina */}
-        {selectedRole === "medico" || selectedRole === "porta" || selectedRole === "prescritor" || selectedRole === "uti" || selectedRole === "recepcao" ? (
+        {selectedRole === "medico" || selectedRole === "porta" || selectedRole === "prescritor" || selectedRole === "uti" ? (
           <>
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">PERFIL DE ACESSO MÉDICO</p>
             <div className="grid grid-cols-2 gap-3">
@@ -377,7 +377,6 @@ export function IndividualSignUpForm({
                 { role: "porta" as const, label: "Porta", icon: DoorOpen, desc: "Edita apenas pacientes que solicitou leito", color: "border-teal-600 bg-teal-50", textColor: "text-teal-600" },
                 { role: "prescritor" as const, label: "Prescritor", icon: Stethoscope, desc: "Acesso para prescrição médica", color: "border-orange-600 bg-orange-50", textColor: "text-orange-600" },
                 { role: "uti" as const, label: "UTI", icon: Stethoscope, desc: "Acesso dedicado à UTI", color: "border-rose-600 bg-rose-50", textColor: "text-rose-600" },
-                { role: "recepcao" as const, label: "Recepção", icon: Eye, desc: "Acompanhamento — sem edição", color: "border-cyan-600 bg-cyan-50", textColor: "text-cyan-600" },
               ] as const).map((opt) => {
                 const Icon = opt.icon;
                 const isSelected = selectedRole === opt.role;
