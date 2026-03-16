@@ -1619,6 +1619,7 @@ export type Database = {
         | "uti"
         | "recepcao"
         | "enfermagem"
+        | "fisioterapia"
       audit_action:
         | "INSERT"
         | "UPDATE"
@@ -1762,6 +1763,7 @@ export const Constants = {
         "uti",
         "recepcao",
         "enfermagem",
+        "fisioterapia",
       ],
       audit_action: ["INSERT", "UPDATE", "DELETE", "SELECT", "LOGIN", "LOGOUT"],
     },

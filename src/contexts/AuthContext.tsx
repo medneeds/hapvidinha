@@ -3,7 +3,7 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
-type UserRole = "admin" | "medico" | "porta" | "visitante" | "prescritor" | "uti" | "recepcao" | "enfermagem" | null;
+type UserRole = "admin" | "medico" | "porta" | "visitante" | "prescritor" | "uti" | "recepcao" | "enfermagem" | "fisioterapia" | null;
 type UserStatus = "pending" | "approved" | "rejected" | null;
 
 interface AuthContextType {
@@ -14,7 +14,7 @@ interface AuthContextType {
   allowedDepartments: string[];
   loading: boolean;
   signIn: (username: string, password: string) => Promise<{ error: any }>;
-  signUp: (username: string, password: string, fullName: string, role?: "admin" | "medico" | "porta" | "visitante" | "prescritor" | "uti" | "recepcao" | "enfermagem") => Promise<{ error: any }>;
+  signUp: (username: string, password: string, fullName: string, role?: "admin" | "medico" | "porta" | "visitante" | "prescritor" | "uti" | "recepcao" | "enfermagem" | "fisioterapia") => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   refreshUserStatus: () => Promise<void>;
 }

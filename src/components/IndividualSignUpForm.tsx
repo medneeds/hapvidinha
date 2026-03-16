@@ -39,8 +39,8 @@ const signUpSchema = z.object({
     .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s.]+$/, { message: "NOME: APENAS LETRAS MAIÚSCULAS" }),
   crm: z.string()
     .trim()
-    .min(4, { message: "CRM OBRIGATÓRIO" })
-    .regex(/^[A-Z0-9/\-\s]+$/, { message: "CRM: APENAS MAIÚSCULAS E NÚMEROS" }),
+    .min(4, { message: "REGISTRO PROFISSIONAL OBRIGATÓRIO" })
+    .regex(/^[A-Z0-9/\-\s]+$/, { message: "REGISTRO: APENAS MAIÚSCULAS E NÚMEROS" }),
   specialty: z.string()
     .trim()
     .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s]*$/, { message: "ESPECIALIDADE: APENAS LETRAS MAIÚSCULAS" })
@@ -95,7 +95,7 @@ export function IndividualSignUpForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const [selectedRole, setSelectedRole] = useState<"medico" | "porta" | "prescritor" | "uti" | "recepcao" | "enfermagem">("medico");
+  const [selectedRole, setSelectedRole] = useState<"medico" | "porta" | "prescritor" | "uti" | "recepcao" | "enfermagem" | "fisioterapia">("medico");
   const [formData, setFormData] = useState({
     fullName: "",
     crm: "",
@@ -338,99 +338,65 @@ export function IndividualSignUpForm({
       {/* Role Selection */}
       <div className="space-y-3 pb-3 border-b border-gray-200">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">CATEGORIA PROFISSIONAL</p>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => setSelectedRole("medico")}
-            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
-              selectedRole === "medico"
-                ? "border-[#013ba6] bg-[#013ba6]/5 shadow-md"
-                : "border-gray-200 bg-gray-50 hover:border-gray-300"
-            }`}
-          >
-            <Stethoscope className={`h-5 w-5 ${selectedRole === "medico" ? "text-[#013ba6]" : "text-gray-400"}`} />
-            <span className={`text-xs font-bold uppercase ${selectedRole === "medico" ? "text-[#013ba6]" : "text-gray-500"}`}>
-              Líder
-            </span>
-            <span className="text-[9px] text-gray-400 text-center">Edita livremente os pacientes do mapa</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedRole("porta")}
-            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
-              selectedRole === "porta"
-                ? "border-teal-600 bg-teal-50 shadow-md"
-                : "border-gray-200 bg-gray-50 hover:border-gray-300"
-            }`}
-          >
-            <DoorOpen className={`h-5 w-5 ${selectedRole === "porta" ? "text-teal-600" : "text-gray-400"}`} />
-            <span className={`text-xs font-bold uppercase ${selectedRole === "porta" ? "text-teal-600" : "text-gray-500"}`}>
-              Porta
-            </span>
-            <span className="text-[9px] text-gray-400 text-center">Edita apenas pacientes que solicitou leito</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedRole("prescritor")}
-            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
-              selectedRole === "prescritor"
-                ? "border-orange-600 bg-orange-50 shadow-md"
-                : "border-gray-200 bg-gray-50 hover:border-gray-300"
-            }`}
-          >
-            <Stethoscope className={`h-5 w-5 ${selectedRole === "prescritor" ? "text-orange-600" : "text-gray-400"}`} />
-            <span className={`text-xs font-bold uppercase ${selectedRole === "prescritor" ? "text-orange-600" : "text-gray-500"}`}>
-              Prescritor
-            </span>
-            <span className="text-[9px] text-gray-400 text-center">Acesso para prescrição médica</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedRole("uti")}
-            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
-              selectedRole === "uti"
-                ? "border-rose-600 bg-rose-50 shadow-md"
-                : "border-gray-200 bg-gray-50 hover:border-gray-300"
-            }`}
-          >
-            <Stethoscope className={`h-5 w-5 ${selectedRole === "uti" ? "text-rose-600" : "text-gray-400"}`} />
-            <span className={`text-xs font-bold uppercase ${selectedRole === "uti" ? "text-rose-600" : "text-gray-500"}`}>
-              UTI
-            </span>
-            <span className="text-[9px] text-gray-400 text-center">Acesso dedicado à UTI</span>
-          </button>
+        
+        {/* Professional Category - Primary (3 columns) */}
+        <div className="grid grid-cols-3 gap-3">
+          {([
+            { role: "medico" as const, label: "Medicina", sublabel: "CRM", icon: Stethoscope, color: "border-[#013ba6] bg-[#013ba6]/5", textColor: "text-[#013ba6]" },
+            { role: "enfermagem" as const, label: "Enfermagem", sublabel: "COREN", icon: User, color: "border-pink-600 bg-pink-50", textColor: "text-pink-600" },
+            { role: "fisioterapia" as const, label: "Fisioterapia", sublabel: "CREFITO", icon: User, color: "border-emerald-600 bg-emerald-50", textColor: "text-emerald-600" },
+          ] as const).map((opt) => {
+            const Icon = opt.icon;
+            const isSelected = selectedRole === opt.role;
+            return (
+              <button
+                key={opt.role}
+                type="button"
+                onClick={() => setSelectedRole(opt.role)}
+                className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all ${
+                  isSelected ? `${opt.color} shadow-md` : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                }`}
+              >
+                <Icon className={`h-5 w-5 ${isSelected ? opt.textColor : "text-gray-400"}`} />
+                <span className={`text-xs font-bold uppercase ${isSelected ? opt.textColor : "text-gray-500"}`}>
+                  {opt.label}
+                </span>
+                <span className="text-[9px] text-gray-400 text-center">{opt.sublabel}</span>
+              </button>
+            );
+          })}
         </div>
+
+        {/* Subcategory Roles */}
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">PERFIL DE ACESSO</p>
         <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => setSelectedRole("recepcao")}
-            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
-              selectedRole === "recepcao"
-                ? "border-cyan-600 bg-cyan-50 shadow-md"
-                : "border-gray-200 bg-gray-50 hover:border-gray-300"
-            }`}
-          >
-            <Eye className={`h-5 w-5 ${selectedRole === "recepcao" ? "text-cyan-600" : "text-gray-400"}`} />
-            <span className={`text-xs font-bold uppercase ${selectedRole === "recepcao" ? "text-cyan-600" : "text-gray-500"}`}>
-              Recepção
-            </span>
-            <span className="text-[9px] text-gray-400 text-center">Acompanhamento — sem edição</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedRole("enfermagem")}
-            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
-              selectedRole === "enfermagem"
-                ? "border-pink-600 bg-pink-50 shadow-md"
-                : "border-gray-200 bg-gray-50 hover:border-gray-300"
-            }`}
-          >
-            <User className={`h-5 w-5 ${selectedRole === "enfermagem" ? "text-pink-600" : "text-gray-400"}`} />
-            <span className={`text-xs font-bold uppercase ${selectedRole === "enfermagem" ? "text-pink-600" : "text-gray-500"}`}>
-              Enfermagem
-            </span>
-            <span className="text-[9px] text-gray-400 text-center">Acompanhamento + Documentos</span>
-          </button>
+          {([
+            { role: "medico" as const, label: "Líder", icon: Stethoscope, desc: "Edita livremente os pacientes do mapa", color: "border-[#013ba6] bg-[#013ba6]/5", textColor: "text-[#013ba6]" },
+            { role: "porta" as const, label: "Porta", icon: DoorOpen, desc: "Edita apenas pacientes que solicitou leito", color: "border-teal-600 bg-teal-50", textColor: "text-teal-600" },
+            { role: "prescritor" as const, label: "Prescritor", icon: Stethoscope, desc: "Acesso para prescrição médica", color: "border-orange-600 bg-orange-50", textColor: "text-orange-600" },
+            { role: "uti" as const, label: "UTI", icon: Stethoscope, desc: "Acesso dedicado à UTI", color: "border-rose-600 bg-rose-50", textColor: "text-rose-600" },
+            { role: "recepcao" as const, label: "Recepção", icon: Eye, desc: "Acompanhamento — sem edição", color: "border-cyan-600 bg-cyan-50", textColor: "text-cyan-600" },
+            { role: "enfermagem" as const, label: "Enfermagem", icon: User, desc: "Acompanhamento + Documentos", color: "border-pink-600 bg-pink-50", textColor: "text-pink-600" },
+          ] as const).map((opt) => {
+            const Icon = opt.icon;
+            const isSelected = selectedRole === opt.role;
+            return (
+              <button
+                key={opt.role}
+                type="button"
+                onClick={() => setSelectedRole(opt.role)}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+                  isSelected ? `${opt.color} shadow-md` : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                }`}
+              >
+                <Icon className={`h-5 w-5 ${isSelected ? opt.textColor : "text-gray-400"}`} />
+                <span className={`text-xs font-bold uppercase ${isSelected ? opt.textColor : "text-gray-500"}`}>
+                  {opt.label}
+                </span>
+                <span className="text-[9px] text-gray-400 text-center">{opt.desc}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -455,14 +421,16 @@ export function IndividualSignUpForm({
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <Label className="text-[10px] font-semibold text-gray-600 uppercase">CRM *</Label>
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">
+              {selectedRole === "enfermagem" ? "COREN *" : selectedRole === "fisioterapia" ? "CREFITO *" : "CRM *"}
+            </Label>
             <div className="relative">
               <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="text"
                 value={formData.crm}
-                onChange={(e) => setFormData({ ...formData, crm: e.target.value.replace(/\D/g, "") })}
-                placeholder="12345"
+                onChange={(e) => setFormData({ ...formData, crm: e.target.value.toUpperCase().replace(/[^A-Z0-9/\-\s]/g, "") })}
+                placeholder={selectedRole === "enfermagem" ? "COREN-MA 12345" : selectedRole === "fisioterapia" ? "CREFITO-16 12345-F" : "12345"}
                 className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                 disabled={loading}
               />
@@ -470,7 +438,9 @@ export function IndividualSignUpForm({
           </div>
 
           <div className="space-y-1">
-            <Label className="text-[10px] font-semibold text-gray-600 uppercase">RQE (Opcional)</Label>
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">
+              {selectedRole === "enfermagem" || selectedRole === "fisioterapia" ? "Nº REGISTRO (Opcional)" : "RQE (Opcional)"}
+            </Label>
             <div className="relative">
               <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -542,8 +512,8 @@ export function IndividualSignUpForm({
             Requisitos de Segurança
           </p>
           <ul className="text-[10px] text-blue-700 space-y-1 pl-5 list-disc">
-            <li><strong>CRM:</strong> Apenas números</li>
-            <li><strong>RQE:</strong> Apenas números (opcional)</li>
+           <li><strong>{selectedRole === "enfermagem" ? "COREN" : selectedRole === "fisioterapia" ? "CREFITO" : "CRM"}:</strong> Registro profissional obrigatório</li>
+            <li><strong>{selectedRole === "enfermagem" || selectedRole === "fisioterapia" ? "Nº Registro" : "RQE"}:</strong> Apenas números (opcional)</li>
             <li><strong>Usuário:</strong> Apenas letras maiúsculas, números e ponto (.)</li>
             <li><strong>Senha:</strong> Exatamente 6 caracteres</li>
             <li>Deve conter <strong>letras</strong> E <strong>números</strong> (ex: ABC123)</li>

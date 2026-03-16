@@ -97,15 +97,16 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
   },
 };
 
-const ROLE_CONFIG: Record<string, { label: string; color: string }> = {
-  admin: { label: "Coordenador Médico", color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
-  medico: { label: "Líder", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
-  porta: { label: "Porta", color: "bg-teal-500/10 text-teal-600 border-teal-500/20" },
-  prescritor: { label: "Prescritor", color: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
-  uti: { label: "UTI", color: "bg-rose-500/10 text-rose-600 border-rose-500/20" },
-  recepcao: { label: "Recepção", color: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20" },
-  enfermagem: { label: "Enfermagem", color: "bg-pink-500/10 text-pink-600 border-pink-500/20" },
-  visitante: { label: "Visitante", color: "bg-gray-500/10 text-gray-600 border-gray-500/20" },
+const ROLE_CONFIG: Record<string, { label: string; color: string; category: string }> = {
+  admin: { label: "Coordenador Médico", color: "bg-purple-500/10 text-purple-600 border-purple-500/20", category: "gestao" },
+  medico: { label: "Líder", color: "bg-blue-500/10 text-blue-600 border-blue-500/20", category: "medicina" },
+  porta: { label: "Porta", color: "bg-teal-500/10 text-teal-600 border-teal-500/20", category: "medicina" },
+  prescritor: { label: "Prescritor", color: "bg-orange-500/10 text-orange-600 border-orange-500/20", category: "medicina" },
+  uti: { label: "UTI", color: "bg-rose-500/10 text-rose-600 border-rose-500/20", category: "medicina" },
+  recepcao: { label: "Recepção", color: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20", category: "administrativo" },
+  enfermagem: { label: "Enfermagem", color: "bg-pink-500/10 text-pink-600 border-pink-500/20", category: "enfermagem" },
+  fisioterapia: { label: "Fisioterapia", color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20", category: "fisioterapia" },
+  visitante: { label: "Visitante", color: "bg-gray-500/10 text-gray-600 border-gray-500/20", category: "outros" },
 };
 
 export default function UserManagementPage() {
@@ -115,6 +116,7 @@ export default function UserManagementPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<UserWithRole | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [credentialsOpen, setCredentialsOpen] = useState(false);
@@ -298,7 +300,10 @@ export default function UserManagementPage() {
     
     const matchesStatus = statusFilter === "all" || u.status === statusFilter;
     
-    return matchesSearch && matchesStatus;
+    const userCategory = u.role ? ROLE_CONFIG[u.role]?.category || "outros" : "outros";
+    const matchesCategory = categoryFilter === "all" || userCategory === categoryFilter;
+    
+    return matchesSearch && matchesStatus && matchesCategory;
   });
 
   const pendingCount = users.filter(u => u.status === "pending").length;
@@ -348,12 +353,41 @@ export default function UserManagementPage() {
           )}
         </div>
 
+        {/* Category Filter Tabs */}
+        <div className="flex flex-wrap gap-2">
+          {[
+            { value: "all", label: "Todos", count: users.length },
+            { value: "medicina", label: "Medicina (CRM)", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "medicina").length },
+            { value: "enfermagem", label: "Enfermagem (COREN)", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "enfermagem").length },
+            { value: "fisioterapia", label: "Fisioterapia (CREFITO)", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "fisioterapia").length },
+            { value: "administrativo", label: "Administrativo", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "administrativo").length },
+            { value: "gestao", label: "Gestão", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "gestao").length },
+          ].map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => setCategoryFilter(tab.value)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
+                categoryFilter === tab.value
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
+              }`}
+            >
+              {tab.label}
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                categoryFilter === tab.value ? "bg-white/20" : "bg-muted"
+              }`}>
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
+
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por nome, email ou CRM..."
+              placeholder="Buscar por nome, email ou registro profissional..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -390,7 +424,7 @@ export default function UserManagementPage() {
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="font-bold uppercase text-xs">Usuário</TableHead>
-                <TableHead className="font-bold uppercase text-xs">CRM</TableHead>
+                <TableHead className="font-bold uppercase text-xs">Registro</TableHead>
                 <TableHead className="font-bold uppercase text-xs">Status</TableHead>
                 <TableHead className="font-bold uppercase text-xs">Papel</TableHead>
                 <TableHead className="font-bold uppercase text-xs">Cadastro</TableHead>
@@ -609,7 +643,10 @@ export default function UserManagementPage() {
                         <SelectItem value="porta">Porta</SelectItem>
                         <SelectItem value="prescritor">Prescritor</SelectItem>
                         <SelectItem value="uti">UTI</SelectItem>
+                        <SelectItem value="enfermagem">Enfermagem</SelectItem>
+                        <SelectItem value="fisioterapia">Fisioterapia</SelectItem>
                         <SelectItem value="admin">Coordenador Médico</SelectItem>
+                        <SelectItem value="recepcao">Recepção</SelectItem>
                         <SelectItem value="visitante">Visitante</SelectItem>
                       </SelectContent>
                     </Select>

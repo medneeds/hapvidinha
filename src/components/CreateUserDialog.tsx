@@ -125,15 +125,18 @@ export function CreateUserDialog({ open, onOpenChange, onSuccess }: CreateUserDi
   };
 
   const ROLE_OPTIONS = [
-    { value: "medico", label: "Líder", icon: Stethoscope, description: "Edita livremente os pacientes do mapa" },
-    { value: "porta", label: "Porta", icon: DoorOpen, description: "Edita apenas pacientes que solicitou leito" },
-    { value: "prescritor", label: "Prescritor", icon: Stethoscope, description: "Acesso para prescrição médica" },
-    { value: "uti", label: "UTI", icon: Stethoscope, description: "Acesso dedicado à UTI" },
-    { value: "recepcao", label: "Recepção", icon: Eye, description: "Acompanhamento — sem edição" },
-    { value: "enfermagem", label: "Enfermagem", icon: User, description: "Acompanhamento + Documentos de Enfermagem" },
-    { value: "admin", label: "Coordenador Médico", icon: Shield, description: "Acesso administrativo" },
-    { value: "visitante", label: "Visitante", icon: Eye, description: "Apenas visualização" },
+    { value: "medico", label: "Líder", icon: Stethoscope, description: "Edita livremente os pacientes do mapa", regLabel: "CRM" },
+    { value: "porta", label: "Porta", icon: DoorOpen, description: "Edita apenas pacientes que solicitou leito", regLabel: "CRM" },
+    { value: "prescritor", label: "Prescritor", icon: Stethoscope, description: "Acesso para prescrição médica", regLabel: "CRM" },
+    { value: "uti", label: "UTI", icon: Stethoscope, description: "Acesso dedicado à UTI", regLabel: "CRM" },
+    { value: "enfermagem", label: "Enfermagem", icon: User, description: "Acompanhamento + Documentos", regLabel: "COREN" },
+    { value: "fisioterapia", label: "Fisioterapia", icon: User, description: "Reabilitação e fisioterapia", regLabel: "CREFITO" },
+    { value: "recepcao", label: "Recepção", icon: Eye, description: "Acompanhamento — sem edição", regLabel: "" },
+    { value: "admin", label: "Coordenador", icon: Shield, description: "Acesso administrativo", regLabel: "CRM" },
+    { value: "visitante", label: "Visitante", icon: Eye, description: "Apenas visualização", regLabel: "" },
   ];
+
+  const currentRegLabel = ROLE_OPTIONS.find(r => r.value === formData.role)?.regLabel || "CRM";
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -221,7 +224,7 @@ export function CreateUserDialog({ open, onOpenChange, onSuccess }: CreateUserDi
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-semibold text-muted-foreground uppercase">CRM</Label>
+                  <Label className="text-[10px] font-semibold text-muted-foreground uppercase">{currentRegLabel || "Registro"}</Label>
                   <div className="relative">
                     <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
