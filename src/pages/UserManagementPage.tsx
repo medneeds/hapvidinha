@@ -353,12 +353,41 @@ export default function UserManagementPage() {
           )}
         </div>
 
+        {/* Category Filter Tabs */}
+        <div className="flex flex-wrap gap-2">
+          {[
+            { value: "all", label: "Todos", count: users.length },
+            { value: "medicina", label: "Medicina (CRM)", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "medicina").length },
+            { value: "enfermagem", label: "Enfermagem (COREN)", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "enfermagem").length },
+            { value: "fisioterapia", label: "Fisioterapia (CREFITO)", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "fisioterapia").length },
+            { value: "administrativo", label: "Administrativo", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "administrativo").length },
+            { value: "gestao", label: "Gestão", count: users.filter(u => u.role && ROLE_CONFIG[u.role]?.category === "gestao").length },
+          ].map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => setCategoryFilter(tab.value)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
+                categoryFilter === tab.value
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
+              }`}
+            >
+              {tab.label}
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                categoryFilter === tab.value ? "bg-white/20" : "bg-muted"
+              }`}>
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
+
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por nome, email ou CRM..."
+              placeholder="Buscar por nome, email ou registro profissional..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
