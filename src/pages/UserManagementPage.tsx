@@ -300,7 +300,10 @@ export default function UserManagementPage() {
     
     const matchesStatus = statusFilter === "all" || u.status === statusFilter;
     
-    return matchesSearch && matchesStatus;
+    const userCategory = u.role ? ROLE_CONFIG[u.role]?.category || "outros" : "outros";
+    const matchesCategory = categoryFilter === "all" || userCategory === categoryFilter;
+    
+    return matchesSearch && matchesStatus && matchesCategory;
   });
 
   const pendingCount = users.filter(u => u.status === "pending").length;
