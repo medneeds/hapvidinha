@@ -85,6 +85,16 @@ const ROLE_CONFIG: Record<string, { label: string; color: string; icon: React.Re
     color: "bg-rose-500/10 text-rose-600 border-rose-500/20",
     icon: <Stethoscope className="h-3 w-3" />
   },
+  recepcao: { 
+    label: "Recepção", 
+    color: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20",
+    icon: <User className="h-3 w-3" />
+  },
+  enfermagem: { 
+    label: "Enfermagem", 
+    color: "bg-pink-500/10 text-pink-600 border-pink-500/20",
+    icon: <User className="h-3 w-3" />
+  },
   visitante: { 
     label: "Visitante", 
     color: "bg-gray-500/10 text-gray-600 border-gray-500/20",
