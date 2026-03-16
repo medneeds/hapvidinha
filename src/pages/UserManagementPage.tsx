@@ -115,6 +115,7 @@ export default function UserManagementPage() {
   const [credentialsOpen, setCredentialsOpen] = useState(false);
   const [userToEdit, setUserToEdit] = useState<UserWithRole | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [createUserOpen, setCreateUserOpen] = useState(false);
 
   useEffect(() => {
     fetchUsers();
