@@ -54,6 +54,7 @@ export default function AuthPage() {
   const [selectedState, setSelectedState] = useState<string>("");
   const [selectedHospitalId, setSelectedHospitalId] = useState<string>("");
   const [selectedDepartment, setSelectedDepartment] = useState<Department>("URGÊNCIA E EMERGÊNCIA ADULTO");
+  const [selectedUserType, setSelectedUserType] = useState<string>("");
 
   // Filter hospitals by selected state
   const filteredHospitals = selectedState 
