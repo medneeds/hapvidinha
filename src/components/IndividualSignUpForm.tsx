@@ -141,7 +141,7 @@ export function IndividualSignUpForm({
     if (needsCouncil && (!formData.crm || formData.crm.trim().length < 4)) {
       toast.error("REGISTRO PROFISSIONAL OBRIGATÓRIO (MIN. 4 CARACTERES)");
       return;
-
+    }
     setLoading(true);
 
     try {
