@@ -643,7 +643,10 @@ export default function UserManagementPage() {
                         <SelectItem value="porta">Porta</SelectItem>
                         <SelectItem value="prescritor">Prescritor</SelectItem>
                         <SelectItem value="uti">UTI</SelectItem>
+                        <SelectItem value="enfermagem">Enfermagem</SelectItem>
+                        <SelectItem value="fisioterapia">Fisioterapia</SelectItem>
                         <SelectItem value="admin">Coordenador Médico</SelectItem>
+                        <SelectItem value="recepcao">Recepção</SelectItem>
                         <SelectItem value="visitante">Visitante</SelectItem>
                       </SelectContent>
                     </Select>

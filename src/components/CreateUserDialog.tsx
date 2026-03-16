@@ -224,7 +224,7 @@ export function CreateUserDialog({ open, onOpenChange, onSuccess }: CreateUserDi
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-semibold text-muted-foreground uppercase">CRM</Label>
+                  <Label className="text-[10px] font-semibold text-muted-foreground uppercase">{currentRegLabel || "Registro"}</Label>
                   <div className="relative">
                     <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
