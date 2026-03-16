@@ -71,6 +71,10 @@ export default function AuthPage() {
     e.preventDefault();
 
     // Validate selections
+    if (!selectedUserType) {
+      toast.error("SELECIONE O TIPO DE USUÁRIO");
+      return;
+    }
     if (!selectedState) {
       toast.error("SELECIONE UM ESTADO");
       return;
