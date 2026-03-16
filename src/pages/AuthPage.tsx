@@ -407,7 +407,7 @@ export default function AuthPage() {
                   {/* User Type Selection */}
                   <div className="group">
                     <Label htmlFor="usertype-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
-                      Tipo de Usuário
+                      Categoria de Usuário
                     </Label>
                     <Select
                       value={selectedUserType}
