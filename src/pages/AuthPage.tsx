@@ -734,6 +734,9 @@ export default function AuthPage() {
                       <SelectItem value="enfermagem" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                         ENFERMAGEM
                       </SelectItem>
+                      <SelectItem value="fisioterapia" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                        FISIOTERAPIA
+                      </SelectItem>
                       <SelectItem value="administrativo" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                         ADMINISTRATIVO
                       </SelectItem>
