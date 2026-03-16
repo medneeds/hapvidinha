@@ -372,6 +372,11 @@ export default function UserManagementPage() {
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
+
+          <Button onClick={() => setCreateUserOpen(true)} className="gap-2">
+            <UserPlus className="h-4 w-4" />
+            Criar Usuário
+          </Button>
         </div>
 
         {/* Users Table */}
