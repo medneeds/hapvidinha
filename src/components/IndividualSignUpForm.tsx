@@ -550,27 +550,47 @@ export function IndividualSignUpForm({
           </div>
         </div>
 
-        {/* Especialidade / Área de atuação */}
-        <div className="space-y-1">
-          <Label className="text-[10px] font-semibold text-gray-600 uppercase">
-            {isMedicina ? "Especialidade Médica (Opcional)" : "Área de Atuação (Opcional)"}
-          </Label>
-          <div className="relative">
-            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              type="text"
-              value={formData.specialty}
-              onChange={(e) => setFormData({ ...formData, specialty: e.target.value.toUpperCase() })}
-              placeholder={
-                isMedicina ? "CLÍNICO GERAL, CARDIOLOGISTA..." 
-                : isEnfermagem ? "EMERGÊNCIA, UTI, CENTRO CIRÚRGICO..." 
-                : "TRAUMATO, NEURO, RESPIRATÓRIA..."
-              }
-              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
-              disabled={loading}
-            />
+        {/* Especialidade / Área de atuação — only for clinical categories */}
+        {needsCouncil && (
+          <div className="space-y-1">
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">
+              {isMedicina ? "Especialidade Médica (Opcional)" : "Área de Atuação (Opcional)"}
+            </Label>
+            <div className="relative">
+              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                value={formData.specialty}
+                onChange={(e) => setFormData({ ...formData, specialty: e.target.value.toUpperCase() })}
+                placeholder={
+                  isMedicina ? "CLÍNICO GERAL, CARDIOLOGISTA..." 
+                  : isEnfermagem ? "EMERGÊNCIA, UTI, CENTRO CIRÚRGICO..." 
+                  : "TRAUMATO, NEURO, RESPIRATÓRIA..."
+                }
+                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
+                disabled={loading}
+              />
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Cargo — only for administrative categories */}
+        {(isAdministrativo || isGestao) && (
+          <div className="space-y-1">
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">Cargo / Função (Opcional)</Label>
+            <div className="relative">
+              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                value={formData.specialty}
+                onChange={(e) => setFormData({ ...formData, specialty: e.target.value.toUpperCase() })}
+                placeholder={isGestao ? "COORDENADOR MÉDICO, DIRETOR..." : "RECEPCIONISTA, AUXILIAR ADMINISTRATIVO..."}
+                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
+                disabled={loading}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ═══════ CREDENCIAIS DE ACESSO ═══════ */}
