@@ -23,7 +23,7 @@ import {
   Mail,
   DoorOpen,
   Heart,
-  Activity,
+  Dumbbell,
 } from "lucide-react";
 import {
   Select,
