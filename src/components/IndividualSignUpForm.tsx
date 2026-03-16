@@ -421,19 +421,33 @@ export function IndividualSignUpForm({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <div className="space-y-1">
-            <Label className="text-[10px] font-semibold text-gray-600 uppercase">
-              {selectedRole === "enfermagem" ? "COREN *" : selectedRole === "fisioterapia" ? "CREFITO *" : "CRM *"}
-            </Label>
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">Conselho *</Label>
+            <Select
+              value={selectedRole === "enfermagem" ? "COREN" : selectedRole === "fisioterapia" ? "CREFITO" : "CRM"}
+              disabled
+            >
+              <SelectTrigger className="h-9 bg-gray-50 border border-gray-200 rounded-lg text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="CRM">CRM</SelectItem>
+                <SelectItem value="COREN">COREN</SelectItem>
+                <SelectItem value="CREFITO">CREFITO</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">Nº Registro *</Label>
             <div className="relative">
-              <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="text"
                 value={formData.crm}
                 onChange={(e) => setFormData({ ...formData, crm: e.target.value.toUpperCase().replace(/[^A-Z0-9/\-\s]/g, "") })}
                 placeholder={selectedRole === "enfermagem" ? "COREN-MA 12345" : selectedRole === "fisioterapia" ? "CREFITO-16 12345-F" : "12345"}
-                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                className="h-9 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                 disabled={loading}
               />
             </div>
@@ -441,16 +455,15 @@ export function IndividualSignUpForm({
 
           <div className="space-y-1">
             <Label className="text-[10px] font-semibold text-gray-600 uppercase">
-              {selectedRole === "enfermagem" || selectedRole === "fisioterapia" ? "Nº REGISTRO (Opcional)" : "RQE (Opcional)"}
+              {selectedRole === "enfermagem" || selectedRole === "fisioterapia" ? "Nº Auxiliar" : "RQE"} (Opcional)
             </Label>
             <div className="relative">
-              <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="text"
                 value={formData.rqe}
                 onChange={(e) => setFormData({ ...formData, rqe: e.target.value.replace(/\D/g, "") })}
                 placeholder="12345"
-                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                className="h-9 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                 disabled={loading}
               />
             </div>
