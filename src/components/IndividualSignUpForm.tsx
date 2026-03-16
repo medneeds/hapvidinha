@@ -357,11 +357,13 @@ export function IndividualSignUpForm({
       <div className="space-y-3 pb-3 border-b border-gray-200">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">CATEGORIA PROFISSIONAL</p>
         
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-5 gap-2">
           {([
             { role: "medico" as const, label: "Medicina", sublabel: "CRM", icon: Stethoscope, color: "border-[#013ba6] bg-[#013ba6]/5", textColor: "text-[#013ba6]" },
             { role: "enfermagem" as const, label: "Enfermagem", sublabel: "COREN", icon: Heart, color: "border-pink-600 bg-pink-50", textColor: "text-pink-600" },
             { role: "fisioterapia" as const, label: "Fisioterapia", sublabel: "CREFITO", icon: Dumbbell, color: "border-emerald-600 bg-emerald-50", textColor: "text-emerald-600" },
+            { role: "recepcao" as const, label: "Administrativo", sublabel: "Recepção", icon: ClipboardList, color: "border-cyan-600 bg-cyan-50", textColor: "text-cyan-600" },
+            { role: "admin" as const, label: "Gestão", sublabel: "Coordenação", icon: Crown, color: "border-violet-600 bg-violet-50", textColor: "text-violet-600" },
           ] as const).map((opt) => {
             const Icon = opt.icon;
             const isCategorySelected = opt.role === "medico" 
@@ -372,15 +374,15 @@ export function IndividualSignUpForm({
                 key={opt.role}
                 type="button"
                 onClick={() => setSelectedRole(opt.role)}
-                className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all ${
+                className={`flex flex-col items-center gap-1 p-2.5 rounded-xl border-2 transition-all ${
                   isCategorySelected ? `${opt.color} shadow-md` : "border-gray-200 bg-gray-50 hover:border-gray-300"
                 }`}
               >
-                <Icon className={`h-5 w-5 ${isCategorySelected ? opt.textColor : "text-gray-400"}`} />
-                <span className={`text-xs font-bold uppercase ${isCategorySelected ? opt.textColor : "text-gray-500"}`}>
+                <Icon className={`h-4 w-4 ${isCategorySelected ? opt.textColor : "text-gray-400"}`} />
+                <span className={`text-[10px] font-bold uppercase leading-tight text-center ${isCategorySelected ? opt.textColor : "text-gray-500"}`}>
                   {opt.label}
                 </span>
-                <span className="text-[9px] text-gray-400 text-center">{opt.sublabel}</span>
+                <span className="text-[8px] text-gray-400 text-center leading-tight">{opt.sublabel}</span>
               </button>
             );
           })}
