@@ -604,7 +604,7 @@ export function IndividualSignUpForm({
             Requisitos de Segurança
           </p>
           <ul className="text-[10px] text-blue-700 space-y-1 pl-5 list-disc">
-            <li><strong>{councilLabel}:</strong> Registro profissional obrigatório</li>
+            {needsCouncil && <li><strong>{councilLabel}:</strong> Registro profissional obrigatório</li>}
             <li><strong>Usuário:</strong> Apenas letras maiúsculas, números e ponto (.)</li>
             <li><strong>Senha:</strong> Exatamente 6 caracteres com letras E números (ex: ABC123)</li>
             <li>Todos os campos marcados com <strong>*</strong> são obrigatórios</li>
