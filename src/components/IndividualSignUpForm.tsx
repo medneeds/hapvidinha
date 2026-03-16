@@ -24,6 +24,8 @@ import {
   DoorOpen,
   Heart,
   Dumbbell,
+  ClipboardList,
+  Crown,
 } from "lucide-react";
 import {
   Select,
@@ -41,8 +43,9 @@ const signUpSchema = z.object({
     .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s.]+$/, { message: "NOME: APENAS LETRAS MAIÚSCULAS" }),
   crm: z.string()
     .trim()
-    .min(4, { message: "REGISTRO PROFISSIONAL OBRIGATÓRIO" })
-    .regex(/^[A-Z0-9/\-\s]+$/, { message: "REGISTRO: APENAS MAIÚSCULAS E NÚMEROS" }),
+    .regex(/^[A-Z0-9/\-\s]*$/, { message: "REGISTRO: APENAS MAIÚSCULAS E NÚMEROS" })
+    .optional()
+    .or(z.literal("")),
   specialty: z.string()
     .trim()
     .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s]*$/, { message: "ESPECIALIDADE: APENAS LETRAS MAIÚSCULAS" })
@@ -97,7 +100,7 @@ export function IndividualSignUpForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const [selectedRole, setSelectedRole] = useState<"medico" | "porta" | "prescritor" | "uti" | "recepcao" | "enfermagem" | "fisioterapia">("medico");
+  const [selectedRole, setSelectedRole] = useState<"medico" | "porta" | "prescritor" | "uti" | "recepcao" | "enfermagem" | "fisioterapia" | "admin">("medico");
   const [formData, setFormData] = useState({
     fullName: "",
     crm: "",
@@ -118,9 +121,11 @@ export function IndividualSignUpForm({
   const isMedicina = ["medico", "porta", "prescritor", "uti"].includes(selectedRole);
   const isEnfermagem = selectedRole === "enfermagem";
   const isFisioterapia = selectedRole === "fisioterapia";
+  const isAdministrativo = selectedRole === "recepcao";
+  const isGestao = selectedRole === "admin";
+  const needsCouncil = isMedicina || isEnfermagem || isFisioterapia;
 
-  const categoryLabel = isMedicina ? "Medicina" : isEnfermagem ? "Enfermagem" : "Fisioterapia";
-  const councilLabel = isMedicina ? "CRM" : isEnfermagem ? "COREN" : "CREFITO";
+  const councilLabel = isMedicina ? "CRM" : isEnfermagem ? "COREN" : isFisioterapia ? "CREFITO" : "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,7 +138,10 @@ export function IndividualSignUpForm({
       toast.error("SELECIONE UMA UNIDADE HOSPITALAR");
       return;
     }
-
+    if (needsCouncil && (!formData.crm || formData.crm.trim().length < 4)) {
+      toast.error("REGISTRO PROFISSIONAL OBRIGATÓRIO (MIN. 4 CARACTERES)");
+      return;
+    }
     setLoading(true);
 
     try {
@@ -349,11 +357,13 @@ export function IndividualSignUpForm({
       <div className="space-y-3 pb-3 border-b border-gray-200">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">CATEGORIA PROFISSIONAL</p>
         
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-5 gap-2">
           {([
             { role: "medico" as const, label: "Medicina", sublabel: "CRM", icon: Stethoscope, color: "border-[#013ba6] bg-[#013ba6]/5", textColor: "text-[#013ba6]" },
             { role: "enfermagem" as const, label: "Enfermagem", sublabel: "COREN", icon: Heart, color: "border-pink-600 bg-pink-50", textColor: "text-pink-600" },
             { role: "fisioterapia" as const, label: "Fisioterapia", sublabel: "CREFITO", icon: Dumbbell, color: "border-emerald-600 bg-emerald-50", textColor: "text-emerald-600" },
+            { role: "recepcao" as const, label: "Administrativo", sublabel: "Recepção", icon: ClipboardList, color: "border-cyan-600 bg-cyan-50", textColor: "text-cyan-600" },
+            { role: "admin" as const, label: "Gestão", sublabel: "Coordenação", icon: Crown, color: "border-violet-600 bg-violet-50", textColor: "text-violet-600" },
           ] as const).map((opt) => {
             const Icon = opt.icon;
             const isCategorySelected = opt.role === "medico" 
@@ -364,15 +374,15 @@ export function IndividualSignUpForm({
                 key={opt.role}
                 type="button"
                 onClick={() => setSelectedRole(opt.role)}
-                className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all ${
+                className={`flex flex-col items-center gap-1 p-2.5 rounded-xl border-2 transition-all ${
                   isCategorySelected ? `${opt.color} shadow-md` : "border-gray-200 bg-gray-50 hover:border-gray-300"
                 }`}
               >
-                <Icon className={`h-5 w-5 ${isCategorySelected ? opt.textColor : "text-gray-400"}`} />
-                <span className={`text-xs font-bold uppercase ${isCategorySelected ? opt.textColor : "text-gray-500"}`}>
+                <Icon className={`h-4 w-4 ${isCategorySelected ? opt.textColor : "text-gray-400"}`} />
+                <span className={`text-[10px] font-bold uppercase leading-tight text-center ${isCategorySelected ? opt.textColor : "text-gray-500"}`}>
                   {opt.label}
                 </span>
-                <span className="text-[9px] text-gray-400 text-center">{opt.sublabel}</span>
+                <span className="text-[8px] text-gray-400 text-center leading-tight">{opt.sublabel}</span>
               </button>
             );
           })}
@@ -416,7 +426,7 @@ export function IndividualSignUpForm({
       {/* ═══════ DADOS PROFISSIONAIS — Adapta por categoria ═══════ */}
       <div className="space-y-3 pb-3 border-b border-gray-200">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-          {isMedicina ? "DADOS MÉDICOS" : isEnfermagem ? "DADOS DE ENFERMAGEM" : "DADOS DE FISIOTERAPIA"}
+          {isMedicina ? "DADOS MÉDICOS" : isEnfermagem ? "DADOS DE ENFERMAGEM" : isFisioterapia ? "DADOS DE FISIOTERAPIA" : isAdministrativo ? "DADOS ADMINISTRATIVOS" : "DADOS DE GESTÃO"}
         </p>
         
         {/* Nome Completo */}
@@ -540,27 +550,47 @@ export function IndividualSignUpForm({
           </div>
         </div>
 
-        {/* Especialidade / Área de atuação */}
-        <div className="space-y-1">
-          <Label className="text-[10px] font-semibold text-gray-600 uppercase">
-            {isMedicina ? "Especialidade Médica (Opcional)" : "Área de Atuação (Opcional)"}
-          </Label>
-          <div className="relative">
-            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              type="text"
-              value={formData.specialty}
-              onChange={(e) => setFormData({ ...formData, specialty: e.target.value.toUpperCase() })}
-              placeholder={
-                isMedicina ? "CLÍNICO GERAL, CARDIOLOGISTA..." 
-                : isEnfermagem ? "EMERGÊNCIA, UTI, CENTRO CIRÚRGICO..." 
-                : "TRAUMATO, NEURO, RESPIRATÓRIA..."
-              }
-              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
-              disabled={loading}
-            />
+        {/* Especialidade / Área de atuação — only for clinical categories */}
+        {needsCouncil && (
+          <div className="space-y-1">
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">
+              {isMedicina ? "Especialidade Médica (Opcional)" : "Área de Atuação (Opcional)"}
+            </Label>
+            <div className="relative">
+              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                value={formData.specialty}
+                onChange={(e) => setFormData({ ...formData, specialty: e.target.value.toUpperCase() })}
+                placeholder={
+                  isMedicina ? "CLÍNICO GERAL, CARDIOLOGISTA..." 
+                  : isEnfermagem ? "EMERGÊNCIA, UTI, CENTRO CIRÚRGICO..." 
+                  : "TRAUMATO, NEURO, RESPIRATÓRIA..."
+                }
+                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
+                disabled={loading}
+              />
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Cargo — only for administrative categories */}
+        {(isAdministrativo || isGestao) && (
+          <div className="space-y-1">
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">Cargo / Função (Opcional)</Label>
+            <div className="relative">
+              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                value={formData.specialty}
+                onChange={(e) => setFormData({ ...formData, specialty: e.target.value.toUpperCase() })}
+                placeholder={isGestao ? "COORDENADOR MÉDICO, DIRETOR..." : "RECEPCIONISTA, AUXILIAR ADMINISTRATIVO..."}
+                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
+                disabled={loading}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ═══════ CREDENCIAIS DE ACESSO ═══════ */}
@@ -574,7 +604,7 @@ export function IndividualSignUpForm({
             Requisitos de Segurança
           </p>
           <ul className="text-[10px] text-blue-700 space-y-1 pl-5 list-disc">
-            <li><strong>{councilLabel}:</strong> Registro profissional obrigatório</li>
+            {needsCouncil && <li><strong>{councilLabel}:</strong> Registro profissional obrigatório</li>}
             <li><strong>Usuário:</strong> Apenas letras maiúsculas, números e ponto (.)</li>
             <li><strong>Senha:</strong> Exatamente 6 caracteres com letras E números (ex: ABC123)</li>
             <li>Todos os campos marcados com <strong>*</strong> são obrigatórios</li>
