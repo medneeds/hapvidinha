@@ -400,6 +400,38 @@ export function IndividualSignUpForm({
             <span className="text-[9px] text-gray-400 text-center">Acesso dedicado à UTI</span>
           </button>
         </div>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setSelectedRole("recepcao")}
+            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+              selectedRole === "recepcao"
+                ? "border-cyan-600 bg-cyan-50 shadow-md"
+                : "border-gray-200 bg-gray-50 hover:border-gray-300"
+            }`}
+          >
+            <Eye className={`h-5 w-5 ${selectedRole === "recepcao" ? "text-cyan-600" : "text-gray-400"}`} />
+            <span className={`text-xs font-bold uppercase ${selectedRole === "recepcao" ? "text-cyan-600" : "text-gray-500"}`}>
+              Recepção
+            </span>
+            <span className="text-[9px] text-gray-400 text-center">Acompanhamento — sem edição</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelectedRole("enfermagem")}
+            className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+              selectedRole === "enfermagem"
+                ? "border-pink-600 bg-pink-50 shadow-md"
+                : "border-gray-200 bg-gray-50 hover:border-gray-300"
+            }`}
+          >
+            <User className={`h-5 w-5 ${selectedRole === "enfermagem" ? "text-pink-600" : "text-gray-400"}`} />
+            <span className={`text-xs font-bold uppercase ${selectedRole === "enfermagem" ? "text-pink-600" : "text-gray-500"}`}>
+              Enfermagem
+            </span>
+            <span className="text-[9px] text-gray-400 text-center">Acompanhamento + Documentos</span>
+          </button>
+        </div>
       </div>
 
       {/* Personal Data Section */}
