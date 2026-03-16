@@ -426,7 +426,7 @@ export function IndividualSignUpForm({
       {/* ═══════ DADOS PROFISSIONAIS — Adapta por categoria ═══════ */}
       <div className="space-y-3 pb-3 border-b border-gray-200">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-          {isMedicina ? "DADOS MÉDICOS" : isEnfermagem ? "DADOS DE ENFERMAGEM" : "DADOS DE FISIOTERAPIA"}
+          {isMedicina ? "DADOS MÉDICOS" : isEnfermagem ? "DADOS DE ENFERMAGEM" : isFisioterapia ? "DADOS DE FISIOTERAPIA" : isAdministrativo ? "DADOS ADMINISTRATIVOS" : "DADOS DE GESTÃO"}
         </p>
         
         {/* Nome Completo */}
