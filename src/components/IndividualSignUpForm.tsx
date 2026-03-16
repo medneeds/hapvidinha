@@ -353,7 +353,7 @@ export function IndividualSignUpForm({
           {([
             { role: "medico" as const, label: "Medicina", sublabel: "CRM", icon: Stethoscope, color: "border-[#013ba6] bg-[#013ba6]/5", textColor: "text-[#013ba6]" },
             { role: "enfermagem" as const, label: "Enfermagem", sublabel: "COREN", icon: Heart, color: "border-pink-600 bg-pink-50", textColor: "text-pink-600" },
-            { role: "fisioterapia" as const, label: "Fisioterapia", sublabel: "CREFITO", icon: Activity, color: "border-emerald-600 bg-emerald-50", textColor: "text-emerald-600" },
+            { role: "fisioterapia" as const, label: "Fisioterapia", sublabel: "CREFITO", icon: Dumbbell, color: "border-emerald-600 bg-emerald-50", textColor: "text-emerald-600" },
           ] as const).map((opt) => {
             const Icon = opt.icon;
             const isCategorySelected = opt.role === "medico" 
