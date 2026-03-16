@@ -1716,7 +1716,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             if (pendenciesText.includes('IR PARA')) {
                               return (
                                 <div title="Auditoria aprovou — Aguardando transferência">
-                                  <ArrowRightCircle className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                                  <ArrowUpCircle className="h-4 w-4 text-blue-500 flex-shrink-0" />
                                 </div>
                               );
                             }
