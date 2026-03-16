@@ -24,6 +24,8 @@ import {
   DoorOpen,
   Heart,
   Dumbbell,
+  ClipboardList,
+  Crown,
 } from "lucide-react";
 import {
   Select,
