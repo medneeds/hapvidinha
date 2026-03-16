@@ -1617,6 +1617,8 @@ export type Database = {
         | "visitante"
         | "prescritor"
         | "uti"
+        | "recepcao"
+        | "enfermagem"
       audit_action:
         | "INSERT"
         | "UPDATE"
@@ -1751,7 +1753,16 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "medico", "porta", "visitante", "prescritor", "uti"],
+      app_role: [
+        "admin",
+        "medico",
+        "porta",
+        "visitante",
+        "prescritor",
+        "uti",
+        "recepcao",
+        "enfermagem",
+      ],
       audit_action: ["INSERT", "UPDATE", "DELETE", "SELECT", "LOGIN", "LOGOUT"],
     },
   },
