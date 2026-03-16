@@ -72,7 +72,7 @@ export default function AuthPage() {
 
     // Validate selections
     if (!selectedUserType) {
-      toast.error("SELECIONE O TIPO DE USUÁRIO");
+      toast.error("SELECIONE A CATEGORIA DE USUÁRIO");
       return;
     }
     if (!selectedState) {
