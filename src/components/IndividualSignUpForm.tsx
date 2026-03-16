@@ -22,6 +22,8 @@ import {
   Shield,
   Mail,
   DoorOpen,
+  Heart,
+  Activity,
 } from "lucide-react";
 import {
   Select,
@@ -111,6 +113,14 @@ export function IndividualSignUpForm({
   const filteredHospitals = selectedState 
     ? hospitals.filter(h => h.state_id === selectedState)
     : [];
+
+  // Determine category from role
+  const isMedicina = ["medico", "porta", "prescritor", "uti"].includes(selectedRole);
+  const isEnfermagem = selectedRole === "enfermagem";
+  const isFisioterapia = selectedRole === "fisioterapia";
+
+  const categoryLabel = isMedicina ? "Medicina" : isEnfermagem ? "Enfermagem" : "Fisioterapia";
+  const councilLabel = isMedicina ? "CRM" : isEnfermagem ? "COREN" : "CREFITO";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -335,30 +345,31 @@ export function IndividualSignUpForm({
         </div>
       </div>
 
-      {/* Role Selection */}
+      {/* ═══════ CATEGORIA PROFISSIONAL ═══════ */}
       <div className="space-y-3 pb-3 border-b border-gray-200">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">CATEGORIA PROFISSIONAL</p>
         
-        {/* Professional Category - Primary (3 columns) */}
         <div className="grid grid-cols-3 gap-3">
           {([
             { role: "medico" as const, label: "Medicina", sublabel: "CRM", icon: Stethoscope, color: "border-[#013ba6] bg-[#013ba6]/5", textColor: "text-[#013ba6]" },
-            { role: "enfermagem" as const, label: "Enfermagem", sublabel: "COREN", icon: User, color: "border-pink-600 bg-pink-50", textColor: "text-pink-600" },
-            { role: "fisioterapia" as const, label: "Fisioterapia", sublabel: "CREFITO", icon: User, color: "border-emerald-600 bg-emerald-50", textColor: "text-emerald-600" },
+            { role: "enfermagem" as const, label: "Enfermagem", sublabel: "COREN", icon: Heart, color: "border-pink-600 bg-pink-50", textColor: "text-pink-600" },
+            { role: "fisioterapia" as const, label: "Fisioterapia", sublabel: "CREFITO", icon: Activity, color: "border-emerald-600 bg-emerald-50", textColor: "text-emerald-600" },
           ] as const).map((opt) => {
             const Icon = opt.icon;
-            const isSelected = selectedRole === opt.role;
+            const isCategorySelected = opt.role === "medico" 
+              ? isMedicina 
+              : selectedRole === opt.role;
             return (
               <button
                 key={opt.role}
                 type="button"
                 onClick={() => setSelectedRole(opt.role)}
                 className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all ${
-                  isSelected ? `${opt.color} shadow-md` : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                  isCategorySelected ? `${opt.color} shadow-md` : "border-gray-200 bg-gray-50 hover:border-gray-300"
                 }`}
               >
-                <Icon className={`h-5 w-5 ${isSelected ? opt.textColor : "text-gray-400"}`} />
-                <span className={`text-xs font-bold uppercase ${isSelected ? opt.textColor : "text-gray-500"}`}>
+                <Icon className={`h-5 w-5 ${isCategorySelected ? opt.textColor : "text-gray-400"}`} />
+                <span className={`text-xs font-bold uppercase ${isCategorySelected ? opt.textColor : "text-gray-500"}`}>
                   {opt.label}
                 </span>
                 <span className="text-[9px] text-gray-400 text-center">{opt.sublabel}</span>
@@ -367,8 +378,8 @@ export function IndividualSignUpForm({
           })}
         </div>
 
-        {/* Subcategory Roles - Only for Medicina */}
-        {selectedRole === "medico" || selectedRole === "porta" || selectedRole === "prescritor" || selectedRole === "uti" ? (
+        {/* Subcategory Roles — Only for Medicina */}
+        {isMedicina && (
           <>
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">PERFIL DE ACESSO MÉDICO</p>
             <div className="grid grid-cols-2 gap-3">
@@ -399,13 +410,16 @@ export function IndividualSignUpForm({
               })}
             </div>
           </>
-        ) : null}
+        )}
       </div>
 
-      {/* Personal Data Section */}
+      {/* ═══════ DADOS PROFISSIONAIS — Adapta por categoria ═══════ */}
       <div className="space-y-3 pb-3 border-b border-gray-200">
-        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">DADOS PROFISSIONAIS</p>
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+          {isMedicina ? "DADOS MÉDICOS" : isEnfermagem ? "DADOS DE ENFERMAGEM" : "DADOS DE FISIOTERAPIA"}
+        </p>
         
+        {/* Nome Completo */}
         <div className="space-y-1">
           <Label className="text-[10px] font-semibold text-gray-600 uppercase">Nome Completo *</Label>
           <div className="relative">
@@ -421,94 +435,127 @@ export function IndividualSignUpForm({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
-          <div className="space-y-1">
-            <Label className="text-[10px] font-semibold text-gray-600 uppercase">Conselho *</Label>
-            <Select
-              value={selectedRole === "enfermagem" ? "COREN" : selectedRole === "fisioterapia" ? "CREFITO" : "CRM"}
-              disabled
-            >
-              <SelectTrigger className="h-9 bg-gray-50 border border-gray-200 rounded-lg text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="CRM">CRM</SelectItem>
-                <SelectItem value="COREN">COREN</SelectItem>
-                <SelectItem value="CREFITO">CREFITO</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* ── MEDICINA: CRM + RQE ── */}
+        {isMedicina && (
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-[10px] font-semibold text-gray-600 uppercase">CRM *</Label>
+              <div className="relative">
+                <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  value={formData.crm}
+                  onChange={(e) => setFormData({ ...formData, crm: e.target.value.toUpperCase().replace(/[^A-Z0-9/\-\s]/g, "") })}
+                  placeholder="12345"
+                  className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-[10px] font-semibold text-gray-600 uppercase">RQE (Opcional)</Label>
+              <div className="relative">
+                <Stethoscope className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  value={formData.rqe}
+                  onChange={(e) => setFormData({ ...formData, rqe: e.target.value.replace(/\D/g, "") })}
+                  placeholder="12345"
+                  className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                  disabled={loading}
+                />
+              </div>
+            </div>
           </div>
+        )}
 
+        {/* ── ENFERMAGEM: COREN ── */}
+        {isEnfermagem && (
           <div className="space-y-1">
-            <Label className="text-[10px] font-semibold text-gray-600 uppercase">Nº Registro *</Label>
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">COREN *</Label>
             <div className="relative">
+              <Heart className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="text"
                 value={formData.crm}
                 onChange={(e) => setFormData({ ...formData, crm: e.target.value.toUpperCase().replace(/[^A-Z0-9/\-\s]/g, "") })}
-                placeholder={selectedRole === "enfermagem" ? "COREN-MA 12345" : selectedRole === "fisioterapia" ? "CREFITO-16 12345-F" : "12345"}
-                className="h-9 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                placeholder="COREN-MA 12345"
+                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                disabled={loading}
+              />
+            </div>
+            <p className="text-[9px] text-gray-500">Informe o COREN completo com UF (ex: COREN-MA 12345)</p>
+          </div>
+        )}
+
+        {/* ── FISIOTERAPIA: CREFITO ── */}
+        {isFisioterapia && (
+          <div className="space-y-1">
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">CREFITO *</Label>
+            <div className="relative">
+              <Activity className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                value={formData.crm}
+                onChange={(e) => setFormData({ ...formData, crm: e.target.value.toUpperCase().replace(/[^A-Z0-9/\-\s]/g, "") })}
+                placeholder="CREFITO-16 12345-F"
+                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                disabled={loading}
+              />
+            </div>
+            <p className="text-[9px] text-gray-500">Informe o CREFITO completo (ex: CREFITO-16 12345-F)</p>
+          </div>
+        )}
+
+        {/* Telefone + E-mail */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">Telefone (WhatsApp) *</Label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="(99) 99999-9999"
+                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                 disabled={loading}
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <Label className="text-[10px] font-semibold text-gray-600 uppercase">
-              {selectedRole === "enfermagem" || selectedRole === "fisioterapia" ? "Nº Auxiliar" : "RQE"} (Opcional)
-            </Label>
+            <Label className="text-[10px] font-semibold text-gray-600 uppercase">E-mail *</Label>
             <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                type="text"
-                value={formData.rqe}
-                onChange={(e) => setFormData({ ...formData, rqe: e.target.value.replace(/\D/g, "") })}
-                placeholder="12345"
-                className="h-9 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="seu.email@exemplo.com"
+                className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
                 disabled={loading}
               />
             </div>
           </div>
         </div>
 
+        {/* Especialidade / Área de atuação */}
         <div className="space-y-1">
-          <Label className="text-[10px] font-semibold text-gray-600 uppercase">Telefone (WhatsApp) *</Label>
-          <div className="relative">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="(99) 99999-9999"
-              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
-              disabled={loading}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          <Label className="text-[10px] font-semibold text-gray-600 uppercase">E-mail *</Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="seu.email@exemplo.com"
-              className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm"
-              disabled={loading}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          <Label className="text-[10px] font-semibold text-gray-600 uppercase">Especialidade (Opcional)</Label>
+          <Label className="text-[10px] font-semibold text-gray-600 uppercase">
+            {isMedicina ? "Especialidade Médica (Opcional)" : "Área de Atuação (Opcional)"}
+          </Label>
           <div className="relative">
             <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               type="text"
               value={formData.specialty}
               onChange={(e) => setFormData({ ...formData, specialty: e.target.value.toUpperCase() })}
-              placeholder="CLÍNICO GERAL, CARDIOLOGISTA..."
+              placeholder={
+                isMedicina ? "CLÍNICO GERAL, CARDIOLOGISTA..." 
+                : isEnfermagem ? "EMERGÊNCIA, UTI, CENTRO CIRÚRGICO..." 
+                : "TRAUMATO, NEURO, RESPIRATÓRIA..."
+              }
               className="h-9 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm uppercase"
               disabled={loading}
             />
@@ -516,7 +563,7 @@ export function IndividualSignUpForm({
         </div>
       </div>
 
-      {/* Credentials Section */}
+      {/* ═══════ CREDENCIAIS DE ACESSO ═══════ */}
       <div className="space-y-3">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">CREDENCIAIS DE ACESSO</p>
         
@@ -527,11 +574,9 @@ export function IndividualSignUpForm({
             Requisitos de Segurança
           </p>
           <ul className="text-[10px] text-blue-700 space-y-1 pl-5 list-disc">
-           <li><strong>{selectedRole === "enfermagem" ? "COREN" : selectedRole === "fisioterapia" ? "CREFITO" : "CRM"}:</strong> Registro profissional obrigatório</li>
-            <li><strong>{selectedRole === "enfermagem" || selectedRole === "fisioterapia" ? "Nº Registro" : "RQE"}:</strong> Apenas números (opcional)</li>
+            <li><strong>{councilLabel}:</strong> Registro profissional obrigatório</li>
             <li><strong>Usuário:</strong> Apenas letras maiúsculas, números e ponto (.)</li>
-            <li><strong>Senha:</strong> Exatamente 6 caracteres</li>
-            <li>Deve conter <strong>letras</strong> E <strong>números</strong> (ex: ABC123)</li>
+            <li><strong>Senha:</strong> Exatamente 6 caracteres com letras E números (ex: ABC123)</li>
             <li>Todos os campos marcados com <strong>*</strong> são obrigatórios</li>
           </ul>
         </div>
