@@ -72,7 +72,7 @@ export default function AuthPage() {
 
     // Validate selections
     if (!selectedUserType) {
-      toast.error("SELECIONE O TIPO DE USUÁRIO");
+      toast.error("SELECIONE A CATEGORIA DE USUÁRIO");
       return;
     }
     if (!selectedState) {
@@ -407,7 +407,7 @@ export default function AuthPage() {
                   {/* User Type Selection */}
                   <div className="group">
                     <Label htmlFor="usertype-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
-                      Tipo de Usuário
+                      Categoria de Usuário
                     </Label>
                     <Select
                       value={selectedUserType}
@@ -418,7 +418,7 @@ export default function AuthPage() {
                         id="usertype-select-desktop"
                         className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900"
                       >
-                        <SelectValue placeholder="Selecione o tipo de usuário" />
+                        <SelectValue placeholder="Selecione a categoria" />
                       </SelectTrigger>
                       <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                         <SelectItem value="medicina" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
@@ -711,7 +711,7 @@ export default function AuthPage() {
                     className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
                   >
                     <Users className="h-2.5 w-2.5 text-gray-500" />
-                    TIPO DE USUÁRIO
+                    CATEGORIA DE USUÁRIO
                   </Label>
                   <Select
                     value={selectedUserType}
@@ -722,7 +722,7 @@ export default function AuthPage() {
                       id="usertype-select-mobile"
                       className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
                     >
-                      <SelectValue placeholder="SELECIONE O TIPO" />
+                      <SelectValue placeholder="SELECIONE A CATEGORIA" />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                       <SelectItem value="medicina" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
