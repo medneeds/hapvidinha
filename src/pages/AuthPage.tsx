@@ -403,6 +403,39 @@ export default function AuthPage() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* User Type Selection */}
+                  <div className="group">
+                    <Label htmlFor="usertype-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
+                      Tipo de Usuário
+                    </Label>
+                    <Select
+                      value={selectedUserType}
+                      onValueChange={setSelectedUserType}
+                      disabled={loading}
+                    >
+                      <SelectTrigger 
+                        id="usertype-select-desktop"
+                        className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900"
+                      >
+                        <SelectValue placeholder="Selecione o tipo de usuário" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
+                        <SelectItem value="medicina" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                          MEDICINA
+                        </SelectItem>
+                        <SelectItem value="enfermagem" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                          ENFERMAGEM
+                        </SelectItem>
+                        <SelectItem value="administrativo" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                          ADMINISTRATIVO
+                        </SelectItem>
+                        <SelectItem value="gestao" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                          GESTÃO
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 {/* Authentication Fields Section */}
