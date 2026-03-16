@@ -367,37 +367,40 @@ export function IndividualSignUpForm({
           })}
         </div>
 
-        {/* Subcategory Roles */}
-        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">PERFIL DE ACESSO</p>
-        <div className="grid grid-cols-2 gap-3">
-          {([
-            { role: "medico" as const, label: "Líder", icon: Stethoscope, desc: "Edita livremente os pacientes do mapa", color: "border-[#013ba6] bg-[#013ba6]/5", textColor: "text-[#013ba6]" },
-            { role: "porta" as const, label: "Porta", icon: DoorOpen, desc: "Edita apenas pacientes que solicitou leito", color: "border-teal-600 bg-teal-50", textColor: "text-teal-600" },
-            { role: "prescritor" as const, label: "Prescritor", icon: Stethoscope, desc: "Acesso para prescrição médica", color: "border-orange-600 bg-orange-50", textColor: "text-orange-600" },
-            { role: "uti" as const, label: "UTI", icon: Stethoscope, desc: "Acesso dedicado à UTI", color: "border-rose-600 bg-rose-50", textColor: "text-rose-600" },
-            { role: "recepcao" as const, label: "Recepção", icon: Eye, desc: "Acompanhamento — sem edição", color: "border-cyan-600 bg-cyan-50", textColor: "text-cyan-600" },
-            { role: "enfermagem" as const, label: "Enfermagem", icon: User, desc: "Acompanhamento + Documentos", color: "border-pink-600 bg-pink-50", textColor: "text-pink-600" },
-          ] as const).map((opt) => {
-            const Icon = opt.icon;
-            const isSelected = selectedRole === opt.role;
-            return (
-              <button
-                key={opt.role}
-                type="button"
-                onClick={() => setSelectedRole(opt.role)}
-                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
-                  isSelected ? `${opt.color} shadow-md` : "border-gray-200 bg-gray-50 hover:border-gray-300"
-                }`}
-              >
-                <Icon className={`h-5 w-5 ${isSelected ? opt.textColor : "text-gray-400"}`} />
-                <span className={`text-xs font-bold uppercase ${isSelected ? opt.textColor : "text-gray-500"}`}>
-                  {opt.label}
-                </span>
-                <span className="text-[9px] text-gray-400 text-center">{opt.desc}</span>
-              </button>
-            );
-          })}
-        </div>
+        {/* Subcategory Roles - Only for Medicina */}
+        {selectedRole === "medico" || selectedRole === "porta" || selectedRole === "prescritor" || selectedRole === "uti" || selectedRole === "recepcao" ? (
+          <>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">PERFIL DE ACESSO MÉDICO</p>
+            <div className="grid grid-cols-2 gap-3">
+              {([
+                { role: "medico" as const, label: "Líder", icon: Stethoscope, desc: "Edita livremente os pacientes do mapa", color: "border-[#013ba6] bg-[#013ba6]/5", textColor: "text-[#013ba6]" },
+                { role: "porta" as const, label: "Porta", icon: DoorOpen, desc: "Edita apenas pacientes que solicitou leito", color: "border-teal-600 bg-teal-50", textColor: "text-teal-600" },
+                { role: "prescritor" as const, label: "Prescritor", icon: Stethoscope, desc: "Acesso para prescrição médica", color: "border-orange-600 bg-orange-50", textColor: "text-orange-600" },
+                { role: "uti" as const, label: "UTI", icon: Stethoscope, desc: "Acesso dedicado à UTI", color: "border-rose-600 bg-rose-50", textColor: "text-rose-600" },
+                { role: "recepcao" as const, label: "Recepção", icon: Eye, desc: "Acompanhamento — sem edição", color: "border-cyan-600 bg-cyan-50", textColor: "text-cyan-600" },
+              ] as const).map((opt) => {
+                const Icon = opt.icon;
+                const isSelected = selectedRole === opt.role;
+                return (
+                  <button
+                    key={opt.role}
+                    type="button"
+                    onClick={() => setSelectedRole(opt.role)}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all ${
+                      isSelected ? `${opt.color} shadow-md` : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                    }`}
+                  >
+                    <Icon className={`h-5 w-5 ${isSelected ? opt.textColor : "text-gray-400"}`} />
+                    <span className={`text-xs font-bold uppercase ${isSelected ? opt.textColor : "text-gray-500"}`}>
+                      {opt.label}
+                    </span>
+                    <span className="text-[9px] text-gray-400 text-center">{opt.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : null}
       </div>
 
       {/* Personal Data Section */}
