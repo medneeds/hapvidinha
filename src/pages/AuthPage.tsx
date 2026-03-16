@@ -722,7 +722,7 @@ export default function AuthPage() {
                       id="usertype-select-mobile"
                       className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
                     >
-                      <SelectValue placeholder="SELECIONE O TIPO" />
+                      <SelectValue placeholder="SELECIONE A CATEGORIA" />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                       <SelectItem value="medicina" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
