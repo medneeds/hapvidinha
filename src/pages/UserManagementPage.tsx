@@ -101,6 +101,8 @@ const ROLE_CONFIG: Record<string, { label: string; color: string }> = {
   admin: { label: "Coordenador Médico", color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
   medico: { label: "Líder", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
   porta: { label: "Porta", color: "bg-teal-500/10 text-teal-600 border-teal-500/20" },
+  prescritor: { label: "Prescritor", color: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
+  uti: { label: "UTI", color: "bg-rose-500/10 text-rose-600 border-rose-500/20" },
   visitante: { label: "Visitante", color: "bg-gray-500/10 text-gray-600 border-gray-500/20" },
 };
 
