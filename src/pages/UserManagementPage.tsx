@@ -54,6 +54,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { EditUserCredentialsDialog } from "@/components/EditUserCredentialsDialog";
+import { CreateUserDialog } from "@/components/CreateUserDialog";
 
 interface UserProfile {
   id: string;
