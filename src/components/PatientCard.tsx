@@ -347,17 +347,20 @@ const PSM_CYCLE = [
   { text: 'AGUARDANDO PSM', status: 'aguardando' as const, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-950/30' },
   { text: 'PSM FAVORÁVEL', status: 'favoravel' as const, icon: CircleCheck, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-950/30' },
   { text: 'PSM DESFAVORÁVEL', status: 'desfavoravel' as const, icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-950/30' },
+  { text: 'IR PARA', status: 'ir_para' as const, icon: ArrowRightCircle, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/30' },
 ];
 
 const isPsmText = (text: string) => {
   const upper = text.toUpperCase();
   return upper.includes('AGUARDANDO PSM') || 
          upper.includes('PSM FAVORÁVEL') || upper.includes('PSM FAVORAVEL') ||
-         upper.includes('PSM DESFAVORÁVEL') || upper.includes('PSM DESFAVORAVEL');
+         upper.includes('PSM DESFAVORÁVEL') || upper.includes('PSM DESFAVORAVEL') ||
+         upper.includes('IR PARA');
 };
 
 const getPsmCycleIndex = (text: string) => {
   const upper = text.toUpperCase();
+  if (upper.includes('IR PARA')) return 3;
   if (upper.includes('PSM DESFAVORÁVEL') || upper.includes('PSM DESFAVORAVEL')) return 2;
   if (upper.includes('PSM FAVORÁVEL') || upper.includes('PSM FAVORAVEL')) return 1;
   if (upper.includes('AGUARDANDO PSM')) return 0;
