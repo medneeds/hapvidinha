@@ -474,20 +474,32 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
     const nextIndex = (currentPsmIndex + 1) % PSM_CYCLE.length;
     const nextPsm = PSM_CYCLE[nextIndex];
     
-    // Replace the PSM text in the pendency string
-    const upper = pendency.toUpperCase();
-    let newText = pendency;
-    for (const psm of PSM_CYCLE) {
-      // Also handle unaccented variants
-      const variants = [psm.text, psm.text.replace('Á', 'A').replace('É', 'E')];
-      for (const variant of variants) {
-        const idx = upper.indexOf(variant);
-        if (idx >= 0) {
-          newText = pendency.substring(0, idx) + nextPsm.text + pendency.substring(idx + variant.length);
-          break;
+    let newText: string;
+    
+    if (nextPsm.status === 'ir_para') {
+      // "IR PARA" step: replace entire text with context-aware destination
+      const baseContext = currentPsmIndex === 3 ? pendency : extractBaseContext(pendency);
+      newText = getIrParaDestination(baseContext);
+    } else if (currentPsmIndex === 3) {
+      // Coming FROM "IR PARA" back to "AGUARDANDO PSM": 
+      // We need to reconstruct. Use a generic format since we lost context
+      newText = `AGUARDANDO PSM`;
+    } else {
+      // Normal cycle between AGUARDANDO/FAVORÁVEL/DESFAVORÁVEL: replace PSM portion in-place
+      const upper = pendency.toUpperCase();
+      newText = pendency;
+      for (const psm of PSM_CYCLE) {
+        if (psm.status === 'ir_para') continue; // skip IR PARA patterns for in-place replacement
+        const variants = [psm.text, psm.text.replace('Á', 'A').replace('É', 'E')];
+        for (const variant of variants) {
+          const idx = upper.indexOf(variant);
+          if (idx >= 0) {
+            newText = pendency.substring(0, idx) + nextPsm.text + pendency.substring(idx + variant.length);
+            break;
+          }
         }
+        if (newText !== pendency) break;
       }
-      if (newText !== pendency) break;
     }
     
     onCyclePsmStatus(index, newText.toUpperCase(), nextPsm.status);
