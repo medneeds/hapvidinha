@@ -39,8 +39,8 @@ const signUpSchema = z.object({
     .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s.]+$/, { message: "NOME: APENAS LETRAS MAIÚSCULAS" }),
   crm: z.string()
     .trim()
-    .min(4, { message: "CRM OBRIGATÓRIO" })
-    .regex(/^[A-Z0-9/\-\s]+$/, { message: "CRM: APENAS MAIÚSCULAS E NÚMEROS" }),
+    .min(4, { message: "REGISTRO PROFISSIONAL OBRIGATÓRIO" })
+    .regex(/^[A-Z0-9/\-\s]+$/, { message: "REGISTRO: APENAS MAIÚSCULAS E NÚMEROS" }),
   specialty: z.string()
     .trim()
     .regex(/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s]*$/, { message: "ESPECIALIDADE: APENAS LETRAS MAIÚSCULAS" })
