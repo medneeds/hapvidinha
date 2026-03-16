@@ -100,7 +100,7 @@ export function IndividualSignUpForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const [selectedRole, setSelectedRole] = useState<"medico" | "porta" | "prescritor" | "uti" | "recepcao" | "enfermagem" | "fisioterapia">("medico");
+  const [selectedRole, setSelectedRole] = useState<"medico" | "porta" | "prescritor" | "uti" | "recepcao" | "enfermagem" | "fisioterapia" | "admin">("medico");
   const [formData, setFormData] = useState({
     fullName: "",
     crm: "",
