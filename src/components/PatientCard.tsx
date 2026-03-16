@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils, MessageSquare, XCircle, Stethoscope, Scissors, Brain, LayoutList, UserCog, UsersRound, Baby, Bone, ArrowRightCircle } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils, MessageSquare, XCircle, Stethoscope, Scissors, Brain, LayoutList, UserCog, UsersRound, Baby, Bone, ArrowUpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -347,7 +347,7 @@ const PSM_CYCLE = [
   { text: 'AGUARDANDO PSM', status: 'aguardando' as const, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-950/30' },
   { text: 'PSM FAVORÁVEL', status: 'favoravel' as const, icon: CircleCheck, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-950/30' },
   { text: 'PSM DESFAVORÁVEL', status: 'desfavoravel' as const, icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-950/30' },
-  { text: 'IR PARA', status: 'ir_para' as const, icon: ArrowRightCircle, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/30' },
+  { text: 'IR PARA', status: 'ir_para' as const, icon: ArrowUpCircle, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/30' },
 ];
 
 // Map internment context to "IR PARA" destination
@@ -1716,7 +1716,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             if (pendenciesText.includes('IR PARA')) {
                               return (
                                 <div title="Auditoria aprovou — Aguardando transferência">
-                                  <ArrowRightCircle className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                                  <ArrowUpCircle className="h-4 w-4 text-blue-500 flex-shrink-0" />
                                 </div>
                               );
                             }
