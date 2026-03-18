@@ -42,6 +42,7 @@ import AdminUnitsPage from "./pages/AdminUnitsPage";
 import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
 import TherapeuticTemplatesPage from "./pages/TherapeuticTemplatesPage";
 import ReportHistoryPage from "./pages/ReportHistoryPage";
+import PresentationPage from "./pages/PresentationPage";
 
 const queryClient = new QueryClient();
 
