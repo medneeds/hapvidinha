@@ -1299,7 +1299,7 @@ const slides = [
   SlideExaminus,        // 13 - Examinus AI
   SlideAnalytics,       // 14 - Analytics
   SlideTraceability,    // 15 - Rastreabilidade
-  SlideTestimonials,    // 16 - Depoimentos
+  SlideClosing,         // 16 - Encerramento
   SlideClosing,         // 17 - Encerramento
 ];
 
