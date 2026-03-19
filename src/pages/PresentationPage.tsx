@@ -1448,10 +1448,10 @@ export default function PresentationPage() {
           {isPrinting && slides.map((SlideComponent, i) => (
             <div
               key={i}
-              className="print-slide-page overflow-hidden bg-white"
+              className="print-slide-page overflow-hidden"
               style={{ width: "1920px", height: "1080px" }}
             >
-              <SlideComponent isActive={false} />
+              <SlideComponent isActive={true} />
             </div>
           ))}
         </div>
