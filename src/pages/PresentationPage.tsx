@@ -1255,7 +1255,6 @@ const slides = [
   SlideAnalytics,       // 14 - Analytics
   SlideTraceability,    // 15 - Rastreabilidade
   SlideClosing,         // 16 - Encerramento
-  SlideClosing,         // 17 - Encerramento
 ];
 
 export default function PresentationPage() {
