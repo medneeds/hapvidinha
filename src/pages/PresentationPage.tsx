@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import PptxGenJS from "pptxgenjs";
 import {
   ChevronLeft, ChevronRight, Maximize2, Minimize2,
   Monitor, Shield, FileText, Activity, Users, Clock,
@@ -1358,6 +1359,50 @@ export default function PresentationPage() {
     }
   };
 
+  const handleDownloadPPTX = async () => {
+    try {
+      setIsPrinting(true);
+      await new Promise(resolve => window.setTimeout(resolve, 2500));
+
+      const slideNodes = printContainerRef.current?.querySelectorAll(".print-slide-page");
+      if (!slideNodes || slideNodes.length === 0) {
+        setIsPrinting(false);
+        return;
+      }
+
+      const pptx = new PptxGenJS();
+      pptx.layout = "LAYOUT_WIDE"; // 13.33 x 7.5 inches (widescreen 16:9)
+
+      for (let i = 0; i < slideNodes.length; i++) {
+        const slideNode = slideNodes[i] as HTMLElement;
+        const canvas = await html2canvas(slideNode, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: null,
+          logging: false,
+          windowWidth: 1920,
+          windowHeight: 1080,
+          width: 1920,
+          height: 1080,
+        });
+
+        const imageData = canvas.toDataURL("image/png");
+        const slide = pptx.addSlide();
+        slide.addImage({
+          data: imageData,
+          x: 0,
+          y: 0,
+          w: "100%",
+          h: "100%",
+        });
+      }
+
+      await pptx.writeFile({ fileName: "hapmap-apresentacao.pptx" });
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
   const CurrentSlide = slides[current];
 
   return (
@@ -1431,6 +1476,14 @@ export default function PresentationPage() {
             >
               <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">{isPrinting ? "Gerando..." : "PDF"}</span>
+            </button>
+            <button
+              onClick={handleDownloadPPTX}
+              disabled={isPrinting}
+              className="flex items-center gap-1 sm:gap-1.5 text-white/50 hover:text-white transition-colors text-xs sm:text-sm disabled:opacity-50 disabled:pointer-events-none"
+            >
+              <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">{isPrinting ? "Gerando..." : "PPTX"}</span>
             </button>
             <span className="text-white/50 text-xs sm:text-sm">{current + 1}/{slides.length}</span>
             <button onClick={toggleFullscreen} className="text-white/50 hover:text-white transition-colors hidden sm:block">
