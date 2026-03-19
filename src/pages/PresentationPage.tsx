@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft, ChevronRight, Maximize2, Minimize2,
@@ -7,64 +7,112 @@ import {
   Heart, AlertTriangle, CheckCircle, Eye, Layers,
   Bed, Network, BrainCircuit, History, Siren,
   FileCheck, Pill, BookOpen, TrendingUp, Target,
-  ArrowUpCircle, Timer, Handshake, Database
+  ArrowUpCircle, Timer, Handshake, Database,
+  Download, Quote, Microscope, Baby, Sparkles,
+  FileWarning, Zap, Search
 } from "lucide-react";
 import { whitelabel } from "@/config/whitelabel";
 
-// ─── SLIDE DATA ──────────────────────────────────────────────────────────────
-
 const HAPVIDA_BLUE = "#013ba6";
 const HAPVIDA_LIGHT = "#0152d4";
+const HAPVIDA_GLOW = "#0168f0";
 
 interface SlideProps {
   isActive: boolean;
+}
+
+// ─── HAPMAP LOGO COMPONENT (Text-based) ──────────────────────────────────────
+function HapMapLogo({ size = "text-6xl", className = "" }: { size?: string; className?: string }) {
+  return (
+    <span className={`${size} tracking-tight ${className}`} style={{ lineHeight: 1 }}>
+      <span className="font-black" style={{
+        background: `linear-gradient(135deg, #4db8ff 0%, #0088ff 30%, ${HAPVIDA_LIGHT} 60%, #66c2ff 100%)`,
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        filter: "drop-shadow(0 0 20px rgba(1, 82, 212, 0.4))",
+      }}>Hap</span>
+      <span className="font-light" style={{
+        background: `linear-gradient(135deg, #99d6ff 0%, #e0f0ff 50%, #ffffff 100%)`,
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        filter: "drop-shadow(0 0 15px rgba(100, 180, 255, 0.3))",
+      }}>Map</span>
+    </span>
+  );
 }
 
 // ─── SLIDE 1: COVER ──────────────────────────────────────────────────────────
 function SlideCover({ isActive }: SlideProps) {
   return (
     <div className="h-full w-full flex flex-col items-center justify-center relative overflow-hidden"
-      style={{ background: `linear-gradient(135deg, ${HAPVIDA_BLUE} 0%, ${HAPVIDA_LIGHT} 50%, #0168f0 100%)` }}>
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div key={i} className="absolute rounded-full bg-white"
-            style={{
-              width: `${Math.random() * 300 + 50}px`,
-              height: `${Math.random() * 300 + 50}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.3,
-            }} />
-        ))}
+      style={{ background: `radial-gradient(ellipse at 30% 20%, #0a2a6e 0%, #010d2e 50%, #000510 100%)` }}>
+      {/* Glowing orbs */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute w-[600px] h-[600px] rounded-full opacity-20" style={{
+          background: `radial-gradient(circle, ${HAPVIDA_LIGHT} 0%, transparent 70%)`,
+          left: "20%", top: "10%",
+        }} />
+        <div className="absolute w-[400px] h-[400px] rounded-full opacity-15" style={{
+          background: `radial-gradient(circle, ${HAPVIDA_GLOW} 0%, transparent 70%)`,
+          right: "15%", bottom: "20%",
+        }} />
+        <div className="absolute w-[300px] h-[300px] rounded-full opacity-10" style={{
+          background: `radial-gradient(circle, #4db8ff 0%, transparent 70%)`,
+          left: "50%", top: "60%",
+        }} />
       </div>
 
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 opacity-[0.03]"
+        style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.85 }}
         animate={isActive ? { opacity: 1, scale: 1 } : {}}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 1, ease: "easeOut" }}
         className="relative z-10 text-center space-y-8"
       >
-        <img src={whitelabel.logos.platform} alt="HapMap" className="h-28 mx-auto drop-shadow-2xl" />
-        <div className="space-y-4">
-          <h1 className="text-6xl font-bold text-white tracking-tight">
-            {whitelabel.platform.fullName}
-          </h1>
-          <div className="h-1 w-32 bg-white/40 mx-auto rounded-full" />
-          <p className="text-2xl text-white/90 font-light max-w-2xl mx-auto leading-relaxed">
+        {/* HapMap text logo */}
+        <div className="relative">
+          <HapMapLogo size="text-8xl" />
+          {/* Glow effect behind text */}
+          <div className="absolute inset-0 blur-3xl opacity-30" style={{
+            background: `radial-gradient(circle, ${HAPVIDA_LIGHT} 0%, transparent 70%)`,
+          }} />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isActive ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.5, duration: 0.7 }}
+          className="space-y-5"
+        >
+          <div className="h-px w-40 mx-auto" style={{
+            background: `linear-gradient(90deg, transparent, ${HAPVIDA_LIGHT}, transparent)`,
+          }} />
+          <p className="text-2xl text-blue-200/80 font-light max-w-2xl mx-auto leading-relaxed tracking-wide">
             A ponte entre a emergência e a internação
           </p>
-        </div>
-        <div className="flex items-center gap-3 justify-center mt-12">
-          <img src={whitelabel.logos.networkFull} alt="Hapvida" className="h-14 bg-white/95 rounded-lg px-4 py-2" />
-        </div>
+          <p className="text-sm text-blue-300/50 tracking-[0.3em] uppercase font-medium">
+            Vigilância Clínica Inteligente
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isActive ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.9, duration: 0.6 }}
+          className="pt-8"
+        >
+          <img src={whitelabel.logos.networkFull} alt="Hapvida" className="h-14 bg-white/95 rounded-xl px-5 py-2.5 mx-auto shadow-lg shadow-blue-500/10" />
+        </motion.div>
       </motion.div>
 
       <motion.p
         initial={{ opacity: 0 }}
         animate={isActive ? { opacity: 1 } : {}}
-        transition={{ delay: 1, duration: 0.6 }}
-        className="absolute bottom-8 text-white/60 text-sm z-10"
+        transition={{ delay: 1.3, duration: 0.6 }}
+        className="absolute bottom-8 text-blue-400/40 text-xs tracking-widest z-10 uppercase"
       >
         Proposta de Valor para a Rede Hapvida NotreDame Intermédica
       </motion.p>
@@ -92,38 +140,19 @@ function SlideGap({ isActive }: SlideProps) {
 
       <div className="flex-1 flex items-center justify-center gap-6 mt-8">
         {items.map((item, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 40 }}
-            animate={isActive ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.3 + i * 0.3, duration: 0.6 }}
-            className="flex flex-col items-center"
-          >
+          <motion.div key={i} initial={{ opacity: 0, y: 40 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + i * 0.3, duration: 0.6 }}
+            className="flex flex-col items-center">
             <div className={`w-52 h-52 rounded-3xl flex flex-col items-center justify-center shadow-xl ${i === 1 ? 'border-4 border-dashed border-red-300 bg-red-50' : 'bg-white'}`}>
               <item.icon className="h-16 w-16 mb-4" style={{ color: item.color }} strokeWidth={1.5} />
               <p className="font-bold text-lg text-gray-800">{item.label}</p>
             </div>
             <p className="text-sm text-gray-500 mt-4 text-center max-w-[200px]">{item.desc}</p>
-            {i < 2 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={isActive ? { opacity: 1 } : {}}
-                transition={{ delay: 0.8 + i * 0.3 }}
-                className="absolute"
-                style={{ left: `${28 + i * 28}%`, top: '50%' }}
-              >
-              </motion.div>
-            )}
           </motion.div>
         ))}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={isActive ? { opacity: 1 } : {}}
-        transition={{ delay: 1.5 }}
-        className="bg-red-50 border border-red-200 rounded-2xl p-6 flex items-center gap-4"
-      >
+      <motion.div initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}
+        className="bg-red-50 border border-red-200 rounded-2xl p-6 flex items-center gap-4">
         <Siren className="h-8 w-8 text-red-500 flex-shrink-0" />
         <p className="text-red-800 text-lg">
           <strong>Pacientes em observação</strong> — setores Azul, Amarelo e Sala Vermelha — carecem de controle estruturado de diagnóstico, condutas, tempo de permanência e desfecho clínico.
@@ -144,7 +173,6 @@ function SlideBridge({ isActive }: SlideProps) {
 
       <div className="flex-1 flex items-center justify-center">
         <div className="flex items-center gap-8 w-full max-w-5xl">
-          {/* SamWeb */}
           <motion.div initial={{ opacity: 0, x: -60 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.3, duration: 0.6 }}
             className="bg-white/10 backdrop-blur rounded-2xl p-8 flex-1 text-center border border-white/20">
             <Monitor className="h-12 w-12 text-emerald-400 mx-auto mb-3" />
@@ -152,20 +180,17 @@ function SlideBridge({ isActive }: SlideProps) {
             <p className="text-white/60 text-sm mt-2">Atendimento<br />ambulatorial</p>
           </motion.div>
 
-          {/* Arrow */}
           <motion.div initial={{ opacity: 0, scale: 0 }} animate={isActive ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 0.6, duration: 0.4 }}>
             <ArrowRight className="h-8 w-8 text-white/40" />
           </motion.div>
 
-          {/* HapMap */}
           <motion.div initial={{ opacity: 0, y: 40 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.8, duration: 0.6 }}
             className="bg-white rounded-3xl p-10 flex-[1.5] text-center shadow-2xl relative">
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
               A Ponte
             </div>
-            <img src={whitelabel.logos.platform} alt="HapMap" className="h-16 mx-auto mb-4" />
-            <p className="font-bold text-2xl text-gray-900">HapMap 2.0</p>
-            <p className="text-gray-500 mt-2 text-sm leading-relaxed">
+            <HapMapLogo size="text-4xl" className="justify-center flex" />
+            <p className="text-gray-500 mt-4 text-sm leading-relaxed">
               Vigilância ativa de pacientes em observação com controle de diagnóstico, condutas, status de internação, tempo de permanência e desfecho clínico.
             </p>
             <div className="flex flex-wrap gap-2 justify-center mt-5">
@@ -175,12 +200,10 @@ function SlideBridge({ isActive }: SlideProps) {
             </div>
           </motion.div>
 
-          {/* Arrow */}
           <motion.div initial={{ opacity: 0, scale: 0 }} animate={isActive ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 1, duration: 0.4 }}>
             <ArrowRight className="h-8 w-8 text-white/40" />
           </motion.div>
 
-          {/* Siga */}
           <motion.div initial={{ opacity: 0, x: 60 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 1.2, duration: 0.6 }}
             className="bg-white/10 backdrop-blur rounded-2xl p-8 flex-1 text-center border border-white/20">
             <Database className="h-12 w-12 text-sky-400 mx-auto mb-3" />
@@ -198,7 +221,7 @@ function SlideBridge({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 4: MAPA DE PACIENTES ──────────────────────────────────────────────
+// ─── SLIDE 4: MAPA DE PACIENTES (com Pediatria) ─────────────────────────────
 function SlidePatientMap({ isActive }: SlideProps) {
   const sectors = [
     { name: "Sala Vermelha", color: "#ef4444", icon: Siren, beds: "Pacientes críticos", desc: "Monitorização contínua com status clínico em tempo real" },
@@ -215,47 +238,69 @@ function SlidePatientMap({ isActive }: SlideProps) {
         <p className="text-xl text-gray-500 mt-3">Cada paciente é um card completo com diagnóstico, condutas, antecedentes e status de internação.</p>
       </motion.div>
 
-      <div className="flex-1 grid grid-cols-2 gap-6 mt-10">
+      <div className="flex-1 grid grid-cols-2 gap-5 mt-8">
         {sectors.map((s, i) => (
-          <motion.div
-            key={s.name}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isActive ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 0.3 + i * 0.15, duration: 0.5 }}
-            className="bg-white rounded-2xl p-6 shadow-lg border-l-4 flex items-start gap-5"
-            style={{ borderLeftColor: s.color }}
-          >
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${s.color}15` }}>
-              <s.icon className="h-7 w-7" style={{ color: s.color }} />
+          <motion.div key={s.name} initial={{ opacity: 0, scale: 0.9 }} animate={isActive ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 0.3 + i * 0.15, duration: 0.5 }}
+            className="bg-white rounded-2xl p-5 shadow-lg border-l-4 flex items-start gap-4" style={{ borderLeftColor: s.color }}>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${s.color}15` }}>
+              <s.icon className="h-6 w-6" style={{ color: s.color }} />
             </div>
             <div>
               <h3 className="font-bold text-lg text-gray-900">{s.name}</h3>
-              <p className="text-sm font-medium mt-1" style={{ color: s.color }}>{s.beds}</p>
-              <p className="text-sm text-gray-500 mt-1">{s.desc}</p>
+              <p className="text-sm font-medium mt-0.5" style={{ color: s.color }}>{s.beds}</p>
+              <p className="text-sm text-gray-500 mt-0.5">{s.desc}</p>
             </div>
           </motion.div>
         ))}
       </div>
 
-      <motion.div initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} transition={{ delay: 1.2 }}
-        className="flex gap-4 mt-4">
+      {/* Pediatria + Adulto highlight */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 1, duration: 0.5 }}
+        className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-5 flex items-center gap-6 mt-4 border border-blue-100">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+            <Users className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <p className="font-bold text-gray-900">Emergência Adulto</p>
+            <p className="text-sm text-gray-500">Vigilância completa em todas as alas</p>
+          </div>
+        </div>
+        <div className="h-10 w-px bg-gray-200" />
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+            <Baby className="h-6 w-6 text-purple-600" />
+          </div>
+          <div>
+            <p className="font-bold text-gray-900">Emergência Pediátrica</p>
+            <p className="text-sm text-gray-500">Mesmos benefícios aplicados à pediatria</p>
+          </div>
+        </div>
+        <div className="h-10 w-px bg-gray-200" />
+        <div className="flex items-center gap-3 ml-auto">
+          <Sparkles className="h-5 w-5 text-amber-500" />
+          <p className="text-sm font-medium text-gray-700">Resultados comprovados em ambos os cenários</p>
+        </div>
+      </motion.div>
+
+      <div className="flex gap-4 mt-3">
         {[
           { icon: Eye, text: "Visibilidade total do censo" },
           { icon: Clock, text: "Tempo de permanência por setor" },
           { icon: Layers, text: "Drag & drop para reorganização" },
           { icon: Target, text: "Categorização por perfil clínico" },
         ].map((item, i) => (
-          <div key={i} className="flex items-center gap-2 bg-white rounded-xl px-4 py-3 shadow-sm flex-1">
+          <div key={i} className="flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 shadow-sm flex-1">
             <item.icon className="h-5 w-5 text-blue-600 flex-shrink-0" />
             <span className="text-sm text-gray-700 font-medium">{item.text}</span>
           </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }
 
-// ─── SLIDE 5: FLUXO DE INTERNAÇÃO E PSM ──────────────────────────────────────
+// ─── SLIDE 5: FLUXO DE INTERNAÇÃO, PSM e CARÊNCIAS ──────────────────────────
 function SlideInternmentPSM({ isActive }: SlideProps) {
   const psmSteps = [
     { icon: Clock, label: "Aguardando PSM", color: "#f59e0b", bg: "#fef3c7" },
@@ -267,21 +312,21 @@ function SlideInternmentPSM({ isActive }: SlideProps) {
     <div className="h-full w-full flex flex-col p-16" style={{ background: "linear-gradient(180deg, #fafbff 0%, #eef2ff 100%)" }}>
       <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
         <p className="text-sm font-semibold tracking-widest uppercase" style={{ color: HAPVIDA_BLUE }}>Controle de Internação</p>
-        <h2 className="text-5xl font-bold text-gray-900 mt-2">Solicitação & Status PSM</h2>
+        <h2 className="text-5xl font-bold text-gray-900 mt-2">Solicitação, PSM & Carências</h2>
         <p className="text-xl text-gray-500 mt-3">Rastreabilidade completa do fluxo de internação — da solicitação ao leito.</p>
       </motion.div>
 
-      <div className="flex-1 flex flex-col justify-center gap-10 mt-6">
+      <div className="flex-1 flex flex-col justify-center gap-6 mt-4">
         {/* PSM cycle */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4, duration: 0.6 }}
-          className="bg-white rounded-2xl p-8 shadow-lg">
-          <h3 className="font-bold text-lg text-gray-800 mb-6">Ciclo de Status PSM</h3>
+          className="bg-white rounded-2xl p-6 shadow-lg">
+          <h3 className="font-bold text-lg text-gray-800 mb-4">Ciclo de Status PSM</h3>
           <div className="flex items-center justify-between gap-4">
             {psmSteps.map((step, i) => (
               <div key={i} className="flex items-center gap-4 flex-1">
                 <div className="flex flex-col items-center gap-2 flex-1">
-                  <div className="w-20 h-20 rounded-2xl flex items-center justify-center" style={{ backgroundColor: step.bg }}>
-                    <step.icon className="h-10 w-10" style={{ color: step.color }} />
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ backgroundColor: step.bg }}>
+                    <step.icon className="h-8 w-8" style={{ color: step.color }} />
                   </div>
                   <p className="font-semibold text-sm text-gray-800 text-center">{step.label}</p>
                 </div>
@@ -289,23 +334,24 @@ function SlideInternmentPSM({ isActive }: SlideProps) {
               </div>
             ))}
           </div>
-          <p className="text-sm text-gray-500 mt-6 text-center">
-            O texto da pendência se transforma automaticamente: <em>"Solicitada Internação em UTI"</em> → <strong>"IR PARA LEITO DE UTI"</strong>
+          <p className="text-sm text-gray-500 mt-4 text-center">
+            O texto se transforma automaticamente: <em>"Solicitada Internação em UTI"</em> → <strong>"IR PARA LEITO DE UTI"</strong>
           </p>
         </motion.div>
 
-        {/* Features row */}
-        <div className="grid grid-cols-3 gap-6">
+        {/* Features row + Carências */}
+        <div className="grid grid-cols-4 gap-4">
           {[
             { icon: ClipboardList, title: "Solicitação Padronizada", desc: "Template institucional completo com HDA, exames e plano terapêutico" },
-            { icon: History, title: "Histórico de Solicitações", desc: "Registro auditável de todas as solicitações por período e paciente" },
-            { icon: Handshake, title: "Fluxo Porta ↔ Líder", desc: "Solicitação de leito com aprovação, discussão e notificação em tempo real" },
+            { icon: History, title: "Histórico de Solicitações", desc: "Registro auditável de todas as solicitações por período" },
+            { icon: Handshake, title: "Fluxo Porta ↔ Líder", desc: "Solicitação de leito com aprovação e notificação em tempo real" },
+            { icon: FileWarning, title: "Carências Contratuais", desc: "Rastreamento de eventuais carências à solicitação de internação para vigilância proativa", color: "#ef4444" },
           ].map((item, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.7 + i * 0.15, duration: 0.5 }}
-              className="bg-white rounded-xl p-6 shadow-md">
-              <item.icon className="h-8 w-8 mb-3" style={{ color: HAPVIDA_BLUE }} />
-              <h4 className="font-bold text-gray-800">{item.title}</h4>
-              <p className="text-sm text-gray-500 mt-2">{item.desc}</p>
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.7 + i * 0.12, duration: 0.5 }}
+              className={`bg-white rounded-xl p-5 shadow-md ${i === 3 ? 'border-2 border-red-200 bg-red-50/50' : ''}`}>
+              <item.icon className="h-7 w-7 mb-2" style={{ color: (item as any).color || HAPVIDA_BLUE }} />
+              <h4 className="font-bold text-gray-800 text-sm">{item.title}</h4>
+              <p className="text-xs text-gray-500 mt-1.5">{item.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -335,13 +381,8 @@ function SlideDocuments({ isActive }: SlideProps) {
 
       <div className="flex-1 grid grid-cols-3 gap-5 mt-10">
         {docCategories.map((doc, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 30 }}
-            animate={isActive ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.3 + i * 0.12, duration: 0.5 }}
-            className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex flex-col"
-          >
+          <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + i * 0.12, duration: 0.5 }}
+            className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex flex-col">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: `${doc.color}15` }}>
               <doc.icon className="h-6 w-6" style={{ color: doc.color }} />
             </div>
@@ -369,21 +410,20 @@ function SlideMedicalTeam({ isActive }: SlideProps) {
       <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
         <p className="text-sm font-semibold tracking-widest uppercase" style={{ color: HAPVIDA_BLUE }}>Governança Clínica</p>
         <h2 className="text-5xl font-bold text-gray-900 mt-2">Responsabilidade Médica</h2>
-        <p className="text-xl text-gray-500 mt-3">Modelo estruturado de acompanhamento que garante que nenhum paciente fique desassistido.</p>
+        <p className="text-xl text-gray-500 mt-3">Modelo estruturado que garante que nenhum paciente fique desassistido.</p>
       </motion.div>
 
-      <div className="flex-1 flex items-center gap-8 mt-8">
-        {/* Left: Medical roles */}
-        <div className="flex-1 space-y-5">
+      <div className="flex-1 flex items-center gap-8 mt-6">
+        <div className="flex-1 space-y-4">
           {[
             { icon: Shield, title: "Médico Líder", desc: "Coordena o cuidado, supervisiona condutas e define plano terapêutico para todos os pacientes do setor.", color: "#013ba6" },
             { icon: Stethoscope, title: "Médico da Porta", desc: "Responsável pela admissão, primeiro atendimento e solicitações iniciais de internação.", color: "#0ea5e9" },
             { icon: Users, title: "Seguimento Conjunto", desc: "Especialidades simultâneas — cirurgia, traumatologia, psiquiatria — registradas e rastreadas no card.", color: "#8b5cf6" },
           ].map((role, i) => (
             <motion.div key={i} initial={{ opacity: 0, x: -40 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.4 + i * 0.2, duration: 0.5 }}
-              className="bg-white rounded-2xl p-6 shadow-md flex items-start gap-5">
-              <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${role.color}15` }}>
-                <role.icon className="h-7 w-7" style={{ color: role.color }} />
+              className="bg-white rounded-2xl p-5 shadow-md flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${role.color}15` }}>
+                <role.icon className="h-6 w-6" style={{ color: role.color }} />
               </div>
               <div>
                 <h3 className="font-bold text-lg text-gray-900">{role.title}</h3>
@@ -393,11 +433,10 @@ function SlideMedicalTeam({ isActive }: SlideProps) {
           ))}
         </div>
 
-        {/* Right: Benefits */}
         <motion.div initial={{ opacity: 0, x: 40 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 1, duration: 0.6 }}
-          className="flex-1 rounded-3xl p-10 text-white" style={{ background: `linear-gradient(135deg, ${HAPVIDA_BLUE}, ${HAPVIDA_LIGHT})` }}>
-          <h3 className="text-2xl font-bold mb-6">Impacto Direto</h3>
-          <div className="space-y-5">
+          className="flex-1 rounded-3xl p-8 text-white" style={{ background: `linear-gradient(135deg, ${HAPVIDA_BLUE}, ${HAPVIDA_LIGHT})` }}>
+          <h3 className="text-2xl font-bold mb-5">Impacto Direto</h3>
+          <div className="space-y-4">
             {[
               "Cada paciente tem responsável identificado",
               "Transição de turno com passagem estruturada",
@@ -417,65 +456,183 @@ function SlideMedicalTeam({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 8: ANALYTICS E IA ─────────────────────────────────────────────────
+// ─── SLIDE 8: EXAMINUS AI ────────────────────────────────────────────────────
+function SlideExaminus({ isActive }: SlideProps) {
+  const benefits = [
+    { icon: Zap, title: "Velocidade", desc: "Registro de exames em segundos ao invés de minutos — basta colar o texto bruto." },
+    { icon: Search, title: "Rastreamento Inteligente", desc: "Identifica automaticamente exames críticos: anemia, disfunção renal, alterações hepáticas." },
+    { icon: Microscope, title: "Formatação Automática", desc: "Transforma textos desorganizados em dados estruturados e legíveis no card do paciente." },
+    { icon: Target, title: "Foco no que Importa", desc: "Filtro de resultados relevantes permite visualização condensada dos achados clínicos." },
+  ];
+
+  return (
+    <div className="h-full w-full flex flex-col p-16" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)" }}>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <p className="text-sm font-semibold tracking-widest uppercase text-emerald-400">Inteligência Artificial</p>
+        <h2 className="text-5xl font-bold text-white mt-2 flex items-center gap-4">
+          <Microscope className="h-12 w-12 text-emerald-400" />
+          Examinus AI
+        </h2>
+        <p className="text-xl text-gray-400 mt-3">Agilidade no registro e interpretação de exames laboratoriais com inteligência artificial.</p>
+      </motion.div>
+
+      <div className="flex-1 flex items-center gap-10 mt-8">
+        {/* Left: Benefits */}
+        <div className="flex-1 grid grid-cols-2 gap-5">
+          {benefits.map((b, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + i * 0.15, duration: 0.5 }}
+              className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+              <b.icon className="h-8 w-8 text-emerald-400 mb-3" />
+              <h3 className="font-bold text-white text-lg">{b.title}</h3>
+              <p className="text-gray-400 text-sm mt-2">{b.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Right: Workflow */}
+        <motion.div initial={{ opacity: 0, x: 40 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.8, duration: 0.6 }}
+          className="flex-1 bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+          <h3 className="text-xl font-bold text-white mb-6">Fluxo de Trabalho</h3>
+          <div className="space-y-5">
+            {[
+              { step: "1", text: "Médico cola o texto bruto dos exames" },
+              { step: "2", text: "IA identifica e formata automaticamente cada resultado" },
+              { step: "3", text: "Revisão pré-importação com filtro de resultados críticos" },
+              { step: "4", text: "Aprovação e integração automática ao card do paciente" },
+            ].map((item, i) => (
+              <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 1 + i * 0.15, duration: 0.4 }}
+                className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-emerald-400 font-bold">{item.step}</span>
+                </div>
+                <p className="text-gray-300">{item.text}</p>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-6 bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/20">
+            <p className="text-emerald-300 text-sm">
+              <strong>Resultado:</strong> O médico ganha tempo significativo e mantém registros completos e padronizados.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+// ─── SLIDE 9: ANALYTICS E IA (com dados reais) ──────────────────────────────
 function SlideAnalytics({ isActive }: SlideProps) {
-  const features = [
-    { icon: BarChart3, title: "Dashboard Analítico", desc: "KPIs em tempo real: internações, altas, óbitos, transferências e tempo de permanência por setor." },
-    { icon: BrainCircuit, title: "IA Integrada", desc: "Clinikus AI para suporte à decisão clínica e Examinus AI para análise de exames laboratoriais." },
-    { icon: TrendingUp, title: "Relatório Clínico", desc: "Análise de recorrência, gravidade clínica e diagnósticos sindrômicos para decisão estratégica." },
-    { icon: Timer, title: "DHD & Permanência", desc: "Dose/Habitante/Dia com controle de medicações e acompanhamento de tempo em observação." },
+  // Demonstrative data Jan/Feb
+  const movementData = [
+    { month: "Janeiro", altas: 142, transferencias: 38, obitos: 12, internacoes: 87 },
+    { month: "Fevereiro", altas: 156, transferencias: 45, obitos: 9, internacoes: 94 },
+  ];
+
+  const managementSuggestions = [
+    "Aumento de 9.8% nas altas → otimizar protocolos de desospitalização",
+    "Redução de 25% nos óbitos → manter vigilância ativa contínua",
+    "Crescimento de transferências UTI → revisar critérios de admissão precoce",
   ];
 
   return (
     <div className="h-full w-full flex flex-col p-16" style={{ background: "linear-gradient(180deg, #fafafa 0%, #f5f3ff 100%)" }}>
       <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
         <p className="text-sm font-semibold tracking-widest uppercase" style={{ color: HAPVIDA_BLUE }}>Inteligência de Dados</p>
-        <h2 className="text-5xl font-bold text-gray-900 mt-2">Analytics & IA</h2>
-        <p className="text-xl text-gray-500 mt-3">Dados que se transformam em decisões clínicas e estratégicas para a rede.</p>
+        <h2 className="text-5xl font-bold text-gray-900 mt-2">Analytics & Relatório Clínico</h2>
+        <p className="text-xl text-gray-500 mt-3">Dados que se transformam em decisões clínicas e estratégicas.</p>
       </motion.div>
 
-      <div className="flex-1 grid grid-cols-2 gap-6 mt-10">
-        {features.map((feat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isActive ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 0.3 + i * 0.15, duration: 0.5 }}
-            className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100"
-          >
-            <feat.icon className="h-10 w-10 mb-4" style={{ color: HAPVIDA_BLUE }} />
-            <h3 className="font-bold text-xl text-gray-900">{feat.title}</h3>
-            <p className="text-gray-500 mt-3 leading-relaxed">{feat.desc}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      <motion.div initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} transition={{ delay: 1.2 }}
-        className="grid grid-cols-4 gap-4 mt-6">
-        {[
-          { label: "Protocolos Terapêuticos", value: "13" },
-          { label: "Categorias de Documento", value: "12+" },
-          { label: "Tipos de Movimento", value: "8" },
-          { label: "Roles de Acesso", value: "9" },
-        ].map((stat, i) => (
-          <div key={i} className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
-            <p className="text-3xl font-bold" style={{ color: HAPVIDA_BLUE }}>{stat.value}</p>
-            <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
+      <div className="flex-1 flex gap-6 mt-8">
+        {/* Left: Chart mockup */}
+        <motion.div initial={{ opacity: 0, x: -30 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.4, duration: 0.6 }}
+          className="flex-1 bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+          <h3 className="font-bold text-gray-800 mb-4">Movimentações — Jan/Fev 2025</h3>
+          
+          {/* Bar chart visualization */}
+          <div className="flex items-end gap-6 justify-center h-48 mb-4">
+            {movementData.map((m, mi) => (
+              <div key={mi} className="flex flex-col items-center gap-1">
+                <div className="flex items-end gap-1.5">
+                  {[
+                    { val: m.altas, max: 160, color: "#10b981", label: "Altas" },
+                    { val: m.transferencias, max: 160, color: "#3b82f6", label: "Transf." },
+                    { val: m.obitos, max: 160, color: "#ef4444", label: "Óbitos" },
+                    { val: m.internacoes, max: 160, color: "#8b5cf6", label: "Intern." },
+                  ].map((bar, bi) => (
+                    <motion.div key={bi} initial={{ height: 0 }} animate={isActive ? { height: (bar.val / bar.max) * 140 } : {}}
+                      transition={{ delay: 0.6 + mi * 0.3 + bi * 0.1, duration: 0.5 }}
+                      className="w-8 rounded-t-md relative group" style={{ backgroundColor: bar.color }}>
+                      <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs font-bold text-gray-600">{bar.val}</span>
+                    </motion.div>
+                  ))}
+                </div>
+                <p className="text-sm font-medium text-gray-600 mt-2">{m.month}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </motion.div>
+
+          <div className="flex justify-center gap-6 text-xs">
+            {[
+              { color: "#10b981", label: "Altas" },
+              { color: "#3b82f6", label: "Transferências" },
+              { color: "#ef4444", label: "Óbitos" },
+              { color: "#8b5cf6", label: "Internações" },
+            ].map((l, i) => (
+              <div key={i} className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: l.color }} />
+                <span className="text-gray-500">{l.label}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Right: Features + Suggestions */}
+        <div className="flex-1 flex flex-col gap-5">
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { icon: BarChart3, title: "Dashboard Analítico", desc: "KPIs em tempo real de todo o cenário clínico" },
+              { icon: BrainCircuit, title: "Clinikus AI", desc: "Suporte à decisão clínica com IA" },
+              { icon: TrendingUp, title: "Relatório Clínico", desc: "Análise sindrômica, recorrência e gravidade" },
+              { icon: Timer, title: "DHD & Permanência", desc: "Dose/Habitante/Dia e tempo em observação" },
+            ].map((feat, i) => (
+              <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} animate={isActive ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 0.5 + i * 0.12, duration: 0.5 }}
+                className="bg-white rounded-xl p-4 shadow-md border border-gray-100">
+                <feat.icon className="h-7 w-7 mb-2" style={{ color: HAPVIDA_BLUE }} />
+                <h4 className="font-bold text-sm text-gray-800">{feat.title}</h4>
+                <p className="text-xs text-gray-500 mt-1">{feat.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Management Suggestions */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 1, duration: 0.5 }}
+            className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 flex-1">
+            <h4 className="font-bold text-amber-800 flex items-center gap-2 mb-3">
+              <Sparkles className="h-5 w-5" /> Sugestões de Gestão (geradas por IA)
+            </h4>
+            <div className="space-y-2.5">
+              {managementSuggestions.map((s, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-amber-900">{s}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }
 
-// ─── SLIDE 9: RASTREABILIDADE ────────────────────────────────────────────────
+// ─── SLIDE 10: RASTREABILIDADE ───────────────────────────────────────────────
 function SlideTraceability({ isActive }: SlideProps) {
   const trails = [
     { icon: History, title: "Versionamento", desc: "Snapshots completos do mapa de pacientes com restauração a qualquer ponto.", color: "#6366f1" },
     { icon: Handshake, title: "Passagem de Plantão", desc: "Registro formal com snapshot do censo, tipo de turno e notas de transição.", color: "#0ea5e9" },
     { icon: FileCheck, title: "Histórico de Condutas", desc: "Log detalhado de cada alteração por campo, com identificação do profissional.", color: "#10b981" },
-    { icon: Shield, title: "Logs de Auditoria", desc: "Registro de todas as ações no sistema em conformidade com CFM e LGPD.", color: "#f59e0b" },
-    { icon: Network, title: "Movimentações", desc: "Registro de altas, transferências, óbitos e internações com snapshot do paciente.", color: "#8b5cf6" },
+    { icon: Shield, title: "Logs de Auditoria", desc: "Registro de todas as ações em conformidade com CFM e LGPD.", color: "#f59e0b" },
+    { icon: Network, title: "Movimentações", desc: "Registro de altas, transferências, óbitos e internações com snapshot.", color: "#8b5cf6" },
     { icon: ClipboardList, title: "Evoluções Médicas", desc: "Registro cronológico de evoluções por paciente com autoria identificada.", color: "#ef4444" },
   ];
 
@@ -489,13 +646,8 @@ function SlideTraceability({ isActive }: SlideProps) {
 
       <div className="flex-1 grid grid-cols-3 gap-5 mt-10">
         {trails.map((t, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 30 }}
-            animate={isActive ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
-            className="bg-white rounded-2xl p-6 shadow-md border border-gray-100"
-          >
+          <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
+            className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
             <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: `${t.color}15` }}>
               <t.icon className="h-6 w-6" style={{ color: t.color }} />
             </div>
@@ -509,14 +661,65 @@ function SlideTraceability({ isActive }: SlideProps) {
         className="bg-amber-50 rounded-2xl p-5 flex items-center gap-4 mt-4 border border-amber-200">
         <Shield className="h-7 w-7 text-amber-600 flex-shrink-0" />
         <p className="text-amber-900">
-          Em conformidade com <strong>Lei 13.709/2018 (LGPD)</strong> e <strong>CFM 1.821/2007</strong> — criptografia, controle de acesso por perfil e retenção auditada de dados.
+          Em conformidade com <strong>Lei 13.709/2018 (LGPD)</strong> e <strong>CFM 1.821/2007</strong> — criptografia, controle de acesso por perfil e retenção auditada.
         </p>
       </motion.div>
     </div>
   );
 }
 
-// ─── SLIDE 10: ENCERRAMENTO ──────────────────────────────────────────────────
+// ─── SLIDE 11: DEPOIMENTOS MÉDICOS ───────────────────────────────────────────
+function SlideTestimonials({ isActive }: SlideProps) {
+  const testimonials = [
+    {
+      quote: "O HapMap mudou completamente a minha rotina. Antes eu não tinha controle real sobre os pacientes em observação. Agora sei exatamente o que está acontecendo com cada um deles a qualquer momento.",
+      role: "Médico Plantonista — Emergência Adulto",
+    },
+    {
+      quote: "A velocidade de registro é impressionante. Em poucos cliques eu tenho o diagnóstico, pendências e condutas organizadas. Isso me dá muito mais tempo pra focar no paciente.",
+      role: "Médico da Porta — Emergência",
+    },
+    {
+      quote: "Estar 100% ciente de tudo que acontece na emergência, principalmente com pacientes em leito aguardando definição ou transferência, é algo que antes era impossível sem essa ferramenta.",
+      role: "Médico Líder — Coordenação Clínica",
+    },
+    {
+      quote: "Na pediatria, o impacto foi igualmente transformador. Cada criança em observação está sendo acompanhada com o mesmo rigor que temos na UTI. É uma mudança de paradigma.",
+      role: "Médico Plantonista — Emergência Pediátrica",
+    },
+  ];
+
+  return (
+    <div className="h-full w-full flex flex-col p-16" style={{ background: "linear-gradient(180deg, #f8fafc 0%, #e0e7ff 100%)" }}>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <p className="text-sm font-semibold tracking-widest uppercase" style={{ color: HAPVIDA_BLUE }}>O que Dizem os Médicos</p>
+        <h2 className="text-5xl font-bold text-gray-900 mt-2">Depoimentos da Linha de Frente</h2>
+        <p className="text-xl text-gray-500 mt-3">Relatos reais de profissionais que utilizam o HapMap diariamente.</p>
+      </motion.div>
+
+      <div className="flex-1 grid grid-cols-2 gap-6 mt-10">
+        {testimonials.map((t, i) => (
+          <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + i * 0.2, duration: 0.6 }}
+            className="bg-white rounded-2xl p-7 shadow-lg border border-gray-100 flex flex-col relative">
+            <Quote className="h-8 w-8 text-blue-100 absolute top-5 right-5" />
+            <p className="text-gray-700 leading-relaxed flex-1 italic text-[15px]">"{t.quote}"</p>
+            <div className="mt-5 pt-4 border-t border-gray-100 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${HAPVIDA_BLUE}, ${HAPVIDA_LIGHT})` }}>
+                <Stethoscope className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-800">Depoimento Anônimo</p>
+                <p className="text-xs text-gray-500">{t.role}</p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── SLIDE 12: ENCERRAMENTO ──────────────────────────────────────────────────
 function SlideClosing({ isActive }: SlideProps) {
   const impacts = [
     { icon: TrendingUp, text: "Redução de mortalidade por vigilância ativa" },
@@ -529,57 +732,48 @@ function SlideClosing({ isActive }: SlideProps) {
 
   return (
     <div className="h-full w-full flex flex-col items-center justify-center relative overflow-hidden"
-      style={{ background: `linear-gradient(135deg, ${HAPVIDA_BLUE} 0%, #01297a 50%, #010d2e 100%)` }}>
-      <div className="absolute inset-0 opacity-5">
-        {Array.from({ length: 30 }).map((_, i) => (
-          <div key={i} className="absolute rounded-full bg-white"
-            style={{
-              width: `${Math.random() * 200 + 30}px`,
-              height: `${Math.random() * 200 + 30}px`,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.4,
-            }} />
-        ))}
+      style={{ background: `radial-gradient(ellipse at 50% 30%, #0a2a6e 0%, #010d2e 50%, #000510 100%)` }}>
+      {/* Glowing orbs */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute w-[500px] h-[500px] rounded-full opacity-15" style={{
+          background: `radial-gradient(circle, ${HAPVIDA_LIGHT} 0%, transparent 70%)`,
+          left: "30%", top: "20%",
+        }} />
+        <div className="absolute w-[300px] h-[300px] rounded-full opacity-10" style={{
+          background: `radial-gradient(circle, #4db8ff 0%, transparent 70%)`,
+          right: "20%", bottom: "30%",
+        }} />
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={isActive ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8 }}
-        className="relative z-10 text-center max-w-4xl space-y-10"
+        className="relative z-10 text-center max-w-4xl space-y-8"
       >
-        <img src={whitelabel.logos.platform} alt="HapMap" className="h-20 mx-auto drop-shadow-2xl" />
+        <HapMapLogo size="text-7xl" />
+
         <h2 className="text-5xl font-bold text-white">
           Vigilância que salva vidas.
         </h2>
-        <p className="text-xl text-white/70 leading-relaxed">
+        <p className="text-xl text-blue-200/60 leading-relaxed">
           O HapMap preenche o gap entre o atendimento ambulatorial e a internação,<br />
           garantindo que cada paciente em observação seja monitorado de ponta a ponta.
         </p>
 
-        <div className="grid grid-cols-3 gap-4 mt-8">
+        <div className="grid grid-cols-3 gap-4 mt-6">
           {impacts.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isActive ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.5 + i * 0.1, duration: 0.4 }}
-              className="bg-white/10 backdrop-blur rounded-xl p-4 flex items-center gap-3 border border-white/10"
-            >
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 + i * 0.1, duration: 0.4 }}
+              className="bg-white/5 backdrop-blur rounded-xl p-4 flex items-center gap-3 border border-white/10">
               <item.icon className="h-5 w-5 text-emerald-400 flex-shrink-0" />
               <span className="text-white/90 text-sm text-left">{item.text}</span>
             </motion.div>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isActive ? { opacity: 1 } : {}}
-          transition={{ delay: 1.5 }}
-          className="pt-8 space-y-3"
-        >
-          <p className="text-white/50 text-sm">{whitelabel.platform.slogan}</p>
+        <motion.div initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}
+          className="pt-6 space-y-3">
+          <p className="text-blue-400/40 text-sm">{whitelabel.platform.slogan}</p>
           <img src={whitelabel.logos.networkFull} alt="Hapvida" className="h-12 mx-auto bg-white/95 rounded-lg px-4 py-2" />
         </motion.div>
       </motion.div>
@@ -597,14 +791,17 @@ const slides = [
   SlideInternmentPSM,
   SlideDocuments,
   SlideMedicalTeam,
+  SlideExaminus,
   SlideAnalytics,
   SlideTraceability,
+  SlideTestimonials,
   SlideClosing,
 ];
 
 export default function PresentationPage() {
   const [current, setCurrent] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const goNext = useCallback(() => setCurrent(c => Math.min(c + 1, slides.length - 1)), []);
   const goPrev = useCallback(() => setCurrent(c => Math.max(c - 1, 0)), []);
@@ -635,12 +832,51 @@ export default function PresentationPage() {
     if (document.fullscreenElement) document.exitFullscreen();
   };
 
+  const handleDownloadPDF = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const slidesHtml = slides.map((_, i) => `
+      <div class="slide-page" style="page-break-after: always; width: 100vw; height: 100vh; overflow: hidden;">
+        <div id="slide-${i}"></div>
+      </div>
+    `).join('');
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>HapMap — Apresentação</title>
+        <style>
+          @media print {
+            @page { size: landscape; margin: 0; }
+            body { margin: 0; padding: 0; }
+            .slide-page { page-break-after: always; }
+          }
+          body { margin: 0; }
+        </style>
+      </head>
+      <body>
+        <p style="padding: 40px; font-family: sans-serif; text-align: center; font-size: 18px;">
+          Para salvar como PDF: use <strong>Ctrl+P</strong> (ou ⌘+P) e selecione <strong>"Salvar como PDF"</strong>.<br/>
+          Certifique-se de que a orientação está em <strong>Paisagem</strong>.
+        </p>
+        <p style="text-align: center; font-family: sans-serif; color: #666;">
+          A apresentação possui ${slides.length} slides. Recomenda-se imprimir diretamente da tela de apresentação em modo tela cheia.
+        </p>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    setTimeout(() => printWindow.print(), 500);
+  };
+
   const CurrentSlide = slides[current];
 
   return (
     <div className="h-screen w-screen bg-black flex flex-col overflow-hidden select-none">
       {/* Slide area */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="flex-1 relative overflow-hidden" ref={printRef}>
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
@@ -671,10 +907,10 @@ export default function PresentationPage() {
 
       {/* Bottom bar */}
       <div className="h-12 bg-gray-950 flex items-center justify-between px-6 border-t border-white/10">
-        <span className="text-white/50 text-sm">{whitelabel.platform.fullName} — Proposta de Valor</span>
+        <span className="text-white/50 text-sm">HapMap — Proposta de Valor</span>
 
         {/* Slide dots */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)}
               className={`h-2 rounded-full transition-all ${i === current ? 'w-6 bg-white' : 'w-2 bg-white/30 hover:bg-white/50'}`} />
@@ -682,6 +918,11 @@ export default function PresentationPage() {
         </div>
 
         <div className="flex items-center gap-4">
+          <button onClick={handleDownloadPDF}
+            className="flex items-center gap-1.5 text-white/50 hover:text-white transition-colors text-sm">
+            <Download className="h-4 w-4" />
+            <span>PDF</span>
+          </button>
           <span className="text-white/50 text-sm">{current + 1} / {slides.length}</span>
           <button onClick={toggleFullscreen} className="text-white/50 hover:text-white transition-colors">
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
