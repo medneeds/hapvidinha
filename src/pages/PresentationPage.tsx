@@ -236,10 +236,9 @@ function SlideBridge({ isActive }: SlideProps) {
 // ─── SLIDE 4: MAPA DE PACIENTES ──────────────────────────────────────────────
 function SlidePatientMap({ isActive }: SlideProps) {
   const sectors = [
-    { name: "Sala Vermelha", color: "#ef4444", icon: Siren, beds: "Pacientes críticos", desc: "Monitorização contínua com status clínico em tempo real" },
-    { name: "Ala Amarela", color: "#f59e0b", icon: AlertTriangle, beds: "Pacientes semi-críticos", desc: "Controle de condutas, pendências e programações" },
-    { name: "Ala Azul", color: "#3b82f6", icon: Bed, beds: "Pacientes estáveis", desc: "Acompanhamento de permanência e desfecho" },
-    { name: "UTI", color: "#8b5cf6", icon: Activity, beds: "Cuidados intensivos", desc: "Dispositivos, culturas, previsão de alta" },
+    { name: "Sala de Cuidados Especiais", color: "#ef4444", icon: Siren, beds: "Pacientes críticos", desc: "Monitorização contínua com status clínico em tempo real" },
+    { name: "Observação Amarela", color: "#f59e0b", icon: AlertTriangle, beds: "Pacientes semi-críticos", desc: "Controle de condutas, pendências e programações" },
+    { name: "Observação Azul", color: "#3b82f6", icon: Bed, beds: "Pacientes estáveis", desc: "Acompanhamento de permanência e desfecho" },
   ];
 
   return (
