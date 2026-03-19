@@ -236,10 +236,9 @@ function SlideBridge({ isActive }: SlideProps) {
 // ─── SLIDE 4: MAPA DE PACIENTES ──────────────────────────────────────────────
 function SlidePatientMap({ isActive }: SlideProps) {
   const sectors = [
-    { name: "Sala Vermelha", color: "#ef4444", icon: Siren, beds: "Pacientes críticos", desc: "Monitorização contínua com status clínico em tempo real" },
-    { name: "Ala Amarela", color: "#f59e0b", icon: AlertTriangle, beds: "Pacientes semi-críticos", desc: "Controle de condutas, pendências e programações" },
-    { name: "Ala Azul", color: "#3b82f6", icon: Bed, beds: "Pacientes estáveis", desc: "Acompanhamento de permanência e desfecho" },
-    { name: "UTI", color: "#8b5cf6", icon: Activity, beds: "Cuidados intensivos", desc: "Dispositivos, culturas, previsão de alta" },
+    { name: "Sala de Cuidados Especiais", color: "#ef4444", icon: Siren, beds: "Pacientes críticos", desc: "Monitorização contínua com status clínico em tempo real" },
+    { name: "Observação Amarela", color: "#f59e0b", icon: AlertTriangle, beds: "Pacientes semi-críticos", desc: "Controle de condutas, pendências e programações" },
+    { name: "Observação Azul", color: "#3b82f6", icon: Bed, beds: "Pacientes estáveis", desc: "Acompanhamento de permanência e desfecho" },
   ];
 
   return (
@@ -264,6 +263,18 @@ function SlidePatientMap({ isActive }: SlideProps) {
             </div>
           </motion.div>
         ))}
+        {/* Fora das Alas */}
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={isActive ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 0.75, duration: 0.5 }}
+          className="bg-white rounded-2xl p-5 shadow-lg border-l-4 border-l-gray-500 flex items-start gap-4 col-span-2">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-gray-100">
+            <MapPin className="h-6 w-6 text-gray-600" />
+          </div>
+          <div>
+            <h3 className="font-bold text-lg text-gray-900">Fora das Alas — Sob Vigilância</h3>
+            <p className="text-sm font-medium mt-0.5 text-amber-600">Pacientes que merecem atenção mesmo sem leito alocado</p>
+            <p className="text-sm text-gray-500 mt-0.5">Casos em acompanhamento ativo que não estão fisicamente em leito, mas permanecem sob monitoramento clínico contínuo.</p>
+          </div>
+        </motion.div>
       </div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 1, duration: 0.5 }}
