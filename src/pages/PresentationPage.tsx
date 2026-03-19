@@ -1303,14 +1303,53 @@ const slides = [
   SlideClosing,         // 17 - Encerramento
 ];
 
+// ─── SCALED SLIDE WRAPPER ─────────────────────────────────────────────────────
+function ScaledSlide({ children, containerRef }: { children: React.ReactNode; containerRef: React.RefObject<HTMLDivElement | null> }) {
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (!containerRef.current) return;
+      const { clientWidth, clientHeight } = containerRef.current;
+      const scaleX = clientWidth / 1920;
+      const scaleY = clientHeight / 1080;
+      setScale(Math.min(scaleX, scaleY));
+    };
+    updateScale();
+    const ro = new ResizeObserver(updateScale);
+    if (containerRef.current) ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, [containerRef]);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        width: 1920,
+        height: 1080,
+        left: "50%",
+        top: "50%",
+        marginLeft: -960,
+        marginTop: -540,
+        transform: `scale(${scale})`,
+        transformOrigin: "center center",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function PresentationPage() {
   const [current, setCurrent] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const printRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartRef = useRef<number | null>(null);
 
   const goNext = useCallback(() => setCurrent(c => Math.min(c + 1, slides.length - 1)), []);
   const goPrev = useCallback(() => setCurrent(c => Math.max(c - 1, 0)), []);
 
+  // Keyboard navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); goNext(); }
@@ -1322,15 +1361,30 @@ export default function PresentationPage() {
     return () => window.removeEventListener("keydown", handler);
   }, [goNext, goPrev, isFullscreen]);
 
+  // Fullscreen state sync
   useEffect(() => {
     const handler = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", handler);
     return () => document.removeEventListener("fullscreenchange", handler);
   }, []);
 
+  // Touch swipe navigation
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartRef.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartRef.current === null) return;
+    const diff = touchStartRef.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goNext();
+      else goPrev();
+    }
+    touchStartRef.current = null;
+  };
+
   const toggleFullscreen = () => {
     if (document.fullscreenElement) document.exitFullscreen();
-    else document.documentElement.requestFullscreen();
+    else document.documentElement.requestFullscreen().catch(() => {});
   };
 
   const exitFullscreen = () => {
@@ -1341,39 +1395,58 @@ export default function PresentationPage() {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
 
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>HapMap — Apresentação</title>
-        <style>
-          @media print {
-            @page { size: landscape; margin: 0; }
-            body { margin: 0; padding: 0; }
-          }
-          body { margin: 0; font-family: sans-serif; }
-        </style>
-      </head>
-      <body>
-        <p style="padding: 40px; text-align: center; font-size: 18px;">
-          Para salvar como PDF: use <strong>Ctrl+P</strong> (ou ⌘+P) e selecione <strong>"Salvar como PDF"</strong>.<br/>
-          Certifique-se de que a orientação está em <strong>Paisagem</strong>.
-        </p>
-        <p style="text-align: center; color: #666;">
-          A apresentação possui ${slides.length} slides. Recomenda-se imprimir diretamente da tela de apresentação em modo tela cheia.
-        </p>
-      </body>
-      </html>
-    `);
+    // Capture current slide's rendered HTML
+    const slideContainer = containerRef.current;
+    const slideHTML = slideContainer
+      ? slideContainer.querySelector('[data-slide-content]')?.innerHTML || slideContainer.innerHTML
+      : '';
+
+    printWindow.document.write(`<!DOCTYPE html>
+<html><head><title>HapMap — Slide ${current + 1}</title>
+<style>
+  @page { size: landscape; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { display: flex; align-items: center; justify-content: center; background: #000; }
+  .slide-capture { 
+    width: 1920px; height: 1080px; 
+    transform-origin: top left;
+    overflow: hidden;
+    position: relative;
+  }
+  @media print {
+    body { background: white; }
+    .slide-capture {
+      width: 100vw; height: 100vh;
+      transform: none !important;
+    }
+  }
+  /* Tailwind-like resets for the captured content */
+  .slide-capture div { box-sizing: border-box; }
+</style>
+</head><body>
+<div class="slide-capture">${slideHTML}</div>
+<script>
+  // Scale to fit viewport
+  const s = document.querySelector('.slide-capture');
+  const scaleX = window.innerWidth / 1920;
+  const scaleY = window.innerHeight / 1080;
+  s.style.transform = 'scale(' + Math.min(scaleX, scaleY) + ')';
+  setTimeout(() => window.print(), 800);
+</script>
+</body></html>`);
     printWindow.document.close();
-    setTimeout(() => printWindow.print(), 500);
   };
 
   const CurrentSlide = slides[current];
 
   return (
-    <div className="h-screen w-screen bg-black flex flex-col overflow-hidden select-none">
-      <div className="flex-1 relative overflow-hidden" ref={printRef}>
+    <div className="h-screen w-screen bg-black flex flex-col overflow-hidden select-none"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Slide area */}
+      <div className="flex-1 relative overflow-hidden" ref={containerRef}>
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
@@ -1383,42 +1456,49 @@ export default function PresentationPage() {
             transition={{ duration: 0.4 }}
             className="absolute inset-0"
           >
-            <CurrentSlide isActive={true} />
+            <ScaledSlide containerRef={containerRef}>
+              <div data-slide-content className="w-full h-full">
+                <CurrentSlide isActive={true} />
+              </div>
+            </ScaledSlide>
           </motion.div>
         </AnimatePresence>
 
+        {/* Nav arrows - hidden on very small screens */}
         {current > 0 && (
           <button onClick={goPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-3 transition-all z-20 backdrop-blur">
-            <ChevronLeft className="h-6 w-6" />
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 sm:p-3 transition-all z-20 backdrop-blur">
+            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
         )}
         {current < slides.length - 1 && (
           <button onClick={goNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-3 transition-all z-20 backdrop-blur">
-            <ChevronRight className="h-6 w-6" />
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 sm:p-3 transition-all z-20 backdrop-blur">
+            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
         )}
       </div>
 
-      <div className="h-12 bg-gray-950 flex items-center justify-between px-6 border-t border-white/10">
-        <span className="text-white/50 text-sm">HapMap — Proposta de Valor</span>
+      {/* Bottom bar - responsive */}
+      <div className="h-10 sm:h-12 bg-gray-950 flex items-center justify-between px-3 sm:px-6 border-t border-white/10">
+        <span className="text-white/50 text-xs sm:text-sm hidden sm:inline">HapMap — Proposta de Valor</span>
 
-        <div className="flex items-center gap-1.5">
+        {/* Dots - show fewer on mobile */}
+        <div className="flex items-center gap-1 sm:gap-1.5 overflow-hidden max-w-[40%] sm:max-w-none">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)}
-              className={`h-2 rounded-full transition-all ${i === current ? 'w-6 bg-white' : 'w-2 bg-white/30 hover:bg-white/50'}`} />
+              className={`h-1.5 sm:h-2 rounded-full transition-all flex-shrink-0 ${i === current ? 'w-4 sm:w-6 bg-white' : 'w-1.5 sm:w-2 bg-white/30 hover:bg-white/50'}`} />
           ))}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button onClick={handleDownloadPDF}
-            className="flex items-center gap-1.5 text-white/50 hover:text-white transition-colors text-sm">
-            <Download className="h-4 w-4" />
-            <span>PDF</span>
+            className="flex items-center gap-1 sm:gap-1.5 text-white/50 hover:text-white transition-colors text-xs sm:text-sm">
+            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">PDF</span>
           </button>
-          <span className="text-white/50 text-sm">{current + 1} / {slides.length}</span>
-          <button onClick={toggleFullscreen} className="text-white/50 hover:text-white transition-colors">
+          <span className="text-white/50 text-xs sm:text-sm">{current + 1}/{slides.length}</span>
+          <button onClick={toggleFullscreen} className="text-white/50 hover:text-white transition-colors hidden sm:block">
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </button>
         </div>
