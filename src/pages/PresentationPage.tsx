@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import PptxGenJS from "pptxgenjs";
 import {
   ChevronLeft, ChevronRight, Maximize2, Minimize2,
   Monitor, Shield, FileText, Activity, Users, Clock,
