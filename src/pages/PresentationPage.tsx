@@ -1285,25 +1285,7 @@ export default function PresentationPage() {
     return () => document.removeEventListener("fullscreenchange", handler);
   }, []);
 
-  useEffect(() => {
-    if (!isPrinting) return;
-
-    const afterPrint = () => setIsPrinting(false);
-    const fallbackTimeout = window.setTimeout(() => setIsPrinting(false), 2000);
-
-    window.addEventListener("afterprint", afterPrint, { once: true });
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        window.print();
-      });
-    });
-
-    return () => {
-      window.removeEventListener("afterprint", afterPrint);
-      window.clearTimeout(fallbackTimeout);
-    };
-  }, [isPrinting]);
+  const printContainerRef = useRef<HTMLDivElement>(null);
 
   // Touch swipe navigation
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -1329,8 +1311,48 @@ export default function PresentationPage() {
     if (document.fullscreenElement) document.exitFullscreen();
   };
 
-  const handleDownloadPDF = () => {
-    setIsPrinting(true);
+  const handleDownloadPDF = async () => {
+    try {
+      setIsPrinting(true);
+
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+      const slideNodes = printContainerRef.current?.querySelectorAll(".print-slide-page");
+      if (!slideNodes || slideNodes.length === 0) {
+        setIsPrinting(false);
+        return;
+      }
+
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+        compress: true,
+      });
+
+      for (let i = 0; i < slideNodes.length; i += 1) {
+        const slideNode = slideNodes[i] as HTMLElement;
+        const canvas = await html2canvas(slideNode, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          windowWidth: 1920,
+          windowHeight: 1080,
+        });
+
+        const imageData = canvas.toDataURL("image/jpeg", 0.95);
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imageData, "JPEG", 0, 0, pageWidth, pageHeight, undefined, "FAST");
+      }
+
+      pdf.save("hapmap-apresentacao.pdf");
+    } finally {
+      setIsPrinting(false);
+    }
   };
 
   const CurrentSlide = slides[current];
@@ -1343,62 +1365,6 @@ export default function PresentationPage() {
         #presentation-print-pages h1,
         #presentation-print-pages h2 {
           text-transform: uppercase;
-        }
-
-        @media print {
-          @page {
-            size: A4 landscape;
-            margin: 0;
-          }
-
-          html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: visible !important;
-            height: auto !important;
-            background: white !important;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-
-          body > *:not(#presentation-root) {
-            display: none !important;
-          }
-
-          #presentation-root {
-            display: block !important;
-            position: static !important;
-            height: auto !important;
-            width: auto !important;
-            overflow: visible !important;
-            background: white !important;
-          }
-
-          #presentation-root .presentation-slide-area,
-          #presentation-root .presentation-nav-btn,
-          #presentation-root .presentation-bottom-bar {
-            display: none !important;
-          }
-
-          #presentation-print-pages {
-            display: block !important;
-            background: white !important;
-          }
-
-          .print-slide-page {
-            width: 297mm;
-            height: 210mm;
-            page-break-after: always;
-            break-after: page;
-            overflow: hidden;
-            position: relative;
-            background: white;
-          }
-
-          .print-slide-page:last-child {
-            page-break-after: auto;
-            break-after: auto;
-          }
         }
       `}</style>
 
@@ -1457,10 +1423,11 @@ export default function PresentationPage() {
           <div className="flex items-center gap-2 sm:gap-4">
             <button
               onClick={handleDownloadPDF}
-              className="flex items-center gap-1 sm:gap-1.5 text-white/50 hover:text-white transition-colors text-xs sm:text-sm"
+              disabled={isPrinting}
+              className="flex items-center gap-1 sm:gap-1.5 text-white/50 hover:text-white transition-colors text-xs sm:text-sm disabled:opacity-50 disabled:pointer-events-none"
             >
               <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">PDF</span>
+              <span className="hidden sm:inline">{isPrinting ? "Gerando..." : "PDF"}</span>
             </button>
             <span className="text-white/50 text-xs sm:text-sm">{current + 1}/{slides.length}</span>
             <button onClick={toggleFullscreen} className="text-white/50 hover:text-white transition-colors hidden sm:block">
@@ -1469,9 +1436,17 @@ export default function PresentationPage() {
           </div>
         </div>
 
-        <div id="presentation-print-pages" className="hidden" aria-hidden="true">
+        <div
+          ref={printContainerRef}
+          className="fixed -left-[99999px] top-0 pointer-events-none opacity-0"
+          aria-hidden="true"
+        >
           {isPrinting && slides.map((SlideComponent, i) => (
-            <div key={i} className="print-slide-page">
+            <div
+              key={i}
+              className="print-slide-page overflow-hidden bg-white"
+              style={{ width: "1920px", height: "1080px" }}
+            >
               <SlideComponent isActive={false} />
             </div>
           ))}
