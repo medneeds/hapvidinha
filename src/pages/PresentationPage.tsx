@@ -9,7 +9,12 @@ import {
   FileCheck, Pill, BookOpen, TrendingUp, Target,
   ArrowUpCircle, Timer, Handshake, Database,
   Download, Quote, Microscope, Baby, Sparkles,
-  FileWarning, Zap, Search
+  FileWarning, Zap, Search, LayoutDashboard,
+  ChevronDown, ChevronUp, GripVertical, Circle,
+  MapPin, Home, Clipboard, Settings, LogOut,
+  PanelLeftClose, MoreHorizontal, Pencil, Trash2,
+  Menu, FileBarChart, Pill as PillIcon, Syringe,
+  HeartPulse, ScrollText, UserCheck, ArrowUp
 } from "lucide-react";
 import { whitelabel } from "@/config/whitelabel";
 
@@ -21,8 +26,16 @@ interface SlideProps {
   isActive: boolean;
 }
 
-// ─── HAPMAP LOGO COMPONENT (Text-based) ──────────────────────────────────────
-function HapMapLogo({ size = "text-6xl", className = "" }: { size?: string; className?: string }) {
+// ─── HAPMAP LOGO COMPONENT ───────────────────────────────────────────────────
+function HapMapLogo({ size = "text-6xl", className = "", variant = "dark" }: { size?: string; className?: string; variant?: "dark" | "light" }) {
+  const mapGradient = variant === "dark"
+    ? `linear-gradient(135deg, #99d6ff 0%, #e0f0ff 50%, #ffffff 100%)`
+    : `linear-gradient(135deg, ${HAPVIDA_BLUE} 0%, ${HAPVIDA_LIGHT} 50%, #014fc2 100%)`;
+
+  const mapFilter = variant === "dark"
+    ? "drop-shadow(0 0 15px rgba(100, 180, 255, 0.3))"
+    : "drop-shadow(0 0 10px rgba(1, 59, 166, 0.3))";
+
   return (
     <span className={`${size} tracking-tight ${className}`} style={{ lineHeight: 1 }}>
       <span className="font-black" style={{
@@ -32,10 +45,10 @@ function HapMapLogo({ size = "text-6xl", className = "" }: { size?: string; clas
         filter: "drop-shadow(0 0 20px rgba(1, 82, 212, 0.4))",
       }}>Hap</span>
       <span className="font-light" style={{
-        background: `linear-gradient(135deg, #99d6ff 0%, #e0f0ff 50%, #ffffff 100%)`,
+        background: mapGradient,
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
-        filter: "drop-shadow(0 0 15px rgba(100, 180, 255, 0.3))",
+        filter: mapFilter,
       }}>Map</span>
     </span>
   );
@@ -46,7 +59,6 @@ function SlideCover({ isActive }: SlideProps) {
   return (
     <div className="h-full w-full flex flex-col items-center justify-center relative overflow-hidden"
       style={{ background: `radial-gradient(ellipse at 30% 20%, #0a2a6e 0%, #010d2e 50%, #000510 100%)` }}>
-      {/* Glowing orbs */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute w-[600px] h-[600px] rounded-full opacity-20" style={{
           background: `radial-gradient(circle, ${HAPVIDA_LIGHT} 0%, transparent 70%)`,
@@ -62,7 +74,6 @@ function SlideCover({ isActive }: SlideProps) {
         }} />
       </div>
 
-      {/* Subtle grid pattern */}
       <div className="absolute inset-0 opacity-[0.03]"
         style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
 
@@ -72,10 +83,8 @@ function SlideCover({ isActive }: SlideProps) {
         transition={{ duration: 1, ease: "easeOut" }}
         className="relative z-10 text-center space-y-8"
       >
-        {/* HapMap text logo */}
         <div className="relative">
-          <HapMapLogo size="text-8xl" />
-          {/* Glow effect behind text */}
+          <HapMapLogo size="text-8xl" variant="dark" />
           <div className="absolute inset-0 blur-3xl opacity-30" style={{
             background: `radial-gradient(circle, ${HAPVIDA_LIGHT} 0%, transparent 70%)`,
           }} />
@@ -168,7 +177,10 @@ function SlideBridge({ isActive }: SlideProps) {
     <div className="h-full w-full flex flex-col p-16" style={{ background: `linear-gradient(135deg, ${HAPVIDA_BLUE} 0%, #01297a 100%)` }}>
       <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
         <p className="text-sm font-semibold tracking-widest uppercase text-blue-300">A Solução</p>
-        <h2 className="text-5xl font-bold text-white mt-2">HapMap: A Ponte</h2>
+        <h2 className="text-5xl font-bold text-white mt-2 flex items-center gap-4">
+          <HapMapLogo size="text-5xl" variant="dark" />
+          <span className="text-white/60 font-light">— A Ponte</span>
+        </h2>
       </motion.div>
 
       <div className="flex-1 flex items-center justify-center">
@@ -189,7 +201,7 @@ function SlideBridge({ isActive }: SlideProps) {
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
               A Ponte
             </div>
-            <HapMapLogo size="text-4xl" className="justify-center flex" />
+            <HapMapLogo size="text-4xl" variant="light" className="justify-center flex" />
             <p className="text-gray-500 mt-4 text-sm leading-relaxed">
               Vigilância ativa de pacientes em observação com controle de diagnóstico, condutas, status de internação, tempo de permanência e desfecho clínico.
             </p>
@@ -221,7 +233,7 @@ function SlideBridge({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 4: MAPA DE PACIENTES (com Pediatria) ─────────────────────────────
+// ─── SLIDE 4: MAPA DE PACIENTES ──────────────────────────────────────────────
 function SlidePatientMap({ isActive }: SlideProps) {
   const sectors = [
     { name: "Sala Vermelha", color: "#ef4444", icon: Siren, beds: "Pacientes críticos", desc: "Monitorização contínua com status clínico em tempo real" },
@@ -254,7 +266,6 @@ function SlidePatientMap({ isActive }: SlideProps) {
         ))}
       </div>
 
-      {/* Pediatria + Adulto highlight */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 1, duration: 0.5 }}
         className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-5 flex items-center gap-6 mt-4 border border-blue-100">
         <div className="flex items-center gap-4">
@@ -300,7 +311,475 @@ function SlidePatientMap({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 5: FLUXO DE INTERNAÇÃO, PSM e CARÊNCIAS ──────────────────────────
+// ─── DEMO: MOCKUP PATIENT ROW ────────────────────────────────────────────────
+function MockPatientRow({ bed, sector, diagnoses, pendencies, psmIcon, psmColor, delay, isActive, collapsed = false }: {
+  bed: string; sector: string; diagnoses: string[]; pendencies: string[];
+  psmIcon?: React.ReactNode; psmColor?: string; delay: number; isActive: boolean; collapsed?: boolean;
+}) {
+  const sectorColors: Record<string, string> = {
+    red: "#ef4444", yellow: "#f59e0b", blue: "#3b82f6",
+  };
+  const borderColor = sectorColors[sector] || "#3b82f6";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={isActive ? { opacity: 1, x: 0 } : {}}
+      transition={{ delay, duration: 0.4 }}
+      className="bg-white rounded-lg shadow-sm border overflow-hidden"
+      style={{ borderLeftWidth: 3, borderLeftColor: borderColor }}
+    >
+      <div className="flex items-center gap-3 px-3 py-2">
+        <GripVertical className="h-3.5 w-3.5 text-gray-300" />
+        <div className="w-9 h-7 rounded flex items-center justify-center text-[10px] font-bold text-white" style={{ backgroundColor: borderColor }}>
+          {bed}
+        </div>
+        {psmIcon && <div className="flex-shrink-0">{psmIcon}</div>}
+        <div className="text-xs font-semibold text-gray-800 w-20">Paciente ••••</div>
+        {collapsed ? (
+          <div className="flex-1 flex items-center justify-end gap-2">
+            <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
+          </div>
+        ) : (
+          <>
+            <div className="flex-1 flex gap-4 text-[10px]">
+              <div className="flex-1">
+                <p className="text-gray-400 font-medium mb-0.5">Hipóteses/Diagnósticos</p>
+                {diagnoses.map((d, i) => (
+                  <p key={i} className="text-gray-700 leading-tight">• {d}</p>
+                ))}
+              </div>
+              <div className="flex-1">
+                <p className="text-gray-400 font-medium mb-0.5">Programações/Pendências</p>
+                {pendencies.map((p, i) => (
+                  <p key={i} className={`leading-tight ${p.startsWith("IR PARA") ? "text-blue-600 font-bold" : p.includes("AGUARDANDO") ? "text-amber-600 font-semibold" : p.includes("PSM FAVORÁVEL") ? "text-emerald-600 font-semibold" : "text-gray-700"}`}>
+                    • {p}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              <Pencil className="h-3 w-3 text-gray-300" />
+              <MoreHorizontal className="h-3 w-3 text-gray-300" />
+            </div>
+          </>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── SLIDE 5: DEMO - VISÃO GERAL LEITOS RETRAÍDOS ───────────────────────────
+function SlideDemoCollapsed({ isActive }: SlideProps) {
+  const beds = [
+    { bed: "A01", sector: "blue" },
+    { bed: "A02", sector: "blue" },
+    { bed: "A03", sector: "blue" },
+    { bed: "A04", sector: "blue" },
+    { bed: "A05", sector: "blue" },
+    { bed: "AM1", sector: "yellow" },
+    { bed: "AM2", sector: "yellow" },
+    { bed: "AM3", sector: "yellow" },
+    { bed: "V01", sector: "red" },
+    { bed: "V02", sector: "red" },
+  ];
+
+  return (
+    <div className="h-full w-full flex flex-col p-12" style={{ background: "linear-gradient(180deg, #f8fafc 0%, #e8edf5 100%)" }}>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <div className="flex items-center gap-3 mb-1">
+          <LayoutDashboard className="h-5 w-5" style={{ color: HAPVIDA_BLUE }} />
+          <p className="text-sm font-semibold tracking-widest uppercase" style={{ color: HAPVIDA_BLUE }}>Interface do HapMap</p>
+        </div>
+        <h2 className="text-4xl font-bold text-gray-900">Visão Compacta — Leitos Retraídos</h2>
+        <p className="text-lg text-gray-500 mt-2">Vista panorâmica de todos os leitos ocupados, permitindo scan rápido do censo completo.</p>
+      </motion.div>
+
+      <div className="flex-1 flex gap-6 mt-6">
+        {/* Sidebar mockup */}
+        <motion.div initial={{ opacity: 0, x: -30 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.3, duration: 0.5 }}
+          className="w-48 bg-white rounded-2xl shadow-lg border border-gray-200 p-3 flex flex-col gap-0.5 overflow-hidden">
+          <div className="flex items-center gap-2 px-2 py-2 mb-2">
+            <HapMapLogo size="text-lg" variant="light" />
+          </div>
+          {[
+            { icon: LayoutDashboard, label: "Mapa de Leitos", active: true },
+            { icon: FileText, label: "Documentos" },
+            { icon: Clipboard, label: "Passagem de Plantão" },
+            { icon: History, label: "Movimentações" },
+            { icon: ScrollText, label: "Evoluções Clínicas" },
+            { icon: BarChart3, label: "Relatório Clínico" },
+            { icon: Microscope, label: "Examinus AI" },
+            { icon: BrainCircuit, label: "Clinikus AI" },
+            { icon: Pill, label: "Alto Custo" },
+            { icon: Syringe, label: "Hemoderivados" },
+            { icon: HeartPulse, label: "Protocolo Sepse" },
+          ].map((item, i) => (
+            <div key={i} className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-[9px] ${item.active ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-500'}`}>
+              <item.icon className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{item.label}</span>
+            </div>
+          ))}
+          <div className="mt-auto pt-2 border-t border-gray-100">
+            <div className="flex items-center gap-2 px-2 py-1 text-[9px] text-gray-400">
+              <UserCheck className="h-3 w-3" />
+              <span>Dr. ••••••</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Main content - collapsed beds */}
+        <div className="flex-1 space-y-4 overflow-hidden">
+          {/* Sector headers with collapsed beds */}
+          {[
+            { name: "Ala Azul", color: "#3b82f6", beds: beds.filter(b => b.sector === "blue") },
+            { name: "Ala Amarela", color: "#f59e0b", beds: beds.filter(b => b.sector === "yellow") },
+            { name: "Sala Vermelha", color: "#ef4444", beds: beds.filter(b => b.sector === "red") },
+          ].map((sector, si) => (
+            <motion.div key={si} initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 + si * 0.2, duration: 0.4 }}>
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: sector.color }} />
+                <span className="font-bold text-sm text-gray-800">{sector.name}</span>
+                <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{sector.beds.length} pacientes</span>
+              </div>
+              <div className="space-y-1">
+                {sector.beds.map((bed, bi) => (
+                  <MockPatientRow
+                    key={bed.bed}
+                    bed={bed.bed}
+                    sector={bed.sector}
+                    diagnoses={[]}
+                    pendencies={[]}
+                    delay={0.6 + si * 0.2 + bi * 0.05}
+                    isActive={isActive}
+                    collapsed={true}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <motion.div initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}
+        className="mt-3 bg-blue-50 rounded-xl p-3 flex items-center gap-3 border border-blue-100">
+        <Eye className="h-5 w-5 text-blue-600 flex-shrink-0" />
+        <p className="text-sm text-blue-900">
+          <strong>Visão retraída:</strong> Cada leito ocupa uma única linha — ideal para visão panorâmica durante rounds e passagens de plantão.
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── SLIDE 6: DEMO - LEITOS EXPANDIDOS COM DIAGNÓSTICOS ──────────────────────
+function SlideDemoExpanded({ isActive }: SlideProps) {
+  const patients = [
+    {
+      bed: "A01", sector: "blue",
+      diagnoses: ["Pneumonia comunitária (J18.9)", "HAS descompensada"],
+      pendencies: ["SOLICITADA INTERNAÇÃO EM ENFERMARIA (AGUARDANDO PSM)", "Reavaliação de antibioticoterapia em 48h", "Aguardando resultado de hemocultura"],
+      psmIcon: <Clock className="h-3.5 w-3.5 text-amber-500" />,
+    },
+    {
+      bed: "A03", sector: "blue",
+      diagnoses: ["ICC descompensada (I50.0)", "DRC estágio III"],
+      pendencies: ["IR PARA LEITO DE ENFERMARIA", "Reposição hidroeletrolítica K+ 3.1", "Controle de diurese 6/6h"],
+      psmIcon: <ArrowUp className="h-3.5 w-3.5 text-blue-500" />,
+    },
+    {
+      bed: "AM2", sector: "yellow",
+      diagnoses: ["Abdome agudo inflamatório", "Suspeita de apendicite aguda"],
+      pendencies: ["IR PARA O CENTRO CIRÚRGICO", "USG abdome total — resultado pendente", "Avaliação cirurgia geral — Dr. em deslocamento"],
+      psmIcon: <ArrowUp className="h-3.5 w-3.5 text-blue-500" />,
+    },
+    {
+      bed: "V01", sector: "red",
+      diagnoses: ["AVC isquêmico (I63)", "Fibrilação atrial de alta resposta"],
+      pendencies: ["IR PARA LEITO DE UTI", "Trombólise realizada — monitorar NIHSS", "TC controle em 24h"],
+      psmIcon: <ArrowUp className="h-3.5 w-3.5 text-blue-500" />,
+    },
+    {
+      bed: "AM1", sector: "yellow",
+      diagnoses: ["Surto psicótico agudo (F23)", "Ideação suicida estruturada"],
+      pendencies: ["IR PARA O INSTITUTO VOLTA VIDA (IVV)", "Contenção química — Haloperidol 5mg IM", "PSM FAVORÁVEL — aguardando vaga psiquiátrica"],
+      psmIcon: <CheckCircle className="h-3.5 w-3.5 text-emerald-500" />,
+    },
+  ];
+
+  return (
+    <div className="h-full w-full flex flex-col p-12" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f0f4fa 100%)" }}>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <div className="flex items-center gap-3 mb-1">
+          <Layers className="h-5 w-5" style={{ color: HAPVIDA_BLUE }} />
+          <p className="text-sm font-semibold tracking-widest uppercase" style={{ color: HAPVIDA_BLUE }}>Interface do HapMap</p>
+        </div>
+        <h2 className="text-4xl font-bold text-gray-900">Visão Expandida — Detalhes Clínicos</h2>
+        <p className="text-lg text-gray-500 mt-2">Diagnósticos, condutas, status de PSM e pendências — tudo visível em cada leito.</p>
+      </motion.div>
+
+      <div className="flex-1 space-y-2 mt-5 overflow-hidden">
+        {patients.map((p, i) => (
+          <MockPatientRow
+            key={p.bed}
+            bed={p.bed}
+            sector={p.sector}
+            diagnoses={p.diagnoses}
+            pendencies={p.pendencies}
+            psmIcon={p.psmIcon}
+            delay={0.3 + i * 0.15}
+            isActive={isActive}
+          />
+        ))}
+      </div>
+
+      <motion.div initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} transition={{ delay: 1.3 }}
+        className="mt-3 grid grid-cols-4 gap-3">
+        {[
+          { icon: Clock, text: "Aguardando PSM", color: "#f59e0b", bg: "#fef3c7" },
+          { icon: CheckCircle, text: "PSM Favorável", color: "#10b981", bg: "#d1fae5" },
+          { icon: ArrowUp, text: "IR PARA (destino)", color: "#3b82f6", bg: "#dbeafe" },
+          { icon: AlertTriangle, text: "PSM Desfavorável", color: "#ef4444", bg: "#fee2e2" },
+        ].map((s, i) => (
+          <div key={i} className="flex items-center gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: s.bg }}>
+            <s.icon className="h-4 w-4" style={{ color: s.color }} />
+            <span className="text-xs font-semibold" style={{ color: s.color }}>{s.text}</span>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── SLIDE 7: DEMO - STATUS PSM E FLUXO DE INTERNAÇÃO ────────────────────────
+function SlideDemoPSM({ isActive }: SlideProps) {
+  const scenarios = [
+    {
+      title: "Internação em UTI",
+      steps: [
+        { text: "SOLICITADA INTERNAÇÃO EM UTI (AGUARDANDO PSM)", icon: Clock, color: "#f59e0b" },
+        { text: "SOLICITADA INTERNAÇÃO EM UTI (PSM FAVORÁVEL)", icon: CheckCircle, color: "#10b981" },
+        { text: "IR PARA LEITO DE UTI", icon: ArrowUp, color: "#3b82f6" },
+      ],
+    },
+    {
+      title: "Internação em Enfermaria",
+      steps: [
+        { text: "SOLICITADA INTERNAÇÃO EM ENFERMARIA (AGUARDANDO PSM)", icon: Clock, color: "#f59e0b" },
+        { text: "SOLICITADA INTERNAÇÃO EM ENFERMARIA (PSM FAVORÁVEL)", icon: CheckCircle, color: "#10b981" },
+        { text: "IR PARA ENFERMARIA", icon: ArrowUp, color: "#3b82f6" },
+      ],
+    },
+    {
+      title: "Internação Psiquiátrica",
+      steps: [
+        { text: "SOLICITADA INTERNAÇÃO PSIQUIÁTRICA (AGUARDANDO PSM)", icon: Clock, color: "#f59e0b" },
+        { text: "SOLICITADA INTERNAÇÃO PSIQUIÁTRICA (PSM FAVORÁVEL)", icon: CheckCircle, color: "#10b981" },
+        { text: "IR PARA O INSTITUTO VOLTA VIDA (IVV)", icon: ArrowUp, color: "#3b82f6" },
+      ],
+    },
+    {
+      title: "Centro Cirúrgico",
+      steps: [
+        { text: "SOLICITADA INTERNAÇÃO CIRÚRGICA (AGUARDANDO PSM)", icon: Clock, color: "#f59e0b" },
+        { text: "SOLICITADA INTERNAÇÃO CIRÚRGICA (PSM FAVORÁVEL)", icon: CheckCircle, color: "#10b981" },
+        { text: "IR PARA O CENTRO CIRÚRGICO", icon: ArrowUp, color: "#3b82f6" },
+      ],
+    },
+  ];
+
+  return (
+    <div className="h-full w-full flex flex-col p-12" style={{ background: "linear-gradient(180deg, #fafbff 0%, #eef2ff 100%)" }}>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <div className="flex items-center gap-3 mb-1">
+          <ArrowUpCircle className="h-5 w-5" style={{ color: HAPVIDA_BLUE }} />
+          <p className="text-sm font-semibold tracking-widest uppercase" style={{ color: HAPVIDA_BLUE }}>Demonstrativo de Fluxo</p>
+        </div>
+        <h2 className="text-4xl font-bold text-gray-900">Ciclo PSM — Transformação Semântica</h2>
+        <p className="text-lg text-gray-500 mt-2">O texto se transforma automaticamente conforme o status avança, indicando claramente o destino do paciente.</p>
+      </motion.div>
+
+      <div className="flex-1 grid grid-cols-2 gap-4 mt-6">
+        {scenarios.map((sc, si) => (
+          <motion.div key={si} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + si * 0.15, duration: 0.5 }}
+            className="bg-white rounded-xl p-4 shadow-md border border-gray-100">
+            <h4 className="font-bold text-gray-800 text-sm mb-3 flex items-center gap-2">
+              <Target className="h-4 w-4" style={{ color: HAPVIDA_BLUE }} />
+              {sc.title}
+            </h4>
+            <div className="space-y-2">
+              {sc.steps.map((step, i) => (
+                <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.5 + si * 0.15 + i * 0.12, duration: 0.3 }}
+                  className="flex items-start gap-2 rounded-lg px-2.5 py-1.5" style={{ backgroundColor: `${step.color}10` }}>
+                  <step.icon className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" style={{ color: step.color }} />
+                  <span className="text-[10px] font-medium leading-tight" style={{ color: step.color }}>{step.text}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.div initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} transition={{ delay: 1.3 }}
+        className="mt-3 bg-amber-50 rounded-xl p-3 flex items-center gap-3 border border-amber-200">
+        <Sparkles className="h-5 w-5 text-amber-600 flex-shrink-0" />
+        <p className="text-sm text-amber-900">
+          <strong>Automação semântica:</strong> O médico clica no ícone de status e o sistema automaticamente atualiza a frase para refletir o destino auditado do paciente.
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── SLIDE 8: DEMO - CONDUTAS E ACOMPANHAMENTO ──────────────────────────────
+function SlideDemoConducts({ isActive }: SlideProps) {
+  const cases = [
+    {
+      bed: "A02", sector: "blue", title: "Paciente Clínico — Enfermaria",
+      conducts: ["Reposição hidroeletrolítica: SF 0.9% 1000mL + KCl 10% 20mL EV 8/8h", "Dieta hipossódica liberada", "Captopril 25mg VO 8/8h", "Controle pressórico de 4/4h", "Reavaliação clínica no próximo plantão"],
+    },
+    {
+      bed: "V02", sector: "red", title: "Paciente Crítico — UTI",
+      conducts: ["Monitorização contínua + oximetria", "Noradrenalina 0.1mcg/kg/min — titular conforme PAM", "IOT + VM: modo PCV, FiO2 60%, PEEP 10", "Colher gasometria arterial de 6/6h", "Solicitar vaga UTI — PRIORIDADE"],
+    },
+    {
+      bed: "AM3", sector: "yellow", title: "Paciente Psiquiátrico — IVV",
+      conducts: ["Contenção mecânica 4 pontos — reavaliar em 2h", "Haloperidol 5mg + Prometazina 50mg IM", "Vigilância contínua — risco de autoextermínio", "Contato com família para informação clínica", "Aguardando vaga IVV — PSM favorável emitido"],
+    },
+  ];
+
+  return (
+    <div className="h-full w-full flex flex-col p-12" style={{ background: "linear-gradient(180deg, #ffffff 0%, #f5f7fa 100%)" }}>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <div className="flex items-center gap-3 mb-1">
+          <ClipboardList className="h-5 w-5" style={{ color: HAPVIDA_BLUE }} />
+          <p className="text-sm font-semibold tracking-widest uppercase" style={{ color: HAPVIDA_BLUE }}>Plano Terapêutico</p>
+        </div>
+        <h2 className="text-4xl font-bold text-gray-900">Condutas & Acompanhamento em Tempo Real</h2>
+        <p className="text-lg text-gray-500 mt-2">Cada conduta é registrada, rastreada e auditável — com histórico completo de alterações.</p>
+      </motion.div>
+
+      <div className="flex-1 grid grid-cols-3 gap-5 mt-6">
+        {cases.map((c, ci) => {
+          const sectorColors: Record<string, string> = { red: "#ef4444", yellow: "#f59e0b", blue: "#3b82f6" };
+          const color = sectorColors[c.sector];
+          return (
+            <motion.div key={ci} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + ci * 0.2, duration: 0.5 }}
+              className="bg-white rounded-2xl shadow-lg border overflow-hidden flex flex-col" style={{ borderTopWidth: 3, borderTopColor: color }}>
+              <div className="p-4 flex items-center gap-2 border-b border-gray-100">
+                <div className="w-8 h-6 rounded flex items-center justify-center text-[9px] font-bold text-white" style={{ backgroundColor: color }}>
+                  {c.bed}
+                </div>
+                <span className="text-xs font-bold text-gray-800">{c.title}</span>
+              </div>
+              <div className="p-4 flex-1 space-y-2">
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Plano Terapêutico / Condutas</p>
+                {c.conducts.map((cond, i) => (
+                  <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.5 + ci * 0.2 + i * 0.08, duration: 0.3 }}
+                    className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: color }} />
+                    <p className="text-[11px] text-gray-700 leading-tight">{cond}</p>
+                  </motion.div>
+                ))}
+              </div>
+              <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex items-center gap-2">
+                <History className="h-3 w-3 text-gray-400" />
+                <span className="text-[9px] text-gray-400">Última atualização: há 15 min — Dr. ••••</span>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <motion.div initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} transition={{ delay: 1.3 }}
+        className="mt-3 bg-emerald-50 rounded-xl p-3 flex items-center gap-3 border border-emerald-200">
+        <Shield className="h-5 w-5 text-emerald-600 flex-shrink-0" />
+        <p className="text-sm text-emerald-900">
+          <strong>Auditabilidade:</strong> Cada alteração em conduta gera um registro no histórico com identificação do profissional, data, hora e campo modificado.
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── SLIDE 9: DEMO - SIDEBAR & NAVEGAÇÃO ─────────────────────────────────────
+function SlideDemoSidebar({ isActive }: SlideProps) {
+  const sections = [
+    {
+      title: "Vigilância Clínica",
+      items: [
+        { icon: LayoutDashboard, label: "Mapa de Leitos", desc: "Dashboard principal com mapa interativo de todos os pacientes em observação" },
+        { icon: Clipboard, label: "Passagem de Plantão", desc: "Registro formal de transição com snapshot do censo e notas" },
+        { icon: Network, label: "Movimentações", desc: "Registro de altas, transferências, óbitos e internações" },
+        { icon: ScrollText, label: "Evoluções Clínicas", desc: "Registro cronológico com autoria identificada" },
+      ],
+    },
+    {
+      title: "Inteligência & Documentos",
+      items: [
+        { icon: BarChart3, label: "Relatório Clínico", desc: "Analytics com gráficos de movimentação e sugestões de gestão" },
+        { icon: BrainCircuit, label: "Clinikus AI", desc: "Suporte à decisão clínica com inteligência artificial" },
+        { icon: Microscope, label: "Examinus AI", desc: "Registro e interpretação de exames laboratoriais" },
+        { icon: FileText, label: "Documentos da Rede", desc: "Repositório completo de fichas, protocolos e guias" },
+      ],
+    },
+    {
+      title: "Protocolos Especializados",
+      items: [
+        { icon: HeartPulse, label: "Protocolo Sepse", desc: "Abertura e acompanhamento do pacote 1h" },
+        { icon: Pill, label: "Medicações de Alto Custo", desc: "Fichas padronizadas para solicitação" },
+        { icon: Syringe, label: "Hemoderivados", desc: "Solicitações e termos de hemoconcentrados" },
+        { icon: FileCheck, label: "OPME & Procedimentos", desc: "Fichas para procedimentos cirúrgicos" },
+      ],
+    },
+  ];
+
+  return (
+    <div className="h-full w-full flex flex-col p-12" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)" }}>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <div className="flex items-center gap-3 mb-1">
+          <Menu className="h-5 w-5 text-blue-400" />
+          <p className="text-sm font-semibold tracking-widest uppercase text-blue-400">Navegação Completa</p>
+        </div>
+        <h2 className="text-4xl font-bold text-white">Tudo ao Alcance — Sidebar do HapMap</h2>
+        <p className="text-lg text-gray-400 mt-2">Todas as ferramentas clínicas e administrativas organizadas em uma navegação intuitiva.</p>
+      </motion.div>
+
+      <div className="flex-1 grid grid-cols-3 gap-6 mt-8">
+        {sections.map((section, si) => (
+          <motion.div key={si} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + si * 0.2, duration: 0.5 }}
+            className="bg-white/5 backdrop-blur rounded-2xl p-5 border border-white/10">
+            <h3 className="font-bold text-white text-lg mb-4">{section.title}</h3>
+            <div className="space-y-3">
+              {section.items.map((item, i) => (
+                <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.5 + si * 0.2 + i * 0.1, duration: 0.3 }}
+                  className="flex items-start gap-3 bg-white/5 rounded-xl p-3 border border-white/5">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${HAPVIDA_LIGHT}20` }}>
+                    <item.icon className="h-4 w-4 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-white text-xs font-semibold">{item.label}</p>
+                    <p className="text-gray-500 text-[10px] mt-0.5 leading-tight">{item.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.div initial={{ opacity: 0 }} animate={isActive ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}
+        className="mt-3 bg-white/5 rounded-xl p-3 flex items-center gap-3 border border-white/10">
+        <Sparkles className="h-5 w-5 text-amber-400 flex-shrink-0" />
+        <p className="text-sm text-gray-300">
+          <strong className="text-white">Acesso baseado em perfil:</strong> Cada profissional visualiza apenas os módulos compatíveis com sua função — médico líder, porta, prescritor, enfermagem ou visitante.
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── SLIDE 10: FLUXO DE INTERNAÇÃO, PSM e CARÊNCIAS ─────────────────────────
 function SlideInternmentPSM({ isActive }: SlideProps) {
   const psmSteps = [
     { icon: Clock, label: "Aguardando PSM", color: "#f59e0b", bg: "#fef3c7" },
@@ -317,7 +796,6 @@ function SlideInternmentPSM({ isActive }: SlideProps) {
       </motion.div>
 
       <div className="flex-1 flex flex-col justify-center gap-6 mt-4">
-        {/* PSM cycle */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4, duration: 0.6 }}
           className="bg-white rounded-2xl p-6 shadow-lg">
           <h3 className="font-bold text-lg text-gray-800 mb-4">Ciclo de Status PSM</h3>
@@ -339,7 +817,6 @@ function SlideInternmentPSM({ isActive }: SlideProps) {
           </p>
         </motion.div>
 
-        {/* Features row + Carências */}
         <div className="grid grid-cols-4 gap-4">
           {[
             { icon: ClipboardList, title: "Solicitação Padronizada", desc: "Template institucional completo com HDA, exames e plano terapêutico" },
@@ -360,7 +837,7 @@ function SlideInternmentPSM({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 6: DOCUMENTOS INSTITUCIONAIS ──────────────────────────────────────
+// ─── SLIDE 11: DOCUMENTOS INSTITUCIONAIS ─────────────────────────────────────
 function SlideDocuments({ isActive }: SlideProps) {
   const docCategories = [
     { icon: Siren, title: "Protocolo Sepse", desc: "Abertura e acompanhamento do pacote 1h com checklist completo", color: "#ef4444" },
@@ -403,7 +880,7 @@ function SlideDocuments({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 7: RESPONSABILIDADE MÉDICA ────────────────────────────────────────
+// ─── SLIDE 12: RESPONSABILIDADE MÉDICA ───────────────────────────────────────
 function SlideMedicalTeam({ isActive }: SlideProps) {
   return (
     <div className="h-full w-full flex flex-col p-16" style={{ background: "linear-gradient(180deg, #fafbff 0%, #eff6ff 100%)" }}>
@@ -456,7 +933,7 @@ function SlideMedicalTeam({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 8: EXAMINUS AI ────────────────────────────────────────────────────
+// ─── SLIDE 13: EXAMINUS AI ───────────────────────────────────────────────────
 function SlideExaminus({ isActive }: SlideProps) {
   const benefits = [
     { icon: Zap, title: "Velocidade", desc: "Registro de exames em segundos ao invés de minutos — basta colar o texto bruto." },
@@ -477,7 +954,6 @@ function SlideExaminus({ isActive }: SlideProps) {
       </motion.div>
 
       <div className="flex-1 flex items-center gap-10 mt-8">
-        {/* Left: Benefits */}
         <div className="flex-1 grid grid-cols-2 gap-5">
           {benefits.map((b, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + i * 0.15, duration: 0.5 }}
@@ -489,7 +965,6 @@ function SlideExaminus({ isActive }: SlideProps) {
           ))}
         </div>
 
-        {/* Right: Workflow */}
         <motion.div initial={{ opacity: 0, x: 40 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.8, duration: 0.6 }}
           className="flex-1 bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
           <h3 className="text-xl font-bold text-white mb-6">Fluxo de Trabalho</h3>
@@ -520,9 +995,8 @@ function SlideExaminus({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 9: ANALYTICS E IA (com dados reais) ──────────────────────────────
+// ─── SLIDE 14: ANALYTICS E IA ────────────────────────────────────────────────
 function SlideAnalytics({ isActive }: SlideProps) {
-  // Demonstrative data Jan/Feb
   const movementData = [
     { month: "Janeiro", altas: 142, transferencias: 38, obitos: 12, internacoes: 87 },
     { month: "Fevereiro", altas: 156, transferencias: 45, obitos: 9, internacoes: 94 },
@@ -543,12 +1017,9 @@ function SlideAnalytics({ isActive }: SlideProps) {
       </motion.div>
 
       <div className="flex-1 flex gap-6 mt-8">
-        {/* Left: Chart mockup */}
         <motion.div initial={{ opacity: 0, x: -30 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.4, duration: 0.6 }}
           className="flex-1 bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
           <h3 className="font-bold text-gray-800 mb-4">Movimentações — Jan/Fev 2025</h3>
-          
-          {/* Bar chart visualization */}
           <div className="flex items-end gap-6 justify-center h-48 mb-4">
             {movementData.map((m, mi) => (
               <div key={mi} className="flex flex-col items-center gap-1">
@@ -570,7 +1041,6 @@ function SlideAnalytics({ isActive }: SlideProps) {
               </div>
             ))}
           </div>
-
           <div className="flex justify-center gap-6 text-xs">
             {[
               { color: "#10b981", label: "Altas" },
@@ -586,7 +1056,6 @@ function SlideAnalytics({ isActive }: SlideProps) {
           </div>
         </motion.div>
 
-        {/* Right: Features + Suggestions */}
         <div className="flex-1 flex flex-col gap-5">
           <div className="grid grid-cols-2 gap-4">
             {[
@@ -604,7 +1073,6 @@ function SlideAnalytics({ isActive }: SlideProps) {
             ))}
           </div>
 
-          {/* Management Suggestions */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 1, duration: 0.5 }}
             className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 flex-1">
             <h4 className="font-bold text-amber-800 flex items-center gap-2 mb-3">
@@ -625,7 +1093,7 @@ function SlideAnalytics({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 10: RASTREABILIDADE ───────────────────────────────────────────────
+// ─── SLIDE 15: RASTREABILIDADE ───────────────────────────────────────────────
 function SlideTraceability({ isActive }: SlideProps) {
   const trails = [
     { icon: History, title: "Versionamento", desc: "Snapshots completos do mapa de pacientes com restauração a qualquer ponto.", color: "#6366f1" },
@@ -668,7 +1136,7 @@ function SlideTraceability({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 11: DEPOIMENTOS MÉDICOS ───────────────────────────────────────────
+// ─── SLIDE 16: DEPOIMENTOS MÉDICOS ───────────────────────────────────────────
 function SlideTestimonials({ isActive }: SlideProps) {
   const testimonials = [
     {
@@ -719,7 +1187,7 @@ function SlideTestimonials({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 12: ENCERRAMENTO ──────────────────────────────────────────────────
+// ─── SLIDE 17: ENCERRAMENTO ──────────────────────────────────────────────────
 function SlideClosing({ isActive }: SlideProps) {
   const impacts = [
     { icon: TrendingUp, text: "Redução de mortalidade por vigilância ativa" },
@@ -733,7 +1201,6 @@ function SlideClosing({ isActive }: SlideProps) {
   return (
     <div className="h-full w-full flex flex-col items-center justify-center relative overflow-hidden"
       style={{ background: `radial-gradient(ellipse at 50% 30%, #0a2a6e 0%, #010d2e 50%, #000510 100%)` }}>
-      {/* Glowing orbs */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute w-[500px] h-[500px] rounded-full opacity-15" style={{
           background: `radial-gradient(circle, ${HAPVIDA_LIGHT} 0%, transparent 70%)`,
@@ -751,7 +1218,7 @@ function SlideClosing({ isActive }: SlideProps) {
         transition={{ duration: 0.8 }}
         className="relative z-10 text-center max-w-4xl space-y-8"
       >
-        <HapMapLogo size="text-7xl" />
+        <HapMapLogo size="text-7xl" variant="dark" />
 
         <h2 className="text-5xl font-bold text-white">
           Vigilância que salva vidas.
@@ -784,18 +1251,23 @@ function SlideClosing({ isActive }: SlideProps) {
 // ─── MAIN PRESENTATION COMPONENT ─────────────────────────────────────────────
 
 const slides = [
-  SlideCover,
-  SlideGap,
-  SlideBridge,
-  SlidePatientMap,
-  SlideInternmentPSM,
-  SlideDocuments,
-  SlideMedicalTeam,
-  SlideExaminus,
-  SlideAnalytics,
-  SlideTraceability,
-  SlideTestimonials,
-  SlideClosing,
+  SlideCover,           // 1 - Capa
+  SlideGap,             // 2 - O Gap
+  SlideBridge,          // 3 - HapMap como Ponte
+  SlidePatientMap,      // 4 - Mapa de Pacientes
+  SlideDemoCollapsed,   // 5 - DEMO: Visão compacta
+  SlideDemoExpanded,    // 6 - DEMO: Visão expandida
+  SlideDemoPSM,         // 7 - DEMO: Ciclo PSM
+  SlideDemoConducts,    // 8 - DEMO: Condutas
+  SlideDemoSidebar,     // 9 - DEMO: Sidebar/Navegação
+  SlideInternmentPSM,   // 10 - Internação & Carências
+  SlideDocuments,       // 11 - Documentos
+  SlideMedicalTeam,     // 12 - Responsabilidade Médica
+  SlideExaminus,        // 13 - Examinus AI
+  SlideAnalytics,       // 14 - Analytics
+  SlideTraceability,    // 15 - Rastreabilidade
+  SlideTestimonials,    // 16 - Depoimentos
+  SlideClosing,         // 17 - Encerramento
 ];
 
 export default function PresentationPage() {
@@ -836,12 +1308,6 @@ export default function PresentationPage() {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
 
-    const slidesHtml = slides.map((_, i) => `
-      <div class="slide-page" style="page-break-after: always; width: 100vw; height: 100vh; overflow: hidden;">
-        <div id="slide-${i}"></div>
-      </div>
-    `).join('');
-
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
@@ -851,17 +1317,16 @@ export default function PresentationPage() {
           @media print {
             @page { size: landscape; margin: 0; }
             body { margin: 0; padding: 0; }
-            .slide-page { page-break-after: always; }
           }
-          body { margin: 0; }
+          body { margin: 0; font-family: sans-serif; }
         </style>
       </head>
       <body>
-        <p style="padding: 40px; font-family: sans-serif; text-align: center; font-size: 18px;">
+        <p style="padding: 40px; text-align: center; font-size: 18px;">
           Para salvar como PDF: use <strong>Ctrl+P</strong> (ou ⌘+P) e selecione <strong>"Salvar como PDF"</strong>.<br/>
           Certifique-se de que a orientação está em <strong>Paisagem</strong>.
         </p>
-        <p style="text-align: center; font-family: sans-serif; color: #666;">
+        <p style="text-align: center; color: #666;">
           A apresentação possui ${slides.length} slides. Recomenda-se imprimir diretamente da tela de apresentação em modo tela cheia.
         </p>
       </body>
@@ -875,7 +1340,6 @@ export default function PresentationPage() {
 
   return (
     <div className="h-screen w-screen bg-black flex flex-col overflow-hidden select-none">
-      {/* Slide area */}
       <div className="flex-1 relative overflow-hidden" ref={printRef}>
         <AnimatePresence mode="wait">
           <motion.div
@@ -890,7 +1354,6 @@ export default function PresentationPage() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation arrows */}
         {current > 0 && (
           <button onClick={goPrev}
             className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-3 transition-all z-20 backdrop-blur">
@@ -905,11 +1368,9 @@ export default function PresentationPage() {
         )}
       </div>
 
-      {/* Bottom bar */}
       <div className="h-12 bg-gray-950 flex items-center justify-between px-6 border-t border-white/10">
         <span className="text-white/50 text-sm">HapMap — Proposta de Valor</span>
 
-        {/* Slide dots */}
         <div className="flex items-center gap-1.5">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)}
