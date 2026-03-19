@@ -1169,56 +1169,8 @@ function SlideTraceability({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 16: DEPOIMENTOS MÉDICOS ───────────────────────────────────────────
-function SlideTestimonials({ isActive }: SlideProps) {
-  const testimonials = [
-    {
-      quote: "O HapMap mudou completamente a minha rotina. Antes eu não tinha controle real sobre os pacientes em observação. Agora sei exatamente o que está acontecendo com cada um deles a qualquer momento.",
-      role: "Médica Plantonista — Emergência Adulto",
-    },
-    {
-      quote: "A velocidade de registro é impressionante. Em poucos cliques eu tenho o diagnóstico, pendências e condutas organizadas. Isso me dá muito mais tempo pra focar no paciente.",
-      role: "Médico da Porta — Emergência",
-    },
-    {
-      quote: "Estar 100% ciente de tudo que acontece na emergência, principalmente com pacientes em leito aguardando definição ou transferência, é algo que antes era impossível sem essa ferramenta.",
-      role: "Médico Líder — Coordenação Clínica",
-    },
-    {
-      quote: "Na pediatria, o HapMap fez com que o nosso raciocínio clínico ficasse totalmente direcionado para os pacientes que estamos visualizando em tempo real, alocados nas alas. A clareza que isso traz é extraordinária.",
-      role: "Médica Plantonista — Emergência Pediátrica",
-    },
-  ];
 
-  return (
-    <div className="h-full w-full flex flex-col p-16" style={{ background: "linear-gradient(180deg, #f8fafc 0%, #e0e7ff 100%)" }}>
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
-        <p className="text-sm font-semibold tracking-widest uppercase" style={{ color: HAPVIDA_BLUE }}>O que Dizem os Médicos</p>
-        <h2 className="text-5xl font-bold text-gray-900 mt-2">Depoimentos da Linha de Frente</h2>
-        <p className="text-xl text-gray-500 mt-3">Relatos reais de profissionais que utilizam o HapMap diariamente.</p>
-      </motion.div>
 
-      <div className="flex-1 grid grid-cols-2 gap-6 mt-10">
-        {testimonials.map((t, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + i * 0.2, duration: 0.6 }}
-            className="bg-white rounded-2xl p-7 shadow-lg border border-gray-100 flex flex-col relative">
-            <Quote className="h-8 w-8 text-blue-100 absolute top-5 right-5" />
-            <p className="text-gray-700 leading-relaxed flex-1 italic text-[15px]">"{t.quote}"</p>
-            <div className="mt-5 pt-4 border-t border-gray-100 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${HAPVIDA_BLUE}, ${HAPVIDA_LIGHT})` }}>
-                <Stethoscope className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-800">Depoimento Anônimo</p>
-                <p className="text-xs text-gray-500">{t.role}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ─── SLIDE 17: ENCERRAMENTO ──────────────────────────────────────────────────
 function SlideClosing({ isActive }: SlideProps) {
