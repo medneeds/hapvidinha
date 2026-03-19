@@ -1315,15 +1315,14 @@ export default function PresentationPage() {
     try {
       setIsPrinting(true);
 
-      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      // Wait for React render + framer-motion animations to complete
+      await new Promise(resolve => window.setTimeout(resolve, 2500));
 
       const slideNodes = printContainerRef.current?.querySelectorAll(".print-slide-page");
       if (!slideNodes || slideNodes.length === 0) {
         setIsPrinting(false);
         return;
       }
-
-      await new Promise((resolve) => window.setTimeout(resolve, 500));
 
       const pdf = new jsPDF({
         orientation: "landscape",
@@ -1335,9 +1334,9 @@ export default function PresentationPage() {
       for (let i = 0; i < slideNodes.length; i += 1) {
         const slideNode = slideNodes[i] as HTMLElement;
         const canvas = await html2canvas(slideNode, {
-          scale: 2,
+          scale: 1,
           useCORS: true,
-          backgroundColor: "#ffffff",
+          backgroundColor: null,
           logging: false,
           windowWidth: 1920,
           windowHeight: 1080,
@@ -1345,7 +1344,7 @@ export default function PresentationPage() {
           height: 1080,
         });
 
-        const imageData = canvas.toDataURL("image/jpeg", 0.98);
+        const imageData = canvas.toDataURL("image/jpeg", 0.75);
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
@@ -1449,10 +1448,10 @@ export default function PresentationPage() {
           {isPrinting && slides.map((SlideComponent, i) => (
             <div
               key={i}
-              className="print-slide-page overflow-hidden bg-white"
+              className="print-slide-page overflow-hidden"
               style={{ width: "1920px", height: "1080px" }}
             >
-              <SlideComponent isActive={false} />
+              <SlideComponent isActive={true} />
             </div>
           ))}
         </div>
