@@ -1353,8 +1353,15 @@ export default function PresentationPage() {
     if (document.fullscreenElement) document.exitFullscreen();
   };
 
+  const [isPrinting, setIsPrinting] = useState(false);
+
   const handleDownloadPDF = () => {
-    window.print();
+    setIsPrinting(true);
+    // Wait for all slides to render, then print
+    setTimeout(() => {
+      window.print();
+      setIsPrinting(false);
+    }, 300);
   };
 
   const CurrentSlide = slides[current];
@@ -1365,13 +1372,32 @@ export default function PresentationPage() {
       <style>{`
         @media print {
           @page { size: landscape; margin: 0; }
+          html, body { margin: 0; padding: 0; overflow: visible !important; height: auto !important; }
           body > *:not(#presentation-root) { display: none !important; }
-          #presentation-root { position: fixed; inset: 0; }
-          #presentation-root .presentation-controls,
+          #presentation-root { 
+            display: block !important; 
+            position: static !important; 
+            height: auto !important; 
+            width: auto !important;
+            overflow: visible !important;
+          }
+          #presentation-root .presentation-slide-area,
           #presentation-root .presentation-nav-btn,
           #presentation-root .presentation-bottom-bar { display: none !important; }
-          #presentation-root .presentation-slide-area {
-            position: fixed; inset: 0; background: white;
+          #presentation-print-pages { 
+            display: block !important; 
+          }
+          .print-slide-page {
+            width: 100vw;
+            height: 100vh;
+            page-break-after: always;
+            break-after: page;
+            overflow: hidden;
+            position: relative;
+          }
+          .print-slide-page:last-child {
+            page-break-after: avoid;
+            break-after: avoid;
           }
         }
       `}</style>
@@ -1380,7 +1406,7 @@ export default function PresentationPage() {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Slide area */}
+        {/* Normal slide area (hidden during print) */}
         <div className="presentation-slide-area flex-1 relative overflow-hidden" ref={containerRef}>
           <AnimatePresence mode="wait">
             <motion.div
@@ -1432,6 +1458,15 @@ export default function PresentationPage() {
               {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             </button>
           </div>
+        </div>
+
+        {/* All slides rendered for PDF (hidden on screen, shown on print) */}
+        <div id="presentation-print-pages" className="hidden">
+          {isPrinting && slides.map((SlideComponent, i) => (
+            <div key={i} className="print-slide-page">
+              <SlideComponent isActive={true} />
+            </div>
+          ))}
         </div>
       </div>
     </>
