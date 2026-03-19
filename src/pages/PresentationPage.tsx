@@ -1174,7 +1174,7 @@ function SlideTestimonials({ isActive }: SlideProps) {
   const testimonials = [
     {
       quote: "O HapMap mudou completamente a minha rotina. Antes eu não tinha controle real sobre os pacientes em observação. Agora sei exatamente o que está acontecendo com cada um deles a qualquer momento.",
-      role: "Médico Plantonista — Emergência Adulto",
+      role: "Médica Plantonista — Emergência Adulto",
     },
     {
       quote: "A velocidade de registro é impressionante. Em poucos cliques eu tenho o diagnóstico, pendências e condutas organizadas. Isso me dá muito mais tempo pra focar no paciente.",
@@ -1185,8 +1185,8 @@ function SlideTestimonials({ isActive }: SlideProps) {
       role: "Médico Líder — Coordenação Clínica",
     },
     {
-      quote: "Na pediatria, o impacto foi igualmente transformador. Cada criança em observação está sendo acompanhada com o mesmo rigor que temos na UTI. É uma mudança de paradigma.",
-      role: "Médico Plantonista — Emergência Pediátrica",
+      quote: "Na pediatria, o HapMap fez com que o nosso raciocínio clínico ficasse totalmente direcionado para os pacientes que estamos visualizando em tempo real, alocados nas alas. A clareza que isso traz é extraordinária.",
+      role: "Médica Plantonista — Emergência Pediátrica",
     },
   ];
 
