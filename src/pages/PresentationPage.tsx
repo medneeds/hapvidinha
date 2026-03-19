@@ -1359,6 +1359,50 @@ export default function PresentationPage() {
     }
   };
 
+  const handleDownloadPPTX = async () => {
+    try {
+      setIsPrinting(true);
+      await new Promise(resolve => window.setTimeout(resolve, 2500));
+
+      const slideNodes = printContainerRef.current?.querySelectorAll(".print-slide-page");
+      if (!slideNodes || slideNodes.length === 0) {
+        setIsPrinting(false);
+        return;
+      }
+
+      const pptx = new PptxGenJS();
+      pptx.layout = "LAYOUT_WIDE"; // 13.33 x 7.5 inches (widescreen 16:9)
+
+      for (let i = 0; i < slideNodes.length; i++) {
+        const slideNode = slideNodes[i] as HTMLElement;
+        const canvas = await html2canvas(slideNode, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: null,
+          logging: false,
+          windowWidth: 1920,
+          windowHeight: 1080,
+          width: 1920,
+          height: 1080,
+        });
+
+        const imageData = canvas.toDataURL("image/png");
+        const slide = pptx.addSlide();
+        slide.addImage({
+          data: imageData,
+          x: 0,
+          y: 0,
+          w: "100%",
+          h: "100%",
+        });
+      }
+
+      await pptx.writeFile({ fileName: "hapmap-apresentacao.pptx" });
+    } finally {
+      setIsPrinting(false);
+    }
+  };
+
   const CurrentSlide = slides[current];
 
   return (
