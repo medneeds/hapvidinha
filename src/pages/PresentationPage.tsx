@@ -1306,6 +1306,7 @@ const slides = [
 export default function PresentationPage() {
   const [current, setCurrent] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartRef = useRef<number | null>(null);
 
@@ -1330,10 +1331,31 @@ export default function PresentationPage() {
     return () => document.removeEventListener("fullscreenchange", handler);
   }, []);
 
+  useEffect(() => {
+    if (!isPrinting) return;
+
+    const afterPrint = () => setIsPrinting(false);
+    const fallbackTimeout = window.setTimeout(() => setIsPrinting(false), 2000);
+
+    window.addEventListener("afterprint", afterPrint, { once: true });
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.print();
+      });
+    });
+
+    return () => {
+      window.removeEventListener("afterprint", afterPrint);
+      window.clearTimeout(fallbackTimeout);
+    };
+  }, [isPrinting]);
+
   // Touch swipe navigation
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartRef.current = e.touches[0].clientX;
   };
+
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (touchStartRef.current === null) return;
     const diff = touchStartRef.current - e.changedTouches[0].clientX;
@@ -1353,60 +1375,85 @@ export default function PresentationPage() {
     if (document.fullscreenElement) document.exitFullscreen();
   };
 
-  const [isPrinting, setIsPrinting] = useState(false);
-
   const handleDownloadPDF = () => {
     setIsPrinting(true);
-    // Wait for all slides to render, then print
-    setTimeout(() => {
-      window.print();
-      setIsPrinting(false);
-    }, 300);
   };
 
   const CurrentSlide = slides[current];
 
   return (
     <>
-      {/* Print-only styles */}
       <style>{`
+        #presentation-root h1,
+        #presentation-root h2,
+        #presentation-print-pages h1,
+        #presentation-print-pages h2 {
+          text-transform: uppercase;
+        }
+
         @media print {
-          @page { size: landscape; margin: 0; }
-          html, body { margin: 0; padding: 0; overflow: visible !important; height: auto !important; }
-          body > *:not(#presentation-root) { display: none !important; }
-          #presentation-root { 
-            display: block !important; 
-            position: static !important; 
-            height: auto !important; 
+          @page {
+            size: A4 landscape;
+            margin: 0;
+          }
+
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            height: auto !important;
+            background: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
+
+          body > *:not(#presentation-root) {
+            display: none !important;
+          }
+
+          #presentation-root {
+            display: block !important;
+            position: static !important;
+            height: auto !important;
             width: auto !important;
             overflow: visible !important;
+            background: white !important;
           }
+
           #presentation-root .presentation-slide-area,
           #presentation-root .presentation-nav-btn,
-          #presentation-root .presentation-bottom-bar { display: none !important; }
-          #presentation-print-pages { 
-            display: block !important; 
+          #presentation-root .presentation-bottom-bar {
+            display: none !important;
           }
+
+          #presentation-print-pages {
+            display: block !important;
+            background: white !important;
+          }
+
           .print-slide-page {
-            width: 100vw;
-            height: 100vh;
+            width: 297mm;
+            height: 210mm;
             page-break-after: always;
             break-after: page;
             overflow: hidden;
             position: relative;
+            background: white;
           }
+
           .print-slide-page:last-child {
-            page-break-after: avoid;
-            break-after: avoid;
+            page-break-after: auto;
+            break-after: auto;
           }
         }
       `}</style>
 
-      <div id="presentation-root" className="h-screen w-screen bg-black flex flex-col overflow-hidden select-none"
+      <div
+        id="presentation-root"
+        className="h-screen w-screen bg-black flex flex-col overflow-hidden select-none"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Normal slide area (hidden during print) */}
         <div className="presentation-slide-area flex-1 relative overflow-hidden" ref={containerRef}>
           <AnimatePresence mode="wait">
             <motion.div
@@ -1421,35 +1468,43 @@ export default function PresentationPage() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Nav arrows */}
           {current > 0 && (
-            <button onClick={goPrev}
-              className="presentation-nav-btn absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 sm:p-3 transition-all z-20 backdrop-blur">
+            <button
+              onClick={goPrev}
+              className="presentation-nav-btn absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 sm:p-3 transition-all z-20 backdrop-blur"
+            >
               <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
             </button>
           )}
+
           {current < slides.length - 1 && (
-            <button onClick={goNext}
-              className="presentation-nav-btn absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 sm:p-3 transition-all z-20 backdrop-blur">
+            <button
+              onClick={goNext}
+              className="presentation-nav-btn absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 sm:p-3 transition-all z-20 backdrop-blur"
+            >
               <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
             </button>
           )}
         </div>
 
-        {/* Bottom bar */}
         <div className="presentation-bottom-bar h-10 sm:h-12 bg-gray-950 flex items-center justify-between px-3 sm:px-6 border-t border-white/10">
           <span className="text-white/50 text-xs sm:text-sm hidden sm:inline">HapMap — Proposta de Valor</span>
 
           <div className="flex items-center gap-1 sm:gap-1.5 overflow-hidden max-w-[50%] sm:max-w-none">
             {slides.map((_, i) => (
-              <button key={i} onClick={() => setCurrent(i)}
-                className={`h-1.5 sm:h-2 rounded-full transition-all flex-shrink-0 ${i === current ? 'w-4 sm:w-6 bg-white' : 'w-1.5 sm:w-2 bg-white/30 hover:bg-white/50'}`} />
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`h-1.5 sm:h-2 rounded-full transition-all flex-shrink-0 ${i === current ? 'w-4 sm:w-6 bg-white' : 'w-1.5 sm:w-2 bg-white/30 hover:bg-white/50'}`}
+              />
             ))}
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={handleDownloadPDF}
-              className="flex items-center gap-1 sm:gap-1.5 text-white/50 hover:text-white transition-colors text-xs sm:text-sm">
+            <button
+              onClick={handleDownloadPDF}
+              className="flex items-center gap-1 sm:gap-1.5 text-white/50 hover:text-white transition-colors text-xs sm:text-sm"
+            >
               <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">PDF</span>
             </button>
@@ -1460,11 +1515,10 @@ export default function PresentationPage() {
           </div>
         </div>
 
-        {/* All slides rendered for PDF (hidden on screen, shown on print) */}
-        <div id="presentation-print-pages" className="hidden">
+        <div id="presentation-print-pages" className="hidden" aria-hidden="true">
           {isPrinting && slides.map((SlideComponent, i) => (
             <div key={i} className="print-slide-page">
-              <SlideComponent isActive={true} />
+              <SlideComponent isActive={false} />
             </div>
           ))}
         </div>
