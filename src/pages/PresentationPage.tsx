@@ -742,7 +742,7 @@ function SlideDemoSidebar({ isActive }: SlideProps) {
       title: "Inteligência & Documentos",
       items: [
         { icon: BarChart3, label: "Relatório Clínico", desc: "Analytics com gráficos de movimentação e sugestões de gestão" },
-        { icon: BrainCircuit, label: "Clinikus AI", desc: "Suporte à decisão clínica com inteligência artificial" },
+        { icon: BrainCircuit, label: "Clinicus AI", desc: "Suporte à decisão clínica com inteligência artificial" },
         { icon: Microscope, label: "Examinus AI", desc: "Registro e interpretação de exames laboratoriais" },
         { icon: FileText, label: "Documentos da Rede", desc: "Repositório completo de fichas, protocolos e guias" },
       ],
