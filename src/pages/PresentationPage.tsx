@@ -1084,7 +1084,7 @@ function SlideAnalytics({ isActive }: SlideProps) {
           <div className="grid grid-cols-2 gap-4">
             {[
               { icon: BarChart3, title: "Dashboard Analítico", desc: "KPIs em tempo real de todo o cenário clínico" },
-              { icon: BrainCircuit, title: "Clinikus AI", desc: "Suporte à decisão clínica com IA" },
+              { icon: BrainCircuit, title: "Clinicus AI", desc: "Suporte à decisão clínica com IA" },
               { icon: TrendingUp, title: "Relatório Clínico", desc: "Análise sindrômica, recorrência e gravidade" },
               { icon: Timer, title: "DHD & Permanência", desc: "Dose/Habitante/Dia e tempo em observação" },
             ].map((feat, i) => (
