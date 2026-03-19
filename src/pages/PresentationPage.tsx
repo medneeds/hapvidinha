@@ -384,21 +384,19 @@ function MockPatientRow({ bed, sector, diagnoses, pendencies, psmIcon, psmColor,
 function SlideDemoCollapsed({ isActive }: SlideProps) {
   const sectors = [
     { name: "Sala de Cuidados Especiais", color: "#ef4444", beds: [
-      { bed: "V01", sector: "red" }, { bed: "V02", sector: "red" }, { bed: "V03", sector: "red" },
-      { bed: "V04", sector: "red" }, { bed: "V05", sector: "red" },
+      { bed: "V01", sector: "red" }, { bed: "V02", sector: "red" },
     ]},
     { name: "Observação Amarela", color: "#f59e0b", beds: [
-      { bed: "A01", sector: "yellow" }, { bed: "A02", sector: "yellow" }, { bed: "A03", sector: "yellow" },
-      { bed: "A04", sector: "yellow" }, { bed: "A05", sector: "yellow" }, { bed: "A06", sector: "yellow" },
+      { bed: "A01", sector: "yellow" }, { bed: "A02", sector: "yellow" },
+      { bed: "A03", sector: "yellow" }, { bed: "A04", sector: "yellow" },
     ]},
     { name: "Observação Azul", color: "#3b82f6", beds: [
       { bed: "Z01", sector: "blue" }, { bed: "Z02", sector: "blue" }, { bed: "Z03", sector: "blue" },
-      { bed: "Z04", sector: "blue" }, { bed: "Z05", sector: "blue" }, { bed: "Z06", sector: "blue" },
     ]},
   ];
 
   const outsideBeds = [
-    { bed: "EXT1", sector: "blue" }, { bed: "EXT2", sector: "yellow" },
+    { bed: "EXT1", sector: "yellow" },
   ];
 
   return (
