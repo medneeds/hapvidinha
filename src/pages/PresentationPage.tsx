@@ -384,21 +384,19 @@ function MockPatientRow({ bed, sector, diagnoses, pendencies, psmIcon, psmColor,
 function SlideDemoCollapsed({ isActive }: SlideProps) {
   const sectors = [
     { name: "Sala de Cuidados Especiais", color: "#ef4444", beds: [
-      { bed: "V01", sector: "red" }, { bed: "V02", sector: "red" }, { bed: "V03", sector: "red" },
-      { bed: "V04", sector: "red" }, { bed: "V05", sector: "red" },
+      { bed: "V01", sector: "red" }, { bed: "V02", sector: "red" },
     ]},
     { name: "Observação Amarela", color: "#f59e0b", beds: [
-      { bed: "A01", sector: "yellow" }, { bed: "A02", sector: "yellow" }, { bed: "A03", sector: "yellow" },
-      { bed: "A04", sector: "yellow" }, { bed: "A05", sector: "yellow" }, { bed: "A06", sector: "yellow" },
+      { bed: "A01", sector: "yellow" }, { bed: "A02", sector: "yellow" },
+      { bed: "A03", sector: "yellow" }, { bed: "A04", sector: "yellow" },
     ]},
     { name: "Observação Azul", color: "#3b82f6", beds: [
       { bed: "Z01", sector: "blue" }, { bed: "Z02", sector: "blue" }, { bed: "Z03", sector: "blue" },
-      { bed: "Z04", sector: "blue" }, { bed: "Z05", sector: "blue" }, { bed: "Z06", sector: "blue" },
     ]},
   ];
 
   const outsideBeds = [
-    { bed: "EXT1", sector: "blue" }, { bed: "EXT2", sector: "yellow" },
+    { bed: "EXT1", sector: "yellow" },
   ];
 
   return (
@@ -1176,7 +1174,7 @@ function SlideTestimonials({ isActive }: SlideProps) {
   const testimonials = [
     {
       quote: "O HapMap mudou completamente a minha rotina. Antes eu não tinha controle real sobre os pacientes em observação. Agora sei exatamente o que está acontecendo com cada um deles a qualquer momento.",
-      role: "Médico Plantonista — Emergência Adulto",
+      role: "Médica Plantonista — Emergência Adulto",
     },
     {
       quote: "A velocidade de registro é impressionante. Em poucos cliques eu tenho o diagnóstico, pendências e condutas organizadas. Isso me dá muito mais tempo pra focar no paciente.",
@@ -1187,8 +1185,8 @@ function SlideTestimonials({ isActive }: SlideProps) {
       role: "Médico Líder — Coordenação Clínica",
     },
     {
-      quote: "Na pediatria, o impacto foi igualmente transformador. Cada criança em observação está sendo acompanhada com o mesmo rigor que temos na UTI. É uma mudança de paradigma.",
-      role: "Médico Plantonista — Emergência Pediátrica",
+      quote: "Na pediatria, o HapMap fez com que o nosso raciocínio clínico ficasse totalmente direcionado para os pacientes que estamos visualizando em tempo real, alocados nas alas. A clareza que isso traz é extraordinária.",
+      role: "Médica Plantonista — Emergência Pediátrica",
     },
   ];
 
