@@ -371,17 +371,23 @@ function MockPatientRow({ bed, sector, diagnoses, pendencies, psmIcon, psmColor,
 
 // ─── SLIDE 5: DEMO - VISÃO GERAL LEITOS RETRAÍDOS ───────────────────────────
 function SlideDemoCollapsed({ isActive }: SlideProps) {
-  const beds = [
-    { bed: "A01", sector: "blue" },
-    { bed: "A02", sector: "blue" },
-    { bed: "A03", sector: "blue" },
-    { bed: "A04", sector: "blue" },
-    { bed: "A05", sector: "blue" },
-    { bed: "AM1", sector: "yellow" },
-    { bed: "AM2", sector: "yellow" },
-    { bed: "AM3", sector: "yellow" },
-    { bed: "V01", sector: "red" },
-    { bed: "V02", sector: "red" },
+  const sectors = [
+    { name: "Sala de Cuidados Especiais", color: "#ef4444", beds: [
+      { bed: "V01", sector: "red" }, { bed: "V02", sector: "red" }, { bed: "V03", sector: "red" },
+      { bed: "V04", sector: "red" }, { bed: "V05", sector: "red" },
+    ]},
+    { name: "Observação Amarela", color: "#f59e0b", beds: [
+      { bed: "A01", sector: "yellow" }, { bed: "A02", sector: "yellow" }, { bed: "A03", sector: "yellow" },
+      { bed: "A04", sector: "yellow" }, { bed: "A05", sector: "yellow" }, { bed: "A06", sector: "yellow" },
+    ]},
+    { name: "Observação Azul", color: "#3b82f6", beds: [
+      { bed: "Z01", sector: "blue" }, { bed: "Z02", sector: "blue" }, { bed: "Z03", sector: "blue" },
+      { bed: "Z04", sector: "blue" }, { bed: "Z05", sector: "blue" }, { bed: "Z06", sector: "blue" },
+    ]},
+  ];
+
+  const outsideBeds = [
+    { bed: "EXT1", sector: "blue" }, { bed: "EXT2", sector: "yellow" },
   ];
 
   return (
@@ -410,7 +416,7 @@ function SlideDemoCollapsed({ isActive }: SlideProps) {
             { icon: ScrollText, label: "Evoluções Clínicas" },
             { icon: BarChart3, label: "Relatório Clínico" },
             { icon: Microscope, label: "Examinus AI" },
-            { icon: BrainCircuit, label: "Clinikus AI" },
+            { icon: BrainCircuit, label: "Clinicus AI" },
             { icon: Pill, label: "Alto Custo" },
             { icon: Syringe, label: "Hemoderivados" },
             { icon: HeartPulse, label: "Protocolo Sepse" },
@@ -429,20 +435,15 @@ function SlideDemoCollapsed({ isActive }: SlideProps) {
         </motion.div>
 
         {/* Main content - collapsed beds */}
-        <div className="flex-1 space-y-4 overflow-hidden">
-          {/* Sector headers with collapsed beds */}
-          {[
-            { name: "Ala Azul", color: "#3b82f6", beds: beds.filter(b => b.sector === "blue") },
-            { name: "Ala Amarela", color: "#f59e0b", beds: beds.filter(b => b.sector === "yellow") },
-            { name: "Sala Vermelha", color: "#ef4444", beds: beds.filter(b => b.sector === "red") },
-          ].map((sector, si) => (
-            <motion.div key={si} initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 + si * 0.2, duration: 0.4 }}>
-              <div className="flex items-center gap-2 mb-1.5">
+        <div className="flex-1 space-y-3 overflow-hidden">
+          {sectors.map((sector, si) => (
+            <motion.div key={si} initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 + si * 0.15, duration: 0.4 }}>
+              <div className="flex items-center gap-2 mb-1">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: sector.color }} />
                 <span className="font-bold text-sm text-gray-800">{sector.name}</span>
                 <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{sector.beds.length} pacientes</span>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {sector.beds.map((bed, bi) => (
                   <MockPatientRow
                     key={bed.bed}
@@ -450,7 +451,7 @@ function SlideDemoCollapsed({ isActive }: SlideProps) {
                     sector={bed.sector}
                     diagnoses={[]}
                     pendencies={[]}
-                    delay={0.6 + si * 0.2 + bi * 0.05}
+                    delay={0.6 + si * 0.15 + bi * 0.04}
                     isActive={isActive}
                     collapsed={true}
                   />
@@ -458,6 +459,29 @@ function SlideDemoCollapsed({ isActive }: SlideProps) {
               </div>
             </motion.div>
           ))}
+
+          {/* Fora das Alas */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 1.1, duration: 0.4 }}>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-3 h-3 rounded-full bg-gray-500" />
+              <span className="font-bold text-sm text-gray-800">Fora das Alas</span>
+              <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full font-medium">⚠ sob vigilância</span>
+            </div>
+            <div className="space-y-0.5">
+              {outsideBeds.map((bed, bi) => (
+                <MockPatientRow
+                  key={bed.bed}
+                  bed={bed.bed}
+                  sector={bed.sector}
+                  diagnoses={[]}
+                  pendencies={[]}
+                  delay={1.2 + bi * 0.05}
+                  isActive={isActive}
+                  collapsed={true}
+                />
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
 
@@ -465,7 +489,7 @@ function SlideDemoCollapsed({ isActive }: SlideProps) {
         className="mt-3 bg-blue-50 rounded-xl p-3 flex items-center gap-3 border border-blue-100">
         <Eye className="h-5 w-5 text-blue-600 flex-shrink-0" />
         <p className="text-sm text-blue-900">
-          <strong>Visão retraída:</strong> Cada leito ocupa uma única linha — ideal para visão panorâmica durante rounds e passagens de plantão.
+          <strong>Visão retraída:</strong> Cada leito ocupa uma única linha — ideal para visão panorâmica durante rounds e passagens de plantão. Pacientes fora das alas também ficam sob vigilância ativa.
         </p>
       </motion.div>
     </div>
@@ -718,7 +742,7 @@ function SlideDemoSidebar({ isActive }: SlideProps) {
       title: "Inteligência & Documentos",
       items: [
         { icon: BarChart3, label: "Relatório Clínico", desc: "Analytics com gráficos de movimentação e sugestões de gestão" },
-        { icon: BrainCircuit, label: "Clinikus AI", desc: "Suporte à decisão clínica com inteligência artificial" },
+        { icon: BrainCircuit, label: "Clinicus AI", desc: "Suporte à decisão clínica com inteligência artificial" },
         { icon: Microscope, label: "Examinus AI", desc: "Registro e interpretação de exames laboratoriais" },
         { icon: FileText, label: "Documentos da Rede", desc: "Repositório completo de fichas, protocolos e guias" },
       ],
@@ -1060,7 +1084,7 @@ function SlideAnalytics({ isActive }: SlideProps) {
           <div className="grid grid-cols-2 gap-4">
             {[
               { icon: BarChart3, title: "Dashboard Analítico", desc: "KPIs em tempo real de todo o cenário clínico" },
-              { icon: BrainCircuit, title: "Clinikus AI", desc: "Suporte à decisão clínica com IA" },
+              { icon: BrainCircuit, title: "Clinicus AI", desc: "Suporte à decisão clínica com IA" },
               { icon: TrendingUp, title: "Relatório Clínico", desc: "Análise sindrômica, recorrência e gravidade" },
               { icon: Timer, title: "DHD & Permanência", desc: "Dose/Habitante/Dia e tempo em observação" },
             ].map((feat, i) => (
