@@ -1477,6 +1477,14 @@ export default function PresentationPage() {
               <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">{isPrinting ? "Gerando..." : "PDF"}</span>
             </button>
+            <button
+              onClick={handleDownloadPPTX}
+              disabled={isPrinting}
+              className="flex items-center gap-1 sm:gap-1.5 text-white/50 hover:text-white transition-colors text-xs sm:text-sm disabled:opacity-50 disabled:pointer-events-none"
+            >
+              <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">{isPrinting ? "Gerando..." : "PPTX"}</span>
+            </button>
             <span className="text-white/50 text-xs sm:text-sm">{current + 1}/{slides.length}</span>
             <button onClick={toggleFullscreen} className="text-white/50 hover:text-white transition-colors hidden sm:block">
               {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
