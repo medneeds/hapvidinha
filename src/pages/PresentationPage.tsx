@@ -1442,7 +1442,8 @@ export default function PresentationPage() {
 
         <div
           ref={printContainerRef}
-          className="fixed -left-[99999px] top-0 pointer-events-none opacity-0"
+          className="fixed left-[-99999px] top-0 pointer-events-none"
+          style={{ width: "1920px", opacity: 1 }}
           aria-hidden="true"
         >
           {isPrinting && slides.map((SlideComponent, i) => (
