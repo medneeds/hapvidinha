@@ -1323,6 +1323,8 @@ export default function PresentationPage() {
         return;
       }
 
+      await new Promise((resolve) => window.setTimeout(resolve, 500));
+
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "mm",
@@ -1339,9 +1341,11 @@ export default function PresentationPage() {
           logging: false,
           windowWidth: 1920,
           windowHeight: 1080,
+          width: 1920,
+          height: 1080,
         });
 
-        const imageData = canvas.toDataURL("image/jpeg", 0.95);
+        const imageData = canvas.toDataURL("image/jpeg", 0.98);
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
