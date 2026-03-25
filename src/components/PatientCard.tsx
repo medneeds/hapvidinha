@@ -3933,6 +3933,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>Liberar Dieta</span>
                     </DropdownMenuItem>
 
+                    {/* PROTOCOLO SEPSE */}
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSepsisWizardOpen(true);
+                      }}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
+                    >
+                      <Activity className={cn("h-4 w-4", hasSepsisActive ? "text-orange-500 animate-pulse" : "text-red-600 dark:text-red-400")} />
+                      <span>{hasSepsisActive ? "Protocolo Sepse (Ativo)" : "Abrir Protocolo Sepse"}</span>
+                    </DropdownMenuItem>
+
                     {/* PSM STATUS - Collapsible with three options */}
                     <Collapsible className="group">
                       <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
