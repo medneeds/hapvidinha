@@ -670,7 +670,7 @@ export function SepsisProtocolWizardDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={v => { if (!v) onClose(); }}>
+    <Dialog open={isOpen} onOpenChange={v => { if (!v && !isSubmitting) onClose(); }}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-0 gap-0">
         {/* Timer Header */}
         {startTime && (
