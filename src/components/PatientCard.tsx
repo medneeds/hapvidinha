@@ -3869,7 +3869,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           onClick={(e) => {
                             e.stopPropagation();
                             if (hasSepsisActive) {
-                              toast({ title: "Protocolo Sepse ativo", description: "Finalize o protocolo de sepse antes de realizar movimentações.", variant: "destructive" });
+                              toastHook({ title: "Protocolo Sepse ativo", description: "Finalize o protocolo de sepse antes de realizar movimentações.", variant: "destructive" });
                               return;
                             }
                             setMovementType("ÓBITO");
