@@ -273,10 +273,21 @@ export function SepsisProtocolWizardDialog({
   };
 
   const handleStartProtocol = async () => {
-    if (!patient || !currentHospital || !currentState) return;
+    if (!patient) {
+      toast({ title: "Erro", description: "Nenhum paciente selecionado.", variant: "destructive" });
+      return;
+    }
+    if (!currentHospital || !currentState) {
+      toast({ title: "Erro", description: "Hospital/Estado não configurado.", variant: "destructive" });
+      return;
+    }
     setIsSubmitting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({ title: "Erro", description: "Sessão expirada. Faça login novamente.", variant: "destructive" });
+        return;
+      }
       const now = new Date();
       const { data, error } = await supabase
         .from('sepsis_protocols')
@@ -285,7 +296,7 @@ export function SepsisProtocolWizardDialog({
           patient_name: formData.patient_name || patient.name,
           hospital_unit_id: currentHospital.id,
           state_id: currentState.id,
-          created_by: user?.id,
+          created_by: user.id,
           opening_date: formData.opening_date || now.toISOString().split("T")[0],
           opening_time: formData.opening_time || now.toTimeString().slice(0, 5),
           birth_date: formData.birth_date || null,
@@ -298,13 +309,14 @@ export function SepsisProtocolWizardDialog({
         .single();
 
       if (error) throw error;
+      if (!data) throw new Error("Nenhum dado retornado");
       setProtocolId(data.id);
       setStartTime(new Date(data.created_at));
       setCurrentStep(1);
       toast({ title: "Protocolo Sepse iniciado", description: "Golden Hour em andamento. Preencha as etapas." });
-    } catch (err) {
-      console.error(err);
-      toast({ title: "Erro", description: "Não foi possível iniciar o protocolo.", variant: "destructive" });
+    } catch (err: any) {
+      console.error('Erro ao iniciar protocolo sepse:', err);
+      toast({ title: "Erro ao iniciar protocolo", description: err?.message || "Não foi possível iniciar o protocolo.", variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
