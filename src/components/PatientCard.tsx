@@ -39,6 +39,9 @@ import { PatientEvolutionsPanel } from "./PatientEvolutionsPanel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { whitelabel } from "@/config/whitelabel";
 import { useHospital } from "@/contexts/HospitalContext";
+import { useSepsisProtocol } from "@/hooks/useSepsisProtocol";
+import { SepsisActiveBanner } from "./SepsisActiveBanner";
+import { SepsisProtocolWizardDialog } from "./SepsisProtocolWizardDialog";
 import {
   Dialog,
   DialogContent,
