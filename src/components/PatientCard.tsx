@@ -4284,6 +4284,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         }}
       />
 
+      <SepsisProtocolWizardDialog
+        patient={patient}
+        isOpen={sepsisWizardOpen}
+        onClose={() => setSepsisWizardOpen(false)}
+        onSuccess={() => refetchSepsis()}
+        existingProtocolId={activeSepsisProtocol?.id || null}
+      />
+
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent className="dark:bg-gray-900 dark:border-gray-700">
           <AlertDialogHeader>
