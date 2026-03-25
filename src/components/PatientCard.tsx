@@ -39,6 +39,9 @@ import { PatientEvolutionsPanel } from "./PatientEvolutionsPanel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { whitelabel } from "@/config/whitelabel";
 import { useHospital } from "@/contexts/HospitalContext";
+import { useSepsisProtocol } from "@/hooks/useSepsisProtocol";
+import { SepsisActiveBanner } from "./SepsisActiveBanner";
+import { SepsisProtocolWizardDialog } from "./SepsisProtocolWizardDialog";
 import {
   Dialog,
   DialogContent,
@@ -784,6 +787,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [conductHistoryDialogOpen, setConductHistoryDialogOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [reportText, setReportText] = useState("");
+  const [sepsisWizardOpen, setSepsisWizardOpen] = useState(false);
+  const { activeProtocol: activeSepsisProtocol, isProtocolActive: hasSepsisActive, refetch: refetchSepsis } = useSepsisProtocol(patient.id);
   const { history: conductHistory, isLoading: conductHistoryLoading, recordChange } = useConductHistory(patient.id);
   const { role, user } = useAuth();
   const { currentState, currentHospital } = useHospital();
@@ -1547,6 +1552,17 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
           </div>
         )}
+
+        {/* Sepsis Protocol Active Banner */}
+        {hasSepsisActive && activeSepsisProtocol && (
+          <SepsisActiveBanner
+            protocolCreatedAt={activeSepsisProtocol.created_at}
+            openingDate={activeSepsisProtocol.opening_date}
+            openingTime={activeSepsisProtocol.opening_time}
+            outcome={activeSepsisProtocol.outcome}
+            onClick={() => setSepsisWizardOpen(true)}
+          />
+        )}
         
         <Card 
           data-patient-id={patient.id}
@@ -1555,7 +1571,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             config.color,
             isSelected && "ring-2 ring-primary",
             isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
-            allocationStatusBarConfig && "rounded-t-none"
+            (allocationStatusBarConfig || hasSepsisActive) && "rounded-t-none"
           )}
         >
         <div className="p-3 md:p-2 print:p-1.5">
@@ -3820,6 +3836,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (hasSepsisActive) {
+                              toastHook({ title: "Protocolo Sepse ativo", description: "Finalize o protocolo de sepse antes de realizar movimentações.", variant: "destructive" });
+                              return;
+                            }
                             setMovementType("TRANSFERÊNCIA");
                             setMovementDialogOpen(true);
                           }}
@@ -3827,10 +3847,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           <ArrowRightLeft className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                           <span>Transferir</span>
+                          {hasSepsisActive && <AlertCircle className="h-3 w-3 text-orange-500 ml-auto" />}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (hasSepsisActive) {
+                              toastHook({ title: "Protocolo Sepse ativo", description: "Finalize o protocolo de sepse antes de realizar movimentações.", variant: "destructive" });
+                              return;
+                            }
                             setMovementType("ALTA");
                             setMovementDialogOpen(true);
                           }}
@@ -3838,10 +3863,15 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           <TrendingUp className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
                           <span>Alta</span>
+                          {hasSepsisActive && <AlertCircle className="h-3 w-3 text-orange-500 ml-auto" />}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (hasSepsisActive) {
+                              toastHook({ title: "Protocolo Sepse ativo", description: "Finalize o protocolo de sepse antes de realizar movimentações.", variant: "destructive" });
+                              return;
+                            }
                             setMovementType("ÓBITO");
                             setMovementDialogOpen(true);
                           }}
@@ -3849,6 +3879,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           <Skull className="h-3.5 w-3.5 text-gray-600 dark:text-gray-400" />
                           <span>Óbito</span>
+                          {hasSepsisActive && <AlertCircle className="h-3 w-3 text-orange-500 ml-auto" />}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
@@ -3915,6 +3946,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     >
                       <Utensils className="h-4 w-4 text-green-600 dark:text-green-400" />
                       <span>Liberar Dieta</span>
+                    </DropdownMenuItem>
+
+                    {/* PROTOCOLO SEPSE */}
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSepsisWizardOpen(true);
+                      }}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
+                    >
+                      <Activity className={cn("h-4 w-4", hasSepsisActive ? "text-orange-500 animate-pulse" : "text-red-600 dark:text-red-400")} />
+                      <span>{hasSepsisActive ? "Protocolo Sepse (Ativo)" : "Abrir Protocolo Sepse"}</span>
                     </DropdownMenuItem>
 
                     {/* PSM STATUS - Collapsible with three options */}
@@ -4239,6 +4282,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             onDelete(patient.id);
           }
         }}
+      />
+
+      <SepsisProtocolWizardDialog
+        patient={patient}
+        isOpen={sepsisWizardOpen}
+        onClose={() => setSepsisWizardOpen(false)}
+        onSuccess={() => refetchSepsis()}
+        existingProtocolId={activeSepsisProtocol?.id || null}
       />
 
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
