@@ -671,7 +671,7 @@ export function SepsisProtocolWizardDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={v => { if (!v && !isSubmitting) onClose(); }}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-0 gap-0">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-0 gap-0" onInteractOutside={e => { if (isSubmitting || protocolId) e.preventDefault(); }} onEscapeKeyDown={e => { if (isSubmitting) e.preventDefault(); }}>
         {/* Timer Header */}
         {startTime && (
           <div className={cn(
