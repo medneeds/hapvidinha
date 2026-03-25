@@ -1552,6 +1552,17 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
           </div>
         )}
+
+        {/* Sepsis Protocol Active Banner */}
+        {hasSepsisActive && activeSepsisProtocol && (
+          <SepsisActiveBanner
+            protocolCreatedAt={activeSepsisProtocol.created_at}
+            openingDate={activeSepsisProtocol.opening_date}
+            openingTime={activeSepsisProtocol.opening_time}
+            outcome={activeSepsisProtocol.outcome}
+            onClick={() => setSepsisWizardOpen(true)}
+          />
+        )}
         
         <Card 
           data-patient-id={patient.id}
@@ -1560,7 +1571,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             config.color,
             isSelected && "ring-2 ring-primary",
             isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
-            allocationStatusBarConfig && "rounded-t-none"
+            (allocationStatusBarConfig || hasSepsisActive) && "rounded-t-none"
           )}
         >
         <div className="p-3 md:p-2 print:p-1.5">
