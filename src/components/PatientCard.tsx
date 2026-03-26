@@ -1562,9 +1562,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             outcome={activeSepsisProtocol.outcome}
             sector={patient.sector as any}
             hasCultures={!!(activeSepsisProtocol.blood_culture_date && activeSepsisProtocol.blood_culture_time)}
-            hasAntibiotic={!!(activeSepsisProtocol.antibiotic_prescription_date && activeSepsisProtocol.antibiotic_prescription_time)}
-            antibioticDate={activeSepsisProtocol.antibiotic_prescription_date}
-            antibioticTime={activeSepsisProtocol.antibiotic_prescription_time}
+            hasAntibiotic={!!(activeSepsisProtocol.antibiotic_administration_date && activeSepsisProtocol.antibiotic_administration_time)}
+            antibioticDate={activeSepsisProtocol.antibiotic_administration_date}
+            antibioticTime={activeSepsisProtocol.antibiotic_administration_time}
             bloodCultureTime={activeSepsisProtocol.blood_culture_time}
             onClick={() => setSepsisWizardOpen(true)}
           />
