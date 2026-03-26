@@ -113,10 +113,6 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
     ? "sepsis-expired"
     : "sepsis-active";
 
-  // Icon uses green when treatment complete, otherwise follows status
-  const iconColorClass = (treatmentComplete && !isExpired && !isFinalized)
-    ? "sepsis-finalized"
-    : statusColorClass;
 
   return (
     <div
