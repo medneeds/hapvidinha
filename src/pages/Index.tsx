@@ -581,11 +581,10 @@ const Index = () => {
     const patient = patients.find(p => p.id === patientId);
     if (!patient) return;
 
-    // Calculate next available bed number in destination sector
-    const patientsInNewSector = patients.filter(p => p.sector === newSector);
-    const bedNumbers = patientsInNewSector.map(p => parseInt(p.bedNumber.replace(/\D/g, '')) || 0);
-    const maxBedNumber = bedNumbers.length > 0 ? Math.max(...bedNumbers) : 0;
-    const newBedNumber = `${patient.bedNumber.match(/[A-Z]+/)?.[0] || 'L'}${String(maxBedNumber + 1).padStart(2, '0')}`;
+    // Calculate next available bed number in destination sector using proper naming
+    const patientsInNewSector = patients.filter(p => p.sector === newSector && p.id !== patientId);
+    const existingBedNumbers = patientsInNewSector.map(p => p.bedNumber);
+    const newBedNumber = getNextBedNumber(newSector, existingBedNumbers, currentDepartment);
 
     const updatedPatient = { ...patient, sector: newSector, bedNumber: newBedNumber };
     
