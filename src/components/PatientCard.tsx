@@ -788,8 +788,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [reportText, setReportText] = useState("");
   const [sepsisWizardOpen, setSepsisWizardOpen] = useState(false);
-  const [cancelSepsisDialogOpen, setCancelSepsisDialogOpen] = useState(false);
-  const [isCancellingSepsis, setIsCancellingSepsis] = useState(false);
   const { activeProtocol: activeSepsisProtocol, isProtocolActive: hasSepsisActive, refetch: refetchSepsis } = useSepsisProtocol(patient.id);
   const { history: conductHistory, isLoading: conductHistoryLoading, recordChange } = useConductHistory(patient.id);
   const { role, user } = useAuth();
@@ -799,26 +797,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const { namesHidden } = usePrivacy();
   const displayName = maskName(patient.name, namesHidden);
   
-  const handleCancelSepsisProtocol = async () => {
-    if (!activeSepsisProtocol?.id) return;
-    setIsCancellingSepsis(true);
-    try {
-      const { error } = await supabase
-        .from('sepsis_protocols')
-        .update({ outcome: 'cancelado_por_erro' })
-        .eq('id', activeSepsisProtocol.id);
-      if (error) throw error;
-      toast.success("Protocolo de sepse cancelado com sucesso");
-      refetchSepsis();
-    } catch (err) {
-      console.error('Error cancelling sepsis protocol:', err);
-      toast.error("Erro ao cancelar protocolo de sepse");
-    } finally {
-      setIsCancellingSepsis(false);
-      setCancelSepsisDialogOpen(false);
-    }
-  };
-
   // Find allocation request for this patient and calculate elapsed time
   const allocationTimeElapsed = useMemo(() => {
     if (!patient.allocationStatus || patient.allocationStatus === 'approved' || !patient.isDoorPatient) {
@@ -3985,19 +3963,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>{hasSepsisActive ? "Protocolo Sepse (Ativo)" : "Abrir Protocolo Sepse"}</span>
                     </DropdownMenuItem>
 
-                    {hasSepsisActive && (
-                      <DropdownMenuItem
-                        onSelect={(e) => {
-                          e.preventDefault();
-                          setCancelSepsisDialogOpen(true);
-                        }}
-                        className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-destructive/10 transition-colors cursor-pointer text-destructive"
-                      >
-                        <XCircle className="h-4 w-4" />
-                        <span>Cancelar Protocolo Sepse</span>
-                      </DropdownMenuItem>
-                    )}
-
                     {/* PSM STATUS - Collapsible with three options */}
                     <Collapsible className="group">
                       <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
@@ -4376,36 +4341,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Dialog de confirmação para cancelar Protocolo Sepse */}
-      <AlertDialog open={cancelSepsisDialogOpen} onOpenChange={setCancelSepsisDialogOpen}>
-        <AlertDialogContent className="dark:bg-gray-900 dark:border-gray-700">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="dark:text-white text-lg font-semibold flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-destructive" />
-              Cancelar Protocolo de Sepse
-            </AlertDialogTitle>
-            <AlertDialogDescription className="dark:text-gray-300 text-base">
-              Tem certeza que deseja cancelar o protocolo de sepse do paciente <strong className="dark:text-white font-bold">{patient.name}</strong> (Leito {patient.bedNumber})?
-              <br />
-              <span className="text-destructive dark:text-red-400 font-medium mt-2 inline-block">
-                Use esta opção apenas se o protocolo foi aberto por engano.
-              </span>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
-              Manter Protocolo
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleCancelSepsisProtocol}
-              disabled={isCancellingSepsis}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {isCancellingSepsis ? "Cancelando..." : "Sim, Cancelar Protocolo"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       {/* Dialog expandido para Hipóteses / Diagnósticos */}
       <Dialog open={expandedSection === 'diagnoses'} onOpenChange={() => setExpandedSection(null)}>
