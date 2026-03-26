@@ -128,7 +128,7 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
         isExpired && !isFinalized && "animate-pulse"
       )}
     >
-      <ShieldAlert className={cn("h-3 w-3 flex-shrink-0 relative z-10", `sepsis-icon ${statusColorClass}`)} />
+      <ShieldAlert className={cn("h-3 w-3 flex-shrink-0 relative z-10", `sepsis-icon ${iconColorClass}`)} />
       
       <span className={cn(
         "text-[9px] font-semibold uppercase flex-shrink-0 relative z-10 tracking-wide",
