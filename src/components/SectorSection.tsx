@@ -44,7 +44,7 @@ interface SectorSectionProps {
   onDeletePatient?: (patientId: string) => void;
   onUndeletePatient?: (patient: Patient) => void;
   onPrintSector?: () => void;
-  onAddExtraBed?: (category?: PatientCategory) => void;
+  onAddExtraBed?: () => void;
   selectionMode?: boolean;
   selectedPatients?: Set<string>;
   onToggleSelection?: (patientId: string) => void;
