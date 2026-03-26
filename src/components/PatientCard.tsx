@@ -1626,12 +1626,61 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     const cfg = respConfig[respType] || { label: respType.toUpperCase(), icon: Stethoscope };
                     const RespIcon = cfg.icon;
                     
-                    let displayText = cfg.label;
+                    // For "conjunto", render stacked pills separated by "+"
                     if (respType === 'conjunto' && localMedicalResponsibility?.conjuntoWith?.length) {
-                      const specNames: Record<string, string> = { porta: 'PRT', lider: 'LÍD', obstetra: 'OBS', cirurgiao_geral: 'CIR', traumatologista: 'ORT' };
-                      displayText = localMedicalResponsibility.conjuntoWith.map(s => specNames[s] || s.toUpperCase()).join('+');
+                      const specConfig: Record<string, { label: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
+                        porta: { label: 'PORTA', icon: Stethoscope },
+                        lider: { label: 'LÍDER', icon: UserCog },
+                        obstetra: { label: 'OBS', icon: Baby },
+                        cirurgiao_geral: { label: 'CIR', icon: Scissors },
+                        traumatologista: { label: 'ORTOP', icon: Bone },
+                      };
+                      const officeText = localMedicalResponsibility?.officeNumber ? `C${localMedicalResponsibility.officeNumber}` : '';
+                      
+                      return (
+                        <div 
+                          className="flex flex-col items-center gap-0 mt-1 cursor-pointer print:hidden"
+                          onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
+                          title="Seguimento Conjunto — Clique para alterar"
+                        >
+                          {localMedicalResponsibility.conjuntoWith.map((specType, idx) => {
+                            const spec = specConfig[specType] || { label: specType.toUpperCase(), icon: Stethoscope };
+                            const SpecIcon = spec.icon;
+                            return (
+                              <div key={specType} className="flex flex-col items-center">
+                                {idx > 0 && (
+                                  <Plus className="h-2.5 w-2.5 my-[-2px]" style={{ color: sColor }} strokeWidth={3} />
+                                )}
+                                <div
+                                  className="inline-flex flex-col items-center gap-0 px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide border-2 transition-all duration-200 hover:shadow-md w-fit"
+                                  style={{
+                                    color: sColor,
+                                    backgroundColor: `${sColor}12`,
+                                    borderColor: `${sColor}50`,
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = `${sColor}25`;
+                                    e.currentTarget.style.borderColor = `${sColor}80`;
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = `${sColor}12`;
+                                    e.currentTarget.style.borderColor = `${sColor}50`;
+                                  }}
+                                >
+                                  <div className="flex items-center gap-0.5">
+                                    <SpecIcon className="h-3 w-3" style={{ color: sColor }} />
+                                    <span className="leading-none">{spec.label}</span>
+                                  </div>
+                                  {idx === 0 && officeText && <span className="opacity-70 text-[8px] leading-none">{officeText}</span>}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
                     }
                     
+                    let displayText = cfg.label;
                     const officeText = localMedicalResponsibility?.officeNumber ? `C${localMedicalResponsibility.officeNumber}` : '';
                     
                     return (
