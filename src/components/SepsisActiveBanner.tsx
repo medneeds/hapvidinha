@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { HeartPulse, CheckCircle2 } from "lucide-react";
+import { ShieldAlert, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectorType } from "@/types/patient";
 
@@ -53,17 +53,16 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
   const progressPercent = Math.min(100, (elapsedSeconds / ONE_HOUR) * 100);
   const isExpired = elapsedSeconds >= ONE_HOUR;
   const isFinalized = !!outcome;
-
-  // Shimmer stays active until both cultures AND antibiotic are filled
   const treatmentComplete = hasCultures && hasAntibiotic;
+  const shimmerActive = !isFinalized && !treatmentComplete;
 
   const sectorColorClass = sector === 'yellow' ? 'sector-yellow' : sector === 'blue' ? 'sector-blue' : 'sector-red';
 
   const statusLabel = isFinalized
-    ? "PROTOCOLO SEPSE FINALIZADO"
+    ? "SEPSE FINALIZADO"
     : isExpired
     ? "GOLDEN HOUR EXCEDIDA"
-    : "PROTOCOLO SEPSE ATIVO";
+    : "SEPSE ATIVO";
 
   const statusColorClass = isFinalized
     ? "sepsis-finalized"
@@ -71,31 +70,31 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
     ? "sepsis-expired"
     : "sepsis-active";
 
-  // Use shimmer class only when treatment is NOT complete (and not finalized)
-  const shimmerActive = !isFinalized && !treatmentComplete;
-
   return (
     <div
       onClick={onClick}
       className={cn(
-        "sepsis-status-bar py-1.5 px-3 flex items-center gap-2 cursor-pointer transition-all print:hidden rounded-t-lg",
+        "sepsis-status-bar py-1 px-3 flex items-center gap-1.5 cursor-pointer transition-all print:hidden rounded-t-lg",
         sectorColorClass,
         shimmerActive && "sepsis-shimmer-active",
         isExpired && !isFinalized && "animate-pulse"
       )}
     >
-      <HeartPulse className={cn("h-3.5 w-3.5 flex-shrink-0 relative z-10", `sepsis-icon ${statusColorClass}`)} />
+      <ShieldAlert className={cn("h-3 w-3 flex-shrink-0 relative z-10", `sepsis-icon ${statusColorClass}`)} />
       
-      <span className={cn("text-[10px] font-bold uppercase flex-shrink-0 relative z-10", statusColorClass)}>
+      <span className={cn(
+        "text-[9px] font-semibold uppercase flex-shrink-0 relative z-10 tracking-wide",
+        statusColorClass
+      )}>
         {statusLabel}
       </span>
 
       {!isFinalized && (
         <>
-          <span className="separator relative z-10">•</span>
+          <span className="separator relative z-10 text-[8px]">•</span>
           
-          <div className="flex-1 max-w-[120px] relative z-10">
-            <div className="h-1.5 w-full rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
+          <div className="flex-1 max-w-[100px] relative z-10">
+            <div className="h-1 w-full rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
               <div
                 className={cn(
                   "h-full rounded-full transition-all",
@@ -107,33 +106,32 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
           </div>
           
           <span className={cn(
-            "text-[10px] font-mono font-bold tabular-nums flex-shrink-0 relative z-10",
+            "text-[9px] font-mono font-semibold tabular-nums flex-shrink-0 relative z-10",
             statusColorClass
           )}>
             {formatElapsed(elapsedSeconds)}
           </span>
 
-          {/* Treatment completion indicators */}
-          <span className="separator relative z-10">•</span>
-          <div className="flex items-center gap-1 relative z-10">
+          <span className="separator relative z-10 text-[8px]">•</span>
+          <div className="flex items-center gap-1.5 relative z-10">
             <span className={cn(
-              "text-[8px] font-bold uppercase",
+              "text-[8px] font-semibold uppercase tracking-wide",
               hasCultures ? "sepsis-finalized" : statusColorClass
             )}>
-              HC {hasCultures ? "✓" : "…"}
+              HC{hasCultures ? "✓" : "…"}
             </span>
             <span className={cn(
-              "text-[8px] font-bold uppercase",
+              "text-[8px] font-semibold uppercase tracking-wide",
               hasAntibiotic ? "sepsis-finalized" : statusColorClass
             )}>
-              ATB {hasAntibiotic ? "✓" : "…"}
+              ATB{hasAntibiotic ? "✓" : "…"}
             </span>
           </div>
         </>
       )}
 
       {isFinalized && (
-        <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0 relative z-10 sepsis-finalized" />
+        <CheckCircle2 className="h-3 w-3 flex-shrink-0 relative z-10 sepsis-finalized" />
       )}
     </div>
   );
