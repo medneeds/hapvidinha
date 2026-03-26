@@ -143,7 +143,15 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
               <div
                 className={cn(
                   "h-full rounded-full transition-all duration-1000",
-                  isExpired ? "bg-red-500" : "bg-orange-500"
+                  isExpired
+                    ? "bg-red-500"
+                    : treatmentComplete
+                    ? "bg-green-500"
+                    : sector === 'red'
+                    ? "bg-red-400/80"
+                    : sector === 'yellow'
+                    ? "bg-amber-400/80"
+                    : "bg-blue-400/80"
                 )}
                 style={{ width: `${progressPercent}%` }}
               />
