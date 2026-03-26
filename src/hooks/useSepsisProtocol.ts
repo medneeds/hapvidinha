@@ -9,10 +9,13 @@ export interface ActiveSepsisProtocol {
   opening_date: string | null;
   opening_time: string | null;
   created_at: string;
-  // Track completion status
   has_infection: boolean | null;
   has_organic_dysfunction: boolean | null;
   outcome: string | null;
+  blood_culture_date: string | null;
+  blood_culture_time: string | null;
+  antibiotic_prescription_date: string | null;
+  antibiotic_prescription_time: string | null;
 }
 
 export function useSepsisProtocol(patientId?: string) {
