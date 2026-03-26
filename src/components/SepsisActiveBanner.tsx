@@ -76,7 +76,7 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
   const isExpired = elapsedSeconds >= ONE_HOUR;
   const isFinalized = !!outcome;
   const treatmentComplete = hasCultures && hasAntibiotic;
-  const shimmerActive = !isFinalized && !treatmentComplete;
+  const shimmerActive = !isFinalized && !treatmentComplete && !isExpired;
 
   const sectorColorClass = sector === 'yellow' ? 'sector-yellow' : sector === 'blue' ? 'sector-blue' : 'sector-red';
 
