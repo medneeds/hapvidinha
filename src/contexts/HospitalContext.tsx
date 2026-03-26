@@ -76,7 +76,7 @@ export function HospitalProvider({ children }: { children: ReactNode }) {
 
       // Set default to Maranhão and Hospital Guarás
       const maState = statesData?.find(s => s.abbreviation === 'MA');
-      const guarasHospital = hospitalsData?.find(h => h.name === 'Hospital Guarás');
+      const guarasHospital = hospitalsData?.find(h => h.name.toUpperCase().includes('GUARÁS') || h.name.toUpperCase().includes('GUARAS'));
 
       if (maState && guarasHospital) {
         setCurrentState(maState);
