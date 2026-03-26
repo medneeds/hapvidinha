@@ -11,6 +11,8 @@ interface SepsisActiveBannerProps {
   sector?: SectorType;
   hasCultures?: boolean;
   hasAntibiotic?: boolean;
+  antibioticDate?: string | null;
+  antibioticTime?: string | null;
   onClick?: () => void;
 }
 
