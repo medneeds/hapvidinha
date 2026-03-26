@@ -599,6 +599,90 @@
     color: hsl(220 15% 80%);
   }
 
+  /* Sepsis Status Bar - Same shimmer as allocation bar, sector-harmonized */
+  .sepsis-status-bar {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem 0.5rem 0 0;
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  .sepsis-status-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.4) 40%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0.4) 60%,
+      transparent 80%
+    );
+    animation: shimmer 2.5s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  .sepsis-status-bar.sector-red {
+    background: linear-gradient(to right, hsl(0 72% 51% / 0.25) 0%, hsl(0 72% 51% / 0.08) 100%);
+  }
+  .sepsis-status-bar.sector-yellow {
+    background: linear-gradient(to right, hsl(45 93% 47% / 0.25) 0%, hsl(45 93% 47% / 0.08) 100%);
+  }
+  .sepsis-status-bar.sector-blue {
+    background: linear-gradient(to right, hsl(210 80% 42% / 0.25) 0%, hsl(210 80% 42% / 0.08) 100%);
+  }
+
+  .sepsis-status-bar .sepsis-active {
+    color: hsl(25 100% 38%);
+  }
+  .sepsis-status-bar .sepsis-expired {
+    color: hsl(0 80% 35%);
+  }
+  .sepsis-status-bar .sepsis-finalized {
+    color: hsl(142 60% 30%);
+  }
+  .sepsis-status-bar .separator {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Dark mode */
+  .dark .sepsis-status-bar.sector-red {
+    background: linear-gradient(to right, hsl(0 62% 45% / 0.25) 0%, hsl(0 62% 45% / 0.08) 100%);
+  }
+  .dark .sepsis-status-bar.sector-yellow {
+    background: linear-gradient(to right, hsl(45 80% 45% / 0.25) 0%, hsl(45 80% 45% / 0.08) 100%);
+  }
+  .dark .sepsis-status-bar.sector-blue {
+    background: linear-gradient(to right, hsl(210 70% 55% / 0.25) 0%, hsl(210 70% 55% / 0.08) 100%);
+  }
+  .dark .sepsis-status-bar::before {
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.25) 40%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0.25) 60%,
+      transparent 80%
+    );
+  }
+  .dark .sepsis-status-bar .sepsis-active {
+    color: hsl(35 100% 65%);
+  }
+  .dark .sepsis-status-bar .sepsis-expired {
+    color: hsl(0 80% 70%);
+  }
+  .dark .sepsis-status-bar .sepsis-finalized {
+    color: hsl(142 60% 70%);
+  }
+
   /* Tactile button feedback - ripple + scale */
   .btn-tactile {
     @apply relative overflow-hidden transition-transform duration-150 active:scale-95;
