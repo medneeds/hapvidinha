@@ -884,6 +884,18 @@ export function SepsisProtocolWizardDialog({
 
         {/* Footer */}
         <DialogFooter className="px-6 py-3 border-t flex-row gap-2 flex-wrap">
+          {protocolId && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setCancelDialogOpen(true)}
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              CANCELAR PROTOCOLO
+            </Button>
+          )}
           {currentStep > 0 && (
             <Button variant="outline" onClick={handlePrev} size="sm">
               <ArrowLeft className="h-4 w-4 mr-1" />
@@ -936,6 +948,37 @@ export function SepsisProtocolWizardDialog({
           )}
         </DialogFooter>
       </DialogContent>
+
+      {/* Confirmation dialog for cancelling protocol */}
+      <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <AlertDialogContent className="dark:bg-gray-900 dark:border-gray-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="dark:text-white text-lg font-semibold flex items-center gap-2">
+              <Trash2 className="h-5 w-5 text-destructive" />
+              Cancelar Protocolo de Sepse
+            </AlertDialogTitle>
+            <AlertDialogDescription className="dark:text-gray-300 text-base">
+              Tem certeza que deseja cancelar e <strong>excluir</strong> este protocolo de sepse?
+              <br />
+              <span className="text-destructive dark:text-red-400 font-medium mt-2 inline-block">
+                Use esta opção apenas se o protocolo foi aberto por engano. Esta ação não pode ser desfeita.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel className="dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+              Manter Protocolo
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCancelProtocol}
+              disabled={isCancelling}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isCancelling ? "Excluindo..." : "Sim, Excluir Protocolo"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }
