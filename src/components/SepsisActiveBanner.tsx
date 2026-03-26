@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
-import { Activity } from "lucide-react";
+import { HeartPulse } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress";
+import { SectorType } from "@/types/patient";
 
 interface SepsisActiveBannerProps {
   protocolCreatedAt: string;
   openingTime?: string | null;
   openingDate?: string | null;
   outcome?: string | null;
+  sector?: SectorType;
   onClick?: () => void;
 }
 
@@ -26,7 +27,7 @@ function formatElapsed(seconds: number): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, onClick }: SepsisActiveBannerProps) {
+export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', onClick }: SepsisActiveBannerProps) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const startTime = useMemo(
@@ -35,7 +36,7 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
   );
 
   useEffect(() => {
-    if (outcome) return; // Stop ticking if finalized
+    if (outcome) return;
 
     const tick = () => {
       const now = new Date();
@@ -51,50 +52,54 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
   const isExpired = elapsedSeconds >= ONE_HOUR;
   const isFinalized = !!outcome;
 
+  const sectorColorClass = sector === 'yellow' ? 'sector-yellow' : sector === 'blue' ? 'sector-blue' : 'sector-red';
+
   const statusLabel = isFinalized
     ? "PROTOCOLO SEPSE FINALIZADO"
     : isExpired
     ? "GOLDEN HOUR EXCEDIDA"
     : "PROTOCOLO SEPSE ATIVO";
 
+  const statusColorClass = isFinalized
+    ? "sepsis-finalized"
+    : isExpired
+    ? "sepsis-expired"
+    : "sepsis-active";
+
   return (
     <div
       onClick={onClick}
       className={cn(
-        "py-1.5 px-3 flex items-center gap-2 cursor-pointer transition-all print:hidden rounded-t-lg",
-        isFinalized
-          ? "bg-green-600/20 border-b border-green-500/30"
-          : isExpired
-          ? "bg-red-600/20 border-b border-red-500/30 animate-pulse"
-          : "bg-orange-500/20 border-b border-orange-400/30"
+        "sepsis-status-bar py-1.5 px-3 flex items-center gap-2 cursor-pointer transition-all print:hidden rounded-t-lg",
+        sectorColorClass,
+        isExpired && !isFinalized && "animate-pulse"
       )}
     >
-      <Activity className={cn(
-        "h-3.5 w-3.5 flex-shrink-0",
-        isFinalized ? "text-green-500" : isExpired ? "text-red-500" : "text-orange-500"
-      )} />
+      <HeartPulse className={cn("h-3.5 w-3.5 flex-shrink-0 relative z-10", `sepsis-icon ${statusColorClass}`)} />
       
-      <span className={cn(
-        "text-[10px] font-bold uppercase flex-shrink-0",
-        isFinalized ? "text-green-600 dark:text-green-400" : isExpired ? "text-red-600 dark:text-red-400" : "text-orange-600 dark:text-orange-400"
-      )}>
+      <span className={cn("text-[10px] font-bold uppercase flex-shrink-0 relative z-10", statusColorClass)}>
         {statusLabel}
       </span>
 
       {!isFinalized && (
         <>
-          <div className="flex-1 max-w-[120px]">
-            <Progress 
-              value={progressPercent} 
-              className={cn(
-                "h-1.5",
-                isExpired ? "[&>div]:bg-red-500" : "[&>div]:bg-orange-500"
-              )}
-            />
+          <span className="separator relative z-10">•</span>
+          
+          <div className="flex-1 max-w-[120px] relative z-10">
+            <div className="h-1.5 w-full rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-all",
+                  isExpired ? "bg-red-500" : "bg-orange-500"
+                )}
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
           </div>
+          
           <span className={cn(
-            "text-[10px] font-mono font-bold tabular-nums flex-shrink-0",
-            isExpired ? "text-red-600 dark:text-red-400" : "text-orange-600 dark:text-orange-400"
+            "text-[10px] font-mono font-bold tabular-nums flex-shrink-0 relative z-10",
+            statusColorClass
           )}>
             {formatElapsed(elapsedSeconds)}
           </span>

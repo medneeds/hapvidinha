@@ -1560,6 +1560,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             openingDate={activeSepsisProtocol.opening_date}
             openingTime={activeSepsisProtocol.opening_time}
             outcome={activeSepsisProtocol.outcome}
+            sector={patient.sector as any}
             onClick={() => setSepsisWizardOpen(true)}
           />
         )}
