@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { HeartPulse } from "lucide-react";
+import { HeartPulse, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectorType } from "@/types/patient";
 
@@ -9,6 +9,8 @@ interface SepsisActiveBannerProps {
   openingDate?: string | null;
   outcome?: string | null;
   sector?: SectorType;
+  hasCultures?: boolean;
+  hasAntibiotic?: boolean;
   onClick?: () => void;
 }
 
@@ -27,7 +29,7 @@ function formatElapsed(seconds: number): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', onClick }: SepsisActiveBannerProps) {
+export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', hasCultures = false, hasAntibiotic = false, onClick }: SepsisActiveBannerProps) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const startTime = useMemo(
@@ -52,6 +54,9 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
   const isExpired = elapsedSeconds >= ONE_HOUR;
   const isFinalized = !!outcome;
 
+  // Shimmer stays active until both cultures AND antibiotic are filled
+  const treatmentComplete = hasCultures && hasAntibiotic;
+
   const sectorColorClass = sector === 'yellow' ? 'sector-yellow' : sector === 'blue' ? 'sector-blue' : 'sector-red';
 
   const statusLabel = isFinalized
@@ -66,12 +71,16 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
     ? "sepsis-expired"
     : "sepsis-active";
 
+  // Use shimmer class only when treatment is NOT complete (and not finalized)
+  const shimmerActive = !isFinalized && !treatmentComplete;
+
   return (
     <div
       onClick={onClick}
       className={cn(
         "sepsis-status-bar py-1.5 px-3 flex items-center gap-2 cursor-pointer transition-all print:hidden rounded-t-lg",
         sectorColorClass,
+        shimmerActive && "sepsis-shimmer-active",
         isExpired && !isFinalized && "animate-pulse"
       )}
     >
@@ -103,7 +112,28 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
           )}>
             {formatElapsed(elapsedSeconds)}
           </span>
+
+          {/* Treatment completion indicators */}
+          <span className="separator relative z-10">•</span>
+          <div className="flex items-center gap-1 relative z-10">
+            <span className={cn(
+              "text-[8px] font-bold uppercase",
+              hasCultures ? "sepsis-finalized" : statusColorClass
+            )}>
+              HC {hasCultures ? "✓" : "…"}
+            </span>
+            <span className={cn(
+              "text-[8px] font-bold uppercase",
+              hasAntibiotic ? "sepsis-finalized" : statusColorClass
+            )}>
+              ATB {hasAntibiotic ? "✓" : "…"}
+            </span>
+          </div>
         </>
+      )}
+
+      {isFinalized && (
+        <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0 relative z-10 sepsis-finalized" />
       )}
     </div>
   );
