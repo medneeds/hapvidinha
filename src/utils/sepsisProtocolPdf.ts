@@ -1,4 +1,5 @@
 import jsPDF from "jspdf";
+import networkFullLogo from "@/assets/hapvida-notredame-full-logo.png";
 
 interface ProtocolData {
   patient_name: string;
@@ -75,31 +76,45 @@ export function generateSepsisProtocolPdf(data: ProtocolData) {
   // ─── HEADER ─────────────────────────────────
   // Top accent bar
   doc.setFillColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]);
-  doc.rect(0, 0, W, 4, "F");
+  doc.rect(0, 0, W, 5, "F");
   doc.setFillColor(ACCENT[0], ACCENT[1], ACCENT[2]);
-  doc.rect(0, 4, W, 1.5, "F");
+  doc.rect(0, 5, W, 1.5, "F");
 
-  y = 12;
+  y = 14;
 
-  // Logo text (brand)
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.setTextColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]);
-  doc.text("HAPVIDA", M, y);
-  doc.setFontSize(10);
-  doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
-  doc.text("NOTREDAME INTERMÉDICA", M + 32, y);
+  // Load Hapvida logo from assets
+  try {
+    const logoImg = new Image();
+    logoImg.src = networkFullLogo;
+    // Add logo image - Hapvida NotreDame Intermédica full logo
+    doc.addImage(networkFullLogo, 'PNG', M, y - 6, 55, 12);
+  } catch {
+    // Fallback to text if image fails
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]);
+    doc.text("HAPVIDA", M, y);
+    doc.setFontSize(9);
+    doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
+    doc.text("NOTREDAME INTERMÉDICA", M + 30, y);
+  }
 
   // Title right
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
+  doc.setFontSize(10);
   doc.setTextColor(ACCENT[0], ACCENT[1], ACCENT[2]);
   doc.text("PROTOCOLO DE SEPSE ADULTO", W - M, y, { align: "right" });
+  doc.setFontSize(6.5);
+  doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
+  doc.text("Gestão de Protocolos Clínicos", W - M, y + 4, { align: "right" });
 
-  y += 4;
-  doc.setDrawColor(200, 200, 200);
-  doc.setLineWidth(0.3);
+  y += 8;
+  doc.setDrawColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]);
+  doc.setLineWidth(0.4);
   doc.line(M, y, W - M, y);
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.2);
+  doc.line(M, y + 0.8, W - M, y + 0.8);
 
   // ─── IDENTIFICATION ─────────────────────────
   y += 6;

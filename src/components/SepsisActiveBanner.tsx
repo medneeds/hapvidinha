@@ -74,7 +74,7 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
     <div
       onClick={onClick}
       className={cn(
-        "sepsis-status-bar py-1 px-3 flex items-center gap-1.5 cursor-pointer transition-all print:hidden rounded-t-lg",
+        "sepsis-status-bar py-1.5 px-4 flex items-center gap-2 cursor-pointer transition-all print:hidden rounded-t-lg",
         sectorColorClass,
         shimmerActive && "sepsis-shimmer-active",
         isExpired && !isFinalized && "animate-pulse"
