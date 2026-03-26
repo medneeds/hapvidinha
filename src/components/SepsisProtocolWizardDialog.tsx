@@ -460,6 +460,30 @@ export function SepsisProtocolWizardDialog({
     onClose();
   };
 
+  const handleCancelProtocol = async () => {
+    if (!protocolId) return;
+    setIsCancelling(true);
+    try {
+      const { error } = await supabase
+        .from('sepsis_protocols')
+        .delete()
+        .eq('id', protocolId);
+      if (error) throw error;
+      toast({ title: "Protocolo cancelado", description: "O protocolo de sepse foi excluído por ter sido aberto por engano." });
+      setProtocolId(null);
+      setFormData({ ...initialFormData });
+      setCurrentStep(0);
+      onSuccess?.();
+      setCancelDialogOpen(false);
+      onClose();
+    } catch (err) {
+      console.error('Error deleting sepsis protocol:', err);
+      toast({ title: "Erro", description: "Não foi possível cancelar o protocolo.", variant: "destructive" });
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
   const sirsCount = [
     formData.sirs_temp_high,
     formData.sirs_temp_low,
