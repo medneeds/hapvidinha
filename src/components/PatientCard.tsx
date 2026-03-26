@@ -797,26 +797,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const { namesHidden } = usePrivacy();
   const displayName = maskName(patient.name, namesHidden);
   
-  const handleCancelSepsisProtocol = async () => {
-    if (!activeSepsisProtocol?.id) return;
-    setIsCancellingSepsis(true);
-    try {
-      const { error } = await supabase
-        .from('sepsis_protocols')
-        .update({ outcome: 'cancelado_por_erro' })
-        .eq('id', activeSepsisProtocol.id);
-      if (error) throw error;
-      toast.success("Protocolo de sepse cancelado com sucesso");
-      refetchSepsis();
-    } catch (err) {
-      console.error('Error cancelling sepsis protocol:', err);
-      toast.error("Erro ao cancelar protocolo de sepse");
-    } finally {
-      setIsCancellingSepsis(false);
-      setCancelSepsisDialogOpen(false);
-    }
-  };
-
   // Find allocation request for this patient and calculate elapsed time
   const allocationTimeElapsed = useMemo(() => {
     if (!patient.allocationStatus || patient.allocationStatus === 'approved' || !patient.isDoorPatient) {
