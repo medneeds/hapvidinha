@@ -1332,7 +1332,7 @@ const Index = () => {
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
                     onPrintSector={() => handlePrintSector("yellow")}
-                    onAddExtraBed={(cat) => handleAddExtraBed("yellow", cat)}
+                    onAddExtraBed={() => handleAddExtraBed("yellow")}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}
