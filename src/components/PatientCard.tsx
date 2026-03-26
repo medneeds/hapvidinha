@@ -4376,6 +4376,37 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Dialog de confirmação para cancelar Protocolo Sepse */}
+      <AlertDialog open={cancelSepsisDialogOpen} onOpenChange={setCancelSepsisDialogOpen}>
+        <AlertDialogContent className="dark:bg-gray-900 dark:border-gray-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="dark:text-white text-lg font-semibold flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5 text-destructive" />
+              Cancelar Protocolo de Sepse
+            </AlertDialogTitle>
+            <AlertDialogDescription className="dark:text-gray-300 text-base">
+              Tem certeza que deseja cancelar o protocolo de sepse do paciente <strong className="dark:text-white font-bold">{patient.name}</strong> (Leito {patient.bedNumber})?
+              <br />
+              <span className="text-destructive dark:text-red-400 font-medium mt-2 inline-block">
+                Use esta opção apenas se o protocolo foi aberto por engano.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel className="dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
+              Manter Protocolo
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCancelSepsisProtocol}
+              disabled={isCancellingSepsis}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isCancellingSepsis ? "Cancelando..." : "Sim, Cancelar Protocolo"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Dialog expandido para Hipóteses / Diagnósticos */}
       <Dialog open={expandedSection === 'diagnoses'} onOpenChange={() => setExpandedSection(null)}>
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col bg-gradient-to-br from-background via-background to-accent/5 border-2">
