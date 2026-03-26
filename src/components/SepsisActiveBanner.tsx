@@ -13,6 +13,7 @@ interface SepsisActiveBannerProps {
   hasAntibiotic?: boolean;
   antibioticDate?: string | null;
   antibioticTime?: string | null;
+  bloodCultureTime?: string | null;
   onClick?: () => void;
 }
 
@@ -32,7 +33,7 @@ function formatElapsed(seconds: number): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', hasCultures = false, hasAntibiotic = false, antibioticDate, antibioticTime, onClick }: SepsisActiveBannerProps) {
+export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', hasCultures = false, hasAntibiotic = false, antibioticDate, antibioticTime, bloodCultureTime, onClick }: SepsisActiveBannerProps) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const startTimeRef = useRef<number>(
     getProtocolStartTime(protocolCreatedAt, openingDate, openingTime)
@@ -160,15 +161,23 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
           <div className="flex items-center gap-1.5 relative z-10">
             <span className={cn(
               "text-[8px] font-semibold uppercase tracking-wide",
+              statusColorClass
+            )}>
+              ABERTURA: {openingTime ? String(openingTime).slice(0, 5) : "…"}
+            </span>
+            <span className="separator relative z-10 text-[8px]">•</span>
+            <span className={cn(
+              "text-[8px] font-semibold uppercase tracking-wide",
               hasCultures ? "sepsis-finalized" : statusColorClass
             )}>
-              HC{hasCultures ? "✓" : "…"}
+              CULTURAS: {hasCultures && bloodCultureTime ? String(bloodCultureTime).slice(0, 5) : "…"}
             </span>
+            <span className="separator relative z-10 text-[8px]">•</span>
             <span className={cn(
               "text-[8px] font-semibold uppercase tracking-wide",
               hasAntibiotic ? "sepsis-finalized" : statusColorClass
             )}>
-              ATB{hasAntibiotic ? "✓" : "…"}
+              ATB: {hasAntibiotic && antibioticTime ? String(antibioticTime).slice(0, 5) : "…"}
             </span>
           </div>
         </>
