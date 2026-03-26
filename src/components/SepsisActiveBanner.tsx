@@ -161,15 +161,23 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
           <div className="flex items-center gap-1.5 relative z-10">
             <span className={cn(
               "text-[8px] font-semibold uppercase tracking-wide",
+              statusColorClass
+            )}>
+              ABERTURA: {openingTime ? String(openingTime).slice(0, 5) : "…"}
+            </span>
+            <span className="separator relative z-10 text-[8px]">•</span>
+            <span className={cn(
+              "text-[8px] font-semibold uppercase tracking-wide",
               hasCultures ? "sepsis-finalized" : statusColorClass
             )}>
-              HC{hasCultures ? "✓" : "…"}
+              CULTURAS: {hasCultures && bloodCultureTime ? String(bloodCultureTime).slice(0, 5) : "…"}
             </span>
+            <span className="separator relative z-10 text-[8px]">•</span>
             <span className={cn(
               "text-[8px] font-semibold uppercase tracking-wide",
               hasAntibiotic ? "sepsis-finalized" : statusColorClass
             )}>
-              ATB{hasAntibiotic ? "✓" : "…"}
+              ATB: {hasAntibiotic && antibioticTime ? String(antibioticTime).slice(0, 5) : "…"}
             </span>
           </div>
         </>
