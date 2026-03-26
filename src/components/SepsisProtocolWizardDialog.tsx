@@ -25,7 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight } from "lucide-react";
+import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SepsisProtocolWizardDialogProps {
@@ -455,12 +455,34 @@ export function SepsisProtocolWizardDialog({
     formData.dysfunction_bilirubin,
   ].filter(Boolean).length;
 
+  const fillNowDateTime = (dateField: keyof FormData, timeField: keyof FormData) => {
+    const now = new Date();
+    updateField(dateField, now.toISOString().split("T")[0]);
+    updateField(timeField, now.toTimeString().slice(0, 5));
+  };
+
+  const NowButton = ({ dateField, timeField, label }: { dateField: keyof FormData; timeField: keyof FormData; label?: string }) => (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      className="h-7 text-[10px] gap-1 px-2 font-semibold uppercase"
+      onClick={() => fillNowDateTime(dateField, timeField)}
+    >
+      <Clock className="h-3 w-3" />
+      {label || "AGORA"}
+    </Button>
+  );
+
   const renderStepContent = () => {
     const step = STEPS[currentStep].key;
 
     if (step === "identification") {
       return (
         <div className="space-y-4">
+          <div className="flex justify-end">
+            <NowButton dateField="opening_date" timeField="opening_time" label="DATA/HORA ABERTURA = AGORA" />
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
               <Label className="text-xs font-semibold uppercase">Nome do Paciente</Label>
@@ -599,21 +621,30 @@ export function SepsisProtocolWizardDialog({
       return (
         <div className="space-y-4">
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
-            <h4 className="text-xs font-bold uppercase">Hemocultura</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Hemocultura</h4>
+              <NowButton dateField="blood_culture_date" timeField="blood_culture_time" />
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <div><Label className="text-xs">Data</Label><Input type="date" value={formData.blood_culture_date} onChange={e => updateField("blood_culture_date", e.target.value)} /></div>
               <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.blood_culture_time} onChange={e => updateField("blood_culture_time", e.target.value)} /></div>
             </div>
           </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
-            <h4 className="text-xs font-bold uppercase">Lactato</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Lactato</h4>
+              <NowButton dateField="lactate_date" timeField="lactate_time" />
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <div><Label className="text-xs">Data</Label><Input type="date" value={formData.lactate_date} onChange={e => updateField("lactate_date", e.target.value)} /></div>
               <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.lactate_time} onChange={e => updateField("lactate_time", e.target.value)} /></div>
             </div>
           </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
-            <h4 className="text-xs font-bold uppercase">Prescrição de Antibiótico</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Prescrição de Antibiótico</h4>
+              <NowButton dateField="antibiotic_prescription_date" timeField="antibiotic_prescription_time" />
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <div><Label className="text-xs">Data</Label><Input type="date" value={formData.antibiotic_prescription_date} onChange={e => updateField("antibiotic_prescription_date", e.target.value)} /></div>
               <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.antibiotic_prescription_time} onChange={e => updateField("antibiotic_prescription_time", e.target.value)} /></div>
@@ -647,6 +678,9 @@ export function SepsisProtocolWizardDialog({
                 </SelectContent>
               </Select>
             </div>
+            <div className="col-span-2 flex justify-end">
+              <NowButton dateField="destination_date" timeField="destination_time" label="DESTINO = AGORA" />
+            </div>
             <div><Label className="text-xs">Data Destino</Label><Input type="date" value={formData.destination_date} onChange={e => updateField("destination_date", e.target.value)} /></div>
             <div><Label className="text-xs">Hora Destino</Label><Input type="time" value={formData.destination_time} onChange={e => updateField("destination_time", e.target.value)} /></div>
           </div>
@@ -665,6 +699,9 @@ export function SepsisProtocolWizardDialog({
               </Select>
             </div>
             <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-2 flex justify-end">
+                <NowButton dateField="outcome_date" timeField="outcome_time" label="DESFECHO = AGORA" />
+              </div>
               <div><Label className="text-xs">Data Desfecho</Label><Input type="date" value={formData.outcome_date} onChange={e => updateField("outcome_date", e.target.value)} /></div>
               <div><Label className="text-xs">Hora Desfecho</Label><Input type="time" value={formData.outcome_time} onChange={e => updateField("outcome_time", e.target.value)} /></div>
             </div>
