@@ -834,6 +834,22 @@ export function SepsisProtocolWizardDialog({
               PDF
             </Button>
           )}
+          {protocolId && currentStep > 0 && currentStep < STEPS.length - 1 && (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={async () => {
+                await saveCurrentStep();
+                onSuccess?.();
+                toast({ title: "Etapa salva", description: `${STEPS[currentStep].label} salva com sucesso.` });
+              }}
+              disabled={isSubmitting}
+            >
+              <Check className="h-3.5 w-3.5 mr-1" />
+              {isSubmitting ? "SALVANDO..." : "SALVAR ETAPA"}
+            </Button>
+          )}
           <div className="flex-1" />
           {currentStep === 0 && !protocolId ? (
             <Button type="button" onClick={handleNext} disabled={isSubmitting} className="bg-primary text-primary-foreground hover:bg-primary/90 min-w-36">
