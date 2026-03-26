@@ -94,7 +94,7 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
   const progressPercent = Math.min(100, (elapsedSeconds / ONE_HOUR) * 100);
   const isExpired = elapsedSeconds >= ONE_HOUR;
   const isFinalized = !!outcome;
-  const treatmentComplete = hasCultures && hasAntibiotic;
+  // treatmentComplete already declared above
   const shimmerActive = !isFinalized && !treatmentComplete && !isExpired;
 
   const sectorColorClass = sector === 'yellow' ? 'sector-yellow' : sector === 'blue' ? 'sector-blue' : 'sector-red';
