@@ -25,7 +25,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock, Download, AlertTriangle, CheckCircle2, Stethoscope } from "lucide-react";
+import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock, Download, AlertTriangle, CheckCircle2, Stethoscope, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { generateSepsisProtocolPdf } from "@/utils/sepsisProtocolPdf";
 import { cn } from "@/lib/utils";
 
