@@ -3177,15 +3177,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <div className="flex flex-col md:col-span-3 relative">
                 <div className="flex items-center gap-1 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Hipóteses / Diagnósticos</span>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setExpandedSection('diagnoses')}
-                  className="h-2.5 w-2.5 p-0 text-muted-foreground/40 hover:text-primary opacity-50 hover:opacity-100 transition-opacity print:hidden"
-                  title="Visualizar expandido"
-                >
-                  <Maximize2 className="h-[2.5px] w-[2.5px]" />
-                </Button>
               </div>
               <DndContext
                 sensors={sensors}
