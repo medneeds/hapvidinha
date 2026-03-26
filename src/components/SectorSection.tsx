@@ -1,7 +1,7 @@
-import { Patient, SectorType, PatientCategory } from "@/types/patient";
+import { Patient, SectorType } from "@/types/patient";
 import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
 import { PatientCard } from "./PatientCard";
-import { Activity, Printer, Plus, ChevronDown, GripVertical, Filter, Stethoscope, Scissors, Brain, LayoutList } from "lucide-react";
+import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
