@@ -85,7 +85,61 @@ const sectorInfo = {
   }
 };
 
-export function SectorSection({ 
+function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode, isSelected, onToggleSelection, onTransfer, onPrintPatient, onRefetch }: {
+  patient: Patient;
+  onUpdate: (patient: Patient) => void;
+  onDelete?: (patientId: string) => void;
+  onUndelete?: (patient: Patient) => void;
+  selectionMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelection?: (patientId: string) => void;
+  onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
+  onPrintPatient?: (patientId: string) => void;
+  onRefetch?: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: patient.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} className="flex items-center gap-1 md:gap-2">
+      {selectionMode && (
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelection?.(patient.id)}
+          className="flex-shrink-0"
+        />
+      )}
+      <div {...listeners} className="cursor-grab active:cursor-grabbing flex-shrink-0 print:hidden">
+        <GripVertical className="h-4 w-4 text-muted-foreground" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <PatientCard
+          patient={patient}
+          onUpdate={onUpdate}
+          onDelete={onDelete}
+          onUndelete={onUndelete}
+          onTransfer={onTransfer}
+          onPrintPatient={onPrintPatient}
+          onRefetch={onRefetch}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function SectorSection({
   sector, 
   patients, 
   onUpdatePatient, 
