@@ -52,6 +52,31 @@ export function useSepsisProtocol(patientId?: string) {
     fetchActiveProtocol();
   }, [fetchActiveProtocol]);
 
+  // Realtime subscription to update banner when protocol changes
+  useEffect(() => {
+    if (!patientId) return;
+
+    const channel = supabase
+      .channel(`sepsis-protocol-${patientId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'sepsis_protocols',
+          filter: `patient_id=eq.${patientId}`,
+        },
+        () => {
+          fetchActiveProtocol();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [patientId, fetchActiveProtocol]);
+
   const isProtocolActive = !!activeProtocol;
   const isProtocolFinalized = activeProtocol?.outcome != null;
 
