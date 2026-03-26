@@ -1639,7 +1639,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       
                       return (
                         <div 
-                          className="flex flex-col items-center gap-0 mt-1 cursor-pointer print:hidden"
+                          className="flex flex-col items-center gap-0.5 mt-1 cursor-pointer print:hidden"
                           onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
                           title="Seguimento Conjunto — Clique para alterar"
                         >
