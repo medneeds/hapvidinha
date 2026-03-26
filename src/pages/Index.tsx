@@ -1316,7 +1316,7 @@ const Index = () => {
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
                     onPrintSector={() => handlePrintSector("red")}
-                    onAddExtraBed={(cat) => handleAddExtraBed("red", cat)}
+                    onAddExtraBed={() => handleAddExtraBed("red")}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}
@@ -1332,7 +1332,7 @@ const Index = () => {
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
                     onPrintSector={() => handlePrintSector("yellow")}
-                    onAddExtraBed={(cat) => handleAddExtraBed("yellow", cat)}
+                    onAddExtraBed={() => handleAddExtraBed("yellow")}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}
@@ -1348,7 +1348,7 @@ const Index = () => {
                     onDeletePatient={handleDeletePatient}
                     onUndeletePatient={handleUndeletePatient}
                     onPrintSector={() => handlePrintSector("blue")}
-                    onAddExtraBed={(cat) => handleAddExtraBed("blue", cat)}
+                    onAddExtraBed={() => handleAddExtraBed("blue")}
                     selectionMode={selectionMode}
                     selectedPatients={selectedPatients}
                     onToggleSelection={handleToggleSelection}
