@@ -33,7 +33,7 @@ function formatElapsed(seconds: number): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', hasCultures = false, hasAntibiotic = false, antibioticDate, antibioticTime, onClick }: SepsisActiveBannerProps) {
+export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', hasCultures = false, hasAntibiotic = false, antibioticDate, antibioticTime, bloodCultureTime, onClick }: SepsisActiveBannerProps) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const startTimeRef = useRef<number>(
     getProtocolStartTime(protocolCreatedAt, openingDate, openingTime)
