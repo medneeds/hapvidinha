@@ -59,10 +59,10 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
   const sectorColorClass = sector === 'yellow' ? 'sector-yellow' : sector === 'blue' ? 'sector-blue' : 'sector-red';
 
   const statusLabel = isFinalized
-    ? "SEPSE FINALIZADO"
+    ? "PROTOCOLO SEPSE FINALIZADO"
     : isExpired
     ? "GOLDEN HOUR EXCEDIDA"
-    : "SEPSE ATIVO";
+    : "PROTOCOLO SEPSE ATIVO";
 
   const statusColorClass = isFinalized
     ? "sepsis-finalized"
