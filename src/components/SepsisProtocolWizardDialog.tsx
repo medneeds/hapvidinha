@@ -89,6 +89,9 @@ interface FormData {
   lactate_time: string;
   antibiotic_prescription_date: string;
   antibiotic_prescription_time: string;
+  antibiotic_administration_date: string;
+  antibiotic_administration_time: string;
+  antibiotic_names: string;
   volume_administered: string;
   // Outcome
   destination: string;

@@ -39,6 +39,9 @@ interface ProtocolData {
   lactate_time: string | null;
   antibiotic_prescription_date: string | null;
   antibiotic_prescription_time: string | null;
+  antibiotic_administration_date: string | null;
+  antibiotic_administration_time: string | null;
+  antibiotic_names: string | null;
   volume_administered: number | null;
   destination: string | null;
   destination_date: string | null;
