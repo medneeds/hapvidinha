@@ -3985,6 +3985,19 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>{hasSepsisActive ? "Protocolo Sepse (Ativo)" : "Abrir Protocolo Sepse"}</span>
                     </DropdownMenuItem>
 
+                    {hasSepsisActive && (
+                      <DropdownMenuItem
+                        onSelect={(e) => {
+                          e.preventDefault();
+                          setCancelSepsisDialogOpen(true);
+                        }}
+                        className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-destructive/10 transition-colors cursor-pointer text-destructive"
+                      >
+                        <XCircle className="h-4 w-4" />
+                        <span>Cancelar Protocolo Sepse</span>
+                      </DropdownMenuItem>
+                    )}
+
                     {/* PSM STATUS - Collapsible with three options */}
                     <Collapsible className="group">
                       <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
