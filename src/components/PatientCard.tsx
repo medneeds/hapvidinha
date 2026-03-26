@@ -788,8 +788,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [reportText, setReportText] = useState("");
   const [sepsisWizardOpen, setSepsisWizardOpen] = useState(false);
-  const [cancelSepsisDialogOpen, setCancelSepsisDialogOpen] = useState(false);
-  const [isCancellingSepsis, setIsCancellingSepsis] = useState(false);
   const { activeProtocol: activeSepsisProtocol, isProtocolActive: hasSepsisActive, refetch: refetchSepsis } = useSepsisProtocol(patient.id);
   const { history: conductHistory, isLoading: conductHistoryLoading, recordChange } = useConductHistory(patient.id);
   const { role, user } = useAuth();
