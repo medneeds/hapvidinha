@@ -148,6 +148,7 @@ export function AppSidebar({
         { name: "CADASTRAR ESTADOS", link: "/admin/states" },
         { name: "CADASTRAR UNIDADES", link: "/admin/units" },
         { name: "GERENCIAR COORDENADORES", link: "/admin/coordinators" },
+        { name: "PROTOCOLOS SEPSE", link: "/admin/sepsis-protocols" },
       ],
     },
   ];
