@@ -586,7 +586,11 @@ const Index = () => {
     const existingBedNumbers = patientsInNewSector.map(p => p.bedNumber);
     const newBedNumber = getNextBedNumber(newSector, existingBedNumbers, currentDepartment);
 
-    const updatedPatient = { ...patient, sector: newSector, bedNumber: newBedNumber };
+    // Calculate display_order: place at end of destination sector
+    const maxDisplayOrder = patientsInNewSector.reduce((max, p) => Math.max(max, p.displayOrder || 0), -1);
+    const newDisplayOrder = maxDisplayOrder + 1;
+
+    const updatedPatient = { ...patient, sector: newSector, bedNumber: newBedNumber, displayOrder: newDisplayOrder };
     
     try {
       // Persist to database
