@@ -60,142 +60,30 @@ interface SectorSectionProps {
 
 const sectorInfo = {
   red: {
-    title: "Cuidados Especiais",
-    subtitle: "Sala Vermelha",
+    title: "Vermelha",
+    subtitle: "Pacientes graves",
     icon: "🔴",
-    gradientClass: "bg-gradient-critical"
+    gradientClass: "bg-critical/15 dark:bg-critical/25 border-l-4 border-l-critical"
   },
   yellow: {
-    title: "Observação Amarela",
-    subtitle: "Em monitorização",
+    title: "Amarela",
+    subtitle: "Pacientes moderados",
     icon: "🟡",
-    gradientClass: "bg-gradient-warning"
+    gradientClass: "bg-warning/15 dark:bg-warning/25 border-l-4 border-l-warning"
   },
   blue: {
-    title: "Observação Azul",
-    subtitle: "Sem monitorização",
+    title: "Verde/Azul",
+    subtitle: "Pacientes estáveis",
     icon: "🔵",
-    gradientClass: "bg-gradient-stable"
+    gradientClass: "bg-stable/15 dark:bg-stable/25 border-l-4 border-l-stable"
+  },
+  outside: {
+    title: "Externo",
+    subtitle: "Pacientes em observação",
+    icon: "⚪",
+    gradientClass: "bg-muted/30 dark:bg-muted/40 border-l-4 border-l-muted-foreground/50"
   }
 };
-
-const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  clinica_medica: Stethoscope,
-  cirurgico: Scissors,
-  psiquiatrico: Brain,
-  custom: LayoutList,
-};
-
-const CATEGORY_LABELS: Record<string, { label: string }> = {
-  clinica_medica: { label: 'Clínica Médica' },
-  cirurgico: { label: 'Cirurgia' },
-  psiquiatrico: { label: 'Psiquiátrica' },
-  custom: { label: 'Outros' },
-};
-
-const getSectorColorClass = (sector: SectorType) => {
-  switch (sector) {
-    case 'red': return 'bg-critical/10 border-critical/30 text-critical';
-    case 'yellow': return 'bg-warning/10 border-warning/30 text-warning';
-    case 'blue': return 'bg-stable/10 border-stable/30 text-stable';
-    default: return 'bg-muted/50 border-border text-muted-foreground';
-  }
-};
-
-interface SortablePatientCardProps {
-  patient: Patient;
-  onUpdate: (patient: Patient) => void;
-  onDelete?: (patientId: string) => void;
-  onUndelete?: (patient: Patient) => void;
-  selectionMode?: boolean;
-  isSelected?: boolean;
-  onToggleSelection?: (patientId: string) => void;
-  onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
-  onPrintPatient?: (patientId: string) => void;
-  onRefetch?: () => void;
-}
-
-function SortablePatientCard(props: SortablePatientCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: props.patient.id });
-
-  const style: React.CSSProperties = {
-    transform: transform ? `translate3d(${Math.round(transform.x)}px, ${Math.round(transform.y)}px, 0)` : undefined,
-    transition: transition ?? 'transform 200ms ease',
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 50 : undefined,
-    position: 'relative' as const,
-  };
-
-  return (
-    <div 
-      ref={setNodeRef} 
-      style={style} 
-      className="flex items-center gap-2 print:block print:w-full"
-      data-patient-id={props.patient.id}
-    >
-      <button
-        className="cursor-grab active:cursor-grabbing p-1 hover:bg-accent rounded flex-shrink-0 print:hidden"
-        {...attributes}
-        {...listeners}
-      >
-        <GripVertical className="h-4 w-4 text-muted-foreground" />
-      </button>
-      <div className="flex-1 print:w-full">
-        <PatientCard {...props} />
-      </div>
-    </div>
-  );
-}
-
-type CategoryFilter = 'all' | PatientCategory;
-
-function CategorySubSection({
-  categoryKey,
-  patients,
-  renderPatients,
-  sector,
-}: {
-  categoryKey: string;
-  patients: Patient[];
-  renderPatients: (patients: Patient[]) => React.ReactNode;
-  sector: SectorType;
-}) {
-  const [isOpen, setIsOpen] = useState(true);
-  const catLabel = CATEGORY_LABELS[categoryKey] || CATEGORY_LABELS.custom;
-  const sectorColor = getSectorColorClass(sector);
-
-  if (patients.length === 0) return null;
-
-  return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mb-0">
-      <CollapsibleTrigger asChild>
-        <button className={cn(
-          "flex items-center gap-2 w-full px-3 py-1 rounded-t-md border-b transition-all text-left",
-          sectorColor,
-          "hover:shadow-sm",
-          isOpen && "rounded-b-none"
-        )}>
-          <ChevronDown className={cn("h-3 w-3 transition-transform", !isOpen && "-rotate-90")} />
-          {(() => { const Icon = CATEGORY_ICONS[categoryKey] || LayoutList; return <Icon className="h-3 w-3" />; })()}
-          <span className="text-[11px] font-medium">{catLabel.label}</span>
-          <Badge variant="secondary" className="h-4 px-1.5 text-[9px] font-bold ml-auto">
-            {patients.length}
-          </Badge>
-        </button>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-1.5 pt-1">
-        {renderPatients(patients)}
-      </CollapsibleContent>
-    </Collapsible>
-  );
-}
 
 export function SectorSection({ 
   sector, 
