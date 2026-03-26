@@ -11,6 +11,8 @@ interface SepsisActiveBannerProps {
   sector?: SectorType;
   hasCultures?: boolean;
   hasAntibiotic?: boolean;
+  antibioticDate?: string | null;
+  antibioticTime?: string | null;
   onClick?: () => void;
 }
 
@@ -30,7 +32,7 @@ function formatElapsed(seconds: number): string {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', hasCultures = false, hasAntibiotic = false, onClick }: SepsisActiveBannerProps) {
+export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', hasCultures = false, hasAntibiotic = false, antibioticDate, antibioticTime, onClick }: SepsisActiveBannerProps) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const startTimeRef = useRef<number>(
     getProtocolStartTime(protocolCreatedAt, openingDate, openingTime)
@@ -45,11 +47,28 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
     }
   }, [protocolCreatedAt, openingDate, openingTime]);
 
+  // Calculate frozen elapsed time when ATB is registered
+  const frozenElapsed = (() => {
+    if (hasAntibiotic && antibioticDate && antibioticTime) {
+      const atbDt = new Date(`${antibioticDate}T${antibioticTime}`);
+      if (!isNaN(atbDt.getTime())) {
+        return Math.max(0, Math.floor((atbDt.getTime() - startTimeRef.current) / 1000));
+      }
+    }
+    return null;
+  })();
+
+  const treatmentComplete = hasCultures && hasAntibiotic;
+  const shouldFreeze = treatmentComplete && frozenElapsed !== null;
+
   useEffect(() => {
-    if (outcome) {
+    if (outcome || shouldFreeze) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
+      }
+      if (shouldFreeze) {
+        setElapsedSeconds(frozenElapsed!);
       }
       return;
     }
@@ -69,13 +88,13 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
         intervalRef.current = null;
       }
     };
-  }, [outcome]);
+  }, [outcome, shouldFreeze, frozenElapsed]);
 
   const ONE_HOUR = 3600;
   const progressPercent = Math.min(100, (elapsedSeconds / ONE_HOUR) * 100);
   const isExpired = elapsedSeconds >= ONE_HOUR;
   const isFinalized = !!outcome;
-  const treatmentComplete = hasCultures && hasAntibiotic;
+  // treatmentComplete already declared above
   const shimmerActive = !isFinalized && !treatmentComplete && !isExpired;
 
   const sectorColorClass = sector === 'yellow' ? 'sector-yellow' : sector === 'blue' ? 'sector-blue' : 'sector-red';
