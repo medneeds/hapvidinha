@@ -4,11 +4,9 @@ import { PatientCard } from "./PatientCard";
 import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { EmptySectorState } from "@/components/EmptySectorState";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import {
