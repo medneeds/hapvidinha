@@ -32,7 +32,7 @@ export function useSepsisProtocol(patientId?: string) {
     try {
       const { data, error } = await supabase
         .from('sepsis_protocols')
-        .select('id, patient_id, patient_name, opening_date, opening_time, created_at, has_infection, has_organic_dysfunction, outcome, blood_culture_date, blood_culture_time, antibiotic_prescription_date, antibiotic_prescription_time')
+        .select('id, patient_id, patient_name, opening_date, opening_time, created_at, has_infection, has_organic_dysfunction, outcome, blood_culture_date, blood_culture_time, antibiotic_prescription_date, antibiotic_prescription_time, antibiotic_administration_date, antibiotic_administration_time')
         .eq('patient_id', patientId)
         .eq('hospital_unit_id', currentHospital.id)
         .eq('state_id', currentState.id)
