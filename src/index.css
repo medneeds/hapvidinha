@@ -672,13 +672,16 @@
 
   /* Dark mode */
   .dark .sepsis-status-bar.sector-red {
-    background: linear-gradient(to right, hsl(0 62% 45% / 0.25) 0%, hsl(0 62% 45% / 0.08) 100%);
+    background: linear-gradient(to right, hsl(0 62% 45% / 0.28) 0%, hsl(0 62% 45% / 0.10) 100%);
+    border-bottom: 2px solid hsl(0 62% 45% / 0.35);
   }
   .dark .sepsis-status-bar.sector-yellow {
-    background: linear-gradient(to right, hsl(45 80% 45% / 0.25) 0%, hsl(45 80% 45% / 0.08) 100%);
+    background: linear-gradient(to right, hsl(45 80% 45% / 0.28) 0%, hsl(45 80% 45% / 0.10) 100%);
+    border-bottom: 2px solid hsl(45 80% 45% / 0.35);
   }
   .dark .sepsis-status-bar.sector-blue {
-    background: linear-gradient(to right, hsl(210 70% 55% / 0.25) 0%, hsl(210 70% 55% / 0.08) 100%);
+    background: linear-gradient(to right, hsl(210 70% 55% / 0.28) 0%, hsl(210 70% 55% / 0.10) 100%);
+    border-bottom: 2px solid hsl(210 70% 55% / 0.35);
   }
   .dark .sepsis-status-bar::before {
     background: linear-gradient(
@@ -690,14 +693,23 @@
       transparent 80%
     );
   }
-  .dark .sepsis-status-bar .sepsis-active {
-    color: hsl(35 100% 65%);
+  .dark .sepsis-status-bar.sector-red .sepsis-active {
+    color: hsl(0 80% 70%);
+  }
+  .dark .sepsis-status-bar.sector-yellow .sepsis-active {
+    color: hsl(45 100% 65%);
+  }
+  .dark .sepsis-status-bar.sector-blue .sepsis-active {
+    color: hsl(210 80% 75%);
   }
   .dark .sepsis-status-bar .sepsis-expired {
     color: hsl(0 80% 70%);
   }
   .dark .sepsis-status-bar .sepsis-finalized {
     color: hsl(142 60% 70%);
+  }
+  .dark .sepsis-status-bar .separator {
+    color: hsl(0 0% 70%);
   }
 
   /* Tactile button feedback - ripple + scale */
