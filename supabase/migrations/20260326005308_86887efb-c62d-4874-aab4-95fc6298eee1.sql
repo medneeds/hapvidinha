@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS audit_sepsis_protocols_trigger ON public.sepsis_protocols;
