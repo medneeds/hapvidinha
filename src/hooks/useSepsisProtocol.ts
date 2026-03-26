@@ -16,6 +16,8 @@ export interface ActiveSepsisProtocol {
   blood_culture_time: string | null;
   antibiotic_prescription_date: string | null;
   antibiotic_prescription_time: string | null;
+  antibiotic_administration_date: string | null;
+  antibiotic_administration_time: string | null;
 }
 
 export function useSepsisProtocol(patientId?: string) {
