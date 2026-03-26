@@ -76,17 +76,21 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
   const isExpired = elapsedSeconds >= ONE_HOUR;
   const isFinalized = !!outcome;
   const treatmentComplete = hasCultures && hasAntibiotic;
-  const shimmerActive = !isFinalized && !treatmentComplete;
+  const shimmerActive = !isFinalized && !treatmentComplete && !isExpired;
 
   const sectorColorClass = sector === 'yellow' ? 'sector-yellow' : sector === 'blue' ? 'sector-blue' : 'sector-red';
 
   const statusLabel = isFinalized
     ? "PROTOCOLO SEPSE FINALIZADO"
+    : treatmentComplete && !isExpired
+    ? "GOLDEN HOUR CUMPRIDA"
     : isExpired
     ? "GOLDEN HOUR EXCEDIDA"
     : "PROTOCOLO SEPSE ATIVO";
 
   const statusColorClass = isFinalized
+    ? "sepsis-finalized"
+    : treatmentComplete && !isExpired
     ? "sepsis-finalized"
     : isExpired
     ? "sepsis-expired"
