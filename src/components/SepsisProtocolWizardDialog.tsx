@@ -176,6 +176,8 @@ export function SepsisProtocolWizardDialog({
   const [protocolId, setProtocolId] = useState<string | null>(existingProtocolId || null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [startTime, setStartTime] = useState<Date | null>(null);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const { toast } = useToast();
   const { currentHospital, currentState } = useHospital();
   const { user } = useAuth();
