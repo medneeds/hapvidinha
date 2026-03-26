@@ -3839,43 +3839,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       </Collapsible>
                     )}
 
-                    {/* SUBCATEGORIA - Change patient category */}
-                    <Collapsible className="group">
-                      <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
-                        <LayoutList className="h-4 w-4 text-violet-500 dark:text-violet-400" />
-                        <span className="flex-1 text-left text-foreground">Subcategoria</span>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-1 space-y-0.5 overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-                        {([
-                          { key: 'clinica_medica', label: 'Clínica Médica', Icon: Stethoscope },
-                          { key: 'cirurgico', label: 'Cirurgia', Icon: Scissors },
-                          { key: 'psiquiatrico', label: 'Psiquiátrica', Icon: Brain },
-                          { key: 'custom', label: 'Outros', Icon: LayoutList },
-                        ] as const).map(({ key, label, Icon }) => (
-                          <DropdownMenuItem
-                            key={key}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const updatedPatient = { ...patient, patientCategory: key as Patient['patientCategory'] };
-                              onUpdate(updatedPatient);
-                            }}
-                            className={cn(
-                              "ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-violet-50 dark:hover:bg-violet-950/30 transition-colors cursor-pointer",
-                              patient.patientCategory === key || (!patient.patientCategory && key === 'clinica_medica')
-                                ? "bg-violet-100 dark:bg-violet-950/50 font-semibold"
-                                : ""
-                            )}
-                          >
-                            <Icon className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400" />
-                            <span>{label}</span>
-                            {(patient.patientCategory === key || (!patient.patientCategory && key === 'clinica_medica')) && (
-                              <Check className="h-3 w-3 ml-auto text-violet-600 dark:text-violet-400" />
-                            )}
-                          </DropdownMenuItem>
-                        ))}
-                      </CollapsibleContent>
-                    </Collapsible>
 
                     {/* MOVIMENTAÇÕES - Priority Category with Gradient Accent */}
                     <Collapsible className="group">
