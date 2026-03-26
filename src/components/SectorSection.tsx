@@ -50,26 +50,26 @@ interface SectorSectionProps {
 
 const sectorInfo = {
   red: {
-    title: "Vermelha",
-    subtitle: "Pacientes graves",
+    title: "Cuidados Especiais",
+    subtitle: "Leitos V01-V05",
     icon: "🔴",
     gradientClass: "bg-critical/15 dark:bg-critical/25 border-l-4 border-l-critical"
   },
   yellow: {
-    title: "Amarela",
-    subtitle: "Pacientes moderados",
+    title: "Observação Amarela",
+    subtitle: "Leitos A01-A06",
     icon: "🟡",
     gradientClass: "bg-warning/15 dark:bg-warning/25 border-l-4 border-l-warning"
   },
   blue: {
-    title: "Verde/Azul",
-    subtitle: "Pacientes estáveis",
+    title: "Observação Azul",
+    subtitle: "Leitos Z01-Z06",
     icon: "🔵",
     gradientClass: "bg-stable/15 dark:bg-stable/25 border-l-4 border-l-stable"
   },
   outside: {
-    title: "Externo",
-    subtitle: "Pacientes em observação",
+    title: "Fora das Alas",
+    subtitle: "Pacientes externos",
     icon: "⚪",
     gradientClass: "bg-muted/30 dark:bg-muted/40 border-l-4 border-l-muted-foreground/50"
   }
