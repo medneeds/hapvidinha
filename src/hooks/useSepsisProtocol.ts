@@ -9,10 +9,13 @@ export interface ActiveSepsisProtocol {
   opening_date: string | null;
   opening_time: string | null;
   created_at: string;
-  // Track completion status
   has_infection: boolean | null;
   has_organic_dysfunction: boolean | null;
   outcome: string | null;
+  blood_culture_date: string | null;
+  blood_culture_time: string | null;
+  antibiotic_prescription_date: string | null;
+  antibiotic_prescription_time: string | null;
 }
 
 export function useSepsisProtocol(patientId?: string) {
@@ -27,7 +30,7 @@ export function useSepsisProtocol(patientId?: string) {
     try {
       const { data, error } = await supabase
         .from('sepsis_protocols')
-        .select('id, patient_id, patient_name, opening_date, opening_time, created_at, has_infection, has_organic_dysfunction, outcome')
+        .select('id, patient_id, patient_name, opening_date, opening_time, created_at, has_infection, has_organic_dysfunction, outcome, blood_culture_date, blood_culture_time, antibiotic_prescription_date, antibiotic_prescription_time')
         .eq('patient_id', patientId)
         .eq('hospital_unit_id', currentHospital.id)
         .eq('state_id', currentState.id)

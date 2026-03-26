@@ -609,6 +609,7 @@
       0 2px 8px rgba(0, 0, 0, 0.12);
   }
 
+  /* Shimmer only active while treatment (HC + ATB) is incomplete */
   .sepsis-status-bar::before {
     content: '';
     position: absolute;
@@ -624,8 +625,14 @@
       rgba(255, 255, 255, 0.4) 60%,
       transparent 80%
     );
-    animation: shimmer 2.5s ease-in-out infinite;
+    animation: none;
     z-index: 1;
+    opacity: 0;
+  }
+
+  .sepsis-status-bar.sepsis-shimmer-active::before {
+    animation: shimmer 2.5s ease-in-out infinite;
+    opacity: 1;
   }
 
   .sepsis-status-bar.sector-red {
