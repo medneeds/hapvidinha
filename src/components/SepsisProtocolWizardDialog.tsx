@@ -672,9 +672,28 @@ export function SepsisProtocolWizardDialog({
               <NowButton dateField="antibiotic_prescription_date" timeField="antibiotic_prescription_time" />
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <div><Label className="text-xs">Data</Label><Input type="date" value={formData.antibiotic_prescription_date} onChange={e => updateField("antibiotic_prescription_date", e.target.value)} /></div>
-              <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.antibiotic_prescription_time} onChange={e => updateField("antibiotic_prescription_time", e.target.value)} /></div>
+              <div><Label className="text-xs">Data Prescrição</Label><Input type="date" value={formData.antibiotic_prescription_date} onChange={e => updateField("antibiotic_prescription_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora Prescrição</Label><Input type="time" value={formData.antibiotic_prescription_time} onChange={e => updateField("antibiotic_prescription_time", e.target.value)} /></div>
             </div>
+          </div>
+          <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Administração de Antibiótico</h4>
+              <NowButton dateField="antibiotic_administration_date" timeField="antibiotic_administration_time" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data Administração</Label><Input type="date" value={formData.antibiotic_administration_date} onChange={e => updateField("antibiotic_administration_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora Administração</Label><Input type="time" value={formData.antibiotic_administration_time} onChange={e => updateField("antibiotic_administration_time", e.target.value)} /></div>
+            </div>
+          </div>
+          <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+            <h4 className="text-xs font-bold uppercase">Antibiótico(s) Prescrito(s)</h4>
+            <Textarea
+              value={formData.antibiotic_names}
+              onChange={e => updateField("antibiotic_names", e.target.value.toUpperCase())}
+              className="uppercase text-sm min-h-[60px]"
+              placeholder="EX: CEFTRIAXONA 2G IV 12/12H + METRONIDAZOL 500MG IV 8/8H"
+            />
           </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
             <h4 className="text-xs font-bold uppercase">Ressuscitação Volêmica</h4>
