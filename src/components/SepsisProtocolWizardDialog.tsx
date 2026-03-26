@@ -389,6 +389,9 @@ export function SepsisProtocolWizardDialog({
           lactate_time: formData.lactate_time || null,
           antibiotic_prescription_date: formData.antibiotic_prescription_date || null,
           antibiotic_prescription_time: formData.antibiotic_prescription_time || null,
+          antibiotic_administration_date: formData.antibiotic_administration_date || null,
+          antibiotic_administration_time: formData.antibiotic_administration_time || null,
+          antibiotic_names: formData.antibiotic_names || null,
           volume_administered: formData.volume_administered ? parseFloat(formData.volume_administered) : null,
           patient_weight: formData.patient_weight ? parseFloat(formData.patient_weight) : null,
         };
