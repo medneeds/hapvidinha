@@ -109,38 +109,6 @@ export function SectorSection({
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
-  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
-  const [categoryPrompt, setCategoryPrompt] = useState<{ patient: Patient; targetCategory: PatientCategory } | null>(null);
-  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
-  const [customCategoryName, setCustomCategoryName] = useState('');
-  
-  // Always show sub-sections when there are patients (default category is clinica_medica)
-  const hasCategories = patients.length > 0;
-  
-  // Group patients by category (default to clinica_medica)
-  const categorizedPatients = useMemo(() => {
-    const groups: Record<string, Patient[]> = {
-      clinica_medica: [],
-      cirurgico: [],
-      psiquiatrico: [],
-      custom: [],
-    };
-    patients.forEach(p => {
-      const cat = p.patientCategory || 'clinica_medica';
-      if (groups[cat]) {
-        groups[cat].push(p);
-      } else {
-        groups.custom.push(p);
-      }
-    });
-    return groups;
-  }, [patients]);
-
-  // Filtered patients based on category filter
-  const filteredPatients = useMemo(() => {
-    if (categoryFilter === 'all') return patients;
-    return categorizedPatients[categoryFilter] || [];
-  }, [patients, categoryFilter, categorizedPatients]);
   
   // Auto-expand when patients are added, auto-collapse when all removed
   useEffect(() => {
@@ -151,8 +119,6 @@ export function SectorSection({
   
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
   const setIsOpen = onOpenChange || setInternalIsOpen;
-  
-  const displayPatients = filteredPatients;
 
   const allPatientsSelected = patients.length > 0 && patients.every(p => selectedPatients.has(p.id));
 
@@ -181,24 +147,12 @@ export function SectorSection({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id && onReorderPatients) {
-      const oldIndex = displayPatients.findIndex((p) => p.id === active.id);
-      const newIndex = displayPatients.findIndex((p) => p.id === over.id);
-      const reorderedPatients = arrayMove(displayPatients, oldIndex, newIndex);
+      const oldIndex = patients.findIndex((p) => p.id === active.id);
+      const newIndex = patients.findIndex((p) => p.id === over.id);
+      const reorderedPatients = arrayMove(patients, oldIndex, newIndex);
       onReorderPatients(reorderedPatients);
-
-      // If sub-sections are active, check if an uncategorized patient was dropped onto a categorized one
-      if (showSubSections) {
-        const draggedPatient = patients.find(p => p.id === active.id);
-        const targetPatient = patients.find(p => p.id === over.id);
-        if (draggedPatient && !draggedPatient.patientCategory && targetPatient?.patientCategory) {
-          setCategoryPrompt({ patient: draggedPatient, targetCategory: targetPatient.patientCategory });
-        }
-      }
     }
   };
-
-  // Determine if we should show sub-sections (only when filter is 'all' and there are categorized patients)
-  const showSubSections = categoryFilter === 'all' && hasCategories;
 
   const renderPatientCards = (patientsToRender: Patient[]) => (
     patientsToRender.map((patient) => (
@@ -217,15 +171,6 @@ export function SectorSection({
       />
     ))
   );
-
-  // Active category counts for filter badges
-  const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    Object.entries(categorizedPatients).forEach(([key, pts]) => {
-      if (pts.length > 0) counts[key] = pts.length;
-    });
-    return counts;
-  }, [categorizedPatients]);
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-3 mb-4 print:space-y-0.5 print:mb-1 print:break-inside-avoid">
@@ -261,7 +206,7 @@ export function SectorSection({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setShowCategoryPicker(true)}
+                onClick={() => onAddExtraBed()}
                 className="h-8 w-8 print:hidden"
                 title="Adicionar leito extra"
               >
@@ -288,48 +233,10 @@ export function SectorSection({
             </div>
           </div>
         </div>
-
-        {/* Category filter chips - only show when categories exist */}
-        {hasCategories && isOpen && (
-          <div className="flex items-center gap-1.5 mt-2 px-1 print:hidden overflow-x-auto">
-            <Filter className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-            <button
-              onClick={() => setCategoryFilter('all')}
-              className={cn(
-                "px-2 py-0.5 rounded-full text-[10px] font-semibold border transition-all whitespace-nowrap",
-                categoryFilter === 'all'
-                  ? "bg-foreground/10 border-foreground/30 text-foreground"
-                  : "border-transparent text-muted-foreground hover:bg-accent"
-              )}
-            >
-              Todos ({patients.length})
-            </button>
-            {Object.entries(categoryCounts).map(([key, count]) => {
-              const catLabel = CATEGORY_LABELS[key];
-              if (!catLabel) return null;
-              const isActive = categoryFilter === key;
-              const sectorColor = getSectorColorClass(sector);
-              return (
-                <button
-                  key={key}
-                  onClick={() => setCategoryFilter(key as PatientCategory)}
-                  className={cn(
-                    "px-2 py-0.5 rounded-full text-[10px] font-semibold border transition-all whitespace-nowrap",
-                    isActive
-                      ? sectorColor
-                      : "border-transparent text-muted-foreground hover:bg-accent"
-                  )}
-                >
-                  {(() => { const Icon = CATEGORY_ICONS[key] || LayoutList; return <Icon className="h-3 w-3 inline-block mr-0.5" />; })()} {catLabel.label} ({count})
-                </button>
-              );
-            })}
-          </div>
-        )}
       </div>
 
       <CollapsibleContent className="space-y-1.5 print:space-y-0.5">
-        {displayPatients.length === 0 ? (
+        {patients.length === 0 ? (
           <EmptySectorState
             sectorName={displayTitle}
             sectorIcon={displayIcon}
@@ -342,123 +249,14 @@ export function SectorSection({
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={displayPatients.map(p => p.id)}
+              items={patients.map(p => p.id)}
               strategy={verticalListSortingStrategy}
             >
-              {showSubSections ? (
-                // Render categorized sub-sections
-                <>
-                  {['clinica_medica', 'cirurgico', 'psiquiatrico', 'custom'].map(catKey => {
-                    const catPatients = categorizedPatients[catKey] || [];
-                    if (catPatients.length === 0) return null;
-                    return (
-                      <CategorySubSection
-                        key={catKey}
-                        categoryKey={catKey}
-                        patients={catPatients}
-                        renderPatients={renderPatientCards}
-                        sector={sector}
-                      />
-                    );
-                  })}
-                </>
-              ) : (
-                // Flat list (no sub-sections)
-                renderPatientCards(displayPatients)
-              )}
+              {renderPatientCards(patients)}
             </SortableContext>
           </DndContext>
         )}
       </CollapsibleContent>
-
-      {/* Category assignment prompt on drag & drop */}
-      <AlertDialog open={!!categoryPrompt} onOpenChange={(open) => !open && setCategoryPrompt(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Categorizar paciente</AlertDialogTitle>
-            <AlertDialogDescription>
-              Deseja categorizar <strong>{categoryPrompt?.patient?.name || 'este paciente'}</strong> como{' '}
-              <strong>{categoryPrompt?.targetCategory ? CATEGORY_LABELS[categoryPrompt.targetCategory]?.label : ''}</strong>?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => {
-              if (categoryPrompt) {
-                onUpdatePatient({ ...categoryPrompt.patient, patientCategory: categoryPrompt.targetCategory });
-                setCategoryPrompt(null);
-              }
-            }}>
-              Confirmar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Category picker for new bed */}
-      <AlertDialog open={showCategoryPicker} onOpenChange={(open) => { if (!open) { setShowCategoryPicker(false); setCustomCategoryName(''); } }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Subcategoria do leito</AlertDialogTitle>
-            <AlertDialogDescription>
-              Em qual subcategoria deseja alocar o novo leito?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="flex flex-col gap-2 py-2">
-            {(['clinica_medica', 'cirurgico', 'psiquiatrico'] as PatientCategory[]).map(cat => {
-              const info = CATEGORY_LABELS[cat as string];
-              if (!info) return null;
-              return (
-                <Button
-                  key={cat}
-                  variant="outline"
-                  className="justify-start gap-2 h-10"
-                  onClick={() => {
-                    setShowCategoryPicker(false);
-                    setCustomCategoryName('');
-                    onAddExtraBed?.(cat);
-                  }}
-                >
-                  {(() => { const Icon = CATEGORY_ICONS[cat as string] || LayoutList; return <Icon className="h-4 w-4" />; })()}
-                  <span>{info.label}</span>
-                </Button>
-              );
-            })}
-            <div className="flex items-center gap-2 mt-1">
-              <Input
-                placeholder="Outra subcategoria..."
-                value={customCategoryName}
-                onChange={e => setCustomCategoryName(e.target.value)}
-                className="flex-1 h-10 text-sm"
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && customCategoryName.trim()) {
-                    setShowCategoryPicker(false);
-                    // Store custom name in patientCategory as custom, name will go in observations via the caller
-                    onAddExtraBed?.('custom');
-                    setCustomCategoryName('');
-                  }
-                }}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={!customCategoryName.trim()}
-                onClick={() => {
-                  setShowCategoryPicker(false);
-                  onAddExtraBed?.('custom');
-                  setCustomCategoryName('');
-                }}
-              >
-                <Plus className="h-3.5 w-3.5 mr-1" />
-                Criar
-              </Button>
-            </div>
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => { setShowCategoryPicker(false); setCustomCategoryName(''); }}>Cancelar</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </Collapsible>
   );
 }
