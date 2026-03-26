@@ -454,10 +454,32 @@ export function SepsisProtocolWizardDialog({
       toast({ title: "Desfecho obrigatório", description: "Selecione o desfecho do paciente para finalizar.", variant: "destructive" });
       return;
     }
-    await saveCurrentStep();
-    toast({ title: "Protocolo Sepse finalizado", description: "Protocolo registrado com sucesso." });
-    onSuccess?.();
-    onClose();
+    if (!protocolId) return;
+    setIsSubmitting(true);
+    try {
+      const updateData = {
+        destination: formData.destination || null,
+        destination_date: formData.destination_date || null,
+        destination_time: formData.destination_time || null,
+        outcome: formData.outcome,
+        outcome_date: formData.outcome_date || null,
+        outcome_time: formData.outcome_time || null,
+        notes: formData.notes || null,
+      };
+      const { error } = await supabase
+        .from('sepsis_protocols')
+        .update(updateData)
+        .eq('id', protocolId);
+      if (error) throw error;
+      toast({ title: "Protocolo Sepse finalizado", description: "Protocolo registrado com sucesso." });
+      onSuccess?.();
+      onClose();
+    } catch (err: any) {
+      console.error('Erro ao finalizar protocolo:', err);
+      toast({ title: "Erro ao finalizar", description: err?.message || "Tente novamente.", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancelProtocol = async () => {
