@@ -80,41 +80,38 @@ export function generateSepsisProtocolPdf(data: ProtocolData) {
   doc.setFillColor(ACCENT[0], ACCENT[1], ACCENT[2]);
   doc.rect(0, 5, W, 1.5, "F");
 
-  y = 14;
+  y = 15;
 
-  // Load Hapvida logo from assets
+  // Logo - proportional (original aspect ~4.5:1, use 40x9mm)
   try {
-    const logoImg = new Image();
-    logoImg.src = networkFullLogo;
-    // Add logo image - Hapvida NotreDame Intermédica full logo
-    doc.addImage(networkFullLogo, 'PNG', M, y - 6, 55, 12);
+    doc.addImage(networkFullLogo, 'PNG', M, y - 7, 42, 9);
   } catch {
-    // Fallback to text if image fails
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
+    doc.setFontSize(13);
     doc.setTextColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]);
     doc.text("HAPVIDA", M, y);
-    doc.setFontSize(9);
+    doc.setFontSize(8);
     doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
-    doc.text("NOTREDAME INTERMÉDICA", M + 30, y);
+    doc.text("NOTREDAME INTERMÉDICA", M + 28, y);
   }
 
-  // Title right
+  // Title - right aligned, vertically centered with logo
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
   doc.setTextColor(ACCENT[0], ACCENT[1], ACCENT[2]);
-  doc.text("PROTOCOLO DE SEPSE ADULTO", W - M, y, { align: "right" });
+  doc.text("PROTOCOLO DE SEPSE ADULTO", W - M, y - 2, { align: "right" });
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(6.5);
   doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
-  doc.text("Gestão de Protocolos Clínicos", W - M, y + 4, { align: "right" });
+  doc.text("Gestão de Protocolos Clínicos", W - M, y + 2, { align: "right" });
 
-  y += 8;
+  y += 6;
   doc.setDrawColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]);
   doc.setLineWidth(0.4);
   doc.line(M, y, W - M, y);
-  doc.setDrawColor(200, 200, 200);
-  doc.setLineWidth(0.2);
-  doc.line(M, y + 0.8, W - M, y + 0.8);
+  doc.setDrawColor(220, 220, 220);
+  doc.setLineWidth(0.15);
+  doc.line(M, y + 0.6, W - M, y + 0.6);
 
   // ─── IDENTIFICATION ─────────────────────────
   y += 6;
