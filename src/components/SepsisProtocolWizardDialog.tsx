@@ -25,7 +25,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock } from "lucide-react";
+import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock, Download, AlertTriangle, CheckCircle2, Stethoscope } from "lucide-react";
+import { generateSepsisProtocolPdf } from "@/utils/sepsisProtocolPdf";
 import { cn } from "@/lib/utils";
 
 interface SepsisProtocolWizardDialogProps {
@@ -455,6 +456,19 @@ export function SepsisProtocolWizardDialog({
     formData.dysfunction_bilirubin,
   ].filter(Boolean).length;
 
+  const focusCount = [formData.focus_pulmonary, formData.focus_urinary, formData.focus_abdominal, formData.focus_skin, formData.focus_neurological].filter(Boolean).length + (formData.focus_other ? 1 : 0);
+  const hasTreatmentData = !!(formData.blood_culture_date || formData.lactate_date || formData.antibiotic_prescription_date || formData.volume_administered);
+
+  const getStepStatus = (i: number): "empty" | "partial" | "complete" | "alert" => {
+    if (i === 0) return protocolId ? "complete" : formData.patient_name ? "partial" : "empty";
+    if (i === 1) return sirsCount >= 2 ? "alert" : sirsCount > 0 ? "partial" : "empty";
+    if (i === 2) return dysfunctionCount > 0 ? (formData.has_organic_dysfunction !== null ? "complete" : "partial") : "empty";
+    if (i === 3) return formData.has_infection !== null ? (focusCount > 0 ? "complete" : "partial") : "empty";
+    if (i === 4) return hasTreatmentData ? "partial" : "empty";
+    if (i === 5) return formData.outcome ? "complete" : "empty";
+    return "empty";
+  };
+
   const fillNowDateTime = (dateField: keyof FormData, timeField: keyof FormData) => {
     const now = new Date();
     updateField(dateField, now.toISOString().split("T")[0]);
@@ -740,7 +754,7 @@ export function SepsisProtocolWizardDialog({
         )}
 
         {/* Step Indicators */}
-        <div className="px-4 py-2 border-b bg-muted/30 flex items-center gap-1 overflow-x-auto">
+        <div className="px-4 py-2 border-b bg-muted/30 flex items-center gap-1 overflow-x-auto scrollbar-none">
           {STEPS.map((step, i) => (
             <button
               key={step.key}
@@ -749,16 +763,40 @@ export function SepsisProtocolWizardDialog({
                 "flex items-center gap-1 px-2 py-1 rounded text-[10px] font-semibold uppercase whitespace-nowrap transition-colors",
                 i === currentStep
                   ? "bg-primary text-primary-foreground"
-                  : i < currentStep
-                  ? "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400 cursor-pointer"
-                  : "text-muted-foreground"
+                  : getStepStatus(i) === "complete" ? "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400 cursor-pointer"
+                  : getStepStatus(i) === "alert" ? "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 cursor-pointer"
+                  : getStepStatus(i) === "partial" ? "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 cursor-pointer"
+                  : "text-muted-foreground/60"
               )}
             >
-              {i < currentStep ? <Check className="h-3 w-3" /> : <span className="text-[9px]">{i + 1}</span>}
+              {getStepStatus(i) === "complete" ? <Check className="h-3 w-3" />
+                : getStepStatus(i) === "alert" ? <AlertTriangle className="h-3 w-3" />
+                : <span className="text-[9px]">{i + 1}</span>}
               <span className="hidden sm:inline">{step.label}</span>
             </button>
           ))}
         </div>
+
+        {/* Status Summary Bar */}
+        {protocolId && (
+          <div className="px-4 py-1.5 border-b bg-muted/20 flex items-center gap-3 text-[10px] font-semibold uppercase overflow-x-auto scrollbar-none">
+            <span className={cn("flex items-center gap-1", sirsCount >= 2 ? "text-red-600 dark:text-red-400" : "text-muted-foreground")}>
+              <Stethoscope className="h-3 w-3" />SIRS {sirsCount}/7
+            </span>
+            <span className={cn("flex items-center gap-1", dysfunctionCount > 0 ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground")}>
+              DISF {dysfunctionCount}/7
+            </span>
+            <span className={cn("flex items-center gap-1", formData.has_infection === true ? "text-red-600 dark:text-red-400" : "text-muted-foreground")}>
+              INF {formData.has_infection === true ? "SIM" : formData.has_infection === false ? "NÃO" : "—"}
+            </span>
+            <span className={cn("flex items-center gap-1", focusCount > 0 ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground")}>
+              FOCO {focusCount}
+            </span>
+            <span className={cn("flex items-center gap-1", hasTreatmentData ? "text-green-600 dark:text-green-400" : "text-muted-foreground")}>
+              {hasTreatmentData ? <CheckCircle2 className="h-3 w-3" /> : null}TTO
+            </span>
+          </div>
+        )}
 
         <DialogHeader className="px-6 pt-4 pb-0">
           <DialogTitle className="text-base font-bold uppercase flex items-center gap-2">
@@ -778,11 +816,22 @@ export function SepsisProtocolWizardDialog({
         </div>
 
         {/* Footer */}
-        <DialogFooter className="px-6 py-3 border-t flex-row gap-2">
+        <DialogFooter className="px-6 py-3 border-t flex-row gap-2 flex-wrap">
           {currentStep > 0 && (
             <Button variant="outline" onClick={handlePrev} size="sm">
               <ArrowLeft className="h-4 w-4 mr-1" />
               ANTERIOR
+            </Button>
+          )}
+          {protocolId && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => generateSepsisProtocolPdf({ ...formData, created_at: startTime?.toISOString() || new Date().toISOString(), patient_weight: formData.patient_weight ? parseFloat(formData.patient_weight) : null, volume_administered: formData.volume_administered ? parseFloat(formData.volume_administered) : null } as any)}
+            >
+              <Download className="h-4 w-4 mr-1" />
+              PDF
             </Button>
           )}
           <div className="flex-1" />
