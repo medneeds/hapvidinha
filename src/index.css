@@ -636,18 +636,29 @@
   }
 
   .sepsis-status-bar.sector-red {
-    background: linear-gradient(to right, hsl(0 72% 51% / 0.25) 0%, hsl(0 72% 51% / 0.08) 100%);
+    background: linear-gradient(to right, hsl(0 72% 51% / 0.28) 0%, hsl(0 72% 51% / 0.10) 100%);
+    border-bottom: 2px solid hsl(0 72% 51% / 0.35);
   }
   .sepsis-status-bar.sector-yellow {
-    background: linear-gradient(to right, hsl(45 93% 47% / 0.25) 0%, hsl(45 93% 47% / 0.08) 100%);
+    background: linear-gradient(to right, hsl(45 93% 47% / 0.28) 0%, hsl(45 93% 47% / 0.10) 100%);
+    border-bottom: 2px solid hsl(45 93% 47% / 0.35);
   }
   .sepsis-status-bar.sector-blue {
-    background: linear-gradient(to right, hsl(210 80% 42% / 0.25) 0%, hsl(210 80% 42% / 0.08) 100%);
+    background: linear-gradient(to right, hsl(210 80% 42% / 0.28) 0%, hsl(210 80% 42% / 0.10) 100%);
+    border-bottom: 2px solid hsl(210 80% 42% / 0.35);
   }
 
-  .sepsis-status-bar .sepsis-active {
-    color: hsl(25 100% 38%);
+  /* Sector-harmonized text colors for active state */
+  .sepsis-status-bar.sector-red .sepsis-active {
+    color: hsl(0 80% 38%);
   }
+  .sepsis-status-bar.sector-yellow .sepsis-active {
+    color: hsl(25 100% 32%);
+  }
+  .sepsis-status-bar.sector-blue .sepsis-active {
+    color: hsl(210 80% 30%);
+  }
+
   .sepsis-status-bar .sepsis-expired {
     color: hsl(0 80% 35%);
   }
@@ -655,9 +666,8 @@
     color: hsl(142 60% 30%);
   }
   .sepsis-status-bar .separator {
-    color: rgba(255, 255, 255, 0.8);
+    color: hsl(0 0% 40%);
     font-weight: bold;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 
   /* Dark mode */
