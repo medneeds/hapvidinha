@@ -1554,7 +1554,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         )}
 
         {/* Sepsis Protocol Active Banner */}
-        {hasSepsisActive && activeSepsisProtocol && (
+        {hasSepsisActive && activeSepsisProtocol?.outcome == null && (
           <SepsisActiveBanner
             protocolCreatedAt={activeSepsisProtocol.created_at}
             openingDate={activeSepsisProtocol.opening_date}
@@ -1577,7 +1577,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             config.color,
             isSelected && "ring-2 ring-primary",
             isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
-            (allocationStatusBarConfig || hasSepsisActive) && "rounded-t-none"
+            (allocationStatusBarConfig || (hasSepsisActive && activeSepsisProtocol?.outcome == null)) && "rounded-t-none"
           )}
         >
         <div className="p-3 md:p-2 print:p-1.5">

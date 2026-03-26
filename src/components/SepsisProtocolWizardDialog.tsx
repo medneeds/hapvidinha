@@ -455,22 +455,41 @@ export function SepsisProtocolWizardDialog({
       return;
     }
     if (!protocolId) return;
+
     setIsSubmitting(true);
     try {
+      const now = new Date();
+      const resolvedOutcomeDate = formData.outcome_date || now.toISOString().split("T")[0];
+      const resolvedOutcomeTime = formData.outcome_time || now.toTimeString().slice(0, 5);
+
       const updateData = {
         destination: formData.destination || null,
         destination_date: formData.destination_date || null,
         destination_time: formData.destination_time || null,
         outcome: formData.outcome,
-        outcome_date: formData.outcome_date || null,
-        outcome_time: formData.outcome_time || null,
+        outcome_date: resolvedOutcomeDate,
+        outcome_time: resolvedOutcomeTime,
         notes: formData.notes || null,
       };
-      const { error } = await supabase
+
+      const { data, error } = await supabase
         .from('sepsis_protocols')
         .update(updateData)
-        .eq('id', protocolId);
+        .eq('id', protocolId)
+        .select('id, outcome, outcome_date, outcome_time')
+        .maybeSingle();
+
       if (error) throw error;
+      if (!data?.outcome) {
+        throw new Error("O protocolo não pôde ser encerrado. Atualize a página e tente novamente.");
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        outcome_date: resolvedOutcomeDate,
+        outcome_time: resolvedOutcomeTime,
+      }));
+
       toast({ title: "Protocolo Sepse finalizado", description: "Protocolo registrado com sucesso." });
       onSuccess?.();
       onClose();
