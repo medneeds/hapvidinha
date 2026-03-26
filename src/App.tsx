@@ -43,6 +43,7 @@ import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
 import TherapeuticTemplatesPage from "./pages/TherapeuticTemplatesPage";
 import ReportHistoryPage from "./pages/ReportHistoryPage";
 import PresentationPage from "./pages/PresentationPage";
+import SepsisProtocolsAdminPage from "./pages/SepsisProtocolsAdminPage";
 
 const queryClient = new QueryClient();
 
@@ -374,6 +375,16 @@ const App = () => {
           }
         />
         <Route path="/presentation" element={<PresentationPage />} />
+        <Route
+          path="/admin/sepsis-protocols"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <SepsisProtocolsAdminPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
