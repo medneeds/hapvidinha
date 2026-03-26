@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ShieldAlert, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectorType } from "@/types/patient";
@@ -14,12 +14,13 @@ interface SepsisActiveBannerProps {
   onClick?: () => void;
 }
 
-function getProtocolStartTime(createdAt: string, openingDate?: string | null, openingTime?: string | null): Date {
+function getProtocolStartTime(createdAt: string, openingDate?: string | null, openingTime?: string | null): number {
   if (openingDate && openingTime) {
+    // Parse as local time
     const dt = new Date(`${openingDate}T${openingTime}`);
-    if (!isNaN(dt.getTime())) return dt;
+    if (!isNaN(dt.getTime())) return dt.getTime();
   }
-  return new Date(createdAt);
+  return new Date(createdAt).getTime();
 }
 
 function formatElapsed(seconds: number): string {
@@ -31,23 +32,44 @@ function formatElapsed(seconds: number): string {
 
 export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate, outcome, sector = 'red', hasCultures = false, hasAntibiotic = false, onClick }: SepsisActiveBannerProps) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-
-  const startTime = useMemo(
-    () => getProtocolStartTime(protocolCreatedAt, openingDate, openingTime),
-    [protocolCreatedAt, openingDate, openingTime]
+  const startTimeRef = useRef<number>(
+    getProtocolStartTime(protocolCreatedAt, openingDate, openingTime)
   );
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Only update startTimeRef if the actual values change
+  useEffect(() => {
+    const newStartTime = getProtocolStartTime(protocolCreatedAt, openingDate, openingTime);
+    if (newStartTime !== startTimeRef.current) {
+      startTimeRef.current = newStartTime;
+    }
+  }, [protocolCreatedAt, openingDate, openingTime]);
 
   useEffect(() => {
-    if (outcome) return;
+    if (outcome) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
 
     const tick = () => {
-      const now = new Date();
-      setElapsedSeconds(Math.max(0, Math.floor((now.getTime() - startTime.getTime()) / 1000)));
+      const now = Date.now();
+      const diff = Math.max(0, Math.floor((now - startTimeRef.current) / 1000));
+      setElapsedSeconds(diff);
     };
+
     tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [startTime, outcome]);
+    intervalRef.current = setInterval(tick, 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [outcome]);
 
   const ONE_HOUR = 3600;
   const progressPercent = Math.min(100, (elapsedSeconds / ONE_HOUR) * 100);
@@ -97,7 +119,7 @@ export function SepsisActiveBanner({ protocolCreatedAt, openingTime, openingDate
             <div className="h-1 w-full rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
               <div
                 className={cn(
-                  "h-full rounded-full transition-all",
+                  "h-full rounded-full transition-all duration-1000",
                   isExpired ? "bg-red-500" : "bg-orange-500"
                 )}
                 style={{ width: `${progressPercent}%` }}
