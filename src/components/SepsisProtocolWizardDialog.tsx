@@ -24,6 +24,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useHospital } from "@/contexts/HospitalContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -160,18 +161,20 @@ export function SepsisProtocolWizardDialog({
   const [startTime, setStartTime] = useState<Date | null>(null);
   const { toast } = useToast();
   const { currentHospital, currentState } = useHospital();
+  const { user } = useAuth();
 
   // Initialize form with patient data
   useEffect(() => {
     if (isOpen && patient) {
-      setFormData(prev => ({
-        ...prev,
+      setFormData({
+        ...initialFormData,
         patient_name: patient.name || "",
-      }));
+      });
       if (!existingProtocolId) {
         setCurrentStep(0);
         setProtocolId(null);
         setStartTime(null);
+        setElapsedSeconds(0);
       }
     }
   }, [isOpen, patient, existingProtocolId]);
@@ -273,6 +276,8 @@ export function SepsisProtocolWizardDialog({
   };
 
   const handleStartProtocol = async () => {
+    if (isSubmitting) return;
+
     if (!patient) {
       toast({ title: "Erro", description: "Nenhum paciente selecionado.", variant: "destructive" });
       return;
@@ -281,14 +286,18 @@ export function SepsisProtocolWizardDialog({
       toast({ title: "Erro", description: "Hospital/Estado não configurado.", variant: "destructive" });
       return;
     }
+    if (!user) {
+      toast({ title: "Erro", description: "Sessão expirada. Faça login novamente.", variant: "destructive" });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({ title: "Erro", description: "Sessão expirada. Faça login novamente.", variant: "destructive" });
-        return;
-      }
       const now = new Date();
+      const openingDate = formData.opening_date || now.toISOString().split("T")[0];
+      const openingTime = formData.opening_time || now.toTimeString().slice(0, 5);
+      const openingDateTime = new Date(`${openingDate}T${openingTime}`);
+
       const { data, error } = await supabase
         .from('sepsis_protocols')
         .insert({
@@ -297,8 +306,8 @@ export function SepsisProtocolWizardDialog({
           hospital_unit_id: currentHospital.id,
           state_id: currentState.id,
           created_by: user.id,
-          opening_date: formData.opening_date || now.toISOString().split("T")[0],
-          opening_time: formData.opening_time || now.toTimeString().slice(0, 5),
+          opening_date: openingDate,
+          opening_time: openingTime,
           birth_date: formData.birth_date || null,
           attendance_number: formData.attendance_number || null,
           hospital: formData.hospital || null,
@@ -310,9 +319,11 @@ export function SepsisProtocolWizardDialog({
 
       if (error) throw error;
       if (!data) throw new Error("Nenhum dado retornado");
+
       setProtocolId(data.id);
-      setStartTime(new Date(data.created_at));
+      setStartTime(openingDateTime);
       setCurrentStep(1);
+      onSuccess?.();
       toast({ title: "Protocolo Sepse iniciado", description: "Golden Hour em andamento. Preencha as etapas." });
     } catch (err: any) {
       console.error('Erro ao iniciar protocolo sepse:', err);
@@ -739,17 +750,17 @@ export function SepsisProtocolWizardDialog({
           )}
           <div className="flex-1" />
           {currentStep === 0 && !protocolId ? (
-            <Button onClick={handleNext} disabled={isSubmitting} className="bg-orange-600 hover:bg-orange-700 text-white">
+            <Button type="button" onClick={handleNext} disabled={isSubmitting} className="bg-primary text-primary-foreground hover:bg-primary/90 min-w-36">
               <Activity className="h-4 w-4 mr-1" />
               {isSubmitting ? "INICIANDO..." : "ABRIR AGORA"}
             </Button>
           ) : currentStep === STEPS.length - 1 ? (
-            <Button onClick={handleFinalize} disabled={isSubmitting} className="bg-green-600 hover:bg-green-700 text-white">
+            <Button type="button" onClick={handleFinalize} disabled={isSubmitting} className="min-w-36">
               <Check className="h-4 w-4 mr-1" />
               {isSubmitting ? "FINALIZANDO..." : "FINALIZAR PROTOCOLO"}
             </Button>
           ) : (
-            <Button onClick={handleNext} disabled={isSubmitting} size="sm">
+            <Button type="button" onClick={handleNext} disabled={isSubmitting} size="sm">
               PRÓXIMO
               <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
