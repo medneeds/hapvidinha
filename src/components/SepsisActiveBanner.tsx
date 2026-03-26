@@ -13,6 +13,7 @@ interface SepsisActiveBannerProps {
   hasAntibiotic?: boolean;
   antibioticDate?: string | null;
   antibioticTime?: string | null;
+  bloodCultureTime?: string | null;
   onClick?: () => void;
 }
 
