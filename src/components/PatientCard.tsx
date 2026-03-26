@@ -1639,7 +1639,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       
                       return (
                         <div 
-                          className="flex flex-col items-center gap-0 mt-1 cursor-pointer print:hidden"
+                          className="flex flex-col items-center gap-0.5 mt-1 cursor-pointer print:hidden"
                           onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
                           title="Seguimento Conjunto — Clique para alterar"
                         >
@@ -1649,7 +1649,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             return (
                               <div key={specType} className="flex flex-col items-center">
                                 {idx > 0 && (
-                                  <Plus className="h-2.5 w-2.5 my-[-2px]" style={{ color: sColor }} strokeWidth={3} />
+                                  <Plus className="h-2.5 w-2.5 my-0" style={{ color: sColor }} strokeWidth={3} />
                                 )}
                                 <div
                                   className="inline-flex flex-col items-center gap-0 px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide border-2 transition-all duration-200 hover:shadow-md w-fit"
