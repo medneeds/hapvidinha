@@ -39,6 +39,9 @@ interface ProtocolData {
   lactate_time: string | null;
   antibiotic_prescription_date: string | null;
   antibiotic_prescription_time: string | null;
+  antibiotic_administration_date: string | null;
+  antibiotic_administration_time: string | null;
+  antibiotic_names: string | null;
   volume_administered: number | null;
   destination: string | null;
   destination_date: string | null;
@@ -255,25 +258,34 @@ export function generateSepsisProtocolPdf(data: ProtocolData) {
 
   y += 5;
   doc.setFillColor(LIGHT_BG[0], LIGHT_BG[1], LIGHT_BG[2]);
-  doc.roundedRect(M, y - 2, CW, 20, 2, 2, "F");
+  doc.roundedRect(M, y - 2, CW, 34, 2, 2, "F");
 
   const t3w = CW / 3;
   doc.setFont("helvetica", "bold"); doc.setFontSize(6.5); doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
   doc.text("HEMOCULTURA", col1, y + 1);
   doc.text("LACTATO", M + t3w + 3, y + 1);
-  doc.text("ANTIBIÓTICO", M + t3w * 2 + 3, y + 1);
+  doc.text("PRESCRIÇÃO ATB", M + t3w * 2 + 3, y + 1);
 
   doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(DARK[0], DARK[1], DARK[2]);
   doc.text(data.blood_culture_date ? `${data.blood_culture_date} ${data.blood_culture_time || ""}` : "—", col1, y + 5);
   doc.text(data.lactate_date ? `${data.lactate_date} ${data.lactate_time || ""}` : "—", M + t3w + 3, y + 5);
   doc.text(data.antibiotic_prescription_date ? `${data.antibiotic_prescription_date} ${data.antibiotic_prescription_time || ""}` : "—", M + t3w * 2 + 3, y + 5);
 
+  // Administration row
   doc.setFont("helvetica", "bold"); doc.setFontSize(6.5); doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
-  doc.text("RESSUSCITAÇÃO VOLÊMICA", col1, y + 11);
+  doc.text("ADMINISTRAÇÃO ATB", col1, y + 11);
+  doc.text("ANTIBIÓTICO(S)", M + t3w + 3, y + 11);
   doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(DARK[0], DARK[1], DARK[2]);
-  doc.text(data.volume_administered ? `${data.volume_administered} mL (${data.patient_weight ? Math.round(data.volume_administered / data.patient_weight) + " mL/kg" : "—"})` : "—", col1, y + 15);
+  doc.text(data.antibiotic_administration_date ? `${data.antibiotic_administration_date} ${data.antibiotic_administration_time || ""}` : "—", col1, y + 15);
+  const atbLines = doc.splitTextToSize(data.antibiotic_names || "—", CW - t3w - 6);
+  doc.text(atbLines.slice(0, 2), M + t3w + 3, y + 15);
 
-  y += 24;
+  doc.setFont("helvetica", "bold"); doc.setFontSize(6.5); doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
+  doc.text("RESSUSCITAÇÃO VOLÊMICA", col1, y + 25);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(DARK[0], DARK[1], DARK[2]);
+  doc.text(data.volume_administered ? `${data.volume_administered} mL (${data.patient_weight ? Math.round(data.volume_administered / data.patient_weight) + " mL/kg" : "—"})` : "—", col1, y + 29);
+
+  y += 38;
 
   // ─── OUTCOME ────────────────────────────────
   doc.setFont("helvetica", "bold"); doc.setFontSize(8);

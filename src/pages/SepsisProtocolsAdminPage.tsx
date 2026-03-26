@@ -125,7 +125,12 @@ export default function SepsisProtocolsAdminPage() {
   };
 
   const handleExportPdf = (protocol: SepsisProtocolRow) => {
-    generateSepsisProtocolPdf(protocol);
+    generateSepsisProtocolPdf({
+      ...protocol,
+      antibiotic_administration_date: (protocol as any).antibiotic_administration_date || null,
+      antibiotic_administration_time: (protocol as any).antibiotic_administration_time || null,
+      antibiotic_names: (protocol as any).antibiotic_names || null,
+    });
   };
 
   return (

@@ -89,6 +89,9 @@ interface FormData {
   lactate_time: string;
   antibiotic_prescription_date: string;
   antibiotic_prescription_time: string;
+  antibiotic_administration_date: string;
+  antibiotic_administration_time: string;
+  antibiotic_names: string;
   volume_administered: string;
   // Outcome
   destination: string;
@@ -137,6 +140,9 @@ const initialFormData: FormData = {
   lactate_time: "",
   antibiotic_prescription_date: "",
   antibiotic_prescription_time: "",
+  antibiotic_administration_date: "",
+  antibiotic_administration_time: "",
+  antibiotic_names: "",
   volume_administered: "",
   destination: "",
   destination_date: "",
@@ -229,6 +235,9 @@ export function SepsisProtocolWizardDialog({
             lactate_time: data.lactate_time || "",
             antibiotic_prescription_date: data.antibiotic_prescription_date || "",
             antibiotic_prescription_time: data.antibiotic_prescription_time || "",
+            antibiotic_administration_date: (data as any).antibiotic_administration_date || "",
+            antibiotic_administration_time: (data as any).antibiotic_administration_time || "",
+            antibiotic_names: (data as any).antibiotic_names || "",
             volume_administered: data.volume_administered?.toString() || "",
             destination: data.destination || "",
             destination_date: data.destination_date || "",
@@ -380,6 +389,9 @@ export function SepsisProtocolWizardDialog({
           lactate_time: formData.lactate_time || null,
           antibiotic_prescription_date: formData.antibiotic_prescription_date || null,
           antibiotic_prescription_time: formData.antibiotic_prescription_time || null,
+          antibiotic_administration_date: formData.antibiotic_administration_date || null,
+          antibiotic_administration_time: formData.antibiotic_administration_time || null,
+          antibiotic_names: formData.antibiotic_names || null,
           volume_administered: formData.volume_administered ? parseFloat(formData.volume_administered) : null,
           patient_weight: formData.patient_weight ? parseFloat(formData.patient_weight) : null,
         };
@@ -660,9 +672,28 @@ export function SepsisProtocolWizardDialog({
               <NowButton dateField="antibiotic_prescription_date" timeField="antibiotic_prescription_time" />
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <div><Label className="text-xs">Data</Label><Input type="date" value={formData.antibiotic_prescription_date} onChange={e => updateField("antibiotic_prescription_date", e.target.value)} /></div>
-              <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.antibiotic_prescription_time} onChange={e => updateField("antibiotic_prescription_time", e.target.value)} /></div>
+              <div><Label className="text-xs">Data Prescrição</Label><Input type="date" value={formData.antibiotic_prescription_date} onChange={e => updateField("antibiotic_prescription_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora Prescrição</Label><Input type="time" value={formData.antibiotic_prescription_time} onChange={e => updateField("antibiotic_prescription_time", e.target.value)} /></div>
             </div>
+          </div>
+          <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Administração de Antibiótico</h4>
+              <NowButton dateField="antibiotic_administration_date" timeField="antibiotic_administration_time" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data Administração</Label><Input type="date" value={formData.antibiotic_administration_date} onChange={e => updateField("antibiotic_administration_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora Administração</Label><Input type="time" value={formData.antibiotic_administration_time} onChange={e => updateField("antibiotic_administration_time", e.target.value)} /></div>
+            </div>
+          </div>
+          <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+            <h4 className="text-xs font-bold uppercase">Antibiótico(s) Prescrito(s)</h4>
+            <Textarea
+              value={formData.antibiotic_names}
+              onChange={e => updateField("antibiotic_names", e.target.value.toUpperCase())}
+              className="uppercase text-sm min-h-[60px]"
+              placeholder="EX: CEFTRIAXONA 2G IV 12/12H + METRONIDAZOL 500MG IV 8/8H"
+            />
           </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
             <h4 className="text-xs font-bold uppercase">Ressuscitação Volêmica</h4>
