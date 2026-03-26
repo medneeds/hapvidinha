@@ -1116,6 +1116,9 @@ export type Database = {
       }
       sepsis_protocols: {
         Row: {
+          antibiotic_administration_date: string | null
+          antibiotic_administration_time: string | null
+          antibiotic_names: string | null
           antibiotic_prescription_date: string | null
           antibiotic_prescription_time: string | null
           attendance_number: string | null
@@ -1171,6 +1174,9 @@ export type Database = {
           volume_administered: number | null
         }
         Insert: {
+          antibiotic_administration_date?: string | null
+          antibiotic_administration_time?: string | null
+          antibiotic_names?: string | null
           antibiotic_prescription_date?: string | null
           antibiotic_prescription_time?: string | null
           attendance_number?: string | null
@@ -1226,6 +1232,9 @@ export type Database = {
           volume_administered?: number | null
         }
         Update: {
+          antibiotic_administration_date?: string | null
+          antibiotic_administration_time?: string | null
+          antibiotic_names?: string | null
           antibiotic_prescription_date?: string | null
           antibiotic_prescription_time?: string | null
           attendance_number?: string | null
