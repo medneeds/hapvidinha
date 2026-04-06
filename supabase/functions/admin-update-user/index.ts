@@ -27,11 +27,12 @@ Deno.serve(async (req) => {
 
     const anonClient = createClient(
       supabaseUrl,
-      Deno.env.get("SUPABASE_ANON_KEY")!
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
     );
     const {
       data: { user: caller },
-    } = await anonClient.auth.getUser(authHeader.replace("Bearer ", ""));
+    } = await anonClient.auth.getUser();
 
     if (!caller) {
       return new Response(JSON.stringify({ error: "Não autorizado" }), {
