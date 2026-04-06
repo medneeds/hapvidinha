@@ -98,6 +98,11 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
+  // Usuários suspensos ou rejeitados são bloqueados (inclusive legados)
+  if (status === "suspended" || status === "rejected") {
+    return <PendingApprovalScreen />;
+  }
+
   // Usuários genéricos legados têm acesso direto (período de transição)
   // Usuários individuais pendentes veem a tela de espera
   if (status === "pending" && !isLegacyGenericUser) {

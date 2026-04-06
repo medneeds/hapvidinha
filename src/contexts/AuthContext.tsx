@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
 type UserRole = "admin" | "medico" | "porta" | "visitante" | "prescritor" | "uti" | "recepcao" | "enfermagem" | "fisioterapia" | null;
-type UserStatus = "pending" | "approved" | "rejected" | null;
+type UserStatus = "pending" | "approved" | "rejected" | "suspended" | null;
 
 interface AuthContextType {
   user: User | null;
