@@ -227,7 +227,7 @@ export function EditPatientDialog({
                       <Brain className="h-3 w-3" />
                       Clinicus IA
                     </Button>
-                  )
+                  )}
                   <Button
                     type="button"
                     size="sm"
