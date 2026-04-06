@@ -168,6 +168,33 @@ export type Database = {
           },
         ]
       }
+      clinicus_access: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          enabled_by: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          enabled_by?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          enabled_by?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       conduct_history: {
         Row: {
           changed_by: string | null
