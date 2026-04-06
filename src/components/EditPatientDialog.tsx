@@ -216,16 +216,18 @@ export function EditPatientDialog({
                   História Admissional / Anamnese
                 </Label>
                 <div className="flex items-center gap-1">
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setClinikusOpen(true)}
-                    className="h-6 px-2 text-xs gap-1 border-primary/50 bg-primary/5 text-primary hover:bg-primary/15 font-semibold"
-                  >
-                    <Brain className="h-3 w-3" />
-                    Clinicus IA
-                  </Button>
+                  {clinicusEnabled && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setClinikusOpen(true)}
+                      className="h-6 px-2 text-xs gap-1 border-primary/50 bg-primary/5 text-primary hover:bg-primary/15 font-semibold"
+                    >
+                      <Brain className="h-3 w-3" />
+                      Clinicus IA
+                    </Button>
+                  )
                   <Button
                     type="button"
                     size="sm"
