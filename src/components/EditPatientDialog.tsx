@@ -110,11 +110,26 @@ export function EditPatientDialog({
   onOpenChange,
   onSave,
 }: EditPatientDialogProps) {
+  const { user } = useAuth();
   const [formData, setFormData] = useState(patient);
   const [admissionHistoryLocal, setAdmissionHistoryLocal] = useState("");
   const { currentDepartment } = useDepartment();
   const isUti = currentDepartment === "UTI";
   const [clinikusOpen, setClinikusOpen] = useState(false);
+  const [clinicusEnabled, setClinicusEnabled] = useState(false);
+
+  useEffect(() => {
+    if (open && user?.id) {
+      supabase
+        .from("clinicus_access")
+        .select("enabled")
+        .eq("user_id", user.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          setClinicusEnabled(data?.enabled ?? false);
+        });
+    }
+  }, [open, user?.id]);
 
   // Reset form data when patient changes or dialog opens
   useEffect(() => {
