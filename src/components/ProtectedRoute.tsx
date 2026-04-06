@@ -100,13 +100,13 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   // Usuários suspensos ou rejeitados são bloqueados (inclusive legados)
   if (status === "suspended" || status === "rejected") {
-    return <PendingApprovalScreen />;
+    return <PendingApprovalScreen status={status} isLegacyUser={!!isLegacyGenericUser} />;
   }
 
   // Usuários genéricos legados têm acesso direto (período de transição)
   // Usuários individuais pendentes veem a tela de espera
   if (status === "pending" && !isLegacyGenericUser) {
-    return <PendingApprovalScreen />;
+    return <PendingApprovalScreen status="pending" />;
   }
 
   // Envolver com SessionTimeoutProvider para ativar timeout LGPD/CFM
