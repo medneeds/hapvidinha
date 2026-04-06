@@ -56,6 +56,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { EditUserCredentialsDialog } from "@/components/EditUserCredentialsDialog";
 import { CreateUserDialog } from "@/components/CreateUserDialog";
+import { ClinicusAccessPanel } from "@/components/ClinicusAccessPanel";
 
 interface UserProfile {
   id: string;
@@ -535,6 +536,9 @@ export default function UserManagementPage() {
 
         {/* User Monitoring Panel */}
         <UserMonitoringPanel />
+
+        {/* Clinicus Access Panel */}
+        {isGestorMaster && <ClinicusAccessPanel />}
 
         {/* Password Reset Requests Panel */}
         <PasswordResetRequestsPanel />

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { ClinikusAIDialog } from "@/components/ClinikusAIDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Patient, PatientCategory } from "@/types/patient";
 import {
   Dialog,
