@@ -391,6 +391,12 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        {/* HAPMAP GO — Módulo Operacional */}
+        <Route path="/go/auth" element={<GoAuthPage />} />
+        <Route path="/go" element={<GoProtectedRoute><GoOverviewPage /></GoProtectedRoute>} />
+        <Route path="/go/conductors" element={<GoProtectedRoute><GoConductorsPage /></GoProtectedRoute>} />
+        <Route path="/go/beds" element={<GoProtectedRoute><GoBedsPage /></GoProtectedRoute>} />
+        <Route path="/go/indicators" element={<GoProtectedRoute><GoIndicatorsPage /></GoProtectedRoute>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
