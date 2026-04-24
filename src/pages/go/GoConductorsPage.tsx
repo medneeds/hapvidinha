@@ -75,6 +75,7 @@ export default function GoConductorsPage() {
       patient_name: form.request_type === "patient" ? form.patient_name : null,
       patient_bed: form.request_type === "patient" ? form.patient_bed : null,
       notes: null,
+      requested_by_name: null,
     });
     if (ok) {
       reset();
