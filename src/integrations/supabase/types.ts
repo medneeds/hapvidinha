@@ -168,6 +168,60 @@ export type Database = {
           },
         ]
       }
+      bed_lifecycle_events: {
+        Row: {
+          bed_number: string
+          created_at: string
+          cycle_id: string | null
+          department: string | null
+          event_at: string
+          event_type: string
+          hospital_unit_id: string
+          id: string
+          notes: string | null
+          patient_id: string | null
+          patient_name: string | null
+          registered_by: string | null
+          registered_by_name: string | null
+          sector: string | null
+          state_id: string
+        }
+        Insert: {
+          bed_number: string
+          created_at?: string
+          cycle_id?: string | null
+          department?: string | null
+          event_at?: string
+          event_type: string
+          hospital_unit_id: string
+          id?: string
+          notes?: string | null
+          patient_id?: string | null
+          patient_name?: string | null
+          registered_by?: string | null
+          registered_by_name?: string | null
+          sector?: string | null
+          state_id: string
+        }
+        Update: {
+          bed_number?: string
+          created_at?: string
+          cycle_id?: string | null
+          department?: string | null
+          event_at?: string
+          event_type?: string
+          hospital_unit_id?: string
+          id?: string
+          notes?: string | null
+          patient_id?: string | null
+          patient_name?: string | null
+          registered_by?: string | null
+          registered_by_name?: string | null
+          sector?: string | null
+          state_id?: string
+        }
+        Relationships: []
+      }
       clinicus_access: {
         Row: {
           created_at: string
@@ -1484,6 +1538,90 @@ export type Database = {
           },
         ]
       }
+      transport_requests: {
+        Row: {
+          accepted_at: string | null
+          assigned_to: string | null
+          assigned_to_name: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          created_at: string
+          department: string | null
+          description: string | null
+          destination: string
+          hospital_unit_id: string
+          id: string
+          notes: string | null
+          origin: string
+          patient_bed: string | null
+          patient_id: string | null
+          patient_name: string | null
+          priority: string
+          request_type: string
+          requested_by: string | null
+          requested_by_name: string | null
+          started_at: string | null
+          state_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          assigned_to?: string | null
+          assigned_to_name?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          department?: string | null
+          description?: string | null
+          destination: string
+          hospital_unit_id: string
+          id?: string
+          notes?: string | null
+          origin: string
+          patient_bed?: string | null
+          patient_id?: string | null
+          patient_name?: string | null
+          priority?: string
+          request_type?: string
+          requested_by?: string | null
+          requested_by_name?: string | null
+          started_at?: string | null
+          state_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          assigned_to?: string | null
+          assigned_to_name?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          department?: string | null
+          description?: string | null
+          destination?: string
+          hospital_unit_id?: string
+          id?: string
+          notes?: string | null
+          origin?: string
+          patient_bed?: string | null
+          patient_id?: string | null
+          patient_name?: string | null
+          priority?: string
+          request_type?: string
+          requested_by?: string | null
+          requested_by_name?: string | null
+          started_at?: string | null
+          state_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_consents: {
         Row: {
           accepted_at: string
@@ -1656,6 +1794,7 @@ export type Database = {
         | "recepcao"
         | "enfermagem"
         | "fisioterapia"
+        | "operacional"
       audit_action:
         | "INSERT"
         | "UPDATE"
@@ -1800,6 +1939,7 @@ export const Constants = {
         "recepcao",
         "enfermagem",
         "fisioterapia",
+        "operacional",
       ],
       audit_action: ["INSERT", "UPDATE", "DELETE", "SELECT", "LOGIN", "LOGOUT"],
     },

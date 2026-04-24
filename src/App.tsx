@@ -44,6 +44,12 @@ import TherapeuticTemplatesPage from "./pages/TherapeuticTemplatesPage";
 import ReportHistoryPage from "./pages/ReportHistoryPage";
 import PresentationPage from "./pages/PresentationPage";
 import SepsisProtocolsAdminPage from "./pages/SepsisProtocolsAdminPage";
+import GoAuthPage from "./pages/go/GoAuthPage";
+import { GoProtectedRoute } from "./pages/go/GoProtectedRoute";
+import GoOverviewPage from "./pages/go/GoOverviewPage";
+import GoConductorsPage from "./pages/go/GoConductorsPage";
+import GoBedsPage from "./pages/go/GoBedsPage";
+import GoIndicatorsPage from "./pages/go/GoIndicatorsPage";
 
 const queryClient = new QueryClient();
 
@@ -385,6 +391,12 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        {/* HAPMAP GO — Módulo Operacional */}
+        <Route path="/go/auth" element={<GoAuthPage />} />
+        <Route path="/go" element={<GoProtectedRoute><GoOverviewPage /></GoProtectedRoute>} />
+        <Route path="/go/conductors" element={<GoProtectedRoute><GoConductorsPage /></GoProtectedRoute>} />
+        <Route path="/go/beds" element={<GoProtectedRoute><GoBedsPage /></GoProtectedRoute>} />
+        <Route path="/go/indicators" element={<GoProtectedRoute><GoIndicatorsPage /></GoProtectedRoute>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
