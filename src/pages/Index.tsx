@@ -3,6 +3,7 @@ import { SectorSection } from "@/components/SectorSection";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { EmptySectorState } from "@/components/EmptySectorState";
 import { UtiSectorSection } from "@/components/UtiSectorSection";
+import { UtiUnitSelector } from "@/components/UtiUnitSelector";
 import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintUtiLayout } from "@/components/PrintUtiLayout";
