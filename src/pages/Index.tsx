@@ -788,15 +788,40 @@ const Index = () => {
         {/* Print-only layout - Hidden on screen, visible only when printing */}
         {printMode && (
           <div className="print-layout-container">
-            {currentDepartment === "UTI" ? (
-              <PrintUtiLayout 
-                uti1Patients={printingSector === "blue" ? bluePatients : printingSector === "selected" ? bluePatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : bluePatients}
-                uti2Patients={printingSector === "yellow" ? yellowPatients : printingSector === "selected" ? yellowPatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : yellowPatients}
-                outsidePatients={printingSector === "outside" ? outsidePatients : printingSector === "selected" ? outsidePatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : outsidePatients}
-                mode={printMode}
-                isPreview={false}
-              />
-            ) : (
+            {currentDepartment === "UTI" ? (() => {
+              // Para UTI: respeita a unidade selecionada (UTI 1 = blue, UTI 2 = yellow)
+              // Quando uma unidade está selecionada e não há filtro de setor/seleção,
+              // imprime apenas os pacientes daquela unidade.
+              const isUnitFiltered = !printingSector && selectedUtiUnit !== null;
+              const showUti1 = !isUnitFiltered || selectedUtiUnit === 'UTI 1';
+              const showUti2 = !isUnitFiltered || selectedUtiUnit === 'UTI 2';
+              const showOutside = !isUnitFiltered; // "Fora das alas" só sai na impressão geral
+
+              return (
+                <PrintUtiLayout 
+                  uti1Patients={
+                    !showUti1 ? [] :
+                    printingSector === "blue" ? bluePatients : 
+                    printingSector === "selected" ? bluePatients.filter(p => selectedPatients.has(p.id)) : 
+                    printingSector ? [] : bluePatients
+                  }
+                  uti2Patients={
+                    !showUti2 ? [] :
+                    printingSector === "yellow" ? yellowPatients : 
+                    printingSector === "selected" ? yellowPatients.filter(p => selectedPatients.has(p.id)) : 
+                    printingSector ? [] : yellowPatients
+                  }
+                  outsidePatients={
+                    !showOutside ? [] :
+                    printingSector === "outside" ? outsidePatients : 
+                    printingSector === "selected" ? outsidePatients.filter(p => selectedPatients.has(p.id)) : 
+                    printingSector ? [] : outsidePatients
+                  }
+                  mode={printMode}
+                  isPreview={false}
+                />
+              );
+            })() : (
               <PrintLayout 
                 redPatients={printingSector === "red" ? redPatients : printingSector === "selected" ? redPatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : redPatients}
                 yellowPatients={printingSector === "yellow" ? yellowPatients : printingSector === "selected" ? yellowPatients.filter(p => selectedPatients.has(p.id)) : printingSector ? [] : yellowPatients}
