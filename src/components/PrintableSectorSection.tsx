@@ -12,6 +12,7 @@ interface PrintableSectorSectionProps {
   mode: 'compact' | 'detailed';
   isUti?: boolean;
   utiColorVariant?: 'blue' | 'yellow';
+  hideHeader?: boolean;
 }
 
 export function PrintableSectorSection({
