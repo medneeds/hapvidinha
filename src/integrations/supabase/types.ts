@@ -998,6 +998,7 @@ export type Database = {
           age: string | null
           allocation_status: string | null
           bed_number: string
+          birth_date: string | null
           clinical_status: string | null
           created_at: string
           created_by: string | null
@@ -1042,6 +1043,7 @@ export type Database = {
           age?: string | null
           allocation_status?: string | null
           bed_number: string
+          birth_date?: string | null
           clinical_status?: string | null
           created_at?: string
           created_by?: string | null
@@ -1086,6 +1088,7 @@ export type Database = {
           age?: string | null
           allocation_status?: string | null
           bed_number?: string
+          birth_date?: string | null
           clinical_status?: string | null
           created_at?: string
           created_by?: string | null

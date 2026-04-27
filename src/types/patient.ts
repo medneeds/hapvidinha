@@ -18,6 +18,7 @@ export interface Patient {
   bedNumber: string;
   name: string;
   age: string | number;
+  birthDate?: string; // DD/MM/YYYY
   sector: SectorType;
   diagnoses: string[];
   medicalHistory: string[];

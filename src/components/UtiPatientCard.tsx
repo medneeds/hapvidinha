@@ -23,6 +23,7 @@ const CLINICAL_STATUS_OPTIONS = [
 // Helper to force uppercase on all text inputs
 const toUpperCase = (value: string) => value.toUpperCase();
 import { cn } from "@/lib/utils";
+import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetailedAge";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { UtiReallocationDialog } from "./UtiReallocationDialog";
@@ -1041,8 +1042,8 @@ export function UtiPatientCard({
                   />
                 </div>
                 
-                {/* Patient Name + Age - Flexible grow */}
-                <div className="flex-1 flex items-baseline gap-1 md:gap-1.5 min-w-0">
+                {/* Patient Name + Birth Date + Age - Flexible grow */}
+                <div className="flex-1 flex items-baseline gap-1 md:gap-1.5 min-w-0 flex-wrap">
                   {namesHidden ? (
                     <span className="text-xs md:text-sm font-semibold truncate tracking-widest opacity-70">{displayName}</span>
                   ) : (
@@ -1053,14 +1054,39 @@ export function UtiPatientCard({
                       className="text-xs md:text-sm font-semibold truncate"
                     />
                   )}
+                  {/* Birth date (DN) */}
                   <div className="shrink-0 flex items-center gap-1 text-[10px] md:text-xs text-muted-foreground">
+                    <span className="font-semibold opacity-70">DN:</span>
                     <InlineEditableField
-                      value={String(patient.age || "").replace(/\s*anos?\s*$/i, "")}
-                      onUpdate={(v) => handleUpdateField("age", v)}
-                      placeholder="IDADE"
-                      className="w-8 text-center"
+                      value={patient.birthDate || ""}
+                      onUpdate={(v) => handleUpdateField("birthDate", v)}
+                      placeholder="DD/MM/AAAA"
+                      className="w-[78px] text-center"
                     />
-                    {patient.age && <span>anos</span>}
+                  </div>
+                  {/* Age - auto-calculated when birthDate exists */}
+                  <div className="shrink-0 flex items-center gap-1 text-[10px] md:text-xs text-muted-foreground">
+                    {patient.birthDate ? (
+                      (() => {
+                        const detailed = calculateDetailedAge(patient.birthDate);
+                        const formatted = formatDetailedAge(detailed);
+                        return formatted ? (
+                          <span className="font-semibold tabular-nums">{formatted}</span>
+                        ) : (
+                          <span className="opacity-50">—</span>
+                        );
+                      })()
+                    ) : (
+                      <>
+                        <InlineEditableField
+                          value={String(patient.age || "").replace(/\s*anos?\s*$/i, "")}
+                          onUpdate={(v) => handleUpdateField("age", v)}
+                          placeholder="IDADE"
+                          className="w-8 text-center"
+                        />
+                        {patient.age && <span>anos</span>}
+                      </>
+                    )}
                   </div>
                 </div>
 
