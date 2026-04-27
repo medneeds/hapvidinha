@@ -39,7 +39,7 @@ export function PrintUtiPreviewDialog({
   
   const totalPatients = displayUti1.length + displayUti2.length + displayOutside.length;
   const utiLabel = selectedUti === 'both' ? 'Ambas' : selectedUti === 'uti1' ? 'UTI 1' : 'UTI 2';
-  const utiTitle = selectedUti === 'both' ? 'Mapa UTI' : selectedUti === 'uti1' ? 'Mapa UTI 1' : 'Mapa UTI 2';
+  const utiTitle = selectedUti === 'both' ? 'Mapa UTI' : selectedUti === 'uti1' ? 'Mapa UTI 01' : 'Mapa UTI 02';
 
   const handlePrint = () => {
     const printContent = printRef.current;
@@ -379,7 +379,7 @@ export function PrintUtiPreviewDialog({
                   mode={mode}
                   isUti={true}
                   utiColorVariant="blue"
-                  hideHeader={selectedUti !== 'both'}
+                  hideHeader={true}
                 />
               )}
               {displayUti2.length > 0 && (
@@ -392,7 +392,7 @@ export function PrintUtiPreviewDialog({
                   mode={mode}
                   isUti={true}
                   utiColorVariant="yellow"
-                  hideHeader={selectedUti !== 'both'}
+                  hideHeader={true}
                 />
               )}
               {displayOutside.length > 0 && (

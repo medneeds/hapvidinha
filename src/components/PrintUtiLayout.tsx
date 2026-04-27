@@ -171,7 +171,7 @@ export function PrintUtiLayout({
             const hasUti2 = uti2Patients.length > 0;
             const onlyUti1 = hasUti1 && !hasUti2;
             const onlyUti2 = !hasUti1 && hasUti2;
-            const unitSuffix = onlyUti1 ? ' 1' : onlyUti2 ? ' 2' : '';
+            const unitSuffix = onlyUti1 ? ' 01' : onlyUti2 ? ' 02' : '';
             const unitCount = onlyUti1 ? uti1Patients.length : onlyUti2 ? uti2Patients.length : null;
             return (
               <h1 style={{ 
@@ -229,7 +229,7 @@ export function PrintUtiLayout({
                 mode={mode}
                 isUti={true}
                 utiColorVariant="blue"
-                hideHeader={singleUnit}
+                hideHeader={true}
               />
               <PrintableSectorSection
                 patients={uti2Patients}
@@ -240,7 +240,7 @@ export function PrintUtiLayout({
                 mode={mode}
                 isUti={true}
                 utiColorVariant="yellow"
-                hideHeader={singleUnit}
+                hideHeader={true}
               />
               {outsidePatients.length > 0 && (
                 <PrintableSectorSection
