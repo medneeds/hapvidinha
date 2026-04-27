@@ -159,8 +159,8 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     setIsEditing(false);
   };
 
-  const handleKeyDownInternal = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+  const handleKeyDownInternal = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSave();
       onKeyDown?.(e);
