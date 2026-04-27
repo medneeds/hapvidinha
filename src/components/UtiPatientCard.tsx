@@ -108,7 +108,14 @@ interface SortableItemProps {
 function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus, highlightColorVariant = 'blue' }: SortableItemProps) {
   const [isEditing, setIsEditing] = useState(autoFocus || false);
   const [localValue, setLocalValue] = useState(value);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-grow textarea height to fit the full content while editing
+  const autoResize = (el: HTMLTextAreaElement | null) => {
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  };
   
   const {
     attributes,
@@ -128,6 +135,10 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
+      // place caret at end + size to content on open
+      const len = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(len, len);
+      autoResize(inputRef.current);
     }
   }, [isEditing]);
 
@@ -148,8 +159,8 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     setIsEditing(false);
   };
 
-  const handleKeyDownInternal = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+  const handleKeyDownInternal = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSave();
       onKeyDown?.(e);
@@ -204,13 +215,16 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       )}>{index + 1}.</span>
       
       {isEditing ? (
-        <div className="flex-1 flex items-center gap-1">
-          <input
+        <div className="flex-1 flex items-start gap-1 min-w-0">
+          <textarea
             ref={inputRef}
-            type="text"
             value={localValue}
-            onChange={(e) => setLocalValue(e.target.value.toUpperCase())}
-            className="flex-1 text-[11px] bg-background border border-primary/30 rounded px-1.5 py-0.5 outline-none uppercase font-medium tracking-tight"
+            onChange={(e) => {
+              setLocalValue(e.target.value.toUpperCase());
+              autoResize(e.currentTarget);
+            }}
+            rows={1}
+            className="flex-1 min-w-0 w-full text-[12px] leading-snug bg-background border border-primary/40 rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 overflow-hidden whitespace-pre-wrap break-words"
             onKeyDown={handleKeyDownInternal}
             onBlur={handleSave}
             onClick={(e) => e.stopPropagation()}
@@ -308,7 +322,7 @@ function InlineEditableArray({
 }: InlineEditableArrayProps) {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
-  const newInputRef = useRef<HTMLInputElement>(null);
+  const newInputRef = useRef<HTMLTextAreaElement>(null);
 
   // Stable IDs per item (required by dnd-kit). We keep an internal parallel array of ids
   // and reorder it together with items.
@@ -549,15 +563,33 @@ function InlineEditableArray({
         )}
         
         {isAddingNew && (
-          <div className="flex items-center gap-1 mt-1 pt-1 border-t border-border/30">
-            <input
+          <div className="flex items-start gap-1 mt-1 pt-1 border-t border-border/30">
+            <textarea
               ref={newInputRef}
-              type="text"
               value={newItemValue}
-              onChange={(e) => setNewItemValue(e.target.value.toUpperCase())}
+              onChange={(e) => {
+                setNewItemValue(e.target.value.toUpperCase());
+                const el = e.currentTarget;
+                el.style.height = 'auto';
+                el.style.height = `${el.scrollHeight}px`;
+              }}
               placeholder="NOVO ITEM..."
-              className="flex-1 text-[11px] bg-background border border-primary/30 rounded px-1.5 py-1 outline-none uppercase font-medium tracking-tight placeholder:font-normal placeholder:text-muted-foreground/50"
-              onKeyDown={handleNewItemKeyDown}
+              rows={1}
+              className="flex-1 min-w-0 w-full text-[12px] leading-snug bg-background border border-primary/40 rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 overflow-hidden whitespace-pre-wrap break-words placeholder:font-normal placeholder:text-muted-foreground/50"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleAddItem(true);
+                  onEnterPress?.();
+                } else if (e.key === 'Tab') {
+                  e.preventDefault();
+                  handleAddItem(false);
+                  onTabPress?.();
+                } else if (e.key === 'Escape') {
+                  setIsAddingNew(false);
+                  setNewItemValue("");
+                }
+              }}
               onBlur={() => handleAddItem(false)}
             />
             <Button size="icon" variant="ghost" className="h-5 w-5" onClick={() => handleAddItem(false)}>
