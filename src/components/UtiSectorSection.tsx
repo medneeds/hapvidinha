@@ -81,14 +81,14 @@ function UtiRow(props: UtiRowProps) {
     });
   };
 
-  // Vacancy toggle button styles based on color variant
+  // Vacancy toggle button styles — neutral palette across both UTIs
   const vacancyButtonStyles = {
     blue: {
-      vacant: "border-primary/40 text-primary hover:bg-primary/10",
+      vacant: "border-blue-400/50 text-blue-600 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30",
       occupied: "border-muted-foreground/30 text-muted-foreground hover:bg-muted/30"
     },
     yellow: {
-      vacant: "border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20",
+      vacant: "border-slate-400/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30",
       occupied: "border-muted-foreground/30 text-muted-foreground hover:bg-muted/30"
     }
   };
