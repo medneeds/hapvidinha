@@ -108,7 +108,14 @@ interface SortableItemProps {
 function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus, highlightColorVariant = 'blue' }: SortableItemProps) {
   const [isEditing, setIsEditing] = useState(autoFocus || false);
   const [localValue, setLocalValue] = useState(value);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-grow textarea height to fit the full content while editing
+  const autoResize = (el: HTMLTextAreaElement | null) => {
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  };
   
   const {
     attributes,
