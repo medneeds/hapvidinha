@@ -374,6 +374,7 @@ export function PrintUtiPreviewDialog({
                   mode={mode}
                   isUti={true}
                   utiColorVariant="blue"
+                  hideHeader={selectedUti !== 'both'}
                 />
               )}
               {displayUti2.length > 0 && (
@@ -386,6 +387,7 @@ export function PrintUtiPreviewDialog({
                   mode={mode}
                   isUti={true}
                   utiColorVariant="yellow"
+                  hideHeader={selectedUti !== 'both'}
                 />
               )}
               {displayOutside.length > 0 && (
