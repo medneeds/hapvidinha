@@ -740,7 +740,14 @@ const Index = () => {
   };
 
   const handlePrintSector = (sector: string) => {
-    // Usa o novo formato híbrido otimizado (compact = tabela densa por setor)
+    // Para UTI, usa o mesmo fluxo do botão do cabeçalho (preview dialog otimizado)
+    // respeitando a unidade do setor clicado (blue = UTI 1, yellow = UTI 2).
+    if (currentDepartment === "UTI" && (sector === "blue" || sector === "yellow")) {
+      setSelectedUtiUnit(sector === "blue" ? "UTI 1" : "UTI 2");
+      setPreviewUtiMapMode('compact');
+      return;
+    }
+    // Demais setores / departamentos: fluxo tradicional de impressão direta
     setPrintMode('compact');
     setPrintingSector(sector);
     setTimeout(() => {
@@ -988,7 +995,7 @@ const Index = () => {
                             variant="outline"
                             size="icon"
                             onClick={handlePrintSelected}
-                            className="print:hidden h-11 w-11 bg-gradient-to-br from-critical via-warning to-stable text-white border-0"
+                            className="print:hidden h-11 w-11 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_18px_-2px_rgba(56,189,248,0.65)] hover:shadow-[0_0_24px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 transition-all"
                             title={`Imprimir ${selectedPatients.size}`}
                           >
                             <Printer className="h-5 w-5" />
@@ -1126,7 +1133,7 @@ const Index = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button variant="outline" size="icon" onClick={handlePrintSelected}
-                                  className="h-8 w-8 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all">
+                                  className="h-8 w-8 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
                                   <Printer className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
@@ -1146,7 +1153,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={handlePrintCompact}
-                              className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-critical via-warning to-stable text-white border-0 hover:shadow-lg hover:scale-105 transition-all">
+                              className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
                               <Printer className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>

@@ -50,10 +50,10 @@ export function PrintUtiLayout({
         left: 0;
         right: 0;
         height: auto;
-        padding: 8mm 15mm 5mm 15mm;
+        padding: 5mm 15mm 3mm 15mm;
         background: #ffffff;
         z-index: 1000;
-        border-bottom: 2px solid #d1d5db;
+        border-bottom: 1.5px solid #d1d5db;
       }
       
       /* Fixed footer on all pages */
@@ -79,8 +79,8 @@ export function PrintUtiLayout({
       
       /* Content area with margins to avoid overlap with fixed elements */
       .print-content-area {
-        margin-top: ${isCompact ? '32mm' : '36mm'};
-        margin-bottom: 20mm;
+        margin-top: ${isCompact ? '24mm' : '28mm'};
+        margin-bottom: 16mm;
       }
       
       /* Developer signature fixed position */
@@ -145,9 +145,9 @@ export function PrintUtiLayout({
             display: 'flex', 
             alignItems: 'center', 
             gap: '8px', 
-            marginBottom: isCompact ? '8px' : '10px', 
-            paddingBottom: isCompact ? '6px' : '8px', 
-            borderBottom: '2px solid #d1d5db',
+            marginBottom: isCompact ? '4px' : '6px', 
+            paddingBottom: isCompact ? '3px' : '4px', 
+            borderBottom: '1.5px solid #d1d5db',
             position: 'relative',
             zIndex: 1
           }}
