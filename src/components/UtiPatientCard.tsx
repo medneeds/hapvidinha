@@ -322,7 +322,7 @@ function InlineEditableArray({
 }: InlineEditableArrayProps) {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
-  const newInputRef = useRef<HTMLInputElement>(null);
+  const newInputRef = useRef<HTMLTextAreaElement>(null);
 
   // Stable IDs per item (required by dnd-kit). We keep an internal parallel array of ids
   // and reorder it together with items.
