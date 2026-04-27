@@ -23,6 +23,7 @@ const CLINICAL_STATUS_OPTIONS = [
 // Helper to force uppercase on all text inputs
 const toUpperCase = (value: string) => value.toUpperCase();
 import { cn } from "@/lib/utils";
+import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetailedAge";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { UtiReallocationDialog } from "./UtiReallocationDialog";
