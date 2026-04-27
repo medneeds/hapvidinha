@@ -282,7 +282,8 @@ export function UtiSectorSection({
                 variant="outline"
                 size="icon"
                 onClick={onPrintSector}
-                className={`h-8 w-8 print:hidden ${buttonClass}`}
+                className="h-8 w-8 print:hidden bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all"
+                title="Imprimir setor"
               >
                 <Printer className="h-3.5 w-3.5" />
               </Button>
