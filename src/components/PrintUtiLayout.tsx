@@ -242,19 +242,21 @@ export function PrintUtiLayout({
                 utiColorVariant="yellow"
                 hideHeader={singleUnit}
               />
-          {outsidePatients.length > 0 && (
-            <PrintableSectorSection
-              patients={outsidePatients}
-              sectorName="Solicitações de Leito UTI"
-              bgColor="#f9fafb"
-              borderColor="#6b7280"
-              textColor="#4b5563"
-              mode={mode}
-              isUti={true}
-              utiColorVariant="blue"
-            />
-          )}
-        </div>
+              {outsidePatients.length > 0 && (
+                <PrintableSectorSection
+                  patients={outsidePatients}
+                  sectorName="Solicitações de Leito UTI"
+                  bgColor="#f9fafb"
+                  borderColor="#6b7280"
+                  textColor="#4b5563"
+                  mode={mode}
+                  isUti={true}
+                  utiColorVariant="blue"
+                />
+              )}
+            </div>
+          );
+        })()}
         
         {/* Fixed Footer - appears on all pages */}
         <div 
