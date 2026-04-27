@@ -1102,29 +1102,29 @@ export function UtiPatientCard({
                   {/* Days in UTI - Fixed width for consistent alignment */}
                   <div className={cn(
                     "shrink-0 flex items-center justify-center gap-1 w-[70px] md:w-[80px] px-2 py-0.5 rounded-md border",
-                    daysInUti > 4 
-                      ? "bg-red-100 dark:bg-red-900/40 border-red-400/50 dark:border-red-600/50" 
-                      : colorVariant === 'yellow' 
-                        ? "bg-amber-100 dark:bg-amber-900/30 border-amber-300/50 dark:border-amber-600/40" 
-                        : "bg-primary/15 dark:bg-primary/25 border-primary/30"
+                    daysInUti > 4
+                      ? "bg-red-50 dark:bg-red-950/30 border-red-300/60 dark:border-red-700/50"
+                      : colorVariant === 'yellow'
+                        ? "bg-slate-50 dark:bg-slate-800/40 border-slate-300/60 dark:border-slate-600/50"
+                        : "bg-blue-50 dark:bg-blue-950/30 border-blue-200/70 dark:border-blue-800/40"
                   )}>
                     <span className={cn(
-                      "text-[9px] font-bold", 
-                      daysInUti > 4 
-                        ? "text-red-700 dark:text-red-300" 
-                        : colorVariant === 'yellow' 
-                          ? "text-amber-700 dark:text-amber-400" 
-                          : "text-primary"
+                      "text-[9px] font-bold",
+                      daysInUti > 4
+                        ? "text-red-700 dark:text-red-300"
+                        : colorVariant === 'yellow'
+                          ? "text-slate-600 dark:text-slate-300"
+                          : "text-blue-700 dark:text-blue-300"
                     )}>
                       DIH:
                     </span>
                     <span className={cn(
-                      "text-xs font-bold min-w-[20px] text-center", 
-                      daysInUti > 4 
-                        ? "text-red-700 dark:text-red-300" 
-                        : colorVariant === 'yellow' 
-                          ? "text-amber-700 dark:text-amber-400" 
-                          : "text-primary"
+                      "text-xs font-bold min-w-[20px] text-center",
+                      daysInUti > 4
+                        ? "text-red-700 dark:text-red-300"
+                        : colorVariant === 'yellow'
+                          ? "text-slate-700 dark:text-slate-200"
+                          : "text-blue-700 dark:text-blue-300"
                     )}>
                       {daysInUti}
                     </span>
