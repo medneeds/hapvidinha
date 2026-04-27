@@ -187,6 +187,19 @@ const Index = () => {
   });
   const [newChecklistItem, setNewChecklistItem] = useState("");
   const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(false);
+  // UTI unit selector — persistent per session via sessionStorage
+  const [selectedUtiUnit, setSelectedUtiUnit] = useState<'UTI 1' | 'UTI 2' | null>(() => {
+    const saved = sessionStorage.getItem('selected_uti_unit');
+    return saved === 'UTI 1' || saved === 'UTI 2' ? saved : null;
+  });
+  useEffect(() => {
+    if (selectedUtiUnit) sessionStorage.setItem('selected_uti_unit', selectedUtiUnit);
+    else sessionStorage.removeItem('selected_uti_unit');
+  }, [selectedUtiUnit]);
+  // Reset selection when leaving UTI department
+  useEffect(() => {
+    if (currentDepartment !== 'UTI') setSelectedUtiUnit(null);
+  }, [currentDepartment]);
   const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(false);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
