@@ -339,6 +339,11 @@ export function PrintUtiPreviewDialog({
                 letterSpacing: '0.4px'
               }}>
                 {getPrintTitle(utiTitle)}
+                {selectedUti !== 'both' && (
+                  <span style={{ fontSize: isCompact ? '10pt' : '11pt', fontWeight: 600, color: '#4b5563', marginLeft: '8px', letterSpacing: '0.2px' }}>
+                    ({totalPatients} {totalPatients === 1 ? 'paciente' : 'pacientes'})
+                  </span>
+                )}
               </h1>
             </div>
             
