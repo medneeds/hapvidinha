@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Department } from "@/contexts/DepartmentContext";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { formatBirthDateDisplay, birthDateToISO } from "@/utils/calculateDetailedAge";
 
 export function usePatients(department?: Department) {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -40,6 +41,7 @@ export function usePatients(department?: Department) {
         bedNumber: p.bed_number,
         name: p.name || '',
         age: p.age || '',
+        birthDate: formatBirthDateDisplay((p as any).birth_date),
         sector: p.sector as 'red' | 'yellow' | 'blue' | 'outside',
         diagnoses: p.diagnoses ? p.diagnoses.split('\n').filter(Boolean) : [],
         medicalHistory: p.medical_history ? p.medical_history.split('\n').filter(Boolean) : [],
@@ -120,6 +122,7 @@ export function usePatients(department?: Department) {
       if (updates.bedNumber !== undefined) dbUpdates.bed_number = updates.bedNumber;
       if (updates.name !== undefined) dbUpdates.name = updates.name;
       if (updates.age !== undefined) dbUpdates.age = typeof updates.age === 'number' ? updates.age.toString() : updates.age;
+      if (updates.birthDate !== undefined) dbUpdates.birth_date = birthDateToISO(updates.birthDate);
       if (updates.sector !== undefined) dbUpdates.sector = updates.sector;
       if (updates.diagnoses !== undefined) dbUpdates.diagnoses = updates.diagnoses.join('\n');
       if (updates.medicalHistory !== undefined) dbUpdates.medical_history = updates.medicalHistory.join('\n');
@@ -214,6 +217,7 @@ export function usePatients(department?: Department) {
         bed_number: patient.bedNumber,
         name: patient.name,
         age: typeof patient.age === 'number' ? patient.age.toString() : patient.age,
+        birth_date: birthDateToISO(patient.birthDate),
         sector: patient.sector,
         diagnoses: patient.diagnoses.join('\n'),
         medical_history: patient.medicalHistory.join('\n'),
@@ -272,6 +276,7 @@ export function usePatients(department?: Department) {
         bedNumber: data.bed_number,
         name: data.name || '',
         age: data.age || '',
+        birthDate: formatBirthDateDisplay((data as any).birth_date),
         sector: data.sector as 'red' | 'yellow' | 'blue' | 'outside',
         diagnoses: data.diagnoses ? data.diagnoses.split('\n').filter(Boolean) : [],
         medicalHistory: data.medical_history ? data.medical_history.split('\n').filter(Boolean) : [],
@@ -415,6 +420,7 @@ export function usePatients(department?: Department) {
     bedNumber: record.bed_number,
     name: record.name || '',
     age: record.age || '',
+    birthDate: formatBirthDateDisplay(record.birth_date),
     sector: record.sector as 'red' | 'yellow' | 'blue' | 'outside',
     diagnoses: record.diagnoses ? record.diagnoses.split('\n').filter(Boolean) : [],
     medicalHistory: record.medical_history ? record.medical_history.split('\n').filter(Boolean) : [],
