@@ -79,8 +79,8 @@ export function PrintUtiLayout({
       
       /* Content area with margins to avoid overlap with fixed elements */
       .print-content-area {
-        margin-top: ${isCompact ? '32mm' : '36mm'};
-        margin-bottom: 20mm;
+        margin-top: ${isCompact ? '24mm' : '28mm'};
+        margin-bottom: 16mm;
       }
       
       /* Developer signature fixed position */
