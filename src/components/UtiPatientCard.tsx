@@ -576,25 +576,6 @@ function InlineEditableArray({
               placeholder="NOVO ITEM..."
               rows={1}
               className="flex-1 min-w-0 w-full text-[12px] leading-snug bg-background border border-primary/40 rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 overflow-hidden whitespace-pre-wrap break-words placeholder:font-normal placeholder:text-muted-foreground/50"
-              onKeyDown={handleNewItemKeyDown as unknown as React.KeyboardEventHandler<HTMLTextAreaElement>}
-              onBlur={() => handleAddItem(false)}
-            />
-          </div>
-        ) && false}
-        {isAddingNew && (
-          <div className="flex items-start gap-1 mt-1 pt-1 border-t border-border/30">
-            <textarea
-              ref={newInputRef}
-              value={newItemValue}
-              onChange={(e) => {
-                setNewItemValue(e.target.value.toUpperCase());
-                const el = e.currentTarget;
-                el.style.height = 'auto';
-                el.style.height = `${el.scrollHeight}px`;
-              }}
-              placeholder="NOVO ITEM..."
-              rows={1}
-              className="flex-1 min-w-0 w-full text-[12px] leading-snug bg-background border border-primary/40 rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 overflow-hidden whitespace-pre-wrap break-words placeholder:font-normal placeholder:text-muted-foreground/50"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
