@@ -1206,49 +1206,93 @@ const Index = () => {
           <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1 pt-[120px] sm:pt-[110px] print:pt-3">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
               {currentDepartment === "UTI" ? (
-                <div className="space-y-4">
-                  <UtiSectorSection 
-                    sector="blue" 
-                    patients={patients.filter(p => p.sector === 'blue' || p.sector === 'red').map(p => ({ ...p, sector: 'blue' as const }))}
-                    onUpdatePatient={handleUpdatePatient}
-                    onDeletePatient={handleDeletePatient}
-                    onUndeletePatient={handleUndeletePatient}
-                    onPrintSector={() => handlePrintSector("blue")}
-                    onAddExtraBed={() => { handleAddExtraBed("blue"); }}
-                    selectionMode={selectionMode}
-                    selectedPatients={selectedPatients}
-                    onToggleSelection={handleToggleSelection}
-                    onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
-                    onTransfer={handleTransferPatient}
-                    onPrintPatient={handlePrintPatient}
-                    onRefetch={refetch}
-                    customTitle="UNIDADE DE TERAPIA INTENSIVA 1"
-                    customIcon={<span className="w-3 h-3 rounded-full bg-primary/80 border border-primary/40" />}
-                    colorVariant="blue"
-                    allPatients={patients}
-                    currentUtiUnit="UTI 1"
+                selectedUtiUnit === null ? (
+                  <UtiUnitSelector
+                    patients={patients}
+                    onSelect={(unit) => setSelectedUtiUnit(unit)}
                   />
-                  <UtiSectorSection 
-                    sector="yellow" 
-                    patients={patients.filter(p => p.sector === 'yellow').map(p => ({ ...p, sector: 'yellow' as const }))}
-                    onUpdatePatient={handleUpdatePatient}
-                    onDeletePatient={handleDeletePatient}
-                    onUndeletePatient={handleUndeletePatient}
-                    onPrintSector={() => handlePrintSector("yellow")}
-                    onAddExtraBed={() => { handleAddExtraBed("yellow"); }}
-                    selectionMode={selectionMode}
-                    selectedPatients={selectedPatients}
-                    onToggleSelection={handleToggleSelection}
-                    onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
-                    onTransfer={handleTransferPatient}
-                    onPrintPatient={handlePrintPatient}
-                    onRefetch={refetch}
-                    customTitle="UNIDADE DE TERAPIA INTENSIVA 2"
-                    customIcon={<span className="w-3 h-3 rounded-full bg-amber-500/80 border border-amber-400/40" />}
-                    colorVariant="yellow"
-                    allPatients={patients}
-                    currentUtiUnit="UTI 2"
-                  />
+                ) : (
+                  <div className="space-y-4">
+                    {/* UTI Unit Toggle (top) */}
+                    <div className="flex items-center justify-between gap-3 p-2 rounded-xl border border-slate-200/70 dark:border-slate-700/60 bg-white dark:bg-slate-900/40 print:hidden">
+                      <div className="inline-flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-lg p-1">
+                        <button
+                          onClick={() => setSelectedUtiUnit('UTI 1')}
+                          className={cn(
+                            "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
+                            selectedUtiUnit === 'UTI 1'
+                              ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-sm border-l-2 border-l-blue-500/70"
+                              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                          )}
+                        >
+                          UTI 1
+                        </button>
+                        <button
+                          onClick={() => setSelectedUtiUnit('UTI 2')}
+                          className={cn(
+                            "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
+                            selectedUtiUnit === 'UTI 2'
+                              ? "bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm border-l-2 border-l-slate-500/70"
+                              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                          )}
+                        >
+                          UTI 2
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => setSelectedUtiUnit(null)}
+                        className="text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors px-2 py-1 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                      >
+                        Trocar unidade
+                      </button>
+                    </div>
+
+                    {selectedUtiUnit === 'UTI 1' && (
+                      <UtiSectorSection
+                        sector="blue"
+                        patients={patients.filter(p => p.sector === 'blue' || p.sector === 'red').map(p => ({ ...p, sector: 'blue' as const }))}
+                        onUpdatePatient={handleUpdatePatient}
+                        onDeletePatient={handleDeletePatient}
+                        onUndeletePatient={handleUndeletePatient}
+                        onPrintSector={() => handlePrintSector("blue")}
+                        onAddExtraBed={() => { handleAddExtraBed("blue"); }}
+                        selectionMode={selectionMode}
+                        selectedPatients={selectedPatients}
+                        onToggleSelection={handleToggleSelection}
+                        onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
+                        onTransfer={handleTransferPatient}
+                        onPrintPatient={handlePrintPatient}
+                        onRefetch={refetch}
+                        customTitle="UNIDADE DE TERAPIA INTENSIVA 1"
+                        customIcon={<span className="w-2.5 h-2.5 rounded-full bg-blue-500/80 border border-blue-300/60" />}
+                        colorVariant="blue"
+                        allPatients={patients}
+                        currentUtiUnit="UTI 1"
+                      />
+                    )}
+                    {selectedUtiUnit === 'UTI 2' && (
+                      <UtiSectorSection
+                        sector="yellow"
+                        patients={patients.filter(p => p.sector === 'yellow').map(p => ({ ...p, sector: 'yellow' as const }))}
+                        onUpdatePatient={handleUpdatePatient}
+                        onDeletePatient={handleDeletePatient}
+                        onUndeletePatient={handleUndeletePatient}
+                        onPrintSector={() => handlePrintSector("yellow")}
+                        onAddExtraBed={() => { handleAddExtraBed("yellow"); }}
+                        selectionMode={selectionMode}
+                        selectedPatients={selectedPatients}
+                        onToggleSelection={handleToggleSelection}
+                        onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
+                        onTransfer={handleTransferPatient}
+                        onPrintPatient={handlePrintPatient}
+                        onRefetch={refetch}
+                        customTitle="UNIDADE DE TERAPIA INTENSIVA 2"
+                        customIcon={<span className="w-2.5 h-2.5 rounded-full bg-slate-500/80 border border-slate-400/60" />}
+                        colorVariant="yellow"
+                        allPatients={patients}
+                        currentUtiUnit="UTI 2"
+                      />
+                    )}
 
                   {/* UTI Outside Patients Section - Bed Allocation Requests */}
                   {(() => {
