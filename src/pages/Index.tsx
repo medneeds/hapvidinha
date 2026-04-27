@@ -740,8 +740,8 @@ const Index = () => {
   };
 
   const handlePrintSector = (sector: string) => {
-    // Usa modo detalhado para impressão de setor
-    setPrintMode('detailed');
+    // Usa o novo formato híbrido otimizado (compact = tabela densa por setor)
+    setPrintMode('compact');
     setPrintingSector(sector);
     setTimeout(() => {
       window.print();
@@ -749,7 +749,7 @@ const Index = () => {
         setPrintMode(null);
         setPrintingSector(null);
       }, 500);
-    }, 100);
+    }, 300);
   };
 
   const handlePrintSelected = () => {
