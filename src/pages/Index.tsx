@@ -740,7 +740,14 @@ const Index = () => {
   };
 
   const handlePrintSector = (sector: string) => {
-    // Usa o novo formato híbrido otimizado (compact = tabela densa por setor)
+    // Para UTI, usa o mesmo fluxo do botão do cabeçalho (preview dialog otimizado)
+    // respeitando a unidade do setor clicado (blue = UTI 1, yellow = UTI 2).
+    if (currentDepartment === "UTI" && (sector === "blue" || sector === "yellow")) {
+      setSelectedUtiUnit(sector === "blue" ? "UTI 1" : "UTI 2");
+      setPreviewUtiMapMode('compact');
+      return;
+    }
+    // Demais setores / departamentos: fluxo tradicional de impressão direta
     setPrintMode('compact');
     setPrintingSector(sector);
     setTimeout(() => {
