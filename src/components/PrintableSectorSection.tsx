@@ -33,7 +33,8 @@ export function PrintableSectorSection({
   return (
     <div 
       style={{ 
-        marginBottom: isCompact ? '12px' : '16px'
+        marginTop: 0,
+        marginBottom: isCompact ? '8px' : '12px'
       }}
     >
       {!hideHeader && (

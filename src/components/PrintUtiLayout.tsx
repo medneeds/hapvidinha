@@ -200,12 +200,11 @@ export function PrintUtiLayout({
           gap: '10px',
           fontSize: isCompact ? '7.5pt' : '8.5pt', 
           color: '#4b5563', 
-          marginBottom: isCompact ? '8px' : '10px', 
-          paddingBottom: isCompact ? '6px' : '8px', 
-          borderBottom: '1px solid #e5e7eb',
+          marginBottom: 0, 
           backgroundColor: '#f9fafb',
-          padding: '6px 8px',
-          borderRadius: '3px'
+          padding: '5px 8px',
+          borderRadius: '3px 3px 0 0',
+          borderBottom: '1px solid #e5e7eb'
         }}>
           <div><strong>Data:</strong> {new Date().toLocaleDateString('pt-BR')}</div>
           <div><strong>Hora:</strong> {new Date().toLocaleTimeString('pt-BR')}</div>
