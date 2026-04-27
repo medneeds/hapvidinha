@@ -161,19 +161,19 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     }
   };
 
-  // Highlight color styles based on variant - subtle background with colored left border, NO bold
+  // Highlight color styles — neutral, sutil, sem barulho visual
   const highlightStyles = {
     blue: {
-      bg: "bg-blue-100/60 dark:bg-blue-800/30 border-l-2 border-l-blue-500 dark:border-l-blue-400 pl-1.5",
+      bg: "bg-blue-50/70 dark:bg-blue-950/30 border-l-2 border-l-blue-400/70 dark:border-l-blue-400/70 pl-1.5",
       number: "text-blue-600 dark:text-blue-300",
-      text: "text-blue-800 dark:text-blue-100",
+      text: "text-slate-800 dark:text-slate-100",
       star: "fill-blue-500 text-blue-500"
     },
     yellow: {
-      bg: "bg-amber-100/60 dark:bg-amber-800/30 border-l-2 border-l-amber-500 dark:border-l-amber-400 pl-1.5",
-      number: "text-amber-600 dark:text-amber-300",
-      text: "text-amber-800 dark:text-amber-100",
-      star: "fill-amber-500 text-amber-500"
+      bg: "bg-slate-100/80 dark:bg-slate-800/40 border-l-2 border-l-slate-500/70 dark:border-l-slate-400/70 pl-1.5",
+      number: "text-slate-600 dark:text-slate-300",
+      text: "text-slate-800 dark:text-slate-100",
+      star: "fill-slate-500 text-slate-500"
     }
   };
   const hStyles = highlightStyles[highlightColorVariant];
@@ -852,33 +852,33 @@ export function UtiPatientCard({
     onRefetch?.();
   };
 
-  // Color schemes based on variant
+  // Color schemes — neutral & clean. Base branca/slate, acento fino azul (UTI 1) ou slate-grafite (UTI 2)
   const colorSchemes = {
     blue: {
-      card: "bg-slate-100 dark:bg-slate-900/80 border-primary/20",
-      bedBg: "bg-primary/10 border-primary/20",
-      bedText: "text-primary",
-      col1: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
-      col1Icon: "text-blue-500 dark:text-blue-300",
-      col2: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
-      col2Icon: "text-blue-500 dark:text-blue-300",
-      col3: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
-      col3Icon: "text-blue-500 dark:text-blue-300",
-      col4: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
-      col4Icon: "text-blue-500 dark:text-blue-300",
+      card: "bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/60 border-l-2 border-l-blue-500/60",
+      bedBg: "bg-blue-50 dark:bg-blue-950/40 border-blue-200/70 dark:border-blue-800/40",
+      bedText: "text-blue-700 dark:text-blue-300",
+      col1: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col1Icon: "text-slate-500 dark:text-slate-400",
+      col2: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col2Icon: "text-slate-500 dark:text-slate-400",
+      col3: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col3Icon: "text-slate-500 dark:text-slate-400",
+      col4: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col4Icon: "text-slate-500 dark:text-slate-400",
     },
     yellow: {
-      card: "bg-amber-50/50 dark:bg-amber-950/30 border-amber-400/30",
-      bedBg: "bg-amber-100 dark:bg-amber-900/40 border-amber-300/50 dark:border-amber-700/40",
-      bedText: "text-amber-700 dark:text-amber-400",
-      col1: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
-      col1Icon: "text-amber-500 dark:text-amber-300",
-      col2: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
-      col2Icon: "text-amber-500 dark:text-amber-300",
-      col3: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
-      col3Icon: "text-amber-500 dark:text-amber-300",
-      col4: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
-      col4Icon: "text-amber-500 dark:text-amber-300",
+      card: "bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/60 border-l-2 border-l-slate-500/60",
+      bedBg: "bg-slate-100 dark:bg-slate-800/50 border-slate-300/60 dark:border-slate-600/50",
+      bedText: "text-slate-700 dark:text-slate-200",
+      col1: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col1Icon: "text-slate-500 dark:text-slate-400",
+      col2: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col2Icon: "text-slate-500 dark:text-slate-400",
+      col3: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col3Icon: "text-slate-500 dark:text-slate-400",
+      col4: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col4Icon: "text-slate-500 dark:text-slate-400",
     }
   };
 
@@ -979,9 +979,9 @@ export function UtiPatientCard({
                 onClick={() => handleToggleVacancy(false)}
                 className={cn(
                   "h-7 text-xs gap-1.5",
-                  colorVariant === 'blue' 
-                    ? "border-primary/40 text-primary hover:bg-primary/10" 
-                    : "border-amber-500/40 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                  colorVariant === 'blue'
+                    ? "border-blue-400/50 text-blue-600 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                    : "border-slate-400/60 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/40"
                 )}
               >
                 <UserPlus className="h-3.5 w-3.5" />
@@ -1102,29 +1102,29 @@ export function UtiPatientCard({
                   {/* Days in UTI - Fixed width for consistent alignment */}
                   <div className={cn(
                     "shrink-0 flex items-center justify-center gap-1 w-[70px] md:w-[80px] px-2 py-0.5 rounded-md border",
-                    daysInUti > 4 
-                      ? "bg-red-100 dark:bg-red-900/40 border-red-400/50 dark:border-red-600/50" 
-                      : colorVariant === 'yellow' 
-                        ? "bg-amber-100 dark:bg-amber-900/30 border-amber-300/50 dark:border-amber-600/40" 
-                        : "bg-primary/15 dark:bg-primary/25 border-primary/30"
+                    daysInUti > 4
+                      ? "bg-red-50 dark:bg-red-950/30 border-red-300/60 dark:border-red-700/50"
+                      : colorVariant === 'yellow'
+                        ? "bg-slate-50 dark:bg-slate-800/40 border-slate-300/60 dark:border-slate-600/50"
+                        : "bg-blue-50 dark:bg-blue-950/30 border-blue-200/70 dark:border-blue-800/40"
                   )}>
                     <span className={cn(
-                      "text-[9px] font-bold", 
-                      daysInUti > 4 
-                        ? "text-red-700 dark:text-red-300" 
-                        : colorVariant === 'yellow' 
-                          ? "text-amber-700 dark:text-amber-400" 
-                          : "text-primary"
+                      "text-[9px] font-bold",
+                      daysInUti > 4
+                        ? "text-red-700 dark:text-red-300"
+                        : colorVariant === 'yellow'
+                          ? "text-slate-600 dark:text-slate-300"
+                          : "text-blue-700 dark:text-blue-300"
                     )}>
                       DIH:
                     </span>
                     <span className={cn(
-                      "text-xs font-bold min-w-[20px] text-center", 
-                      daysInUti > 4 
-                        ? "text-red-700 dark:text-red-300" 
-                        : colorVariant === 'yellow' 
-                          ? "text-amber-700 dark:text-amber-400" 
-                          : "text-primary"
+                      "text-xs font-bold min-w-[20px] text-center",
+                      daysInUti > 4
+                        ? "text-red-700 dark:text-red-300"
+                        : colorVariant === 'yellow'
+                          ? "text-slate-700 dark:text-slate-200"
+                          : "text-blue-700 dark:text-blue-300"
                     )}>
                       {daysInUti}
                     </span>

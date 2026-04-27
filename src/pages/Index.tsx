@@ -3,6 +3,7 @@ import { SectorSection } from "@/components/SectorSection";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { EmptySectorState } from "@/components/EmptySectorState";
 import { UtiSectorSection } from "@/components/UtiSectorSection";
+import { UtiUnitSelector } from "@/components/UtiUnitSelector";
 import { PatientCard } from "@/components/PatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintUtiLayout } from "@/components/PrintUtiLayout";
@@ -186,6 +187,19 @@ const Index = () => {
   });
   const [newChecklistItem, setNewChecklistItem] = useState("");
   const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(false);
+  // UTI unit selector — persistent per session via sessionStorage
+  const [selectedUtiUnit, setSelectedUtiUnit] = useState<'UTI 1' | 'UTI 2' | null>(() => {
+    const saved = sessionStorage.getItem('selected_uti_unit');
+    return saved === 'UTI 1' || saved === 'UTI 2' ? saved : null;
+  });
+  useEffect(() => {
+    if (selectedUtiUnit) sessionStorage.setItem('selected_uti_unit', selectedUtiUnit);
+    else sessionStorage.removeItem('selected_uti_unit');
+  }, [selectedUtiUnit]);
+  // Reset selection when leaving UTI department
+  useEffect(() => {
+    if (currentDepartment !== 'UTI') setSelectedUtiUnit(null);
+  }, [currentDepartment]);
   const [isNotesSectionOpen, setIsNotesSectionOpen] = useState(false);
   const [printingSector, setPrintingSector] = useState<string | null>(null);
   const [printMode, setPrintMode] = useState<'compact' | 'detailed' | null>(null);
@@ -1192,123 +1206,167 @@ const Index = () => {
           <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1 pt-[120px] sm:pt-[110px] print:pt-3">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
               {currentDepartment === "UTI" ? (
-                <div className="space-y-4">
-                  <UtiSectorSection 
-                    sector="blue" 
-                    patients={patients.filter(p => p.sector === 'blue' || p.sector === 'red').map(p => ({ ...p, sector: 'blue' as const }))}
-                    onUpdatePatient={handleUpdatePatient}
-                    onDeletePatient={handleDeletePatient}
-                    onUndeletePatient={handleUndeletePatient}
-                    onPrintSector={() => handlePrintSector("blue")}
-                    onAddExtraBed={() => { handleAddExtraBed("blue"); }}
-                    selectionMode={selectionMode}
-                    selectedPatients={selectedPatients}
-                    onToggleSelection={handleToggleSelection}
-                    onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
-                    onTransfer={handleTransferPatient}
-                    onPrintPatient={handlePrintPatient}
-                    onRefetch={refetch}
-                    customTitle="UNIDADE DE TERAPIA INTENSIVA 1"
-                    customIcon={<span className="w-3 h-3 rounded-full bg-primary/80 border border-primary/40" />}
-                    colorVariant="blue"
-                    allPatients={patients}
-                    currentUtiUnit="UTI 1"
+                selectedUtiUnit === null ? (
+                  <UtiUnitSelector
+                    patients={patients}
+                    onSelect={(unit) => setSelectedUtiUnit(unit)}
                   />
-                  <UtiSectorSection 
-                    sector="yellow" 
-                    patients={patients.filter(p => p.sector === 'yellow').map(p => ({ ...p, sector: 'yellow' as const }))}
-                    onUpdatePatient={handleUpdatePatient}
-                    onDeletePatient={handleDeletePatient}
-                    onUndeletePatient={handleUndeletePatient}
-                    onPrintSector={() => handlePrintSector("yellow")}
-                    onAddExtraBed={() => { handleAddExtraBed("yellow"); }}
-                    selectionMode={selectionMode}
-                    selectedPatients={selectedPatients}
-                    onToggleSelection={handleToggleSelection}
-                    onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
-                    onTransfer={handleTransferPatient}
-                    onPrintPatient={handlePrintPatient}
-                    onRefetch={refetch}
-                    customTitle="UNIDADE DE TERAPIA INTENSIVA 2"
-                    customIcon={<span className="w-3 h-3 rounded-full bg-amber-500/80 border border-amber-400/40" />}
-                    colorVariant="yellow"
-                    allPatients={patients}
-                    currentUtiUnit="UTI 2"
-                  />
+                ) : (
+                  <div className="space-y-4">
+                    {/* UTI Unit Toggle (top) */}
+                    <div className="flex items-center justify-between gap-3 p-2 rounded-xl border border-slate-200/70 dark:border-slate-700/60 bg-white dark:bg-slate-900/40 print:hidden">
+                      <div className="inline-flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-lg p-1">
+                        <button
+                          onClick={() => setSelectedUtiUnit('UTI 1')}
+                          className={cn(
+                            "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
+                            selectedUtiUnit === 'UTI 1'
+                              ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-sm border-l-2 border-l-blue-500/70"
+                              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                          )}
+                        >
+                          UTI 1
+                        </button>
+                        <button
+                          onClick={() => setSelectedUtiUnit('UTI 2')}
+                          className={cn(
+                            "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
+                            selectedUtiUnit === 'UTI 2'
+                              ? "bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm border-l-2 border-l-slate-500/70"
+                              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                          )}
+                        >
+                          UTI 2
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => setSelectedUtiUnit(null)}
+                        className="text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors px-2 py-1 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                      >
+                        Trocar unidade
+                      </button>
+                    </div>
 
-                  {/* UTI Outside Patients Section - Bed Allocation Requests */}
-                  {(() => {
-                    const utiOutsidePatients = patients.filter(p => p.sector === 'outside');
-                    const isUtiOutsideSectionOpen = utiOutsidePatients.length > 0;
-                    return (
-                      <Collapsible open={isUtiOutsideSectionOpen} className="space-y-3 mb-4 print:hidden">
-                        <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
-                          <div className="flex items-center justify-between w-full">
-                            <CollapsibleTrigger asChild>
-                              <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                                <ChevronDown className={`h-5 w-5 transition-transform ${isUtiOutsideSectionOpen ? '' : '-rotate-90'}`} />
-                                <div className="flex items-center gap-2">
-                                  <SectorBedIcon sectorIcon="📋" size="md" />
-                                  <h2 className="text-lg font-bold text-foreground uppercase">Solicitações de Leito UTI</h2>
+                    {selectedUtiUnit === 'UTI 1' && (
+                      <UtiSectorSection
+                        sector="blue"
+                        patients={patients.filter(p => p.sector === 'blue' || p.sector === 'red').map(p => ({ ...p, sector: 'blue' as const }))}
+                        onUpdatePatient={handleUpdatePatient}
+                        onDeletePatient={handleDeletePatient}
+                        onUndeletePatient={handleUndeletePatient}
+                        onPrintSector={() => handlePrintSector("blue")}
+                        onAddExtraBed={() => { handleAddExtraBed("blue"); }}
+                        selectionMode={selectionMode}
+                        selectedPatients={selectedPatients}
+                        onToggleSelection={handleToggleSelection}
+                        onReorderPatients={(reordered) => handleReorderPatients("blue", reordered)}
+                        onTransfer={handleTransferPatient}
+                        onPrintPatient={handlePrintPatient}
+                        onRefetch={refetch}
+                        customTitle="UNIDADE DE TERAPIA INTENSIVA 1"
+                        customIcon={<span className="w-2.5 h-2.5 rounded-full bg-blue-500/80 border border-blue-300/60" />}
+                        colorVariant="blue"
+                        allPatients={patients}
+                        currentUtiUnit="UTI 1"
+                      />
+                    )}
+                    {selectedUtiUnit === 'UTI 2' && (
+                      <UtiSectorSection
+                        sector="yellow"
+                        patients={patients.filter(p => p.sector === 'yellow').map(p => ({ ...p, sector: 'yellow' as const }))}
+                        onUpdatePatient={handleUpdatePatient}
+                        onDeletePatient={handleDeletePatient}
+                        onUndeletePatient={handleUndeletePatient}
+                        onPrintSector={() => handlePrintSector("yellow")}
+                        onAddExtraBed={() => { handleAddExtraBed("yellow"); }}
+                        selectionMode={selectionMode}
+                        selectedPatients={selectedPatients}
+                        onToggleSelection={handleToggleSelection}
+                        onReorderPatients={(reordered) => handleReorderPatients("yellow", reordered)}
+                        onTransfer={handleTransferPatient}
+                        onPrintPatient={handlePrintPatient}
+                        onRefetch={refetch}
+                        customTitle="UNIDADE DE TERAPIA INTENSIVA 2"
+                        customIcon={<span className="w-2.5 h-2.5 rounded-full bg-slate-500/80 border border-slate-400/60" />}
+                        colorVariant="yellow"
+                        allPatients={patients}
+                        currentUtiUnit="UTI 2"
+                      />
+                    )}
+
+                    {/* UTI Outside Patients Section - Bed Allocation Requests */}
+                    {(() => {
+                      const utiOutsidePatients = patients.filter(p => p.sector === 'outside');
+                      const isUtiOutsideSectionOpen = utiOutsidePatients.length > 0;
+                      return (
+                        <Collapsible open={isUtiOutsideSectionOpen} className="space-y-3 mb-4 print:hidden">
+                          <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
+                            <div className="flex items-center justify-between w-full">
+                              <CollapsibleTrigger asChild>
+                                <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                                  <ChevronDown className={`h-5 w-5 transition-transform ${isUtiOutsideSectionOpen ? '' : '-rotate-90'}`} />
+                                  <div className="flex items-center gap-2">
+                                    <SectorBedIcon sectorIcon="📋" size="md" />
+                                    <h2 className="text-lg font-bold text-foreground uppercase">Solicitações de Leito UTI</h2>
+                                  </div>
+                                </button>
+                              </CollapsibleTrigger>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setUtiAllocationDialogOpen(true)}
+                                  className="h-8 gap-1"
+                                >
+                                  <Plus className="h-3.5 w-3.5" />
+                                  Nova Solicitação
+                                </Button>
+                                <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
+                                  <p className="text-base font-bold text-foreground">{utiOutsidePatients.length}</p>
                                 </div>
-                              </button>
-                            </CollapsibleTrigger>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setUtiAllocationDialogOpen(true)}
-                                className="h-8 gap-1"
-                              >
-                                <Plus className="h-3.5 w-3.5" />
-                                Nova Solicitação
-                              </Button>
-                              <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
-                                <p className="text-base font-bold text-foreground">{utiOutsidePatients.length}</p>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <CollapsibleContent>
-                          <div className="space-y-2 mt-3">
-                            {utiOutsidePatients.length === 0 ? (
-                              <p className="text-sm text-muted-foreground text-center py-4">
-                                Nenhuma solicitação de leito pendente
-                              </p>
-                            ) : (
-                              utiOutsidePatients.map((patient) => (
-                                <div key={patient.id} className="relative">
-                                  {/* Status bar showing requested UTI */}
-                                  {patient.allocationStatus === 'pending' && (
-                                    <div className="mb-1 px-3 py-1 rounded-t-lg bg-amber-100/80 dark:bg-amber-900/40 border border-amber-300/50 dark:border-amber-700/40 text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-2">
-                                      <span>⏳</span>
-                                      <span>AGUARDANDO APROVAÇÃO</span>
-                                      <span className="ml-auto text-[10px] text-muted-foreground">
-                                        Origem: {patient.utiOriginSector?.[0] || 'Não informado'}
-                                      </span>
-                                    </div>
-                                  )}
-                                  <PatientCard
-                                    patient={patient}
-                                    onUpdate={handleUpdatePatient}
-                                    onDelete={handleDeletePatient}
-                                    onUndelete={handleUndeletePatient}
-                                    selectionMode={selectionMode}
-                                    isSelected={selectedPatients.has(patient.id)}
-                                    onToggleSelection={handleToggleSelection}
-                                    onTransfer={handleTransferPatient}
-                                    onPrintPatient={handlePrintPatient}
-                                    onRefetch={refetch}
-                                  />
-                                </div>
-                              ))
-                            )}
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
-                    );
-                  })()}
-                </div>
+                          <CollapsibleContent>
+                            <div className="space-y-2 mt-3">
+                              {utiOutsidePatients.length === 0 ? (
+                                <p className="text-sm text-muted-foreground text-center py-4">
+                                  Nenhuma solicitação de leito pendente
+                                </p>
+                              ) : (
+                                utiOutsidePatients.map((patient) => (
+                                  <div key={patient.id} className="relative">
+                                    {patient.allocationStatus === 'pending' && (
+                                      <div className="mb-1 px-3 py-1 rounded-t-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-300/60 dark:border-slate-600/50 text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                                        <span>⏳</span>
+                                        <span>AGUARDANDO APROVAÇÃO</span>
+                                        <span className="ml-auto text-[10px] text-muted-foreground">
+                                          Origem: {patient.utiOriginSector?.[0] || 'Não informado'}
+                                        </span>
+                                      </div>
+                                    )}
+                                    <PatientCard
+                                      patient={patient}
+                                      onUpdate={handleUpdatePatient}
+                                      onDelete={handleDeletePatient}
+                                      onUndelete={handleUndeletePatient}
+                                      selectionMode={selectionMode}
+                                      isSelected={selectedPatients.has(patient.id)}
+                                      onToggleSelection={handleToggleSelection}
+                                      onTransfer={handleTransferPatient}
+                                      onPrintPatient={handlePrintPatient}
+                                      onRefetch={refetch}
+                                    />
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      );
+                    })()}
+                  </div>
+                )
               ) : (
                 <>
                   {/* Emergency sectors: Red, Yellow, Blue, Outside */}

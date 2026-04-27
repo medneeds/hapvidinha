@@ -81,14 +81,14 @@ function UtiRow(props: UtiRowProps) {
     });
   };
 
-  // Vacancy toggle button styles based on color variant
+  // Vacancy toggle button styles — neutral palette across both UTIs
   const vacancyButtonStyles = {
     blue: {
-      vacant: "border-primary/40 text-primary hover:bg-primary/10",
+      vacant: "border-blue-400/50 text-blue-600 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30",
       occupied: "border-muted-foreground/30 text-muted-foreground hover:bg-muted/30"
     },
     yellow: {
-      vacant: "border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20",
+      vacant: "border-slate-400/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/30",
       occupied: "border-muted-foreground/30 text-muted-foreground hover:bg-muted/30"
     }
   };
@@ -169,21 +169,21 @@ export function UtiSectorSection({
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
   const [allCardsCollapsed, setAllCardsCollapsed] = useState(true);
 
-  // Header color schemes based on colorVariant
+  // Header color schemes — clean & neutral. Base sempre branca/cinza, com fina linha de acento
   const headerStyles = {
     blue: {
-      bg: "bg-primary/15 dark:bg-primary/25 border-l-4 border-l-primary",
-      title: "text-primary dark:text-primary",
-      button: "border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50",
-      chevron: "text-primary",
-      counter: "border-primary/30 bg-primary/10"
+      bg: "bg-slate-50/80 dark:bg-slate-900/40 border-l-2 border-l-blue-500/70 dark:border-l-blue-400/70",
+      title: "text-slate-700 dark:text-slate-200",
+      button: "border-slate-300/60 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/40 hover:border-slate-400/60",
+      chevron: "text-slate-500 dark:text-slate-400",
+      counter: "border-slate-300/60 bg-white dark:bg-slate-800/60"
     },
     yellow: {
-      bg: "bg-amber-100/60 dark:bg-amber-900/30 border-l-4 border-l-amber-500",
-      title: "text-amber-700 dark:text-amber-400",
-      button: "border-amber-400/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:border-amber-400/50",
-      chevron: "text-amber-600 dark:text-amber-400",
-      counter: "border-amber-400/30 bg-amber-500/10"
+      bg: "bg-slate-50/80 dark:bg-slate-900/40 border-l-2 border-l-slate-500/70 dark:border-l-slate-400/70",
+      title: "text-slate-700 dark:text-slate-200",
+      button: "border-slate-300/60 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/40 hover:border-slate-400/60",
+      chevron: "text-slate-500 dark:text-slate-400",
+      counter: "border-slate-300/60 bg-white dark:bg-slate-800/60"
     }
   };
   const headerClass = headerStyles[colorVariant].bg;
