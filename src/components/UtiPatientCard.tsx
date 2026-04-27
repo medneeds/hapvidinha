@@ -215,13 +215,16 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       )}>{index + 1}.</span>
       
       {isEditing ? (
-        <div className="flex-1 flex items-center gap-1">
-          <input
+        <div className="flex-1 flex items-start gap-1 min-w-0">
+          <textarea
             ref={inputRef}
-            type="text"
             value={localValue}
-            onChange={(e) => setLocalValue(e.target.value.toUpperCase())}
-            className="flex-1 text-[11px] bg-background border border-primary/30 rounded px-1.5 py-0.5 outline-none uppercase font-medium tracking-tight"
+            onChange={(e) => {
+              setLocalValue(e.target.value.toUpperCase());
+              autoResize(e.currentTarget);
+            }}
+            rows={1}
+            className="flex-1 min-w-0 w-full text-[12px] leading-snug bg-background border border-primary/40 rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 overflow-hidden whitespace-pre-wrap break-words"
             onKeyDown={handleKeyDownInternal}
             onBlur={handleSave}
             onClick={(e) => e.stopPropagation()}
