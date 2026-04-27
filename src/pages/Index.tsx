@@ -867,12 +867,12 @@ const Index = () => {
           />
         )}
 
-        {/* UTI preview dialog with unit selection */}
+        {/* UTI preview dialog with unit selection — respeita unidade selecionada */}
         {previewUtiMapMode && (
           <PrintUtiPreviewDialog
-            uti1Patients={bluePatients}
-            uti2Patients={yellowPatients}
-            outsidePatients={outsidePatients}
+            uti1Patients={selectedUtiUnit === 'UTI 2' ? [] : bluePatients}
+            uti2Patients={selectedUtiUnit === 'UTI 1' ? [] : yellowPatients}
+            outsidePatients={selectedUtiUnit ? [] : outsidePatients}
             mode={previewUtiMapMode}
             onClose={() => setPreviewUtiMapMode(null)}
           />
