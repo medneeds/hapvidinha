@@ -135,6 +135,10 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
+      // place caret at end + size to content on open
+      const len = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(len, len);
+      autoResize(inputRef.current);
     }
   }, [isEditing]);
 
