@@ -12,12 +12,12 @@ import {
 
 // Clinical status options with refined colors - only critical ones are vibrant
 const CLINICAL_STATUS_OPTIONS = [
-  { value: "gravissimo", label: "GRAVÍSSIMO", color: "bg-red-600 text-white", borderColor: "border-red-600" },
-  { value: "grave", label: "GRAVE", color: "bg-red-500 text-white", borderColor: "border-red-500" },
-  { value: "grave_estavel", label: "GRAVE, PORÉM ESTÁVEL", color: "bg-amber-600 text-white", borderColor: "border-amber-600" },
-  { value: "potencialmente_grave", label: "POTENCIALMENTE GRAVE", color: "bg-amber-500 text-white", borderColor: "border-amber-500" },
-  { value: "regular", label: "REGULAR", color: "bg-slate-500 text-white", borderColor: "border-slate-500" },
-  { value: "paliativado", label: "CUIDADOS PALIATIVOS", color: "bg-violet-600 text-white", borderColor: "border-violet-600" },
+  { value: "gravissimo", label: "GRAVÍSSIMO", color: "bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900", borderColor: "border-slate-800 dark:border-slate-200" },
+  { value: "grave", label: "GRAVE", color: "bg-slate-700 text-white dark:bg-slate-300 dark:text-slate-900", borderColor: "border-slate-700 dark:border-slate-300" },
+  { value: "grave_estavel", label: "GRAVE, PORÉM ESTÁVEL", color: "bg-slate-500 text-white dark:bg-slate-400 dark:text-slate-900", borderColor: "border-slate-500 dark:border-slate-400" },
+  { value: "potencialmente_grave", label: "POTENCIALMENTE GRAVE", color: "bg-slate-400 text-white dark:bg-slate-500 dark:text-slate-50", borderColor: "border-slate-400 dark:border-slate-500" },
+  { value: "regular", label: "REGULAR", color: "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200", borderColor: "border-slate-300 dark:border-slate-600" },
+  { value: "paliativado", label: "CUIDADOS PALIATIVOS", color: "bg-white text-slate-700 border border-slate-300 dark:bg-slate-900 dark:text-slate-200 dark:border-slate-600", borderColor: "border-slate-300 dark:border-slate-600" },
 ] as const;
 
 // Helper to force uppercase on all text inputs
