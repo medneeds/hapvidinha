@@ -145,9 +145,9 @@ export function PrintUtiLayout({
             display: 'flex', 
             alignItems: 'center', 
             gap: '8px', 
-            marginBottom: isCompact ? '8px' : '10px', 
-            paddingBottom: isCompact ? '6px' : '8px', 
-            borderBottom: '2px solid #d1d5db',
+            marginBottom: isCompact ? '4px' : '6px', 
+            paddingBottom: isCompact ? '3px' : '4px', 
+            borderBottom: '1.5px solid #d1d5db',
             position: 'relative',
             zIndex: 1
           }}
