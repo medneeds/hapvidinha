@@ -1,6 +1,7 @@
 import { Patient } from "@/types/patient";
 import { PrintablePatientCard } from "./PrintablePatientCard";
 import { PrintableUtiPatientCard } from "./PrintableUtiPatientCard";
+import { PrintableSectorTable } from "./PrintableSectorTable";
 
 interface PrintableSectorSectionProps {
   patients: Patient[];
@@ -56,23 +57,34 @@ export function PrintableSectorSection({
         </h2>
       </div>
       <div>
-        {patients.map(patient => (
-          isUti ? (
-            <PrintableUtiPatientCard 
-              key={patient.id} 
-              patient={patient} 
-              mode={mode}
-              colorVariant={utiColorVariant}
-            />
-          ) : (
-            <PrintablePatientCard 
-              key={patient.id} 
-              patient={patient} 
-              mode={mode}
-              bedColor={borderColor}
-            />
-          )
-        ))}
+        {isCompact ? (
+          // Hybrid mode: compact => dense table per sector
+          <PrintableSectorTable
+            patients={patients}
+            bedColor={borderColor}
+            isUti={isUti}
+            utiColorVariant={utiColorVariant}
+          />
+        ) : (
+          // Detailed mode keeps the richer card layout
+          patients.map(patient => (
+            isUti ? (
+              <PrintableUtiPatientCard
+                key={patient.id}
+                patient={patient}
+                mode={mode}
+                colorVariant={utiColorVariant}
+              />
+            ) : (
+              <PrintablePatientCard
+                key={patient.id}
+                patient={patient}
+                mode={mode}
+                bedColor={borderColor}
+              />
+            )
+          ))
+        )}
       </div>
     </div>
   );
