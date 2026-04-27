@@ -852,33 +852,33 @@ export function UtiPatientCard({
     onRefetch?.();
   };
 
-  // Color schemes based on variant
+  // Color schemes — neutral & clean. Base branca/slate, acento fino azul (UTI 1) ou slate-grafite (UTI 2)
   const colorSchemes = {
     blue: {
-      card: "bg-slate-100 dark:bg-slate-900/80 border-primary/20",
-      bedBg: "bg-primary/10 border-primary/20",
-      bedText: "text-primary",
-      col1: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
-      col1Icon: "text-blue-500 dark:text-blue-300",
-      col2: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
-      col2Icon: "text-blue-500 dark:text-blue-300",
-      col3: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
-      col3Icon: "text-blue-500 dark:text-blue-300",
-      col4: "bg-blue-100/70 dark:bg-blue-900/35 border-blue-300/50 dark:border-blue-700/45",
-      col4Icon: "text-blue-500 dark:text-blue-300",
+      card: "bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/60 border-l-2 border-l-blue-500/60",
+      bedBg: "bg-blue-50 dark:bg-blue-950/40 border-blue-200/70 dark:border-blue-800/40",
+      bedText: "text-blue-700 dark:text-blue-300",
+      col1: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col1Icon: "text-slate-500 dark:text-slate-400",
+      col2: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col2Icon: "text-slate-500 dark:text-slate-400",
+      col3: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col3Icon: "text-slate-500 dark:text-slate-400",
+      col4: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col4Icon: "text-slate-500 dark:text-slate-400",
     },
     yellow: {
-      card: "bg-amber-50/50 dark:bg-amber-950/30 border-amber-400/30",
-      bedBg: "bg-amber-100 dark:bg-amber-900/40 border-amber-300/50 dark:border-amber-700/40",
-      bedText: "text-amber-700 dark:text-amber-400",
-      col1: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
-      col1Icon: "text-amber-500 dark:text-amber-300",
-      col2: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
-      col2Icon: "text-amber-500 dark:text-amber-300",
-      col3: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
-      col3Icon: "text-amber-500 dark:text-amber-300",
-      col4: "bg-amber-100/50 dark:bg-amber-900/30 border-amber-200/50 dark:border-amber-700/40",
-      col4Icon: "text-amber-500 dark:text-amber-300",
+      card: "bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/60 border-l-2 border-l-slate-500/60",
+      bedBg: "bg-slate-100 dark:bg-slate-800/50 border-slate-300/60 dark:border-slate-600/50",
+      bedText: "text-slate-700 dark:text-slate-200",
+      col1: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col1Icon: "text-slate-500 dark:text-slate-400",
+      col2: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col2Icon: "text-slate-500 dark:text-slate-400",
+      col3: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col3Icon: "text-slate-500 dark:text-slate-400",
+      col4: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
+      col4Icon: "text-slate-500 dark:text-slate-400",
     }
   };
 
