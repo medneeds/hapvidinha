@@ -50,10 +50,10 @@ export function PrintUtiLayout({
         left: 0;
         right: 0;
         height: auto;
-        padding: 8mm 15mm 5mm 15mm;
+        padding: 5mm 15mm 3mm 15mm;
         background: #ffffff;
         z-index: 1000;
-        border-bottom: 2px solid #d1d5db;
+        border-bottom: 1.5px solid #d1d5db;
       }
       
       /* Fixed footer on all pages */
