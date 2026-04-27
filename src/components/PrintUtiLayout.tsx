@@ -164,16 +164,33 @@ export function PrintUtiLayout({
           }}>
             <ClipboardList style={{ height: isCompact ? '14px' : '16px', width: isCompact ? '14px' : '16px', color: '#ffffff' }} />
           </div>
-          <h1 style={{ 
-            fontSize: isCompact ? '14pt' : '16pt', 
-            fontWeight: 'bold', 
-            textTransform: 'uppercase',
-            margin: 0,
-            color: '#000000',
-            letterSpacing: '0.4px'
-          }}>
-            Mapa UTI - {whitelabel.institution.hospitalName}
-          </h1>
+          {(() => {
+            // Conjuga o título quando apenas uma unidade tem pacientes — ganha espaço
+            // e evita repetir "Unidade de Terapia Intensiva X" logo abaixo.
+            const hasUti1 = uti1Patients.length > 0;
+            const hasUti2 = uti2Patients.length > 0;
+            const onlyUti1 = hasUti1 && !hasUti2;
+            const onlyUti2 = !hasUti1 && hasUti2;
+            const unitSuffix = onlyUti1 ? ' 1' : onlyUti2 ? ' 2' : '';
+            const unitCount = onlyUti1 ? uti1Patients.length : onlyUti2 ? uti2Patients.length : null;
+            return (
+              <h1 style={{ 
+                fontSize: isCompact ? '14pt' : '16pt', 
+                fontWeight: 'bold', 
+                textTransform: 'uppercase',
+                margin: 0,
+                color: '#000000',
+                letterSpacing: '0.4px'
+              }}>
+                Mapa UTI{unitSuffix} - {whitelabel.institution.hospitalName}
+                {unitCount !== null && (
+                  <span style={{ fontSize: isCompact ? '10pt' : '11pt', fontWeight: 600, color: '#4b5563', marginLeft: '8px', letterSpacing: '0.2px' }}>
+                    ({unitCount} {unitCount === 1 ? 'paciente' : 'pacientes'})
+                  </span>
+                )}
+              </h1>
+            );
+          })()}
         </div>
         
         {/* Metadata */}
@@ -197,40 +214,49 @@ export function PrintUtiLayout({
         </div>
         
         {/* UTI Sectors - Content Area */}
-        <div className="print-content-area">
-          <PrintableSectorSection
-            patients={uti1Patients}
-            sectorName="Unidade de Terapia Intensiva 1"
-            bgColor="#eff6ff"
-            borderColor="#3b82f6"
-            textColor="#1d4ed8"
-            mode={mode}
-            isUti={true}
-            utiColorVariant="blue"
-          />
-          <PrintableSectorSection
-            patients={uti2Patients}
-            sectorName="Unidade de Terapia Intensiva 2"
-            bgColor="#fefce8"
-            borderColor="#eab308"
-            textColor="#a16207"
-            mode={mode}
-            isUti={true}
-            utiColorVariant="yellow"
-          />
-          {outsidePatients.length > 0 && (
-            <PrintableSectorSection
-              patients={outsidePatients}
-              sectorName="Solicitações de Leito UTI"
-              bgColor="#f9fafb"
-              borderColor="#6b7280"
-              textColor="#4b5563"
-              mode={mode}
-              isUti={true}
-              utiColorVariant="blue"
-            />
-          )}
-        </div>
+        {(() => {
+          const hasUti1 = uti1Patients.length > 0;
+          const hasUti2 = uti2Patients.length > 0;
+          const singleUnit = (hasUti1 && !hasUti2) || (!hasUti1 && hasUti2);
+          return (
+            <div className="print-content-area">
+              <PrintableSectorSection
+                patients={uti1Patients}
+                sectorName="Unidade de Terapia Intensiva 1"
+                bgColor="#eff6ff"
+                borderColor="#3b82f6"
+                textColor="#1d4ed8"
+                mode={mode}
+                isUti={true}
+                utiColorVariant="blue"
+                hideHeader={singleUnit}
+              />
+              <PrintableSectorSection
+                patients={uti2Patients}
+                sectorName="Unidade de Terapia Intensiva 2"
+                bgColor="#fefce8"
+                borderColor="#eab308"
+                textColor="#a16207"
+                mode={mode}
+                isUti={true}
+                utiColorVariant="yellow"
+                hideHeader={singleUnit}
+              />
+              {outsidePatients.length > 0 && (
+                <PrintableSectorSection
+                  patients={outsidePatients}
+                  sectorName="Solicitações de Leito UTI"
+                  bgColor="#f9fafb"
+                  borderColor="#6b7280"
+                  textColor="#4b5563"
+                  mode={mode}
+                  isUti={true}
+                  utiColorVariant="blue"
+                />
+              )}
+            </div>
+          );
+        })()}
         
         {/* Fixed Footer - appears on all pages */}
         <div 

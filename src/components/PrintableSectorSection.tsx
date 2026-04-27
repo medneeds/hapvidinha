@@ -12,6 +12,7 @@ interface PrintableSectorSectionProps {
   mode: 'compact' | 'detailed';
   isUti?: boolean;
   utiColorVariant?: 'blue' | 'yellow';
+  hideHeader?: boolean;
 }
 
 export function PrintableSectorSection({
@@ -22,7 +23,8 @@ export function PrintableSectorSection({
   textColor,
   mode,
   isUti = false,
-  utiColorVariant = 'blue'
+  utiColorVariant = 'blue',
+  hideHeader = false
 }: PrintableSectorSectionProps) {
   if (patients.length === 0) return null;
   
@@ -34,28 +36,30 @@ export function PrintableSectorSection({
         marginBottom: isCompact ? '12px' : '16px'
       }}
     >
-      <div 
-        style={{ 
-          backgroundColor: bgColor,
-          borderLeft: `6px solid ${borderColor}`,
-          padding: isCompact ? '8px 12px' : '10px 14px',
-          marginBottom: isCompact ? '8px' : '12px',
-          pageBreakAfter: 'avoid',
-          breakAfter: 'avoid',
-          borderRadius: '4px'
-        }}
-      >
-        <h2 style={{ 
-          fontSize: isCompact ? '12pt' : '13pt', 
-          fontWeight: 'bold', 
-          textTransform: 'uppercase',
-          color: textColor,
-          margin: 0,
-          letterSpacing: '0.5px'
-        }}>
-          {sectorName} ({patients.length} {patients.length === 1 ? 'PACIENTE' : 'PACIENTES'})
-        </h2>
-      </div>
+      {!hideHeader && (
+        <div 
+          style={{ 
+            backgroundColor: bgColor,
+            borderLeft: `6px solid ${borderColor}`,
+            padding: isCompact ? '8px 12px' : '10px 14px',
+            marginBottom: isCompact ? '8px' : '12px',
+            pageBreakAfter: 'avoid',
+            breakAfter: 'avoid',
+            borderRadius: '4px'
+          }}
+        >
+          <h2 style={{ 
+            fontSize: isCompact ? '12pt' : '13pt', 
+            fontWeight: 'bold', 
+            textTransform: 'uppercase',
+            color: textColor,
+            margin: 0,
+            letterSpacing: '0.5px'
+          }}>
+            {sectorName} ({patients.length} {patients.length === 1 ? 'PACIENTE' : 'PACIENTES'})
+          </h2>
+        </div>
+      )}
       <div>
         {isCompact ? (
           // Hybrid mode: compact => dense table per sector
