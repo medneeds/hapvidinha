@@ -1,0 +1,121 @@
+-- Substituir todos os pacientes da UTI 2 (sector='yellow') no Hospital Guarás/Maranhão
+-- Com base em planilha clínica fornecida pelo usuário (28/04/2026)
+
+DO $$
+DECLARE
+  v_state_id uuid := 'c286ecc8-c509-4f90-b3cd-0cf68efd3733';
+  v_unit_id  uuid := 'c6363372-65c0-4dd2-955c-7cd3bfa23dd3';
+BEGIN
+  -- 1) Limpar UTI 2 atual
+  DELETE FROM public.patients
+  WHERE sector = 'yellow'
+    AND department = 'UTI'
+    AND state_id = v_state_id
+    AND hospital_unit_id = v_unit_id;
+
+  -- 2) Inserir os 8 pacientes (U09 fica vago)
+  INSERT INTO public.patients (
+    bed_number, name, age, sector, department,
+    state_id, hospital_unit_id,
+    uti_admission_date, uti_discharge_prediction,
+    uti_allergies, medical_history, diagnoses,
+    uti_admission_reason, uti_current_status,
+    uti_devices, uti_specialties,
+    uti_daily_conducts, pendencies,
+    display_order, is_vacant
+  ) VALUES
+  -- LEITO U02
+  ('U02', 'JEANDERSON LUCAS DA CRUZ LOBATO', '31 ANOS (15.03.1995)', 'yellow', 'UTI',
+   v_state_id, v_unit_id,
+   '2026-04-20'::timestamptz, '23.04.2026',
+   'NEGA', 'HIPERTENSO', 'EAP HIPERTENSIVO',
+   'EAP HIPERTENSIVO', 'HIPERTENSO',
+   'AVP', 'UTI + NEFROLOGIA',
+   'OTIMIZADA TERAPIA ANTI-HAS | DESMAMADO NIPRIDE | EM INVESTIGAÇÃO PARA HIPERALDOSTERONISMO',
+   'AVALIAR ALTA COM SEGUIMENTO EM ENFERMARIA',
+   2, false),
+
+  -- LEITO U03
+  ('U03', 'JOSÉ MOUSINHO SILVA', '84 ANOS (20.07.1941)', 'yellow', 'UTI',
+   v_state_id, v_unit_id,
+   '2026-04-10'::timestamptz, '16.04.2026',
+   'NEGA', 'DRC DIALÍTICO + HAS + DM2 + DISSECÇÃO DE AORTA + AVCi PRÉVIO',
+   'DRC AGUDIZADA + DERRAME PLEURAL DE GRANDE VOLUME',
+   'DRC AGUDIZADA + DERRAME PLEURAL DE GRANDE VOLUME', 'DESMAME DE NIPRIDE',
+   'AVP + SHILLEY', 'UTI + NEFROLOGIA',
+   'DESMAME DE NIPRIDE, REINTRODUÇÃO MINOXIDIL | COBRADA REALIZAÇÃO DE COMPRESSA FRIA E CURATIVO COMPRESSIVO EM MSE | SOLICITADO RX NA ROTINA',
+   'AVALIAR ALTA COM SEGUIMENTO EM ENFERMARIA',
+   3, false),
+
+  -- LEITO U04
+  ('U04', 'MARILZE NASCIMENTO FRANÇA', '80 ANOS (19.08.1945)', 'yellow', 'UTI',
+   v_state_id, v_unit_id,
+   '2026-03-22'::timestamptz, 'SEM PREVISÃO',
+   'ESCOPOLAMINA', 'HAS + DM2 + OBESIDADE',
+   'ASMA GRAVE + IRPA + DEPENDÊNCIA DA VM',
+   'ASMA GRAVE + IRPA + DEPENDÊNCIA DA VM', 'ESTÁVEL',
+   'CVC VJID (07/04)', 'UTI',
+   'SOB MACRONEB | AUMENTO DE SECREÇÃO TRAQUEAL E MARCADORES INFLAMATÓRIOS > SOLICITO NOVO SET DE CULTURAS',
+   'ACOMPANHAMENTO COM A FONOAUDIOLOGIA » EM PROGRESSÃO NUTRICIONAL | TENTA NOVO DESMAME DA VM',
+   4, false),
+
+  -- LEITO U05
+  ('U05', 'MARIA DO SOCORRO DOURADO DA SILVA', '77 ANOS (10.07.1948)', 'yellow', 'UTI',
+   v_state_id, v_unit_id,
+   '2026-04-24'::timestamptz, '28.04.2026',
+   'NEGA', 'HAS; DM; AVC 2019',
+   'AVCi EXTENSO (OCLUSÃO CARÓTIDA INTERNA ESQUERDA E M1 DA ACM)',
+   'AVCi EXTENSO (OCLUSÃO CARÓTIDA INTERNA ESQUERDA E M1 DA ACM)', 'AFASIA',
+   'AVP', 'UTI',
+   'SUSPENSO AAS E HEPARINA | MANTIDA ESTATINA DE ALTA POTÊNCIA | NCR MANTÉM CD CONSERVADORA',
+   'PARECER NEUROCIRURGIA E TELENEUROLOGIA | NCR ORIENTA NOVA TC DE CONTROLE AMANHÃ (27/04)',
+   5, false),
+
+  -- LEITO U06
+  ('U06', 'RUTH MENEZES DE SOUSA', '78 ANOS (08.05.1948)', 'yellow', 'UTI',
+   v_state_id, v_unit_id,
+   '2026-04-26'::timestamptz, 'SEM PREVISÃO',
+   'NEGA', 'HAS | IC | FA CRÔNICA',
+   'AVCi (OCLUSÃO PROXIMAL DE SEG M1 DA ACM)',
+   'AVCi (OCLUSÃO PROXIMAL DE SEG M1 DA ACM)', 'SOB DVA',
+   'CVC VSD', 'UTI',
+   'MANTIDA SOB SEDOANALGESIA CONTÍNUA | ANGIOTC DE CRÂNIO REALIZADA > AUMENTO DA ÁREA ISQUÊMICA',
+   'AGUARDANDO: ECOTT | DOPPLER DE CARÓTIDAS | RM DE CRÂNIO > AVALIAR NOVO TELENEURO',
+   6, false),
+
+  -- LEITO U07
+  ('U07', 'ANALIA CAPPELLI DE ALBUQUERQUE', '91 ANOS (02.05.1934)', 'yellow', 'UTI',
+   v_state_id, v_unit_id,
+   '2026-04-26'::timestamptz, '27.04.2026',
+   'NEGA', 'SEPSE DE FOCO URINÁRIO + MASSA ANEXIAL CÍSTICA EM INVESTIGAÇÃO',
+   'HIPOTIREOIDISMO PÓS-CIRÚRGICO',
+   'HIPOTIREOIDISMO PÓS-CIRÚRGICO', 'ESTÁVEL',
+   'AVP', 'UTI',
+   'RECEBIDA JÁ EM FASE DE RECUPERAÇÃO INFECTO-METABÓLICA',
+   'AVALIAR ALTA COM SEGUIMENTO EM ENFERMARIA',
+   7, false),
+
+  -- LEITO U08
+  ('U08', 'OTACÍLIO DOS SANTOS RODRIGUES', '38 ANOS (09.08.1987)', 'yellow', 'UTI',
+   v_state_id, v_unit_id,
+   '2026-04-15'::timestamptz, 'SEM PREVISÃO',
+   'NEGA', 'HISTÓRIA DE TB PULMONAR / USUÁRIO DE DROGAS ILÍCITAS / FUMANTE E ETILISTA',
+   '8º DPO DE LAPE POR ABDOME AGUDO (PERITONITE) + APENDICECTOMIA',
+   '8º DPO DE LAPE POR ABDOME AGUDO (PERITONITE) + APENDICECTOMIA', 'EM USO DE NIPRIDE P/ CONTROLE PRESSÓRICO',
+   'AVP', 'UTI + CIRURGIA GERAL',
+   'ATB: PIPERACILINA + TAZOBACTAM (D1: 21.04) | ANALGESIA OTIMIZADA + PROCINÉTICOS + NEUROLÉPTICOS / MANTIDA EXPANSÃO VOLÊMICA + REPOSIÇÃO DE ELETRÓLITOS / FÓSFORO ELEVADO: CARBONATO DE CÁLCIO??',
+   'KLEBSIELLA PNEUMONIAE > INFECTO ORIENTA MANTER | AGUARDANDO NPT (JÁ SOLICITADA > EM AUTORIZAÇÃO) | ENDOSCOPIA CONTRAINDICA SPP',
+   8, false),
+
+  -- LEITO U10 (U09 fica vago)
+  ('U10', 'SHIGUEKO NIRASAWA DOS SANTOS', '86 ANOS (10.05.1939)', 'yellow', 'UTI',
+   v_state_id, v_unit_id,
+   '2026-04-23'::timestamptz, '25.04.2026',
+   'NEGA', 'ALZHEIMER, HAS, USUÁRIA DE MARCAPASSO',
+   'PNEUMONIA + ENCEFALOPATIA SÉPTICA',
+   'PNEUMONIA + ENCEFALOPATIA SÉPTICA', 'ESTÁVEL',
+   'AVP', 'UTI',
+   'MANTIDA ATBTERAPIA | DESMAMADO NIPRIDE | REALIZADAS RECONCILIAÇÕES',
+   'AVALIAR ALTA COM SEGUIMENTO EM ENFERMARIA',
+   10, false);
+END $$;
