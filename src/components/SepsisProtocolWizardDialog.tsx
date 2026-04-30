@@ -544,8 +544,14 @@ export function SepsisProtocolWizardDialog({
   };
 
   const handleFinalize = async () => {
-    if (!formData.outcome) {
-      toast({ title: "Desfecho obrigatório", description: "Selecione o desfecho do paciente para finalizar.", variant: "destructive" });
+    const pendencies = getProtocolPendencies();
+    if (pendencies.length > 0) {
+      const firstPendingStep = pendencies[0].step;
+      setCurrentStep(firstPendingStep);
+      showPendingPopup(
+        `${pendencies.length} PENDÊNCIA(S) PARA ENCERRAR`,
+        pendencies.map((item) => item.message),
+      );
       return;
     }
     if (!protocolId) return;
@@ -555,16 +561,7 @@ export function SepsisProtocolWizardDialog({
       const now = new Date();
       const resolvedOutcomeDate = formData.outcome_date || now.toISOString().split("T")[0];
       const resolvedOutcomeTime = formData.outcome_time || now.toTimeString().slice(0, 5);
-
-      const updateData = {
-        destination: formData.destination || null,
-        destination_date: formData.destination_date || null,
-        destination_time: formData.destination_time || null,
-        outcome: formData.outcome,
-        outcome_date: resolvedOutcomeDate,
-        outcome_time: resolvedOutcomeTime,
-        notes: formData.notes || null,
-      };
+      const updateData = getFullProtocolUpdateData(resolvedOutcomeDate, resolvedOutcomeTime);
 
       const { data, error } = await supabase
         .from('sepsis_protocols')
@@ -585,11 +582,21 @@ export function SepsisProtocolWizardDialog({
       }));
 
       toast({ title: "Protocolo Sepse finalizado", description: "Protocolo registrado com sucesso." });
+      popupToast.success("PROTOCOLO DE SEPSE ENCERRADO", {
+        description: `Desfecho registrado: ${data.outcome}.`,
+      });
       onSuccess?.();
       onClose();
     } catch (err: any) {
       console.error('Erro ao finalizar protocolo:', err);
-      toast({ title: "Erro ao finalizar", description: err?.message || "Tente novamente.", variant: "destructive" });
+      const message = err?.message || "Tente novamente.";
+      toast({ title: "Erro ao finalizar", description: message, variant: "destructive" });
+      popupToast.error("ERRO AO ENCERRAR PROTOCOLO", {
+        description: message.includes("permission") || message.includes("row-level security")
+          ? "Sua sessão não tem permissão para editar este protocolo. Faça login novamente ou chame um administrador."
+          : message,
+        duration: 9000,
+      });
     } finally {
       setIsSubmitting(false);
     }
