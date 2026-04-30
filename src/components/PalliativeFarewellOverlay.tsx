@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { BedDouble, Sparkles } from "lucide-react";
 
 interface PalliativeFarewellOverlayProps {
   open: boolean;
@@ -18,10 +20,10 @@ const REFLECTIONS = [
   { text: "Como a borboleta que pousa apenas o tempo necessário, há vidas que nos atravessam para nos ensinar sobre o tempo certo de partir.", author: "" },
 ];
 
-type Phase = "enter" | "pause" | "exit";
+type Phase = "enter" | "live" | "exit";
 
 const ENTER_MS = 2800;
-const PAUSE_MS = 5200;
+const SHOW_BUTTON_AFTER_MS = 4200; // botão "Desalocar leito" aparece depois de a borboleta pousar e respirar
 const EXIT_FADE_MS = 1300;
 const EXIT_TOTAL_MS = 3400;
 
@@ -33,6 +35,7 @@ export function PalliativeFarewellOverlay({
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<Phase>("enter");
   const [activeName, setActiveName] = useState<string | undefined>(undefined);
+  const [showAction, setShowAction] = useState(false);
 
   const timersRef = useRef<number[]>([]);
   const closedRef = useRef(false);
@@ -52,45 +55,31 @@ export function PalliativeFarewellOverlay({
     timersRef.current.push(t);
   };
 
-  // Mount + drive the entire enter → pause → exit sequence whenever a NEW
-  // farewell is triggered (open transitions to true, even if already true).
+  // Sequência: enter → live (loop infinito de voo dinâmico) → exit (apenas via botão)
   useEffect(() => {
     if (!open) return;
 
-    console.log('[FAREWELL] overlay sequence starting', { patientName });
+    console.log("[FAREWELL] overlay sequence starting", { patientName });
     clearTimers();
     closedRef.current = false;
     setActiveName(patientName);
     setMounted(true);
     setPhase("enter");
+    setShowAction(false);
 
     schedule(() => {
-      console.log('[FAREWELL] phase → pause');
-      setPhase("pause");
+      console.log("[FAREWELL] phase → live (looping flight)");
+      setPhase("live");
     }, ENTER_MS);
 
     schedule(() => {
-      console.log('[FAREWELL] phase → exit (auto)');
-      setPhase("exit");
-    }, ENTER_MS + PAUSE_MS);
-
-    schedule(() => {
-      if (closedRef.current) return;
-      closedRef.current = true;
-      console.log('[FAREWELL] firing onClose() after exit fade');
-      onCloseRef.current();
-    }, ENTER_MS + PAUSE_MS + EXIT_FADE_MS);
-
-    schedule(() => {
-      console.log('[FAREWELL] overlay unmounting');
-      setMounted(false);
-    }, ENTER_MS + PAUSE_MS + EXIT_TOTAL_MS);
+      console.log("[FAREWELL] revealing dealloc action button");
+      setShowAction(true);
+    }, SHOW_BUTTON_AFTER_MS);
 
     return () => {
       // Only clear on real unmount of the provider, not on prop churn.
     };
-    // We deliberately key on patientName too: a brand-new farewell while one
-    // is already playing should restart the sequence cleanly.
   }, [open, patientName]);
 
   useEffect(() => () => clearTimers(), []);
@@ -115,7 +104,6 @@ export function PalliativeFarewellOverlay({
     [activeName]
   );
 
-  // Floating light particles drifting upward (like dust in a sunbeam)
   const particles = useMemo(
     () =>
       Array.from({ length: 28 }, (_, i) => ({
@@ -131,10 +119,11 @@ export function PalliativeFarewellOverlay({
     [activeName]
   );
 
-  const handleSkip = () => {
+  const handleConfirmDealloc = () => {
     if (phase === "exit") return;
-    console.log('[FAREWELL] user clicked overlay (skip)');
+    console.log("[FAREWELL] user confirmed dealloc — starting exit");
     clearTimers();
+    setShowAction(false);
     setPhase("exit");
     schedule(() => {
       if (closedRef.current) return;
@@ -156,7 +145,6 @@ export function PalliativeFarewellOverlay({
         "backdrop-blur-md",
         isExiting ? "farewell-backdrop-exit" : "farewell-backdrop"
       )}
-      onClick={handleSkip}
       role="dialog"
       aria-label="Homenagem de despedida"
     >
@@ -172,7 +160,7 @@ export function PalliativeFarewellOverlay({
         }}
       />
 
-      {/* Breathing radial vignette — soft heartbeat of light */}
+      {/* Breathing radial vignette */}
       <div
         className="pointer-events-none absolute inset-0 farewell-vignette"
         style={{
@@ -201,7 +189,7 @@ export function PalliativeFarewellOverlay({
         ))}
       </div>
 
-      {/* Floating light particles drifting upward */}
+      {/* Floating light particles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {particles.map((p) => (
           <span
@@ -223,13 +211,13 @@ export function PalliativeFarewellOverlay({
         ))}
       </div>
 
-      {/* TOP BAND — Patient name (8% – 22%) */}
+      {/* TOP BAND — Patient name (4% – 14%) */}
       <div
         className={cn(
           "absolute left-1/2 -translate-x-1/2 w-full max-w-3xl px-6 text-center",
-          "top-[8%] md:top-[10%]",
+          "top-[4%] md:top-[5%]",
           "transition-all duration-1000 ease-out",
-          phase === "pause"
+          phase !== "enter"
             ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-4"
         )}
@@ -237,19 +225,18 @@ export function PalliativeFarewellOverlay({
         {activeName && (
           <p className="text-sky-200/80 text-[10px] md:text-xs tracking-[0.4em] uppercase font-light">
             Em memória de
-            <span className="block text-white/95 text-base md:text-xl tracking-[0.15em] mt-3 font-normal">
+            <span className="block text-white/95 text-base md:text-xl tracking-[0.15em] mt-2 font-normal">
               {activeName}
             </span>
           </p>
         )}
       </div>
 
-      {/* GLASS LANDING ZONE — ripples + shadow + sheen anchored to butterfly position */}
+      {/* GLASS LANDING ZONE — anchored to butterfly position (28%) */}
       <div
-        className="pointer-events-none absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2"
-        style={{ width: "min(80vmin, 520px)", height: "min(80vmin, 520px)" }}
+        className="pointer-events-none absolute left-1/2 top-[28%] -translate-x-1/2 -translate-y-1/2"
+        style={{ width: "min(60vmin, 420px)", height: "min(60vmin, 420px)" }}
       >
-        {/* Diagonal glass sheen sweeps once at landing */}
         <div
           className={cn(
             "absolute inset-0 overflow-hidden rounded-full",
@@ -266,7 +253,6 @@ export function PalliativeFarewellOverlay({
           />
         </div>
 
-        {/* Concentric ripple rings — only during the enter phase (impact moment) */}
         {phase === "enter" && (
           <>
             <span
@@ -284,12 +270,11 @@ export function PalliativeFarewellOverlay({
           </>
         )}
 
-        {/* Soft drop shadow projected onto the "glass" beneath the butterfly */}
         <div
           className={cn(
             "absolute left-1/2 bottom-[8%]",
             phase === "enter" && "farewell-shadow-land",
-            phase === "pause" && "farewell-shadow-pause",
+            phase === "live" && "farewell-shadow-pause",
             phase === "exit" && "farewell-shadow-exit"
           )}
           style={{
@@ -302,17 +287,16 @@ export function PalliativeFarewellOverlay({
         />
       </div>
 
-      {/* MIDDLE BAND — Butterfly with luminous aura (centered around 38%) */}
+      {/* MIDDLE BAND — Butterfly with luminous aura (centered around 28%) */}
       <div
         className={cn(
-          "absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2",
+          "absolute left-1/2 top-[28%] -translate-x-1/2 -translate-y-1/2",
           phase === "enter" && "farewell-butterfly-enter",
-          phase === "pause" && "farewell-butterfly-pause",
+          phase === "live" && "farewell-butterfly-live",
           phase === "exit" && "farewell-butterfly-exit"
         )}
       >
-        <div className="relative h-48 w-48 md:h-64 md:w-64 flex items-center justify-center">
-          {/* Aura glow */}
+        <div className="relative h-40 w-40 md:h-56 md:w-56 flex items-center justify-center">
           <div
             className="absolute inset-0 rounded-full farewell-aura pointer-events-none"
             style={{
@@ -344,7 +328,7 @@ export function PalliativeFarewellOverlay({
             >
               <animate
                 attributeName="d"
-                dur="1.1s"
+                dur="0.9s"
                 repeatCount="indefinite"
                 values="
                   M12 12C10 8 6 4 3 5C0 6 1 10 4 12C1 14 0 18 3 19C6 20 10 16 12 12Z;
@@ -360,7 +344,7 @@ export function PalliativeFarewellOverlay({
             >
               <animate
                 attributeName="d"
-                dur="1.1s"
+                dur="0.9s"
                 repeatCount="indefinite"
                 values="
                   M12 12C14 8 18 4 21 5C24 6 23 10 20 12C23 14 24 18 21 19C18 20 14 16 12 12Z;
@@ -370,8 +354,20 @@ export function PalliativeFarewellOverlay({
               />
             </path>
             <ellipse cx="12" cy="12" rx="0.7" ry="3" className="fill-white" />
-            <path d="M11.5 9.5C10.5 7.5 9 6.5 8.5 6" className="stroke-white" strokeWidth="0.4" strokeLinecap="round" fill="none" />
-            <path d="M12.5 9.5C13.5 7.5 15 6.5 15.5 6" className="stroke-white" strokeWidth="0.4" strokeLinecap="round" fill="none" />
+            <path
+              d="M11.5 9.5C10.5 7.5 9 6.5 8.5 6"
+              className="stroke-white"
+              strokeWidth="0.4"
+              strokeLinecap="round"
+              fill="none"
+            />
+            <path
+              d="M12.5 9.5C13.5 7.5 15 6.5 15.5 6"
+              className="stroke-white"
+              strokeWidth="0.4"
+              strokeLinecap="round"
+              fill="none"
+            />
             <circle cx="7" cy="9" r="1.2" className="fill-white/55" />
             <circle cx="7" cy="15" r="1" className="fill-white/55" />
             <circle cx="17" cy="9" r="1.2" className="fill-white/55" />
@@ -382,12 +378,12 @@ export function PalliativeFarewellOverlay({
         </div>
       </div>
 
-      {/* BOTTOM BAND — Reflection text (60% – 92%) */}
+      {/* REFLECTION TEXT — well below the butterfly to avoid overlap (52%–80%) */}
       <div
         className={cn(
           "absolute left-1/2 -translate-x-1/2 w-full max-w-2xl px-8 text-center farewell-reflection",
-          "top-[60%] md:top-[58%]",
-          phase === "pause"
+          "top-[52%]",
+          phase === "live"
             ? "opacity-100 translate-y-0 farewell-reflection-active"
             : "opacity-0 translate-y-6"
         )}
@@ -396,21 +392,37 @@ export function PalliativeFarewellOverlay({
           "{reflection.text}"
         </p>
         {reflection.author && (
-          <p className="mt-4 text-sky-200/70 text-xs md:text-sm tracking-wide">
+          <p className="mt-3 text-sky-200/70 text-xs md:text-sm tracking-wide">
             — {reflection.author}
           </p>
         )}
       </div>
 
-      {/* FOOTER — Caption pinned to bottom (95%) */}
+      {/* DEALLOC ACTION BUTTON — only way to close the overlay */}
       <div
         className={cn(
-          "absolute bottom-[5%] left-1/2 -translate-x-1/2 text-center",
-          "transition-opacity duration-1000",
-          phase === "pause" ? "opacity-100" : "opacity-0"
+          "absolute left-1/2 -translate-x-1/2 bottom-[12%] flex flex-col items-center gap-3",
+          "transition-all duration-1000 ease-out",
+          showAction
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-6 pointer-events-none"
         )}
       >
-        <p className="text-sky-100/50 text-[10px] md:text-xs tracking-[0.5em] uppercase">
+        <Button
+          size="lg"
+          onClick={handleConfirmDealloc}
+          className={cn(
+            "gap-2 px-8 py-6 text-base font-medium tracking-wide",
+            "bg-white/95 text-slate-900 hover:bg-white",
+            "shadow-[0_0_40px_rgba(186,230,253,0.5)]",
+            "border border-sky-200/40"
+          )}
+        >
+          <BedDouble className="h-5 w-5" />
+          Desalocar leito e encerrar
+          <Sparkles className="h-4 w-4 text-amber-500" />
+        </Button>
+        <p className="text-sky-100/60 text-[10px] md:text-xs tracking-[0.3em] uppercase">
           Ortotanásia · Cuidado até o fim
         </p>
       </div>
