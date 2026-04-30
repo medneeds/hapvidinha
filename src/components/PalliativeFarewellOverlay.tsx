@@ -454,6 +454,7 @@ export function PalliativeFarewellOverlay({
         <Button
           size="lg"
           onClick={handleConfirmDealloc}
+          disabled={isDeallocating}
           className={cn(
             "gap-2 px-8 py-6 text-base font-medium tracking-wide",
             "bg-white/95 text-slate-900 hover:bg-white",
@@ -461,13 +462,28 @@ export function PalliativeFarewellOverlay({
             "border border-sky-200/40"
           )}
         >
-          <BedDouble className="h-5 w-5" />
-          Desalocar leito e encerrar
-          <Sparkles className="h-4 w-4 text-amber-500" />
+          {isDeallocating ? (
+            <>
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Desalocando leito...
+            </>
+          ) : (
+            <>
+              <BedDouble className="h-5 w-5" />
+              Desalocar leito e encerrar
+              <Sparkles className="h-4 w-4 text-amber-500" />
+            </>
+          )}
         </Button>
-        <p className="text-sky-100/60 text-[10px] md:text-xs tracking-[0.3em] uppercase">
-          Ortotanásia · Cuidado até o fim
-        </p>
+        {deallocError ? (
+          <p className="text-rose-200 text-xs md:text-sm tracking-wide">
+            {deallocError}
+          </p>
+        ) : (
+          <p className="text-sky-100/60 text-[10px] md:text-xs tracking-[0.3em] uppercase">
+            Ortotanásia · Cuidado até o fim
+          </p>
+        )}
       </div>
     </div>,
     document.body
