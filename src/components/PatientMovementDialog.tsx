@@ -158,25 +158,11 @@ export function PatientMovementDialog({
         description: `${movementType.toLowerCase()} registrado(a) no histórico.`,
       });
 
-      // For deaths: create a post-death review record so the bed shows the
-      // "ÓBITO • REVISAR" ribbon and appears in the global pending badge.
-      if (movementType === "ÓBITO") {
-        await supabase.from('death_reviews' as any).insert({
-          patient_movement_id: movementData?.id ?? null,
-          patient_name: patient.name,
-          patient_bed: patient.bedNumber,
-          patient_sector: patient.sector,
-          department: patientDepartment,
-          state_id: currentState.id,
-          hospital_unit_id: currentHospital.id,
-          created_by: user?.id,
-        });
-      }
-
-      // Trigger palliative farewell overlay if patient was in palliative care and died
+      // 1) Trigger the palliative farewell overlay FIRST, while we still hold
+      //    the patient reference and BEFORE onSuccess unmounts the card.
+      //    The overlay lives in the global provider, so it survives unmount.
       const isPalliative = (patient as any).clinicalStatus === 'paliativado';
       console.log('[FAREWELL] death movement saved', {
-        patientId: (patient as any).id,
         patientName: patient.name,
         bed: patient.bedNumber,
         sector: patient.sector,
@@ -189,13 +175,38 @@ export function PatientMovementDialog({
       });
       if (movementType === "ÓBITO" && isPalliative) {
         console.log('[FAREWELL] calling triggerFarewell()', { patientName: patient.name });
-        triggerFarewell(patient.name);
-      } else if (movementType === 'ÓBITO') {
-        console.log('[FAREWELL] overlay skipped — patient was not in palliative care', {
-          clinicalStatus: (patient as any).clinicalStatus,
-        });
+        try {
+          triggerFarewell(patient.name);
+        } catch (e) {
+          console.error('[FAREWELL] triggerFarewell threw', e);
+        }
       }
 
+      // 2) Create the post-death review record (best-effort — must not block
+      //    the rest of the flow if the table/policy fails for any reason).
+      if (movementType === "ÓBITO") {
+        try {
+          const { error: reviewError } = await supabase
+            .from('death_reviews' as any)
+            .insert({
+              patient_movement_id: movementData?.id ?? null,
+              patient_name: patient.name,
+              patient_bed: patient.bedNumber,
+              patient_sector: patient.sector,
+              department: patientDepartment,
+              state_id: currentState.id,
+              hospital_unit_id: currentHospital.id,
+              created_by: user?.id,
+            });
+          if (reviewError) {
+            console.error('[DEATH_REVIEW] insert failed (non-blocking)', reviewError);
+          }
+        } catch (e) {
+          console.error('[DEATH_REVIEW] insert threw (non-blocking)', e);
+        }
+      }
+
+      // 3) Notify parent + close dialog.
       onSuccess?.();
       handleClose();
     } catch (error) {
