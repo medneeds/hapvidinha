@@ -20,10 +20,10 @@ const REFLECTIONS = [
 
 type Phase = "enter" | "pause" | "exit";
 
-const ENTER_MS = 2500;
-const PAUSE_MS = 4000;
-const EXIT_FADE_MS = 1100;
-const EXIT_TOTAL_MS = 3000;
+const ENTER_MS = 2800;
+const PAUSE_MS = 5200;
+const EXIT_FADE_MS = 1300;
+const EXIT_TOTAL_MS = 3400;
 
 export function PalliativeFarewellOverlay({
   open,
