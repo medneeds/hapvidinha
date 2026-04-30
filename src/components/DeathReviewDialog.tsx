@@ -7,9 +7,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Skull, CheckCircle2, Clock } from "lucide-react";
+import { Skull, CheckCircle2, Clock, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DeathReview,
@@ -20,6 +30,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { usePalliativeFarewell } from "@/contexts/PalliativeFarewellContext";
 
 type DeathReviewDoneKey = `${DeathReviewItem}_done`;
 type DeathReviewAtKey = `${DeathReviewItem}_at`;
@@ -37,14 +48,34 @@ export function DeathReviewDialog({
   onOpenChange,
 }: DeathReviewDialogProps) {
   const { toggleItem } = useDeathReviews(review?.department);
+  const { triggerFarewell } = usePalliativeFarewell();
   const [savingItem, setSavingItem] = useState<DeathReviewItem | null>(null);
   const [localReview, setLocalReview] = useState<DeathReview | null>(review);
   const localReviewRef = useRef<DeathReview | null>(review);
+  const [confirmFarewellOpen, setConfirmFarewellOpen] = useState(false);
+  const farewellTriggeredRef = useRef<string | null>(null);
 
   useEffect(() => {
     setLocalReview(review);
     localReviewRef.current = review;
+    if (!review) {
+      setConfirmFarewellOpen(false);
+    }
   }, [review]);
+
+  // When all pendências are concluded, prompt the user to confirm deallocation + farewell
+  useEffect(() => {
+    if (!localReview) return;
+    const allDone = DEATH_REVIEW_ITEMS.every(
+      (it) => localReview[`${it.key}_done` as DeathReviewDoneKey]
+    );
+    if (
+      allDone &&
+      farewellTriggeredRef.current !== localReview.id
+    ) {
+      setConfirmFarewellOpen(true);
+    }
+  }, [localReview]);
 
   if (!localReview) return null;
 
@@ -181,8 +212,8 @@ export function DeathReviewDialog({
 
         {completedCount === DEATH_REVIEW_ITEMS.length && (
           <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-200">
-            ✅ Todas as pendências foram concluídas. O indicador será removido
-            automaticamente.
+            ✅ Todas as pendências foram concluídas. Confirme abaixo para
+            desalocar o leito e iniciar a despedida.
           </div>
         )}
 
@@ -190,8 +221,64 @@ export function DeathReviewDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Fechar
           </Button>
+          {completedCount === DEATH_REVIEW_ITEMS.length && (
+            <Button
+              onClick={() => setConfirmFarewellOpen(true)}
+              className="gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              Desalocar e despedir
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
+
+      <AlertDialog
+        open={confirmFarewellOpen}
+        onOpenChange={setConfirmFarewellOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              CONFIRMAR DESALOCAÇÃO
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <span className="block">
+                Todas as pendências de <strong>{localReview.patient_name}</strong>{" "}
+                foram concluídas.
+              </span>
+              <span className="block">
+                Deseja <strong>desalocar o leito {localReview.patient_bed}</strong>{" "}
+                e iniciar a animação de despedida (borboleta)?
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (!localReview) return;
+                farewellTriggeredRef.current = localReview.id;
+                setConfirmFarewellOpen(false);
+                onOpenChange(false);
+                // Trigger butterfly farewell after dialog close transition
+                setTimeout(() => {
+                  try {
+                    triggerFarewell(localReview.patient_name);
+                  } catch (e) {
+                    console.error("[FAREWELL] trigger from review failed", e);
+                  }
+                }, 120);
+              }}
+              className="gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              Sim, desalocar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }
