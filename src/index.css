@@ -980,6 +980,38 @@ input:-webkit-autofill:active {
   will-change: transform, opacity, filter;
 }
 
+/* 3D scene container — gives perspective so translateZ has meaning */
+.farewell-scene {
+  perspective: 1400px;
+  perspective-origin: 50% 45%;
+}
+
+/* Drop shadow projected onto the "glass" beneath the butterfly */
+.farewell-shadow-land {
+  animation: farewell-shadow-land 2.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.farewell-shadow-pause {
+  animation:
+    farewell-shadow-land 2.8s cubic-bezier(0.22, 0.61, 0.36, 1) both,
+    farewell-shadow-pause 5s ease-in-out 2.8s infinite;
+}
+.farewell-shadow-exit {
+  animation: farewell-shadow-exit 1.6s ease-in both;
+}
+
+/* Concentric ripple rings on landing */
+.farewell-ripple {
+  animation: farewell-ripple 1.6s cubic-bezier(0.16, 1, 0.3, 1) 2.55s both;
+}
+.farewell-ripple-2 {
+  animation: farewell-ripple 1.9s cubic-bezier(0.16, 1, 0.3, 1) 2.7s both;
+}
+
+/* Diagonal glass sheen — sweeps across the surface once on landing */
+.farewell-glass-sheen {
+  animation: farewell-glass-sheen 3.2s ease-in-out 2.6s both;
+}
+
 .farewell-aura {
   animation: farewell-aura-pulse 3.5s ease-in-out infinite;
   will-change: transform, opacity;
