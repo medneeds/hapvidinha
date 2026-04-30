@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useHospital } from "@/contexts/HospitalContext";
 import { TrendingUp, Skull, ArrowLeftRight } from "lucide-react";
-import { PalliativeFarewellOverlay } from "./PalliativeFarewellOverlay";
+import { usePalliativeFarewell } from "@/contexts/PalliativeFarewellContext";
 
 interface PatientMovementDialogProps {
   patient: Patient | null;
@@ -83,9 +83,8 @@ export function PatientMovementDialog({
   const [responsibleDoctor, setResponsibleDoctor] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [doctors, setDoctors] = useState<{ id: string; full_name: string }[]>([]);
-  const [showFarewell, setShowFarewell] = useState(false);
-  const [farewellName, setFarewellName] = useState<string>("");
   const { toast } = useToast();
+  const { triggerFarewell } = usePalliativeFarewell();
   const { currentState, currentHospital } = useHospital();
 
   useEffect(() => {
@@ -160,8 +159,7 @@ export function PatientMovementDialog({
       // Trigger palliative farewell overlay if patient was in palliative care and died
       const isPalliative = (patient as any).clinicalStatus === 'paliativado';
       if (movementType === "ÓBITO" && isPalliative) {
-        setFarewellName(patient.name);
-        setShowFarewell(true);
+        triggerFarewell(patient.name);
       }
 
       onSuccess?.();
@@ -186,21 +184,9 @@ export function PatientMovementDialog({
     onClose();
   };
 
-  const farewellOverlay = (
-    <PalliativeFarewellOverlay
-      open={showFarewell}
-      patientName={farewellName}
-      onClose={() => setShowFarewell(false)}
-    />
-  );
-
-  if (!config || !patient) {
-    return farewellOverlay;
-  }
+  if (!config || !patient) return null;
 
   return (
-    <>
-    {farewellOverlay}
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
