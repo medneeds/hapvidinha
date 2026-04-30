@@ -1211,6 +1211,7 @@ export type Database = {
           blood_culture_time: string | null
           created_at: string
           created_by: string | null
+          deletion_reason: string | null
           destination: string | null
           destination_date: string | null
           destination_time: string | null
@@ -1269,6 +1270,7 @@ export type Database = {
           blood_culture_time?: string | null
           created_at?: string
           created_by?: string | null
+          deletion_reason?: string | null
           destination?: string | null
           destination_date?: string | null
           destination_time?: string | null
@@ -1327,6 +1329,7 @@ export type Database = {
           blood_culture_time?: string | null
           created_at?: string
           created_by?: string | null
+          deletion_reason?: string | null
           destination?: string | null
           destination_date?: string | null
           destination_time?: string | null
