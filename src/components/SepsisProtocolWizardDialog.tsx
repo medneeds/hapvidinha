@@ -26,17 +26,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock, Download, AlertTriangle, CheckCircle2, Stethoscope, Trash2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { generateSepsisProtocolPdf } from "@/utils/sepsisProtocolPdf";
+import { DeleteSepsisProtocolDialog } from "./DeleteSepsisProtocolDialog";
 import { cn } from "@/lib/utils";
 
 interface SepsisProtocolWizardDialogProps {
@@ -435,6 +426,11 @@ export function SepsisProtocolWizardDialog({
   };
 
   const handleNext = async () => {
+    const validationError = validateCurrentStep();
+    if (validationError) {
+      toast({ title: "VALIDAÇÃO PENDENTE", description: validationError, variant: "destructive" });
+      return;
+    }
     if (currentStep === 0 && !protocolId) {
       await handleStartProtocol();
       return;
@@ -501,28 +497,43 @@ export function SepsisProtocolWizardDialog({
     }
   };
 
-  const handleCancelProtocol = async () => {
-    if (!protocolId) return;
-    setIsCancelling(true);
-    try {
-      const { error } = await supabase
-        .from('sepsis_protocols')
-        .delete()
-        .eq('id', protocolId);
-      if (error) throw error;
-      toast({ title: "Protocolo cancelado", description: "O protocolo de sepse foi excluído por ter sido aberto por engano." });
-      setProtocolId(null);
-      setFormData({ ...initialFormData });
-      setCurrentStep(0);
-      onSuccess?.();
-      setCancelDialogOpen(false);
-      onClose();
-    } catch (err) {
-      console.error('Error deleting sepsis protocol:', err);
-      toast({ title: "Erro", description: "Não foi possível cancelar o protocolo.", variant: "destructive" });
-    } finally {
-      setIsCancelling(false);
+  const handleProtocolDeleted = () => {
+    setProtocolId(null);
+    setFormData({ ...initialFormData });
+    setCurrentStep(0);
+    onSuccess?.();
+    onClose();
+  };
+
+  // Per-step validation: returns null if OK, otherwise an error message
+  const validateCurrentStep = (): string | null => {
+    const step = STEPS[currentStep].key;
+    if (step === "identification") {
+      if (!formData.patient_name?.trim()) return "Nome do paciente é obrigatório.";
     }
+    if (step === "dysfunction") {
+      if (formData.has_organic_dysfunction === null)
+        return "Informe se há disfunção orgânica confirmada (SIM/NÃO).";
+    }
+    if (step === "focus") {
+      if (formData.has_infection === null)
+        return "Informe se há infecção confirmada ou suspeita (SIM/NÃO).";
+      if (formData.has_infection === true) {
+        const focusCount =
+          [formData.focus_pulmonary, formData.focus_urinary, formData.focus_abdominal,
+            formData.focus_skin, formData.focus_neurological].filter(Boolean).length +
+          (formData.focus_other?.trim() ? 1 : 0);
+        if (focusCount === 0)
+          return "Selecione ao menos um foco infeccioso ou descreva em 'Outro'.";
+      }
+    }
+    if (step === "treatment") {
+      const hasAdmin =
+        formData.antibiotic_administration_date && formData.antibiotic_administration_time;
+      if (hasAdmin && !formData.antibiotic_names?.trim())
+        return "Informe o(s) antibiótico(s) administrado(s).";
+    }
+    return null;
   };
 
   const sirsCount = [
@@ -990,36 +1001,15 @@ export function SepsisProtocolWizardDialog({
         </DialogFooter>
       </DialogContent>
 
-      {/* Confirmation dialog for cancelling protocol */}
-      <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
-        <AlertDialogContent className="dark:bg-gray-900 dark:border-gray-700">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="dark:text-white text-lg font-semibold flex items-center gap-2">
-              <Trash2 className="h-5 w-5 text-destructive" />
-              Cancelar Protocolo de Sepse
-            </AlertDialogTitle>
-            <AlertDialogDescription className="dark:text-gray-300 text-base">
-              Tem certeza que deseja cancelar e <strong>excluir</strong> este protocolo de sepse?
-              <br />
-              <span className="text-destructive dark:text-red-400 font-medium mt-2 inline-block">
-                Use esta opção apenas se o protocolo foi aberto por engano. Esta ação não pode ser desfeita.
-              </span>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
-              Manter Protocolo
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleCancelProtocol}
-              disabled={isCancelling}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {isCancelling ? "Excluindo..." : "Sim, Excluir Protocolo"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Deletion dialog: requires reason and respects RLS rules */}
+      <DeleteSepsisProtocolDialog
+        open={cancelDialogOpen}
+        onOpenChange={setCancelDialogOpen}
+        protocolId={protocolId}
+        patientName={formData.patient_name}
+        isFinalized={!!formData.outcome}
+        onDeleted={handleProtocolDeleted}
+      />
     </Dialog>
   );
 }

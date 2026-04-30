@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { MainLayout } from "@/components/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,15 +10,17 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Activity, Search, FileText, Eye, Download, AlertTriangle, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { Activity, Search, FileText, Eye, Download, AlertTriangle, CheckCircle2, Clock, XCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { generateSepsisProtocolPdf } from "@/utils/sepsisProtocolPdf";
+import { DeleteSepsisProtocolDialog } from "@/components/DeleteSepsisProtocolDialog";
 
 interface SepsisProtocolRow {
   id: string;
   patient_name: string;
   patient_id: string | null;
+  created_by: string | null;
   opening_date: string | null;
   opening_time: string | null;
   created_at: string;
@@ -70,7 +73,13 @@ export default function SepsisProtocolsAdminPage() {
   const [search, setSearch] = useState("");
   const [filterOutcome, setFilterOutcome] = useState<string>("all");
   const [selectedProtocol, setSelectedProtocol] = useState<SepsisProtocolRow | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SepsisProtocolRow | null>(null);
   const { currentHospital, currentState } = useHospital();
+  const { user, role } = useAuth();
+
+  const isAdmin = role === "admin";
+  const canDelete = (p: SepsisProtocolRow) =>
+    isAdmin || (p.created_by === user?.id && !p.outcome);
 
   useEffect(() => {
     fetchProtocols();
@@ -203,8 +212,19 @@ export default function SepsisProtocolsAdminPage() {
                     <TableCell>{getOutcomeBadge(p.outcome)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-1 justify-end">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); setSelectedProtocol(p); }}><Eye className="h-3.5 w-3.5" /></Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); handleExportPdf(p); }}><Download className="h-3.5 w-3.5" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); setSelectedProtocol(p); }} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); handleExportPdf(p); }} title="Exportar PDF"><Download className="h-3.5 w-3.5" /></Button>
+                        {canDelete(p) && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={e => { e.stopPropagation(); setDeleteTarget(p); }}
+                            title={isAdmin ? "Excluir (admin)" : "Excluir (somente em curso)"}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -314,7 +334,18 @@ export default function SepsisProtocolsAdminPage() {
                   </div>
                 )}
 
-                <div className="flex justify-end pt-2">
+                <div className="flex justify-between gap-2 pt-2">
+                  {canDelete(selectedProtocol) ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-destructive border-destructive/40 hover:bg-destructive/10"
+                      onClick={() => setDeleteTarget(selectedProtocol)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      EXCLUIR PROTOCOLO
+                    </Button>
+                  ) : <span />}
                   <Button size="sm" variant="outline" onClick={() => handleExportPdf(selectedProtocol)}>
                     <Download className="h-4 w-4 mr-1" />
                     EXPORTAR PDF
@@ -325,6 +356,19 @@ export default function SepsisProtocolsAdminPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <DeleteSepsisProtocolDialog
+        open={!!deleteTarget}
+        onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}
+        protocolId={deleteTarget?.id || null}
+        patientName={deleteTarget?.patient_name}
+        isFinalized={!!deleteTarget?.outcome}
+        onDeleted={() => {
+          setDeleteTarget(null);
+          if (selectedProtocol?.id === deleteTarget?.id) setSelectedProtocol(null);
+          fetchProtocols();
+        }}
+      />
     </div>
   );
 }
