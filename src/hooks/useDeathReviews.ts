@@ -148,15 +148,11 @@ export function useDeathReviews(department?: string | null) {
         [byField]: done ? byName : null,
       };
 
-      // After applying this change locally, decide whether all items are complete
-      const merged = { ...review, ...updates };
-      const allDone =
-        merged.death_certificate_done &&
-        merged.family_notified_done &&
-        merged.belongings_removal_done &&
-        merged.chart_finalized_done;
-      updates.completed_at = allDone ? now : null;
-
+      // IMPORTANT: do NOT auto-set completed_at here, even if every checklist
+      // item is now done. Completion (and the consequent removal of the bed
+      // ribbon) only happens when the user explicitly confirms deallocation
+      // at the end of the farewell flow — mirroring the way alta/transferência
+      // only frees the bed when the user presses "Confirmar".
       const { data, error } = await supabase
         .from("death_reviews")
         .update(updates)
@@ -185,12 +181,39 @@ export function useDeathReviews(department?: string | null) {
     [fetchReviews]
   );
 
+  /**
+   * Mark a review as fully completed. This is the canonical "deallocate bed"
+   * step — it sets completed_at on the review, which removes the ÓBITO•REVISAR
+   * ribbon from the bed and frees it visually. Should be called only AFTER
+   * the user confirms via the farewell action button.
+   */
+  const completeReview = useCallback(
+    async (review: DeathReview) => {
+      const now = new Date().toISOString();
+      const { data, error } = await supabase
+        .from("death_reviews")
+        .update({ completed_at: now })
+        .eq("id", review.id)
+        .select()
+        .single();
+      if (error) {
+        console.error("Failed to complete death review", error);
+        throw error;
+      }
+      setReviews((current) => current.filter((r) => r.id !== review.id));
+      await fetchReviews();
+      return data as unknown as DeathReview;
+    },
+    [fetchReviews]
+  );
+
   return {
     reviews,
     pendingCount: reviews.length,
     isLoading,
     createReview,
     toggleItem,
+    completeReview,
     refetch: fetchReviews,
     getReviewForBed: (bed: string, dept?: string) =>
       reviews.find(
