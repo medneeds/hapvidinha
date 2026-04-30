@@ -1,0 +1,2 @@
+ALTER TABLE public.sepsis_protocols DROP CONSTRAINT IF EXISTS sepsis_protocols_outcome_check;
+ALTER TABLE public.sepsis_protocols DROP CONSTRAINT IF EXISTS sepsis_protocols_destination_check;
