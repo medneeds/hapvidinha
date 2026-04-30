@@ -869,8 +869,9 @@ export function UtiPatientCard({
       isVacant: true, // Mark bed as vacant after movement
     };
     
-    // Update the patient - this persists to database
-    onUpdate(emptyPatient);
+    // Update the patient - this persists to database before the dialog finishes,
+    // so the bed is actually released and realtime cannot restore stale data.
+    await onUpdate(emptyPatient);
     
     // Close dialog
     setIsMovementDialogOpen(false);
