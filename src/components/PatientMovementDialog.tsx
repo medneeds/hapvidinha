@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useHospital } from "@/contexts/HospitalContext";
 import { TrendingUp, Skull, ArrowLeftRight } from "lucide-react";
+import { PalliativeFarewellOverlay } from "./PalliativeFarewellOverlay";
 
 interface PatientMovementDialogProps {
   patient: Patient | null;
@@ -82,6 +83,7 @@ export function PatientMovementDialog({
   const [responsibleDoctor, setResponsibleDoctor] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [doctors, setDoctors] = useState<{ id: string; full_name: string }[]>([]);
+  const [showFarewell, setShowFarewell] = useState(false);
   const { toast } = useToast();
   const { currentState, currentHospital } = useHospital();
 
@@ -154,6 +156,12 @@ export function PatientMovementDialog({
         description: `${movementType.toLowerCase()} registrado(a) no histórico.`,
       });
 
+      // Trigger palliative farewell overlay if patient was in palliative care and died
+      const isPalliative = (patient as any).clinicalStatus === 'paliativado';
+      if (movementType === "ÓBITO" && isPalliative) {
+        setShowFarewell(true);
+      }
+
       onSuccess?.();
       handleClose();
     } catch (error) {
@@ -176,9 +184,23 @@ export function PatientMovementDialog({
     onClose();
   };
 
-  if (!config || !patient) return null;
+  if (!config || !patient) {
+    return (
+      <PalliativeFarewellOverlay
+        open={showFarewell}
+        patientName={patient?.name}
+        onClose={() => setShowFarewell(false)}
+      />
+    );
+  }
 
   return (
+    <>
+    <PalliativeFarewellOverlay
+      open={showFarewell}
+      patientName={patient?.name}
+      onClose={() => setShowFarewell(false)}
+    />
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
@@ -266,5 +288,6 @@ export function PatientMovementDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
