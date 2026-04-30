@@ -212,8 +212,19 @@ export default function SepsisProtocolsAdminPage() {
                     <TableCell>{getOutcomeBadge(p.outcome)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-1 justify-end">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); setSelectedProtocol(p); }}><Eye className="h-3.5 w-3.5" /></Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); handleExportPdf(p); }}><Download className="h-3.5 w-3.5" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); setSelectedProtocol(p); }} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); handleExportPdf(p); }} title="Exportar PDF"><Download className="h-3.5 w-3.5" /></Button>
+                        {canDelete(p) && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={e => { e.stopPropagation(); setDeleteTarget(p); }}
+                            title={isAdmin ? "Excluir (admin)" : "Excluir (somente em curso)"}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
