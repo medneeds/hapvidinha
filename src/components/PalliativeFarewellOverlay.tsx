@@ -2,12 +2,18 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { BedDouble, Sparkles } from "lucide-react";
+import { BedDouble, Sparkles, Loader2 } from "lucide-react";
 
 interface PalliativeFarewellOverlayProps {
   open: boolean;
   patientName?: string;
   onClose: () => void;
+  /**
+   * Called when the user clicks "Desalocar leito e encerrar". The overlay
+   * waits for this to resolve before starting the exit animation. If it
+   * rejects, the overlay stays open so the user can retry.
+   */
+  onDeallocate?: () => Promise<void> | void;
 }
 
 const REFLECTIONS = [
