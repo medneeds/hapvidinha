@@ -307,7 +307,7 @@ export function PalliativeFarewellOverlay({
         className={cn(
           "relative z-10 max-w-2xl mx-auto px-8 text-center farewell-reflection",
           phase === "pause"
-            ? "opacity-100 translate-y-0"
+            ? "opacity-100 translate-y-0 farewell-reflection-active"
             : "opacity-0 translate-y-6"
         )}
       >
