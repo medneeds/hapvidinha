@@ -9,75 +9,95 @@ interface PalliativeFarewellOverlayProps {
 }
 
 const REFLECTIONS = [
-  {
-    text: "Quando a borboleta encontra seu voo, a lagarta cumpriu seu propósito. A vida não termina — apenas muda de forma.",
-    author: "",
-  },
-  {
-    text: "Há um tempo em que é preciso abandonar as roupas usadas, que já têm a forma do nosso corpo. É o tempo da travessia.",
-    author: "Manoel de Barros",
-  },
-  {
-    text: "Não se trata de prolongar a vida, nem de abreviá-la — mas de respeitar seu tempo natural. Partir em paz é também um ato de cuidado.",
-    author: "",
-  },
-  {
-    text: "Cuidar até o fim é reconhecer que existe dignidade em cada respiração — inclusive na última.",
-    author: "",
-  },
-  {
-    text: "A morte não é o oposto da vida, mas parte dela. E acompanhar quem parte é o gesto mais humano da medicina.",
-    author: "",
-  },
-  {
-    text: "Quando não se pode mais acrescentar dias à vida, resta acrescentar vida aos dias — e paz à despedida.",
-    author: "Cicely Saunders",
-  },
-  {
-    text: "Como a borboleta que pousa apenas o tempo necessário, há vidas que nos atravessam para nos ensinar sobre o tempo certo de partir.",
-    author: "",
-  },
+  { text: "Quando a borboleta encontra seu voo, a lagarta cumpriu seu propósito. A vida não termina — apenas muda de forma.", author: "" },
+  { text: "Há um tempo em que é preciso abandonar as roupas usadas, que já têm a forma do nosso corpo. É o tempo da travessia.", author: "Manoel de Barros" },
+  { text: "Não se trata de prolongar a vida, nem de abreviá-la — mas de respeitar seu tempo natural. Partir em paz é também um ato de cuidado.", author: "" },
+  { text: "Cuidar até o fim é reconhecer que existe dignidade em cada respiração — inclusive na última.", author: "" },
+  { text: "A morte não é o oposto da vida, mas parte dela. E acompanhar quem parte é o gesto mais humano da medicina.", author: "" },
+  { text: "Quando não se pode mais acrescentar dias à vida, resta acrescentar vida aos dias — e paz à despedida.", author: "Cicely Saunders" },
+  { text: "Como a borboleta que pousa apenas o tempo necessário, há vidas que nos atravessam para nos ensinar sobre o tempo certo de partir.", author: "" },
 ];
 
 type Phase = "enter" | "pause" | "exit";
 
 const ENTER_MS = 2500;
 const PAUSE_MS = 4000;
-const EXIT_MS = 3000;
+const EXIT_FADE_MS = 1100;
+const EXIT_TOTAL_MS = 3000;
 
 export function PalliativeFarewellOverlay({
   open,
   patientName,
   onClose,
 }: PalliativeFarewellOverlayProps) {
-  // Mounted state is decoupled from `open` so we can keep the overlay alive
-  // through the fade-out animation, avoiding any perceptible unmount flicker.
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<Phase>("enter");
-  const closedRef = useRef(false);
-  const mountedRef = useRef(false);
-  const timersRef = useRef<number[]>([]);
+  const [activeName, setActiveName] = useState<string | undefined>(undefined);
 
-  const setOverlayMounted = (value: boolean) => {
-    mountedRef.current = value;
-    setMounted(value);
-  };
+  const timersRef = useRef<number[]>([]);
+  const closedRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   const clearTimers = () => {
-    timersRef.current.forEach((timer) => window.clearTimeout(timer));
+    timersRef.current.forEach((t) => window.clearTimeout(t));
     timersRef.current = [];
   };
 
-  const scheduleTimer = (callback: () => void, delay: number) => {
-    const timer = window.setTimeout(callback, delay);
-    timersRef.current.push(timer);
-    return timer;
+  const schedule = (cb: () => void, delay: number) => {
+    const t = window.setTimeout(cb, delay);
+    timersRef.current.push(t);
   };
+
+  // Mount + drive the entire enter → pause → exit sequence whenever a NEW
+  // farewell is triggered (open transitions to true, even if already true).
+  useEffect(() => {
+    if (!open) return;
+
+    console.log('[FAREWELL] overlay sequence starting', { patientName });
+    clearTimers();
+    closedRef.current = false;
+    setActiveName(patientName);
+    setMounted(true);
+    setPhase("enter");
+
+    schedule(() => {
+      console.log('[FAREWELL] phase → pause');
+      setPhase("pause");
+    }, ENTER_MS);
+
+    schedule(() => {
+      console.log('[FAREWELL] phase → exit (auto)');
+      setPhase("exit");
+    }, ENTER_MS + PAUSE_MS);
+
+    schedule(() => {
+      if (closedRef.current) return;
+      closedRef.current = true;
+      console.log('[FAREWELL] firing onClose() after exit fade');
+      onCloseRef.current();
+    }, ENTER_MS + PAUSE_MS + EXIT_FADE_MS);
+
+    schedule(() => {
+      console.log('[FAREWELL] overlay unmounting');
+      setMounted(false);
+    }, ENTER_MS + PAUSE_MS + EXIT_TOTAL_MS);
+
+    return () => {
+      // Only clear on real unmount of the provider, not on prop churn.
+    };
+    // We deliberately key on patientName too: a brand-new farewell while one
+    // is already playing should restart the sequence cleanly.
+  }, [open, patientName]);
+
+  useEffect(() => () => clearTimers(), []);
 
   const reflection = useMemo(
     () => REFLECTIONS[Math.floor(Math.random() * REFLECTIONS.length)],
-    // re-pick only when a new farewell starts
-    [open, patientName]
+    [activeName]
   );
 
   const stars = useMemo(
@@ -91,65 +111,20 @@ export function PalliativeFarewellOverlay({
         animationDelay: `${Math.random() * 3}s`,
         animationDuration: `${2 + Math.random() * 3}s`,
       })),
-    [open, patientName]
+    [activeName]
   );
 
-  // Mount when opened; never tear down before the exit animation completes.
-  useEffect(() => {
-    console.log('[FAREWELL] overlay open prop changed', {
-      open,
-      patientName,
-      timestamp: new Date().toISOString(),
-    });
-    if (!open) return;
-    console.log('[FAREWELL] overlay mounting & starting enter phase', { patientName });
-    closedRef.current = false;
-    setMounted(true);
-    setPhase("enter");
-
-    // enter (2.5s) → pause (4s) → exit (3s) → unmount
-    const tPause = setTimeout(() => {
-      console.log('[FAREWELL] phase → pause');
-      setPhase("pause");
-    }, 2500);
-    const tExit = setTimeout(() => {
-      console.log('[FAREWELL] phase → exit (auto)');
-      setPhase("exit");
-    }, 6500);
-    const tClose = setTimeout(() => {
-      if (closedRef.current) {
-        console.log('[FAREWELL] tClose skipped — already closed');
-        return;
-      }
-      console.log('[FAREWELL] firing onClose() after exit fade');
-      closedRef.current = true;
-      onClose();
-    }, 6500 + 1100); // fire onClose after backdrop fade (~1s)
-    const tUnmount = setTimeout(() => {
-      console.log('[FAREWELL] overlay unmounting');
-      setMounted(false);
-    }, 6500 + 3100);
-
-    return () => {
-      console.log('[FAREWELL] effect cleanup — clearing timers', { open });
-      clearTimeout(tPause);
-      clearTimeout(tExit);
-      clearTimeout(tClose);
-      clearTimeout(tUnmount);
-    };
-  }, [open, onClose, patientName]);
-
   const handleSkip = () => {
-    console.log('[FAREWELL] user clicked overlay (skip)', { phase });
     if (phase === "exit") return;
+    console.log('[FAREWELL] user clicked overlay (skip)');
+    clearTimers();
     setPhase("exit");
-    setTimeout(() => {
+    schedule(() => {
       if (closedRef.current) return;
       closedRef.current = true;
-      console.log('[FAREWELL] firing onClose() after user skip');
-      onClose();
-    }, 1100);
-    setTimeout(() => setMounted(false), 3100);
+      onCloseRef.current();
+    }, EXIT_FADE_MS);
+    schedule(() => setMounted(false), EXIT_TOTAL_MS);
   };
 
   if (!mounted) return null;
@@ -168,30 +143,23 @@ export function PalliativeFarewellOverlay({
       role="dialog"
       aria-label="Homenagem de despedida"
     >
-      {/* Subtle starfield */}
       <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 40 }).map((_, i) => (
+        {stars.map((s) => (
           <span
-            key={i}
+            key={s.id}
             className="absolute rounded-full bg-white/60 animate-pulse"
             style={{
-              width: `${1 + Math.random() * 2}px`,
-              height: `${1 + Math.random() * 2}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 3}s`,
+              width: s.width,
+              height: s.height,
+              top: s.top,
+              left: s.left,
+              animationDelay: s.animationDelay,
+              animationDuration: s.animationDuration,
             }}
           />
         ))}
       </div>
 
-      {/*
-        Butterfly: a single element whose class swaps once between
-        "enter/pause" (which chains both keyframes) and "exit". The pause
-        class re-declares the enter animation so the visual frame never
-        snaps when transitioning enter→pause.
-      */}
       <div
         className={cn(
           "absolute",
@@ -248,7 +216,6 @@ export function PalliativeFarewellOverlay({
         </svg>
       </div>
 
-      {/* Reflection message */}
       <div
         className={cn(
           "relative z-10 max-w-2xl mx-auto px-8 text-center farewell-reflection",
@@ -257,11 +224,11 @@ export function PalliativeFarewellOverlay({
             : "opacity-0 translate-y-6"
         )}
       >
-        {patientName && (
+        {activeName && (
           <p className="text-sky-200/80 text-xs md:text-sm tracking-[0.3em] uppercase mb-6 font-light">
             Em memória de
             <span className="block text-white/95 text-base md:text-lg tracking-wider mt-2 font-normal">
-              {patientName}
+              {activeName}
             </span>
           </p>
         )}
