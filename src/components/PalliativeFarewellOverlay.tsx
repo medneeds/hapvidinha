@@ -244,6 +244,64 @@ export function PalliativeFarewellOverlay({
         )}
       </div>
 
+      {/* GLASS LANDING ZONE — ripples + shadow + sheen anchored to butterfly position */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2"
+        style={{ width: "min(80vmin, 520px)", height: "min(80vmin, 520px)" }}
+      >
+        {/* Diagonal glass sheen sweeps once at landing */}
+        <div
+          className={cn(
+            "absolute inset-0 overflow-hidden rounded-full",
+            phase !== "enter" ? "opacity-0" : "opacity-100"
+          )}
+        >
+          <div
+            className="absolute inset-y-0 -inset-x-1/2 farewell-glass-sheen"
+            style={{
+              background:
+                "linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.18) 50%, transparent 65%)",
+              mixBlendMode: "screen",
+            }}
+          />
+        </div>
+
+        {/* Concentric ripple rings — only during the enter phase (impact moment) */}
+        {phase === "enter" && (
+          <>
+            <span
+              className="absolute left-1/2 top-1/2 farewell-ripple rounded-full border border-sky-200/50"
+              style={{
+                width: "60%",
+                height: "60%",
+                boxShadow: "0 0 40px rgba(186,230,253,0.3)",
+              }}
+            />
+            <span
+              className="absolute left-1/2 top-1/2 farewell-ripple-2 rounded-full border border-sky-100/30"
+              style={{ width: "40%", height: "40%" }}
+            />
+          </>
+        )}
+
+        {/* Soft drop shadow projected onto the "glass" beneath the butterfly */}
+        <div
+          className={cn(
+            "absolute left-1/2 bottom-[8%]",
+            phase === "enter" && "farewell-shadow-land",
+            phase === "pause" && "farewell-shadow-pause",
+            phase === "exit" && "farewell-shadow-exit"
+          )}
+          style={{
+            width: "65%",
+            height: "10%",
+            background:
+              "radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, transparent 75%)",
+            transformOrigin: "center",
+          }}
+        />
+      </div>
+
       {/* MIDDLE BAND — Butterfly with luminous aura (centered around 38%) */}
       <div
         className={cn(
