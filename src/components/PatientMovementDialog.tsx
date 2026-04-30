@@ -274,6 +274,5 @@ export function PatientMovementDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-    </>
   );
 }
