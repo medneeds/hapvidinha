@@ -151,7 +151,7 @@ export function PalliativeFarewellOverlay({
   return createPortal(
     <div
       className={cn(
-        "fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden",
+        "fixed inset-0 z-[9999] overflow-hidden",
         "bg-gradient-to-br from-slate-950 via-indigo-950/95 to-sky-950/90",
         "backdrop-blur-md",
         isExiting ? "farewell-backdrop-exit" : "farewell-backdrop"
@@ -223,16 +223,37 @@ export function PalliativeFarewellOverlay({
         ))}
       </div>
 
-      {/* Butterfly with luminous aura */}
+      {/* TOP BAND — Patient name (8% – 22%) */}
       <div
         className={cn(
-          "absolute",
+          "absolute left-1/2 -translate-x-1/2 w-full max-w-3xl px-6 text-center",
+          "top-[8%] md:top-[10%]",
+          "transition-all duration-1000 ease-out",
+          phase === "pause"
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 -translate-y-4"
+        )}
+      >
+        {activeName && (
+          <p className="text-sky-200/80 text-[10px] md:text-xs tracking-[0.4em] uppercase font-light">
+            Em memória de
+            <span className="block text-white/95 text-base md:text-xl tracking-[0.15em] mt-3 font-normal">
+              {activeName}
+            </span>
+          </p>
+        )}
+      </div>
+
+      {/* MIDDLE BAND — Butterfly with luminous aura (centered around 38%) */}
+      <div
+        className={cn(
+          "absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2",
           phase === "enter" && "farewell-butterfly-enter",
           phase === "pause" && "farewell-butterfly-pause",
           phase === "exit" && "farewell-butterfly-exit"
         )}
       >
-        <div className="relative h-64 w-64 md:h-80 md:w-80 flex items-center justify-center">
+        <div className="relative h-48 w-48 md:h-64 md:w-64 flex items-center justify-center">
           {/* Aura glow */}
           <div
             className="absolute inset-0 rounded-full farewell-aura pointer-events-none"
@@ -303,31 +324,35 @@ export function PalliativeFarewellOverlay({
         </div>
       </div>
 
+      {/* BOTTOM BAND — Reflection text (60% – 92%) */}
       <div
         className={cn(
-          "relative z-10 max-w-2xl mx-auto px-8 text-center farewell-reflection",
+          "absolute left-1/2 -translate-x-1/2 w-full max-w-2xl px-8 text-center farewell-reflection",
+          "top-[60%] md:top-[58%]",
           phase === "pause"
             ? "opacity-100 translate-y-0 farewell-reflection-active"
             : "opacity-0 translate-y-6"
         )}
       >
-        {activeName && (
-          <p className="text-sky-200/80 text-xs md:text-sm tracking-[0.3em] uppercase mb-6 font-light">
-            Em memória de
-            <span className="block text-white/95 text-base md:text-lg tracking-wider mt-2 font-normal">
-              {activeName}
-            </span>
-          </p>
-        )}
-        <p className="text-white/95 text-lg md:text-2xl font-light leading-relaxed italic">
+        <p className="text-white/95 text-base md:text-2xl font-light leading-relaxed italic">
           "{reflection.text}"
         </p>
         {reflection.author && (
-          <p className="mt-4 text-sky-200/70 text-sm tracking-wide">
+          <p className="mt-4 text-sky-200/70 text-xs md:text-sm tracking-wide">
             — {reflection.author}
           </p>
         )}
-        <p className="mt-10 text-sky-100/50 text-[10px] md:text-xs tracking-[0.4em] uppercase">
+      </div>
+
+      {/* FOOTER — Caption pinned to bottom (95%) */}
+      <div
+        className={cn(
+          "absolute bottom-[5%] left-1/2 -translate-x-1/2 text-center",
+          "transition-opacity duration-1000",
+          phase === "pause" ? "opacity-100" : "opacity-0"
+        )}
+      >
+        <p className="text-sky-100/50 text-[10px] md:text-xs tracking-[0.5em] uppercase">
           Ortotanásia · Cuidado até o fim
         </p>
       </div>
