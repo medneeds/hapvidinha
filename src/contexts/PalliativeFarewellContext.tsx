@@ -12,6 +12,10 @@ export function PalliativeFarewellProvider({ children }: { children: ReactNode }
   const [name, setName] = useState("");
 
   const triggerFarewell = useCallback((patientName: string) => {
+    console.log('[FAREWELL] context.triggerFarewell received', {
+      patientName,
+      timestamp: new Date().toISOString(),
+    });
     setName(patientName);
     setOpen(true);
   }, []);
