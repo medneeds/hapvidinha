@@ -147,14 +147,30 @@ export function useDeathReviews(department?: string | null) {
         merged.chart_finalized_done;
       updates.completed_at = allDone ? now : null;
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("death_reviews" as any)
         .update(updates)
-        .eq("id", review.id);
+        .eq("id", review.id)
+        .select()
+        .single();
       if (error) {
         console.error("Failed to update death review", error);
+        throw error;
+      }
+
+      if (data) {
+        const updatedReview = data as unknown as DeathReview;
+        setReviews((current) => {
+          const exists = current.some((r) => r.id === updatedReview.id);
+          if (updatedReview.completed_at) {
+            return current.filter((r) => r.id !== updatedReview.id);
+          }
+          if (!exists) return [updatedReview, ...current];
+          return current.map((r) => (r.id === updatedReview.id ? updatedReview : r));
+        });
       }
       await fetchReviews();
+      return data as unknown as DeathReview;
     },
     [fetchReviews]
   );
