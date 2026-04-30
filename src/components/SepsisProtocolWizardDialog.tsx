@@ -492,28 +492,43 @@ export function SepsisProtocolWizardDialog({
     }
   };
 
-  const handleCancelProtocol = async () => {
-    if (!protocolId) return;
-    setIsCancelling(true);
-    try {
-      const { error } = await supabase
-        .from('sepsis_protocols')
-        .delete()
-        .eq('id', protocolId);
-      if (error) throw error;
-      toast({ title: "Protocolo cancelado", description: "O protocolo de sepse foi excluído por ter sido aberto por engano." });
-      setProtocolId(null);
-      setFormData({ ...initialFormData });
-      setCurrentStep(0);
-      onSuccess?.();
-      setCancelDialogOpen(false);
-      onClose();
-    } catch (err) {
-      console.error('Error deleting sepsis protocol:', err);
-      toast({ title: "Erro", description: "Não foi possível cancelar o protocolo.", variant: "destructive" });
-    } finally {
-      setIsCancelling(false);
+  const handleProtocolDeleted = () => {
+    setProtocolId(null);
+    setFormData({ ...initialFormData });
+    setCurrentStep(0);
+    onSuccess?.();
+    onClose();
+  };
+
+  // Per-step validation: returns null if OK, otherwise an error message
+  const validateCurrentStep = (): string | null => {
+    const step = STEPS[currentStep].key;
+    if (step === "identification") {
+      if (!formData.patient_name?.trim()) return "Nome do paciente é obrigatório.";
     }
+    if (step === "dysfunction") {
+      if (formData.has_organic_dysfunction === null)
+        return "Informe se há disfunção orgânica confirmada (SIM/NÃO).";
+    }
+    if (step === "focus") {
+      if (formData.has_infection === null)
+        return "Informe se há infecção confirmada ou suspeita (SIM/NÃO).";
+      if (formData.has_infection === true) {
+        const focusCount =
+          [formData.focus_pulmonary, formData.focus_urinary, formData.focus_abdominal,
+            formData.focus_skin, formData.focus_neurological].filter(Boolean).length +
+          (formData.focus_other?.trim() ? 1 : 0);
+        if (focusCount === 0)
+          return "Selecione ao menos um foco infeccioso ou descreva em 'Outro'.";
+      }
+    }
+    if (step === "treatment") {
+      const hasAdmin =
+        formData.antibiotic_administration_date && formData.antibiotic_administration_time;
+      if (hasAdmin && !formData.antibiotic_names?.trim())
+        return "Informe o(s) antibiótico(s) administrado(s).";
+    }
+    return null;
   };
 
   const sirsCount = [
