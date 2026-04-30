@@ -37,14 +37,18 @@ export function PalliativeFarewellOverlay({
   open,
   patientName,
   onClose,
+  onDeallocate,
 }: PalliativeFarewellOverlayProps) {
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<Phase>("enter");
   const [activeName, setActiveName] = useState<string | undefined>(undefined);
   const [showAction, setShowAction] = useState(false);
+  const [isDeallocating, setIsDeallocating] = useState(false);
+  const [deallocError, setDeallocError] = useState<string | null>(null);
 
   const timersRef = useRef<number[]>([]);
   const closedRef = useRef(false);
+  const onDeallocateRef = useRef(onDeallocate);
   const onCloseRef = useRef(onClose);
 
   useEffect(() => {
