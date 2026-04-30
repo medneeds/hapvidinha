@@ -102,14 +102,31 @@ export function PalliativeFarewellOverlay({
 
   const stars = useMemo(
     () =>
-      Array.from({ length: 40 }, (_, i) => ({
+      Array.from({ length: 60 }, (_, i) => ({
         id: i,
-        width: `${1 + Math.random() * 2}px`,
-        height: `${1 + Math.random() * 2}px`,
+        width: `${1 + Math.random() * 2.2}px`,
+        height: `${1 + Math.random() * 2.2}px`,
         top: `${Math.random() * 100}%`,
         left: `${Math.random() * 100}%`,
-        animationDelay: `${Math.random() * 3}s`,
-        animationDuration: `${2 + Math.random() * 3}s`,
+        animationDelay: `${Math.random() * 4}s`,
+        animationDuration: `${2 + Math.random() * 4}s`,
+        opacity: 0.35 + Math.random() * 0.55,
+      })),
+    [activeName]
+  );
+
+  // Floating light particles drifting upward (like dust in a sunbeam)
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 28 }, (_, i) => ({
+        id: i,
+        left: `${Math.random() * 100}%`,
+        bottom: `${-10 - Math.random() * 20}%`,
+        size: `${2 + Math.random() * 4}px`,
+        drift: `${(Math.random() - 0.5) * 200}px`,
+        life: `${7 + Math.random() * 8}s`,
+        delay: `${Math.random() * 9}s`,
+        hue: Math.random() > 0.5 ? "bg-sky-200/70" : "bg-amber-100/60",
       })),
     [activeName]
   );
