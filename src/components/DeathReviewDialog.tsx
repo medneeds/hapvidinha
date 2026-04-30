@@ -48,14 +48,34 @@ export function DeathReviewDialog({
   onOpenChange,
 }: DeathReviewDialogProps) {
   const { toggleItem } = useDeathReviews(review?.department);
+  const { triggerFarewell } = usePalliativeFarewell();
   const [savingItem, setSavingItem] = useState<DeathReviewItem | null>(null);
   const [localReview, setLocalReview] = useState<DeathReview | null>(review);
   const localReviewRef = useRef<DeathReview | null>(review);
+  const [confirmFarewellOpen, setConfirmFarewellOpen] = useState(false);
+  const farewellTriggeredRef = useRef<string | null>(null);
 
   useEffect(() => {
     setLocalReview(review);
     localReviewRef.current = review;
+    if (!review) {
+      setConfirmFarewellOpen(false);
+    }
   }, [review]);
+
+  // When all pendências are concluded, prompt the user to confirm deallocation + farewell
+  useEffect(() => {
+    if (!localReview) return;
+    const allDone = DEATH_REVIEW_ITEMS.every(
+      (it) => localReview[`${it.key}_done` as DeathReviewDoneKey]
+    );
+    if (
+      allDone &&
+      farewellTriggeredRef.current !== localReview.id
+    ) {
+      setConfirmFarewellOpen(true);
+    }
+  }, [localReview]);
 
   if (!localReview) return null;
 
