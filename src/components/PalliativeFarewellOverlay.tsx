@@ -140,9 +140,31 @@ export function PalliativeFarewellOverlay({
     [activeName]
   );
 
-  const handleConfirmDealloc = () => {
-    if (phase === "exit") return;
-    console.log("[FAREWELL] user confirmed dealloc — starting exit");
+  const handleConfirmDealloc = async () => {
+    if (phase === "exit" || isDeallocating) return;
+    console.log("[FAREWELL] user confirmed dealloc — running deallocation");
+    setDeallocError(null);
+
+    // Run the real deallocation work (e.g. mark death_review.completed_at).
+    // Mirrors the alta/transferência flow: only commit visual changes after
+    // the persistence step succeeds.
+    const fn = onDeallocateRef.current;
+    if (fn) {
+      setIsDeallocating(true);
+      try {
+        await fn();
+      } catch (e) {
+        console.error("[FAREWELL] deallocation failed", e);
+        setIsDeallocating(false);
+        setDeallocError(
+          "Não foi possível desalocar o leito. Tente novamente."
+        );
+        return;
+      }
+      setIsDeallocating(false);
+    }
+
+    console.log("[FAREWELL] deallocation done — starting exit animation");
     clearTimers();
     setShowAction(false);
     setPhase("exit");
