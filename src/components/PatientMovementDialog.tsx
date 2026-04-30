@@ -132,7 +132,7 @@ export function PatientMovementDialog({
       // Get patient's department from the patient object
       const patientDepartment = (patient as any).department || 'URGÊNCIA E EMERGÊNCIA ADULTO';
 
-      const { error } = await supabase
+      const { data: movementData, error } = await supabase
         .from('patient_movements')
         .insert({
           patient_name: patient.name,
@@ -147,7 +147,9 @@ export function PatientMovementDialog({
           department: patientDepartment,
           state_id: currentState.id,
           hospital_unit_id: currentHospital.id,
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
@@ -155,6 +157,21 @@ export function PatientMovementDialog({
         title: `${config?.title} realizado com sucesso`,
         description: `${movementType.toLowerCase()} registrado(a) no histórico.`,
       });
+
+      // For deaths: create a post-death review record so the bed shows the
+      // "ÓBITO • REVISAR" ribbon and appears in the global pending badge.
+      if (movementType === "ÓBITO") {
+        await supabase.from('death_reviews' as any).insert({
+          patient_movement_id: movementData?.id ?? null,
+          patient_name: patient.name,
+          patient_bed: patient.bedNumber,
+          patient_sector: patient.sector,
+          department: patientDepartment,
+          state_id: currentState.id,
+          hospital_unit_id: currentHospital.id,
+          created_by: user?.id,
+        });
+      }
 
       // Trigger palliative farewell overlay if patient was in palliative care and died
       const isPalliative = (patient as any).clinicalStatus === 'paliativado';

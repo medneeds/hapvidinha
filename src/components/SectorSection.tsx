@@ -5,6 +5,8 @@ import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
 import { EmptySectorState } from "@/components/EmptySectorState";
+import { DeathReviewGhostCard } from "@/components/DeathReviewGhostCard";
+import { useDeathReviews } from "@/hooks/useDeathReviews";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
@@ -153,6 +155,15 @@ export function SectorSection({
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
+
+  // Pending post-death reviews for THIS sector (beds no longer in the list)
+  const department = (patients[0] as any)?.department as string | undefined;
+  const { reviews: pendingReviews } = useDeathReviews(department);
+  const ghostReviews = pendingReviews.filter(
+    (r) =>
+      r.patient_sector === sector &&
+      !patients.some((p) => p.bedNumber === r.patient_bed)
+  );
   
   // Auto-expand when patients are added, auto-collapse when all removed
   useEffect(() => {
@@ -280,25 +291,32 @@ export function SectorSection({
       </div>
 
       <CollapsibleContent className="space-y-1.5 print:space-y-0.5">
-        {patients.length === 0 ? (
+        {patients.length === 0 && ghostReviews.length === 0 ? (
           <EmptySectorState
             sectorName={displayTitle}
             sectorIcon={displayIcon}
             onAddBed={onAddExtraBed}
           />
         ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={patients.map(p => p.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {renderPatientCards(patients)}
-            </SortableContext>
-          </DndContext>
+          <>
+            {patients.length > 0 && (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={patients.map(p => p.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {renderPatientCards(patients)}
+                </SortableContext>
+              </DndContext>
+            )}
+            {ghostReviews.map((review) => (
+              <DeathReviewGhostCard key={review.id} review={review} />
+            ))}
+          </>
         )}
       </CollapsibleContent>
     </Collapsible>

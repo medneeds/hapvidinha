@@ -385,6 +385,90 @@ export type Database = {
         }
         Relationships: []
       }
+      death_reviews: {
+        Row: {
+          belongings_removal_at: string | null
+          belongings_removal_by: string | null
+          belongings_removal_done: boolean
+          chart_finalized_at: string | null
+          chart_finalized_by: string | null
+          chart_finalized_done: boolean
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          death_certificate_at: string | null
+          death_certificate_by: string | null
+          death_certificate_done: boolean
+          department: string
+          family_notified_at: string | null
+          family_notified_by: string | null
+          family_notified_done: boolean
+          hospital_unit_id: string
+          id: string
+          notes: string | null
+          patient_bed: string
+          patient_movement_id: string | null
+          patient_name: string
+          patient_sector: string | null
+          state_id: string
+          updated_at: string
+        }
+        Insert: {
+          belongings_removal_at?: string | null
+          belongings_removal_by?: string | null
+          belongings_removal_done?: boolean
+          chart_finalized_at?: string | null
+          chart_finalized_by?: string | null
+          chart_finalized_done?: boolean
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          death_certificate_at?: string | null
+          death_certificate_by?: string | null
+          death_certificate_done?: boolean
+          department?: string
+          family_notified_at?: string | null
+          family_notified_by?: string | null
+          family_notified_done?: boolean
+          hospital_unit_id: string
+          id?: string
+          notes?: string | null
+          patient_bed: string
+          patient_movement_id?: string | null
+          patient_name: string
+          patient_sector?: string | null
+          state_id: string
+          updated_at?: string
+        }
+        Update: {
+          belongings_removal_at?: string | null
+          belongings_removal_by?: string | null
+          belongings_removal_done?: boolean
+          chart_finalized_at?: string | null
+          chart_finalized_by?: string | null
+          chart_finalized_done?: boolean
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          death_certificate_at?: string | null
+          death_certificate_by?: string | null
+          death_certificate_done?: boolean
+          department?: string
+          family_notified_at?: string | null
+          family_notified_by?: string | null
+          family_notified_done?: boolean
+          hospital_unit_id?: string
+          id?: string
+          notes?: string | null
+          patient_bed?: string
+          patient_movement_id?: string | null
+          patient_name?: string
+          patient_sector?: string | null
+          state_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dhd_patients: {
         Row: {
           created_at: string
