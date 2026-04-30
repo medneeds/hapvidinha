@@ -2,12 +2,18 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { BedDouble, Sparkles } from "lucide-react";
+import { BedDouble, Sparkles, Loader2 } from "lucide-react";
 
 interface PalliativeFarewellOverlayProps {
   open: boolean;
   patientName?: string;
   onClose: () => void;
+  /**
+   * Called when the user clicks "Desalocar leito e encerrar". The overlay
+   * waits for this to resolve before starting the exit animation. If it
+   * rejects, the overlay stays open so the user can retry.
+   */
+  onDeallocate?: () => Promise<void> | void;
 }
 
 const REFLECTIONS = [
@@ -31,19 +37,34 @@ export function PalliativeFarewellOverlay({
   open,
   patientName,
   onClose,
+  onDeallocate,
 }: PalliativeFarewellOverlayProps) {
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<Phase>("enter");
   const [activeName, setActiveName] = useState<string | undefined>(undefined);
   const [showAction, setShowAction] = useState(false);
+  const [isDeallocating, setIsDeallocating] = useState(false);
+  const [deallocError, setDeallocError] = useState<string | null>(null);
 
   const timersRef = useRef<number[]>([]);
   const closedRef = useRef(false);
+  const onDeallocateRef = useRef(onDeallocate);
   const onCloseRef = useRef(onClose);
 
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
+
+  useEffect(() => {
+    onDeallocateRef.current = onDeallocate;
+  }, [onDeallocate]);
+
+  useEffect(() => {
+    if (open) {
+      setIsDeallocating(false);
+      setDeallocError(null);
+    }
+  }, [open]);
 
   const clearTimers = () => {
     timersRef.current.forEach((t) => window.clearTimeout(t));
@@ -119,9 +140,31 @@ export function PalliativeFarewellOverlay({
     [activeName]
   );
 
-  const handleConfirmDealloc = () => {
-    if (phase === "exit") return;
-    console.log("[FAREWELL] user confirmed dealloc — starting exit");
+  const handleConfirmDealloc = async () => {
+    if (phase === "exit" || isDeallocating) return;
+    console.log("[FAREWELL] user confirmed dealloc — running deallocation");
+    setDeallocError(null);
+
+    // Run the real deallocation work (e.g. mark death_review.completed_at).
+    // Mirrors the alta/transferência flow: only commit visual changes after
+    // the persistence step succeeds.
+    const fn = onDeallocateRef.current;
+    if (fn) {
+      setIsDeallocating(true);
+      try {
+        await fn();
+      } catch (e) {
+        console.error("[FAREWELL] deallocation failed", e);
+        setIsDeallocating(false);
+        setDeallocError(
+          "Não foi possível desalocar o leito. Tente novamente."
+        );
+        return;
+      }
+      setIsDeallocating(false);
+    }
+
+    console.log("[FAREWELL] deallocation done — starting exit animation");
     clearTimers();
     setShowAction(false);
     setPhase("exit");
@@ -411,6 +454,7 @@ export function PalliativeFarewellOverlay({
         <Button
           size="lg"
           onClick={handleConfirmDealloc}
+          disabled={isDeallocating}
           className={cn(
             "gap-2 px-8 py-6 text-base font-medium tracking-wide",
             "bg-white/95 text-slate-900 hover:bg-white",
@@ -418,13 +462,28 @@ export function PalliativeFarewellOverlay({
             "border border-sky-200/40"
           )}
         >
-          <BedDouble className="h-5 w-5" />
-          Desalocar leito e encerrar
-          <Sparkles className="h-4 w-4 text-amber-500" />
+          {isDeallocating ? (
+            <>
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Desalocando leito...
+            </>
+          ) : (
+            <>
+              <BedDouble className="h-5 w-5" />
+              Desalocar leito e encerrar
+              <Sparkles className="h-4 w-4 text-amber-500" />
+            </>
+          )}
         </Button>
-        <p className="text-sky-100/60 text-[10px] md:text-xs tracking-[0.3em] uppercase">
-          Ortotanásia · Cuidado até o fim
-        </p>
+        {deallocError ? (
+          <p className="text-rose-200 text-xs md:text-sm tracking-wide">
+            {deallocError}
+          </p>
+        ) : (
+          <p className="text-sky-100/60 text-[10px] md:text-xs tracking-[0.3em] uppercase">
+            Ortotanásia · Cuidado até o fim
+          </p>
+        )}
       </div>
     </div>,
     document.body

@@ -51,7 +51,7 @@ export function DeathReviewDialog({
   onOpenChange,
   trigger,
 }: DeathReviewDialogProps) {
-  const { toggleItem } = useDeathReviews(review?.department);
+  const { toggleItem, completeReview } = useDeathReviews(review?.department);
   const { triggerFarewell } = usePalliativeFarewell();
   const [savingItem, setSavingItem] = useState<DeathReviewItem | null>(null);
   const [localReview, setLocalReview] = useState<DeathReview | null>(review);
@@ -283,12 +283,20 @@ export function DeathReviewDialog({
             <AlertDialogAction
               onClick={() => {
                 if (!localReview) return;
-                farewellTriggeredRef.current = localReview.id;
+                const reviewSnapshot = localReview;
+                farewellTriggeredRef.current = reviewSnapshot.id;
                 setConfirmFarewellOpen(false);
                 onOpenChange(false);
                 setTimeout(() => {
                   try {
-                    triggerFarewell(localReview.patient_name);
+                    triggerFarewell(reviewSnapshot.patient_name, {
+                      // Real bed deallocation step — same role as the
+                      // "Confirmar" button on the alta/transferência form.
+                      // Only after this resolves does the overlay exit.
+                      onDeallocate: async () => {
+                        await completeReview(reviewSnapshot);
+                      },
+                    });
                   } catch (e) {
                     console.error(
                       "[FAREWELL] trigger from review failed",
