@@ -334,7 +334,18 @@ export default function SepsisProtocolsAdminPage() {
                   </div>
                 )}
 
-                <div className="flex justify-end pt-2">
+                <div className="flex justify-between gap-2 pt-2">
+                  {canDelete(selectedProtocol) ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-destructive border-destructive/40 hover:bg-destructive/10"
+                      onClick={() => setDeleteTarget(selectedProtocol)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      EXCLUIR PROTOCOLO
+                    </Button>
+                  ) : <span />}
                   <Button size="sm" variant="outline" onClick={() => handleExportPdf(selectedProtocol)}>
                     <Download className="h-4 w-4 mr-1" />
                     EXPORTAR PDF
@@ -345,6 +356,19 @@ export default function SepsisProtocolsAdminPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <DeleteSepsisProtocolDialog
+        open={!!deleteTarget}
+        onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}
+        protocolId={deleteTarget?.id || null}
+        patientName={deleteTarget?.patient_name}
+        isFinalized={!!deleteTarget?.outcome}
+        onDeleted={() => {
+          setDeleteTarget(null);
+          if (selectedProtocol?.id === deleteTarget?.id) setSelectedProtocol(null);
+          fetchProtocols();
+        }}
+      />
     </div>
   );
 }
