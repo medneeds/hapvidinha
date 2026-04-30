@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { toast as popupToast } from "sonner";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock, Download, AlertTriangle, CheckCircle2, Stethoscope, Trash2 } from "lucide-react";
@@ -288,6 +289,106 @@ export function SepsisProtocolWizardDialog({
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const getDateTimePairPendencies = (dateValue: string, timeValue: string, label: string) => {
+    if (dateValue && !timeValue) return [`${label}: informe a hora.`];
+    if (!dateValue && timeValue) return [`${label}: informe a data.`];
+    return [];
+  };
+
+  const showPendingPopup = (title: string, pendencies: string[]) => {
+    popupToast.error(title, {
+      description: (
+        <div className="mt-2 space-y-1 text-xs leading-relaxed">
+          {pendencies.slice(0, 6).map((item) => (
+            <div key={item}>• {item}</div>
+          ))}
+          {pendencies.length > 6 && <div>• Mais {pendencies.length - 6} pendência(s)...</div>}
+        </div>
+      ),
+      duration: 9000,
+    });
+  };
+
+  const getProtocolPendencies = () => {
+    const pendencies: Array<{ step: number; message: string }> = [];
+    const hasSelectedFocus =
+      [formData.focus_pulmonary, formData.focus_urinary, formData.focus_abdominal, formData.focus_skin, formData.focus_neurological].some(Boolean) ||
+      !!formData.focus_other?.trim();
+
+    if (!protocolId) pendencies.push({ step: 0, message: "Abra o protocolo antes de tentar finalizar." });
+    if (!formData.patient_name?.trim()) pendencies.push({ step: 0, message: "Identificação: informe o nome do paciente." });
+    if (!formData.opening_date || !formData.opening_time) pendencies.push({ step: 0, message: "Identificação: confirme data e hora de abertura." });
+    if (formData.has_organic_dysfunction === null) pendencies.push({ step: 2, message: "Disfunções: responda SIM ou NÃO para disfunção orgânica." });
+    if (formData.has_infection === null) pendencies.push({ step: 3, message: "Foco infeccioso: responda SIM ou NÃO para infecção suspeita/confirmada." });
+    if (formData.has_infection === true && !hasSelectedFocus) pendencies.push({ step: 3, message: "Foco infeccioso: selecione um foco ou descreva em Outro." });
+    if ((formData.antibiotic_administration_date || formData.antibiotic_administration_time) && !formData.antibiotic_names?.trim()) {
+      pendencies.push({ step: 4, message: "Tratamento: informe o(s) antibiótico(s) administrado(s)." });
+    }
+    const treatmentDateTimePendencies = [
+      ...getDateTimePairPendencies(formData.blood_culture_date, formData.blood_culture_time, "Hemocultura"),
+      ...getDateTimePairPendencies(formData.lactate_date, formData.lactate_time, "Lactato"),
+      ...getDateTimePairPendencies(formData.antibiotic_prescription_date, formData.antibiotic_prescription_time, "Prescrição de antibiótico"),
+      ...getDateTimePairPendencies(formData.antibiotic_administration_date, formData.antibiotic_administration_time, "Administração de antibiótico"),
+    ];
+    treatmentDateTimePendencies.forEach((message) => pendencies.push({ step: 4, message }));
+    getDateTimePairPendencies(formData.destination_date, formData.destination_time, "Destino").forEach((message) =>
+      pendencies.push({ step: 5, message }),
+    );
+    if (!formData.outcome) pendencies.push({ step: 5, message: "Desfecho: selecione o desfecho para encerrar." });
+
+    return pendencies;
+  };
+
+  const getFullProtocolUpdateData = (outcomeDate?: string, outcomeTime?: string) => ({
+    patient_name: formData.patient_name?.trim().toUpperCase(),
+    birth_date: formData.birth_date || null,
+    attendance_number: formData.attendance_number || null,
+    hospital: formData.hospital || null,
+    responsible_name: formData.responsible_name || null,
+    opening_date: formData.opening_date || null,
+    opening_time: formData.opening_time || null,
+    patient_weight: formData.patient_weight ? parseFloat(formData.patient_weight) : null,
+    sirs_temp_high: formData.sirs_temp_high,
+    sirs_temp_low: formData.sirs_temp_low,
+    sirs_heart_rate: formData.sirs_heart_rate,
+    sirs_respiratory_rate: formData.sirs_respiratory_rate,
+    sirs_leukocytosis: formData.sirs_leukocytosis,
+    sirs_leukopenia: formData.sirs_leukopenia,
+    sirs_young_cells: formData.sirs_young_cells,
+    has_organic_dysfunction: formData.has_organic_dysfunction,
+    dysfunction_hypotension: formData.dysfunction_hypotension,
+    dysfunction_oliguria: formData.dysfunction_oliguria,
+    dysfunction_pao2: formData.dysfunction_pao2,
+    dysfunction_platelets: formData.dysfunction_platelets,
+    dysfunction_acidosis: formData.dysfunction_acidosis,
+    dysfunction_consciousness: formData.dysfunction_consciousness,
+    dysfunction_bilirubin: formData.dysfunction_bilirubin,
+    has_infection: formData.has_infection,
+    focus_pulmonary: formData.focus_pulmonary,
+    focus_urinary: formData.focus_urinary,
+    focus_abdominal: formData.focus_abdominal,
+    focus_skin: formData.focus_skin,
+    focus_neurological: formData.focus_neurological,
+    focus_other: formData.focus_other || null,
+    blood_culture_date: formData.blood_culture_date || null,
+    blood_culture_time: formData.blood_culture_time || null,
+    lactate_date: formData.lactate_date || null,
+    lactate_time: formData.lactate_time || null,
+    antibiotic_prescription_date: formData.antibiotic_prescription_date || null,
+    antibiotic_prescription_time: formData.antibiotic_prescription_time || null,
+    antibiotic_administration_date: formData.antibiotic_administration_date || null,
+    antibiotic_administration_time: formData.antibiotic_administration_time || null,
+    antibiotic_names: formData.antibiotic_names || null,
+    volume_administered: formData.volume_administered ? parseFloat(formData.volume_administered) : null,
+    destination: formData.destination || null,
+    destination_date: formData.destination_date || null,
+    destination_time: formData.destination_time || null,
+    outcome: formData.outcome || null,
+    outcome_date: outcomeDate || formData.outcome_date || null,
+    outcome_time: outcomeTime || formData.outcome_time || null,
+    notes: formData.notes || null,
+  });
+
   const handleStartProtocol = async () => {
     if (isSubmitting) return;
 
@@ -429,6 +530,7 @@ export function SepsisProtocolWizardDialog({
     const validationError = validateCurrentStep();
     if (validationError) {
       toast({ title: "VALIDAÇÃO PENDENTE", description: validationError, variant: "destructive" });
+      showPendingPopup("PENDÊNCIA NA ETAPA", [validationError]);
       return;
     }
     if (currentStep === 0 && !protocolId) {
@@ -446,8 +548,14 @@ export function SepsisProtocolWizardDialog({
   };
 
   const handleFinalize = async () => {
-    if (!formData.outcome) {
-      toast({ title: "Desfecho obrigatório", description: "Selecione o desfecho do paciente para finalizar.", variant: "destructive" });
+    const pendencies = getProtocolPendencies();
+    if (pendencies.length > 0) {
+      const firstPendingStep = pendencies[0].step;
+      setCurrentStep(firstPendingStep);
+      showPendingPopup(
+        `${pendencies.length} PENDÊNCIA(S) PARA ENCERRAR`,
+        pendencies.map((item) => item.message),
+      );
       return;
     }
     if (!protocolId) return;
@@ -457,16 +565,7 @@ export function SepsisProtocolWizardDialog({
       const now = new Date();
       const resolvedOutcomeDate = formData.outcome_date || now.toISOString().split("T")[0];
       const resolvedOutcomeTime = formData.outcome_time || now.toTimeString().slice(0, 5);
-
-      const updateData = {
-        destination: formData.destination || null,
-        destination_date: formData.destination_date || null,
-        destination_time: formData.destination_time || null,
-        outcome: formData.outcome,
-        outcome_date: resolvedOutcomeDate,
-        outcome_time: resolvedOutcomeTime,
-        notes: formData.notes || null,
-      };
+      const updateData = getFullProtocolUpdateData(resolvedOutcomeDate, resolvedOutcomeTime);
 
       const { data, error } = await supabase
         .from('sepsis_protocols')
@@ -487,11 +586,21 @@ export function SepsisProtocolWizardDialog({
       }));
 
       toast({ title: "Protocolo Sepse finalizado", description: "Protocolo registrado com sucesso." });
+      popupToast.success("PROTOCOLO DE SEPSE ENCERRADO", {
+        description: `Desfecho registrado: ${data.outcome}.`,
+      });
       onSuccess?.();
       onClose();
     } catch (err: any) {
       console.error('Erro ao finalizar protocolo:', err);
-      toast({ title: "Erro ao finalizar", description: err?.message || "Tente novamente.", variant: "destructive" });
+      const message = err?.message || "Tente novamente.";
+      toast({ title: "Erro ao finalizar", description: message, variant: "destructive" });
+      popupToast.error("ERRO AO ENCERRAR PROTOCOLO", {
+        description: message.includes("permission") || message.includes("row-level security")
+          ? "Sua sessão não tem permissão para editar este protocolo. Faça login novamente ou chame um administrador."
+          : message,
+        duration: 9000,
+      });
     } finally {
       setIsSubmitting(false);
     }
