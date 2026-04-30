@@ -60,35 +60,57 @@ export function PalliativeFarewellOverlay({
 
   // Mount when opened; never tear down before the exit animation completes.
   useEffect(() => {
+    console.log('[FAREWELL] overlay open prop changed', {
+      open,
+      patientName,
+      timestamp: new Date().toISOString(),
+    });
     if (!open) return;
+    console.log('[FAREWELL] overlay mounting & starting enter phase', { patientName });
     closedRef.current = false;
     setMounted(true);
     setPhase("enter");
 
     // enter (2.5s) → pause (4s) → exit (3s) → unmount
-    const tPause = setTimeout(() => setPhase("pause"), 2500);
-    const tExit = setTimeout(() => setPhase("exit"), 6500);
+    const tPause = setTimeout(() => {
+      console.log('[FAREWELL] phase → pause');
+      setPhase("pause");
+    }, 2500);
+    const tExit = setTimeout(() => {
+      console.log('[FAREWELL] phase → exit (auto)');
+      setPhase("exit");
+    }, 6500);
     const tClose = setTimeout(() => {
-      if (closedRef.current) return;
+      if (closedRef.current) {
+        console.log('[FAREWELL] tClose skipped — already closed');
+        return;
+      }
+      console.log('[FAREWELL] firing onClose() after exit fade');
       closedRef.current = true;
       onClose();
     }, 6500 + 1100); // fire onClose after backdrop fade (~1s)
-    const tUnmount = setTimeout(() => setMounted(false), 6500 + 3100);
+    const tUnmount = setTimeout(() => {
+      console.log('[FAREWELL] overlay unmounting');
+      setMounted(false);
+    }, 6500 + 3100);
 
     return () => {
+      console.log('[FAREWELL] effect cleanup — clearing timers', { open });
       clearTimeout(tPause);
       clearTimeout(tExit);
       clearTimeout(tClose);
       clearTimeout(tUnmount);
     };
-  }, [open, onClose]);
+  }, [open, onClose, patientName]);
 
   const handleSkip = () => {
+    console.log('[FAREWELL] user clicked overlay (skip)', { phase });
     if (phase === "exit") return;
     setPhase("exit");
     setTimeout(() => {
       if (closedRef.current) return;
       closedRef.current = true;
+      console.log('[FAREWELL] firing onClose() after user skip');
       onClose();
     }, 1100);
     setTimeout(() => setMounted(false), 3100);
