@@ -20,6 +20,7 @@ interface SepsisProtocolRow {
   id: string;
   patient_name: string;
   patient_id: string | null;
+  created_by: string | null;
   opening_date: string | null;
   opening_time: string | null;
   created_at: string;
