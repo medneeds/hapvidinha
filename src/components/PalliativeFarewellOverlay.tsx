@@ -20,10 +20,10 @@ const REFLECTIONS = [
 
 type Phase = "enter" | "pause" | "exit";
 
-const ENTER_MS = 2500;
-const PAUSE_MS = 4000;
-const EXIT_FADE_MS = 1100;
-const EXIT_TOTAL_MS = 3000;
+const ENTER_MS = 2800;
+const PAUSE_MS = 5200;
+const EXIT_FADE_MS = 1300;
+const EXIT_TOTAL_MS = 3400;
 
 export function PalliativeFarewellOverlay({
   open,
@@ -102,14 +102,31 @@ export function PalliativeFarewellOverlay({
 
   const stars = useMemo(
     () =>
-      Array.from({ length: 40 }, (_, i) => ({
+      Array.from({ length: 60 }, (_, i) => ({
         id: i,
-        width: `${1 + Math.random() * 2}px`,
-        height: `${1 + Math.random() * 2}px`,
+        width: `${1 + Math.random() * 2.2}px`,
+        height: `${1 + Math.random() * 2.2}px`,
         top: `${Math.random() * 100}%`,
         left: `${Math.random() * 100}%`,
-        animationDelay: `${Math.random() * 3}s`,
-        animationDuration: `${2 + Math.random() * 3}s`,
+        animationDelay: `${Math.random() * 4}s`,
+        animationDuration: `${2 + Math.random() * 4}s`,
+        opacity: 0.35 + Math.random() * 0.55,
+      })),
+    [activeName]
+  );
+
+  // Floating light particles drifting upward (like dust in a sunbeam)
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 28 }, (_, i) => ({
+        id: i,
+        left: `${Math.random() * 100}%`,
+        bottom: `${-10 - Math.random() * 20}%`,
+        size: `${2 + Math.random() * 4}px`,
+        drift: `${(Math.random() - 0.5) * 200}px`,
+        life: `${7 + Math.random() * 8}s`,
+        delay: `${Math.random() * 9}s`,
+        hue: Math.random() > 0.5 ? "bg-sky-200/70" : "bg-amber-100/60",
       })),
     [activeName]
   );
@@ -135,7 +152,7 @@ export function PalliativeFarewellOverlay({
     <div
       className={cn(
         "fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden",
-        "bg-gradient-to-b from-sky-950/85 via-indigo-950/80 to-slate-950/90",
+        "bg-gradient-to-br from-slate-950 via-indigo-950/95 to-sky-950/90",
         "backdrop-blur-md",
         isExiting ? "farewell-backdrop-exit" : "farewell-backdrop"
       )}
@@ -143,23 +160,70 @@ export function PalliativeFarewellOverlay({
       role="dialog"
       aria-label="Homenagem de despedida"
     >
+      {/* Slowly rotating light rays — sacred, ethereal background */}
+      <div
+        className="pointer-events-none absolute top-1/2 left-1/2 farewell-rays"
+        style={{
+          width: "180vmax",
+          height: "180vmax",
+          background:
+            "conic-gradient(from 0deg, transparent 0deg, rgba(186,230,253,0.08) 18deg, transparent 36deg, transparent 90deg, rgba(255,237,213,0.06) 108deg, transparent 126deg, transparent 180deg, rgba(186,230,253,0.07) 198deg, transparent 216deg, transparent 270deg, rgba(255,237,213,0.05) 288deg, transparent 306deg)",
+          mixBlendMode: "screen",
+        }}
+      />
+
+      {/* Breathing radial vignette — soft heartbeat of light */}
+      <div
+        className="pointer-events-none absolute inset-0 farewell-vignette"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(186,230,253,0.18) 0%, rgba(15,23,42,0) 55%)",
+        }}
+      />
+
+      {/* Stars */}
       <div className="absolute inset-0 pointer-events-none">
         {stars.map((s) => (
           <span
             key={s.id}
-            className="absolute rounded-full bg-white/60 animate-pulse"
+            className="absolute rounded-full bg-white animate-pulse"
             style={{
               width: s.width,
               height: s.height,
               top: s.top,
               left: s.left,
+              opacity: s.opacity,
               animationDelay: s.animationDelay,
               animationDuration: s.animationDuration,
+              boxShadow: "0 0 6px rgba(255,255,255,0.6)",
             }}
           />
         ))}
       </div>
 
+      {/* Floating light particles drifting upward */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {particles.map((p) => (
+          <span
+            key={p.id}
+            className={cn("absolute rounded-full farewell-particle", p.hue)}
+            style={
+              {
+                left: p.left,
+                bottom: p.bottom,
+                width: p.size,
+                height: p.size,
+                boxShadow: "0 0 8px rgba(186,230,253,0.7)",
+                "--drift": p.drift,
+                "--life": p.life,
+                "--delay": p.delay,
+              } as React.CSSProperties
+            }
+          />
+        ))}
+      </div>
+
+      {/* Butterfly with luminous aura */}
       <div
         className={cn(
           "absolute",
@@ -168,59 +232,82 @@ export function PalliativeFarewellOverlay({
           phase === "exit" && "farewell-butterfly-exit"
         )}
       >
-        <svg
-          viewBox="0 0 24 24"
-          className="h-64 w-64 md:h-80 md:w-80 drop-shadow-[0_0_40px_rgba(186,230,253,0.6)]"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 12C10 8 6 4 3 5C0 6 1 10 4 12C1 14 0 18 3 19C6 20 10 16 12 12Z"
-            className="fill-sky-300/80 stroke-sky-200"
-            strokeWidth="0.3"
+        <div className="relative h-64 w-64 md:h-80 md:w-80 flex items-center justify-center">
+          {/* Aura glow */}
+          <div
+            className="absolute inset-0 rounded-full farewell-aura pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(186,230,253,0.55) 0%, rgba(186,230,253,0.15) 40%, transparent 70%)",
+              filter: "blur(20px)",
+            }}
+          />
+          <div
+            className="absolute inset-8 rounded-full farewell-aura pointer-events-none"
+            style={{
+              animationDelay: "0.6s",
+              background:
+                "radial-gradient(circle, rgba(255,237,213,0.4) 0%, transparent 65%)",
+              filter: "blur(14px)",
+            }}
+          />
+
+          <svg
+            viewBox="0 0 24 24"
+            className="relative h-full w-full drop-shadow-[0_0_50px_rgba(186,230,253,0.7)]"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <animate
-              attributeName="d"
-              dur="1.2s"
-              repeatCount="indefinite"
-              values="
-                M12 12C10 8 6 4 3 5C0 6 1 10 4 12C1 14 0 18 3 19C6 20 10 16 12 12Z;
-                M12 12C10.5 9 8 6 5 7C2 8 3 10.5 5 12C3 13.5 2 16 5 17C8 18 10.5 15 12 12Z;
-                M12 12C10 8 6 4 3 5C0 6 1 10 4 12C1 14 0 18 3 19C6 20 10 16 12 12Z
-              "
-            />
-          </path>
-          <path
-            d="M12 12C14 8 18 4 21 5C24 6 23 10 20 12C23 14 24 18 21 19C18 20 14 16 12 12Z"
-            className="fill-sky-300/80 stroke-sky-200"
-            strokeWidth="0.3"
-          >
-            <animate
-              attributeName="d"
-              dur="1.2s"
-              repeatCount="indefinite"
-              values="
-                M12 12C14 8 18 4 21 5C24 6 23 10 20 12C23 14 24 18 21 19C18 20 14 16 12 12Z;
-                M12 12C13.5 9 16 6 19 7C22 8 21 10.5 19 12C21 13.5 22 16 19 17C16 18 13.5 15 12 12Z;
-                M12 12C14 8 18 4 21 5C24 6 23 10 20 12C23 14 24 18 21 19C18 20 14 16 12 12Z
-              "
-            />
-          </path>
-          <ellipse cx="12" cy="12" rx="0.7" ry="3" className="fill-sky-100" />
-          <path d="M11.5 9.5C10.5 7.5 9 6.5 8.5 6" className="stroke-sky-100" strokeWidth="0.4" strokeLinecap="round" fill="none" />
-          <path d="M12.5 9.5C13.5 7.5 15 6.5 15.5 6" className="stroke-sky-100" strokeWidth="0.4" strokeLinecap="round" fill="none" />
-          <circle cx="7" cy="9" r="1.2" className="fill-white/40" />
-          <circle cx="7" cy="15" r="1" className="fill-white/40" />
-          <circle cx="17" cy="9" r="1.2" className="fill-white/40" />
-          <circle cx="17" cy="15" r="1" className="fill-white/40" />
-        </svg>
+            <path
+              d="M12 12C10 8 6 4 3 5C0 6 1 10 4 12C1 14 0 18 3 19C6 20 10 16 12 12Z"
+              className="fill-sky-200/85 stroke-sky-100"
+              strokeWidth="0.3"
+            >
+              <animate
+                attributeName="d"
+                dur="1.1s"
+                repeatCount="indefinite"
+                values="
+                  M12 12C10 8 6 4 3 5C0 6 1 10 4 12C1 14 0 18 3 19C6 20 10 16 12 12Z;
+                  M12 12C10.5 9 8 6 5 7C2 8 3 10.5 5 12C3 13.5 2 16 5 17C8 18 10.5 15 12 12Z;
+                  M12 12C10 8 6 4 3 5C0 6 1 10 4 12C1 14 0 18 3 19C6 20 10 16 12 12Z
+                "
+              />
+            </path>
+            <path
+              d="M12 12C14 8 18 4 21 5C24 6 23 10 20 12C23 14 24 18 21 19C18 20 14 16 12 12Z"
+              className="fill-sky-200/85 stroke-sky-100"
+              strokeWidth="0.3"
+            >
+              <animate
+                attributeName="d"
+                dur="1.1s"
+                repeatCount="indefinite"
+                values="
+                  M12 12C14 8 18 4 21 5C24 6 23 10 20 12C23 14 24 18 21 19C18 20 14 16 12 12Z;
+                  M12 12C13.5 9 16 6 19 7C22 8 21 10.5 19 12C21 13.5 22 16 19 17C16 18 13.5 15 12 12Z;
+                  M12 12C14 8 18 4 21 5C24 6 23 10 20 12C23 14 24 18 21 19C18 20 14 16 12 12Z
+                "
+              />
+            </path>
+            <ellipse cx="12" cy="12" rx="0.7" ry="3" className="fill-white" />
+            <path d="M11.5 9.5C10.5 7.5 9 6.5 8.5 6" className="stroke-white" strokeWidth="0.4" strokeLinecap="round" fill="none" />
+            <path d="M12.5 9.5C13.5 7.5 15 6.5 15.5 6" className="stroke-white" strokeWidth="0.4" strokeLinecap="round" fill="none" />
+            <circle cx="7" cy="9" r="1.2" className="fill-white/55" />
+            <circle cx="7" cy="15" r="1" className="fill-white/55" />
+            <circle cx="17" cy="9" r="1.2" className="fill-white/55" />
+            <circle cx="17" cy="15" r="1" className="fill-white/55" />
+            <circle cx="6" cy="9" r="0.35" className="fill-amber-100" />
+            <circle cx="18" cy="9" r="0.35" className="fill-amber-100" />
+          </svg>
+        </div>
       </div>
 
       <div
         className={cn(
           "relative z-10 max-w-2xl mx-auto px-8 text-center farewell-reflection",
           phase === "pause"
-            ? "opacity-100 translate-y-0"
+            ? "opacity-100 translate-y-0 farewell-reflection-active"
             : "opacity-0 translate-y-6"
         )}
       >
