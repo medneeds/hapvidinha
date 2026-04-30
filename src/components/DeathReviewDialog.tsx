@@ -51,7 +51,7 @@ export function DeathReviewDialog({
   onOpenChange,
   trigger,
 }: DeathReviewDialogProps) {
-  const { toggleItem } = useDeathReviews(review?.department);
+  const { toggleItem, completeReview } = useDeathReviews(review?.department);
   const { triggerFarewell } = usePalliativeFarewell();
   const [savingItem, setSavingItem] = useState<DeathReviewItem | null>(null);
   const [localReview, setLocalReview] = useState<DeathReview | null>(review);
