@@ -55,6 +55,17 @@ export function PalliativeFarewellOverlay({
     onCloseRef.current = onClose;
   }, [onClose]);
 
+  useEffect(() => {
+    onDeallocateRef.current = onDeallocate;
+  }, [onDeallocate]);
+
+  useEffect(() => {
+    if (open) {
+      setIsDeallocating(false);
+      setDeallocError(null);
+    }
+  }, [open]);
+
   const clearTimers = () => {
     timersRef.current.forEach((t) => window.clearTimeout(t));
     timersRef.current = [];
