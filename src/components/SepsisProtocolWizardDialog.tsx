@@ -527,6 +527,7 @@ export function SepsisProtocolWizardDialog({
     const validationError = validateCurrentStep();
     if (validationError) {
       toast({ title: "VALIDAÇÃO PENDENTE", description: validationError, variant: "destructive" });
+      showPendingPopup("PENDÊNCIA NA ETAPA", [validationError]);
       return;
     }
     if (currentStep === 0 && !protocolId) {
