@@ -84,6 +84,7 @@ export function PatientMovementDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [doctors, setDoctors] = useState<{ id: string; full_name: string }[]>([]);
   const [showFarewell, setShowFarewell] = useState(false);
+  const [farewellName, setFarewellName] = useState<string>("");
   const { toast } = useToast();
   const { currentState, currentHospital } = useHospital();
 
@@ -159,6 +160,7 @@ export function PatientMovementDialog({
       // Trigger palliative farewell overlay if patient was in palliative care and died
       const isPalliative = (patient as any).clinicalStatus === 'paliativado';
       if (movementType === "ÓBITO" && isPalliative) {
+        setFarewellName(patient.name);
         setShowFarewell(true);
       }
 
@@ -184,23 +186,21 @@ export function PatientMovementDialog({
     onClose();
   };
 
+  const farewellOverlay = (
+    <PalliativeFarewellOverlay
+      open={showFarewell}
+      patientName={farewellName}
+      onClose={() => setShowFarewell(false)}
+    />
+  );
+
   if (!config || !patient) {
-    return (
-      <PalliativeFarewellOverlay
-        open={showFarewell}
-        patientName={patient?.name}
-        onClose={() => setShowFarewell(false)}
-      />
-    );
+    return farewellOverlay;
   }
 
   return (
     <>
-    <PalliativeFarewellOverlay
-      open={showFarewell}
-      patientName={patient?.name}
-      onClose={() => setShowFarewell(false)}
-    />
+    {farewellOverlay}
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
