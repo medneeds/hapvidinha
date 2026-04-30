@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { MainLayout } from "@/components/MainLayout";
 import { PrivacyProvider } from "@/contexts/PrivacyContext";
+import { PalliativeFarewellProvider } from "@/contexts/PalliativeFarewellContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
@@ -59,6 +60,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <PrivacyProvider>
+      <PalliativeFarewellProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -401,6 +403,7 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </TooltipProvider>
+      </PalliativeFarewellProvider>
       </PrivacyProvider>
   </QueryClientProvider>
   );
