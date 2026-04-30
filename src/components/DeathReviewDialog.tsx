@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -37,22 +37,48 @@ export function DeathReviewDialog({
   const { toggleItem } = useDeathReviews(review?.department);
   const [savingItem, setSavingItem] = useState<DeathReviewItem | null>(null);
   const [notes, setNotes] = useState("");
+  const [localReview, setLocalReview] = useState<DeathReview | null>(review);
 
-  if (!review) return null;
+  useEffect(() => {
+    setLocalReview(review);
+  }, [review]);
+
+  if (!localReview) return null;
 
   const handleToggle = async (item: DeathReviewItem, currentlyDone: boolean) => {
+    if (!localReview) return;
     setSavingItem(item);
+    const done = !currentlyDone;
+    const now = new Date().toISOString();
+    const optimisticReview = {
+      ...localReview,
+      [`${item}_done`]: done,
+      [`${item}_at`]: done ? now : null,
+      [`${item}_by`]: done ? "SALVANDO..." : null,
+    } as DeathReview;
+    setLocalReview(optimisticReview);
+
     const { data: userData } = await supabase.auth.getUser();
     const byName =
       (userData.user?.user_metadata?.full_name as string) ||
       (userData.user?.email as string) ||
       "USUÁRIO";
-    await toggleItem(review, item, !currentlyDone, byName.toUpperCase());
-    setSavingItem(null);
+    try {
+      await toggleItem(localReview, item, done, byName.toUpperCase());
+      setLocalReview((current) => current ? ({
+        ...current,
+        [`${item}_by`]: done ? byName.toUpperCase() : null,
+      } as DeathReview) : current);
+    } catch (error) {
+      setLocalReview(localReview);
+      console.error("Failed to toggle death review item", error);
+    } finally {
+      setSavingItem(null);
+    }
   };
 
   const completedCount = DEATH_REVIEW_ITEMS.filter(
-    (it) => (review as any)[`${it.key}_done`]
+    (it) => (localReview as any)[`${it.key}_done`]
   ).length;
 
   return (
@@ -73,12 +99,12 @@ export function DeathReviewDialog({
         </DialogHeader>
 
         <div className="space-y-1 rounded-lg border bg-muted/30 p-3 text-sm">
-          <div className="font-medium">{review.patient_name}</div>
+          <div className="font-medium">{localReview.patient_name}</div>
           <div className="text-xs text-muted-foreground">
-            Leito {review.patient_bed}
-            {review.patient_sector ? ` • ${review.patient_sector}` : ""} •{" "}
+            Leito {localReview.patient_bed}
+            {localReview.patient_sector ? ` • ${localReview.patient_sector}` : ""} •{" "}
             Óbito registrado{" "}
-            {format(new Date(review.created_at), "dd/MM/yyyy 'às' HH:mm", {
+            {format(new Date(localReview.created_at), "dd/MM/yyyy 'às' HH:mm", {
               locale: ptBR,
             })}
           </div>
@@ -93,9 +119,9 @@ export function DeathReviewDialog({
           </div>
           <div className="space-y-2">
             {DEATH_REVIEW_ITEMS.map((item) => {
-              const done = (review as any)[`${item.key}_done`] as boolean;
-              const at = (review as any)[`${item.key}_at`] as string | null;
-              const by = (review as any)[`${item.key}_by`] as string | null;
+              const done = (localReview as any)[`${item.key}_done`] as boolean;
+              const at = (localReview as any)[`${item.key}_at`] as string | null;
+              const by = (localReview as any)[`${item.key}_by`] as string | null;
               return (
                 <button
                   key={item.key}
