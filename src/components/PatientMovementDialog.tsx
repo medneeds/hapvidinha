@@ -30,7 +30,7 @@ interface PatientMovementDialogProps {
   movementType: "ALTA" | "ÓBITO" | "TRANSFERÊNCIA" | null;
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: () => void;
+  onSuccess?: () => void | Promise<void>;
 }
 
 const movementConfig = {
@@ -162,6 +162,10 @@ export function PatientMovementDialog({
       //    the patient reference and BEFORE onSuccess unmounts the card.
       //    The overlay lives in the global provider, so it survives unmount.
       const isPalliative = (patient as any).clinicalStatus === 'paliativado';
+      const isPalliativeByPendency = patient.pendencies?.some((pendency) =>
+        pendency.toUpperCase().includes('CUIDADOS PALIATIVOS')
+      );
+      const shouldTriggerFarewell = movementType === 'ÓBITO' && (isPalliative || isPalliativeByPendency);
       console.log('[FAREWELL] death movement saved', {
         patientName: patient.name,
         bed: patient.bedNumber,
@@ -169,11 +173,12 @@ export function PatientMovementDialog({
         movementType,
         clinicalStatus: (patient as any).clinicalStatus,
         isPalliative,
-        willTriggerOverlay: movementType === 'ÓBITO' && isPalliative,
+        isPalliativeByPendency,
+        willTriggerOverlay: shouldTriggerFarewell,
         movementId: movementData?.id ?? null,
         timestamp: new Date().toISOString(),
       });
-      if (movementType === "ÓBITO" && isPalliative) {
+      if (shouldTriggerFarewell) {
         console.log('[FAREWELL] calling triggerFarewell()', { patientName: patient.name });
         try {
           triggerFarewell(patient.name);
@@ -186,8 +191,26 @@ export function PatientMovementDialog({
       //    the rest of the flow if the table/policy fails for any reason).
       if (movementType === "ÓBITO") {
         try {
-          const { error: reviewError } = await supabase
+          const { data: existingReview, error: lookupError } = await supabase
             .from('death_reviews' as any)
+            .select('id')
+            .eq('state_id', currentState.id)
+            .eq('hospital_unit_id', currentHospital.id)
+            .eq('department', patientDepartment)
+            .eq('patient_bed', patient.bedNumber)
+            .is('completed_at', null)
+            .maybeSingle();
+
+          if (lookupError) {
+            console.error('[DEATH_REVIEW] lookup failed before insert (non-blocking)', lookupError);
+          } else if ((existingReview as any)?.id) {
+            console.log('[DEATH_REVIEW] pending review already exists — skipping duplicate insert', {
+              reviewId: (existingReview as any).id,
+              bed: patient.bedNumber,
+            });
+          } else {
+            const { error: reviewError } = await supabase
+              .from('death_reviews' as any)
             .insert({
               patient_movement_id: movementData?.id ?? null,
               patient_name: patient.name,
@@ -198,17 +221,24 @@ export function PatientMovementDialog({
               hospital_unit_id: currentHospital.id,
               created_by: user?.id,
             });
-          if (reviewError) {
-            console.error('[DEATH_REVIEW] insert failed (non-blocking)', reviewError);
+            if (reviewError) {
+              console.error('[DEATH_REVIEW] insert failed (non-blocking)', reviewError);
+            }
           }
         } catch (e) {
           console.error('[DEATH_REVIEW] insert threw (non-blocking)', e);
         }
       }
 
-      // 3) Notify parent + close dialog.
-      onSuccess?.();
+      // 3) Notify parent + close dialog. Keep the parent cleanup asynchronous
+      //    so the dialog can close before an emergency card is deleted/unmounted.
+      const successResult = onSuccess?.();
       handleClose();
+      if (successResult && typeof (successResult as Promise<void>).catch === "function") {
+        void (successResult as Promise<void>).catch((e) => {
+          console.error('[MOVEMENT] post-success cleanup failed', e);
+        });
+      }
     } catch (error) {
       console.error('Error creating movement:', error);
       toast({

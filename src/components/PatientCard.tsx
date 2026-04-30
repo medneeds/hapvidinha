@@ -235,7 +235,7 @@ const calculateDaysUntilDischarge = (dateString: string): string | null => {
 interface PatientCardProps {
   patient: Patient;
   onUpdate: (updatedPatient: Patient) => void;
-  onDelete?: (patientId: string) => void;
+  onDelete?: (patientId: string) => void | Promise<void>;
   onUndelete?: (patient: Patient) => void;
   selectionMode?: boolean;
   isSelected?: boolean;
@@ -4270,7 +4270,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         }}
         onSuccess={() => {
           if (onDelete) {
-            onDelete(patient.id);
+            return onDelete(patient.id);
           }
         }}
       />
