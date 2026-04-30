@@ -461,6 +461,7 @@ export function usePatients(department?: Department) {
     createdBy: record.created_by || undefined,
     psmStatus: record.psm_status as Patient['psmStatus'],
     clinicalStatus: record.clinical_status as Patient['clinicalStatus'],
+    isVacant: record.is_vacant ?? false,
     patientCategory: record.patient_category as Patient['patientCategory'],
   });
 
