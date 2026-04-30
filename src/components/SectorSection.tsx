@@ -157,7 +157,7 @@ export function SectorSection({
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
 
   // Pending post-death reviews for THIS sector (beds no longer in the list)
-  const department = patients[0]?.department;
+  const department = (patients[0] as any)?.department as string | undefined;
   const { reviews: pendingReviews } = useDeathReviews(department);
   const ghostReviews = pendingReviews.filter(
     (r) =>
