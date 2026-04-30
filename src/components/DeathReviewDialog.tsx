@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -38,24 +38,28 @@ export function DeathReviewDialog({
   const [savingItem, setSavingItem] = useState<DeathReviewItem | null>(null);
   const [notes, setNotes] = useState("");
   const [localReview, setLocalReview] = useState<DeathReview | null>(review);
+  const localReviewRef = useRef<DeathReview | null>(review);
 
   useEffect(() => {
     setLocalReview(review);
+    localReviewRef.current = review;
   }, [review]);
 
   if (!localReview) return null;
 
   const handleToggle = async (item: DeathReviewItem, currentlyDone: boolean) => {
-    if (!localReview) return;
+    const currentReview = localReviewRef.current;
+    if (!currentReview || savingItem) return;
     setSavingItem(item);
     const done = !currentlyDone;
     const now = new Date().toISOString();
     const optimisticReview = {
-      ...localReview,
+      ...currentReview,
       [`${item}_done`]: done,
       [`${item}_at`]: done ? now : null,
       [`${item}_by`]: done ? "SALVANDO..." : null,
     } as DeathReview;
+    localReviewRef.current = optimisticReview;
     setLocalReview(optimisticReview);
 
     const { data: userData } = await supabase.auth.getUser();
@@ -64,13 +68,14 @@ export function DeathReviewDialog({
       (userData.user?.email as string) ||
       "USUÁRIO";
     try {
-      await toggleItem(localReview, item, done, byName.toUpperCase());
-      setLocalReview((current) => current ? ({
-        ...current,
-        [`${item}_by`]: done ? byName.toUpperCase() : null,
-      } as DeathReview) : current);
+      const persistedReview = await toggleItem(currentReview, item, done, byName.toUpperCase());
+      if (persistedReview) {
+        localReviewRef.current = persistedReview;
+        setLocalReview(persistedReview);
+      }
     } catch (error) {
-      setLocalReview(localReview);
+      localReviewRef.current = currentReview;
+      setLocalReview(currentReview);
       console.error("Failed to toggle death review item", error);
     } finally {
       setSavingItem(null);
