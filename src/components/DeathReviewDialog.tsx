@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,8 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Skull, CheckCircle2, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -22,6 +20,10 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
+type DeathReviewDoneKey = `${DeathReviewItem}_done`;
+type DeathReviewAtKey = `${DeathReviewItem}_at`;
+type DeathReviewByKey = `${DeathReviewItem}_by`;
 
 interface DeathReviewDialogProps {
   review: DeathReview | null;
@@ -36,26 +38,29 @@ export function DeathReviewDialog({
 }: DeathReviewDialogProps) {
   const { toggleItem } = useDeathReviews(review?.department);
   const [savingItem, setSavingItem] = useState<DeathReviewItem | null>(null);
-  const [notes, setNotes] = useState("");
   const [localReview, setLocalReview] = useState<DeathReview | null>(review);
+  const localReviewRef = useRef<DeathReview | null>(review);
 
   useEffect(() => {
     setLocalReview(review);
+    localReviewRef.current = review;
   }, [review]);
 
   if (!localReview) return null;
 
   const handleToggle = async (item: DeathReviewItem, currentlyDone: boolean) => {
-    if (!localReview) return;
+    const currentReview = localReviewRef.current;
+    if (!currentReview || savingItem) return;
     setSavingItem(item);
     const done = !currentlyDone;
     const now = new Date().toISOString();
     const optimisticReview = {
-      ...localReview,
+      ...currentReview,
       [`${item}_done`]: done,
       [`${item}_at`]: done ? now : null,
       [`${item}_by`]: done ? "SALVANDO..." : null,
     } as DeathReview;
+    localReviewRef.current = optimisticReview;
     setLocalReview(optimisticReview);
 
     const { data: userData } = await supabase.auth.getUser();
@@ -64,13 +69,14 @@ export function DeathReviewDialog({
       (userData.user?.email as string) ||
       "USUÁRIO";
     try {
-      await toggleItem(localReview, item, done, byName.toUpperCase());
-      setLocalReview((current) => current ? ({
-        ...current,
-        [`${item}_by`]: done ? byName.toUpperCase() : null,
-      } as DeathReview) : current);
+      const persistedReview = await toggleItem(currentReview, item, done, byName.toUpperCase());
+      if (persistedReview) {
+        localReviewRef.current = persistedReview;
+        setLocalReview(persistedReview);
+      }
     } catch (error) {
-      setLocalReview(localReview);
+      localReviewRef.current = currentReview;
+      setLocalReview(currentReview);
       console.error("Failed to toggle death review item", error);
     } finally {
       setSavingItem(null);
@@ -78,7 +84,7 @@ export function DeathReviewDialog({
   };
 
   const completedCount = DEATH_REVIEW_ITEMS.filter(
-    (it) => (localReview as any)[`${it.key}_done`]
+    (it) => localReview[`${it.key}_done` as DeathReviewDoneKey]
   ).length;
 
   return (
@@ -119,9 +125,9 @@ export function DeathReviewDialog({
           </div>
           <div className="space-y-2">
             {DEATH_REVIEW_ITEMS.map((item) => {
-              const done = (localReview as any)[`${item.key}_done`] as boolean;
-              const at = (localReview as any)[`${item.key}_at`] as string | null;
-              const by = (localReview as any)[`${item.key}_by`] as string | null;
+              const done = localReview[`${item.key}_done` as DeathReviewDoneKey];
+              const at = localReview[`${item.key}_at` as DeathReviewAtKey];
+              const by = localReview[`${item.key}_by` as DeathReviewByKey];
               return (
                 <button
                   key={item.key}

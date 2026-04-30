@@ -36,6 +36,13 @@ export type DeathReviewItem =
   | "belongings_removal"
   | "chart_finalized";
 
+type DeathReviewDoneKey = `${DeathReviewItem}_done`;
+type DeathReviewAtKey = `${DeathReviewItem}_at`;
+type DeathReviewByKey = `${DeathReviewItem}_by`;
+type DeathReviewUpdate = Partial<
+  Pick<DeathReview, DeathReviewDoneKey | DeathReviewAtKey | DeathReviewByKey | "completed_at">
+>;
+
 export const DEATH_REVIEW_ITEMS: { key: DeathReviewItem; label: string }[] = [
   { key: "death_certificate", label: "DECLARAÇÃO DE ÓBITO EMITIDA" },
   { key: "family_notified", label: "FAMÍLIA COMUNICADA" },
@@ -56,7 +63,7 @@ export function useDeathReviews(department?: string | null) {
     }
 
     let query = supabase
-      .from("death_reviews" as any)
+      .from("death_reviews")
       .select("*")
       .eq("state_id", currentState.id)
       .eq("hospital_unit_id", currentHospital.id)
@@ -106,7 +113,7 @@ export function useDeathReviews(department?: string | null) {
       if (!currentState?.id || !currentHospital?.id) return null;
       const { data: userData } = await supabase.auth.getUser();
       const { data, error } = await supabase
-        .from("death_reviews" as any)
+        .from("death_reviews")
         .insert({
           patient_movement_id: input.patient_movement_id ?? null,
           patient_name: input.patient_name,
@@ -132,14 +139,17 @@ export function useDeathReviews(department?: string | null) {
   const toggleItem = useCallback(
     async (review: DeathReview, item: DeathReviewItem, done: boolean, byName: string) => {
       const now = new Date().toISOString();
-      const updates: Record<string, any> = {
-        [`${item}_done`]: done,
-        [`${item}_at`]: done ? now : null,
-        [`${item}_by`]: done ? byName : null,
+      const doneField = `${item}_done` as DeathReviewDoneKey;
+      const atField = `${item}_at` as DeathReviewAtKey;
+      const byField = `${item}_by` as DeathReviewByKey;
+      const updates: DeathReviewUpdate = {
+        [doneField]: done,
+        [atField]: done ? now : null,
+        [byField]: done ? byName : null,
       };
 
       // After applying this change locally, decide whether all items are complete
-      const merged = { ...review, ...updates } as any;
+      const merged = { ...review, ...updates };
       const allDone =
         merged.death_certificate_done &&
         merged.family_notified_done &&
@@ -147,14 +157,30 @@ export function useDeathReviews(department?: string | null) {
         merged.chart_finalized_done;
       updates.completed_at = allDone ? now : null;
 
-      const { error } = await supabase
-        .from("death_reviews" as any)
+      const { data, error } = await supabase
+        .from("death_reviews")
         .update(updates)
-        .eq("id", review.id);
+        .eq("id", review.id)
+        .select()
+        .single();
       if (error) {
         console.error("Failed to update death review", error);
+        throw error;
+      }
+
+      if (data) {
+        const updatedReview = data as unknown as DeathReview;
+        setReviews((current) => {
+          const exists = current.some((r) => r.id === updatedReview.id);
+          if (updatedReview.completed_at) {
+            return current.filter((r) => r.id !== updatedReview.id);
+          }
+          if (!exists) return [updatedReview, ...current];
+          return current.map((r) => (r.id === updatedReview.id ? updatedReview : r));
+        });
       }
       await fetchReviews();
+      return data as unknown as DeathReview;
     },
     [fetchReviews]
   );
