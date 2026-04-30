@@ -970,10 +970,12 @@ input:-webkit-autofill:active {
   will-change: transform, opacity, filter;
 }
 
-.farewell-butterfly-pause {
+.farewell-butterfly-live {
+  /* Replays the entrance once, then loops the dynamic flight indefinitely
+     (no auto-exit — only the user button stops it). */
   animation:
     farewell-butterfly-enter 2.8s cubic-bezier(0.22, 0.61, 0.36, 1) both,
-    farewell-butterfly-pause 5s ease-in-out 2.8s infinite;
+    farewell-butterfly-live 7s ease-in-out 2.8s infinite;
   backface-visibility: hidden;
   transform-style: preserve-3d;
   will-change: transform;
