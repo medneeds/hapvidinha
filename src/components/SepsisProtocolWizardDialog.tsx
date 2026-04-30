@@ -426,6 +426,11 @@ export function SepsisProtocolWizardDialog({
   };
 
   const handleNext = async () => {
+    const validationError = validateCurrentStep();
+    if (validationError) {
+      toast({ title: "VALIDAÇÃO PENDENTE", description: validationError, variant: "destructive" });
+      return;
+    }
     if (currentStep === 0 && !protocolId) {
       await handleStartProtocol();
       return;
