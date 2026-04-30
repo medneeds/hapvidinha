@@ -1,12 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, ReactNode } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,12 +37,19 @@ interface DeathReviewDialogProps {
   review: DeathReview | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /**
+   * Optional element used to anchor the popover. If omitted, an invisible
+   * anchor is rendered at the current cursor position via the parent's
+   * own trigger handling. Most callers should pass a trigger.
+   */
+  trigger?: ReactNode;
 }
 
 export function DeathReviewDialog({
   review,
   open,
   onOpenChange,
+  trigger,
 }: DeathReviewDialogProps) {
   const { toggleItem } = useDeathReviews(review?.department);
   const { triggerFarewell } = usePalliativeFarewell();
@@ -63,21 +67,15 @@ export function DeathReviewDialog({
     }
   }, [review]);
 
-  // When all pendências are concluded, prompt the user to confirm deallocation + farewell
   useEffect(() => {
     if (!localReview) return;
     const allDone = DEATH_REVIEW_ITEMS.every(
       (it) => localReview[`${it.key}_done` as DeathReviewDoneKey]
     );
-    if (
-      allDone &&
-      farewellTriggeredRef.current !== localReview.id
-    ) {
+    if (allDone && farewellTriggeredRef.current !== localReview.id) {
       setConfirmFarewellOpen(true);
     }
   }, [localReview]);
-
-  if (!localReview) return null;
 
   const handleToggle = async (item: DeathReviewItem, currentlyDone: boolean) => {
     const currentReview = localReviewRef.current;
@@ -100,7 +98,12 @@ export function DeathReviewDialog({
       (userData.user?.email as string) ||
       "USUÁRIO";
     try {
-      const persistedReview = await toggleItem(currentReview, item, done, byName.toUpperCase());
+      const persistedReview = await toggleItem(
+        currentReview,
+        item,
+        done,
+        byName.toUpperCase()
+      );
       if (persistedReview) {
         localReviewRef.current = persistedReview;
         setLocalReview(persistedReview);
@@ -114,124 +117,142 @@ export function DeathReviewDialog({
     }
   };
 
+  if (!localReview) {
+    // Still render the trigger if provided so the layout is preserved.
+    return trigger ? <>{trigger}</> : null;
+  }
+
   const completedCount = DEATH_REVIEW_ITEMS.filter(
     (it) => localReview[`${it.key}_done` as DeathReviewDoneKey]
   ).length;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[560px]">
-        <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-slate-900/10 flex items-center justify-center">
-              <Skull className="h-5 w-5 text-slate-700" />
+    <>
+      <Popover open={open} onOpenChange={onOpenChange}>
+        {trigger && <PopoverTrigger asChild>{trigger}</PopoverTrigger>}
+        <PopoverContent
+          align="end"
+          side="bottom"
+          sideOffset={8}
+          className="w-[380px] max-w-[92vw] p-0 overflow-hidden border-slate-300 shadow-xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="flex items-center gap-3 border-b bg-slate-50/80 dark:bg-slate-900/40 p-3">
+            <div className="h-9 w-9 rounded-full bg-slate-900/10 flex items-center justify-center">
+              <Skull className="h-4 w-4 text-slate-700" />
             </div>
-            <div>
-              <DialogTitle className="text-lg">REVISÃO PÓS-ÓBITO</DialogTitle>
-              <DialogDescription className="text-xs">
-                Confirme as pendências para encerrar a baixa do leito.
-              </DialogDescription>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-semibold leading-tight">
+                REVISÃO PÓS-ÓBITO
+              </div>
+              <div className="text-[11px] text-muted-foreground truncate">
+                {localReview.patient_name} • Leito {localReview.patient_bed}
+              </div>
             </div>
           </div>
-        </DialogHeader>
 
-        <div className="space-y-1 rounded-lg border bg-muted/30 p-3 text-sm">
-          <div className="font-medium">{localReview.patient_name}</div>
-          <div className="text-xs text-muted-foreground">
-            Leito {localReview.patient_bed}
-            {localReview.patient_sector ? ` • ${localReview.patient_sector}` : ""} •{" "}
+          {/* Sub info */}
+          <div className="px-3 pt-2 text-[11px] text-muted-foreground">
             Óbito registrado{" "}
             {format(new Date(localReview.created_at), "dd/MM/yyyy 'às' HH:mm", {
               locale: ptBR,
             })}
           </div>
-        </div>
 
-        <div className="space-y-2 py-2">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>PENDÊNCIAS</span>
-            <span>
-              {completedCount}/{DEATH_REVIEW_ITEMS.length} concluídas
-            </span>
-          </div>
-          <div className="space-y-2">
-            {DEATH_REVIEW_ITEMS.map((item) => {
-              const done = localReview[`${item.key}_done` as DeathReviewDoneKey];
-              const at = localReview[`${item.key}_at` as DeathReviewAtKey];
-              const by = localReview[`${item.key}_by` as DeathReviewByKey];
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  disabled={savingItem === item.key}
-                  onClick={() => handleToggle(item.key, done)}
-                  className={cn(
-                    "w-full text-left rounded-lg border p-3 transition-colors",
-                    "hover:bg-accent/40",
-                    done
-                      ? "border-emerald-300 bg-emerald-50/60 dark:bg-emerald-950/20"
-                      : "border-border bg-background"
-                  )}
-                >
-                  <div className="flex items-start gap-3">
-                    <Checkbox
-                      checked={done}
-                      className="mt-0.5 pointer-events-none"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div
-                        className={cn(
-                          "text-sm font-medium",
-                          done && "text-emerald-700 dark:text-emerald-400"
+          {/* Pendências */}
+          <div className="space-y-2 p-3">
+            <div className="flex items-center justify-between text-[10px] font-semibold tracking-wider text-muted-foreground">
+              <span>PENDÊNCIAS</span>
+              <span>
+                {completedCount}/{DEATH_REVIEW_ITEMS.length} concluídas
+              </span>
+            </div>
+            <div className="space-y-1.5">
+              {DEATH_REVIEW_ITEMS.map((item) => {
+                const done =
+                  localReview[`${item.key}_done` as DeathReviewDoneKey];
+                const at = localReview[`${item.key}_at` as DeathReviewAtKey];
+                const by = localReview[`${item.key}_by` as DeathReviewByKey];
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    disabled={savingItem === item.key}
+                    onClick={() => handleToggle(item.key, done)}
+                    className={cn(
+                      "w-full text-left rounded-md border p-2 transition-colors",
+                      "hover:bg-accent/40",
+                      done
+                        ? "border-emerald-300 bg-emerald-50/60 dark:bg-emerald-950/20"
+                        : "border-border bg-background"
+                    )}
+                  >
+                    <div className="flex items-start gap-2">
+                      <Checkbox
+                        checked={done}
+                        className="mt-0.5 pointer-events-none"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className={cn(
+                            "text-[12px] font-medium leading-tight",
+                            done && "text-emerald-700 dark:text-emerald-400"
+                          )}
+                        >
+                          {item.label}
+                        </div>
+                        {done && at ? (
+                          <div className="mt-0.5 flex items-center gap-1 text-[10px] text-muted-foreground">
+                            <CheckCircle2 className="h-3 w-3" />
+                            {by || "—"} •{" "}
+                            {format(new Date(at), "dd/MM HH:mm", {
+                              locale: ptBR,
+                            })}
+                          </div>
+                        ) : (
+                          <div className="mt-0.5 flex items-center gap-1 text-[10px] text-amber-700 dark:text-amber-400">
+                            <Clock className="h-3 w-3" />
+                            PENDENTE
+                          </div>
                         )}
-                      >
-                        {item.label}
                       </div>
-                      {done && at && (
-                        <div className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground">
-                          <CheckCircle2 className="h-3 w-3" />
-                          {by || "—"} •{" "}
-                          {format(new Date(at), "dd/MM HH:mm", {
-                            locale: ptBR,
-                          })}
-                        </div>
-                      )}
-                      {!done && (
-                        <div className="mt-1 flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-400">
-                          <Clock className="h-3 w-3" />
-                          PENDENTE
-                        </div>
-                      )}
                     </div>
-                  </div>
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {completedCount === DEATH_REVIEW_ITEMS.length && (
-          <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-200">
-            ✅ Todas as pendências foram concluídas. Confirme abaixo para
-            desalocar o leito e iniciar a despedida.
-          </div>
-        )}
-
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Fechar
-          </Button>
           {completedCount === DEATH_REVIEW_ITEMS.length && (
-            <Button
-              onClick={() => setConfirmFarewellOpen(true)}
-              className="gap-2"
-            >
-              <Sparkles className="h-4 w-4" />
-              Desalocar e despedir
-            </Button>
+            <div className="mx-3 mb-3 rounded-md border border-emerald-300 bg-emerald-50 p-2 text-[11px] text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-200">
+              ✅ Todas as pendências concluídas. Confirme abaixo para desalocar
+              o leito.
+            </div>
           )}
-        </DialogFooter>
-      </DialogContent>
+
+          {/* Footer */}
+          <div className="flex items-center justify-end gap-2 border-t bg-muted/30 px-3 py-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+            >
+              Fechar
+            </Button>
+            {completedCount === DEATH_REVIEW_ITEMS.length && (
+              <Button
+                size="sm"
+                onClick={() => setConfirmFarewellOpen(true)}
+                className="gap-1.5"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Desalocar
+              </Button>
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
 
       <AlertDialog
         open={confirmFarewellOpen}
@@ -245,11 +266,14 @@ export function DeathReviewDialog({
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-2">
               <span className="block">
-                Todas as pendências de <strong>{localReview.patient_name}</strong>{" "}
-                foram concluídas.
+                Todas as pendências de{" "}
+                <strong>{localReview.patient_name}</strong> foram concluídas.
               </span>
               <span className="block">
-                Deseja <strong>desalocar o leito {localReview.patient_bed}</strong>{" "}
+                Deseja{" "}
+                <strong>
+                  desalocar o leito {localReview.patient_bed}
+                </strong>{" "}
                 e iniciar a animação de despedida (borboleta)?
               </span>
             </AlertDialogDescription>
@@ -262,12 +286,14 @@ export function DeathReviewDialog({
                 farewellTriggeredRef.current = localReview.id;
                 setConfirmFarewellOpen(false);
                 onOpenChange(false);
-                // Trigger butterfly farewell after dialog close transition
                 setTimeout(() => {
                   try {
                     triggerFarewell(localReview.patient_name);
                   } catch (e) {
-                    console.error("[FAREWELL] trigger from review failed", e);
+                    console.error(
+                      "[FAREWELL] trigger from review failed",
+                      e
+                    );
                   }
                 }, 120);
               }}
@@ -279,6 +305,6 @@ export function DeathReviewDialog({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </Dialog>
+    </>
   );
 }
