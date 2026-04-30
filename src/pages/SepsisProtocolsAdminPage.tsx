@@ -73,7 +73,13 @@ export default function SepsisProtocolsAdminPage() {
   const [search, setSearch] = useState("");
   const [filterOutcome, setFilterOutcome] = useState<string>("all");
   const [selectedProtocol, setSelectedProtocol] = useState<SepsisProtocolRow | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SepsisProtocolRow | null>(null);
   const { currentHospital, currentState } = useHospital();
+  const { user, role } = useAuth();
+
+  const isAdmin = role === "admin";
+  const canDelete = (p: SepsisProtocolRow) =>
+    isAdmin || (p.created_by === user?.id && !p.outcome);
 
   useEffect(() => {
     fetchProtocols();
