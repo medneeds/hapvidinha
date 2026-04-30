@@ -84,7 +84,7 @@ export function DeathReviewDialog({
   };
 
   const completedCount = DEATH_REVIEW_ITEMS.filter(
-    (it) => (localReview as any)[`${it.key}_done`]
+    (it) => localReview[`${it.key}_done` as DeathReviewDoneKey]
   ).length;
 
   return (
@@ -125,9 +125,9 @@ export function DeathReviewDialog({
           </div>
           <div className="space-y-2">
             {DEATH_REVIEW_ITEMS.map((item) => {
-              const done = (localReview as any)[`${item.key}_done`] as boolean;
-              const at = (localReview as any)[`${item.key}_at`] as string | null;
-              const by = (localReview as any)[`${item.key}_by`] as string | null;
+              const done = localReview[`${item.key}_done` as DeathReviewDoneKey];
+              const at = localReview[`${item.key}_at` as DeathReviewAtKey];
+              const by = localReview[`${item.key}_by` as DeathReviewByKey];
               return (
                 <button
                   key={item.key}
