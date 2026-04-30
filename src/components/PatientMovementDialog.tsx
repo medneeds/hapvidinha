@@ -230,9 +230,15 @@ export function PatientMovementDialog({
         }
       }
 
-      // 3) Notify parent + close dialog.
-      await onSuccess?.();
+      // 3) Notify parent + close dialog. Keep the parent cleanup asynchronous
+      //    so the dialog can close before an emergency card is deleted/unmounted.
+      const successResult = onSuccess?.();
       handleClose();
+      if (successResult && typeof (successResult as Promise<void>).catch === "function") {
+        void (successResult as Promise<void>).catch((e) => {
+          console.error('[MOVEMENT] post-success cleanup failed', e);
+        });
+      }
     } catch (error) {
       console.error('Error creating movement:', error);
       toast({
