@@ -175,8 +175,25 @@ export function PatientMovementDialog({
 
       // Trigger palliative farewell overlay if patient was in palliative care and died
       const isPalliative = (patient as any).clinicalStatus === 'paliativado';
+      console.log('[FAREWELL] death movement saved', {
+        patientId: (patient as any).id,
+        patientName: patient.name,
+        bed: patient.bedNumber,
+        sector: patient.sector,
+        movementType,
+        clinicalStatus: (patient as any).clinicalStatus,
+        isPalliative,
+        willTriggerOverlay: movementType === 'ÓBITO' && isPalliative,
+        movementId: movementData?.id ?? null,
+        timestamp: new Date().toISOString(),
+      });
       if (movementType === "ÓBITO" && isPalliative) {
+        console.log('[FAREWELL] calling triggerFarewell()', { patientName: patient.name });
         triggerFarewell(patient.name);
+      } else if (movementType === 'ÓBITO') {
+        console.log('[FAREWELL] overlay skipped — patient was not in palliative care', {
+          clinicalStatus: (patient as any).clinicalStatus,
+        });
       }
 
       onSuccess?.();
