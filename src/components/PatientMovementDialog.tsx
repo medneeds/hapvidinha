@@ -203,9 +203,9 @@ export function PatientMovementDialog({
 
           if (lookupError) {
             console.error('[DEATH_REVIEW] lookup failed before insert (non-blocking)', lookupError);
-          } else if (existingReview?.id) {
+          } else if ((existingReview as any)?.id) {
             console.log('[DEATH_REVIEW] pending review already exists — skipping duplicate insert', {
-              reviewId: existingReview.id,
+              reviewId: (existingReview as any).id,
               bed: patient.bedNumber,
             });
           } else {
