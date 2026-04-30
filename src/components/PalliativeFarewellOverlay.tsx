@@ -151,7 +151,7 @@ export function PalliativeFarewellOverlay({
   return createPortal(
     <div
       className={cn(
-        "fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden",
+        "fixed inset-0 z-[9999] overflow-hidden",
         "bg-gradient-to-br from-slate-950 via-indigo-950/95 to-sky-950/90",
         "backdrop-blur-md",
         isExiting ? "farewell-backdrop-exit" : "farewell-backdrop"
