@@ -324,13 +324,16 @@ export function SepsisProtocolWizardDialog({
     if ((formData.antibiotic_administration_date || formData.antibiotic_administration_time) && !formData.antibiotic_names?.trim()) {
       pendencies.push({ step: 4, message: "Tratamento: informe o(s) antibiótico(s) administrado(s)." });
     }
-    [
+    const treatmentDateTimePendencies = [
       ...getDateTimePairPendencies(formData.blood_culture_date, formData.blood_culture_time, "Hemocultura"),
       ...getDateTimePairPendencies(formData.lactate_date, formData.lactate_time, "Lactato"),
       ...getDateTimePairPendencies(formData.antibiotic_prescription_date, formData.antibiotic_prescription_time, "Prescrição de antibiótico"),
       ...getDateTimePairPendencies(formData.antibiotic_administration_date, formData.antibiotic_administration_time, "Administração de antibiótico"),
-      ...getDateTimePairPendencies(formData.destination_date, formData.destination_time, "Destino"),
-    ].forEach((message) => pendencies.push({ step: 4, message }));
+    ];
+    treatmentDateTimePendencies.forEach((message) => pendencies.push({ step: 4, message }));
+    getDateTimePairPendencies(formData.destination_date, formData.destination_time, "Destino").forEach((message) =>
+      pendencies.push({ step: 5, message }),
+    );
     if (!formData.outcome) pendencies.push({ step: 5, message: "Desfecho: selecione o desfecho para encerrar." });
 
     return pendencies;
