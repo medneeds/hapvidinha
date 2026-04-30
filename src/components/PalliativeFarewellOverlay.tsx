@@ -41,6 +41,10 @@ const REFLECTIONS = [
 
 type Phase = "enter" | "pause" | "exit";
 
+const ENTER_MS = 2500;
+const PAUSE_MS = 4000;
+const EXIT_MS = 3000;
+
 export function PalliativeFarewellOverlay({
   open,
   patientName,
@@ -51,11 +55,43 @@ export function PalliativeFarewellOverlay({
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<Phase>("enter");
   const closedRef = useRef(false);
+  const mountedRef = useRef(false);
+  const timersRef = useRef<number[]>([]);
+
+  const setOverlayMounted = (value: boolean) => {
+    mountedRef.current = value;
+    setMounted(value);
+  };
+
+  const clearTimers = () => {
+    timersRef.current.forEach((timer) => window.clearTimeout(timer));
+    timersRef.current = [];
+  };
+
+  const scheduleTimer = (callback: () => void, delay: number) => {
+    const timer = window.setTimeout(callback, delay);
+    timersRef.current.push(timer);
+    return timer;
+  };
 
   const reflection = useMemo(
     () => REFLECTIONS[Math.floor(Math.random() * REFLECTIONS.length)],
     // re-pick only when a new farewell starts
-    [mounted && open]
+    [open, patientName]
+  );
+
+  const stars = useMemo(
+    () =>
+      Array.from({ length: 40 }, (_, i) => ({
+        id: i,
+        width: `${1 + Math.random() * 2}px`,
+        height: `${1 + Math.random() * 2}px`,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 3}s`,
+        animationDuration: `${2 + Math.random() * 3}s`,
+      })),
+    [open, patientName]
   );
 
   // Mount when opened; never tear down before the exit animation completes.

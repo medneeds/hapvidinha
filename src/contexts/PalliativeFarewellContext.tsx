@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from "react";
 import { PalliativeFarewellOverlay } from "@/components/PalliativeFarewellOverlay";
 
 interface PalliativeFarewellContextValue {
@@ -10,6 +10,11 @@ const PalliativeFarewellContext = createContext<PalliativeFarewellContextValue |
 export function PalliativeFarewellProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const nameRef = useRef("");
+
+  useEffect(() => {
+    nameRef.current = name;
+  }, [name]);
 
   const triggerFarewell = useCallback((patientName: string) => {
     console.log('[FAREWELL] context.triggerFarewell received', {
@@ -20,19 +25,21 @@ export function PalliativeFarewellProvider({ children }: { children: ReactNode }
     setOpen(true);
   }, []);
 
+  const handleOverlayClose = useCallback(() => {
+    console.log('[FAREWELL] context.onClose fired — setting open=false', {
+      patientName: nameRef.current,
+      timestamp: new Date().toISOString(),
+    });
+    setOpen(false);
+  }, []);
+
   return (
     <PalliativeFarewellContext.Provider value={{ triggerFarewell }}>
       {children}
       <PalliativeFarewellOverlay
         open={open}
         patientName={name}
-        onClose={() => {
-          console.log('[FAREWELL] context.onClose fired — setting open=false', {
-            patientName: name,
-            timestamp: new Date().toISOString(),
-          });
-          setOpen(false);
-        }}
+        onClose={handleOverlayClose}
       />
     </PalliativeFarewellContext.Provider>
   );
