@@ -7,9 +7,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Skull, CheckCircle2, Clock } from "lucide-react";
+import { Skull, CheckCircle2, Clock, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DeathReview,
@@ -20,6 +30,7 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { usePalliativeFarewell } from "@/contexts/PalliativeFarewellContext";
 
 type DeathReviewDoneKey = `${DeathReviewItem}_done`;
 type DeathReviewAtKey = `${DeathReviewItem}_at`;
