@@ -255,9 +255,7 @@ const Index = () => {
 
   // Sync database patients to local state
   useEffect(() => {
-    if (dbPatients.length > 0) {
-      setPatients(dbPatients);
-    }
+    setPatients(dbPatients);
   }, [dbPatients]);
 
   // Persist history to localStorage
