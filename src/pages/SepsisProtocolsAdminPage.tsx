@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { MainLayout } from "@/components/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,10 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Activity, Search, FileText, Eye, Download, AlertTriangle, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { Activity, Search, FileText, Eye, Download, AlertTriangle, CheckCircle2, Clock, XCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { generateSepsisProtocolPdf } from "@/utils/sepsisProtocolPdf";
+import { DeleteSepsisProtocolDialog } from "@/components/DeleteSepsisProtocolDialog";
 
 interface SepsisProtocolRow {
   id: string;
