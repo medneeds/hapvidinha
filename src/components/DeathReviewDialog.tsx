@@ -9,8 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Skull, CheckCircle2, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -22,6 +20,10 @@ import {
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
+type DeathReviewDoneKey = `${DeathReviewItem}_done`;
+type DeathReviewAtKey = `${DeathReviewItem}_at`;
+type DeathReviewByKey = `${DeathReviewItem}_by`;
 
 interface DeathReviewDialogProps {
   review: DeathReview | null;
@@ -36,7 +38,6 @@ export function DeathReviewDialog({
 }: DeathReviewDialogProps) {
   const { toggleItem } = useDeathReviews(review?.department);
   const [savingItem, setSavingItem] = useState<DeathReviewItem | null>(null);
-  const [notes, setNotes] = useState("");
   const [localReview, setLocalReview] = useState<DeathReview | null>(review);
   const localReviewRef = useRef<DeathReview | null>(review);
 
