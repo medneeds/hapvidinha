@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
@@ -39,48 +39,74 @@ const REFLECTIONS = [
   },
 ];
 
+type Phase = "enter" | "pause" | "exit";
+
 export function PalliativeFarewellOverlay({
   open,
   patientName,
   onClose,
 }: PalliativeFarewellOverlayProps) {
-  const [phase, setPhase] = useState<"enter" | "pause" | "exit" | "done">("enter");
+  // Mounted state is decoupled from `open` so we can keep the overlay alive
+  // through the fade-out animation, avoiding any perceptible unmount flicker.
+  const [mounted, setMounted] = useState(false);
+  const [phase, setPhase] = useState<Phase>("enter");
+  const closedRef = useRef(false);
 
   const reflection = useMemo(
     () => REFLECTIONS[Math.floor(Math.random() * REFLECTIONS.length)],
-    [open]
+    // re-pick only when a new farewell starts
+    [mounted && open]
   );
 
+  // Mount when opened; never tear down before the exit animation completes.
   useEffect(() => {
     if (!open) return;
+    closedRef.current = false;
+    setMounted(true);
     setPhase("enter");
-    const t1 = setTimeout(() => setPhase("pause"), 2500);
-    const t2 = setTimeout(() => setPhase("exit"), 6500);
-    const t3 = setTimeout(() => {
-      setPhase("done");
+
+    // enter (2.5s) → pause (4s) → exit (3s) → unmount
+    const tPause = setTimeout(() => setPhase("pause"), 2500);
+    const tExit = setTimeout(() => setPhase("exit"), 6500);
+    const tClose = setTimeout(() => {
+      if (closedRef.current) return;
+      closedRef.current = true;
       onClose();
-    }, 9500);
+    }, 6500 + 1100); // fire onClose after backdrop fade (~1s)
+    const tUnmount = setTimeout(() => setMounted(false), 6500 + 3100);
+
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
+      clearTimeout(tPause);
+      clearTimeout(tExit);
+      clearTimeout(tClose);
+      clearTimeout(tUnmount);
     };
   }, [open, onClose]);
 
-  if (!open) return null;
+  const handleSkip = () => {
+    if (phase === "exit") return;
+    setPhase("exit");
+    setTimeout(() => {
+      if (closedRef.current) return;
+      closedRef.current = true;
+      onClose();
+    }, 1100);
+    setTimeout(() => setMounted(false), 3100);
+  };
+
+  if (!mounted) return null;
+
+  const isExiting = phase === "exit";
 
   return createPortal(
     <div
       className={cn(
         "fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden",
         "bg-gradient-to-b from-sky-950/85 via-indigo-950/80 to-slate-950/90",
-        "backdrop-blur-md transition-opacity duration-1000",
-        phase === "exit" || phase === "done" ? "opacity-0" : "opacity-100"
+        "backdrop-blur-md",
+        isExiting ? "farewell-backdrop-exit" : "farewell-backdrop"
       )}
-      onClick={() => {
-        setPhase("exit");
-        setTimeout(onClose, 1000);
-      }}
+      onClick={handleSkip}
       role="dialog"
       aria-label="Homenagem de despedida"
     >
@@ -102,13 +128,18 @@ export function PalliativeFarewellOverlay({
         ))}
       </div>
 
-      {/* Giant butterfly - flies in, pauses center, flies up and out */}
+      {/*
+        Butterfly: a single element whose class swaps once between
+        "enter/pause" (which chains both keyframes) and "exit". The pause
+        class re-declares the enter animation so the visual frame never
+        snaps when transitioning enter→pause.
+      */}
       <div
         className={cn(
-          "absolute will-change-transform",
+          "absolute",
           phase === "enter" && "farewell-butterfly-enter",
           phase === "pause" && "farewell-butterfly-pause",
-          (phase === "exit" || phase === "done") && "farewell-butterfly-exit"
+          phase === "exit" && "farewell-butterfly-exit"
         )}
       >
         <svg
@@ -162,7 +193,7 @@ export function PalliativeFarewellOverlay({
       {/* Reflection message */}
       <div
         className={cn(
-          "relative z-10 max-w-2xl mx-auto px-8 text-center transition-all duration-1500",
+          "relative z-10 max-w-2xl mx-auto px-8 text-center farewell-reflection",
           phase === "pause"
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-6"
@@ -177,7 +208,7 @@ export function PalliativeFarewellOverlay({
           </p>
         )}
         <p className="text-white/95 text-lg md:text-2xl font-light leading-relaxed italic">
-          “{reflection.text}”
+          "{reflection.text}"
         </p>
         {reflection.author && (
           <p className="mt-4 text-sky-200/70 text-sm tracking-wide">
