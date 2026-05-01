@@ -133,6 +133,7 @@ export function BedAllocationNotifications() {
   const [rejectReason, setRejectReason] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [lastNotifiedId, setLastNotifiedId] = useState<string | null>(null);
+  const [bedPickerRequest, setBedPickerRequest] = useState<BedAllocationRequest | null>(null);
 
   // Apenas LIDER e COORDENADOR veem as notificações
   if (role === "porta") return null;
