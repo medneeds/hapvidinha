@@ -318,7 +318,7 @@ export function SectorSection({
               // occupied beds as full draggable cards — interleaved by bed number.
               (() => {
                 const occupiedIds = sortedPatients
-                  .filter((p) => !p.isVacant && p.name)
+                  .filter((p) => !p.isVacant)
                   .map((p) => p.id);
                 return (
                   <DndContext
@@ -328,7 +328,7 @@ export function SectorSection({
                   >
                     <SortableContext items={occupiedIds} strategy={verticalListSortingStrategy}>
                       {sortedPatients.map((patient) => {
-                        const isVacantSlot = patient.isVacant || !patient.name;
+                        const isVacantSlot = patient.isVacant === true;
                         if (isVacantSlot) {
                           return (
                             <EmptyBedSlot
