@@ -160,7 +160,20 @@ export function useBedAllocationRequests() {
     }
   };
 
-  const approveRequest = async (requestId: string) => {
+  /**
+   * Approve a Door allocation request.
+   * @param requestId
+   * @param overrideBedNumber If provided, allocates the patient to this exact bed (must already
+   *        be free or be a vacant placeholder in the requested sector). When omitted, falls back
+   *        to legacy auto-pick (lowest vacant → next regular → EXTRA).
+   * @param overrideVacantPlaceholderId When the chosen bed corresponds to an existing vacant
+   *        placeholder row, pass its id so it can be removed before the move.
+   */
+  const approveRequest = async (
+    requestId: string,
+    overrideBedNumber?: string,
+    overrideVacantPlaceholderId?: string,
+  ) => {
     if (!user?.id || !currentHospital?.id) return false;
 
     try {
@@ -189,7 +202,7 @@ export function useBedAllocationRequests() {
       };
       const dbSector = sectorMap[request.requested_sector] || request.requested_sector;
 
-      // Look for an existing vacant bed in the destination sector to prioritize
+      // Look for existing beds in the destination sector
       const { data: existingPatients } = await supabase
         .from("patients")
         .select("id, bed_number, display_order, is_vacant")
@@ -213,16 +226,31 @@ export function useBedAllocationRequests() {
         });
       }
 
-      // Prefer reusing the lowest-numbered vacant regular bed; only fall back to a new (or EXTRA) slot
-      const sortedVacant = [...vacantBeds].sort((a, b) =>
-        a.bed_number.localeCompare(b.bed_number, undefined, { numeric: true })
-      );
-      const vacantTarget = sortedVacant[0];
+      let newBedNumber: string;
+      let newDisplayOrder: number;
+      let vacantTarget: { id: string; bed_number: string; display_order: number | null } | undefined;
 
-      const newBedNumber = vacantTarget
-        ? vacantTarget.bed_number
-        : getNextBedNumber(dbSector, occupiedBedNumbers, currentDepartment);
-      const newDisplayOrder = vacantTarget?.display_order ?? maxDisplayOrder + 1;
+      if (overrideBedNumber) {
+        // Caller picked a specific bed via the popup. Validate it's not occupied.
+        if (occupiedBedNumbers.includes(overrideBedNumber)) {
+          throw new Error(`Leito ${overrideBedNumber} já está ocupado`);
+        }
+        newBedNumber = overrideBedNumber;
+        vacantTarget =
+          vacantBeds.find((v) => v.id === overrideVacantPlaceholderId) ||
+          vacantBeds.find((v) => v.bed_number === overrideBedNumber);
+        newDisplayOrder = vacantTarget?.display_order ?? maxDisplayOrder + 1;
+      } else {
+        // Legacy auto-pick: lowest vacant → next regular → EXTRA
+        const sortedVacant = [...vacantBeds].sort((a, b) =>
+          a.bed_number.localeCompare(b.bed_number, undefined, { numeric: true })
+        );
+        vacantTarget = sortedVacant[0];
+        newBedNumber = vacantTarget
+          ? vacantTarget.bed_number
+          : getNextBedNumber(dbSector, occupiedBedNumbers, currentDepartment);
+        newDisplayOrder = vacantTarget?.display_order ?? maxDisplayOrder + 1;
+      }
 
       // Update request status
       const { error: updateError } = await supabase
@@ -269,11 +297,11 @@ export function useBedAllocationRequests() {
       await fetchRequests();
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error approving request:", error);
       toast({
         title: "Erro",
-        description: "Falha ao aprovar alocação",
+        description: error?.message || "Falha ao aprovar alocação",
         variant: "destructive",
       });
       return false;
