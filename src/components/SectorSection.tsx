@@ -53,7 +53,7 @@ interface SectorSectionProps {
 const sectorInfo = {
   red: {
     title: "Cuidados Especiais",
-    subtitle: "Leitos V01-V05",
+    subtitle: "Leitos V01-V07",
     icon: "🔴",
     gradientClass: "bg-critical/15 dark:bg-critical/25 border-l-4 border-l-critical"
   },
