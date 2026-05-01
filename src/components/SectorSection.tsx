@@ -154,6 +154,11 @@ export function SectorSection({
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
+  // V/A/Z are FIXED, numerically-ordered emergency observation beds (like UTI).
+  const isFixedBedSector = sector === 'red' || sector === 'yellow' || sector === 'blue';
+  const sortedPatients = isFixedBedSector
+    ? [...patients].sort((a, b) => a.bedNumber.localeCompare(b.bedNumber, 'pt-BR', { numeric: true }))
+    : patients;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
 
   // Pending post-death reviews for THIS sector (beds no longer in the list)
