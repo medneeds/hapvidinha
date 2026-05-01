@@ -32,6 +32,7 @@ export function AllocationPendingBadge({ patient, onStatusChange }: AllocationPe
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isSettingDiscussing, setIsSettingDiscussing] = useState(false);
+  const [bedPickerOpen, setBedPickerOpen] = useState(false);
   const { requests, approveRequest, setDiscussing, refetch } = useBedAllocationRequests();
   const { role } = useAuth();
   
