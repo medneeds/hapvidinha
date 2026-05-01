@@ -1432,6 +1432,7 @@ const Index = () => {
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
                     onRefetch={refetch}
+                    onRequestFromQueue={handleRequestFromQueue}
                   />
                   <SectorSection 
                     sector="yellow" 
@@ -1448,6 +1449,7 @@ const Index = () => {
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
                     onRefetch={refetch}
+                    onRequestFromQueue={handleRequestFromQueue}
                   />
                   <SectorSection 
                     sector="blue" 
@@ -1464,6 +1466,7 @@ const Index = () => {
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
                     onRefetch={refetch}
+                    onRequestFromQueue={handleRequestFromQueue}
                   />
 
                   {/* Pacientes Fora das Alas Section */}
