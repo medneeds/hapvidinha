@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { RotateCcw } from "lucide-react";
+import { getNextBedNumber } from "@/utils/bedNaming";
 
 interface PatientMovement {
   id: string;
