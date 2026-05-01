@@ -12,7 +12,7 @@ export interface SectorBedConfig {
 }
 
 export const SECTOR_BED_CONFIG: Record<string, SectorBedConfig> = {
-  red: { prefix: 'V', maxRegularBeds: 5, label: 'Cuidados Especiais' },
+  red: { prefix: 'V', maxRegularBeds: 7, label: 'Cuidados Especiais' },
   yellow: { prefix: 'A', maxRegularBeds: 6, label: 'Observação Amarela' },
   blue: { prefix: 'Z', maxRegularBeds: 6, label: 'Observação Azul' },
   outside: { prefix: 'F', maxRegularBeds: Infinity, label: 'Fora das Alas' },

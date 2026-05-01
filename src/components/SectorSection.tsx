@@ -53,7 +53,7 @@ interface SectorSectionProps {
 const sectorInfo = {
   red: {
     title: "Cuidados Especiais",
-    subtitle: "Leitos V01-V05",
+    subtitle: "Leitos V01-V07",
     icon: "🔴",
     gradientClass: "bg-critical/15 dark:bg-critical/25 border-l-4 border-l-critical"
   },
@@ -77,7 +77,7 @@ const sectorInfo = {
   }
 };
 
-function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode, isSelected, onToggleSelection, onTransfer, onPrintPatient, onRefetch }: {
+function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode, isSelected, onToggleSelection, onTransfer, onPrintPatient, onRefetch, dragDisabled }: {
   patient: Patient;
   onUpdate: (patient: Patient) => void;
   onDelete?: (patientId: string) => void;
@@ -88,6 +88,7 @@ function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectio
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
+  dragDisabled?: boolean;
 }) {
   const {
     attributes,
@@ -96,7 +97,7 @@ function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectio
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: patient.id });
+  } = useSortable({ id: patient.id, disabled: dragDisabled });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -113,9 +114,11 @@ function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectio
           className="flex-shrink-0"
         />
       )}
-      <div {...listeners} className="cursor-grab active:cursor-grabbing flex-shrink-0 print:hidden">
-        <GripVertical className="h-4 w-4 text-muted-foreground" />
-      </div>
+      {!dragDisabled && (
+        <div {...listeners} className="cursor-grab active:cursor-grabbing flex-shrink-0 print:hidden">
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
+        </div>
+      )}
       <div className="flex-1 min-w-0">
         <PatientCard
           patient={patient}
@@ -154,6 +157,11 @@ export function SectorSection({
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
+  // V/A/Z are FIXED, numerically-ordered emergency observation beds (like UTI).
+  const isFixedBedSector = sector === 'red' || sector === 'yellow' || sector === 'blue';
+  const sortedPatients = isFixedBedSector
+    ? [...patients].sort((a, b) => a.bedNumber.localeCompare(b.bedNumber, 'pt-BR', { numeric: true }))
+    : patients;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
 
   // Pending post-death reviews for THIS sector (beds no longer in the list)
@@ -165,12 +173,13 @@ export function SectorSection({
       !patients.some((p) => p.bedNumber === r.patient_bed)
   );
   
-  // Auto-expand when patients are added, auto-collapse when all removed
+  // Auto-expand when patients are added, auto-collapse when all removed.
+  // Fixed-bed sectors (V/A/Z) stay open by default since slots are always present.
   useEffect(() => {
     if (controlledIsOpen === undefined) {
-      setInternalIsOpen(patients.length > 0);
+      setInternalIsOpen(isFixedBedSector ? true : patients.length > 0);
     }
-  }, [patients.length, controlledIsOpen]);
+  }, [patients.length, controlledIsOpen, isFixedBedSector]);
   
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
   const setIsOpen = onOpenChange || setInternalIsOpen;
@@ -200,6 +209,7 @@ export function SectorSection({
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
+    if (isFixedBedSector) return; // V/A/Z stay locked in numeric order
     const { active, over } = event;
     if (over && active.id !== over.id && onReorderPatients) {
       const oldIndex = patients.findIndex((p) => p.id === active.id);
@@ -223,6 +233,7 @@ export function SectorSection({
         onTransfer={onTransfer}
         onPrintPatient={onPrintPatient}
         onRefetch={onRefetch}
+        dragDisabled={isFixedBedSector}
       />
     ))
   );
@@ -280,7 +291,7 @@ export function SectorSection({
             )}
             <div className="flex items-center justify-center h-8 min-w-[2rem] px-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:min-w-[1.5rem]">
               <p className="text-base font-bold text-foreground print:text-[10px]">
-                {patients.length}
+                {isFixedBedSector ? sortedPatients.filter(p => !p.isVacant && p.name).length : patients.length}
                 {SECTOR_BED_CONFIG[sector] && SECTOR_BED_CONFIG[sector].maxRegularBeds !== Infinity && (
                   <span className="text-xs font-normal text-muted-foreground">/{SECTOR_BED_CONFIG[sector].maxRegularBeds}</span>
                 )}
@@ -299,17 +310,17 @@ export function SectorSection({
           />
         ) : (
           <>
-            {patients.length > 0 && (
+            {sortedPatients.length > 0 && (
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
-                  items={patients.map(p => p.id)}
+                  items={sortedPatients.map(p => p.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                  {renderPatientCards(patients)}
+                  {renderPatientCards(sortedPatients)}
                 </SortableContext>
               </DndContext>
             )}
