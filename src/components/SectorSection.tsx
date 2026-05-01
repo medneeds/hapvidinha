@@ -170,12 +170,13 @@ export function SectorSection({
       !patients.some((p) => p.bedNumber === r.patient_bed)
   );
   
-  // Auto-expand when patients are added, auto-collapse when all removed
+  // Auto-expand when patients are added, auto-collapse when all removed.
+  // Fixed-bed sectors (V/A/Z) stay open by default since slots are always present.
   useEffect(() => {
     if (controlledIsOpen === undefined) {
-      setInternalIsOpen(patients.length > 0);
+      setInternalIsOpen(isFixedBedSector ? true : patients.length > 0);
     }
-  }, [patients.length, controlledIsOpen]);
+  }, [patients.length, controlledIsOpen, isFixedBedSector]);
   
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
   const setIsOpen = onOpenChange || setInternalIsOpen;
