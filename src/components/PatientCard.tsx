@@ -1609,11 +1609,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     return (
                       <div
                         className={cn(
-                          'w-fit shrink-0 rounded-md border px-2 py-1 md:px-1.5 md:py-0.5',
+                          'w-fit shrink-0 rounded border px-1.5 py-0.5',
                           bedChipTokens,
                         )}
                       >
-                        <span className="text-base md:text-sm font-extrabold tabular-nums tracking-wide leading-none">
+                        <span className="text-xs font-bold tabular-nums leading-none">
                           {patient.bedNumber}
                         </span>
                       </div>
