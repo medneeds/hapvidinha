@@ -337,8 +337,77 @@ export function usePatients(department?: Department) {
 
   const deletePatient = async (patientId: string, options = { showToast: true, updateLocalState: true }) => {
     try {
+      // Determine if this is a fixed bed in V/A/Z (Urgência) — those must be
+      // PRESERVED as vacant slots (like UTI), never physically removed.
+      const target = patients.find(p => p.id === patientId);
+      const isFixedEmergencyBed =
+        target &&
+        target.sector !== 'outside' &&
+        ['red', 'yellow', 'blue'].includes(target.sector) &&
+        /^[VAZ]\d{2}$/.test(target.bedNumber); // V01-V07, A01-A06, Z01-Z06
+
+      if (isFixedEmergencyBed) {
+        console.log('Vacating fixed emergency bed (preserving slot):', target.bedNumber);
+
+        const { error } = await supabase
+          .from('patients')
+          .update({
+            name: '',
+            age: null,
+            birth_date: null,
+            diagnoses: null,
+            medical_history: null,
+            relevant_exams: null,
+            pendencies: null,
+            schedule: null,
+            admission_history: null,
+            admission_date: null,
+            internment_status: null,
+            internment_notes: null,
+            clinical_status: null,
+            patient_category: null,
+            psm_status: null,
+            allocation_status: null,
+            is_door_patient: false,
+            medical_responsibility: null,
+            highlighted_diagnoses: [],
+            highlighted_medical_history: [],
+            highlighted_conducts: [],
+            highlighted_pendencies: [],
+            is_vacant: true,
+          } as any)
+          .eq('id', patientId);
+
+        if (error) {
+          console.error('Supabase vacate error:', error);
+          throw error;
+        }
+
+        if (options.updateLocalState) {
+          setPatients(prev => prev.map(p => p.id === patientId ? {
+            ...p,
+            name: '',
+            age: '',
+            birthDate: '',
+            diagnoses: [],
+            medicalHistory: [],
+            relevantExams: [],
+            pendencies: [],
+            isVacant: true,
+          } : p));
+        }
+
+        if (options.showToast) {
+          toast({
+            title: "Leito liberado",
+            description: `Leito ${target.bedNumber} agora está disponível.`,
+          });
+        }
+        return;
+      }
+
       console.log('Deleting patient:', patientId);
-      
+
       const { error } = await supabase
         .from('patients')
         .delete()
