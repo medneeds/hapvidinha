@@ -209,6 +209,7 @@ export function SectorSection({
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
+    if (isFixedBedSector) return; // V/A/Z stay locked in numeric order
     const { active, over } = event;
     if (over && active.id !== over.id && onReorderPatients) {
       const oldIndex = patients.findIndex((p) => p.id === active.id);
@@ -232,6 +233,7 @@ export function SectorSection({
         onTransfer={onTransfer}
         onPrintPatient={onPrintPatient}
         onRefetch={onRefetch}
+        dragDisabled={isFixedBedSector}
       />
     ))
   );
