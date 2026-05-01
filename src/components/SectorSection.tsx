@@ -291,7 +291,7 @@ export function SectorSection({
             )}
             <div className="flex items-center justify-center h-8 min-w-[2rem] px-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:min-w-[1.5rem]">
               <p className="text-base font-bold text-foreground print:text-[10px]">
-                {patients.length}
+                {isFixedBedSector ? sortedPatients.filter(p => !p.isVacant && p.name).length : patients.length}
                 {SECTOR_BED_CONFIG[sector] && SECTOR_BED_CONFIG[sector].maxRegularBeds !== Infinity && (
                   <span className="text-xs font-normal text-muted-foreground">/{SECTOR_BED_CONFIG[sector].maxRegularBeds}</span>
                 )}
@@ -310,17 +310,17 @@ export function SectorSection({
           />
         ) : (
           <>
-            {patients.length > 0 && (
+            {sortedPatients.length > 0 && (
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
-                  items={patients.map(p => p.id)}
+                  items={sortedPatients.map(p => p.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                  {renderPatientCards(patients)}
+                  {renderPatientCards(sortedPatients)}
                 </SortableContext>
               </DndContext>
             )}
