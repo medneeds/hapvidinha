@@ -173,10 +173,16 @@ export function BedAllocationNotifications() {
   const discussingRequests = requests.filter(r => r.status === "discussing");
 
   const handleApprove = async (request: BedAllocationRequest) => {
-    const success = await approveRequest(request.id);
+    // Always open the bed picker first so the leader chooses the exact bed.
+    setBedPickerRequest(request);
+  };
+
+  const handleConfirmBedSelection = async (bedNumber: string, vacantPlaceholderId?: string) => {
+    if (!bedPickerRequest) return;
+    const success = await approveRequest(bedPickerRequest.id, bedNumber, vacantPlaceholderId);
     if (success) {
       setSelectedRequest(null);
-      // Refetch to update the list immediately
+      setBedPickerRequest(null);
       await refetch();
     }
   };
