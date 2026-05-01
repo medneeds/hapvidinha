@@ -457,6 +457,19 @@ const Index = () => {
     }
   };
 
+  // Open the regulation/queue request dialog targeting a specific emergency sector.
+  const handleRequestFromQueue = (sector: Patient['sector']) => {
+    const sectorMap: Partial<Record<Patient['sector'], "Cuidados Especiais" | "Observação Amarela" | "Observação Azul">> = {
+      red: 'Cuidados Especiais',
+      yellow: 'Observação Amarela',
+      blue: 'Observação Azul',
+    };
+    const target = sectorMap[sector];
+    if (!target) return;
+    setAllocationTargetSector(target);
+    setAllocationDialogOpen(true);
+  };
+
   const handleDeletePatient = async (patientId: string) => {
     saveToHistory(patients);
     try {
@@ -1419,6 +1432,7 @@ const Index = () => {
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
                     onRefetch={refetch}
+                    onRequestFromQueue={handleRequestFromQueue}
                   />
                   <SectorSection 
                     sector="yellow" 
@@ -1435,6 +1449,7 @@ const Index = () => {
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
                     onRefetch={refetch}
+                    onRequestFromQueue={handleRequestFromQueue}
                   />
                   <SectorSection 
                     sector="blue" 
@@ -1451,6 +1466,7 @@ const Index = () => {
                     onTransfer={handleTransferPatient}
                     onPrintPatient={handlePrintPatient}
                     onRefetch={refetch}
+                    onRequestFromQueue={handleRequestFromQueue}
                   />
 
                   {/* Pacientes Fora das Alas Section */}

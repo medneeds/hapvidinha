@@ -5,6 +5,7 @@ import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
 import { EmptySectorState } from "@/components/EmptySectorState";
+import { EmptyBedSlot } from "@/components/EmptyBedSlot";
 import { DeathReviewGhostCard } from "@/components/DeathReviewGhostCard";
 import { useDeathReviews } from "@/hooks/useDeathReviews";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -48,6 +49,7 @@ interface SectorSectionProps {
   customTitle?: string;
   customIcon?: string;
   onRefetch?: () => void;
+  onRequestFromQueue?: (sector: SectorType) => void;
 }
 
 const sectorInfo = {
@@ -152,7 +154,8 @@ export function SectorSection({
   onOpenChange,
   customTitle,
   customIcon,
-  onRefetch
+  onRefetch,
+  onRequestFromQueue
 }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
@@ -310,19 +313,73 @@ export function SectorSection({
           />
         ) : (
           <>
-            {sortedPatients.length > 0 && (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={sortedPatients.map(p => p.id)}
-                  strategy={verticalListSortingStrategy}
+            {isFixedBedSector ? (
+              // Fixed sectors (V/A/Z): render vacant slots as compact pre-allocation rows,
+              // occupied beds as full draggable cards — interleaved by bed number.
+              (() => {
+                const occupiedIds = sortedPatients
+                  .filter((p) => !p.isVacant && p.name)
+                  .map((p) => p.id);
+                return (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext items={occupiedIds} strategy={verticalListSortingStrategy}>
+                      {sortedPatients.map((patient) => {
+                        const isVacantSlot = patient.isVacant || !patient.name;
+                        if (isVacantSlot) {
+                          return (
+                            <EmptyBedSlot
+                              key={patient.id}
+                              bedNumber={patient.bedNumber}
+                              sector={sector}
+                              onAllocateNew={() =>
+                                onUpdatePatient({ ...patient, isVacant: false })
+                              }
+                              onAllocateFromQueue={
+                                onRequestFromQueue ? () => onRequestFromQueue(sector) : undefined
+                              }
+                            />
+                          );
+                        }
+                        return (
+                          <SortablePatientCard
+                            key={patient.id}
+                            patient={patient}
+                            onUpdate={onUpdatePatient}
+                            onDelete={onDeletePatient}
+                            onUndelete={onUndeletePatient}
+                            selectionMode={selectionMode}
+                            isSelected={selectedPatients.has(patient.id)}
+                            onToggleSelection={onToggleSelection}
+                            onTransfer={onTransfer}
+                            onPrintPatient={onPrintPatient}
+                            onRefetch={onRefetch}
+                            dragDisabled={isFixedBedSector}
+                          />
+                        );
+                      })}
+                    </SortableContext>
+                  </DndContext>
+                );
+              })()
+            ) : (
+              sortedPatients.length > 0 && (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
                 >
-                  {renderPatientCards(sortedPatients)}
-                </SortableContext>
-              </DndContext>
+                  <SortableContext
+                    items={sortedPatients.map((p) => p.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {renderPatientCards(sortedPatients)}
+                  </SortableContext>
+                </DndContext>
+              )
             )}
             {ghostReviews.map((review) => (
               <DeathReviewGhostCard key={review.id} review={review} />
