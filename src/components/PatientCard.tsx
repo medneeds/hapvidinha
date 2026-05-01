@@ -968,11 +968,26 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }
   }, [patient, editingField, editingArrayIndex, onUpdate]);
 
+  // When user picks a destination sector, we open the bed picker first
+  // (the menu just toggles state; actual onTransfer happens after a specific
+  //  bed is chosen in the popup).
   const handleTransfer = useCallback((newSector: Patient['sector']) => {
-    if (onTransfer && newSector !== patient.sector) {
-      onTransfer(patient.id, newSector);
+    if (newSector === patient.sector) return;
+    if (newSector === 'outside') {
+      onTransfer?.(patient.id, newSector);
+      return;
     }
+    setBedPickerSector(newSector);
   }, [onTransfer, patient.id, patient.sector]);
+
+  const handleConfirmTransferBed = useCallback(
+    (bedNumber: string, vacantPlaceholderId?: string) => {
+      if (!bedPickerSector) return;
+      onTransfer?.(patient.id, bedPickerSector, bedNumber, vacantPlaceholderId);
+      setBedPickerSector(null);
+    },
+    [bedPickerSector, onTransfer, patient.id]
+  );
 
   const startEditing = useCallback((field: string, currentValue: string, index: number = -1) => {
     // Porta users can only edit patients they created
