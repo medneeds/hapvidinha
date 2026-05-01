@@ -1594,12 +1594,31 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             <div className="flex-1 flex flex-col gap-3 md:grid md:grid-cols-19 md:gap-1.5 md:items-start">
               {/* Mobile: Leito + Paciente na mesma linha */}
               <div className="flex items-start gap-3 md:contents">
-                {/* Leito - ultra compacto */}
+                {/* Leito - chip alinhado ao slot compacto "Leito disponível" */}
                 <div className="flex flex-col shrink-0 md:col-span-1">
                   <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                  <Badge className={cn("w-fit text-sm md:text-[10px] py-1 md:py-0 px-2 md:px-1 font-bold leading-tight", config.badgeColor)}>
-                    {patient.bedNumber}
-                  </Badge>
+                  {(() => {
+                    const bedChipTokens =
+                      patient.sector === 'red'
+                        ? 'bg-critical/15 border-critical/40 text-critical'
+                        : patient.sector === 'yellow'
+                        ? 'bg-warning/15 border-warning/40 text-warning'
+                        : patient.sector === 'blue'
+                        ? 'bg-stable/15 border-stable/40 text-stable'
+                        : 'bg-muted/60 border-border text-muted-foreground';
+                    return (
+                      <div
+                        className={cn(
+                          'w-fit shrink-0 rounded-md border px-2 py-1 md:px-1.5 md:py-0.5',
+                          bedChipTokens,
+                        )}
+                      >
+                        <span className="text-base md:text-sm font-extrabold tabular-nums tracking-wide leading-none">
+                          {patient.bedNumber}
+                        </span>
+                      </div>
+                    );
+                  })()}
                   {/* Medical Responsibility Badge - Prominent chip below bed number */}
                   {(() => {
                     const respType = localMedicalResponsibility?.type;
