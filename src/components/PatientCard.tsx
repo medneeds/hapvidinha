@@ -5371,6 +5371,25 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         patient={patient}
       />
 
+      {bedPickerSector && (
+        <BedSelectionDialog
+          open={!!bedPickerSector}
+          onOpenChange={(o) => !o && setBedPickerSector(null)}
+          sector={bedPickerSector}
+          title="Realocar — Escolher Leito"
+          description={`Selecione o leito de destino para ${patient.name}.`}
+          patientName={patient.name}
+          onSelect={handleConfirmTransferBed}
+        />
+      )}
+
+      <BedSwapDialog
+        open={bedSwapOpen}
+        onOpenChange={setBedSwapOpen}
+        patient={patient}
+        onSwapped={onRefetch}
+      />
+
       <DietReleaseDialog
         isOpen={dietDialogOpen}
         onClose={() => setDietDialogOpen(false)}
