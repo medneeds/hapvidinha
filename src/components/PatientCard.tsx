@@ -4063,6 +4063,43 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             <ChevronDown className="h-4 w-4 text-red-500 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                           </CollapsibleTrigger>
                           <CollapsibleContent className="mt-1 overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                            {/* ESVAZIAR LEITO — only for fixed emergency observation beds (V/A/Z) */}
+                            {(['red', 'yellow', 'blue'].includes(patient.sector) && /^[VAZ]\d{2}$/.test(patient.bedNumber)) && (
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onUpdate({
+                                    ...patient,
+                                    name: '',
+                                    age: '',
+                                    birthDate: undefined,
+                                    diagnoses: '',
+                                    pendencies: '',
+                                    medicalHistory: '',
+                                    relevantExams: '',
+                                    schedule: '',
+                                    clinicalStatus: undefined,
+                                    patientCategory: undefined,
+                                    psmStatus: undefined,
+                                    admissionDate: undefined,
+                                    medicalResponsibility: undefined,
+                                    highlightedDiagnoses: [],
+                                    highlightedPendencies: [],
+                                    highlightedConducts: [],
+                                    highlightedMedicalHistory: [],
+                                    isVacant: true,
+                                  } as any);
+                                  toastHook({
+                                    title: 'Leito esvaziado',
+                                    description: `${patient.bedNumber} voltou para o estado disponível.`,
+                                  });
+                                }}
+                                className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-950/40 transition-colors cursor-pointer font-semibold"
+                              >
+                                <BedDouble className="h-3.5 w-3.5" />
+                                <span>Esvaziar Leito (Disponível)</span>
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem
                               onClick={(e) => {
                                 e.stopPropagation();
