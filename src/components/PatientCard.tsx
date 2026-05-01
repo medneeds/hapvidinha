@@ -21,6 +21,8 @@ import { ExaminusAIDialog } from "./ExaminusAIDialog";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
 import { PalliativeButterflyIcon } from "./PalliativeButterflyIcon";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
+import { BedSelectionDialog } from "./BedSelectionDialog";
+import { BedSwapDialog } from "./BedSwapDialog";
 import { DietReleaseDialog } from "./DietReleaseDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -240,7 +242,7 @@ interface PatientCardProps {
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
-  onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
+  onTransfer?: (patientId: string, newSector: Patient['sector'], targetBedNumber?: string, vacantPlaceholderId?: string) => void;
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
 }
@@ -783,6 +785,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
   const [examinusAIDialogOpen, setExaminusAIDialogOpen] = useState(false);
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
+  const [bedPickerSector, setBedPickerSector] = useState<Patient['sector'] | null>(null);
+  const [bedSwapOpen, setBedSwapOpen] = useState(false);
   const [dietDialogOpen, setDietDialogOpen] = useState(false);
   const [conductHistoryDialogOpen, setConductHistoryDialogOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
@@ -968,11 +972,26 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }
   }, [patient, editingField, editingArrayIndex, onUpdate]);
 
+  // When user picks a destination sector, we open the bed picker first
+  // (the menu just toggles state; actual onTransfer happens after a specific
+  //  bed is chosen in the popup).
   const handleTransfer = useCallback((newSector: Patient['sector']) => {
-    if (onTransfer && newSector !== patient.sector) {
-      onTransfer(patient.id, newSector);
+    if (newSector === patient.sector) return;
+    if (newSector === 'outside') {
+      onTransfer?.(patient.id, newSector);
+      return;
     }
+    setBedPickerSector(newSector);
   }, [onTransfer, patient.id, patient.sector]);
+
+  const handleConfirmTransferBed = useCallback(
+    (bedNumber: string, vacantPlaceholderId?: string) => {
+      if (!bedPickerSector) return;
+      onTransfer?.(patient.id, bedPickerSector, bedNumber, vacantPlaceholderId);
+      setBedPickerSector(null);
+    },
+    [bedPickerSector, onTransfer, patient.id]
+  );
 
   const startEditing = useCallback((field: string, currentValue: string, index: number = -1) => {
     // Porta users can only edit patients they created
@@ -3830,6 +3849,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               </DropdownMenuItem>
                             )
                           ))}
+                          {patient.sector !== 'outside' && (
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setBedSwapOpen(true);
+                              }}
+                              className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-teal-50 dark:hover:bg-teal-950/30 transition-colors cursor-pointer border-t border-border/40 mt-1 pt-2"
+                            >
+                              <ArrowRightLeft className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400 rotate-90" />
+                              <span className="font-medium">Permutar com outro paciente</span>
+                            </DropdownMenuItem>
+                          )}
                         </CollapsibleContent>
                       </Collapsible>
                     )}
@@ -5350,6 +5381,25 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         open={bedAllocationDialogOpen}
         onOpenChange={setBedAllocationDialogOpen}
         patient={patient}
+      />
+
+      {bedPickerSector && (
+        <BedSelectionDialog
+          open={!!bedPickerSector}
+          onOpenChange={(o) => !o && setBedPickerSector(null)}
+          sector={bedPickerSector}
+          title="Realocar — Escolher Leito"
+          description={`Selecione o leito de destino para ${patient.name}.`}
+          patientName={patient.name}
+          onSelect={handleConfirmTransferBed}
+        />
+      )}
+
+      <BedSwapDialog
+        open={bedSwapOpen}
+        onOpenChange={setBedSwapOpen}
+        patient={patient}
+        onSwapped={onRefetch}
       />
 
       <DietReleaseDialog

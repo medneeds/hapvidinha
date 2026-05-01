@@ -25,6 +25,7 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useNotificationSound } from "@/hooks/useNotificationSound";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { BedSelectionDialog } from "@/components/BedSelectionDialog";
 
 // Animation variants for staggered grid items
 const containerVariants = {
@@ -132,6 +133,7 @@ export function BedAllocationNotifications() {
   const [rejectReason, setRejectReason] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [lastNotifiedId, setLastNotifiedId] = useState<string | null>(null);
+  const [bedPickerRequest, setBedPickerRequest] = useState<BedAllocationRequest | null>(null);
 
   // Apenas LIDER e COORDENADOR veem as notificações
   if (role === "porta") return null;
@@ -171,10 +173,16 @@ export function BedAllocationNotifications() {
   const discussingRequests = requests.filter(r => r.status === "discussing");
 
   const handleApprove = async (request: BedAllocationRequest) => {
-    const success = await approveRequest(request.id);
+    // Always open the bed picker first so the leader chooses the exact bed.
+    setBedPickerRequest(request);
+  };
+
+  const handleConfirmBedSelection = async (bedNumber: string, vacantPlaceholderId?: string) => {
+    if (!bedPickerRequest) return;
+    const success = await approveRequest(bedPickerRequest.id, bedNumber, vacantPlaceholderId);
     if (success) {
       setSelectedRequest(null);
-      // Refetch to update the list immediately
+      setBedPickerRequest(null);
       await refetch();
     }
   };
@@ -605,6 +613,25 @@ export function BedAllocationNotifications() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Bed picker before approving */}
+      {bedPickerRequest && (
+        <BedSelectionDialog
+          open={!!bedPickerRequest}
+          onOpenChange={(o) => !o && setBedPickerRequest(null)}
+          sector={
+            bedPickerRequest.requested_sector === "Cuidados Especiais"
+              ? "red"
+              : bedPickerRequest.requested_sector === "Observação Amarela"
+              ? "yellow"
+              : "blue"
+          }
+          title="Aprovar — Escolher Leito"
+          description="Selecione o leito específico para alocar este paciente."
+          patientName={bedPickerRequest.patient?.name}
+          onSelect={handleConfirmBedSelection}
+        />
+      )}
     </>
   );
 }

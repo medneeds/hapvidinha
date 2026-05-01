@@ -108,7 +108,7 @@ interface SortableOutsidePatientCardProps {
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
-  onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
+  onTransfer?: (patientId: string, newSector: Patient['sector'], targetBedNumber?: string, vacantPlaceholderId?: string) => void;
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
 }
@@ -601,43 +601,70 @@ const Index = () => {
     }
   };
 
-  const handleTransferPatient = async (patientId: string, newSector: Patient['sector']) => {
+  const handleTransferPatient = async (
+    patientId: string,
+    newSector: Patient['sector'],
+    targetBedNumber?: string,
+    vacantPlaceholderId?: string,
+  ) => {
     saveToHistory(patients);
-    
+
     const patient = patients.find(p => p.id === patientId);
     if (!patient) return;
 
-    // Calculate next available bed number in destination sector using proper naming
     const patientsInNewSector = patients.filter(p => p.sector === newSector && p.id !== patientId);
     const existingBedNumbers = patientsInNewSector.map(p => p.bedNumber);
-    const newBedNumber = getNextBedNumber(newSector, existingBedNumbers, currentDepartment);
+
+    let newBedNumber: string;
+    if (targetBedNumber) {
+      // User picked a specific bed via popup. Validate not occupied (except placeholder)
+      const occupied = patientsInNewSector.some(p => p.bedNumber === targetBedNumber && !(p as any).isVacant);
+      if (occupied) {
+        toast({ title: "Leito indisponível", description: `O leito ${targetBedNumber} acabou de ser ocupado. Escolha outro.`, variant: "destructive" });
+        return;
+      }
+      newBedNumber = targetBedNumber;
+
+      // If a vacant placeholder exists for this bed, delete it from DB
+      if (vacantPlaceholderId) {
+        try {
+          await supabase.from("patients").delete().eq("id", vacantPlaceholderId);
+        } catch (e) {
+          console.error("[transfer] failed to delete vacant placeholder", e);
+        }
+      }
+    } else {
+      newBedNumber = getNextBedNumber(newSector, existingBedNumbers, currentDepartment);
+    }
 
     // Calculate display_order: place at end of destination sector
     const maxDisplayOrder = patientsInNewSector.reduce((max, p) => Math.max(max, p.displayOrder || 0), -1);
     const newDisplayOrder = maxDisplayOrder + 1;
 
     const updatedPatient = { ...patient, sector: newSector, bedNumber: newBedNumber, displayOrder: newDisplayOrder };
-    
+
     try {
-      // Persist to database
       await dbUpdatePatient(patientId, updatedPatient);
-      
-      // Update local state
       setPatients(prev => prev.map(p => p.id === patientId ? updatedPatient : p));
-      
+
       toast({
-        title: "Paciente transferido",
-        description: `${patient.name} foi transferido para ${
+        title: "Paciente realocado",
+        description: `${patient.name} foi realocado para ${
           newSector === 'red' ? 'Cuidados Especiais' :
           newSector === 'yellow' ? 'Observação Amarela' :
           newSector === 'blue' ? 'Observação Azul' : 'Fora das Alas'
-        } (novo leito: ${newBedNumber}).`,
+        } (leito ${newBedNumber}).`,
       });
+
+      // Refetch to pick up the placeholder deletion in local state
+      if (vacantPlaceholderId) {
+        await refetch();
+      }
     } catch (error) {
       console.error("Failed to transfer patient:", error);
       toast({
-        title: "Erro ao transferir",
-        description: "Não foi possível transferir o paciente.",
+        title: "Erro ao realocar",
+        description: "Não foi possível realocar o paciente.",
         variant: "destructive",
       });
     }

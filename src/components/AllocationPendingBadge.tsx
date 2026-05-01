@@ -21,6 +21,7 @@ import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { BedSelectionDialog } from "@/components/BedSelectionDialog";
 
 interface AllocationPendingBadgeProps {
   patient: Patient;
@@ -31,6 +32,7 @@ export function AllocationPendingBadge({ patient, onStatusChange }: AllocationPe
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isSettingDiscussing, setIsSettingDiscussing] = useState(false);
+  const [bedPickerOpen, setBedPickerOpen] = useState(false);
   const { requests, approveRequest, setDiscussing, refetch } = useBedAllocationRequests();
   const { role } = useAuth();
   
@@ -80,12 +82,18 @@ export function AllocationPendingBadge({ patient, onStatusChange }: AllocationPe
 
   const handleApprove = async () => {
     if (!patientRequest?.id) return;
+    // Open the bed picker first
+    setIsDialogOpen(false);
+    setBedPickerOpen(true);
+  };
+
+  const handleConfirmBed = async (bedNumber: string, vacantPlaceholderId?: string) => {
+    if (!patientRequest?.id) return;
     setIsApproving(true);
     try {
-      const success = await approveRequest(patientRequest.id);
+      const success = await approveRequest(patientRequest.id, bedNumber, vacantPlaceholderId);
       if (success) {
-        setIsDialogOpen(false);
-        // Trigger immediate refresh
+        setBedPickerOpen(false);
         await refetch();
         onStatusChange?.();
       }
@@ -230,6 +238,24 @@ export function AllocationPendingBadge({ patient, onStatusChange }: AllocationPe
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {patientRequest?.requested_sector && (
+          <BedSelectionDialog
+            open={bedPickerOpen}
+            onOpenChange={setBedPickerOpen}
+            sector={
+              patientRequest.requested_sector === "Cuidados Especiais"
+                ? "red"
+                : patientRequest.requested_sector === "Observação Amarela"
+                ? "yellow"
+                : "blue"
+            }
+            title="Aprovar — Escolher Leito"
+            description="Selecione o leito específico para alocar o paciente."
+            patientName={patient.name}
+            onSelect={handleConfirmBed}
+          />
+        )}
       </TooltipProvider>
     );
   }
