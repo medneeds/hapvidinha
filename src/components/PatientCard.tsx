@@ -240,7 +240,7 @@ interface PatientCardProps {
   selectionMode?: boolean;
   isSelected?: boolean;
   onToggleSelection?: (patientId: string) => void;
-  onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
+  onTransfer?: (patientId: string, newSector: Patient['sector'], targetBedNumber?: string, vacantPlaceholderId?: string) => void;
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
 }
