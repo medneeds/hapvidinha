@@ -21,6 +21,8 @@ import { ExaminusAIDialog } from "./ExaminusAIDialog";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
 import { PalliativeButterflyIcon } from "./PalliativeButterflyIcon";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
+import { BedSelectionDialog } from "./BedSelectionDialog";
+import { BedSwapDialog } from "./BedSwapDialog";
 import { DietReleaseDialog } from "./DietReleaseDialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
