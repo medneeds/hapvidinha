@@ -399,22 +399,6 @@ const Index = () => {
       return;
     }
 
-  };
-
-  // Open the regulation/queue request dialog for any role, targeting a specific sector.
-  const handleRequestFromQueue = (sector: SectorType) => {
-    const sectorMap: Record<string, "Cuidados Especiais" | "Observação Amarela" | "Observação Azul"> = {
-      red: 'Cuidados Especiais',
-      yellow: 'Observação Amarela',
-      blue: 'Observação Azul',
-    };
-    const target = sectorMap[sector];
-    if (!target) return;
-    setAllocationTargetSector(target);
-    setAllocationDialogOpen(true);
-  };
-
-  const __keep__ = () => {
     saveToHistory(patients);
     
     // Buscar todos os pacientes deste setor do banco de dados para garantir unicidade
