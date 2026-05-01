@@ -77,7 +77,7 @@ const sectorInfo = {
   }
 };
 
-function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode, isSelected, onToggleSelection, onTransfer, onPrintPatient, onRefetch }: {
+function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode, isSelected, onToggleSelection, onTransfer, onPrintPatient, onRefetch, dragDisabled }: {
   patient: Patient;
   onUpdate: (patient: Patient) => void;
   onDelete?: (patientId: string) => void;
@@ -88,6 +88,7 @@ function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectio
   onTransfer?: (patientId: string, newSector: Patient['sector']) => void;
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
+  dragDisabled?: boolean;
 }) {
   const {
     attributes,
@@ -96,7 +97,7 @@ function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectio
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: patient.id });
+  } = useSortable({ id: patient.id, disabled: dragDisabled });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -113,9 +114,11 @@ function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectio
           className="flex-shrink-0"
         />
       )}
-      <div {...listeners} className="cursor-grab active:cursor-grabbing flex-shrink-0 print:hidden">
-        <GripVertical className="h-4 w-4 text-muted-foreground" />
-      </div>
+      {!dragDisabled && (
+        <div {...listeners} className="cursor-grab active:cursor-grabbing flex-shrink-0 print:hidden">
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
+        </div>
+      )}
       <div className="flex-1 min-w-0">
         <PatientCard
           patient={patient}
