@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { RotateCcw } from "lucide-react";
+import { getNextBedNumber } from "@/utils/bedNaming";
 
 interface PatientMovement {
   id: string;
@@ -90,42 +91,44 @@ export function ReallocateFromHistoryDialog({
     try {
       const snapshot = movement.patient_snapshot;
 
-      // Calculate next available bed number for target sector
+      // Look for an existing vacant bed in the target sector to prioritize
       const { data: existingPatients } = await supabase
         .from("patients")
-        .select("bed_number")
+        .select("id, bed_number, is_vacant")
         .eq("sector", selectedSector)
         .eq("department", currentDepartment)
         .eq("hospital_unit_id", currentHospital.id)
         .eq("state_id", currentState.id);
 
-      let nextBedNumber = "1";
-      if (existingPatients && existingPatients.length > 0) {
-        const maxBed = Math.max(
-          ...existingPatients.map((p) => {
-            const match = p.bed_number.match(/\d+/);
-            return match ? parseInt(match[0], 10) : 0;
-          })
-        );
-        nextBedNumber = String(maxBed + 1);
+      const occupiedBedNumbers: string[] = [];
+      const vacantBeds: { id: string; bed_number: string }[] = [];
+      (existingPatients || []).forEach((p: any) => {
+        if (p.is_vacant) {
+          vacantBeds.push({ id: p.id, bed_number: p.bed_number });
+        } else {
+          occupiedBedNumbers.push(p.bed_number);
+        }
+      });
+
+      // Prefer the lowest-numbered vacant regular bed; otherwise let getNextBedNumber pick
+      // the next regular slot or an EXTRA bed if regular capacity is full.
+      const sortedVacant = [...vacantBeds].sort((a, b) =>
+        a.bed_number.localeCompare(b.bed_number, undefined, { numeric: true })
+      );
+      const vacantTarget = sortedVacant[0];
+
+      const finalBed = vacantTarget
+        ? vacantTarget.bed_number
+        : getNextBedNumber(selectedSector, occupiedBedNumbers, currentDepartment);
+
+      // If reusing a vacant slot, remove the vacant placeholder row first
+      if (vacantTarget) {
+        const { error: deleteVacantError } = await supabase
+          .from("patients")
+          .delete()
+          .eq("id", vacantTarget.id);
+        if (deleteVacantError) throw deleteVacantError;
       }
-
-      // Prefix based on sector
-      const prefixMap: Record<string, string> = {
-        red: "V",
-        yellow: "A",
-        blue: "Z",
-      };
-      const prefix = prefixMap[selectedSector] || "";
-      const formattedBed = `${prefix}${nextBedNumber.padStart(2, "0")}`;
-
-      // Check capacity limits
-      const capacityMap: Record<string, number> = { red: 2, yellow: 6, blue: 6 };
-      const capacity = capacityMap[selectedSector] || 6;
-      const currentCount = existingPatients?.length || 0;
-      const finalBed = currentCount >= capacity
-        ? `EXTRA${currentCount - capacity + 1}`
-        : formattedBed;
 
       const { error: insertError } = await supabase.from("patients").insert({
         name: snapshot.name || movement.patient_name,
@@ -147,6 +150,7 @@ export function ReallocateFromHistoryDialog({
         state_id: currentState.id,
         hospital_unit_id: currentHospital.id,
         medical_responsibility: snapshot.medicalResponsibility || null,
+        is_vacant: false,
       });
 
       if (insertError) throw insertError;

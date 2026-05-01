@@ -189,26 +189,40 @@ export function useBedAllocationRequests() {
       };
       const dbSector = sectorMap[request.requested_sector] || request.requested_sector;
 
-      // Calculate next available bed number in destination sector
+      // Look for an existing vacant bed in the destination sector to prioritize
       const { data: existingPatients } = await supabase
         .from("patients")
-        .select("bed_number, display_order")
+        .select("id, bed_number, display_order, is_vacant")
         .eq("hospital_unit_id", currentHospital.id)
         .eq("department", currentDepartment)
         .eq("sector", dbSector);
 
       let maxDisplayOrder = 0;
-      const existingBedNumbers: string[] = [];
+      const occupiedBedNumbers: string[] = [];
+      const vacantBeds: { id: string; bed_number: string; display_order: number | null }[] = [];
       if (existingPatients) {
-        existingPatients.forEach((p) => {
-          existingBedNumbers.push(p.bed_number);
+        existingPatients.forEach((p: any) => {
+          if (p.is_vacant) {
+            vacantBeds.push({ id: p.id, bed_number: p.bed_number, display_order: p.display_order });
+          } else {
+            occupiedBedNumbers.push(p.bed_number);
+          }
           if (p.display_order && p.display_order > maxDisplayOrder) {
             maxDisplayOrder = p.display_order;
           }
         });
       }
-      const newBedNumber = getNextBedNumber(dbSector, existingBedNumbers, currentDepartment);
-      const newDisplayOrder = maxDisplayOrder + 1;
+
+      // Prefer reusing the lowest-numbered vacant regular bed; only fall back to a new (or EXTRA) slot
+      const sortedVacant = [...vacantBeds].sort((a, b) =>
+        a.bed_number.localeCompare(b.bed_number, undefined, { numeric: true })
+      );
+      const vacantTarget = sortedVacant[0];
+
+      const newBedNumber = vacantTarget
+        ? vacantTarget.bed_number
+        : getNextBedNumber(dbSector, occupiedBedNumbers, currentDepartment);
+      const newDisplayOrder = vacantTarget?.display_order ?? maxDisplayOrder + 1;
 
       // Update request status
       const { error: updateError } = await supabase
@@ -222,7 +236,16 @@ export function useBedAllocationRequests() {
 
       if (updateError) throw updateError;
 
-      // Move patient to official sector with new bed number and display order at the end
+      // If reusing a vacant slot, remove the vacant placeholder row first to free its bed_number
+      if (vacantTarget) {
+        const { error: deleteVacantError } = await supabase
+          .from("patients")
+          .delete()
+          .eq("id", vacantTarget.id);
+        if (deleteVacantError) throw deleteVacantError;
+      }
+
+      // Move patient to official sector with the chosen bed number
       const { error: patientError } = await supabase
         .from("patients")
         .update({
@@ -231,6 +254,7 @@ export function useBedAllocationRequests() {
           sector: dbSector,
           bed_number: newBedNumber,
           display_order: newDisplayOrder,
+          is_vacant: false,
         })
         .eq("id", request.patient_id);
 
