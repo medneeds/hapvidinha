@@ -82,12 +82,18 @@ export function AllocationPendingBadge({ patient, onStatusChange }: AllocationPe
 
   const handleApprove = async () => {
     if (!patientRequest?.id) return;
+    // Open the bed picker first
+    setIsDialogOpen(false);
+    setBedPickerOpen(true);
+  };
+
+  const handleConfirmBed = async (bedNumber: string, vacantPlaceholderId?: string) => {
+    if (!patientRequest?.id) return;
     setIsApproving(true);
     try {
-      const success = await approveRequest(patientRequest.id);
+      const success = await approveRequest(patientRequest.id, bedNumber, vacantPlaceholderId);
       if (success) {
-        setIsDialogOpen(false);
-        // Trigger immediate refresh
+        setBedPickerOpen(false);
         await refetch();
         onStatusChange?.();
       }
