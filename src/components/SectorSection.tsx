@@ -294,7 +294,7 @@ export function SectorSection({
             )}
             <div className="flex items-center justify-center h-8 min-w-[2rem] px-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:min-w-[1.5rem]">
               <p className="text-base font-bold text-foreground print:text-[10px]">
-                {isFixedBedSector ? sortedPatients.filter(p => !p.isVacant && p.name).length : patients.length}
+                {isFixedBedSector ? sortedPatients.filter(p => !p.isVacant).length : patients.length}
                 {SECTOR_BED_CONFIG[sector] && SECTOR_BED_CONFIG[sector].maxRegularBeds !== Infinity && (
                   <span className="text-xs font-normal text-muted-foreground">/{SECTOR_BED_CONFIG[sector].maxRegularBeds}</span>
                 )}
