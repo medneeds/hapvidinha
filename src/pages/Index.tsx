@@ -470,6 +470,7 @@ const Index = () => {
     setAllocationDialogOpen(true);
   };
 
+  const handleDeletePatient = async (patientId: string) => {
     saveToHistory(patients);
     try {
       await dbDeletePatient(patientId);
