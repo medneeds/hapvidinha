@@ -238,6 +238,24 @@ export function AllocationPendingBadge({ patient, onStatusChange }: AllocationPe
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {patientRequest?.requested_sector && (
+          <BedSelectionDialog
+            open={bedPickerOpen}
+            onOpenChange={setBedPickerOpen}
+            sector={
+              patientRequest.requested_sector === "Cuidados Especiais"
+                ? "red"
+                : patientRequest.requested_sector === "Observação Amarela"
+                ? "yellow"
+                : "blue"
+            }
+            title="Aprovar — Escolher Leito"
+            description="Selecione o leito específico para alocar o paciente."
+            patientName={patient.name}
+            onSelect={handleConfirmBed}
+          />
+        )}
       </TooltipProvider>
     );
   }
