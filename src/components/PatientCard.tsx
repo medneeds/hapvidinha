@@ -4072,6 +4072,50 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       </CollapsibleContent>
                     </Collapsible>
 
+                    {/* ESVAZIAR LEITO — gestão operacional do leito (V/A/Z fixos) */}
+                    {(['red', 'yellow', 'blue'].includes(patient.sector) && /^[VAZ]\d{2}$/.test(patient.bedNumber)) && (
+                      <>
+                        <div className="h-px bg-gradient-to-r from-transparent via-amber-200 dark:via-amber-900/50 to-transparent my-2" />
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onUpdate({
+                              ...patient,
+                              name: '',
+                              age: '',
+                              birthDate: undefined,
+                              diagnoses: '',
+                              pendencies: '',
+                              medicalHistory: '',
+                              relevantExams: '',
+                              schedule: '',
+                              clinicalStatus: undefined,
+                              patientCategory: undefined,
+                              psmStatus: undefined,
+                              admissionDate: undefined,
+                              medicalResponsibility: undefined,
+                              highlightedDiagnoses: [],
+                              highlightedPendencies: [],
+                              highlightedConducts: [],
+                              highlightedMedicalHistory: [],
+                              isVacant: true,
+                            } as any);
+                            toastHook({
+                              title: 'Leito esvaziado',
+                              description: `${patient.bedNumber} voltou para o estado disponível.`,
+                            });
+                          }}
+                          className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors cursor-pointer"
+                        >
+                          <BedDouble className="h-4 w-4" />
+                          <span className="flex-1 text-left">Esvaziar Leito</span>
+                          <span className="text-[10px] font-normal uppercase tracking-wide text-amber-600/70 dark:text-amber-500/70">
+                            Disponível
+                          </span>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+
                     {onDelete && (
                       <>
                         <div className="h-px bg-gradient-to-r from-transparent via-red-200 dark:via-red-900/50 to-transparent my-2" />
