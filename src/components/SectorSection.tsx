@@ -49,6 +49,7 @@ interface SectorSectionProps {
   customTitle?: string;
   customIcon?: string;
   onRefetch?: () => void;
+  onRequestFromQueue?: (sector: SectorType) => void;
 }
 
 const sectorInfo = {
