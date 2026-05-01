@@ -5,6 +5,7 @@ import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
 import { EmptySectorState } from "@/components/EmptySectorState";
+import { EmptyBedSlot } from "@/components/EmptyBedSlot";
 import { DeathReviewGhostCard } from "@/components/DeathReviewGhostCard";
 import { useDeathReviews } from "@/hooks/useDeathReviews";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
