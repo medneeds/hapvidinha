@@ -783,6 +783,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
   const [examinusAIDialogOpen, setExaminusAIDialogOpen] = useState(false);
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
+  const [bedPickerSector, setBedPickerSector] = useState<Patient['sector'] | null>(null);
+  const [bedSwapOpen, setBedSwapOpen] = useState(false);
   const [dietDialogOpen, setDietDialogOpen] = useState(false);
   const [conductHistoryDialogOpen, setConductHistoryDialogOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
