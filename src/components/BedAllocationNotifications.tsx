@@ -613,6 +613,25 @@ export function BedAllocationNotifications() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Bed picker before approving */}
+      {bedPickerRequest && (
+        <BedSelectionDialog
+          open={!!bedPickerRequest}
+          onOpenChange={(o) => !o && setBedPickerRequest(null)}
+          sector={
+            bedPickerRequest.requested_sector === "Cuidados Especiais"
+              ? "red"
+              : bedPickerRequest.requested_sector === "Observação Amarela"
+              ? "yellow"
+              : "blue"
+          }
+          title="Aprovar — Escolher Leito"
+          description="Selecione o leito específico para alocar este paciente."
+          patientName={bedPickerRequest.patient?.name}
+          onSelect={handleConfirmBedSelection}
+        />
+      )}
     </>
   );
 }
