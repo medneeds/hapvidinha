@@ -154,7 +154,8 @@ export function SectorSection({
   onOpenChange,
   customTitle,
   customIcon,
-  onRefetch
+  onRefetch,
+  onRequestFromQueue
 }: SectorSectionProps) {
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
