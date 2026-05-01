@@ -457,7 +457,19 @@ const Index = () => {
     }
   };
 
-  const handleDeletePatient = async (patientId: string) => {
+  // Open the regulation/queue request dialog targeting a specific emergency sector.
+  const handleRequestFromQueue = (sector: Patient['sector']) => {
+    const sectorMap: Partial<Record<Patient['sector'], "Cuidados Especiais" | "Observação Amarela" | "Observação Azul">> = {
+      red: 'Cuidados Especiais',
+      yellow: 'Observação Amarela',
+      blue: 'Observação Azul',
+    };
+    const target = sectorMap[sector];
+    if (!target) return;
+    setAllocationTargetSector(target);
+    setAllocationDialogOpen(true);
+  };
+
     saveToHistory(patients);
     try {
       await dbDeletePatient(patientId);
