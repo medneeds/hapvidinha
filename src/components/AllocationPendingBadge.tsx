@@ -21,6 +21,7 @@ import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { BedSelectionDialog } from "@/components/BedSelectionDialog";
 
 interface AllocationPendingBadgeProps {
   patient: Patient;
