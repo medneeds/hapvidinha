@@ -42,8 +42,19 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { whitelabel } from "@/config/whitelabel";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useSepsisProtocol } from "@/hooks/useSepsisProtocol";
+import { useStrokeProtocol } from "@/hooks/useStrokeProtocol";
+import { useChestPainProtocol } from "@/hooks/useChestPainProtocol";
 import { SepsisActiveBanner } from "./SepsisActiveBanner";
 import { SepsisProtocolWizardDialog } from "./SepsisProtocolWizardDialog";
+import { StrokeProtocolWizardDialog } from "./StrokeProtocolWizardDialog";
+import { ChestPainProtocolWizardDialog } from "./ChestPainProtocolWizardDialog";
+import {
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
+} from "@/components/ui/dropdown-menu";
+import { Brain, HeartPulse, ShieldAlert } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -792,7 +803,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [reportText, setReportText] = useState("");
   const [sepsisWizardOpen, setSepsisWizardOpen] = useState(false);
+  const [strokeWizardOpen, setStrokeWizardOpen] = useState(false);
+  const [chestPainWizardOpen, setChestPainWizardOpen] = useState(false);
   const { activeProtocol: activeSepsisProtocol, isProtocolActive: hasSepsisActive, refetch: refetchSepsis } = useSepsisProtocol(patient.id);
+  const { activeProtocol: activeStrokeProtocol, isProtocolActive: hasStrokeActive, refetch: refetchStroke } = useStrokeProtocol(patient.id);
+  const { activeProtocol: activeChestPainProtocol, isProtocolActive: hasChestPainActive, refetch: refetchChestPain } = useChestPainProtocol(patient.id);
+  const hasAnyProtocolActive = hasSepsisActive || hasStrokeActive || hasChestPainActive;
+  const activeProtocolLabel = hasSepsisActive ? "Sepse" : hasStrokeActive ? "AVC" : hasChestPainActive ? "Dor Torácica" : null;
   const { history: conductHistory, isLoading: conductHistoryLoading, recordChange } = useConductHistory(patient.id);
   const { role, user } = useAuth();
   const { currentState, currentHospital } = useHospital();
