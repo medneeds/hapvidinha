@@ -695,8 +695,8 @@ const Index = () => {
             name: '',
             is_vacant: true,
             department: currentDepartment,
-            state_id: currentState?.id,
-            hospital_unit_id: currentHospital?.id,
+            state_id: (patient as any).stateId || (patient as any).state_id,
+            hospital_unit_id: (patient as any).hospitalUnitId || (patient as any).hospital_unit_id,
           } as any);
         } catch (e) {
           console.error("[transfer] failed to recreate vacant placeholder for old bed", e);
