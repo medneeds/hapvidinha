@@ -976,13 +976,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   // (the menu just toggles state; actual onTransfer happens after a specific
   //  bed is chosen in the popup).
   const handleTransfer = useCallback((newSector: Patient['sector']) => {
-    if (newSector === patient.sector) return;
     if (newSector === 'outside') {
       onTransfer?.(patient.id, newSector);
       return;
     }
     setBedPickerSector(newSector);
-  }, [onTransfer, patient.id, patient.sector]);
+  }, [onTransfer, patient.id]);
 
   const handleConfirmTransferBed = useCallback(
     (bedNumber: string, vacantPlaceholderId?: string) => {
