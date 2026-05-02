@@ -20,6 +20,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
 import { BedAllocationNotifications } from "@/components/BedAllocationNotifications";
+import { BedSelectionDialog } from "@/components/BedSelectionDialog";
 import { DoorPatientNotifications } from "@/components/DoorPatientNotifications";
 import { RequestNewAllocationDialog } from "@/components/RequestNewAllocationDialog";
 import { RequestUtiAllocationDialog } from "@/components/RequestUtiAllocationDialog";
@@ -218,6 +219,9 @@ const Index = () => {
   const [utiAllocationDialogOpen, setUtiAllocationDialogOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [bedSelectionOpen, setBedSelectionOpen] = useState(false);
+  const [bedSelectionSector, setBedSelectionSector] = useState<Patient['sector']>('red');
+  const [bedSelectionCategory, setBedSelectionCategory] = useState<PatientCategory | undefined>(undefined);
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
   const { saveVersion, fetchVersions } = usePatientVersions();
@@ -376,6 +380,77 @@ const Index = () => {
     }
   };
 
+  // Creates a patient row in a given sector at a specific bed number.
+  // If overrideBedNumber is provided, uses it directly; otherwise auto-picks the next bed.
+  // If vacantPlaceholderId is provided, deletes that vacant placeholder before creating.
+  const createBedInSector = async (
+    sector: Patient['sector'],
+    category?: PatientCategory,
+    overrideBedNumber?: string,
+    vacantPlaceholderId?: string,
+  ) => {
+    saveToHistory(patients);
+
+    let newBedNumber = overrideBedNumber;
+    if (!newBedNumber) {
+      const { data: allSectorPatients } = await supabase
+        .from('patients')
+        .select('bed_number')
+        .eq('sector', sector)
+        .eq('department', currentDepartment);
+      const existingBedNumbers = (allSectorPatients || []).map(p => p.bed_number);
+      newBedNumber = getNextBedNumber(sector, existingBedNumbers, currentDepartment);
+    }
+
+    // If user picked a vacant placeholder slot, remove it first to free the bed_number
+    if (vacantPlaceholderId) {
+      try {
+        await supabase.from('patients').delete().eq('id', vacantPlaceholderId);
+      } catch (err) {
+        console.error('Failed to remove vacant placeholder:', err);
+      }
+    }
+
+    const newPatientData: Omit<Patient, 'id'> = {
+      bedNumber: newBedNumber,
+      name: "",
+      age: 0,
+      sector: sector,
+      diagnoses: [],
+      medicalHistory: [],
+      relevantExams: [],
+      pendencies: [],
+      schedule: [],
+      admissionHistory: "",
+      admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      highlightedPendencies: [],
+      patientCategory: category || 'clinica_medica',
+      ...(currentDepartment === 'UTI' && {
+        utiAdmissionDate: [],
+        utiDischargePrediction: [],
+        utiAllergies: [],
+        utiAdmissionReason: [],
+        utiCurrentStatus: [],
+        utiDevices: [],
+        utiCulturesAntibiotics: [],
+        utiSpecialties: [],
+        utiOriginSector: [],
+      })
+    };
+
+    try {
+      const createdPatient = await dbCreatePatient(newPatientData, currentDepartment);
+      setTimeout(() => {
+        const patientElement = document.querySelector(`[data-patient-id="${createdPatient.id}"]`);
+        if (patientElement) {
+          patientElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    } catch (error) {
+      console.error("Failed to create patient:", error);
+    }
+  };
+
   const handleAddExtraBed = async (sector: Patient['sector'], category?: PatientCategory) => {
     // Visitante users cannot add beds
     if (role === 'visitante') {
@@ -399,62 +474,17 @@ const Index = () => {
       return;
     }
 
-    saveToHistory(patients);
-    
-    // Buscar todos os pacientes deste setor do banco de dados para garantir unicidade
-    const { data: allSectorPatients } = await supabase
-      .from('patients')
-      .select('bed_number')
-      .eq('sector', sector)
-      .eq('department', currentDepartment);
-    
-    const existingBedNumbers = (allSectorPatients || []).map(p => p.bed_number);
-    const newBedNumber = getNextBedNumber(sector, existingBedNumbers, currentDepartment);
-    
-    const newPatientData: Omit<Patient, 'id'> = {
-      bedNumber: newBedNumber,
-      name: "",
-      age: 0,
-      sector: sector,
-      diagnoses: [],
-      medicalHistory: [],
-      relevantExams: [],
-      pendencies: [],
-      schedule: [],
-      admissionHistory: "",
-      admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' '),
-      highlightedPendencies: [],
-      patientCategory: category || 'clinica_medica',
-      // Add UTI fields for UTI department
-      ...(currentDepartment === 'UTI' && {
-        utiAdmissionDate: [],
-        utiDischargePrediction: [],
-        utiAllergies: [],
-        utiAdmissionReason: [],
-        utiCurrentStatus: [],
-        utiDevices: [],
-        utiCulturesAntibiotics: [],
-        utiSpecialties: [],
-        utiOriginSector: [],
-      })
-    };
-
-    try {
-      const createdPatient = await dbCreatePatient(newPatientData, currentDepartment);
-
-      // Scroll automático para o novo leito criado após pequeno delay para garantir renderização
-      setTimeout(() => {
-        const patientElement = document.querySelector(`[data-patient-id="${createdPatient.id}"]`);
-        if (patientElement) {
-          patientElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          });
-        }
-      }, 100);
-    } catch (error) {
-      console.error("Failed to create patient:", error);
+    // For fixed-capacity sectors (red/yellow/blue), open the bed selection dialog
+    // so the user can pick a specific available bed OR create an EXTRA bed.
+    if (sector === 'red' || sector === 'yellow' || sector === 'blue') {
+      setBedSelectionSector(sector);
+      setBedSelectionCategory(category);
+      setBedSelectionOpen(true);
+      return;
     }
+
+    // For "outside" / UTI etc., create directly with auto-picked bed number
+    await createBedInSector(sector, category);
   };
 
   // Open the regulation/queue request dialog targeting a specific emergency sector.
@@ -1658,6 +1688,17 @@ const Index = () => {
       </AlertDialog>
 
       <GlobalSearchDialog externalOpen={searchOpen} onExternalOpenChange={setSearchOpen} />
+
+      <BedSelectionDialog
+        open={bedSelectionOpen}
+        onOpenChange={setBedSelectionOpen}
+        sector={bedSelectionSector}
+        title="Adicionar paciente ao setor"
+        description="Selecione um leito disponível ou crie um leito EXTRA se necessário."
+        onSelect={async (bedNumber, vacantPlaceholderId) => {
+          await createBedInSector(bedSelectionSector, bedSelectionCategory, bedNumber, vacantPlaceholderId);
+        }}
+      />
     </MainLayout>
   );
 };
