@@ -976,13 +976,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   // (the menu just toggles state; actual onTransfer happens after a specific
   //  bed is chosen in the popup).
   const handleTransfer = useCallback((newSector: Patient['sector']) => {
-    if (newSector === patient.sector) return;
     if (newSector === 'outside') {
       onTransfer?.(patient.id, newSector);
       return;
     }
     setBedPickerSector(newSector);
-  }, [onTransfer, patient.id, patient.sector]);
+  }, [onTransfer, patient.id]);
 
   const handleConfirmTransferBed = useCallback(
     (bedNumber: string, vacantPlaceholderId?: string) => {
@@ -3853,9 +3852,21 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             <DropdownMenuItem
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setBedSwapOpen(true);
+                                setBedPickerSector(patient.sector);
                               }}
                               className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-teal-50 dark:hover:bg-teal-950/30 transition-colors cursor-pointer border-t border-border/40 mt-1 pt-2"
+                            >
+                              <ArrowRightLeft className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+                              <span className="font-medium">Trocar de leito (mesmo setor)</span>
+                            </DropdownMenuItem>
+                          )}
+                          {patient.sector !== 'outside' && (
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setBedSwapOpen(true);
+                              }}
+                              className="ml-6 flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-teal-50 dark:hover:bg-teal-950/30 transition-colors cursor-pointer"
                             >
                               <ArrowRightLeft className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400 rotate-90" />
                               <span className="font-medium">Permutar com outro paciente</span>
