@@ -442,11 +442,13 @@ export function StrokeProtocolWizardDialog({ patient, isOpen, onClose, onSuccess
 
       {protocolId && (
         <DeleteProtocolDialog
-          isOpen={deleteOpen}
-          onClose={() => setDeleteOpen(false)}
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
           protocolId={protocolId}
-          protocolType="stroke"
+          table="stroke_protocols"
+          protocolLabel="PROTOCOLO DE AVC"
           patientName={form.patient_name}
+          isFinalized={!!form.outcome}
           onDeleted={() => { setDeleteOpen(false); onClose(); onSuccess?.(); }}
         />
       )}
