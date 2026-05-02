@@ -3905,8 +3905,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (hasSepsisActive) {
-                              toastHook({ title: "Protocolo Sepse ativo", description: "Finalize o protocolo de sepse antes de realizar movimentações.", variant: "destructive" });
+                            if (hasAnyProtocolActive) {
+                              toastHook({ title: `Protocolo ${activeProtocolLabel} ativo`, description: `Finalize o protocolo de ${activeProtocolLabel} antes de realizar movimentações.`, variant: "destructive" });
                               return;
                             }
                             setMovementType("TRANSFERÊNCIA");
@@ -3916,13 +3916,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           <ArrowRightLeft className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                           <span>Transferir</span>
-                          {hasSepsisActive && <AlertCircle className="h-3 w-3 text-orange-500 ml-auto" />}
+                          {hasAnyProtocolActive && <AlertCircle className="h-3 w-3 text-orange-500 ml-auto" />}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (hasSepsisActive) {
-                              toastHook({ title: "Protocolo Sepse ativo", description: "Finalize o protocolo de sepse antes de realizar movimentações.", variant: "destructive" });
+                            if (hasAnyProtocolActive) {
+                              toastHook({ title: `Protocolo ${activeProtocolLabel} ativo`, description: `Finalize o protocolo de ${activeProtocolLabel} antes de realizar movimentações.`, variant: "destructive" });
                               return;
                             }
                             setMovementType("ALTA");
@@ -3932,13 +3932,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           <TrendingUp className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
                           <span>Alta</span>
-                          {hasSepsisActive && <AlertCircle className="h-3 w-3 text-orange-500 ml-auto" />}
+                          {hasAnyProtocolActive && <AlertCircle className="h-3 w-3 text-orange-500 ml-auto" />}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (hasSepsisActive) {
-                              toastHook({ title: "Protocolo Sepse ativo", description: "Finalize o protocolo de sepse antes de realizar movimentações.", variant: "destructive" });
+                            if (hasAnyProtocolActive) {
+                              toastHook({ title: `Protocolo ${activeProtocolLabel} ativo`, description: `Finalize o protocolo de ${activeProtocolLabel} antes de realizar movimentações.`, variant: "destructive" });
                               return;
                             }
                             setMovementType("ÓBITO");
@@ -3948,7 +3948,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           <Skull className="h-3.5 w-3.5 text-gray-600 dark:text-gray-400" />
                           <span>Óbito</span>
-                          {hasSepsisActive && <AlertCircle className="h-3 w-3 text-orange-500 ml-auto" />}
+                          {hasAnyProtocolActive && <AlertCircle className="h-3 w-3 text-orange-500 ml-auto" />}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
