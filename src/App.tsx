@@ -45,6 +45,8 @@ import TherapeuticTemplatesPage from "./pages/TherapeuticTemplatesPage";
 import ReportHistoryPage from "./pages/ReportHistoryPage";
 import PresentationPage from "./pages/PresentationPage";
 import SepsisProtocolsAdminPage from "./pages/SepsisProtocolsAdminPage";
+import StrokeProtocolsAdminPage from "./pages/StrokeProtocolsAdminPage";
+import ChestPainProtocolsAdminPage from "./pages/ChestPainProtocolsAdminPage";
 import GoAuthPage from "./pages/go/GoAuthPage";
 import { GoProtectedRoute } from "./pages/go/GoProtectedRoute";
 import GoOverviewPage from "./pages/go/GoOverviewPage";
@@ -389,6 +391,26 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <SepsisProtocolsAdminPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/stroke-protocols"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <StrokeProtocolsAdminPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/chest-pain-protocols"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <ChestPainProtocolsAdminPage />
               </MainLayout>
             </ProtectedRoute>
           }

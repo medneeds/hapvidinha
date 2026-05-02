@@ -149,6 +149,8 @@ export function AppSidebar({
         { name: "CADASTRAR UNIDADES", link: "/admin/units" },
         { name: "GERENCIAR COORDENADORES", link: "/admin/coordinators" },
         { name: "PROTOCOLOS SEPSE", link: "/admin/sepsis-protocols" },
+        { name: "PROTOCOLOS AVC", link: "/admin/stroke-protocols" },
+        { name: "PROTOCOLOS DOR TORÁCICA", link: "/admin/chest-pain-protocols" },
       ],
     },
   ];
