@@ -222,6 +222,228 @@ export type Database = {
         }
         Relationships: []
       }
+      chest_pain_protocols: {
+        Row: {
+          arrival_date: string | null
+          arrival_time: string | null
+          associated_symptoms: string | null
+          attendance_number: string | null
+          balloon_date: string | null
+          balloon_time: string | null
+          birth_date: string | null
+          created_at: string
+          created_by: string | null
+          deletion_reason: string | null
+          destination: string | null
+          destination_date: string | null
+          destination_time: string | null
+          ecg_date: string | null
+          ecg_findings: string | null
+          ecg_new_lbbb: boolean | null
+          ecg_normal: boolean | null
+          ecg_st_depression: boolean | null
+          ecg_st_elevation: boolean | null
+          ecg_t_inversion: boolean | null
+          ecg_time: string | null
+          fibrinolytic_date: string | null
+          fibrinolytic_drug: string | null
+          fibrinolytic_time: string | null
+          heart_age: number | null
+          heart_ecg: number | null
+          heart_history: number | null
+          heart_risk_factors: number | null
+          heart_risk_level: string | null
+          heart_total: number | null
+          heart_troponin: number | null
+          hospital: string | null
+          hospital_unit_id: string
+          id: string
+          is_stemi: boolean | null
+          killip_class: string | null
+          notes: string | null
+          opening_date: string | null
+          opening_time: string | null
+          outcome: string | null
+          outcome_date: string | null
+          outcome_time: string | null
+          pain_classification: string | null
+          pain_duration: string | null
+          pain_irradiation: string | null
+          pain_location: string | null
+          pain_onset_date: string | null
+          pain_onset_time: string | null
+          pain_relieving_factors: string | null
+          pain_triggering_factors: string | null
+          patient_id: string | null
+          patient_name: string
+          patient_weight: number | null
+          reperfusion_strategy: string | null
+          responsible_name: string | null
+          state_id: string
+          therapy_aas: boolean | null
+          therapy_betablocker: boolean | null
+          therapy_clopidogrel: boolean | null
+          therapy_heparin: boolean | null
+          therapy_morphine: boolean | null
+          therapy_nitrate: boolean | null
+          therapy_oxygen: boolean | null
+          therapy_statin: boolean | null
+          troponin_0h_date: string | null
+          troponin_0h_time: string | null
+          troponin_0h_value: number | null
+          troponin_3h_date: string | null
+          troponin_3h_time: string | null
+          troponin_3h_value: number | null
+          updated_at: string
+        }
+        Insert: {
+          arrival_date?: string | null
+          arrival_time?: string | null
+          associated_symptoms?: string | null
+          attendance_number?: string | null
+          balloon_date?: string | null
+          balloon_time?: string | null
+          birth_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          deletion_reason?: string | null
+          destination?: string | null
+          destination_date?: string | null
+          destination_time?: string | null
+          ecg_date?: string | null
+          ecg_findings?: string | null
+          ecg_new_lbbb?: boolean | null
+          ecg_normal?: boolean | null
+          ecg_st_depression?: boolean | null
+          ecg_st_elevation?: boolean | null
+          ecg_t_inversion?: boolean | null
+          ecg_time?: string | null
+          fibrinolytic_date?: string | null
+          fibrinolytic_drug?: string | null
+          fibrinolytic_time?: string | null
+          heart_age?: number | null
+          heart_ecg?: number | null
+          heart_history?: number | null
+          heart_risk_factors?: number | null
+          heart_risk_level?: string | null
+          heart_total?: number | null
+          heart_troponin?: number | null
+          hospital?: string | null
+          hospital_unit_id: string
+          id?: string
+          is_stemi?: boolean | null
+          killip_class?: string | null
+          notes?: string | null
+          opening_date?: string | null
+          opening_time?: string | null
+          outcome?: string | null
+          outcome_date?: string | null
+          outcome_time?: string | null
+          pain_classification?: string | null
+          pain_duration?: string | null
+          pain_irradiation?: string | null
+          pain_location?: string | null
+          pain_onset_date?: string | null
+          pain_onset_time?: string | null
+          pain_relieving_factors?: string | null
+          pain_triggering_factors?: string | null
+          patient_id?: string | null
+          patient_name: string
+          patient_weight?: number | null
+          reperfusion_strategy?: string | null
+          responsible_name?: string | null
+          state_id: string
+          therapy_aas?: boolean | null
+          therapy_betablocker?: boolean | null
+          therapy_clopidogrel?: boolean | null
+          therapy_heparin?: boolean | null
+          therapy_morphine?: boolean | null
+          therapy_nitrate?: boolean | null
+          therapy_oxygen?: boolean | null
+          therapy_statin?: boolean | null
+          troponin_0h_date?: string | null
+          troponin_0h_time?: string | null
+          troponin_0h_value?: number | null
+          troponin_3h_date?: string | null
+          troponin_3h_time?: string | null
+          troponin_3h_value?: number | null
+          updated_at?: string
+        }
+        Update: {
+          arrival_date?: string | null
+          arrival_time?: string | null
+          associated_symptoms?: string | null
+          attendance_number?: string | null
+          balloon_date?: string | null
+          balloon_time?: string | null
+          birth_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          deletion_reason?: string | null
+          destination?: string | null
+          destination_date?: string | null
+          destination_time?: string | null
+          ecg_date?: string | null
+          ecg_findings?: string | null
+          ecg_new_lbbb?: boolean | null
+          ecg_normal?: boolean | null
+          ecg_st_depression?: boolean | null
+          ecg_st_elevation?: boolean | null
+          ecg_t_inversion?: boolean | null
+          ecg_time?: string | null
+          fibrinolytic_date?: string | null
+          fibrinolytic_drug?: string | null
+          fibrinolytic_time?: string | null
+          heart_age?: number | null
+          heart_ecg?: number | null
+          heart_history?: number | null
+          heart_risk_factors?: number | null
+          heart_risk_level?: string | null
+          heart_total?: number | null
+          heart_troponin?: number | null
+          hospital?: string | null
+          hospital_unit_id?: string
+          id?: string
+          is_stemi?: boolean | null
+          killip_class?: string | null
+          notes?: string | null
+          opening_date?: string | null
+          opening_time?: string | null
+          outcome?: string | null
+          outcome_date?: string | null
+          outcome_time?: string | null
+          pain_classification?: string | null
+          pain_duration?: string | null
+          pain_irradiation?: string | null
+          pain_location?: string | null
+          pain_onset_date?: string | null
+          pain_onset_time?: string | null
+          pain_relieving_factors?: string | null
+          pain_triggering_factors?: string | null
+          patient_id?: string | null
+          patient_name?: string
+          patient_weight?: number | null
+          reperfusion_strategy?: string | null
+          responsible_name?: string | null
+          state_id?: string
+          therapy_aas?: boolean | null
+          therapy_betablocker?: boolean | null
+          therapy_clopidogrel?: boolean | null
+          therapy_heparin?: boolean | null
+          therapy_morphine?: boolean | null
+          therapy_nitrate?: boolean | null
+          therapy_oxygen?: boolean | null
+          therapy_statin?: boolean | null
+          troponin_0h_date?: string | null
+          troponin_0h_time?: string | null
+          troponin_0h_value?: number | null
+          troponin_3h_date?: string | null
+          troponin_3h_time?: string | null
+          troponin_3h_value?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clinicus_access: {
         Row: {
           created_at: string
@@ -1568,6 +1790,234 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      stroke_protocols: {
+        Row: {
+          arrival_date: string | null
+          arrival_time: string | null
+          attendance_number: string | null
+          birth_date: string | null
+          bp_diastolic: number | null
+          bp_systolic: number | null
+          cincinnati_arm_weakness: boolean | null
+          cincinnati_facial_droop: boolean | null
+          cincinnati_speech_abnormal: boolean | null
+          conduct: string | null
+          created_at: string
+          created_by: string | null
+          ct_aspects: number | null
+          ct_date: string | null
+          ct_findings: string | null
+          ct_hemorrhage: boolean | null
+          ct_time: string | null
+          deletion_reason: string | null
+          destination: string | null
+          destination_date: string | null
+          destination_time: string | null
+          exclusion_active_bleeding: boolean | null
+          exclusion_age: boolean | null
+          exclusion_anticoagulation: boolean | null
+          exclusion_bp_high: boolean | null
+          exclusion_glucose: boolean | null
+          exclusion_inr_high: boolean | null
+          exclusion_other: string | null
+          exclusion_platelets_low: boolean | null
+          exclusion_previous_stroke: boolean | null
+          exclusion_recent_surgery: boolean | null
+          exclusion_window: boolean | null
+          glucose: number | null
+          hospital: string | null
+          hospital_unit_id: string
+          id: string
+          inr: number | null
+          last_seen_well_date: string | null
+          last_seen_well_time: string | null
+          nihss_10_dysarthria: number | null
+          nihss_11_extinction: number | null
+          nihss_1a_consciousness: number | null
+          nihss_1b_questions: number | null
+          nihss_1c_commands: number | null
+          nihss_2_gaze: number | null
+          nihss_3_visual_fields: number | null
+          nihss_4_facial_palsy: number | null
+          nihss_5a_left_arm: number | null
+          nihss_5b_right_arm: number | null
+          nihss_6a_left_leg: number | null
+          nihss_6b_right_leg: number | null
+          nihss_7_ataxia: number | null
+          nihss_8_sensory: number | null
+          nihss_9_language: number | null
+          nihss_total: number | null
+          notes: string | null
+          opening_date: string | null
+          opening_time: string | null
+          outcome: string | null
+          outcome_date: string | null
+          outcome_time: string | null
+          patient_id: string | null
+          patient_name: string
+          patient_weight: number | null
+          platelets: number | null
+          responsible_name: string | null
+          state_id: string
+          thrombolysis_date: string | null
+          thrombolysis_dose: number | null
+          thrombolysis_drug: string | null
+          thrombolysis_eligible: boolean | null
+          thrombolysis_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          arrival_date?: string | null
+          arrival_time?: string | null
+          attendance_number?: string | null
+          birth_date?: string | null
+          bp_diastolic?: number | null
+          bp_systolic?: number | null
+          cincinnati_arm_weakness?: boolean | null
+          cincinnati_facial_droop?: boolean | null
+          cincinnati_speech_abnormal?: boolean | null
+          conduct?: string | null
+          created_at?: string
+          created_by?: string | null
+          ct_aspects?: number | null
+          ct_date?: string | null
+          ct_findings?: string | null
+          ct_hemorrhage?: boolean | null
+          ct_time?: string | null
+          deletion_reason?: string | null
+          destination?: string | null
+          destination_date?: string | null
+          destination_time?: string | null
+          exclusion_active_bleeding?: boolean | null
+          exclusion_age?: boolean | null
+          exclusion_anticoagulation?: boolean | null
+          exclusion_bp_high?: boolean | null
+          exclusion_glucose?: boolean | null
+          exclusion_inr_high?: boolean | null
+          exclusion_other?: string | null
+          exclusion_platelets_low?: boolean | null
+          exclusion_previous_stroke?: boolean | null
+          exclusion_recent_surgery?: boolean | null
+          exclusion_window?: boolean | null
+          glucose?: number | null
+          hospital?: string | null
+          hospital_unit_id: string
+          id?: string
+          inr?: number | null
+          last_seen_well_date?: string | null
+          last_seen_well_time?: string | null
+          nihss_10_dysarthria?: number | null
+          nihss_11_extinction?: number | null
+          nihss_1a_consciousness?: number | null
+          nihss_1b_questions?: number | null
+          nihss_1c_commands?: number | null
+          nihss_2_gaze?: number | null
+          nihss_3_visual_fields?: number | null
+          nihss_4_facial_palsy?: number | null
+          nihss_5a_left_arm?: number | null
+          nihss_5b_right_arm?: number | null
+          nihss_6a_left_leg?: number | null
+          nihss_6b_right_leg?: number | null
+          nihss_7_ataxia?: number | null
+          nihss_8_sensory?: number | null
+          nihss_9_language?: number | null
+          nihss_total?: number | null
+          notes?: string | null
+          opening_date?: string | null
+          opening_time?: string | null
+          outcome?: string | null
+          outcome_date?: string | null
+          outcome_time?: string | null
+          patient_id?: string | null
+          patient_name: string
+          patient_weight?: number | null
+          platelets?: number | null
+          responsible_name?: string | null
+          state_id: string
+          thrombolysis_date?: string | null
+          thrombolysis_dose?: number | null
+          thrombolysis_drug?: string | null
+          thrombolysis_eligible?: boolean | null
+          thrombolysis_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          arrival_date?: string | null
+          arrival_time?: string | null
+          attendance_number?: string | null
+          birth_date?: string | null
+          bp_diastolic?: number | null
+          bp_systolic?: number | null
+          cincinnati_arm_weakness?: boolean | null
+          cincinnati_facial_droop?: boolean | null
+          cincinnati_speech_abnormal?: boolean | null
+          conduct?: string | null
+          created_at?: string
+          created_by?: string | null
+          ct_aspects?: number | null
+          ct_date?: string | null
+          ct_findings?: string | null
+          ct_hemorrhage?: boolean | null
+          ct_time?: string | null
+          deletion_reason?: string | null
+          destination?: string | null
+          destination_date?: string | null
+          destination_time?: string | null
+          exclusion_active_bleeding?: boolean | null
+          exclusion_age?: boolean | null
+          exclusion_anticoagulation?: boolean | null
+          exclusion_bp_high?: boolean | null
+          exclusion_glucose?: boolean | null
+          exclusion_inr_high?: boolean | null
+          exclusion_other?: string | null
+          exclusion_platelets_low?: boolean | null
+          exclusion_previous_stroke?: boolean | null
+          exclusion_recent_surgery?: boolean | null
+          exclusion_window?: boolean | null
+          glucose?: number | null
+          hospital?: string | null
+          hospital_unit_id?: string
+          id?: string
+          inr?: number | null
+          last_seen_well_date?: string | null
+          last_seen_well_time?: string | null
+          nihss_10_dysarthria?: number | null
+          nihss_11_extinction?: number | null
+          nihss_1a_consciousness?: number | null
+          nihss_1b_questions?: number | null
+          nihss_1c_commands?: number | null
+          nihss_2_gaze?: number | null
+          nihss_3_visual_fields?: number | null
+          nihss_4_facial_palsy?: number | null
+          nihss_5a_left_arm?: number | null
+          nihss_5b_right_arm?: number | null
+          nihss_6a_left_leg?: number | null
+          nihss_6b_right_leg?: number | null
+          nihss_7_ataxia?: number | null
+          nihss_8_sensory?: number | null
+          nihss_9_language?: number | null
+          nihss_total?: number | null
+          notes?: string | null
+          opening_date?: string | null
+          opening_time?: string | null
+          outcome?: string | null
+          outcome_date?: string | null
+          outcome_time?: string | null
+          patient_id?: string | null
+          patient_name?: string
+          patient_weight?: number | null
+          platelets?: number | null
+          responsible_name?: string | null
+          state_id?: string
+          thrombolysis_date?: string | null
+          thrombolysis_dose?: number | null
+          thrombolysis_drug?: string | null
+          thrombolysis_eligible?: boolean | null
+          thrombolysis_time?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
