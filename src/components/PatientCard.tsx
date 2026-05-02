@@ -54,7 +54,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
-import { Brain, HeartPulse, ShieldAlert } from "lucide-react";
+import { HeartPulse } from "lucide-react";
 import {
   Dialog,
   DialogContent,
