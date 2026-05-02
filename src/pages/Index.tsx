@@ -671,10 +671,38 @@ const Index = () => {
     const maxDisplayOrder = patientsInNewSector.reduce((max, p) => Math.max(max, p.displayOrder || 0), -1);
     const newDisplayOrder = maxDisplayOrder + 1;
 
+    const oldSector = patient.sector;
+    const oldBedNumber = patient.bedNumber;
+    const isFixedSector = (s: string) => s === 'red' || s === 'yellow' || s === 'blue';
+    const sameSectorMove = oldSector === newSector && oldBedNumber !== newBedNumber;
+
     const updatedPatient = { ...patient, sector: newSector, bedNumber: newBedNumber, displayOrder: newDisplayOrder };
 
     try {
+      if (sameSectorMove) {
+        // Two-step swap-safe update to avoid unique-constraint conflicts on (sector, bed_number)
+        const tempBed = `__TMP_${patientId.slice(0, 8)}`;
+        await supabase.from("patients").update({ bed_number: tempBed }).eq("id", patientId);
+      }
       await dbUpdatePatient(patientId, updatedPatient);
+
+      // If we vacated a fixed-capacity bed, recreate a vacant placeholder for it
+      if (isFixedSector(oldSector) && oldBedNumber && oldBedNumber !== newBedNumber) {
+        try {
+          await supabase.from("patients").insert({
+            bed_number: oldBedNumber,
+            sector: oldSector,
+            name: '',
+            is_vacant: true,
+            department: currentDepartment,
+            state_id: currentState?.id,
+            hospital_unit_id: currentHospital?.id,
+          } as any);
+        } catch (e) {
+          console.error("[transfer] failed to recreate vacant placeholder for old bed", e);
+        }
+      }
+
       setPatients(prev => prev.map(p => p.id === patientId ? updatedPatient : p));
 
       toast({
@@ -686,8 +714,8 @@ const Index = () => {
         } (leito ${newBedNumber}).`,
       });
 
-      // Refetch to pick up the placeholder deletion in local state
-      if (vacantPlaceholderId) {
+      // Refetch to pick up placeholder changes
+      if (vacantPlaceholderId || isFixedSector(oldSector)) {
         await refetch();
       }
     } catch (error) {
