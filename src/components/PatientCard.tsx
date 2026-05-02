@@ -4429,6 +4429,22 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         existingProtocolId={activeSepsisProtocol?.id || null}
       />
 
+      <StrokeProtocolWizardDialog
+        patient={patient}
+        isOpen={strokeWizardOpen}
+        onClose={() => setStrokeWizardOpen(false)}
+        onSuccess={() => refetchStroke()}
+        existingProtocolId={activeStrokeProtocol?.id || null}
+      />
+
+      <ChestPainProtocolWizardDialog
+        patient={patient}
+        isOpen={chestPainWizardOpen}
+        onClose={() => setChestPainWizardOpen(false)}
+        onSuccess={() => refetchChestPain()}
+        existingProtocolId={activeChestPainProtocol?.id || null}
+      />
+
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent className="dark:bg-gray-900 dark:border-gray-700">
           <AlertDialogHeader>
