@@ -1688,6 +1688,17 @@ const Index = () => {
       </AlertDialog>
 
       <GlobalSearchDialog externalOpen={searchOpen} onExternalOpenChange={setSearchOpen} />
+
+      <BedSelectionDialog
+        open={bedSelectionOpen}
+        onOpenChange={setBedSelectionOpen}
+        sector={bedSelectionSector}
+        title="Adicionar paciente ao setor"
+        description="Selecione um leito disponível ou crie um leito EXTRA se necessário."
+        onSelect={async (bedNumber, vacantPlaceholderId) => {
+          await createBedInSector(bedSelectionSector, bedSelectionCategory, bedNumber, vacantPlaceholderId);
+        }}
+      />
     </MainLayout>
   );
 };
