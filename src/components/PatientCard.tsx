@@ -4017,17 +4017,39 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>Liberar Dieta</span>
                     </DropdownMenuItem>
 
-                    {/* PROTOCOLO SEPSE */}
-                    <DropdownMenuItem
-                      onSelect={(e) => {
-                        e.preventDefault();
-                        setTimeout(() => setSepsisWizardOpen(true), 100);
-                      }}
-                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer"
-                    >
-                      <Activity className={cn("h-4 w-4", hasSepsisActive ? "text-orange-500 animate-pulse" : "text-red-600 dark:text-red-400")} />
-                      <span>{hasSepsisActive ? "Protocolo Sepse (Ativo)" : "Abrir Protocolo Sepse"}</span>
-                    </DropdownMenuItem>
+                    {/* PROTOCOLOS — menu unificado */}
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer">
+                        <ShieldAlert className={cn("h-4 w-4", hasAnyProtocolActive ? "text-orange-500 animate-pulse" : "text-red-600 dark:text-red-400")} />
+                        <span>{hasAnyProtocolActive ? `Protocolos (${activeProtocolLabel} ativo)` : "Protocolos"}</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent className="min-w-[220px]">
+                          <DropdownMenuItem
+                            onSelect={(e) => { e.preventDefault(); setTimeout(() => setSepsisWizardOpen(true), 100); }}
+                            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm cursor-pointer"
+                          >
+                            <Activity className={cn("h-4 w-4", hasSepsisActive ? "text-orange-500 animate-pulse" : "text-red-600")} />
+                            <span>{hasSepsisActive ? "Sepse (Ativo)" : "Protocolo Sepse"}</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={(e) => { e.preventDefault(); setTimeout(() => setStrokeWizardOpen(true), 100); }}
+                            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm cursor-pointer"
+                          >
+                            <Brain className={cn("h-4 w-4", hasStrokeActive ? "text-orange-500 animate-pulse" : "text-purple-600")} />
+                            <span>{hasStrokeActive ? "AVC (Ativo)" : "Protocolo AVC"}</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={(e) => { e.preventDefault(); setTimeout(() => setChestPainWizardOpen(true), 100); }}
+                            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm cursor-pointer"
+                          >
+                            <HeartPulse className={cn("h-4 w-4", hasChestPainActive ? "text-orange-500 animate-pulse" : "text-red-600")} />
+                            <span>{hasChestPainActive ? "Dor Torácica (Ativo)" : "Protocolo Dor Torácica"}</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+
 
                     {/* PSM STATUS - Collapsible with three options */}
                     <Collapsible className="group">
