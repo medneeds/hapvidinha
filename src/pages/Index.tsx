@@ -20,6 +20,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
 import { BedAllocationNotifications } from "@/components/BedAllocationNotifications";
+import { BedSelectionDialog } from "@/components/BedSelectionDialog";
 import { DoorPatientNotifications } from "@/components/DoorPatientNotifications";
 import { RequestNewAllocationDialog } from "@/components/RequestNewAllocationDialog";
 import { RequestUtiAllocationDialog } from "@/components/RequestUtiAllocationDialog";
@@ -218,6 +219,9 @@ const Index = () => {
   const [utiAllocationDialogOpen, setUtiAllocationDialogOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [bedSelectionOpen, setBedSelectionOpen] = useState(false);
+  const [bedSelectionSector, setBedSelectionSector] = useState<Patient['sector']>('red');
+  const [bedSelectionCategory, setBedSelectionCategory] = useState<PatientCategory | undefined>(undefined);
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
   const { saveVersion, fetchVersions } = usePatientVersions();
