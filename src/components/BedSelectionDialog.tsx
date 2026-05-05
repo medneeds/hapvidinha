@@ -18,9 +18,10 @@ import { SECTOR_BED_CONFIG, getNextBedNumber, isExtraBed, formatBedDisplay } fro
 
 export type BedSlot = {
   bed_number: string;
-  status: "vacant" | "occupied" | "extra-suggestion";
+  status: "vacant" | "occupied" | "maintenance" | "extra-suggestion";
   patient_id?: string;
   patient_name?: string;
+  maintenance_reason?: string | null;
   display_order?: number | null;
 };
 
@@ -70,7 +71,7 @@ export function BedSelectionDialog({
     (async () => {
       const { data, error } = await supabase
         .from("patients")
-        .select("id, bed_number, name, is_vacant, display_order")
+        .select("id, bed_number, name, is_vacant, display_order, bed_status, bed_maintenance_reason")
         .eq("hospital_unit_id", currentHospital.id)
         .eq("state_id", currentState.id)
         .eq("department", currentDepartment)
@@ -91,6 +92,8 @@ export function BedSelectionDialog({
         is_vacant: !!p.is_vacant,
         name: p.name as string,
         display_order: p.display_order as number | null,
+        bed_status: p.bed_status as string | null,
+        bed_maintenance_reason: p.bed_maintenance_reason as string | null,
       }));
 
       const map = new Map<string, BedSlot>();
@@ -105,9 +108,10 @@ export function BedSelectionDialog({
       existingBeds.forEach((b) => {
         map.set(b.bed_number, {
           bed_number: b.bed_number,
-          status: b.is_vacant ? "vacant" : "occupied",
+          status: b.bed_status === "maintenance" ? "maintenance" : b.is_vacant ? "vacant" : "occupied",
           patient_id: b.id,
           patient_name: b.is_vacant ? undefined : b.name,
+          maintenance_reason: b.bed_maintenance_reason,
           display_order: b.display_order,
         });
       });
@@ -196,17 +200,18 @@ export function BedSelectionDialog({
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 py-2">
             {slots.map((s) => {
               const isOccupied = s.status === "occupied";
+              const isMaintenance = s.status === "maintenance";
               const isBusy = submitting === s.bed_number;
               return (
                 <button
                   key={s.bed_number}
                   type="button"
-                  disabled={isOccupied || !!submitting}
+                  disabled={isOccupied || isMaintenance || !!submitting}
                   onClick={() => handlePick(s)}
                   className={cn(
                     "relative rounded-lg border p-3 text-center transition-all duration-150",
                     "flex flex-col items-center gap-1",
-                    isOccupied
+                    isOccupied || isMaintenance
                       ? "bg-muted/50 border-border text-muted-foreground cursor-not-allowed opacity-60"
                       : cn(
                           "bg-background hover:scale-[1.03] hover:shadow-md cursor-pointer",
@@ -216,13 +221,13 @@ export function BedSelectionDialog({
                     isBusy && "ring-2",
                     isBusy && colors.ring,
                   )}
-                  title={isOccupied ? `Ocupado por ${s.patient_name}` : `Alocar em ${s.bed_number}`}
+                  title={isMaintenance ? `Interditado: ${s.maintenance_reason || 'manutenção'}` : isOccupied ? `Ocupado por ${s.patient_name}` : `Alocar em ${s.bed_number}`}
                 >
                   <span className="text-base font-bold tracking-wide">
                     {formatBedDisplay(s.bed_number)}
                   </span>
                   <span className="text-[10px] uppercase tracking-wide">
-                    {isOccupied ? "Ocupado" : isBusy ? "Alocando…" : "Disponível"}
+                    {isMaintenance ? "Interditado" : isOccupied ? "Ocupado" : isBusy ? "Alocando…" : "Disponível"}
                   </span>
                   {isOccupied && s.patient_name && (
                     <span className="text-[9px] truncate max-w-full text-muted-foreground/80">

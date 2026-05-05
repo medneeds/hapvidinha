@@ -1303,7 +1303,11 @@ export type Database = {
           admission_history: string | null
           age: string | null
           allocation_status: string | null
+          bed_maintenance_reason: string | null
+          bed_maintenance_started_at: string | null
+          bed_maintenance_started_by: string | null
           bed_number: string
+          bed_status: string
           birth_date: string | null
           clinical_status: string | null
           created_at: string
@@ -1348,7 +1352,11 @@ export type Database = {
           admission_history?: string | null
           age?: string | null
           allocation_status?: string | null
+          bed_maintenance_reason?: string | null
+          bed_maintenance_started_at?: string | null
+          bed_maintenance_started_by?: string | null
           bed_number: string
+          bed_status?: string
           birth_date?: string | null
           clinical_status?: string | null
           created_at?: string
@@ -1393,7 +1401,11 @@ export type Database = {
           admission_history?: string | null
           age?: string | null
           allocation_status?: string | null
+          bed_maintenance_reason?: string | null
+          bed_maintenance_started_at?: string | null
+          bed_maintenance_started_by?: string | null
           bed_number?: string
+          bed_status?: string
           birth_date?: string | null
           clinical_status?: string | null
           created_at?: string

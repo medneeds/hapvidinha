@@ -402,12 +402,34 @@ const Index = () => {
       newBedNumber = getNextBedNumber(sector, existingBedNumbers, currentDepartment);
     }
 
-    // If user picked a vacant placeholder slot, remove it first to free the bed_number
+    // If user picked a fixed vacant placeholder, reuse it instead of deleting the slot.
     if (vacantPlaceholderId) {
       try {
-        await supabase.from('patients').delete().eq('id', vacantPlaceholderId);
+        await dbUpdatePatient(vacantPlaceholderId, {
+          id: vacantPlaceholderId,
+          bedNumber: newBedNumber,
+          name: "",
+          age: 0,
+          sector,
+          diagnoses: [],
+          medicalHistory: [],
+          relevantExams: [],
+          pendencies: [],
+          schedule: [],
+          admissionHistory: "",
+          admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' '),
+          highlightedPendencies: [],
+          patientCategory: category || 'clinica_medica',
+          isVacant: false,
+          bedStatus: 'available',
+          bedMaintenanceReason: null,
+          bedMaintenanceStartedAt: null,
+          bedMaintenanceStartedBy: null,
+        });
+        await refetch();
+        return;
       } catch (err) {
-        console.error('Failed to remove vacant placeholder:', err);
+        console.error('Failed to reuse vacant placeholder:', err);
       }
     }
 
