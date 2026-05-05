@@ -1,4 +1,4 @@
-import { DoorOpen, UserPlus, Users, ChevronDown } from "lucide-react";
+import { DoorOpen, UserPlus, Users, ChevronDown, Wrench, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,6 +14,10 @@ interface EmptyBedSlotProps {
   sector: SectorType;
   onAllocateNew: () => void;
   onAllocateFromQueue?: () => void;
+  isMaintenance?: boolean;
+  maintenanceReason?: string | null;
+  onBlockMaintenance?: () => void;
+  onReleaseMaintenance?: () => void;
 }
 
 const sectorTokens: Record<
@@ -59,6 +63,10 @@ export function EmptyBedSlot({
   sector,
   onAllocateNew,
   onAllocateFromQueue,
+  isMaintenance = false,
+  maintenanceReason,
+  onBlockMaintenance,
+  onReleaseMaintenance,
 }: EmptyBedSlotProps) {
   const tokens = sectorTokens[sector];
 
@@ -66,7 +74,7 @@ export function EmptyBedSlot({
     <div
       className={cn(
         "group flex items-center justify-between gap-2 px-2 py-1.5 rounded-md border border-dashed transition-colors",
-        tokens.container,
+        isMaintenance ? "bg-muted/60 border-muted-foreground/40" : tokens.container,
       )}
     >
       <div className="flex items-center gap-2 min-w-0">
@@ -80,9 +88,13 @@ export function EmptyBedSlot({
             {bedNumber}
           </span>
         </div>
-        <DoorOpen className={cn("h-3.5 w-3.5 shrink-0 opacity-70", tokens.accent)} />
-        <span className="text-xs font-medium italic text-muted-foreground truncate">
-          Leito disponível
+        {isMaintenance ? (
+          <Wrench className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        ) : (
+          <DoorOpen className={cn("h-3.5 w-3.5 shrink-0 opacity-70", tokens.accent)} />
+        )}
+        <span className="text-xs font-medium italic text-muted-foreground truncate" title={maintenanceReason || undefined}>
+          {isMaintenance ? `Interditado${maintenanceReason ? ` · ${maintenanceReason}` : ""}` : "Leito disponível"}
         </span>
       </div>
 
@@ -91,6 +103,7 @@ export function EmptyBedSlot({
           <Button
             variant="ghost"
             size="sm"
+            disabled={isMaintenance}
             className={cn(
               "h-6 px-2 text-xs gap-1 opacity-70 hover:opacity-100",
               tokens.accent,
@@ -103,7 +116,7 @@ export function EmptyBedSlot({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-52 bg-popover z-50">
-          <DropdownMenuItem onClick={onAllocateNew} className="gap-2">
+          {!isMaintenance && <DropdownMenuItem onClick={onAllocateNew} className="gap-2">
             <UserPlus className="h-4 w-4" />
             <div className="flex flex-col">
               <span className="text-sm">Novo paciente</span>
@@ -111,8 +124,8 @@ export function EmptyBedSlot({
                 Liberar leito para preenchimento
               </span>
             </div>
-          </DropdownMenuItem>
-          {onAllocateFromQueue && (
+          </DropdownMenuItem>}
+          {!isMaintenance && onAllocateFromQueue && (
             <DropdownMenuItem onClick={onAllocateFromQueue} className="gap-2">
               <Users className="h-4 w-4" />
               <div className="flex flex-col">
@@ -121,6 +134,17 @@ export function EmptyBedSlot({
                   Solicitar regulação para este leito
                 </span>
               </div>
+            </DropdownMenuItem>
+          )}
+          {isMaintenance ? (
+            <DropdownMenuItem onClick={onReleaseMaintenance} className="gap-2">
+              <CheckCircle2 className="h-4 w-4" />
+              Liberar manutenção
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem onClick={onBlockMaintenance} className="gap-2">
+              <Wrench className="h-4 w-4" />
+              Interditar manutenção
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>
