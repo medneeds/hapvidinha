@@ -27,7 +27,6 @@ import { RequestUtiAllocationDialog } from "@/components/RequestUtiAllocationDia
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
 import { supabase } from "@/integrations/supabase/client";
 import { usePrivacy } from "@/contexts/PrivacyContext";
@@ -225,7 +224,6 @@ const Index = () => {
   const [bedSelectionCategory, setBedSelectionCategory] = useState<PatientCategory | undefined>(undefined);
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
-  const { currentState, currentHospital } = useHospital();
   const { saveVersion, fetchVersions } = usePatientVersions();
   const isMobile = useIsMobile();
   const { namesHidden, toggleNamesHidden } = usePrivacy();
