@@ -4,6 +4,8 @@ export type MedicalResponsibilityType = 'porta' | 'lider' | 'conjunto' | 'obstet
 
 export type PatientCategory = 'clinica_medica' | 'cirurgico' | 'psiquiatrico' | 'custom' | null;
 
+export type BedStatus = 'available' | 'maintenance';
+
 export interface MedicalResponsibility {
   type: MedicalResponsibilityType;
   officeNumber?: string;
@@ -57,6 +59,11 @@ export interface Patient {
   clinicalStatus?: 'gravissimo' | 'grave' | 'grave_estavel' | 'potencialmente_grave' | 'regular' | 'paliativado' | null;
   // UTI bed vacancy status
   isVacant?: boolean;
+  // Fixed bed operational status
+  bedStatus?: BedStatus;
+  bedMaintenanceReason?: string | null;
+  bedMaintenanceStartedAt?: string | null;
+  bedMaintenanceStartedBy?: string | null;
   // Patient category for emergency sub-segmentation
   patientCategory?: PatientCategory;
 }
