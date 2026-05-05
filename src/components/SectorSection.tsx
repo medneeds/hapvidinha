@@ -336,10 +336,20 @@ export function SectorSection({
                               bedNumber={patient.bedNumber}
                               sector={sector}
                               onAllocateNew={() =>
-                                onUpdatePatient({ ...patient, isVacant: false })
+                                onUpdatePatient({ ...patient, isVacant: false, bedStatus: 'available', bedMaintenanceReason: null, bedMaintenanceStartedAt: null, bedMaintenanceStartedBy: null })
                               }
                               onAllocateFromQueue={
                                 onRequestFromQueue ? () => onRequestFromQueue(sector) : undefined
+                              }
+                              isMaintenance={patient.bedStatus === 'maintenance'}
+                              maintenanceReason={patient.bedMaintenanceReason}
+                              onBlockMaintenance={() => {
+                                const reason = window.prompt(`Motivo da interdição do leito ${patient.bedNumber}:`)?.trim().toUpperCase();
+                                if (!reason) return;
+                                onUpdatePatient({ ...patient, isVacant: true, bedStatus: 'maintenance', bedMaintenanceReason: reason, bedMaintenanceStartedAt: new Date().toISOString() });
+                              }}
+                              onReleaseMaintenance={() =>
+                                onUpdatePatient({ ...patient, bedStatus: 'available', bedMaintenanceReason: null, bedMaintenanceStartedAt: null, bedMaintenanceStartedBy: null })
                               }
                             />
                           );
