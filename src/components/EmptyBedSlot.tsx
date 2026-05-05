@@ -103,15 +103,14 @@ export function EmptyBedSlot({
           <Button
             variant="ghost"
             size="sm"
-            disabled={isMaintenance}
             className={cn(
               "h-6 px-2 text-xs gap-1 opacity-70 hover:opacity-100",
               tokens.accent,
               tokens.ring,
             )}
           >
-            <UserPlus className="h-3 w-3" />
-            Alocar
+            {isMaintenance ? <Wrench className="h-3 w-3" /> : <UserPlus className="h-3 w-3" />}
+            {isMaintenance ? "Manutenção" : "Alocar"}
             <ChevronDown className="h-3 w-3 opacity-60" />
           </Button>
         </DropdownMenuTrigger>
