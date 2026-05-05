@@ -27,6 +27,7 @@ import { RequestUtiAllocationDialog } from "@/components/RequestUtiAllocationDia
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
 import { supabase } from "@/integrations/supabase/client";
 import { usePrivacy } from "@/contexts/PrivacyContext";
@@ -224,6 +225,7 @@ const Index = () => {
   const [bedSelectionCategory, setBedSelectionCategory] = useState<PatientCategory | undefined>(undefined);
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
+  const { currentState, currentHospital } = useHospital();
   const { saveVersion, fetchVersions } = usePatientVersions();
   const isMobile = useIsMobile();
   const { namesHidden, toggleNamesHidden } = usePrivacy();
@@ -402,12 +404,34 @@ const Index = () => {
       newBedNumber = getNextBedNumber(sector, existingBedNumbers, currentDepartment);
     }
 
-    // If user picked a vacant placeholder slot, remove it first to free the bed_number
+    // If user picked a fixed vacant placeholder, reuse it instead of deleting the slot.
     if (vacantPlaceholderId) {
       try {
-        await supabase.from('patients').delete().eq('id', vacantPlaceholderId);
+        await dbUpdatePatient(vacantPlaceholderId, {
+          id: vacantPlaceholderId,
+          bedNumber: newBedNumber,
+          name: "",
+          age: 0,
+          sector,
+          diagnoses: [],
+          medicalHistory: [],
+          relevantExams: [],
+          pendencies: [],
+          schedule: [],
+          admissionHistory: "",
+          admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' '),
+          highlightedPendencies: [],
+          patientCategory: category || 'clinica_medica',
+          isVacant: false,
+          bedStatus: 'available',
+          bedMaintenanceReason: null,
+          bedMaintenanceStartedAt: null,
+          bedMaintenanceStartedBy: null,
+        });
+        await refetch();
+        return;
       } catch (err) {
-        console.error('Failed to remove vacant placeholder:', err);
+        console.error('Failed to reuse vacant placeholder:', err);
       }
     }
 
