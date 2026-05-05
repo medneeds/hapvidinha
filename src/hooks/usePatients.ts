@@ -325,6 +325,11 @@ export function usePatients(department?: Department) {
         utiOriginSector: data.uti_origin_sector ? data.uti_origin_sector.split('\n').filter(Boolean) : [],
         utiDailyConducts: (data as any).uti_daily_conducts ? (data as any).uti_daily_conducts.split('\n').filter(Boolean) : [],
         createdBy: data.created_by || undefined,
+        isVacant: (data as any).is_vacant ?? false,
+        bedStatus: ((data as any).bed_status || 'available') as Patient['bedStatus'],
+        bedMaintenanceReason: (data as any).bed_maintenance_reason || null,
+        bedMaintenanceStartedAt: (data as any).bed_maintenance_started_at || null,
+        bedMaintenanceStartedBy: (data as any).bed_maintenance_started_by || null,
         patientCategory: data.patient_category as Patient['patientCategory'],
       };
 
@@ -388,6 +393,10 @@ export function usePatients(department?: Department) {
             highlighted_conducts: [],
             highlighted_pendencies: [],
             is_vacant: true,
+            bed_status: 'available',
+            bed_maintenance_reason: null,
+            bed_maintenance_started_at: null,
+            bed_maintenance_started_by: null,
           } as any)
           .eq('id', patientId);
 
@@ -407,6 +416,10 @@ export function usePatients(department?: Department) {
             relevantExams: [],
             pendencies: [],
             isVacant: true,
+            bedStatus: 'available',
+            bedMaintenanceReason: null,
+            bedMaintenanceStartedAt: null,
+            bedMaintenanceStartedBy: null,
           } : p));
         }
 
@@ -544,6 +557,10 @@ export function usePatients(department?: Department) {
     psmStatus: record.psm_status as Patient['psmStatus'],
     clinicalStatus: record.clinical_status as Patient['clinicalStatus'],
     isVacant: record.is_vacant ?? false,
+    bedStatus: (record.bed_status || 'available') as Patient['bedStatus'],
+    bedMaintenanceReason: record.bed_maintenance_reason || null,
+    bedMaintenanceStartedAt: record.bed_maintenance_started_at || null,
+    bedMaintenanceStartedBy: record.bed_maintenance_started_by || null,
     patientCategory: record.patient_category as Patient['patientCategory'],
   });
 
