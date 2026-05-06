@@ -45,6 +45,8 @@ import { useSepsisProtocol } from "@/hooks/useSepsisProtocol";
 import { useStrokeProtocol } from "@/hooks/useStrokeProtocol";
 import { useChestPainProtocol } from "@/hooks/useChestPainProtocol";
 import { SepsisActiveBanner } from "./SepsisActiveBanner";
+import { StrokeActiveBanner } from "./StrokeActiveBanner";
+import { ChestPainActiveBanner } from "./ChestPainActiveBanner";
 import { SepsisProtocolWizardDialog } from "./SepsisProtocolWizardDialog";
 import { StrokeProtocolWizardDialog } from "./StrokeProtocolWizardDialog";
 import { ChestPainProtocolWizardDialog } from "./ChestPainProtocolWizardDialog";
@@ -1604,7 +1606,43 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             onClick={() => setSepsisWizardOpen(true)}
           />
         )}
-        
+
+        {/* Stroke Protocol Active Banner */}
+        {hasStrokeActive && activeStrokeProtocol?.outcome == null && (
+          <StrokeActiveBanner
+            protocolCreatedAt={activeStrokeProtocol.created_at}
+            openingDate={activeStrokeProtocol.opening_date}
+            openingTime={activeStrokeProtocol.opening_time}
+            outcome={activeStrokeProtocol.outcome}
+            sector={patient.sector as any}
+            hasCt={!!(activeStrokeProtocol.ct_date && activeStrokeProtocol.ct_time)}
+            hasThrombolysis={!!(activeStrokeProtocol.thrombolysis_date && activeStrokeProtocol.thrombolysis_time)}
+            ctTime={activeStrokeProtocol.ct_time}
+            thrombolysisTime={activeStrokeProtocol.thrombolysis_time}
+            nihssTotal={activeStrokeProtocol.nihss_total}
+            onClick={() => setStrokeWizardOpen(true)}
+          />
+        )}
+
+        {/* Chest Pain Protocol Active Banner */}
+        {hasChestPainActive && activeChestPainProtocol?.outcome == null && (
+          <ChestPainActiveBanner
+            protocolCreatedAt={activeChestPainProtocol.created_at}
+            openingDate={activeChestPainProtocol.opening_date}
+            openingTime={activeChestPainProtocol.opening_time}
+            outcome={activeChestPainProtocol.outcome}
+            sector={patient.sector as any}
+            hasEcg={!!(activeChestPainProtocol.ecg_date && activeChestPainProtocol.ecg_time)}
+            ecgTime={activeChestPainProtocol.ecg_time}
+            isStemi={activeChestPainProtocol.is_stemi}
+            heartScore={activeChestPainProtocol.heart_total}
+            heartRiskLevel={activeChestPainProtocol.heart_risk_level}
+            hasBalloon={!!(activeChestPainProtocol.balloon_date && activeChestPainProtocol.balloon_time)}
+            balloonTime={activeChestPainProtocol.balloon_time}
+            onClick={() => setChestPainWizardOpen(true)}
+          />
+        )}
+
         <Card 
           data-patient-id={patient.id}
           className={cn(
@@ -1612,7 +1650,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             config.color,
             isSelected && "ring-2 ring-primary",
             isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
-            (allocationStatusBarConfig || (hasSepsisActive && activeSepsisProtocol?.outcome == null)) && "rounded-t-none"
+            (allocationStatusBarConfig
+              || (hasSepsisActive && activeSepsisProtocol?.outcome == null)
+              || (hasStrokeActive && activeStrokeProtocol?.outcome == null)
+              || (hasChestPainActive && activeChestPainProtocol?.outcome == null)) && "rounded-t-none"
           )}
         >
         <div className="p-3 md:p-2 print:p-1.5">
