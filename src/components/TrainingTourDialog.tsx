@@ -19,6 +19,7 @@ interface Props {
 export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDismissed }: Props) {
   const [stage, setStage] = useState<"teaser" | "slides" | "celebrate">("teaser");
   const [index, setIndex] = useState(0);
+  const primaryActionRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (open) {
@@ -26,6 +27,14 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
       setIndex(0);
     }
   }, [open, tour?.id]);
+
+  // Auto-focus primary action on stage change for accessibility
+  useEffect(() => {
+    if (open) {
+      const t = setTimeout(() => primaryActionRef.current?.focus(), 80);
+      return () => clearTimeout(t);
+    }
+  }, [open, stage, index]);
 
   if (!tour) return null;
 
@@ -49,6 +58,17 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
   };
 
   const handlePrev = () => index > 0 && setIndex(index - 1);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (stage !== "slides") return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      handleNext();
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      handlePrev();
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
