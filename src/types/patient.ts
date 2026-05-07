@@ -66,4 +66,14 @@ export interface Patient {
   bedMaintenanceStartedBy?: string | null;
   // Patient category for emergency sub-segmentation
   patientCategory?: PatientCategory;
+  // Administrative info (from Samweb paste)
+  medicalRecordNumber?: string | null;
+  attendanceNumber?: string | null;
+  cpf?: string | null;
+  motherName?: string | null;
+  insuranceCompany?: string | null;
+  insurancePlan?: string | null;
+  insurancePlanType?: string | null;
+  insuranceCardNumber?: string | null;
+  insuranceDuration?: string | null;
 }

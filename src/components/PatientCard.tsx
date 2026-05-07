@@ -50,6 +50,9 @@ import { ChestPainActiveBanner } from "./ChestPainActiveBanner";
 import { SepsisProtocolWizardDialog } from "./SepsisProtocolWizardDialog";
 import { StrokeProtocolWizardDialog } from "./StrokeProtocolWizardDialog";
 import { ChestPainProtocolWizardDialog } from "./ChestPainProtocolWizardDialog";
+import { PatientInfoPasteDialog } from "./PatientInfoPasteDialog";
+import { PatientInfoDialog } from "./PatientInfoDialog";
+import { Info } from "lucide-react";
 import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
@@ -807,6 +810,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [sepsisWizardOpen, setSepsisWizardOpen] = useState(false);
   const [strokeWizardOpen, setStrokeWizardOpen] = useState(false);
   const [chestPainWizardOpen, setChestPainWizardOpen] = useState(false);
+  const [infoPasteDialogOpen, setInfoPasteDialogOpen] = useState(false);
+  const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const { activeProtocol: activeSepsisProtocol, isProtocolActive: hasSepsisActive, refetch: refetchSepsis } = useSepsisProtocol(patient.id);
   const { activeProtocol: activeStrokeProtocol, isProtocolActive: hasStrokeActive, refetch: refetchStroke } = useStrokeProtocol(patient.id);
   const { activeProtocol: activeChestPainProtocol, isProtocolActive: hasChestPainActive, refetch: refetchChestPain } = useChestPainProtocol(patient.id);
@@ -1833,6 +1838,24 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>{stayTimer.displayShort}</span>
                     </div>
                   )}
+                  {/* AI paste icon */}
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setInfoPasteDialogOpen(true); }}
+                    className="inline-flex items-center justify-center h-4 w-4 rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors print:hidden"
+                    title="Colar dados do paciente (IA reconhece automaticamente)"
+                  >
+                    <Sparkles className="h-3 w-3" />
+                  </button>
+                  {/* Info dialog icon */}
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setInfoDialogOpen(true); }}
+                    className="inline-flex items-center justify-center h-4 w-4 rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors print:hidden"
+                    title="Ver informações administrativas"
+                  >
+                    <Info className="h-3 w-3" />
+                  </button>
                 </div>
                 <div className="group/name relative">
                   <div className="flex items-start gap-0.5">
@@ -1931,7 +1954,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
                            <p 
                             className={cn(
-                              "font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words rounded px-1 -mx-1",
+                              "font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words rounded px-1 -mx-1 inline",
                               canEdit && "cursor-pointer hover:bg-accent/50"
                             )}
                             onClick={() => canEdit && startEditing("name", patient.name)}
@@ -1940,6 +1963,24 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             {namesHidden ? (
                               <span className="tracking-widest opacity-70 transition-all duration-300">{displayName}</span>
                             ) : patient.name ? patient.name : <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
+                            {patient.age && (
+                              <>
+                                <span className="mx-1 text-muted-foreground/60 font-normal">·</span>
+                                <span
+                                  className={cn(
+                                    "text-sm md:text-xs font-normal text-muted-foreground rounded px-1 -mx-0.5",
+                                    canEdit && "cursor-pointer hover:bg-accent/50"
+                                  )}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (canEdit) startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age);
+                                  }}
+                                  title={canEdit ? "Clique para editar idade" : undefined}
+                                >
+                                  {formatAgeDisplay(patient.age)}
+                                </span>
+                              </>
+                            )}
                           </p>
                           
                           {/* Allocation Pending Badge - Hidden when status bar is visible, kept for dialog functionality */}
@@ -1981,16 +2022,51 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             <X className="h-2.5 w-2.5" />
                           </Button>
                         </div>
-                      ) : (
+                      ) : !patient.age ? (
                         <p 
                           className={cn(
-                            "text-sm md:text-[11px] text-muted-foreground mt-0.5 rounded px-1 -mx-1 whitespace-normal break-words",
+                            "text-sm md:text-[11px] text-muted-foreground mt-0.5 rounded px-1 -mx-1 italic",
                             canEdit && "cursor-pointer hover:bg-accent/50"
                           )}
-                          onClick={() => canEdit && startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
-                          title={canEdit ? "Clique para editar" : undefined}
+                          onClick={() => canEdit && startEditing("age", "")}
+                          title={canEdit ? "Clique para adicionar idade" : undefined}
                         >
-                          {patient.age ? formatAgeDisplay(patient.age) : <span className="italic">Clique para adicionar idade</span>}
+                          Clique para adicionar idade
+                        </p>
+                      ) : null}
+
+                      {/* PRONT. / ATEND. discrete italic line */}
+                      {(patient.medicalRecordNumber || patient.attendanceNumber) && (
+                        <p className="text-[10px] md:text-[11px] italic text-muted-foreground/80 mt-0.5 flex flex-wrap gap-x-2 gap-y-0">
+                          {patient.medicalRecordNumber && (
+                            <span
+                              className="cursor-pointer hover:text-primary transition-colors"
+                              title="Copiar prontuário"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(patient.medicalRecordNumber!);
+                                toast.success("Prontuário copiado");
+                              }}
+                            >
+                              <span className="font-semibold not-italic">PRONT.</span> {patient.medicalRecordNumber}
+                            </span>
+                          )}
+                          {patient.medicalRecordNumber && patient.attendanceNumber && (
+                            <span className="text-muted-foreground/50">·</span>
+                          )}
+                          {patient.attendanceNumber && (
+                            <span
+                              className="cursor-pointer hover:text-primary transition-colors"
+                              title="Copiar atendimento"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(patient.attendanceNumber!);
+                                toast.success("Atendimento copiado");
+                              }}
+                            >
+                              <span className="font-semibold not-italic">ATEND.</span> {patient.attendanceNumber}
+                            </span>
+                          )}
                         </p>
                       )}
                     </div>
@@ -4478,6 +4554,23 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         existingProtocolId={activeStrokeProtocol?.id || null}
       />
 
+      <PatientInfoPasteDialog
+        open={infoPasteDialogOpen}
+        onOpenChange={setInfoPasteDialogOpen}
+        onApply={async (updates) => {
+          onUpdate({ ...patient, ...updates });
+        }}
+      />
+
+      <PatientInfoDialog
+        open={infoDialogOpen}
+        onOpenChange={setInfoDialogOpen}
+        patient={patient}
+        canEdit={canEdit}
+        onApply={async (updates) => {
+          onUpdate({ ...patient, ...updates });
+        }}
+      />
       <ChestPainProtocolWizardDialog
         patient={patient}
         isOpen={chestPainWizardOpen}

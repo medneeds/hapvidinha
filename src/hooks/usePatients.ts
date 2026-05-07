@@ -136,6 +136,15 @@ export function usePatients(department?: Department) {
         bedMaintenanceStartedAt: (p as any).bed_maintenance_started_at || null,
         bedMaintenanceStartedBy: (p as any).bed_maintenance_started_by || null,
         patientCategory: (p as any).patient_category as Patient['patientCategory'],
+        medicalRecordNumber: (p as any).medical_record_number || null,
+        attendanceNumber: (p as any).attendance_number || null,
+        cpf: (p as any).cpf || null,
+        motherName: (p as any).mother_name || null,
+        insuranceCompany: (p as any).insurance_company || null,
+        insurancePlan: (p as any).insurance_plan || null,
+        insurancePlanType: (p as any).insurance_plan_type || null,
+        insuranceCardNumber: (p as any).insurance_card_number || null,
+        insuranceDuration: (p as any).insurance_duration || null,
       }));
 
       // Sort by display_order first, then by bed_number as tiebreaker
@@ -226,6 +235,15 @@ export function usePatients(department?: Department) {
       if (updates.bedMaintenanceStartedAt !== undefined) dbUpdates.bed_maintenance_started_at = updates.bedMaintenanceStartedAt;
       if (updates.bedMaintenanceStartedBy !== undefined) dbUpdates.bed_maintenance_started_by = updates.bedMaintenanceStartedBy;
       if (updates.patientCategory !== undefined) dbUpdates.patient_category = updates.patientCategory;
+      if (updates.medicalRecordNumber !== undefined) dbUpdates.medical_record_number = updates.medicalRecordNumber;
+      if (updates.attendanceNumber !== undefined) dbUpdates.attendance_number = updates.attendanceNumber;
+      if (updates.cpf !== undefined) dbUpdates.cpf = updates.cpf;
+      if (updates.motherName !== undefined) dbUpdates.mother_name = updates.motherName;
+      if (updates.insuranceCompany !== undefined) dbUpdates.insurance_company = updates.insuranceCompany;
+      if (updates.insurancePlan !== undefined) dbUpdates.insurance_plan = updates.insurancePlan;
+      if (updates.insurancePlanType !== undefined) dbUpdates.insurance_plan_type = updates.insurancePlanType;
+      if (updates.insuranceCardNumber !== undefined) dbUpdates.insurance_card_number = updates.insuranceCardNumber;
+      if (updates.insuranceDuration !== undefined) dbUpdates.insurance_duration = updates.insuranceDuration;
 
       console.log('Updating patient:', patientId, 'with data:', dbUpdates);
 
@@ -606,6 +624,15 @@ export function usePatients(department?: Department) {
     bedMaintenanceStartedAt: record.bed_maintenance_started_at || null,
     bedMaintenanceStartedBy: record.bed_maintenance_started_by || null,
     patientCategory: record.patient_category as Patient['patientCategory'],
+    medicalRecordNumber: record.medical_record_number || null,
+    attendanceNumber: record.attendance_number || null,
+    cpf: record.cpf || null,
+    motherName: record.mother_name || null,
+    insuranceCompany: record.insurance_company || null,
+    insurancePlan: record.insurance_plan || null,
+    insurancePlanType: record.insurance_plan_type || null,
+    insuranceCardNumber: record.insurance_card_number || null,
+    insuranceDuration: record.insurance_duration || null,
   });
 
   useEffect(() => {
