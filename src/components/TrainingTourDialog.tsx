@@ -145,8 +145,10 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
                   Agora não
                 </Button>
                 <Button
+                  ref={primaryActionRef}
                   onClick={() => setStage("slides")}
                   className="flex-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white border-0 shadow-lg shadow-violet-500/25 group"
+                  aria-label="Iniciar treinamento"
                 >
                   Vamos lá
                   <Sparkles className="ml-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
@@ -237,9 +239,11 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
                     Voltar
                   </Button>
                   <Button
+                    ref={primaryActionRef}
                     size="sm"
                     onClick={handleNext}
                     className="gap-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white border-0"
+                    aria-label={index === tour.slides.length - 1 ? "Concluir treinamento" : "Próximo slide"}
                   >
                     {index === tour.slides.length - 1 ? "Concluir" : "Próximo"}
                     <ChevronRight className="h-4 w-4" />
@@ -310,8 +314,10 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
                 transition={{ delay: 0.55 }}
               >
                 <Button
+                  ref={primaryActionRef}
                   onClick={() => handleClose(true)}
                   className="bg-white text-emerald-700 hover:bg-white/90 font-semibold"
+                  aria-label="Fechar e continuar trabalhando"
                 >
                   Continuar trabalhando
                 </Button>
