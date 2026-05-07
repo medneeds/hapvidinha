@@ -15,7 +15,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
 import { Patient, PatientCategory } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2, Search } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2, Search, GraduationCap } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
@@ -1298,6 +1298,20 @@ const Index = () => {
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent><p>{namesHidden ? "Mostrar nomes dos pacientes" : "Ocultar nomes (Proteção de Dados)"}</p></TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => window.dispatchEvent(new CustomEvent("hapmap:open-training-center"))}
+                              aria-label="Rever treinamentos"
+                              className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-violet-500 to-fuchsia-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(168,85,247,0.6)] hover:shadow-[0_0_20px_-2px_rgba(168,85,247,0.85)] hover:brightness-110 hover:scale-105 transition-all"
+                            >
+                              <GraduationCap className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent><p>Rever treinamento</p></TooltipContent>
                         </Tooltip>
                       </div>
 
