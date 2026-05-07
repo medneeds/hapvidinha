@@ -624,6 +624,15 @@ export function usePatients(department?: Department) {
     bedMaintenanceStartedAt: record.bed_maintenance_started_at || null,
     bedMaintenanceStartedBy: record.bed_maintenance_started_by || null,
     patientCategory: record.patient_category as Patient['patientCategory'],
+    medicalRecordNumber: record.medical_record_number || null,
+    attendanceNumber: record.attendance_number || null,
+    cpf: record.cpf || null,
+    motherName: record.mother_name || null,
+    insuranceCompany: record.insurance_company || null,
+    insurancePlan: record.insurance_plan || null,
+    insurancePlanType: record.insurance_plan_type || null,
+    insuranceCardNumber: record.insurance_card_number || null,
+    insuranceDuration: record.insurance_duration || null,
   });
 
   useEffect(() => {
