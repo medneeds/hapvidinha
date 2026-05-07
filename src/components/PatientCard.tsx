@@ -50,6 +50,9 @@ import { ChestPainActiveBanner } from "./ChestPainActiveBanner";
 import { SepsisProtocolWizardDialog } from "./SepsisProtocolWizardDialog";
 import { StrokeProtocolWizardDialog } from "./StrokeProtocolWizardDialog";
 import { ChestPainProtocolWizardDialog } from "./ChestPainProtocolWizardDialog";
+import { PatientInfoPasteDialog } from "./PatientInfoPasteDialog";
+import { PatientInfoDialog } from "./PatientInfoDialog";
+import { Info } from "lucide-react";
 import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
