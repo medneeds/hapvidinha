@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ChevronLeft, ChevronRight, X, PartyPopper, Sparkles, Lightbulb, Trophy } from "lucide-react";
@@ -18,6 +19,7 @@ interface Props {
 export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDismissed }: Props) {
   const [stage, setStage] = useState<"teaser" | "slides" | "celebrate">("teaser");
   const [index, setIndex] = useState(0);
+  const primaryActionRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (open) {
@@ -25,6 +27,14 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
       setIndex(0);
     }
   }, [open, tour?.id]);
+
+  // Auto-focus primary action on stage change for accessibility
+  useEffect(() => {
+    if (open) {
+      const t = setTimeout(() => primaryActionRef.current?.focus(), 80);
+      return () => clearTimeout(t);
+    }
+  }, [open, stage, index]);
 
   if (!tour) return null;
 
@@ -49,12 +59,33 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
 
   const handlePrev = () => index > 0 && setIndex(index - 1);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (stage !== "slides") return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      handleNext();
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      handlePrev();
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
       <DialogContent
         className="max-w-lg p-0 overflow-hidden border-0 bg-transparent shadow-none"
         onInteractOutside={(e) => e.preventDefault()}
+        onKeyDown={handleKeyDown}
+        aria-label={`Treinamento: ${tour.title}`}
       >
+        <VisuallyHidden>
+          <DialogTitle>{tour.title}</DialogTitle>
+          <DialogDescription>
+            {stage === "slides"
+              ? `Slide ${index + 1} de ${tour.slides.length}. Use as setas do teclado para navegar.`
+              : tour.hook}
+          </DialogDescription>
+        </VisuallyHidden>
         <AnimatePresence mode="wait">
           {stage === "teaser" && (
             <motion.div
@@ -114,8 +145,10 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
                   Agora não
                 </Button>
                 <Button
+                  ref={primaryActionRef}
                   onClick={() => setStage("slides")}
                   className="flex-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white border-0 shadow-lg shadow-violet-500/25 group"
+                  aria-label="Iniciar treinamento"
                 >
                   Vamos lá
                   <Sparkles className="ml-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
@@ -206,9 +239,11 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
                     Voltar
                   </Button>
                   <Button
+                    ref={primaryActionRef}
                     size="sm"
                     onClick={handleNext}
                     className="gap-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white border-0"
+                    aria-label={index === tour.slides.length - 1 ? "Concluir treinamento" : "Próximo slide"}
                   >
                     {index === tour.slides.length - 1 ? "Concluir" : "Próximo"}
                     <ChevronRight className="h-4 w-4" />
@@ -279,8 +314,10 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
                 transition={{ delay: 0.55 }}
               >
                 <Button
+                  ref={primaryActionRef}
                   onClick={() => handleClose(true)}
                   className="bg-white text-emerald-700 hover:bg-white/90 font-semibold"
+                  aria-label="Fechar e continuar trabalhando"
                 >
                   Continuar trabalhando
                 </Button>
