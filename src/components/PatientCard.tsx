@@ -4571,8 +4571,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           onUpdate({ ...patient, ...updates });
         }}
       />
-
-
+      <ChestPainProtocolWizardDialog
         patient={patient}
         isOpen={chestPainWizardOpen}
         onClose={() => setChestPainWizardOpen(false)}
