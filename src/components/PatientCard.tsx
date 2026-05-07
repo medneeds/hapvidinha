@@ -1954,7 +1954,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
                            <p 
                             className={cn(
-                              "font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words rounded px-1 -mx-1",
+                              "font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words rounded px-1 -mx-1 inline",
                               canEdit && "cursor-pointer hover:bg-accent/50"
                             )}
                             onClick={() => canEdit && startEditing("name", patient.name)}
@@ -1963,6 +1963,24 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             {namesHidden ? (
                               <span className="tracking-widest opacity-70 transition-all duration-300">{displayName}</span>
                             ) : patient.name ? patient.name : <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
+                            {patient.age && (
+                              <>
+                                <span className="mx-1 text-muted-foreground/60 font-normal">·</span>
+                                <span
+                                  className={cn(
+                                    "text-sm md:text-xs font-normal text-muted-foreground rounded px-1 -mx-0.5",
+                                    canEdit && "cursor-pointer hover:bg-accent/50"
+                                  )}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (canEdit) startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age);
+                                  }}
+                                  title={canEdit ? "Clique para editar idade" : undefined}
+                                >
+                                  {formatAgeDisplay(patient.age)}
+                                </span>
+                              </>
+                            )}
                           </p>
                           
                           {/* Allocation Pending Badge - Hidden when status bar is visible, kept for dialog functionality */}
@@ -2004,16 +2022,51 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             <X className="h-2.5 w-2.5" />
                           </Button>
                         </div>
-                      ) : (
+                      ) : !patient.age ? (
                         <p 
                           className={cn(
-                            "text-sm md:text-[11px] text-muted-foreground mt-0.5 rounded px-1 -mx-1 whitespace-normal break-words",
+                            "text-sm md:text-[11px] text-muted-foreground mt-0.5 rounded px-1 -mx-1 italic",
                             canEdit && "cursor-pointer hover:bg-accent/50"
                           )}
-                          onClick={() => canEdit && startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
-                          title={canEdit ? "Clique para editar" : undefined}
+                          onClick={() => canEdit && startEditing("age", "")}
+                          title={canEdit ? "Clique para adicionar idade" : undefined}
                         >
-                          {patient.age ? formatAgeDisplay(patient.age) : <span className="italic">Clique para adicionar idade</span>}
+                          Clique para adicionar idade
+                        </p>
+                      ) : null}
+
+                      {/* PRONT. / ATEND. discrete italic line */}
+                      {(patient.medicalRecordNumber || patient.attendanceNumber) && (
+                        <p className="text-[10px] md:text-[11px] italic text-muted-foreground/80 mt-0.5 flex flex-wrap gap-x-2 gap-y-0">
+                          {patient.medicalRecordNumber && (
+                            <span
+                              className="cursor-pointer hover:text-primary transition-colors"
+                              title="Copiar prontuário"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(patient.medicalRecordNumber!);
+                                toast({ title: "Copiado", description: "Prontuário copiado." });
+                              }}
+                            >
+                              <span className="font-semibold not-italic">PRONT.</span> {patient.medicalRecordNumber}
+                            </span>
+                          )}
+                          {patient.medicalRecordNumber && patient.attendanceNumber && (
+                            <span className="text-muted-foreground/50">·</span>
+                          )}
+                          {patient.attendanceNumber && (
+                            <span
+                              className="cursor-pointer hover:text-primary transition-colors"
+                              title="Copiar atendimento"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(patient.attendanceNumber!);
+                                toast({ title: "Copiado", description: "Atendimento copiado." });
+                              }}
+                            >
+                              <span className="font-semibold not-italic">ATEND.</span> {patient.attendanceNumber}
+                            </span>
+                          )}
                         </p>
                       )}
                     </div>
