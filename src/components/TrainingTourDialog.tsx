@@ -75,7 +75,17 @@ export function TrainingTourDialog({ tour, open, onOpenChange, onCompleted, onDi
       <DialogContent
         className="max-w-lg p-0 overflow-hidden border-0 bg-transparent shadow-none"
         onInteractOutside={(e) => e.preventDefault()}
+        onKeyDown={handleKeyDown}
+        aria-label={`Treinamento: ${tour.title}`}
       >
+        <VisuallyHidden>
+          <DialogTitle>{tour.title}</DialogTitle>
+          <DialogDescription>
+            {stage === "slides"
+              ? `Slide ${index + 1} de ${tour.slides.length}. Use as setas do teclado para navegar.`
+              : tour.hook}
+          </DialogDescription>
+        </VisuallyHidden>
         <AnimatePresence mode="wait">
           {stage === "teaser" && (
             <motion.div
