@@ -1838,6 +1838,24 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>{stayTimer.displayShort}</span>
                     </div>
                   )}
+                  {/* AI paste icon */}
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setInfoPasteDialogOpen(true); }}
+                    className="inline-flex items-center justify-center h-4 w-4 rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors print:hidden"
+                    title="Colar dados do paciente (IA reconhece automaticamente)"
+                  >
+                    <Sparkles className="h-3 w-3" />
+                  </button>
+                  {/* Info dialog icon */}
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setInfoDialogOpen(true); }}
+                    className="inline-flex items-center justify-center h-4 w-4 rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors print:hidden"
+                    title="Ver informações administrativas"
+                  >
+                    <Info className="h-3 w-3" />
+                  </button>
                 </div>
                 <div className="group/name relative">
                   <div className="flex items-start gap-0.5">
