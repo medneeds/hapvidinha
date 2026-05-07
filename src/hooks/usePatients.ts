@@ -36,6 +36,50 @@ export function usePatients(department?: Department) {
 
       if (error) throw error;
 
+      // Self-heal: garante que todos os leitos fixos da Urgência Adulto existam.
+      // Se algum leito V01-V07 / A01-A06 / Z01-Z06 estiver ausente, recria como vago.
+      if (department === 'URGÊNCIA E EMERGÊNCIA ADULTO') {
+        const FIXED_BEDS: { bed_number: string; sector: string }[] = [
+          ...['V01','V02','V03','V04','V05','V06','V07'].map(b => ({ bed_number: b, sector: 'red' })),
+          ...['A01','A02','A03','A04','A05','A06'].map(b => ({ bed_number: b, sector: 'yellow' })),
+          ...['Z01','Z02','Z03','Z04','Z05','Z06'].map(b => ({ bed_number: b, sector: 'blue' })),
+        ];
+        const existingKeys = new Set((data || []).map((p: any) => `${p.sector}:${p.bed_number}`));
+        const missing = FIXED_BEDS.filter(b => !existingKeys.has(`${b.sector}:${b.bed_number}`));
+        if (missing.length > 0) {
+          console.warn('[usePatients] Restaurando leitos fixos ausentes:', missing.map(m => m.bed_number));
+          try {
+            await supabase.from('patients').insert(
+              missing.map(m => ({
+                bed_number: m.bed_number,
+                sector: m.sector,
+                name: '',
+                is_vacant: true,
+                bed_status: 'available',
+                department: 'URGÊNCIA E EMERGÊNCIA ADULTO',
+                state_id: currentState.id,
+                hospital_unit_id: currentHospital.id,
+              })) as any
+            );
+            // Re-fetch após restauração (builder novo)
+            const { data: refreshed } = await supabase
+              .from('patients')
+              .select('*')
+              .eq('hospital_unit_id', currentHospital.id)
+              .eq('state_id', currentState.id)
+              .eq('department', 'URGÊNCIA E EMERGÊNCIA ADULTO')
+              .order('display_order')
+              .order('bed_number');
+            if (refreshed) {
+              (data as any).length = 0;
+              (data as any).push(...refreshed);
+            }
+          } catch (healErr) {
+            console.error('[usePatients] Falha ao restaurar leitos fixos:', healErr);
+          }
+        }
+      }
+
       const mappedPatients: Patient[] = (data || []).map(p => ({
         id: p.id,
         bedNumber: p.bed_number,
