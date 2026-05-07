@@ -1954,7 +1954,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
                            <p 
                             className={cn(
-                              "font-semibold text-base md:text-sm text-foreground leading-tight uppercase break-words rounded px-1 -mx-1 inline",
+                              "font-semibold text-base md:text-sm text-foreground leading-tight break-words rounded px-1 -mx-1 inline",
                               canEdit && "cursor-pointer hover:bg-accent/50"
                             )}
                             onClick={() => canEdit && startEditing("name", patient.name)}
@@ -1963,24 +1963,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             {namesHidden ? (
                               <span className="tracking-widest opacity-70 transition-all duration-300">{displayName}</span>
                             ) : patient.name ? patient.name : <span className="text-muted-foreground italic">Clique para adicionar nome</span>}
-                            {patient.age && (
-                              <>
-                                <span className="mx-1 text-muted-foreground/60 font-normal">·</span>
-                                <span
-                                  className={cn(
-                                    "text-sm md:text-xs font-normal text-muted-foreground rounded px-1 -mx-0.5",
-                                    canEdit && "cursor-pointer hover:bg-accent/50"
-                                  )}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (canEdit) startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age);
-                                  }}
-                                  title={canEdit ? "Clique para editar idade" : undefined}
-                                >
-                                  {formatAgeDisplay(patient.age)}
-                                </span>
-                              </>
-                            )}
                           </p>
                           
                           {/* Allocation Pending Badge - Hidden when status bar is visible, kept for dialog functionality */}
