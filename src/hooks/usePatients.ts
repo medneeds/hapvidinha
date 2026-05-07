@@ -61,8 +61,15 @@ export function usePatients(department?: Department) {
                 hospital_unit_id: currentHospital.id,
               })) as any
             );
-            // Re-fetch após restauração
-            const { data: refreshed } = await query.order('display_order').order('bed_number');
+            // Re-fetch após restauração (builder novo)
+            const { data: refreshed } = await supabase
+              .from('patients')
+              .select('*')
+              .eq('hospital_unit_id', currentHospital.id)
+              .eq('state_id', currentState.id)
+              .eq('department', 'URGÊNCIA E EMERGÊNCIA ADULTO')
+              .order('display_order')
+              .order('bed_number');
             if (refreshed) {
               (data as any).length = 0;
               (data as any).push(...refreshed);
