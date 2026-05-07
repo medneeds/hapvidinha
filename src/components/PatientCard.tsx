@@ -4554,7 +4554,25 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         existingProtocolId={activeStrokeProtocol?.id || null}
       />
 
-      <ChestPainProtocolWizardDialog
+      <PatientInfoPasteDialog
+        open={infoPasteDialogOpen}
+        onOpenChange={setInfoPasteDialogOpen}
+        onApply={async (updates) => {
+          onUpdate({ ...patient, ...updates });
+        }}
+      />
+
+      <PatientInfoDialog
+        open={infoDialogOpen}
+        onOpenChange={setInfoDialogOpen}
+        patient={patient}
+        canEdit={canEdit}
+        onApply={async (updates) => {
+          onUpdate({ ...patient, ...updates });
+        }}
+      />
+
+
         patient={patient}
         isOpen={chestPainWizardOpen}
         onClose={() => setChestPainWizardOpen(false)}
