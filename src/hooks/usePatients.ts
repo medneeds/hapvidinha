@@ -136,6 +136,15 @@ export function usePatients(department?: Department) {
         bedMaintenanceStartedAt: (p as any).bed_maintenance_started_at || null,
         bedMaintenanceStartedBy: (p as any).bed_maintenance_started_by || null,
         patientCategory: (p as any).patient_category as Patient['patientCategory'],
+        medicalRecordNumber: (p as any).medical_record_number || null,
+        attendanceNumber: (p as any).attendance_number || null,
+        cpf: (p as any).cpf || null,
+        motherName: (p as any).mother_name || null,
+        insuranceCompany: (p as any).insurance_company || null,
+        insurancePlan: (p as any).insurance_plan || null,
+        insurancePlanType: (p as any).insurance_plan_type || null,
+        insuranceCardNumber: (p as any).insurance_card_number || null,
+        insuranceDuration: (p as any).insurance_duration || null,
       }));
 
       // Sort by display_order first, then by bed_number as tiebreaker
