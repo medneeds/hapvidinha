@@ -1303,6 +1303,7 @@ export type Database = {
           admission_history: string | null
           age: string | null
           allocation_status: string | null
+          attendance_number: string | null
           bed_maintenance_reason: string | null
           bed_maintenance_started_at: string | null
           bed_maintenance_started_by: string | null
@@ -1310,6 +1311,7 @@ export type Database = {
           bed_status: string
           birth_date: string | null
           clinical_status: string | null
+          cpf: string | null
           created_at: string
           created_by: string | null
           department: string
@@ -1321,12 +1323,19 @@ export type Database = {
           highlighted_pendencies: number[] | null
           hospital_unit_id: string
           id: string
+          insurance_card_number: string | null
+          insurance_company: string | null
+          insurance_duration: string | null
+          insurance_plan: string | null
+          insurance_plan_type: string | null
           internment_notes: string | null
           internment_status: string | null
           is_door_patient: boolean | null
           is_vacant: boolean | null
           medical_history: string | null
+          medical_record_number: string | null
           medical_responsibility: Json | null
+          mother_name: string | null
           name: string
           patient_category: string | null
           pendencies: string | null
@@ -1352,6 +1361,7 @@ export type Database = {
           admission_history?: string | null
           age?: string | null
           allocation_status?: string | null
+          attendance_number?: string | null
           bed_maintenance_reason?: string | null
           bed_maintenance_started_at?: string | null
           bed_maintenance_started_by?: string | null
@@ -1359,6 +1369,7 @@ export type Database = {
           bed_status?: string
           birth_date?: string | null
           clinical_status?: string | null
+          cpf?: string | null
           created_at?: string
           created_by?: string | null
           department?: string
@@ -1370,12 +1381,19 @@ export type Database = {
           highlighted_pendencies?: number[] | null
           hospital_unit_id: string
           id?: string
+          insurance_card_number?: string | null
+          insurance_company?: string | null
+          insurance_duration?: string | null
+          insurance_plan?: string | null
+          insurance_plan_type?: string | null
           internment_notes?: string | null
           internment_status?: string | null
           is_door_patient?: boolean | null
           is_vacant?: boolean | null
           medical_history?: string | null
+          medical_record_number?: string | null
           medical_responsibility?: Json | null
+          mother_name?: string | null
           name?: string
           patient_category?: string | null
           pendencies?: string | null
@@ -1401,6 +1419,7 @@ export type Database = {
           admission_history?: string | null
           age?: string | null
           allocation_status?: string | null
+          attendance_number?: string | null
           bed_maintenance_reason?: string | null
           bed_maintenance_started_at?: string | null
           bed_maintenance_started_by?: string | null
@@ -1408,6 +1427,7 @@ export type Database = {
           bed_status?: string
           birth_date?: string | null
           clinical_status?: string | null
+          cpf?: string | null
           created_at?: string
           created_by?: string | null
           department?: string
@@ -1419,12 +1439,19 @@ export type Database = {
           highlighted_pendencies?: number[] | null
           hospital_unit_id?: string
           id?: string
+          insurance_card_number?: string | null
+          insurance_company?: string | null
+          insurance_duration?: string | null
+          insurance_plan?: string | null
+          insurance_plan_type?: string | null
           internment_notes?: string | null
           internment_status?: string | null
           is_door_patient?: boolean | null
           is_vacant?: boolean | null
           medical_history?: string | null
+          medical_record_number?: string | null
           medical_responsibility?: Json | null
+          mother_name?: string | null
           name?: string
           patient_category?: string | null
           pendencies?: string | null
