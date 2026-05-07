@@ -2045,7 +2045,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               onClick={(e) => {
                                 e.stopPropagation();
                                 navigator.clipboard.writeText(patient.medicalRecordNumber!);
-                                toast({ title: "Copiado", description: "Prontuário copiado." });
+                                toast.success("Prontuário copiado");
                               }}
                             >
                               <span className="font-semibold not-italic">PRONT.</span> {patient.medicalRecordNumber}
@@ -2061,7 +2061,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               onClick={(e) => {
                                 e.stopPropagation();
                                 navigator.clipboard.writeText(patient.attendanceNumber!);
-                                toast({ title: "Copiado", description: "Atendimento copiado." });
+                                toast.success("Atendimento copiado");
                               }}
                             >
                               <span className="font-semibold not-italic">ATEND.</span> {patient.attendanceNumber}
