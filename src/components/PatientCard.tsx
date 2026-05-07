@@ -807,6 +807,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [sepsisWizardOpen, setSepsisWizardOpen] = useState(false);
   const [strokeWizardOpen, setStrokeWizardOpen] = useState(false);
   const [chestPainWizardOpen, setChestPainWizardOpen] = useState(false);
+  const [infoPasteDialogOpen, setInfoPasteDialogOpen] = useState(false);
+  const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const { activeProtocol: activeSepsisProtocol, isProtocolActive: hasSepsisActive, refetch: refetchSepsis } = useSepsisProtocol(patient.id);
   const { activeProtocol: activeStrokeProtocol, isProtocolActive: hasStrokeActive, refetch: refetchStroke } = useStrokeProtocol(patient.id);
   const { activeProtocol: activeChestPainProtocol, isProtocolActive: hasChestPainActive, refetch: refetchChestPain } = useChestPainProtocol(patient.id);
