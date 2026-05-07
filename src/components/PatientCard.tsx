@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils, MessageSquare, XCircle, Stethoscope, Scissors, Brain, LayoutList, UserCog, UsersRound, Baby, Bone, ArrowUpCircle, ShieldAlert } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils, MessageSquare, XCircle, Stethoscope, Scissors, Brain, LayoutList, Crown, UsersRound, Baby, Bone, ArrowUpCircle, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -1719,7 +1719,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     
                     const respConfig: Record<string, { label: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
                       porta: { label: 'PORTA', icon: Stethoscope },
-                      lider: { label: 'LÍDER', icon: UserCog },
+                      lider: { label: 'LDR', icon: Crown },
                       conjunto: { label: 'CONJUNTO', icon: UsersRound },
                       obstetra: { label: 'OBS', icon: Baby },
                       cirurgiao_geral: { label: 'CIR', icon: Scissors },
@@ -1733,7 +1733,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     if (respType === 'conjunto' && localMedicalResponsibility?.conjuntoWith?.length) {
                       const specConfig: Record<string, { label: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
                         porta: { label: 'PORTA', icon: Stethoscope },
-                        lider: { label: 'LÍDER', icon: UserCog },
+                        lider: { label: 'LDR', icon: Crown },
                         obstetra: { label: 'OBS', icon: Baby },
                         cirurgiao_geral: { label: 'CIR', icon: Scissors },
                         traumatologista: { label: 'ORTOP', icon: Bone },
