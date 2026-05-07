@@ -2015,7 +2015,18 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         >
                           Clique para adicionar idade
                         </p>
-                      ) : null}
+                      ) : (
+                        <p
+                          className={cn(
+                            "text-sm md:text-[11px] text-muted-foreground mt-0.5 rounded px-1 -mx-1",
+                            canEdit && "cursor-pointer hover:bg-accent/50"
+                          )}
+                          onClick={() => canEdit && startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
+                          title={canEdit ? "Clique para editar idade" : undefined}
+                        >
+                          {formatAgeDisplay(patient.age)}
+                        </p>
+                      )}
 
                       {/* PRONT. / ATEND. discrete italic line */}
                       {(patient.medicalRecordNumber || patient.attendanceNumber) && (
