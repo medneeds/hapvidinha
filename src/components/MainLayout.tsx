@@ -8,6 +8,7 @@ import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
 import { PageTransition } from "@/components/PageTransition";
 import { TrainingScheduler } from "@/components/TrainingScheduler";
+import { FloatingSidebarTrigger } from "@/components/FloatingSidebarTrigger";
 
 interface MainLayoutProps {
   children: ReactNode;
