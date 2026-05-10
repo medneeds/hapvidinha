@@ -222,6 +222,140 @@ export type Database = {
         }
         Relationships: []
       }
+      bed_requests: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          accepted_by_name: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          clinical_summary: string | null
+          completed_at: string | null
+          created_at: string
+          destination_bed: string | null
+          destination_sector: string | null
+          hospital_unit_id: string
+          id: string
+          notes: string | null
+          origin_bed: string | null
+          origin_sector: string | null
+          patient_age: string | null
+          patient_id: string | null
+          patient_name: string
+          priority: string
+          request_type: string
+          requested_by: string | null
+          requested_by_name: string | null
+          started_at: string | null
+          state_id: string
+          status: string
+          target_bed_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          accepted_by_name?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          clinical_summary?: string | null
+          completed_at?: string | null
+          created_at?: string
+          destination_bed?: string | null
+          destination_sector?: string | null
+          hospital_unit_id: string
+          id?: string
+          notes?: string | null
+          origin_bed?: string | null
+          origin_sector?: string | null
+          patient_age?: string | null
+          patient_id?: string | null
+          patient_name: string
+          priority?: string
+          request_type: string
+          requested_by?: string | null
+          requested_by_name?: string | null
+          started_at?: string | null
+          state_id: string
+          status?: string
+          target_bed_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          accepted_by_name?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          clinical_summary?: string | null
+          completed_at?: string | null
+          created_at?: string
+          destination_bed?: string | null
+          destination_sector?: string | null
+          hospital_unit_id?: string
+          id?: string
+          notes?: string | null
+          origin_bed?: string | null
+          origin_sector?: string | null
+          patient_age?: string | null
+          patient_id?: string | null
+          patient_name?: string
+          priority?: string
+          request_type?: string
+          requested_by?: string | null
+          requested_by_name?: string | null
+          started_at?: string | null
+          state_id?: string
+          status?: string
+          target_bed_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bed_requests_target_bed_id_fkey"
+            columns: ["target_bed_id"]
+            isOneToOne: false
+            referencedRelation: "managed_beds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bed_sla_configs: {
+        Row: {
+          created_at: string
+          hospital_unit_id: string
+          id: string
+          sector: string
+          sla_minutes: number
+          stage: string
+          state_id: string
+          updated_at: string
+          warning_pct: number
+        }
+        Insert: {
+          created_at?: string
+          hospital_unit_id: string
+          id?: string
+          sector: string
+          sla_minutes?: number
+          stage: string
+          state_id: string
+          updated_at?: string
+          warning_pct?: number
+        }
+        Update: {
+          created_at?: string
+          hospital_unit_id?: string
+          id?: string
+          sector?: string
+          sla_minutes?: number
+          stage?: string
+          state_id?: string
+          updated_at?: string
+          warning_pct?: number
+        }
+        Relationships: []
+      }
       chest_pain_protocols: {
         Row: {
           arrival_date: string | null
@@ -904,6 +1038,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      managed_beds: {
+        Row: {
+          bed_number: string
+          bed_type: string
+          block_reason: string | null
+          created_at: string
+          created_by: string | null
+          current_cycle_id: string | null
+          current_patient_id: string | null
+          current_patient_name: string | null
+          current_status: string
+          hospital_unit_id: string
+          id: string
+          is_blocked: boolean
+          notes: string | null
+          sector: string
+          state_id: string
+          status_changed_at: string
+          updated_at: string
+        }
+        Insert: {
+          bed_number: string
+          bed_type?: string
+          block_reason?: string | null
+          created_at?: string
+          created_by?: string | null
+          current_cycle_id?: string | null
+          current_patient_id?: string | null
+          current_patient_name?: string | null
+          current_status?: string
+          hospital_unit_id: string
+          id?: string
+          is_blocked?: boolean
+          notes?: string | null
+          sector: string
+          state_id: string
+          status_changed_at?: string
+          updated_at?: string
+        }
+        Update: {
+          bed_number?: string
+          bed_type?: string
+          block_reason?: string | null
+          created_at?: string
+          created_by?: string | null
+          current_cycle_id?: string | null
+          current_patient_id?: string | null
+          current_patient_name?: string | null
+          current_status?: string
+          hospital_unit_id?: string
+          id?: string
+          is_blocked?: boolean
+          notes?: string | null
+          sector?: string
+          state_id?: string
+          status_changed_at?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       medical_codes: {
         Row: {
@@ -2117,6 +2311,56 @@ export type Database = {
           },
         ]
       }
+      transport_assignments: {
+        Row: {
+          acknowledged_at: string | null
+          conductor_name: string | null
+          conductor_user_id: string | null
+          created_at: string
+          finished_at: string | null
+          id: string
+          notes: string | null
+          request_id: string
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          conductor_name?: string | null
+          conductor_user_id?: string | null
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          notes?: string | null
+          request_id: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          conductor_name?: string | null
+          conductor_user_id?: string | null
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          notes?: string | null
+          request_id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_assignments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "bed_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transport_requests: {
         Row: {
           accepted_at: string | null
@@ -2374,6 +2618,8 @@ export type Database = {
         | "enfermagem"
         | "fisioterapia"
         | "operacional"
+        | "hotelaria"
+        | "condutor"
       audit_action:
         | "INSERT"
         | "UPDATE"
@@ -2519,6 +2765,8 @@ export const Constants = {
         "enfermagem",
         "fisioterapia",
         "operacional",
+        "hotelaria",
+        "condutor",
       ],
       audit_action: ["INSERT", "UPDATE", "DELETE", "SELECT", "LOGIN", "LOGOUT"],
     },
