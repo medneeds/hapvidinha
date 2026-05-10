@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useBedRequestsPanel, PanelRequest, formatHHMM, getRequestStatusInfo } from "@/hooks/useBedRequestsPanel";
+import { useBedRequestsPanel, PanelRequest, formatHHMM, getRequestStatusInfo, StageEval, SlaResolver } from "@/hooks/useBedRequestsPanel";
 import { useHospital } from "@/contexts/HospitalContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { exportPanelExcel, exportPanelPDF } from "@/utils/bedPanelExport";
+import { SlaConfigDialog } from "@/components/bed-panel/SlaConfigDialog";
 import {
   FileDown, FileSpreadsheet, RefreshCw, Search, Activity, AlertTriangle,
   Clock, CheckCircle2, Hourglass, ShieldAlert, Bed, ArrowRight,
@@ -15,44 +16,81 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-function StageDot({ done, late, label, time }: { done: boolean; late?: boolean; label: string; time?: string }) {
+const LEVEL_DOT: Record<string, string> = {
+  ok: "bg-emerald-500 ring-emerald-300",
+  warning: "bg-amber-500 ring-amber-300",
+  late: "bg-destructive ring-destructive/40",
+  in_progress: "bg-sky-500 ring-sky-300 animate-pulse",
+  pending: "bg-muted ring-border",
+};
+const LEVEL_LINE: Record<string, string> = {
+  ok: "bg-emerald-400",
+  warning: "bg-amber-400",
+  late: "bg-destructive",
+  in_progress: "bg-sky-400",
+  pending: "bg-border",
+};
+
+function StageDot({ stage, label, time }: { stage: StageEval; label: string; time?: string }) {
   return (
     <div className="flex flex-col items-center gap-1 min-w-[64px]">
       <div className={cn(
         "h-3 w-3 rounded-full ring-2 ring-offset-2 ring-offset-background transition-all",
-        done ? (late ? "bg-destructive ring-destructive/40" : "bg-emerald-500 ring-emerald-300") : "bg-muted ring-border"
-      )} />
+        LEVEL_DOT[stage.level]
+      )} title={`SLA ${stage.slaMinutes}min · alerta ${stage.warningPct}%`} />
       <span className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</span>
       <span className="text-[10px] font-mono font-semibold">{time ?? "--:--"}</span>
+      {stage.elapsedMin !== null && (
+        <span className={cn(
+          "text-[9px] font-mono",
+          stage.level === "late" ? "text-destructive" :
+          stage.level === "warning" ? "text-amber-600" :
+          stage.level === "ok" ? "text-emerald-600" : "text-muted-foreground"
+        )}>{formatHHMM(stage.elapsedMin)}/{formatHHMM(stage.slaMinutes)}</span>
+      )}
     </div>
   );
 }
 
-function StageLine({ active }: { active: boolean }) {
-  return <div className={cn("h-px flex-1 mt-1.5", active ? "bg-emerald-400" : "bg-border")} />;
+function StageLine({ level }: { level: string }) {
+  return <div className={cn("h-px flex-1 mt-1.5", LEVEL_LINE[level])} />;
 }
 
 function fmtTime(iso: string | null) {
   return iso ? new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : undefined;
 }
 
-function RequestRow({ r, onAdvance }: { r: PanelRequest; onAdvance: (id: string, patch: Partial<PanelRequest>) => void }) {
-  const info = getRequestStatusInfo(r);
-  const overall = info.completed
+function RequestRow({ r, onAdvance, resolver }: { r: PanelRequest; onAdvance: (id: string, patch: Partial<PanelRequest>) => void; resolver: SlaResolver }) {
+  const info = getRequestStatusInfo(r, resolver);
+  const stages = info.stages;
+  const anyLate = stages.hotelaria.level === "late" || stages.leito.level === "late" || stages.transferencia.level === "late";
+  const anyWarn = stages.hotelaria.level === "warning" || stages.leito.level === "warning" || stages.transferencia.level === "warning";
+  const overall: "ok" | "late" | "warning" | "in_progress" | "pending" = info.completed
     ? (info.onTime ? "ok" : "late")
-    : r.status === "pending" ? "pending" : "in_progress";
+    : anyLate ? "late"
+    : anyWarn ? "warning"
+    : r.status === "pending" && !stages.hotelaria.done ? "pending"
+    : "in_progress";
 
   const statusBadge = {
     ok: <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200">CONCLUÍDO {formatHHMM(info.totalMin)}</Badge>,
     late: <Badge className="bg-destructive/15 text-destructive border-destructive/30">ATRASADO {formatHHMM(info.totalMin)}</Badge>,
-    in_progress: <Badge className="bg-amber-100 text-amber-700 border-amber-200">EM ANDAMENTO</Badge>,
+    warning: <Badge className="bg-amber-100 text-amber-700 border-amber-200">ATENÇÃO SLA</Badge>,
+    in_progress: <Badge className="bg-sky-100 text-sky-700 border-sky-200">EM ANDAMENTO</Badge>,
     pending: <Badge className="bg-rose-100 text-rose-700 border-rose-200">PENDENTE</Badge>,
   }[overall];
 
+  const borderColor =
+    overall === "ok" ? "hsl(142 71% 45%)" :
+    overall === "late" ? "hsl(var(--destructive))" :
+    overall === "warning" ? "hsl(38 92% 50%)" :
+    overall === "in_progress" ? "hsl(199 89% 48%)" :
+    "hsl(346 77% 50%)";
+
+  const solicitStage: StageEval = { elapsedMin: 0, slaMinutes: 0, warningPct: 100, level: "ok", done: true };
+
   return (
-    <Card className="p-4 hover:shadow-md transition-shadow border-l-4" style={{
-      borderLeftColor: overall === "ok" ? "hsl(142 71% 45%)" : overall === "late" ? "hsl(var(--destructive))" : overall === "in_progress" ? "hsl(38 92% 50%)" : "hsl(346 77% 50%)"
-    }}>
+    <Card className="p-4 hover:shadow-md transition-shadow border-l-4" style={{ borderLeftColor: borderColor }}>
       <div className="flex flex-wrap items-start gap-3 mb-3">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <span className="font-mono text-xs text-muted-foreground">#{r.sequence_number ?? "—"}</span>
@@ -91,13 +129,13 @@ function RequestRow({ r, onAdvance }: { r: PanelRequest; onAdvance: (id: string,
 
       {/* Timeline */}
       <div className="flex items-start gap-1 mb-3">
-        <StageDot done={!!r.created_at} label="Solicit" time={fmtTime(r.created_at)} />
-        <StageLine active={!!r.hotelaria_released_at} />
-        <StageDot done={!!r.hotelaria_released_at} late={(info.hotelMin ?? 0) > 60} label="Hotelaria" time={fmtTime(r.hotelaria_released_at)} />
-        <StageLine active={!!r.bed_released_at} />
-        <StageDot done={!!r.bed_released_at} label="Leito Lib" time={fmtTime(r.bed_released_at)} />
-        <StageLine active={!!r.transfer_completed_at} />
-        <StageDot done={!!r.transfer_completed_at} late={!info.onTime && info.completed} label="Transferido" time={fmtTime(r.transfer_completed_at)} />
+        <StageDot stage={solicitStage} label="Solicit" time={fmtTime(r.created_at)} />
+        <StageLine level={stages.hotelaria.level} />
+        <StageDot stage={stages.hotelaria} label="Hotelaria" time={fmtTime(r.hotelaria_released_at)} />
+        <StageLine level={stages.leito.level} />
+        <StageDot stage={stages.leito} label="Leito Lib" time={fmtTime(r.bed_released_at)} />
+        <StageLine level={stages.transferencia.level} />
+        <StageDot stage={stages.transferencia} label="Transferido" time={fmtTime(r.transfer_completed_at)} />
       </div>
 
       <div className="flex flex-wrap gap-2 pt-2 border-t">
@@ -142,7 +180,7 @@ function KPI({ icon: Icon, label, value, accent }: { icon: any; label: string; v
 }
 
 export default function BedRequestsPanelPage() {
-  const { requests, loading, kpis, refetch, updateStage } = useBedRequestsPanel();
+  const { requests, loading, kpis, refetch, updateStage, resolver } = useBedRequestsPanel();
   const { currentHospital } = useHospital();
   const [search, setSearch] = useState("");
   const [sectorFilter, setSectorFilter] = useState<string>("all");
@@ -155,7 +193,7 @@ export default function BedRequestsPanelPage() {
     return requests.filter((r) => {
       if (sectorFilter !== "all" && r.requesting_sector !== sectorFilter) return false;
       if (statusFilter !== "all") {
-        const info = getRequestStatusInfo(r);
+        const info = getRequestStatusInfo(r, resolver);
         if (statusFilter === "completed" && !info.completed) return false;
         if (statusFilter === "pending" && r.status !== "pending") return false;
         if (statusFilter === "late" && !(info.completed && !info.onTime)) return false;
@@ -184,6 +222,7 @@ export default function BedRequestsPanelPage() {
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={refetch}><RefreshCw className="h-4 w-4 mr-1" /> Atualizar</Button>
+          <SlaConfigDialog knownSectors={Array.from(new Set(requests.map((r) => r.requested_sector).filter(Boolean) as string[]))} />
           <Button variant="outline" size="sm" onClick={() => exportPanelExcel(filtered, hospitalName)}><FileSpreadsheet className="h-4 w-4 mr-1" /> Excel</Button>
           <Button variant="default" size="sm" onClick={() => exportPanelPDF(filtered, hospitalName)}><FileDown className="h-4 w-4 mr-1" /> PDF</Button>
         </div>
@@ -237,7 +276,7 @@ export default function BedRequestsPanelPage() {
               Nenhuma solicitação para os filtros atuais.
             </Card>
           ) : (
-            filtered.map((r) => <RequestRow key={r.id} r={r} onAdvance={handleAdvance} />)
+            filtered.map((r) => <RequestRow key={r.id} r={r} onAdvance={handleAdvance} resolver={resolver} />)
           )}
         </TabsContent>
         <TabsContent value="conducoes" className="mt-4">
