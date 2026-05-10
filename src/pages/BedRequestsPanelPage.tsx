@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useBedRequestsPanel, PanelRequest, formatHHMM, getRequestStatusInfo } from "@/hooks/useBedRequestsPanel";
+import { useBedRequestsPanel, PanelRequest, formatHHMM, getRequestStatusInfo, StageEval, SlaResolver } from "@/hooks/useBedRequestsPanel";
 import { useHospital } from "@/contexts/HospitalContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { exportPanelExcel, exportPanelPDF } from "@/utils/bedPanelExport";
+import { SlaConfigDialog } from "@/components/bed-panel/SlaConfigDialog";
 import {
   FileDown, FileSpreadsheet, RefreshCw, Search, Activity, AlertTriangle,
   Clock, CheckCircle2, Hourglass, ShieldAlert, Bed, ArrowRight,
@@ -15,21 +16,44 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-function StageDot({ done, late, label, time }: { done: boolean; late?: boolean; label: string; time?: string }) {
+const LEVEL_DOT: Record<string, string> = {
+  ok: "bg-emerald-500 ring-emerald-300",
+  warning: "bg-amber-500 ring-amber-300",
+  late: "bg-destructive ring-destructive/40",
+  in_progress: "bg-sky-500 ring-sky-300 animate-pulse",
+  pending: "bg-muted ring-border",
+};
+const LEVEL_LINE: Record<string, string> = {
+  ok: "bg-emerald-400",
+  warning: "bg-amber-400",
+  late: "bg-destructive",
+  in_progress: "bg-sky-400",
+  pending: "bg-border",
+};
+
+function StageDot({ stage, label, time }: { stage: StageEval; label: string; time?: string }) {
   return (
     <div className="flex flex-col items-center gap-1 min-w-[64px]">
       <div className={cn(
         "h-3 w-3 rounded-full ring-2 ring-offset-2 ring-offset-background transition-all",
-        done ? (late ? "bg-destructive ring-destructive/40" : "bg-emerald-500 ring-emerald-300") : "bg-muted ring-border"
-      )} />
+        LEVEL_DOT[stage.level]
+      )} title={`SLA ${stage.slaMinutes}min · alerta ${stage.warningPct}%`} />
       <span className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</span>
       <span className="text-[10px] font-mono font-semibold">{time ?? "--:--"}</span>
+      {stage.elapsedMin !== null && (
+        <span className={cn(
+          "text-[9px] font-mono",
+          stage.level === "late" ? "text-destructive" :
+          stage.level === "warning" ? "text-amber-600" :
+          stage.level === "ok" ? "text-emerald-600" : "text-muted-foreground"
+        )}>{formatHHMM(stage.elapsedMin)}/{formatHHMM(stage.slaMinutes)}</span>
+      )}
     </div>
   );
 }
 
-function StageLine({ active }: { active: boolean }) {
-  return <div className={cn("h-px flex-1 mt-1.5", active ? "bg-emerald-400" : "bg-border")} />;
+function StageLine({ level }: { level: string }) {
+  return <div className={cn("h-px flex-1 mt-1.5", LEVEL_LINE[level])} />;
 }
 
 function fmtTime(iso: string | null) {
