@@ -215,7 +215,7 @@ export default function BedRequestsPanelPage() {
   const hospitalName = currentHospital?.name ?? "HOSPITAL";
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-[1600px]">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-10 py-6 space-y-6 max-w-[1600px]">
       <BedPageHeader
         icon={Activity}
         title="Painel de Gestão de Leitos"
