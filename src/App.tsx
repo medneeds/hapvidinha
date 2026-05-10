@@ -55,6 +55,7 @@ import GoBedsPage from "./pages/go/GoBedsPage";
 import GoIndicatorsPage from "./pages/go/GoIndicatorsPage";
 import BedManagementPage from "./pages/BedManagementPage";
 import BedManagementRegistrationPage from "./pages/BedManagementRegistrationPage";
+import BedRequestsPanelPage from "./pages/BedRequestsPanelPage";
 
 const queryClient = new QueryClient();
 
@@ -440,6 +441,16 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <BedManagementRegistrationPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leitos/painel"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <BedRequestsPanelPage />
               </MainLayout>
             </ProtectedRoute>
           }

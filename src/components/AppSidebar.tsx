@@ -100,7 +100,11 @@ export function AppSidebar({
     {
       title: "GERENCIAMENTO DE LEITOS",
       icon: BedDouble,
-      link: "/leitos",
+      items: [
+        { name: "MAPA DE LEITOS", link: "/leitos" },
+        { name: "PAINEL DE SOLICITAÇÕES", link: "/leitos/painel" },
+        { name: "CADASTRO DE LEITOS", link: "/leitos/cadastro" },
+      ],
     },
     {
       title: "PACIENTES",
