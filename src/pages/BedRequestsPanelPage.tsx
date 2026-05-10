@@ -300,11 +300,15 @@ export default function BedRequestsPanelPage() {
   const exportActions = isMobile ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="h-8">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 rounded-md border border-white/30 bg-white/5 text-white hover:bg-white/15 hover:text-white"
+        >
           <Download className="h-4 w-4 mr-1" /> Exportar
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="min-w-[140px]">
         <DropdownMenuItem onClick={() => exportPanelExcel(filtered, hospitalName)}>
           <FileSpreadsheet className="h-4 w-4 mr-2" /> Excel
         </DropdownMenuItem>
