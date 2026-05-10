@@ -193,7 +193,7 @@ export default function BedRequestsPanelPage() {
     return requests.filter((r) => {
       if (sectorFilter !== "all" && r.requesting_sector !== sectorFilter) return false;
       if (statusFilter !== "all") {
-        const info = getRequestStatusInfo(r);
+        const info = getRequestStatusInfo(r, resolver);
         if (statusFilter === "completed" && !info.completed) return false;
         if (statusFilter === "pending" && r.status !== "pending") return false;
         if (statusFilter === "late" && !(info.completed && !info.onTime)) return false;
