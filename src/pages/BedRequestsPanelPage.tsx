@@ -222,6 +222,7 @@ export default function BedRequestsPanelPage() {
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={refetch}><RefreshCw className="h-4 w-4 mr-1" /> Atualizar</Button>
+          <SlaConfigDialog knownSectors={Array.from(new Set(requests.map((r) => r.requested_sector).filter(Boolean) as string[]))} />
           <Button variant="outline" size="sm" onClick={() => exportPanelExcel(filtered, hospitalName)}><FileSpreadsheet className="h-4 w-4 mr-1" /> Excel</Button>
           <Button variant="default" size="sm" onClick={() => exportPanelPDF(filtered, hospitalName)}><FileDown className="h-4 w-4 mr-1" /> PDF</Button>
         </div>
