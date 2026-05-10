@@ -30,6 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -100,7 +106,6 @@ function BedTile({
     return () => clearInterval(t);
   }, []);
   const elapsed = elapsedMinutes(bed.status_changed_at);
-  // simple SLA visual cue: >120min in operational states
   const operational: BedStatus[] = [
     "medical_discharge",
     "admin_discharge",
@@ -109,44 +114,65 @@ function BedTile({
   ];
   const slaWarning = operational.includes(bed.current_status) && elapsed >= 60;
   const slaCritical = operational.includes(bed.current_status) && elapsed >= 120;
+  const isAvailable = bed.current_status === "available";
 
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "group text-left p-3 rounded-lg border-2 transition-all hover:shadow-md hover:scale-[1.02]",
-        BED_STATUS_COLORS[bed.current_status],
-        slaCritical && "ring-2 ring-red-500 animate-pulse",
-        slaWarning && !slaCritical && "ring-1 ring-amber-500"
-      )}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="text-[10px] uppercase tracking-wider opacity-70">
-            {bed.sector}
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={onClick}
+            className={cn(
+              "group text-left p-3 rounded-lg border transition-all duration-200 ease-in-out hover:shadow-md hover:scale-[1.02]",
+              BED_STATUS_COLORS[bed.current_status],
+              slaCritical && "ring-[2px] ring-red-500 animate-pulse",
+              slaWarning && !slaCritical && "ring-[2px] ring-amber-500"
+            )}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="text-[10px] uppercase tracking-wider opacity-70 truncate">
+                {bed.sector}
+              </div>
+              <BedDouble className="h-4 w-4 opacity-60 flex-shrink-0" />
+            </div>
+            <div className="mt-1 text-base font-mono font-bold text-center leading-tight">
+              {bed.bed_number}
+            </div>
+            <div className="mt-1 text-[10px] font-semibold uppercase text-center opacity-80 truncate">
+              {BED_STATUS_LABELS[bed.current_status]}
+            </div>
+            {bed.current_patient_name && (
+              <div className="mt-1 text-[10px] opacity-80 truncate text-center">
+                {bed.current_patient_name}
+              </div>
+            )}
+            <div className={cn(
+              "mt-2 flex items-center justify-center gap-1 text-xs font-mono tabular-nums",
+              isAvailable ? "text-muted-foreground" : "opacity-80"
+            )}>
+              <Clock className="h-3 w-3" />
+              {formatElapsed(bed.status_changed_at)}
+              {slaCritical && (
+                <AlertTriangle className="h-3 w-3 text-red-600 ml-0.5" />
+              )}
+            </div>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="text-xs">
+          <div className="font-semibold uppercase tracking-wide">
+            {BED_STATUS_LABELS[bed.current_status]}
           </div>
-          <div className="text-lg font-black leading-tight">
-            {bed.bed_number}
+          {bed.current_patient_name && (
+            <div className="text-[11px] opacity-90 uppercase mt-0.5">
+              {bed.current_patient_name}
+            </div>
+          )}
+          <div className="text-[11px] opacity-70 font-mono mt-0.5">
+            há {formatElapsed(bed.status_changed_at)}
           </div>
-        </div>
-        <BedDouble className="h-4 w-4 opacity-60" />
-      </div>
-      <div className="mt-2 text-[11px] font-semibold uppercase">
-        {BED_STATUS_LABELS[bed.current_status]}
-      </div>
-      {bed.current_patient_name && (
-        <div className="mt-1 text-[11px] opacity-80 truncate">
-          {bed.current_patient_name}
-        </div>
-      )}
-      <div className="mt-2 flex items-center gap-1 text-[10px] opacity-70">
-        <Clock className="h-3 w-3" />
-        {formatElapsed(bed.status_changed_at)}
-        {slaCritical && (
-          <AlertTriangle className="h-3 w-3 text-red-600 ml-1" />
-        )}
-      </div>
-    </button>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
@@ -338,9 +364,17 @@ export default function BedManagementPage() {
       </div>
 
       <Tabs defaultValue="map">
-        <TabsList>
-          <TabsTrigger value="map">Mapa de leitos</TabsTrigger>
-          <TabsTrigger value="requests">
+        <TabsList className="bg-transparent border-b rounded-none p-0 h-auto w-full justify-start gap-4">
+          <TabsTrigger
+            value="map"
+            className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent data-[state=active]:border-[#0256d4] data-[state=active]:shadow-none data-[state=active]:text-[#0256d4] px-1 pb-2"
+          >
+            Mapa de leitos
+          </TabsTrigger>
+          <TabsTrigger
+            value="requests"
+            className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent data-[state=active]:border-[#0256d4] data-[state=active]:shadow-none data-[state=active]:text-[#0256d4] px-1 pb-2"
+          >
             Solicitações
             {pendingRequests.length > 0 && (
               <Badge variant="destructive" className="ml-2">{pendingRequests.length}</Badge>
@@ -348,22 +382,11 @@ export default function BedManagementPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="map" className="space-y-3">
+        <TabsContent value="map" className="space-y-3 mt-4">
           <Card className="p-3 flex flex-wrap gap-2 items-center">
             <Filter className="h-4 w-4 text-muted-foreground" />
-            <Select value={sectorFilter} onValueChange={setSectorFilter}>
-              <SelectTrigger className="w-48 h-8">
-                <SelectValue placeholder="Setor" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os setores</SelectItem>
-                {sectors.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
             <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as BedStatus | "all")}>
-              <SelectTrigger className="w-56 h-8">
+              <SelectTrigger className="w-56 h-8 border-input">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -373,7 +396,51 @@ export default function BedManagementPage() {
                 ))}
               </SelectContent>
             </Select>
+            <span className="text-xs text-muted-foreground ml-auto tabular-nums">
+              {filtered.length} {filtered.length === 1 ? "leito" : "leitos"}
+            </span>
           </Card>
+
+          {/* Sector tabs */}
+          {sectors.length > 0 && (
+            <div className="flex items-center gap-1 overflow-x-auto pb-1">
+              <button
+                onClick={() => setSectorFilter("all")}
+                className={cn(
+                  "inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs uppercase tracking-wide transition-all duration-200 border",
+                  sectorFilter === "all"
+                    ? "border-[#0256d4] text-[#0256d4] bg-[#0256d4]/5 font-semibold"
+                    : "border-transparent text-muted-foreground hover:bg-muted"
+                )}
+              >
+                Todos
+                <span className="text-[10px] rounded-full bg-muted text-foreground/70 px-1.5 py-0.5 font-mono">
+                  {beds.length}
+                </span>
+              </button>
+              {sectors.map((s) => {
+                const count = beds.filter((b) => b.sector === s).length;
+                const active = sectorFilter === s;
+                return (
+                  <button
+                    key={s}
+                    onClick={() => setSectorFilter(s)}
+                    className={cn(
+                      "inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs uppercase tracking-wide whitespace-nowrap transition-all duration-200 border",
+                      active
+                        ? "border-[#0256d4] text-[#0256d4] bg-[#0256d4]/5 font-semibold"
+                        : "border-transparent text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    {s}
+                    <span className="text-[10px] rounded-full bg-muted text-foreground/70 px-1.5 py-0.5 font-mono">
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {loading ? (
             <Card className="p-8 text-center text-sm text-muted-foreground">

@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { BedDouble, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { BedDouble, Plus, Trash2, ArrowLeft, ChevronDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -21,6 +21,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Link } from "react-router-dom";
 import {
   useManagedBeds,
@@ -29,6 +34,7 @@ import {
 } from "@/hooks/useManagedBeds";
 import { toast } from "sonner";
 import { BedPageHeader } from "@/components/bed-panel/BedPageHeader";
+import { cn } from "@/lib/utils";
 
 export default function BedManagementRegistrationPage() {
   const { beds, loading, createBed, deleteBed } = useManagedBeds();
@@ -71,6 +77,18 @@ export default function BedManagementRegistrationPage() {
     return acc;
   }, {});
 
+  const bulkPreview = useMemo(() => {
+    const count = parseInt(bulkCount, 10);
+    if (!bulkPrefix.trim() || isNaN(count) || count < 1) return "";
+    const prefix = bulkPrefix.toUpperCase();
+    if (count <= 4) {
+      return Array.from({ length: count }, (_, i) =>
+        `${prefix}${String(i + 1).padStart(2, "0")}`
+      ).join(", ");
+    }
+    return `${prefix}01, ${prefix}02, … ${prefix}${String(count).padStart(2, "0")}`;
+  }, [bulkPrefix, bulkCount]);
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-10 py-6 space-y-6 max-w-[1600px]">
       <BedPageHeader
@@ -81,14 +99,14 @@ export default function BedManagementRegistrationPage() {
         accent="emerald"
         actions={
           <Link to="/leitos">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="h-8">
               <ArrowLeft className="h-4 w-4 mr-1" /> Voltar
             </Button>
           </Link>
         }
       />
 
-      <Card className="p-4 space-y-3">
+      <Card className="p-4 space-y-3 transition-all duration-200">
         <h2 className="font-semibold text-sm uppercase">Cadastro individual</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
           <Input
@@ -117,7 +135,7 @@ export default function BedManagementRegistrationPage() {
         </div>
       </Card>
 
-      <Card className="p-4 space-y-3">
+      <Card className="p-4 space-y-3 transition-all duration-200">
         <h2 className="font-semibold text-sm uppercase">Cadastro em lote</h2>
         <p className="text-xs text-muted-foreground">
           Ex.: prefixo <code>L</code> + quantidade <code>10</code> cria L01, L02, ..., L10 no setor informado acima.
@@ -139,9 +157,14 @@ export default function BedManagementRegistrationPage() {
             <Plus className="h-4 w-4 mr-1" /> Criar em lote
           </Button>
         </div>
+        {bulkPreview && (
+          <div className="text-xs font-mono text-muted-foreground">
+            Será gerado: <span className="text-foreground/80">{bulkPreview}</span>
+          </div>
+        )}
       </Card>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {loading ? (
           <Card className="p-6 text-center text-sm text-muted-foreground">Carregando...</Card>
         ) : beds.length === 0 ? (
@@ -150,32 +173,49 @@ export default function BedManagementRegistrationPage() {
           </Card>
         ) : (
           Object.entries(grouped).map(([sec, list]) => (
-            <Card key={sec} className="p-3">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-sm uppercase">{sec}</h3>
-                <Badge variant="outline">{list.length} leitos</Badge>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                {list.map((b) => (
-                  <div
-                    key={b.id}
-                    className={`p-2 rounded border text-xs ${BED_STATUS_COLORS[b.current_status]}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold">{b.bed_number}</span>
-                      <button
-                        onClick={() => setToDelete(b.id)}
-                        className="opacity-60 hover:opacity-100"
-                        title="Excluir"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </button>
-                    </div>
-                    <div className="text-[10px] mt-1">{BED_STATUS_LABELS[b.current_status]}</div>
+            <Collapsible key={sec} defaultOpen className="group/collapsible">
+              <Card className="overflow-hidden transition-all duration-200">
+                <CollapsibleTrigger className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/40 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=closed]/collapsible:-rotate-90" />
+                    <h3 className="font-semibold text-sm uppercase">{sec}</h3>
+                    <Badge variant="outline" className="text-[10px]">{list.length} leitos</Badge>
                   </div>
-                ))}
-              </div>
-            </Card>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="border-t divide-y">
+                    {list.map((b) => (
+                      <div
+                        key={b.id}
+                        className="h-11 flex items-center gap-3 px-4 hover:bg-muted/30 transition-colors"
+                      >
+                        <span className="font-mono font-bold text-sm w-16">{b.bed_number}</span>
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            "text-[10px] uppercase",
+                            BED_STATUS_COLORS[b.current_status]
+                          )}
+                        >
+                          {BED_STATUS_LABELS[b.current_status]}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground capitalize">
+                          {b.bed_type}
+                        </span>
+                        <button
+                          onClick={() => setToDelete(b.id)}
+                          className="ml-auto p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          title="Excluir"
+                          aria-label="Excluir leito"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
           ))
         )}
       </div>

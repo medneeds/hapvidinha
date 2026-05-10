@@ -9,6 +9,8 @@ interface BedPageHeaderProps {
   title: string;
   subtitle?: string;
   badge?: string;
+  /** Show a small pulsing dot inside the badge to indicate live status. */
+  badgePulse?: boolean;
   actions?: ReactNode;
   /** Visual accent — defaults to "blue" matching the main MAPA. */
   accent?: "blue" | "violet" | "emerald" | "amber";
@@ -50,6 +52,7 @@ export function BedPageHeader({
   title,
   subtitle,
   badge,
+  badgePulse,
   actions,
   accent = "blue",
 }: BedPageHeaderProps) {
@@ -106,10 +109,16 @@ export function BedPageHeader({
                   {badge && (
                     <span
                       className={cn(
-                        "text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border backdrop-blur-sm",
+                        "inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border backdrop-blur-sm",
                         a.chipBg
                       )}
                     >
+                      {badgePulse && (
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                        </span>
+                      )}
                       {badge}
                     </span>
                   )}
