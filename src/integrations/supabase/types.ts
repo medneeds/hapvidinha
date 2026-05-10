@@ -91,57 +91,99 @@ export type Database = {
       }
       bed_allocation_requests: {
         Row: {
+          accommodation_type: string | null
+          bed_released_at: string | null
+          bed_released_by: string | null
           created_at: string
           department: string
+          diagnosis: string | null
           hospital_unit_id: string
+          hotelaria_released_at: string | null
+          hotelaria_released_by: string | null
+          hotelaria_requested_at: string | null
           id: string
+          is_isolation: boolean
+          non_compliance_reason: string | null
           patient_id: string | null
+          patient_name: string | null
           rejection_reason: string | null
           requested_bed: string | null
           requested_by: string | null
           requested_sector: string
           requesting_doctor_name: string | null
           requesting_office_number: string | null
+          requesting_sector: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          sequence_number: number
           state_id: string
           status: string
+          transfer_completed_at: string | null
+          transfer_started_at: string | null
           updated_at: string
         }
         Insert: {
+          accommodation_type?: string | null
+          bed_released_at?: string | null
+          bed_released_by?: string | null
           created_at?: string
           department?: string
+          diagnosis?: string | null
           hospital_unit_id: string
+          hotelaria_released_at?: string | null
+          hotelaria_released_by?: string | null
+          hotelaria_requested_at?: string | null
           id?: string
+          is_isolation?: boolean
+          non_compliance_reason?: string | null
           patient_id?: string | null
+          patient_name?: string | null
           rejection_reason?: string | null
           requested_bed?: string | null
           requested_by?: string | null
           requested_sector: string
           requesting_doctor_name?: string | null
           requesting_office_number?: string | null
+          requesting_sector?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          sequence_number?: number
           state_id: string
           status?: string
+          transfer_completed_at?: string | null
+          transfer_started_at?: string | null
           updated_at?: string
         }
         Update: {
+          accommodation_type?: string | null
+          bed_released_at?: string | null
+          bed_released_by?: string | null
           created_at?: string
           department?: string
+          diagnosis?: string | null
           hospital_unit_id?: string
+          hotelaria_released_at?: string | null
+          hotelaria_released_by?: string | null
+          hotelaria_requested_at?: string | null
           id?: string
+          is_isolation?: boolean
+          non_compliance_reason?: string | null
           patient_id?: string | null
+          patient_name?: string | null
           rejection_reason?: string | null
           requested_bed?: string | null
           requested_by?: string | null
           requested_sector?: string
           requesting_doctor_name?: string | null
           requesting_office_number?: string | null
+          requesting_sector?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          sequence_number?: number
           state_id?: string
           status?: string
+          transfer_completed_at?: string | null
+          transfer_started_at?: string | null
           updated_at?: string
         }
         Relationships: [
