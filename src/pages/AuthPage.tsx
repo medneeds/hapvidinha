@@ -414,10 +414,11 @@ export default function AuthPage() {
                     </Select>
                   </div>
 
-                  {/* Department Selection - amplo para admin/gestão */}
+                  {/* Department Selection - oculto para admin/gestão (acesso amplo) */}
+                  {selectedUserType !== "administrativo" && selectedUserType !== "gestao" && (
                   <div className="group">
                     <Label htmlFor="department-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
-                      Setor {(selectedUserType === "administrativo" || selectedUserType === "gestao") && <span className="text-[#013ba6] normal-case font-normal">(acesso amplo)</span>}
+                      Setor
                     </Label>
                     <Select
                       value={selectedDepartment}
@@ -439,6 +440,7 @@ export default function AuthPage() {
                       </SelectContent>
                     </Select>
                   </div>
+                  )}
                 </div>
 
                 {/* Authentication Fields Section */}
@@ -717,25 +719,26 @@ export default function AuthPage() {
                   </Select>
                 </div>
 
-                {/* Department Selection - amplo para admin/gestão */}
+                {/* Department Selection - oculto para admin/gestão (acesso amplo) */}
+                {selectedUserType !== "administrativo" && selectedUserType !== "gestao" && (
                 <div className="space-y-0.5">
                   <Label 
                     htmlFor="department-select-mobile" 
                     className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
                   >
                     <Building2 className="h-2.5 w-2.5 text-gray-500" />
-                    SETOR {(selectedUserType === "administrativo" || selectedUserType === "gestao") && <span className="text-[#013ba6] normal-case font-normal">(acesso amplo)</span>}
+                    SETOR
                   </Label>
                   <Select
                     value={selectedDepartment}
                     onValueChange={(value: Department) => setSelectedDepartment(value)}
-                    disabled={loading || selectedUserType === "administrativo" || selectedUserType === "gestao"}
+                    disabled={loading}
                   >
                     <SelectTrigger 
                       id="department-select-mobile"
                       className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-60"
                     >
-                      <SelectValue placeholder={(selectedUserType === "administrativo" || selectedUserType === "gestao") ? "TODOS OS SETORES" : "SELECIONE O SETOR"} />
+                      <SelectValue placeholder="SELECIONE O SETOR" />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                       {DEPARTMENTS.map((dept) => (
@@ -746,6 +749,7 @@ export default function AuthPage() {
                     </SelectContent>
                   </Select>
                 </div>
+                )}
               </div>
 
               {/* Authentication Fields Section */}
