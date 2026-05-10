@@ -57,16 +57,96 @@ export function formatHHMM(min: number | null): string {
   return `${String(h).padStart(1, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-const HOTEL_SLA = 60; // minutos
-const TRANSFER_SLA = 90;
+import { classifySla, SlaLevel, SLA_DEFAULTS } from "./useBedSlaConfigs";
 
-export function getRequestStatusInfo(r: PanelRequest) {
-  const hotelMin = diffMinutes(r.hotelaria_requested_at ?? r.created_at, r.hotelaria_released_at);
-  const transferMin = diffMinutes(r.bed_released_at, r.transfer_completed_at);
+export interface StageEval {
+  elapsedMin: number | null;
+  slaMinutes: number;
+  warningPct: number;
+  level: SlaLevel; // ok | warning | late | pending | in_progress
+  done: boolean;
+}
+
+export type SlaResolver = (
+  sector: string | null | undefined,
+  stage: "hotelaria" | "leito" | "transferencia"
+) => { sla_minutes: number; warning_pct: number };
+
+const defaultResolver: SlaResolver = (_s, stage) => ({
+  sla_minutes: SLA_DEFAULTS[stage],
+  warning_pct: 80,
+});
+
+export function getRequestStatusInfo(r: PanelRequest, resolver: SlaResolver = defaultResolver) {
+  const sector = r.requested_sector;
+  const now = new Date().toISOString();
+
+  // Hotelaria: from request to hotelaria_released_at
+  const hotelStart = r.hotelaria_requested_at ?? r.created_at;
+  const hotelEnd = r.hotelaria_released_at;
+  const hotelMin = diffMinutes(hotelStart, hotelEnd ?? now);
+  const hotelCfg = resolver(sector, "hotelaria");
+  const hotelStage: StageEval = {
+    elapsedMin: hotelEnd ? diffMinutes(hotelStart, hotelEnd) : hotelMin,
+    slaMinutes: hotelCfg.sla_minutes,
+    warningPct: hotelCfg.warning_pct,
+    level: hotelEnd
+      ? classifySla(diffMinutes(hotelStart, hotelEnd), hotelCfg.sla_minutes, hotelCfg.warning_pct)
+      : (hotelMin === null ? "pending" : (classifySla(hotelMin, hotelCfg.sla_minutes, hotelCfg.warning_pct) === "late" ? "late" : "in_progress")),
+    done: !!hotelEnd,
+  };
+
+  // Leito: from hotelaria_released_at to bed_released_at
+  const leitoStart = r.hotelaria_released_at;
+  const leitoEnd = r.bed_released_at;
+  const leitoCfg = resolver(sector, "leito");
+  const leitoElapsed = leitoStart ? diffMinutes(leitoStart, leitoEnd ?? now) : null;
+  const leitoStage: StageEval = {
+    elapsedMin: leitoStart ? diffMinutes(leitoStart, leitoEnd ?? now) : null,
+    slaMinutes: leitoCfg.sla_minutes,
+    warningPct: leitoCfg.warning_pct,
+    level: !leitoStart
+      ? "pending"
+      : leitoEnd
+        ? classifySla(diffMinutes(leitoStart, leitoEnd), leitoCfg.sla_minutes, leitoCfg.warning_pct)
+        : (classifySla(leitoElapsed, leitoCfg.sla_minutes, leitoCfg.warning_pct) === "late" ? "late" : "in_progress"),
+    done: !!leitoEnd,
+  };
+
+  // Transferência: from bed_released_at to transfer_completed_at
+  const trStart = r.bed_released_at;
+  const trEnd = r.transfer_completed_at;
+  const trCfg = resolver(sector, "transferencia");
+  const trElapsed = trStart ? diffMinutes(trStart, trEnd ?? now) : null;
+  const transferStage: StageEval = {
+    elapsedMin: trStart ? diffMinutes(trStart, trEnd ?? now) : null,
+    slaMinutes: trCfg.sla_minutes,
+    warningPct: trCfg.warning_pct,
+    level: !trStart
+      ? "pending"
+      : trEnd
+        ? classifySla(diffMinutes(trStart, trEnd), trCfg.sla_minutes, trCfg.warning_pct)
+        : (classifySla(trElapsed, trCfg.sla_minutes, trCfg.warning_pct) === "late" ? "late" : "in_progress"),
+    done: !!trEnd,
+  };
+
+  const transferMin = trStart && trEnd ? diffMinutes(trStart, trEnd) : null;
   const totalMin = diffMinutes(r.created_at, r.transfer_completed_at);
   const completed = !!r.transfer_completed_at;
-  const onTime = completed && (totalMin ?? 0) <= HOTEL_SLA + TRANSFER_SLA;
-  return { hotelMin, transferMin, totalMin, completed, onTime };
+  const onTime =
+    completed &&
+    hotelStage.level !== "late" &&
+    leitoStage.level !== "late" &&
+    transferStage.level !== "late";
+
+  return {
+    hotelMin: hotelEnd ? diffMinutes(hotelStart, hotelEnd) : null,
+    transferMin,
+    totalMin,
+    completed,
+    onTime,
+    stages: { hotelaria: hotelStage, leito: leitoStage, transferencia: transferStage },
+  };
 }
 
 export function useBedRequestsPanel() {
