@@ -166,7 +166,7 @@ export function AppSidebar({
   ];
 
   // Filtra itens de menu baseado no papel do usuário
-  const menuItems = isDoorUser 
+  const baseMenuItems = isDoorUser 
     ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "EXAMINUS AI")
     : isRecepcao
     ? allMenuItems.filter(item => item.title === "MAPA")
@@ -183,6 +183,11 @@ export function AppSidebar({
         return item;
       })
     : allMenuItems;
+
+  // GERENCIAMENTO DE LEITOS: fluxo em validação — visível apenas para o Gestor Master (Artur Batista).
+  const menuItems = isGestorMaster
+    ? baseMenuItems
+    : baseMenuItems.filter(item => item.title !== "GERENCIAMENTO DE LEITOS");
 
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
