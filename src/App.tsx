@@ -53,6 +53,8 @@ import GoOverviewPage from "./pages/go/GoOverviewPage";
 import GoConductorsPage from "./pages/go/GoConductorsPage";
 import GoBedsPage from "./pages/go/GoBedsPage";
 import GoIndicatorsPage from "./pages/go/GoIndicatorsPage";
+import BedManagementPage from "./pages/BedManagementPage";
+import BedManagementRegistrationPage from "./pages/BedManagementRegistrationPage";
 
 const queryClient = new QueryClient();
 
