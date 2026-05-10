@@ -364,9 +364,17 @@ export default function BedManagementPage() {
       </div>
 
       <Tabs defaultValue="map">
-        <TabsList>
-          <TabsTrigger value="map">Mapa de leitos</TabsTrigger>
-          <TabsTrigger value="requests">
+        <TabsList className="bg-transparent border-b rounded-none p-0 h-auto w-full justify-start gap-4">
+          <TabsTrigger
+            value="map"
+            className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent data-[state=active]:border-[#0256d4] data-[state=active]:shadow-none data-[state=active]:text-[#0256d4] px-1 pb-2"
+          >
+            Mapa de leitos
+          </TabsTrigger>
+          <TabsTrigger
+            value="requests"
+            className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:bg-transparent data-[state=active]:border-[#0256d4] data-[state=active]:shadow-none data-[state=active]:text-[#0256d4] px-1 pb-2"
+          >
             Solicitações
             {pendingRequests.length > 0 && (
               <Badge variant="destructive" className="ml-2">{pendingRequests.length}</Badge>
@@ -374,22 +382,11 @@ export default function BedManagementPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="map" className="space-y-3">
+        <TabsContent value="map" className="space-y-3 mt-4">
           <Card className="p-3 flex flex-wrap gap-2 items-center">
             <Filter className="h-4 w-4 text-muted-foreground" />
-            <Select value={sectorFilter} onValueChange={setSectorFilter}>
-              <SelectTrigger className="w-48 h-8">
-                <SelectValue placeholder="Setor" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os setores</SelectItem>
-                {sectors.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
             <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as BedStatus | "all")}>
-              <SelectTrigger className="w-56 h-8">
+              <SelectTrigger className="w-56 h-8 border-input">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -399,7 +396,51 @@ export default function BedManagementPage() {
                 ))}
               </SelectContent>
             </Select>
+            <span className="text-xs text-muted-foreground ml-auto tabular-nums">
+              {filtered.length} {filtered.length === 1 ? "leito" : "leitos"}
+            </span>
           </Card>
+
+          {/* Sector tabs */}
+          {sectors.length > 0 && (
+            <div className="flex items-center gap-1 overflow-x-auto pb-1">
+              <button
+                onClick={() => setSectorFilter("all")}
+                className={cn(
+                  "inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs uppercase tracking-wide transition-all duration-200 border",
+                  sectorFilter === "all"
+                    ? "border-[#0256d4] text-[#0256d4] bg-[#0256d4]/5 font-semibold"
+                    : "border-transparent text-muted-foreground hover:bg-muted"
+                )}
+              >
+                Todos
+                <span className="text-[10px] rounded-full bg-muted text-foreground/70 px-1.5 py-0.5 font-mono">
+                  {beds.length}
+                </span>
+              </button>
+              {sectors.map((s) => {
+                const count = beds.filter((b) => b.sector === s).length;
+                const active = sectorFilter === s;
+                return (
+                  <button
+                    key={s}
+                    onClick={() => setSectorFilter(s)}
+                    className={cn(
+                      "inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs uppercase tracking-wide whitespace-nowrap transition-all duration-200 border",
+                      active
+                        ? "border-[#0256d4] text-[#0256d4] bg-[#0256d4]/5 font-semibold"
+                        : "border-transparent text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    {s}
+                    <span className="text-[10px] rounded-full bg-muted text-foreground/70 px-1.5 py-0.5 font-mono">
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {loading ? (
             <Card className="p-8 text-center text-sm text-muted-foreground">
