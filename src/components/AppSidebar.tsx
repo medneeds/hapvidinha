@@ -527,10 +527,12 @@ export function AppSidebar({
         ))}
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border/50 p-3 bg-muted/30">
+      <SidebarFooter className="border-t border-border/50 p-2 bg-muted/30">
         <div className={cn(
-          "flex items-center gap-3 rounded-xl p-2 transition-all duration-200",
-          isCollapsed ? "justify-center" : "bg-card/50"
+          "rounded-xl transition-all duration-200",
+          isCollapsed
+            ? "flex flex-col items-center gap-1 p-1"
+            : "flex items-center gap-3 p-2 bg-card/50"
         )}>
           {!isCollapsed && (
             <>
@@ -547,12 +549,18 @@ export function AppSidebar({
               </div>
             </>
           )}
-          <div className="flex items-center gap-1">
+          <div className={cn(
+            "flex items-center",
+            isCollapsed ? "flex-col gap-1 w-full" : "gap-1"
+          )}>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setShowChangeOwnPassword(true)}
-              className="h-9 w-9 hover:bg-primary/10 hover:text-primary transition-all duration-200 flex-shrink-0"
+              className={cn(
+                "hover:bg-primary/10 hover:text-primary transition-all duration-200 flex-shrink-0",
+                isCollapsed ? "h-8 w-8" : "h-9 w-9"
+              )}
               title="Alterar minha senha"
             >
               <KeyRound className="h-4 w-4" />
@@ -561,7 +569,10 @@ export function AppSidebar({
               variant="ghost"
               size="icon"
               onClick={signOut}
-              className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive transition-all duration-200 flex-shrink-0"
+              className={cn(
+                "hover:bg-destructive/10 hover:text-destructive transition-all duration-200 flex-shrink-0",
+                isCollapsed ? "h-8 w-8" : "h-9 w-9"
+              )}
               title="Sair"
             >
               <LogOut className="h-4 w-4" />
