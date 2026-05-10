@@ -440,6 +440,7 @@ export default function AuthPage() {
                       </SelectContent>
                     </Select>
                   </div>
+                  )}
                 </div>
 
                 {/* Authentication Fields Section */}
