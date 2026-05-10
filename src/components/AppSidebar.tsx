@@ -98,6 +98,11 @@ export function AppSidebar({
       link: "/",
     },
     {
+      title: "GERENCIAMENTO DE LEITOS",
+      icon: BedDouble,
+      link: "/leitos",
+    },
+    {
       title: "PACIENTES",
       icon: Users,
       items: [
