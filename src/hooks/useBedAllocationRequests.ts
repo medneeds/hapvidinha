@@ -119,6 +119,19 @@ export function useBedAllocationRequests() {
     }
 
     try {
+      // Hidrata campos do painel a partir do paciente
+      const { data: pat } = await supabase
+        .from("patients")
+        .select("name, diagnoses, sector")
+        .eq("id", patientId)
+        .maybeSingle();
+
+      const accommodation = /UTI/i.test(requestedSector)
+        ? "UTI"
+        : /APT|APARTAMENTO/i.test(requestedSector)
+        ? "APT"
+        : "ENFERM";
+
       const { data, error } = await supabase
         .from("bed_allocation_requests")
         .insert({
@@ -131,7 +144,12 @@ export function useBedAllocationRequests() {
           state_id: currentState.id,
           hospital_unit_id: currentHospital.id,
           department: currentDepartment,
-        })
+          patient_name: pat?.name?.toUpperCase() || null,
+          requesting_sector: pat?.sector || null,
+          diagnosis: pat?.diagnoses?.toUpperCase() || null,
+          accommodation_type: accommodation,
+          hotelaria_requested_at: new Date().toISOString(),
+        } as any)
         .select()
         .single();
 
