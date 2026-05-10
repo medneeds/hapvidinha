@@ -1718,7 +1718,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     }
                     
                     const respConfig: Record<string, { label: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
-                      porta: { label: 'PORTA', icon: Stethoscope },
+                      porta: { label: 'PRT', icon: Stethoscope },
                       lider: { label: 'LDR', icon: Crown },
                       conjunto: { label: 'CONJUNTO', icon: UsersRound },
                       obstetra: { label: 'OBS', icon: Baby },
@@ -1732,7 +1732,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     // For "conjunto", render stacked pills separated by "+"
                     if (respType === 'conjunto' && localMedicalResponsibility?.conjuntoWith?.length) {
                       const specConfig: Record<string, { label: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
-                        porta: { label: 'PORTA', icon: Stethoscope },
+                        porta: { label: 'PRT', icon: Stethoscope },
                         lider: { label: 'LDR', icon: Crown },
                         obstetra: { label: 'OBS', icon: Baby },
                         cirurgiao_geral: { label: 'CIR', icon: Scissors },
