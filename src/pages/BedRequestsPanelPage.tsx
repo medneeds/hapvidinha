@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { exportPanelExcel, exportPanelPDF } from "@/utils/bedPanelExport";
 import { SlaConfigDialog } from "@/components/bed-panel/SlaConfigDialog";
+import { BedPageHeader } from "@/components/bed-panel/BedPageHeader";
 import {
   FileDown, FileSpreadsheet, RefreshCw, Search, Activity, AlertTriangle,
   Clock, CheckCircle2, Hourglass, ShieldAlert, Bed, ArrowRight,
@@ -214,19 +215,22 @@ export default function BedRequestsPanelPage() {
   const hospitalName = currentHospital?.name ?? "HOSPITAL";
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-[1600px]">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight uppercase">Painel de Gestão de Leitos</h1>
-          <p className="text-sm text-muted-foreground uppercase tracking-wide">{hospitalName} · Solicitações & Conduções em tempo real</p>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          <Button variant="outline" size="sm" onClick={refetch}><RefreshCw className="h-4 w-4 mr-1" /> Atualizar</Button>
-          <SlaConfigDialog knownSectors={Array.from(new Set(requests.map((r) => r.requested_sector).filter(Boolean) as string[]))} />
-          <Button variant="outline" size="sm" onClick={() => exportPanelExcel(filtered, hospitalName)}><FileSpreadsheet className="h-4 w-4 mr-1" /> Excel</Button>
-          <Button variant="default" size="sm" onClick={() => exportPanelPDF(filtered, hospitalName)}><FileDown className="h-4 w-4 mr-1" /> PDF</Button>
-        </div>
-      </header>
+    <div className="container mx-auto px-4 sm:px-6 lg:px-10 py-6 space-y-6 max-w-[1600px]">
+      <BedPageHeader
+        icon={Activity}
+        title="Painel de Gestão de Leitos"
+        subtitle={`${hospitalName} · Solicitações & conduções em tempo real`}
+        badge="Tempo real"
+        accent="violet"
+        actions={
+          <>
+            <Button variant="outline" size="sm" onClick={refetch}><RefreshCw className="h-4 w-4 mr-1" /> Atualizar</Button>
+            <SlaConfigDialog knownSectors={Array.from(new Set(requests.map((r) => r.requested_sector).filter(Boolean) as string[]))} />
+            <Button variant="outline" size="sm" onClick={() => exportPanelExcel(filtered, hospitalName)}><FileSpreadsheet className="h-4 w-4 mr-1" /> Excel</Button>
+            <Button variant="default" size="sm" onClick={() => exportPanelPDF(filtered, hospitalName)}><FileDown className="h-4 w-4 mr-1" /> PDF</Button>
+          </>
+        }
+      />
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <KPI icon={Activity} label="Total" value={kpis.total} accent="hsl(217 91% 60%)" />

@@ -28,6 +28,7 @@ import {
   BED_STATUS_COLORS,
 } from "@/hooks/useManagedBeds";
 import { toast } from "sonner";
+import { BedPageHeader } from "@/components/bed-panel/BedPageHeader";
 
 export default function BedManagementRegistrationPage() {
   const { beds, loading, createBed, deleteBed } = useManagedBeds();
@@ -71,23 +72,21 @@ export default function BedManagementRegistrationPage() {
   }, {});
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-[1600px]">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <BedDouble className="h-6 w-6 text-primary" />
-            Cadastro de leitos
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Cadastre individualmente ou em lote os leitos administrados pelo módulo de gestão.
-          </p>
-        </div>
-        <Link to="/leitos">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-1" /> Voltar
-          </Button>
-        </Link>
-      </div>
+    <div className="container mx-auto px-4 sm:px-6 lg:px-10 py-6 space-y-6 max-w-[1600px]">
+      <BedPageHeader
+        icon={BedDouble}
+        title="Cadastro de Leitos"
+        subtitle="Cadastre individualmente ou em lote os leitos administrados pelo módulo de gestão"
+        badge="Configuração"
+        accent="emerald"
+        actions={
+          <Link to="/leitos">
+            <Button variant="outline" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-1" /> Voltar
+            </Button>
+          </Link>
+        }
+      />
 
       <Card className="p-4 space-y-3">
         <h2 className="font-semibold text-sm uppercase">Cadastro individual</h2>

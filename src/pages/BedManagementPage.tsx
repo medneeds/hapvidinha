@@ -47,6 +47,7 @@ import {
   type BedRequestPriority,
 } from "@/hooks/useBedRequests";
 import { toast } from "sonner";
+import { BedPageHeader } from "@/components/bed-panel/BedPageHeader";
 
 const ALL_STATUSES: BedStatus[] = [
   "available",
@@ -295,28 +296,31 @@ export default function BedManagementPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-[1600px]">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <BedDouble className="h-6 w-6 text-primary" />
-            Gerenciamento de Leitos
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Ciclo operacional do leito em tempo real, solicitações e KPIs.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link to="/leitos/cadastro">
-            <Button variant="outline" size="sm">
-              <Plus className="h-4 w-4 mr-1" /> Cadastro de leitos
+    <div className="container mx-auto px-4 sm:px-6 lg:px-10 py-6 space-y-6 max-w-[1600px]">
+      <BedPageHeader
+        icon={BedDouble}
+        title="Mapa de Leitos"
+        subtitle="Ciclo operacional do leito em tempo real, solicitações e KPIs"
+        badge="Operacional"
+        accent="blue"
+        actions={
+          <>
+            <Link to="/leitos/cadastro">
+              <Button variant="outline" size="sm">
+                <Plus className="h-4 w-4 mr-1" /> Cadastro de leitos
+              </Button>
+            </Link>
+            <Link to="/leitos/painel">
+              <Button variant="outline" size="sm">
+                <Sparkles className="h-4 w-4 mr-1" /> Painel de solicitações
+              </Button>
+            </Link>
+            <Button size="sm" onClick={() => setRequestSheetOpen(true)}>
+              <Sparkles className="h-4 w-4 mr-1" /> Nova solicitação
             </Button>
-          </Link>
-          <Button size="sm" onClick={() => setRequestSheetOpen(true)}>
-            <Sparkles className="h-4 w-4 mr-1" /> Nova solicitação
-          </Button>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
         <Card className="p-3">
