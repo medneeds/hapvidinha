@@ -60,23 +60,37 @@ function fmtTime(iso: string | null) {
   return iso ? new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : undefined;
 }
 
-function RequestRow({ r, onAdvance }: { r: PanelRequest; onAdvance: (id: string, patch: Partial<PanelRequest>) => void }) {
-  const info = getRequestStatusInfo(r);
-  const overall = info.completed
+function RequestRow({ r, onAdvance, resolver }: { r: PanelRequest; onAdvance: (id: string, patch: Partial<PanelRequest>) => void; resolver: SlaResolver }) {
+  const info = getRequestStatusInfo(r, resolver);
+  const stages = info.stages;
+  const anyLate = stages.hotelaria.level === "late" || stages.leito.level === "late" || stages.transferencia.level === "late";
+  const anyWarn = stages.hotelaria.level === "warning" || stages.leito.level === "warning" || stages.transferencia.level === "warning";
+  const overall: "ok" | "late" | "warning" | "in_progress" | "pending" = info.completed
     ? (info.onTime ? "ok" : "late")
-    : r.status === "pending" ? "pending" : "in_progress";
+    : anyLate ? "late"
+    : anyWarn ? "warning"
+    : r.status === "pending" && !stages.hotelaria.done ? "pending"
+    : "in_progress";
 
   const statusBadge = {
     ok: <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200">CONCLUÍDO {formatHHMM(info.totalMin)}</Badge>,
     late: <Badge className="bg-destructive/15 text-destructive border-destructive/30">ATRASADO {formatHHMM(info.totalMin)}</Badge>,
-    in_progress: <Badge className="bg-amber-100 text-amber-700 border-amber-200">EM ANDAMENTO</Badge>,
+    warning: <Badge className="bg-amber-100 text-amber-700 border-amber-200">ATENÇÃO SLA</Badge>,
+    in_progress: <Badge className="bg-sky-100 text-sky-700 border-sky-200">EM ANDAMENTO</Badge>,
     pending: <Badge className="bg-rose-100 text-rose-700 border-rose-200">PENDENTE</Badge>,
   }[overall];
 
+  const borderColor =
+    overall === "ok" ? "hsl(142 71% 45%)" :
+    overall === "late" ? "hsl(var(--destructive))" :
+    overall === "warning" ? "hsl(38 92% 50%)" :
+    overall === "in_progress" ? "hsl(199 89% 48%)" :
+    "hsl(346 77% 50%)";
+
+  const solicitStage: StageEval = { elapsedMin: 0, slaMinutes: 0, warningPct: 100, level: "ok", done: true };
+
   return (
-    <Card className="p-4 hover:shadow-md transition-shadow border-l-4" style={{
-      borderLeftColor: overall === "ok" ? "hsl(142 71% 45%)" : overall === "late" ? "hsl(var(--destructive))" : overall === "in_progress" ? "hsl(38 92% 50%)" : "hsl(346 77% 50%)"
-    }}>
+    <Card className="p-4 hover:shadow-md transition-shadow border-l-4" style={{ borderLeftColor: borderColor }}>
       <div className="flex flex-wrap items-start gap-3 mb-3">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <span className="font-mono text-xs text-muted-foreground">#{r.sequence_number ?? "—"}</span>
@@ -115,13 +129,13 @@ function RequestRow({ r, onAdvance }: { r: PanelRequest; onAdvance: (id: string,
 
       {/* Timeline */}
       <div className="flex items-start gap-1 mb-3">
-        <StageDot done={!!r.created_at} label="Solicit" time={fmtTime(r.created_at)} />
-        <StageLine active={!!r.hotelaria_released_at} />
-        <StageDot done={!!r.hotelaria_released_at} late={(info.hotelMin ?? 0) > 60} label="Hotelaria" time={fmtTime(r.hotelaria_released_at)} />
-        <StageLine active={!!r.bed_released_at} />
-        <StageDot done={!!r.bed_released_at} label="Leito Lib" time={fmtTime(r.bed_released_at)} />
-        <StageLine active={!!r.transfer_completed_at} />
-        <StageDot done={!!r.transfer_completed_at} late={!info.onTime && info.completed} label="Transferido" time={fmtTime(r.transfer_completed_at)} />
+        <StageDot stage={solicitStage} label="Solicit" time={fmtTime(r.created_at)} />
+        <StageLine level={stages.hotelaria.level} />
+        <StageDot stage={stages.hotelaria} label="Hotelaria" time={fmtTime(r.hotelaria_released_at)} />
+        <StageLine level={stages.leito.level} />
+        <StageDot stage={stages.leito} label="Leito Lib" time={fmtTime(r.bed_released_at)} />
+        <StageLine level={stages.transferencia.level} />
+        <StageDot stage={stages.transferencia} label="Transferido" time={fmtTime(r.transfer_completed_at)} />
       </div>
 
       <div className="flex flex-wrap gap-2 pt-2 border-t">
