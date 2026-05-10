@@ -180,7 +180,7 @@ function KPI({ icon: Icon, label, value, accent }: { icon: any; label: string; v
 }
 
 export default function BedRequestsPanelPage() {
-  const { requests, loading, kpis, refetch, updateStage } = useBedRequestsPanel();
+  const { requests, loading, kpis, refetch, updateStage, resolver } = useBedRequestsPanel();
   const { currentHospital } = useHospital();
   const [search, setSearch] = useState("");
   const [sectorFilter, setSectorFilter] = useState<string>("all");
