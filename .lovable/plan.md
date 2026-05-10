@@ -1,76 +1,136 @@
-## Otimização do cabeçalho do card do paciente
 
-### 1. Banco de dados (migration)
-Adicionar colunas opcionais à tabela `patients` para guardar dados administrativos vindos do Samweb:
-- `medical_record_number` (text) — Prontuário
-- `attendance_number` (text) — Cód. Atendimento
-- `cpf` (text)
-- `mother_name` (text)
-- `insurance_company` (text) — Convênio
-- `insurance_plan` (text) — Plano Convênio
-- `insurance_plan_type` (text) — Plano (Ambulatorial/Hospitalar...)
-- `insurance_card_number` (text) — Carteira
-- `insurance_duration` (text) — Tempo Plano
+# Gerenciamento de Leitos — Plano da v1
 
-Todos nullable. Sem CHECK constraints.
+Módulo novo, isolado, em rota dedicada `/leitos`. Não altera o MAPA, evoluções, UTI, protocolos ou qualquer fluxo já em produção. Aproveita o `bed_lifecycle_events` que já existe e amplia.
 
-### 2. Tipo `Patient` (`src/types/patient.ts`)
-Adicionar os campos correspondentes em camelCase (`medicalRecordNumber`, `attendanceNumber`, `cpf`, `motherName`, `insuranceCompany`, `insurancePlan`, `insurancePlanType`, `insuranceCardNumber`, `insuranceDuration`).
+## 1. Pesquisa de mercado (referências aplicadas)
 
-### 3. Hook `usePatients.ts`
-Mapear os novos campos no fetch e no `dbUpdatePatient` (camelCase ↔ snake_case).
+Boas práticas de bed management hospitalar (TeleTracking, Epic Grand Central, Qventus, MV Soul Leitos):
+- Cada leito possui **estado canônico**: ocupado → alta médica → alta administrativa → vago sujo → em higienização → vago limpo → reservado → ocupado.
+- Cada transição registra **timestamp + responsável**, gerando KPIs (turnaround time, tempo médio de higienização, tempo de leito ocioso).
+- Solicitações têm **ciclo próprio**: criada → aceita → em transporte → concluída → cancelada, com SLA por etapa.
+- Painéis em "tiles" coloridos por estado, atualizados em tempo real.
 
-### 4. Edge function `extract-patient-info`
-Nova função que recebe um bloco de texto colado e retorna JSON estruturado via tool calling do Lovable AI Gateway (`google/gemini-3-flash-preview`).
-- Extrai: name, age, birthDate, cpf, motherName, insuranceCompany, insurancePlan, insurancePlanType, insuranceCardNumber, insuranceDuration, medicalRecordNumber, attendanceNumber.
-- Retorna apenas campos identificados; demais ficam ausentes para preservar dados existentes.
-- `verify_jwt = true` (default).
+Vamos seguir esse padrão.
 
-### 5. Novo componente `PatientInfoPasteDialog.tsx`
-- Trigger: ícone `Sparkles` (IA) posicionado **logo após o badge de tempo de permanência**, ao lado do nome.
-- Dialog com `Textarea` que processa **automaticamente ao detectar paste (onPaste)** — sem botão extra.
-- Mostra loading enquanto chama a edge function.
-- Ao retornar, mostra preview dos campos extraídos com confirmar/cancelar; ao confirmar, faz merge no paciente via `onUpdate`.
-- Toast de sucesso indicando quantos campos foram preenchidos.
+## 2. Escopo da v1 (confirmado)
 
-### 6. Novo componente `PatientInfoDialog.tsx` (ícone "i")
-- Trigger: ícone `Info` ao lado do `Sparkles`.
-- Pop-up exibindo todos os campos administrativos preenchidos (CPF, Mãe, Convênio, Plano Convênio, Plano, Carteira, Tempo Plano, Prontuário, Atendimento).
-- Cada linha com botão de copiar individual.
-- Botão **"Editar"** que abre modo de edição inline (inputs) para corrigir/preencher manualmente qualquer campo, com Salvar/Cancelar.
-- Campos vazios mostrados como "—" no modo visualização.
+- Dashboard com ciclo de vida do leito + cronômetros e SLA visual.
+- Cadastro individual de leitos por setor (próprios do módulo, sem mexer nos U01-U10/V/A/Z do MAPA).
+- Solicitações unificadas: **UTI**, **enfermaria**, **transporte/condutor**.
+- Novas categorias de usuário: **Hotelaria** e **Condutor**.
+- Disparo manual em tela separada (MAPA segue intocado nesta v1).
 
-### 7. Refatorar cabeçalho em `PatientCard.tsx` (linhas ~1932-2008)
-Layout novo:
+## 3. Estados do leito
 
 ```text
-[badges PSM] NOME COMPLETO · 51 ANOS E 8 MESES   [⏱ tempo] [✨ IA] [ⓘ info] [📋 copiar]
-            PRONT. 12890372 · ATEND. 178471602
+OCCUPIED → MEDICAL_DISCHARGE → ADMIN_DISCHARGE → VACATED_DIRTY
+        → CLEANING_IN_PROGRESS → CLEANING_DONE → AVAILABLE
+        → RESERVED → OCCUPIED
+                  ↘ MAINTENANCE / BLOCKED (paralelo)
 ```
 
-Mudanças:
-- **Linha 1**: nome (mantém edição inline ao clicar) + separador `·` + idade no mesmo `<p>`/flex (idade mantém edição inline ao clicar). Tamanhos: nome `text-base md:text-sm`, idade `text-sm md:text-xs text-muted-foreground font-normal`.
-- Reposicionar o badge de tempo de permanência (já existente próximo ao nome) **antes** dos novos ícones.
-- Adicionar ícones `Sparkles` (IA) e `Info` (info) — `h-3.5 w-3.5`, `opacity-60 hover:opacity-100`, sem fundo, discretos.
-- Manter ícone `Copy` (já existente) ao final, com mesma discrição — sem mudar tamanho.
-- **Linha 2** (substitui o antigo `<p>` da idade): mostrar somente se `medicalRecordNumber` ou `attendanceNumber` estiverem preenchidos. Estilo: `text-[10px] md:text-[11px] italic text-muted-foreground/80 mt-0.5`. Cada item clicável para copiar (toast "Copiado").
-- Se nenhum dos dois estiver preenchido, **não renderiza** a linha 2 (espaço fica limpo); o usuário acessa via ícone IA ou Info.
+Cada transição grava em `bed_lifecycle_events` (já existente) com `cycle_id` agrupando o ciclo completo daquele leito até nova ocupação.
 
-### 8. Permissões e regras já existentes mantidas
-- Edição inline de nome/idade respeita `canEdit`.
-- Modo privacidade (`namesHidden`) continua mascarando o nome.
-- Conversão automática para UPPERCASE preservada nos campos clínicos (PRONT./ATEND. ficam em maiúsculas como rótulo, mas valores numéricos preservados).
+## 4. SLA por setor
 
-### Arquivos afetados
-- `supabase/migrations/<novo>.sql` (novas colunas)
-- `src/types/patient.ts`
-- `src/hooks/usePatients.ts`
-- `src/components/PatientCard.tsx`
-- `src/components/PatientInfoPasteDialog.tsx` (novo)
-- `src/components/PatientInfoDialog.tsx` (novo)
-- `supabase/functions/extract-patient-info/index.ts` (novo)
+Tabela `bed_sla_configs` com tempos-alvo (em minutos) por setor para cada etapa:
+- alta médica → alta administrativa
+- alta administrativa → desocupação
+- desocupação → início higienização
+- duração da higienização
+- liberação → ocupação
+- aceite do condutor após solicitação
+- duração do transporte
 
-### Notas
-- IA usa Lovable AI (gemini-3-flash-preview) — sem custo de chave para o usuário.
-- Tratamento de erros 429/402 com toasts amigáveis.
-- Nenhum dado é salvo automaticamente sem confirmação do usuário no preview.
+Cards mostram cronômetro **verde / âmbar / vermelho** conforme SLA.
+
+## 5. Banco de dados (novas tabelas)
+
+- **`managed_beds`** — leitos cadastrados no módulo
+  - sector, bed_number, bed_type (enfermaria/UTI/observação), current_status, current_patient_name, current_cycle_id, is_blocked, hospital_unit_id, state_id
+- **`bed_sla_configs`** — SLA por setor + etapa (minutos)
+- **`bed_requests`** — solicitações unificadas
+  - request_type (uti | enfermaria | transporte), origin_sector, destination_sector, target_bed_id, patient_name, patient_age, clinical_summary, priority, status (pending | accepted | in_progress | completed | cancelled), requested_by, accepted_by, accepted_at, completed_at, sla_minutes, notes
+- **`transport_assignments`** — vínculo condutor ↔ solicitação
+  - request_id, conductor_user_id, acknowledged_at, started_at, finished_at, status
+
+`bed_lifecycle_events` continua igual (já tem todos os event_type necessários — adicionar apenas `bed_blocked` / `bed_unblocked` se preciso).
+
+RLS:
+- `managed_beds` / `bed_sla_configs`: leitura para autenticados; escrita só admin/gestão.
+- `bed_requests`: criação por enfermagem/médico/recepção; update por hotelaria (cleaning) e condutor (transporte); admin total.
+- `transport_assignments`: condutor lê/atualiza apenas as próprias; gestão lê todas.
+
+## 6. Categorias de usuário (novas)
+
+Adicionar à enum `app_role`: **`hotelaria`**, **`condutor`**.
+- `hotelaria`: opera apenas eventos de higienização e visualiza fila de leitos sujos.
+- `condutor`: tela própria simplificada, lista solicitações de transporte atribuídas, botões "DAR CIÊNCIA → INICIAR → FINALIZAR".
+
+Login (`AuthPage`): adicionar as duas opções no Select de categoria, com Setor oculto para `hotelaria` (visão ampla) e para `condutor` (recebe por escala).
+
+## 7. Telas
+
+### `/leitos` — Dashboard principal (gestão/admin/enfermagem)
+- Header com filtros (setor, status, SLA estourado).
+- Grid de tiles (um por leito) coloridos por status, com cronômetro do estado atual e nome do paciente.
+- Click no tile abre **drawer** com timeline do ciclo, botões de avanço de estado conforme permissão e histórico de ciclos anteriores.
+- Aba "Solicitações" lista pedidos pendentes com badges de SLA.
+- Aba "Indicadores" com KPIs: tempo médio por etapa, leitos ociosos, taxa de giro.
+
+### `/leitos/cadastro` — admin
+CRUD de `managed_beds` e `bed_sla_configs`.
+
+### `/leitos/hotelaria` — hotelaria
+Fila de leitos aguardando higienização + em higienização. Botões "INICIAR" / "FINALIZAR".
+
+### `/condutor` — condutor (layout próprio enxuto, mobile-first)
+Lista de transportes atribuídos com 3 botões grandes: CIÊNCIA, INICIAR, FINALIZAR. Toast de confirmação a cada passo.
+
+## 8. Fluxo de solicitação (exemplo enfermaria)
+
+1. Enfermagem clica "+ Nova solicitação" → escolhe tipo (UTI/Enfermaria/Transporte).
+2. Preenche paciente + setor destino (ou leito específico se for transporte).
+3. Solicitação entra em `pending` com SLA iniciado.
+4. Gestão/Hotelaria/Condutor visualiza e aceita → SLA da etapa seguinte começa.
+5. Conclusão registra evento no `bed_lifecycle_events` e atualiza `managed_beds.current_status`.
+
+## 9. Substituição do RequestUtiAllocationDialog
+
+Manter o componente atual funcionando (não quebrar MAPA), mas adicionar **flag** `useUnifiedBedRequests` (default OFF). Quando ON, o botão atual passa a abrir o novo formulário do módulo. Migração suave; ligamos depois que o módulo estiver estável.
+
+## 10. Realtime
+
+Habilitar realtime em `managed_beds`, `bed_requests`, `transport_assignments` e `bed_lifecycle_events` para que dashboard e tela do condutor atualizem ao vivo.
+
+## 11. Sidebar / navegação
+
+- Adicionar item "Gerenciamento de Leitos" (icone `BedDouble`) visível para `admin`, `gestao`, `administrativo`, `enfermagem`, `hotelaria`.
+- `condutor` faz login e cai direto em `/condutor` (rota protegida própria, sem sidebar).
+
+## 12. Garantias de não-regressão
+
+- Nenhuma alteração em `patients`, `patient_movements`, `useBedLifecycle`, MAPA, UTI, protocolos.
+- Novas tabelas isoladas; nada lê/escreve nas existentes exceto `bed_lifecycle_events` (apenas INSERT, que já é permitido).
+- Categorias novas não afetam roteamento das antigas.
+
+## 13. Entregáveis da v1 (ordem sugerida de execução depois)
+
+1. Migração: enum (`hotelaria`, `condutor`), tabelas `managed_beds`, `bed_sla_configs`, `bed_requests`, `transport_assignments`, RLS + realtime.
+2. AuthPage: novas categorias.
+3. Sidebar + rotas + ProtectedRoute para `condutor`.
+4. CRUD `/leitos/cadastro` e seed inicial de SLAs padrão.
+5. Dashboard `/leitos` com tiles + drawer + cronômetros.
+6. Solicitações unificadas (UI + hooks).
+7. `/leitos/hotelaria`.
+8. `/condutor`.
+9. Aba Indicadores.
+
+## 14. Itens deixados para v2 (fora do escopo agora)
+
+- Substituição definitiva do RequestUtiAllocationDialog.
+- Integração automática com altas do MAPA.
+- Mapa de calor de ocupação histórica.
+- Notificações push/SMS para condutor.
+- Integração com Samweb/Siga para censo externo.
