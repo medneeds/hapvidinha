@@ -106,7 +106,6 @@ function BedTile({
     return () => clearInterval(t);
   }, []);
   const elapsed = elapsedMinutes(bed.status_changed_at);
-  // simple SLA visual cue: >120min in operational states
   const operational: BedStatus[] = [
     "medical_discharge",
     "admin_discharge",
@@ -115,44 +114,65 @@ function BedTile({
   ];
   const slaWarning = operational.includes(bed.current_status) && elapsed >= 60;
   const slaCritical = operational.includes(bed.current_status) && elapsed >= 120;
+  const isAvailable = bed.current_status === "available";
 
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "group text-left p-3 rounded-lg border-2 transition-all hover:shadow-md hover:scale-[1.02]",
-        BED_STATUS_COLORS[bed.current_status],
-        slaCritical && "ring-2 ring-red-500 animate-pulse",
-        slaWarning && !slaCritical && "ring-1 ring-amber-500"
-      )}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="text-[10px] uppercase tracking-wider opacity-70">
-            {bed.sector}
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={onClick}
+            className={cn(
+              "group text-left p-3 rounded-lg border transition-all duration-200 ease-in-out hover:shadow-md hover:scale-[1.02]",
+              BED_STATUS_COLORS[bed.current_status],
+              slaCritical && "ring-[2px] ring-red-500 animate-pulse",
+              slaWarning && !slaCritical && "ring-[2px] ring-amber-500"
+            )}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="text-[10px] uppercase tracking-wider opacity-70 truncate">
+                {bed.sector}
+              </div>
+              <BedDouble className="h-4 w-4 opacity-60 flex-shrink-0" />
+            </div>
+            <div className="mt-1 text-base font-mono font-bold text-center leading-tight">
+              {bed.bed_number}
+            </div>
+            <div className="mt-1 text-[10px] font-semibold uppercase text-center opacity-80 truncate">
+              {BED_STATUS_LABELS[bed.current_status]}
+            </div>
+            {bed.current_patient_name && (
+              <div className="mt-1 text-[10px] opacity-80 truncate text-center">
+                {bed.current_patient_name}
+              </div>
+            )}
+            <div className={cn(
+              "mt-2 flex items-center justify-center gap-1 text-xs font-mono tabular-nums",
+              isAvailable ? "text-muted-foreground" : "opacity-80"
+            )}>
+              <Clock className="h-3 w-3" />
+              {formatElapsed(bed.status_changed_at)}
+              {slaCritical && (
+                <AlertTriangle className="h-3 w-3 text-red-600 ml-0.5" />
+              )}
+            </div>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="text-xs">
+          <div className="font-semibold uppercase tracking-wide">
+            {BED_STATUS_LABELS[bed.current_status]}
           </div>
-          <div className="text-lg font-black leading-tight">
-            {bed.bed_number}
+          {bed.current_patient_name && (
+            <div className="text-[11px] opacity-90 uppercase mt-0.5">
+              {bed.current_patient_name}
+            </div>
+          )}
+          <div className="text-[11px] opacity-70 font-mono mt-0.5">
+            há {formatElapsed(bed.status_changed_at)}
           </div>
-        </div>
-        <BedDouble className="h-4 w-4 opacity-60" />
-      </div>
-      <div className="mt-2 text-[11px] font-semibold uppercase">
-        {BED_STATUS_LABELS[bed.current_status]}
-      </div>
-      {bed.current_patient_name && (
-        <div className="mt-1 text-[11px] opacity-80 truncate">
-          {bed.current_patient_name}
-        </div>
-      )}
-      <div className="mt-2 flex items-center gap-1 text-[10px] opacity-70">
-        <Clock className="h-3 w-3" />
-        {formatElapsed(bed.status_changed_at)}
-        {slaCritical && (
-          <AlertTriangle className="h-3 w-3 text-red-600 ml-1" />
-        )}
-      </div>
-    </button>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
