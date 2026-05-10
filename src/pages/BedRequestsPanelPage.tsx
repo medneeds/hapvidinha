@@ -275,7 +275,7 @@ export default function BedRequestsPanelPage() {
               Nenhuma solicitação para os filtros atuais.
             </Card>
           ) : (
-            filtered.map((r) => <RequestRow key={r.id} r={r} onAdvance={handleAdvance} />)
+            filtered.map((r) => <RequestRow key={r.id} r={r} onAdvance={handleAdvance} resolver={resolver} />)
           )}
         </TabsContent>
         <TabsContent value="conducoes" className="mt-4">
