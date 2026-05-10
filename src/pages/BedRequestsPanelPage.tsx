@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useBedRequestsPanel, PanelRequest, formatHHMM, getRequestStatusInfo, diffMinutes } from "@/hooks/useBedRequestsPanel";
+import { useBedRequestsPanel, PanelRequest, formatHHMM, getRequestStatusInfo } from "@/hooks/useBedRequestsPanel";
 import { useHospital } from "@/contexts/HospitalContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
