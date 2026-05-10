@@ -57,7 +57,7 @@ export function formatHHMM(min: number | null): string {
   return `${String(h).padStart(1, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-import { classifySla, SlaLevel, SLA_DEFAULTS } from "./useBedSlaConfigs";
+import { classifySla, SlaLevel, SLA_DEFAULTS, useBedSlaConfigs } from "./useBedSlaConfigs";
 
 export interface StageEval {
   elapsedMin: number | null;
