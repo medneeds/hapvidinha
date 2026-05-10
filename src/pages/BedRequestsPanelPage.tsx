@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { exportPanelExcel, exportPanelPDF } from "@/utils/bedPanelExport";
 import { SlaConfigDialog } from "@/components/bed-panel/SlaConfigDialog";
+import { BedPageHeader } from "@/components/bed-panel/BedPageHeader";
 import {
   FileDown, FileSpreadsheet, RefreshCw, Search, Activity, AlertTriangle,
   Clock, CheckCircle2, Hourglass, ShieldAlert, Bed, ArrowRight,
