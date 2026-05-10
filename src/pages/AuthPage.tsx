@@ -414,10 +414,11 @@ export default function AuthPage() {
                     </Select>
                   </div>
 
-                  {/* Department Selection - amplo para admin/gestão */}
+                  {/* Department Selection - oculto para admin/gestão (acesso amplo) */}
+                  {selectedUserType !== "administrativo" && selectedUserType !== "gestao" && (
                   <div className="group">
                     <Label htmlFor="department-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
-                      Setor {(selectedUserType === "administrativo" || selectedUserType === "gestao") && <span className="text-[#013ba6] normal-case font-normal">(acesso amplo)</span>}
+                      Setor
                     </Label>
                     <Select
                       value={selectedDepartment}
