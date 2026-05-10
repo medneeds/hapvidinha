@@ -9,6 +9,8 @@ interface BedPageHeaderProps {
   title: string;
   subtitle?: string;
   badge?: string;
+  /** Show a small pulsing dot inside the badge to indicate live status. */
+  badgePulse?: boolean;
   actions?: ReactNode;
   /** Visual accent — defaults to "blue" matching the main MAPA. */
   accent?: "blue" | "violet" | "emerald" | "amber";
