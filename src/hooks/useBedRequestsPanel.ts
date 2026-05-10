@@ -152,6 +152,7 @@ export function getRequestStatusInfo(r: PanelRequest, resolver: SlaResolver = de
 export function useBedRequestsPanel() {
   const { currentHospital, currentState } = useHospital();
   const { currentDepartment } = useDepartment();
+  const { getSla } = useBedSlaConfigs();
   const [requests, setRequests] = useState<PanelRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -185,6 +186,8 @@ export function useBedRequestsPanel() {
     return () => { supabase.removeChannel(ch); };
   }, [currentHospital?.id, fetchAll]);
 
+  const resolver: SlaResolver = useCallback((sector, stage) => getSla(sector, stage), [getSla]);
+
   const kpis: PanelKPIs = useMemo(() => {
     const total = requests.length;
     const pending = requests.filter((r) => r.status === "pending").length;
@@ -193,7 +196,7 @@ export function useBedRequestsPanel() {
     const isolation = requests.filter((r) => r.is_isolation).length;
     const hotelDeltas = requests.map((r) => diffMinutes(r.hotelaria_requested_at ?? r.created_at, r.hotelaria_released_at)).filter((v): v is number => v !== null);
     const transDeltas = requests.map((r) => diffMinutes(r.bed_released_at, r.transfer_completed_at)).filter((v): v is number => v !== null);
-    const onTime = requests.filter((r) => getRequestStatusInfo(r).onTime).length;
+    const onTime = requests.filter((r) => getRequestStatusInfo(r, resolver).onTime).length;
     return {
       total,
       pending,
@@ -204,7 +207,7 @@ export function useBedRequestsPanel() {
       avgTransferMin: transDeltas.length ? Math.round(transDeltas.reduce((a, b) => a + b, 0) / transDeltas.length) : null,
       onTimePct: completed ? Math.round((onTime / completed) * 100) : 0,
     };
-  }, [requests]);
+  }, [requests, resolver]);
 
   const updateStage = async (id: string, patch: Partial<PanelRequest>) => {
     const { error } = await supabase.from("bed_allocation_requests").update(patch as any).eq("id", id);
@@ -212,5 +215,5 @@ export function useBedRequestsPanel() {
     return !error;
   };
 
-  return { requests, loading, kpis, refetch: fetchAll, updateStage };
+  return { requests, loading, kpis, refetch: fetchAll, updateStage, resolver };
 }
