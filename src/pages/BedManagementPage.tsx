@@ -47,6 +47,7 @@ import {
   type BedRequestPriority,
 } from "@/hooks/useBedRequests";
 import { toast } from "sonner";
+import { BedPageHeader } from "@/components/bed-panel/BedPageHeader";
 
 const ALL_STATUSES: BedStatus[] = [
   "available",
