@@ -19,7 +19,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?:
 };
 
 const LABEL_MAP: Record<string, string> = {
-  porta: 'PORTA',
+  porta: 'PRT',
   lider: 'LÍDER',
   conjunto: 'CONJUNTO',
   obstetra: 'OBS',
