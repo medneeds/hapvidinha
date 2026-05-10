@@ -16,6 +16,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   KeyRound,
+  BedDouble,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { whitelabel } from "@/config/whitelabel";
