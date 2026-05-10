@@ -492,6 +492,12 @@ export default function BedManagementPage() {
                     </Button>
                   </div>
                 </div>
+
+                <div className="pt-4 border-t flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setSelectedBed(null)}>
+                    <ArrowRight className="h-4 w-4 mr-1 rotate-180" /> Voltar
+                  </Button>
+                </div>
               </div>
             </>
           )}
