@@ -295,7 +295,7 @@ export default function BedManagementPage() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-[1600px]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
@@ -491,6 +491,12 @@ export default function BedManagementPage() {
                       Forçar disponível
                     </Button>
                   </div>
+                </div>
+
+                <div className="pt-4 border-t flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setSelectedBed(null)}>
+                    <ArrowRight className="h-4 w-4 mr-1 rotate-180" /> Voltar
+                  </Button>
                 </div>
               </div>
             </>
