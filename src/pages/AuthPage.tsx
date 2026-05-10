@@ -378,32 +378,6 @@ export default function AuthPage() {
                     </Select>
                   </div>
 
-                  {/* Department Selection */}
-                  <div className="group">
-                    <Label htmlFor="department-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
-                      Setor
-                    </Label>
-                    <Select
-                      value={selectedDepartment}
-                      onValueChange={(value: Department) => setSelectedDepartment(value)}
-                      disabled={loading}
-                    >
-                      <SelectTrigger 
-                        id="department-select-desktop"
-                        className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900"
-                      >
-                        <SelectValue placeholder="Selecione o setor" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
-                        {DEPARTMENTS.map((dept) => (
-                          <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                            {dept}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
                   {/* User Type Selection */}
                   <div className="group">
                     <Label htmlFor="usertype-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
@@ -436,6 +410,32 @@ export default function AuthPage() {
                         <SelectItem value="gestao" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                           GESTÃO
                         </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Department Selection - amplo para admin/gestão */}
+                  <div className="group">
+                    <Label htmlFor="department-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
+                      Setor {(selectedUserType === "administrativo" || selectedUserType === "gestao") && <span className="text-[#013ba6] normal-case font-normal">(acesso amplo)</span>}
+                    </Label>
+                    <Select
+                      value={selectedDepartment}
+                      onValueChange={(value: Department) => setSelectedDepartment(value)}
+                      disabled={loading || selectedUserType === "administrativo" || selectedUserType === "gestao"}
+                    >
+                      <SelectTrigger 
+                        id="department-select-desktop"
+                        className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-60"
+                      >
+                        <SelectValue placeholder={(selectedUserType === "administrativo" || selectedUserType === "gestao") ? "TODOS OS SETORES" : "Selecione o setor"} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
+                        {DEPARTMENTS.map((dept) => (
+                          <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                            {dept}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -677,36 +677,6 @@ export default function AuthPage() {
                   </Select>
                 </div>
 
-                {/* Department Selection */}
-                <div className="space-y-0.5">
-                  <Label 
-                    htmlFor="department-select-mobile" 
-                    className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
-                  >
-                    <Building2 className="h-2.5 w-2.5 text-gray-500" />
-                    SETOR
-                  </Label>
-                  <Select
-                    value={selectedDepartment}
-                    onValueChange={(value: Department) => setSelectedDepartment(value)}
-                    disabled={loading}
-                  >
-                    <SelectTrigger 
-                      id="department-select-mobile"
-                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
-                    >
-                      <SelectValue placeholder="SELECIONE O SETOR" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
-                      {DEPARTMENTS.map((dept) => (
-                        <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                          {dept}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
                 {/* User Type Selection */}
                 <div className="space-y-0.5">
                   <Label 
@@ -743,6 +713,36 @@ export default function AuthPage() {
                       <SelectItem value="gestao" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
                         GESTÃO
                       </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Department Selection - amplo para admin/gestão */}
+                <div className="space-y-0.5">
+                  <Label 
+                    htmlFor="department-select-mobile" 
+                    className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
+                  >
+                    <Building2 className="h-2.5 w-2.5 text-gray-500" />
+                    SETOR {(selectedUserType === "administrativo" || selectedUserType === "gestao") && <span className="text-[#013ba6] normal-case font-normal">(acesso amplo)</span>}
+                  </Label>
+                  <Select
+                    value={selectedDepartment}
+                    onValueChange={(value: Department) => setSelectedDepartment(value)}
+                    disabled={loading || selectedUserType === "administrativo" || selectedUserType === "gestao"}
+                  >
+                    <SelectTrigger 
+                      id="department-select-mobile"
+                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-60"
+                    >
+                      <SelectValue placeholder={(selectedUserType === "administrativo" || selectedUserType === "gestao") ? "TODOS OS SETORES" : "SELECIONE O SETOR"} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
+                      {DEPARTMENTS.map((dept) => (
+                        <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
+                          {dept}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
