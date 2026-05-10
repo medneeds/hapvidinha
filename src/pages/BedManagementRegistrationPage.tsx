@@ -28,6 +28,7 @@ import {
   BED_STATUS_COLORS,
 } from "@/hooks/useManagedBeds";
 import { toast } from "sonner";
+import { BedPageHeader } from "@/components/bed-panel/BedPageHeader";
 
 export default function BedManagementRegistrationPage() {
   const { beds, loading, createBed, deleteBed } = useManagedBeds();
