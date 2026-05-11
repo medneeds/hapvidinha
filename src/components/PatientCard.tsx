@@ -1,4 +1,3 @@
-import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { useState, useRef, useEffect, useCallback, useMemo, memo } from "react";
 import { Patient, SectorType, MedicalResponsibility } from "@/types/patient";
 import { Card } from "@/components/ui/card";
@@ -18,7 +17,6 @@ import { InternmentStatusDialog } from "./InternmentStatusDialog";
 import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
 import { ApplyTemplateDialog } from "./ApplyTemplateDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
-import { ExaminusAIDialog } from "./ExaminusAIDialog";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
 import { PalliativeButterflyIcon } from "./PalliativeButterflyIcon";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
@@ -800,7 +798,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
   const [applyTemplateDialogOpen, setApplyTemplateDialogOpen] = useState(false);
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
-  const [examinusAIDialogOpen, setExaminusAIDialogOpen] = useState(false);
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
   const [bedPickerSector, setBedPickerSector] = useState<Patient['sector'] | null>(null);
   const [bedSwapOpen, setBedSwapOpen] = useState(false);
@@ -3547,29 +3544,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <div className="flex flex-col md:col-span-3 relative">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
-                {FEATURE_FLAGS.EXAMINUS_AI_ENABLED && (
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setExaminusAIDialogOpen(true)}
-                  className="h-4 w-4 p-0.5 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110 hover:shadow-lg print:hidden group"
-                  title="Examinus AI - Importar exames com IA"
-                  style={{ color: sectorColorMap[patient.sector] }}
-                >
-                  <Sparkles 
-                    className="h-3.5 w-3.5 transition-all duration-300" 
-                    style={{
-                      filter: 'drop-shadow(0 0 0px transparent)',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.filter = `drop-shadow(0 0 8px ${sectorColorMap[patient.sector]})`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.filter = 'drop-shadow(0 0 0px transparent)';
-                    }}
-                  />
-                </Button>
-                )}
                 <Button
                   size="icon"
                   variant="ghost"
