@@ -1,3 +1,4 @@
+import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { useState, useEffect } from "react";
 import { ClinikusAIDialog } from "@/components/ClinikusAIDialog";
 import { supabase } from "@/integrations/supabase/client";

@@ -1,3 +1,4 @@
+import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { useState, useRef, useEffect, useCallback, useMemo, memo } from "react";
 import { Patient, SectorType, MedicalResponsibility } from "@/types/patient";
 import { Card } from "@/components/ui/card";
