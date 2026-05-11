@@ -26,6 +26,7 @@ import SadtPage from "./pages/SadtPage";
 import MovementsPage from "./pages/MovementsPage";
 import AuthPage from "./pages/AuthPage";
 import IAPage from "./pages/IAPage";
+import { FEATURE_FLAGS } from "@/config/featureFlags";
 import InternmentHistoryPage from "./pages/InternmentHistoryPage";
 import DashboardPage from "./pages/DashboardPage";
 import PriorizacaoCirurgicaPage from "./pages/PriorizacaoCirurgicaPage";
