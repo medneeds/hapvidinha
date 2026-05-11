@@ -427,8 +427,6 @@ function SlideDemoCollapsed({ isActive }: SlideProps) {
             { icon: History, label: "Movimentações" },
             { icon: ScrollText, label: "Evoluções Clínicas" },
             { icon: BarChart3, label: "Relatório Clínico" },
-            { icon: Microscope, label: "Examinus AI" },
-            { icon: BrainCircuit, label: "Clinicus AI" },
             { icon: Pill, label: "Alto Custo" },
             { icon: Syringe, label: "Hemoderivados" },
             { icon: HeartPulse, label: "Protocolo Sepse" },
@@ -754,8 +752,6 @@ function SlideDemoSidebar({ isActive }: SlideProps) {
       title: "Inteligência & Documentos",
       items: [
         { icon: BarChart3, label: "Relatório Clínico", desc: "Analytics com gráficos de movimentação e sugestões de gestão" },
-        { icon: BrainCircuit, label: "Clinicus AI", desc: "Suporte à decisão clínica com inteligência artificial" },
-        { icon: Microscope, label: "Examinus AI", desc: "Registro e interpretação de exames laboratoriais" },
         { icon: FileText, label: "Documentos da Rede", desc: "Repositório completo de fichas, protocolos e guias" },
       ],
     },
@@ -1251,7 +1247,6 @@ const slides = [
   SlideInternmentPSM,   // 10 - Internação & Carências
   SlideDocuments,       // 11 - Documentos
   SlideMedicalTeam,     // 12 - Responsabilidade Médica
-  SlideExaminus,        // 13 - Examinus AI
   SlideAnalytics,       // 14 - Analytics
   SlideTraceability,    // 15 - Rastreabilidade
   SlideClosing,         // 16 - Encerramento
