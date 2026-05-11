@@ -136,11 +136,11 @@ export function AppSidebar({
          { name: "RELATÓRIOS EMITIDOS", link: "/report-history" },
        ],
      },
-    {
+    ...(FEATURE_FLAGS.EXAMINUS_AI_ENABLED ? [{
       title: "EXAMINUS AI",
       icon: Sparkles,
       link: "/ia",
-    },
+    }] : []),
     {
       title: "VERSÕES",
       icon: History,

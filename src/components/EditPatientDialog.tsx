@@ -216,7 +216,7 @@ export function EditPatientDialog({
                   História Admissional / Anamnese
                 </Label>
                 <div className="flex items-center gap-1">
-                  {clinicusEnabled && (
+                  {FEATURE_FLAGS.CLINIKUS_AI_ENABLED && clinicusEnabled && (
                     <Button
                       type="button"
                       size="sm"

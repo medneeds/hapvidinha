@@ -538,7 +538,7 @@ export default function UserManagementPage() {
         <UserMonitoringPanel />
 
         {/* Clinicus Access Panel */}
-        {isGestorMaster && <ClinicusAccessPanel />}
+        {FEATURE_FLAGS.CLINIKUS_AI_ENABLED && isGestorMaster && <ClinicusAccessPanel />}
 
         {/* Password Reset Requests Panel */}
         <PasswordResetRequestsPanel />

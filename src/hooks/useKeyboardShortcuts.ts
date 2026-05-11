@@ -16,7 +16,7 @@ export const SHORTCUT_GROUPS: ShortcutGroup[] = [
       { keys: ["Alt", "H"], description: "Histórico de Internações" },
       { keys: ["Alt", "C"], description: "Códigos Médicos" },
       { keys: ["Alt", "D"], description: "Documentos" },
-      { keys: ["Alt", "I"], description: "Examinus AI" },
+      
       { keys: ["Alt", "V"], description: "Versões" },
       { keys: ["Alt", "T"], description: "Templates Terapêuticos" },
     ],
