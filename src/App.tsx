@@ -269,16 +269,18 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/ia"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <IAPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
+        {FEATURE_FLAGS.EXAMINUS_AI_ENABLED && (
+          <Route
+            path="/ia"
+            element={
+              <ProtectedRoute>
+                <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                  <IAPage />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+        )}
         <Route
           path="/internment-history"
           element={
