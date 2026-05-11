@@ -1,4 +1,3 @@
-import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,7 +56,6 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { EditUserCredentialsDialog } from "@/components/EditUserCredentialsDialog";
 import { CreateUserDialog } from "@/components/CreateUserDialog";
-import { ClinicusAccessPanel } from "@/components/ClinicusAccessPanel";
 
 interface UserProfile {
   id: string;
@@ -537,9 +535,6 @@ export default function UserManagementPage() {
 
         {/* User Monitoring Panel */}
         <UserMonitoringPanel />
-
-        {/* Clinicus Access Panel */}
-        {FEATURE_FLAGS.CLINIKUS_AI_ENABLED && isGestorMaster && <ClinicusAccessPanel />}
 
         {/* Password Reset Requests Panel */}
         <PasswordResetRequestsPanel />
