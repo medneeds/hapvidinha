@@ -25,8 +25,6 @@ import AltoCustoPage from "./pages/AltoCustoPage";
 import SadtPage from "./pages/SadtPage";
 import MovementsPage from "./pages/MovementsPage";
 import AuthPage from "./pages/AuthPage";
-import IAPage from "./pages/IAPage";
-import { FEATURE_FLAGS } from "@/config/featureFlags";
 import InternmentHistoryPage from "./pages/InternmentHistoryPage";
 import DashboardPage from "./pages/DashboardPage";
 import PriorizacaoCirurgicaPage from "./pages/PriorizacaoCirurgicaPage";
@@ -270,18 +268,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        {FEATURE_FLAGS.EXAMINUS_AI_ENABLED && (
-          <Route
-            path="/ia"
-            element={
-              <ProtectedRoute>
-                <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                  <IAPage />
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-        )}
         <Route
           path="/internment-history"
           element={
