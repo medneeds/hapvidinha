@@ -1,3 +1,4 @@
+import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { useState, useEffect } from "react";
 import { ClinikusAIDialog } from "@/components/ClinikusAIDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -216,7 +217,7 @@ export function EditPatientDialog({
                   História Admissional / Anamnese
                 </Label>
                 <div className="flex items-center gap-1">
-                  {clinicusEnabled && (
+                  {FEATURE_FLAGS.CLINIKUS_AI_ENABLED && clinicusEnabled && (
                     <Button
                       type="button"
                       size="sm"

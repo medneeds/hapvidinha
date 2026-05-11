@@ -1,3 +1,4 @@
+import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { useState, useRef, useEffect, useCallback, useMemo, memo } from "react";
 import { Patient, SectorType, MedicalResponsibility } from "@/types/patient";
 import { Card } from "@/components/ui/card";
@@ -3546,6 +3547,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <div className="flex flex-col md:col-span-3 relative">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
+                {FEATURE_FLAGS.EXAMINUS_AI_ENABLED && (
                 <Button
                   size="icon"
                   variant="ghost"
@@ -3567,6 +3569,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     }}
                   />
                 </Button>
+                )}
                 <Button
                   size="icon"
                   variant="ghost"

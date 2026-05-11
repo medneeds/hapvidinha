@@ -1,3 +1,4 @@
+import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -538,7 +539,7 @@ export default function UserManagementPage() {
         <UserMonitoringPanel />
 
         {/* Clinicus Access Panel */}
-        {isGestorMaster && <ClinicusAccessPanel />}
+        {FEATURE_FLAGS.CLINIKUS_AI_ENABLED && isGestorMaster && <ClinicusAccessPanel />}
 
         {/* Password Reset Requests Panel */}
         <PasswordResetRequestsPanel />
