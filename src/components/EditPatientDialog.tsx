@@ -1,8 +1,4 @@
-import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { useState, useEffect } from "react";
-import { ClinikusAIDialog } from "@/components/ClinikusAIDialog";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import { Patient, PatientCategory } from "@/types/patient";
 import {
   Dialog,
@@ -111,26 +107,10 @@ export function EditPatientDialog({
   onOpenChange,
   onSave,
 }: EditPatientDialogProps) {
-  const { user } = useAuth();
   const [formData, setFormData] = useState(patient);
   const [admissionHistoryLocal, setAdmissionHistoryLocal] = useState("");
   const { currentDepartment } = useDepartment();
   const isUti = currentDepartment === "UTI";
-  const [clinikusOpen, setClinikusOpen] = useState(false);
-  const [clinicusEnabled, setClinicusEnabled] = useState(false);
-
-  useEffect(() => {
-    if (open && user?.id) {
-      supabase
-        .from("clinicus_access")
-        .select("enabled")
-        .eq("user_id", user.id)
-        .maybeSingle()
-        .then(({ data }) => {
-          setClinicusEnabled(data?.enabled ?? false);
-        });
-    }
-  }, [open, user?.id]);
 
   // Reset form data when patient changes or dialog opens
   useEffect(() => {
@@ -217,18 +197,6 @@ export function EditPatientDialog({
                   História Admissional / Anamnese
                 </Label>
                 <div className="flex items-center gap-1">
-                  {FEATURE_FLAGS.CLINIKUS_AI_ENABLED && clinicusEnabled && (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setClinikusOpen(true)}
-                      className="h-6 px-2 text-xs gap-1 border-primary/50 bg-primary/5 text-primary hover:bg-primary/15 font-semibold"
-                    >
-                      <Brain className="h-3 w-3" />
-                      Clinicus IA
-                    </Button>
-                  )}
                   <Button
                     type="button"
                     size="sm"
@@ -433,11 +401,6 @@ export function EditPatientDialog({
         </div>
       </DialogContent>
 
-      <ClinikusAIDialog
-        open={clinikusOpen}
-        onOpenChange={setClinikusOpen}
-        onImport={(text) => setAdmissionHistoryLocal(text)}
-      />
     </Dialog>
   );
 }

@@ -8,11 +8,11 @@ import {
   Monitor, Shield, FileText, Activity, Users, Clock,
   ArrowRight, Stethoscope, ClipboardList, BarChart3,
   Heart, AlertTriangle, CheckCircle, Eye, Layers,
-  Bed, Network, BrainCircuit, History, Siren,
+  Bed, Network, History, Siren,
   FileCheck, Pill, BookOpen, TrendingUp, Target,
   ArrowUpCircle, Timer, Handshake, Database,
-  Download, Quote, Microscope, Baby, Sparkles,
-  FileWarning, Zap, Search, LayoutDashboard,
+  Download, Quote, Baby, Sparkles,
+  FileWarning, LayoutDashboard,
   ChevronDown, ChevronUp, GripVertical, Circle,
   MapPin, Home, Clipboard, Settings, LogOut,
   PanelLeftClose, MoreHorizontal, Pencil, Trash2,
@@ -427,8 +427,6 @@ function SlideDemoCollapsed({ isActive }: SlideProps) {
             { icon: History, label: "Movimentações" },
             { icon: ScrollText, label: "Evoluções Clínicas" },
             { icon: BarChart3, label: "Relatório Clínico" },
-            { icon: Microscope, label: "Examinus AI" },
-            { icon: BrainCircuit, label: "Clinicus AI" },
             { icon: Pill, label: "Alto Custo" },
             { icon: Syringe, label: "Hemoderivados" },
             { icon: HeartPulse, label: "Protocolo Sepse" },
@@ -754,8 +752,6 @@ function SlideDemoSidebar({ isActive }: SlideProps) {
       title: "Inteligência & Documentos",
       items: [
         { icon: BarChart3, label: "Relatório Clínico", desc: "Analytics com gráficos de movimentação e sugestões de gestão" },
-        { icon: BrainCircuit, label: "Clinicus AI", desc: "Suporte à decisão clínica com inteligência artificial" },
-        { icon: Microscope, label: "Examinus AI", desc: "Registro e interpretação de exames laboratoriais" },
         { icon: FileText, label: "Documentos da Rede", desc: "Repositório completo de fichas, protocolos e guias" },
       ],
     },
@@ -969,68 +965,6 @@ function SlideMedicalTeam({ isActive }: SlideProps) {
   );
 }
 
-// ─── SLIDE 13: EXAMINUS AI ───────────────────────────────────────────────────
-function SlideExaminus({ isActive }: SlideProps) {
-  const benefits = [
-    { icon: Zap, title: "Velocidade", desc: "Registro de exames em segundos ao invés de minutos — basta colar o texto bruto." },
-    { icon: Search, title: "Rastreamento Inteligente", desc: "Identifica automaticamente exames críticos: anemia, disfunção renal, alterações hepáticas." },
-    { icon: Microscope, title: "Formatação Automática", desc: "Transforma textos desorganizados em dados estruturados e legíveis no card do paciente." },
-    { icon: Target, title: "Foco no que Importa", desc: "Filtro de resultados relevantes permite visualização condensada dos achados clínicos." },
-  ];
-
-  return (
-    <div className="h-full w-full flex flex-col p-16" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)" }}>
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
-        <p className="text-sm font-semibold tracking-widest uppercase text-emerald-400">Inteligência Artificial</p>
-        <h2 className="text-5xl font-bold text-white mt-2 flex items-center gap-4">
-          <Microscope className="h-12 w-12 text-emerald-400" />
-          Examinus AI
-        </h2>
-        <p className="text-xl text-gray-400 mt-3">Agilidade no registro e interpretação de exames laboratoriais com inteligência artificial.</p>
-      </motion.div>
-
-      <div className="flex-1 flex items-center gap-10 mt-8">
-        <div className="flex-1 grid grid-cols-2 gap-5">
-          {benefits.map((b, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={isActive ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 + i * 0.15, duration: 0.5 }}
-              className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
-              <b.icon className="h-8 w-8 text-emerald-400 mb-3" />
-              <h3 className="font-bold text-white text-lg">{b.title}</h3>
-              <p className="text-gray-400 text-sm mt-2">{b.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        <motion.div initial={{ opacity: 0, x: 40 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.8, duration: 0.6 }}
-          className="flex-1 bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
-          <h3 className="text-xl font-bold text-white mb-6">Fluxo de Trabalho</h3>
-          <div className="space-y-5">
-            {[
-              { step: "1", text: "Médico cola o texto bruto dos exames" },
-              { step: "2", text: "IA identifica e formata automaticamente cada resultado" },
-              { step: "3", text: "Revisão pré-importação com filtro de resultados críticos" },
-              { step: "4", text: "Aprovação e integração automática ao card do paciente" },
-            ].map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={isActive ? { opacity: 1, x: 0 } : {}} transition={{ delay: 1 + i * 0.15, duration: 0.4 }}
-                className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-emerald-400 font-bold">{item.step}</span>
-                </div>
-                <p className="text-gray-300">{item.text}</p>
-              </motion.div>
-            ))}
-          </div>
-          <div className="mt-6 bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/20">
-            <p className="text-emerald-300 text-sm">
-              <strong>Resultado:</strong> O médico ganha tempo significativo e mantém registros completos e padronizados.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
 // ─── SLIDE 14: ANALYTICS E IA ────────────────────────────────────────────────
 function SlideAnalytics({ isActive }: SlideProps) {
   const movementData = [
@@ -1096,7 +1030,6 @@ function SlideAnalytics({ isActive }: SlideProps) {
           <div className="grid grid-cols-2 gap-4">
             {[
               { icon: BarChart3, title: "Dashboard Analítico", desc: "KPIs em tempo real de todo o cenário clínico" },
-              { icon: BrainCircuit, title: "Clinicus AI", desc: "Suporte à decisão clínica com IA" },
               { icon: TrendingUp, title: "Relatório Clínico", desc: "Análise sindrômica, recorrência e gravidade" },
               { icon: Timer, title: "DHD & Permanência", desc: "Dose/Habitante/Dia e tempo em observação" },
             ].map((feat, i) => (
@@ -1251,7 +1184,6 @@ const slides = [
   SlideInternmentPSM,   // 10 - Internação & Carências
   SlideDocuments,       // 11 - Documentos
   SlideMedicalTeam,     // 12 - Responsabilidade Médica
-  SlideExaminus,        // 13 - Examinus AI
   SlideAnalytics,       // 14 - Analytics
   SlideTraceability,    // 15 - Rastreabilidade
   SlideClosing,         // 16 - Encerramento

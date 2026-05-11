@@ -1,4 +1,3 @@
-import { FEATURE_FLAGS } from "@/config/featureFlags";
 import {
   FileSearch,
   Users,
@@ -9,7 +8,6 @@ import {
   History,
   User,
   FolderOpen,
-  Sparkles,
   BarChart3,
   LockKeyhole,
   Shield,
@@ -137,11 +135,6 @@ export function AppSidebar({
          { name: "RELATÓRIOS EMITIDOS", link: "/report-history" },
        ],
      },
-    ...(FEATURE_FLAGS.EXAMINUS_AI_ENABLED ? [{
-      title: "EXAMINUS AI",
-      icon: Sparkles,
-      link: "/ia",
-    }] : []),
     {
       title: "VERSÕES",
       icon: History,
@@ -168,7 +161,7 @@ export function AppSidebar({
 
   // Filtra itens de menu baseado no papel do usuário
   const baseMenuItems = isDoorUser 
-    ? allMenuItems.filter(item => item.title === "MAPA" || (FEATURE_FLAGS.EXAMINUS_AI_ENABLED && item.title === "EXAMINUS AI"))
+    ? allMenuItems.filter(item => item.title === "MAPA")
     : isRecepcao
     ? allMenuItems.filter(item => item.title === "MAPA")
     : isEnfermagem
