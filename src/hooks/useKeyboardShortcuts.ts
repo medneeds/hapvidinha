@@ -61,7 +61,6 @@ export function useKeyboardShortcuts({ onShowHelp }: UseKeyboardShortcutsOptions
         h: "/internment-history",
         c: "/codigos",
         d: "/documents",
-        i: "/ia",
         v: "/versions",
         t: "/therapeutic-templates",
         k: "__help__",
