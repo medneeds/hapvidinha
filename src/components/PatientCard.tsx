@@ -17,6 +17,7 @@ import { InternmentStatusDialog } from "./InternmentStatusDialog";
 import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
 import { ApplyTemplateDialog } from "./ApplyTemplateDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
+import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
 import { PalliativeButterflyIcon } from "./PalliativeButterflyIcon";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
@@ -3544,27 +3545,29 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <div className="flex flex-col md:col-span-3 relative">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setExamCurvesDialogOpen(true)}
-                  className="h-4 w-4 p-0.5 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110 hover:shadow-lg print:hidden group"
-                  title="Adicionar Curva de Exames"
-                  style={{ color: sectorColorMap[patient.sector] }}
-                >
-                  <TrendingUp 
-                    className="h-3.5 w-3.5 transition-all duration-300" 
-                    style={{
-                      filter: 'drop-shadow(0 0 0px transparent)',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.filter = `drop-shadow(0 0 8px ${sectorColorMap[patient.sector]})`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.filter = 'drop-shadow(0 0 0px transparent)';
-                    }}
-                  />
-                </Button>
+                {FEATURE_FLAGS.EXAMINUS_AI_ENABLED && (
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setExamCurvesDialogOpen(true)}
+                    className="h-4 w-4 p-0.5 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110 hover:shadow-lg print:hidden group"
+                    title="Adicionar Curva de Exames"
+                    style={{ color: sectorColorMap[patient.sector] }}
+                  >
+                    <TrendingUp
+                      className="h-3.5 w-3.5 transition-all duration-300"
+                      style={{
+                        filter: 'drop-shadow(0 0 0px transparent)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.filter = `drop-shadow(0 0 8px ${sectorColorMap[patient.sector]})`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.filter = 'drop-shadow(0 0 0px transparent)';
+                      }}
+                    />
+                  </Button>
+                )}
               </div>
               <DndContext
                 sensors={sensors}
