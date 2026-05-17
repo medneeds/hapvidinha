@@ -1067,12 +1067,9 @@ export function UtiPatientCard({
                 
                 {/* Bed Number - Compact */}
                 <div className={cn("shrink-0 px-1.5 py-0.5 rounded border", colors.bedBg)}>
-                  <InlineEditableField
-                    value={patient.bedNumber}
-                    onUpdate={(v) => handleUpdateField("bedNumber", v)}
-                    placeholder="LEITO"
-                    className={cn("text-xs font-bold w-8 md:w-10 text-center", colors.bedText)}
-                  />
+                  <span className={cn("text-xs font-bold w-8 md:w-10 text-center inline-block", colors.bedText)}>
+                    {patient.bedNumber}
+                  </span>
                 </div>
                 
                 {/* Patient Name + Birth Date + Age - Flexible grow */}
