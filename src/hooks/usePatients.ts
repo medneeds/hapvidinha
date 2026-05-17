@@ -417,17 +417,21 @@ export function usePatients(department?: Department) {
 
   const deletePatient = async (patientId: string, options = { showToast: true, updateLocalState: true }) => {
     try {
-      // Determine if this is a fixed bed in V/A/Z (Urgência) — those must be
-      // PRESERVED as vacant slots (like UTI), never physically removed.
+      // Determine if this is a fixed bed — V/A/Z (Urgência) or U01-U10 (UTI).
+      // Fixed beds must be PRESERVED as vacant slots, never physically removed.
       const target = patients.find(p => p.id === patientId);
       const isFixedEmergencyBed =
         target &&
         target.sector !== 'outside' &&
         ['red', 'yellow', 'blue'].includes(target.sector) &&
         /^[VAZ]\d{2}$/.test(target.bedNumber); // V01-V07, A01-A06, Z01-Z06
+      const isFixedUtiBed =
+        target &&
+        (target as any).department === 'UTI' &&
+        /^U(0[1-9]|10)$/.test(target.bedNumber); // U01-U10 (UTI 1 & UTI 2)
 
-      if (isFixedEmergencyBed) {
-        console.log('Vacating fixed emergency bed (preserving slot):', target.bedNumber);
+      if (isFixedEmergencyBed || isFixedUtiBed) {
+        console.log('Vacating fixed bed (preserving slot):', target.bedNumber);
 
         const { error } = await supabase
           .from('patients')
@@ -454,6 +458,17 @@ export function usePatients(department?: Department) {
             highlighted_medical_history: [],
             highlighted_conducts: [],
             highlighted_pendencies: [],
+            // Clear UTI-specific fields when vacating a UTI fixed bed
+            uti_admission_date: null,
+            uti_admission_reason: null,
+            uti_allergies: null,
+            uti_current_status: null,
+            uti_devices: null,
+            uti_cultures_antibiotics: null,
+            uti_specialties: null,
+            uti_origin_sector: null,
+            uti_discharge_prediction: null,
+            uti_daily_conducts: null,
             is_vacant: true,
             bed_status: 'available',
             bed_maintenance_reason: null,
