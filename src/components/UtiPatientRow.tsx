@@ -405,6 +405,7 @@ function FieldCell({ field, patient, onUpdateField }: FieldCellProps) {
                 {hasContent ? singleValue : <span className="text-muted-foreground/50">-</span>}
               </span>
             )
+          )
         )}
       </div>
     </div>
