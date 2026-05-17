@@ -390,16 +390,21 @@ function FieldCell({ field, patient, onUpdateField }: FieldCellProps) {
               </Button>
             </div>
           ) : (
-            <span 
-              className="cursor-pointer hover:text-primary transition-colors"
-              onClick={() => {
-                setSingleEditValue(singleValue);
-                setIsEditingSingle(true);
-              }}
-            >
-              {hasContent ? singleValue : <span className="text-muted-foreground/50">-</span>}
-            </span>
-          )
+            field.key === "bedNumber" ? (
+              <span className="cursor-default">
+                {hasContent ? singleValue : <span className="text-muted-foreground/50">-</span>}
+              </span>
+            ) : (
+              <span 
+                className="cursor-pointer hover:text-primary transition-colors"
+                onClick={() => {
+                  setSingleEditValue(singleValue);
+                  setIsEditingSingle(true);
+                }}
+              >
+                {hasContent ? singleValue : <span className="text-muted-foreground/50">-</span>}
+              </span>
+            )
         )}
       </div>
     </div>
