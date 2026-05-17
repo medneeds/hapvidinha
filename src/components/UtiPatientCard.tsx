@@ -1021,24 +1021,6 @@ export function UtiPatientCard({
                 <UserPlus className="h-3.5 w-3.5" />
                 Liberar para Preenchimento
               </Button>
-              {onDelete && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
-                      <MoreVertical className="h-3 w-3" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50 w-40">
-                    <DropdownMenuItem 
-                      onClick={() => onDelete(patient.id)}
-                      className="text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Excluir Leito
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
             </div>
           </div>
         ) : (
@@ -1371,18 +1353,6 @@ export function UtiPatientCard({
                     </>
                   )}
                   
-                  {onDelete && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem 
-                        onClick={() => onDelete(patient.id)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Excluir Leito
-                      </DropdownMenuItem>
-                    </>
-                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
               <CollapsibleTrigger asChild>
