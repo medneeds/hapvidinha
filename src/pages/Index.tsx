@@ -31,6 +31,7 @@ import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentCon
 import { supabase } from "@/integrations/supabase/client";
 import { usePrivacy } from "@/contexts/PrivacyContext";
 import { getNextBedNumber } from "@/utils/bedNaming";
+import { vacateOrDeletePatient, isFixedBed } from "@/utils/bedVacancy";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import NotesTabOptimized from "@/components/resources/NotesTabOptimized";
@@ -524,10 +525,28 @@ const Index = () => {
 
   const handleDeletePatient = async (patientId: string) => {
     saveToHistory(patients);
+    const patient = patients.find(p => p.id === patientId);
     try {
-      await dbDeletePatient(patientId);
+      if (patient && isFixedBed(currentDepartment, patient.sector, patient.bedNumber)) {
+        // Fixed-capacity slot: vacate, don't delete
+        const { error } = await vacateOrDeletePatient({
+          id: patientId,
+          department: currentDepartment,
+          sector: patient.sector,
+          bedNumber: patient.bedNumber,
+        });
+        if (error) throw error;
+        await refetch();
+      } else {
+        await dbDeletePatient(patientId);
+      }
     } catch (error) {
-      console.error("Failed to delete patient:", error);
+      console.error("Failed to delete/vacate patient:", error);
+      toast({
+        title: "Erro ao liberar leito",
+        description: "Não foi possível liberar o leito. Tente novamente.",
+        variant: "destructive",
+      });
     }
   };
 
