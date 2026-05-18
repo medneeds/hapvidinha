@@ -1,0 +1,1 @@
+DELETE FROM public.patients WHERE department = 'UTI' AND bed_number IN ('U11','Z01','A01');
