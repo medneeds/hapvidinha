@@ -225,13 +225,15 @@ export function usePatients(department?: Department) {
 
   const updatePatient = async (patientId: string, updates: Partial<Patient>) => {
     try {
+      const currentPatient = patients.find(p => p.id === patientId);
+      const isProtectedUtiSlot = department === 'UTI' && isFixedUtiBed(currentPatient?.sector, currentPatient?.bedNumber);
       const dbUpdates: any = {};
       
-      if (updates.bedNumber !== undefined) dbUpdates.bed_number = updates.bedNumber;
+      if (updates.bedNumber !== undefined && !isProtectedUtiSlot) dbUpdates.bed_number = updates.bedNumber;
       if (updates.name !== undefined) dbUpdates.name = updates.name;
       if (updates.age !== undefined) dbUpdates.age = typeof updates.age === 'number' ? updates.age.toString() : updates.age;
       if (updates.birthDate !== undefined) dbUpdates.birth_date = birthDateToISO(updates.birthDate);
-      if (updates.sector !== undefined) dbUpdates.sector = updates.sector;
+      if (updates.sector !== undefined && !isProtectedUtiSlot) dbUpdates.sector = updates.sector;
       if (updates.diagnoses !== undefined) dbUpdates.diagnoses = updates.diagnoses.join('\n');
       if (updates.medicalHistory !== undefined) dbUpdates.medical_history = updates.medicalHistory.join('\n');
       if (updates.relevantExams !== undefined) dbUpdates.relevant_exams = updates.relevantExams.join('\n');
@@ -478,7 +480,7 @@ export function usePatients(department?: Department) {
         /^[VAZ]\d{2}$/.test(target.bedNumber); // V01-V07, A01-A06, Z01-Z06
       const isFixedUtiBed =
         target &&
-        (target as any).department === 'UTI' &&
+        department === 'UTI' &&
         /^U(0[1-9]|10)$/.test(target.bedNumber); // U01-U10 (UTI 1 & UTI 2)
 
       if (isFixedEmergencyBed || isFixedUtiBed) {
