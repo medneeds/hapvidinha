@@ -1420,7 +1420,6 @@ const Index = () => {
                         sector="blue"
                         patients={patients.filter(p => p.sector === 'blue' || p.sector === 'red').map(p => ({ ...p, sector: 'blue' as const }))}
                         onUpdatePatient={handleUpdatePatient}
-                        onDeletePatient={handleDeletePatient}
                         onUndeletePatient={handleUndeletePatient}
                         onPrintSector={() => handlePrintSector("blue")}
                         onAddExtraBed={() => { handleAddExtraBed("blue"); }}
@@ -1443,7 +1442,6 @@ const Index = () => {
                         sector="yellow"
                         patients={patients.filter(p => p.sector === 'yellow').map(p => ({ ...p, sector: 'yellow' as const }))}
                         onUpdatePatient={handleUpdatePatient}
-                        onDeletePatient={handleDeletePatient}
                         onUndeletePatient={handleUndeletePatient}
                         onPrintSector={() => handlePrintSector("yellow")}
                         onAddExtraBed={() => { handleAddExtraBed("yellow"); }}

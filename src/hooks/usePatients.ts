@@ -7,6 +7,10 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatBirthDateDisplay, birthDateToISO } from "@/utils/calculateDetailedAge";
 
+const UTI_FIXED_BEDS = Array.from({ length: 10 }, (_, index) => `U${String(index + 1).padStart(2, '0')}`);
+const isFixedUtiBed = (sector?: string, bedNumber?: string) =>
+  (sector === 'blue' || sector === 'yellow') && !!bedNumber && /^U(0[1-9]|10)$/.test(bedNumber);
+
 export function usePatients(department?: Department) {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,7 +84,54 @@ export function usePatients(department?: Department) {
         }
       }
 
-      const mappedPatients: Patient[] = (data || []).map(p => ({
+      // Self-heal: UTI 1 (blue) and UTI 2 (yellow) are fixed capacity units.
+      // U01-U10 must always exist in both units and must never be physically deleted.
+      if (department === 'UTI') {
+        const FIXED_UTI_BEDS: { bed_number: string; sector: string; display_order: number }[] = [
+          ...UTI_FIXED_BEDS.map((b, index) => ({ bed_number: b, sector: 'blue', display_order: index + 1 })),
+          ...UTI_FIXED_BEDS.map((b, index) => ({ bed_number: b, sector: 'yellow', display_order: index + 1 })),
+        ];
+        const existingKeys = new Set((data || []).map((p: any) => `${p.sector}:${p.bed_number}`));
+        const missing = FIXED_UTI_BEDS.filter(b => !existingKeys.has(`${b.sector}:${b.bed_number}`));
+        if (missing.length > 0) {
+          console.warn('[usePatients] Restaurando leitos fixos da UTI ausentes:', missing.map(m => `${m.sector}:${m.bed_number}`));
+          try {
+            await supabase.from('patients').insert(
+              missing.map(m => ({
+                bed_number: m.bed_number,
+                sector: m.sector,
+                name: '',
+                is_vacant: true,
+                bed_status: 'available',
+                display_order: m.display_order,
+                department: 'UTI',
+                state_id: currentState.id,
+                hospital_unit_id: currentHospital.id,
+              })) as any
+            );
+            const { data: refreshed } = await supabase
+              .from('patients')
+              .select('*')
+              .eq('hospital_unit_id', currentHospital.id)
+              .eq('state_id', currentState.id)
+              .eq('department', 'UTI')
+              .order('display_order')
+              .order('bed_number');
+            if (refreshed) {
+              (data as any).length = 0;
+              (data as any).push(...refreshed);
+            }
+          } catch (healErr) {
+            console.error('[usePatients] Falha ao restaurar leitos fixos da UTI:', healErr);
+          }
+        }
+      }
+
+      const visibleData = department === 'UTI'
+        ? (data || []).filter((p: any) => isFixedUtiBed(p.sector, p.bed_number))
+        : (data || []);
+
+      const mappedPatients: Patient[] = visibleData.map(p => ({
         id: p.id,
         bedNumber: p.bed_number,
         name: p.name || '',
@@ -174,13 +225,15 @@ export function usePatients(department?: Department) {
 
   const updatePatient = async (patientId: string, updates: Partial<Patient>) => {
     try {
+      const currentPatient = patients.find(p => p.id === patientId);
+      const isProtectedUtiSlot = department === 'UTI' && isFixedUtiBed(currentPatient?.sector, currentPatient?.bedNumber);
       const dbUpdates: any = {};
       
-      if (updates.bedNumber !== undefined) dbUpdates.bed_number = updates.bedNumber;
+      if (updates.bedNumber !== undefined && !isProtectedUtiSlot) dbUpdates.bed_number = updates.bedNumber;
       if (updates.name !== undefined) dbUpdates.name = updates.name;
       if (updates.age !== undefined) dbUpdates.age = typeof updates.age === 'number' ? updates.age.toString() : updates.age;
       if (updates.birthDate !== undefined) dbUpdates.birth_date = birthDateToISO(updates.birthDate);
-      if (updates.sector !== undefined) dbUpdates.sector = updates.sector;
+      if (updates.sector !== undefined && !isProtectedUtiSlot) dbUpdates.sector = updates.sector;
       if (updates.diagnoses !== undefined) dbUpdates.diagnoses = updates.diagnoses.join('\n');
       if (updates.medicalHistory !== undefined) dbUpdates.medical_history = updates.medicalHistory.join('\n');
       if (updates.relevantExams !== undefined) dbUpdates.relevant_exams = updates.relevantExams.join('\n');
@@ -427,7 +480,7 @@ export function usePatients(department?: Department) {
         /^[VAZ]\d{2}$/.test(target.bedNumber); // V01-V07, A01-A06, Z01-Z06
       const isFixedUtiBed =
         target &&
-        (target as any).department === 'UTI' &&
+        department === 'UTI' &&
         /^U(0[1-9]|10)$/.test(target.bedNumber); // U01-U10 (UTI 1 & UTI 2)
 
       if (isFixedEmergencyBed || isFixedUtiBed) {

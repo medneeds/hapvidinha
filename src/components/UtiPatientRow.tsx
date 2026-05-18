@@ -459,14 +459,6 @@ export function UtiPatientRow({
                     Imprimir
                   </DropdownMenuItem>
                 )}
-                {onDelete && (
-                  <DropdownMenuItem 
-                    onClick={() => onDelete(patient.id)}
-                    className="text-destructive"
-                  >
-                    Excluir
-                  </DropdownMenuItem>
-                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
