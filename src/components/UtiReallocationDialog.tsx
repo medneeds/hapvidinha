@@ -56,13 +56,27 @@ export function UtiReallocationDialog({
     }
   }, [isOpen]);
 
-  // Get empty beds (beds without patient name) for each unit
+  const toFirstIsoDate = (dates?: string[]) => {
+    const date = dates?.[0];
+    if (!date) return null;
+    const parts = date.split('/');
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      const parsed = new Date(`${year}-${month}-${day}`);
+      return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+    }
+    const parsed = new Date(date);
+    return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+  };
+
+  // Get fixed empty beds for each unit
   const emptyBeds = useMemo(() => {
     const uti1EmptyBeds = allPatients.filter(p => {
-      const isUti1 = p.sector === "red";
-      const isEmpty = !p.name || p.name.trim() === "";
+      const isUti1 = p.sector === "blue";
+      const isFixedBed = /^U(0[1-9]|10)$/.test(p.bedNumber);
+      const isEmpty = p.isVacant || !p.name || p.name.trim() === "";
       const isNotCurrentPatient = p.id !== patient?.id;
-      return isUti1 && isEmpty && isNotCurrentPatient;
+      return isUti1 && isFixedBed && isEmpty && isNotCurrentPatient;
     }).sort((a, b) => {
       const numA = parseInt(a.bedNumber) || 0;
       const numB = parseInt(b.bedNumber) || 0;
@@ -71,9 +85,10 @@ export function UtiReallocationDialog({
 
     const uti2EmptyBeds = allPatients.filter(p => {
       const isUti2 = p.sector === "yellow";
-      const isEmpty = !p.name || p.name.trim() === "";
+      const isFixedBed = /^U(0[1-9]|10)$/.test(p.bedNumber);
+      const isEmpty = p.isVacant || !p.name || p.name.trim() === "";
       const isNotCurrentPatient = p.id !== patient?.id;
-      return isUti2 && isEmpty && isNotCurrentPatient;
+      return isUti2 && isFixedBed && isEmpty && isNotCurrentPatient;
     }).sort((a, b) => {
       const numA = parseInt(a.bedNumber) || 0;
       const numB = parseInt(b.bedNumber) || 0;
@@ -142,7 +157,7 @@ export function UtiReallocationDialog({
           highlighted_medical_history: patient.highlightedMedicalHistory || null,
           highlighted_pendencies: patient.highlightedPendencies || null,
           highlighted_conducts: patient.highlightedConducts || null,
-          uti_admission_date: patient.utiAdmissionDate?.join('\n') || null,
+          uti_admission_date: toFirstIsoDate(patient.utiAdmissionDate),
           uti_discharge_prediction: patient.utiDischargePrediction?.join('\n') || null,
           uti_allergies: patient.utiAllergies?.join('\n') || null,
           uti_admission_reason: patient.utiAdmissionReason?.join('\n') || null,
@@ -154,6 +169,8 @@ export function UtiReallocationDialog({
           uti_daily_conducts: patient.utiDailyConducts?.join('\n') || null,
           clinical_status: patient.clinicalStatus || null,
           psm_status: patient.psmStatus || null,
+          is_vacant: false,
+          bed_status: 'available',
           updated_at: new Date().toISOString(),
         })
         .eq('id', targetBedPatient.id);
@@ -189,6 +206,8 @@ export function UtiReallocationDialog({
           uti_daily_conducts: null,
           clinical_status: null,
           psm_status: null,
+          is_vacant: true,
+          bed_status: 'available',
           updated_at: new Date().toISOString(),
         })
         .eq('id', patient.id);
