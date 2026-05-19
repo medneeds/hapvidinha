@@ -90,12 +90,14 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { DeathReviewBadge } from "@/components/DeathReviewBadge";
 import { buildPatientSlotPayloadFromPatient, vacantPatientSlotPayload } from "@/utils/patientSlotPayload";
+import type { Database } from "@/integrations/supabase/types";
 
 const STORAGE_KEY = "hospital_patients_data";
 const HISTORY_KEY = "hospital_patients_history";
 const REDO_HISTORY_KEY = "hospital_patients_redo_history";
 const NOTES_KEY = "hospital_notes";
 const CHECKLIST_KEY = "hospital_checklist";
+type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
 
 interface ChecklistItem {
   id: string;
@@ -382,18 +384,19 @@ const Index = () => {
 
   const insertMovedPatient = async (patient: Patient, sector: Patient['sector'], bedNumber: string, displayOrder: number) => {
     if (!currentHospital || !currentState) throw new Error('Hospital unit and state must be selected');
+    const insertPayload: PatientInsert = {
+      bed_number: bedNumber,
+      sector,
+      department: currentDepartment,
+      state_id: currentState.id,
+      hospital_unit_id: currentHospital.id,
+      created_by: user?.id || null,
+      display_order: displayOrder,
+      ...buildPatientSlotPayloadFromPatient(patient, sector),
+    };
     const { data, error } = await supabase
       .from('patients')
-      .insert({
-        bed_number: bedNumber,
-        sector,
-        department: currentDepartment,
-        state_id: currentState.id,
-        hospital_unit_id: currentHospital.id,
-        created_by: user?.id || null,
-        display_order: displayOrder,
-        ...buildPatientSlotPayloadFromPatient(patient, sector),
-      } as any)
+      .insert(insertPayload)
       .select('id')
       .single();
     if (error) throw error;
@@ -725,7 +728,7 @@ const Index = () => {
     let newBedNumber: string;
     if (targetBedNumber) {
       // User picked a specific bed via popup. Validate not occupied (except placeholder)
-      const occupied = patientsInNewSector.some(p => p.bedNumber === targetBedNumber && !(p as any).isVacant);
+      const occupied = patientsInNewSector.some(p => p.bedNumber === targetBedNumber && !p.isVacant);
       if (occupied) {
         toast({ title: "Leito indisponível", description: `O leito ${targetBedNumber} acabou de ser ocupado. Escolha outro.`, variant: "destructive" });
         return;
@@ -754,7 +757,7 @@ const Index = () => {
             .update({
               ...buildPatientSlotPayloadFromPatient(patient, newSector),
               display_order: newDisplayOrder,
-            } as any)
+            })
             .eq('id', vacantPlaceholderId);
           if (fillError) throw fillError;
         } else if (destinationIsFixed) {
@@ -764,7 +767,7 @@ const Index = () => {
         if (originIsFixed) {
           const { error: vacateError } = await supabase
             .from('patients')
-            .update(vacantPatientSlotPayload as any)
+            .update(vacantPatientSlotPayload)
             .eq('id', patientId);
           if (vacateError) throw vacateError;
         } else {
