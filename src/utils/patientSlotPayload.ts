@@ -67,7 +67,7 @@ export const vacantPatientSlotPayload: PatientUpdate = {
   bed_maintenance_started_by: null,
 } as const;
 
-export const buildPatientSlotPayloadFromPatient = (patient: Patient, destinationSector: SectorType) => ({
+export const buildPatientSlotPayloadFromPatient = (patient: Patient, destinationSector: SectorType): PatientUpdate => ({
   name: patient.name || "",
   age: normalizedAge(patient.age),
   birth_date: birthDateToISO(patient.birthDate),
