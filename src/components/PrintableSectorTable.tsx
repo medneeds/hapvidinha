@@ -29,9 +29,9 @@ function calculateDaysInUti(admissionDate: string[] | undefined): number {
 
 const cellStyle: React.CSSProperties = {
   padding: '4px 6px',
-  fontSize: '7.5pt',
-  color: '#374151',
-  lineHeight: '1.35',
+  fontSize: '8pt',
+  color: '#1f2937',
+  lineHeight: '1.4',
   verticalAlign: 'top',
   borderBottom: '1px solid #e5e7eb',
 };
@@ -48,21 +48,57 @@ const headerCellStyle: React.CSSProperties = {
   borderBottom: '1px solid #cbd5e1',
 };
 
-function renderList(items: string[] | undefined, max?: number): JSX.Element {
-  if (!items || items.length === 0) return <span style={{ color: '#cbd5e1' }}>—</span>;
+function renderList(
+  items: string[] | undefined,
+  max?: number,
+  highlights?: number[],
+): JSX.Element {
+  if (!items || items.length === 0) {
+    return <span style={{ color: '#94a3b8' }}>—</span>;
+  }
   const visible = max ? items.slice(0, max) : items;
+  const hl = new Set(highlights ?? []);
   return (
     <>
-      {visible.map((item, idx) => (
-        <div key={idx} style={{ marginBottom: '1px' }}>
-          <span style={{ color: '#94a3b8', fontWeight: 600 }}>{idx + 1}.</span> {item}
-        </div>
-      ))}
+      {visible.map((item, idx) => {
+        const highlighted = hl.has(idx);
+        return (
+          <div
+            key={idx}
+            style={{
+              marginBottom: '2px',
+              fontWeight: highlighted ? 700 : 400,
+              color: highlighted ? '#0f172a' : '#1f2937',
+              backgroundColor: highlighted ? '#fef9c3' : 'transparent',
+              padding: highlighted ? '1px 3px' : 0,
+              borderRadius: highlighted ? '2px' : 0,
+            }}
+          >
+            <span style={{ color: '#94a3b8', fontWeight: 600 }}>{idx + 1}.</span> {item}
+          </div>
+        );
+      })}
       {max && items.length > max && (
-        <div style={{ fontSize: '6pt', color: '#94a3b8' }}>+{items.length - max}</div>
+        <div style={{ fontSize: '6.5pt', color: '#64748b', fontStyle: 'italic' }}>
+          +{items.length - max} item(ns)
+        </div>
       )}
     </>
   );
+}
+
+// Combine UTI daily conducts with schedule (programações), tagging schedule entries
+function combineConductsAndSchedule(
+  conducts: string[] | undefined,
+  schedule: string[] | undefined,
+): { items: string[]; highlights: number[] } {
+  const c = conducts ?? [];
+  const s = schedule ?? [];
+  const items = [
+    ...c,
+    ...s.map((it) => `[PROG] ${it}`),
+  ];
+  return { items, highlights: [] };
 }
 
 export function PrintableSectorTable({
@@ -78,13 +114,15 @@ export function PrintableSectorTable({
     ? (utiColorVariant === 'blue' ? '#3b82f6' : '#64748b')
     : bedColor;
 
+  const ITEM_LIMIT = isUti ? 6 : 4;
+
   return (
     <table
       style={{
         width: '100%',
         borderCollapse: 'collapse',
         tableLayout: 'fixed',
-        fontSize: '7.5pt',
+        fontSize: '8pt',
         backgroundColor: '#ffffff',
         border: '1px solid #e5e7eb',
         borderRadius: '4px',
@@ -94,11 +132,15 @@ export function PrintableSectorTable({
       <thead>
         <tr>
           <th style={{ ...headerCellStyle, width: '38px' }}>Leito</th>
-          <th style={{ ...headerCellStyle, width: '18%' }}>Paciente</th>
+          <th style={{ ...headerCellStyle, width: '20%' }}>Paciente</th>
           <th style={{ ...headerCellStyle, width: '22%' }}>Hipóteses</th>
-          <th style={{ ...headerCellStyle, width: '18%' }}>Antecedentes</th>
-          <th style={{ ...headerCellStyle, width: '20%' }}>{isUti ? 'Plano Terapêutico' : 'Exames'}</th>
-          <th style={{ ...headerCellStyle, width: '18%' }}>{isUti ? 'Pendências' : 'Programações'}</th>
+          <th style={{ ...headerCellStyle, width: '16%' }}>Antecedentes</th>
+          <th style={{ ...headerCellStyle, width: '22%' }}>
+            {isUti ? 'Condutas + Programações' : 'Exames'}
+          </th>
+          <th style={{ ...headerCellStyle, width: '18%' }}>
+            {isUti ? 'Pendências' : 'Programações'}
+          </th>
           {isUti && <th style={{ ...headerCellStyle, width: '38px', textAlign: 'center' }}>DIH</th>}
         </tr>
       </thead>
@@ -106,6 +148,13 @@ export function PrintableSectorTable({
         {visible.map((patient) => {
           const days = isUti ? calculateDaysInUti(patient.utiAdmissionDate) : 0;
           const longStay = isUti && days > 4;
+          const conductsCombined = isUti
+            ? combineConductsAndSchedule(patient.utiDailyConducts, patient.schedule)
+            : null;
+          const admissionReason = isUti && patient.utiAdmissionReason && patient.utiAdmissionReason[0]
+            ? patient.utiAdmissionReason[0]
+            : null;
+
           return (
             <tr key={patient.id} style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
               {/* Leito */}
@@ -125,31 +174,54 @@ export function PrintableSectorTable({
                 </div>
               </td>
 
-              {/* Paciente */}
+              {/* Paciente — nome, idade e identificadores */}
               <td style={cellStyle}>
-                <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '8pt' }}>
+                <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '8.5pt', lineHeight: '1.25' }}>
                   {patient.name || 'SEM NOME'}
                 </div>
-                <div style={{ fontSize: '6.5pt', color: '#64748b' }}>
+                <div style={{ fontSize: '7pt', color: '#475569', marginTop: '1px' }}>
                   {formatAgeDisplay(patient.age)}
                 </div>
+                {patient.medicalRecordNumber && (
+                  <div style={{ fontSize: '6.5pt', color: '#64748b', marginTop: '1px' }}>
+                    <span style={{ fontWeight: 600 }}>PRT:</span> {patient.medicalRecordNumber}
+                  </div>
+                )}
+                {patient.attendanceNumber && (
+                  <div style={{ fontSize: '6.5pt', color: '#64748b' }}>
+                    <span style={{ fontWeight: 600 }}>ATD:</span> {patient.attendanceNumber}
+                  </div>
+                )}
+                {admissionReason && (
+                  <div style={{ fontSize: '6.5pt', color: '#475569', marginTop: '2px', fontStyle: 'italic' }}>
+                    {admissionReason}
+                  </div>
+                )}
               </td>
 
               {/* Hipóteses */}
-              <td style={cellStyle}>{renderList(patient.diagnoses, 4)}</td>
-
-              {/* Antecedentes */}
-              <td style={cellStyle}>{renderList(patient.medicalHistory, 4)}</td>
-
-              {/* Plano Terapêutico (UTI) ou Exames (geral) */}
               <td style={cellStyle}>
-                {isUti
-                  ? renderList(patient.utiDailyConducts, 4)
-                  : renderList(patient.relevantExams, 4)}
+                {renderList(patient.diagnoses, ITEM_LIMIT, patient.highlightedDiagnoses)}
               </td>
 
-              {/* Pendências */}
-              <td style={cellStyle}>{renderList(patient.pendencies, 4)}</td>
+              {/* Antecedentes */}
+              <td style={cellStyle}>
+                {renderList(patient.medicalHistory, ITEM_LIMIT, patient.highlightedMedicalHistory)}
+              </td>
+
+              {/* Plano Terapêutico (UTI: condutas+programações) ou Exames (geral) */}
+              <td style={cellStyle}>
+                {isUti && conductsCombined
+                  ? renderList(conductsCombined.items, ITEM_LIMIT, patient.highlightedConducts)
+                  : renderList(patient.relevantExams, ITEM_LIMIT)}
+              </td>
+
+              {/* Pendências (UTI) ou Programações (geral) */}
+              <td style={cellStyle}>
+                {isUti
+                  ? renderList(patient.pendencies, ITEM_LIMIT, patient.highlightedPendencies)
+                  : renderList(patient.schedule, ITEM_LIMIT, patient.highlightedPendencies)}
+              </td>
 
               {/* DIH (somente UTI) */}
               {isUti && (
