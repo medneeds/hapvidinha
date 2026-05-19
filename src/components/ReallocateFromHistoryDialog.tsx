@@ -23,6 +23,10 @@ import { useDepartment } from "@/contexts/DepartmentContext";
 import { RotateCcw, ArrowRight } from "lucide-react";
 import { BedSelectionDialog } from "@/components/BedSelectionDialog";
 import { buildPatientSlotPayloadFromSnapshot } from "@/utils/patientSlotPayload";
+import type { Patient, SectorType } from "@/types/patient";
+import type { Database } from "@/integrations/supabase/types";
+
+type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
 
 interface PatientMovement {
   id: string;
@@ -34,7 +38,7 @@ interface PatientMovement {
   notes: string | null;
   responsible_doctor: string | null;
   created_at: string;
-  patient_snapshot: any;
+  patient_snapshot: Partial<Patient> | null;
 }
 
 interface ReallocateFromHistoryDialogProps {
@@ -62,7 +66,7 @@ export function ReallocateFromHistoryDialog({
   onClose,
   onSuccess,
 }: ReallocateFromHistoryDialogProps) {
-  const [selectedSector, setSelectedSector] = useState("");
+  const [selectedSector, setSelectedSector] = useState<SectorType | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bedPickerOpen, setBedPickerOpen] = useState(false);
   const { toast } = useToast();
@@ -99,18 +103,19 @@ export function ReallocateFromHistoryDialog({
       if (vacantPlaceholderId) {
         const { error: fillVacantError } = await supabase
           .from("patients")
-          .update(buildPatientSlotPayloadFromSnapshot(snapshot, movement.patient_name, selectedSector as any) as any)
+          .update(buildPatientSlotPayloadFromSnapshot(snapshot, movement.patient_name, selectedSector))
           .eq("id", vacantPlaceholderId);
         if (fillVacantError) throw fillVacantError;
       } else {
-        const { error: insertError } = await supabase.from("patients").insert({
+        const insertPayload: PatientInsert = {
           bed_number: bedNumber,
           sector: selectedSector,
           department: currentDepartment,
           state_id: currentState.id,
           hospital_unit_id: currentHospital.id,
-          ...buildPatientSlotPayloadFromSnapshot(snapshot, movement.patient_name, selectedSector as any),
-        } as any);
+          ...buildPatientSlotPayloadFromSnapshot(snapshot, movement.patient_name, selectedSector),
+        };
+        const { error: insertError } = await supabase.from("patients").insert(insertPayload);
         if (insertError) throw insertError;
       }
 
