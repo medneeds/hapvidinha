@@ -16,7 +16,7 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { toast } from "@/hooks/use-toast";
 import type { Patient } from "@/types/patient";
-import { isFixedBed } from "@/utils/bedVacancy";
+import { buildPatientSlotPayloadFromPatient, buildPatientSlotPayloadFromRecord } from "@/utils/patientSlotPayload";
 import { cn } from "@/lib/utils";
 
 interface BedSwapDialogProps {
@@ -77,8 +77,6 @@ export function BedSwapDialog({ open, onOpenChange, patient, onSwapped }: BedSwa
         setCandidates(
           (data || [])
             .filter((p: any) => !p.is_vacant && (p.name?.trim() || "").length > 0)
-            // Block permuta envolvendo leitos fixos (devem usar fluxo de leito vago)
-            .filter((p: any) => !isFixedBed(currentDepartment, p.sector, p.bed_number))
             .map((p: any) => ({
               id: p.id,
               name: p.name,
@@ -107,62 +105,28 @@ export function BedSwapDialog({ open, onOpenChange, patient, onSwapped }: BedSwa
 
   const handleSwap = async (target: SwapCandidate) => {
     if (!patient) return;
-    // Defensive guard: never allow swapping a fixed-capacity slot
-    if (
-      isFixedBed(currentDepartment, patient.sector, patient.bedNumber) ||
-      isFixedBed(currentDepartment, target.sector, target.bed_number)
-    ) {
-      toast({
-        title: "Permuta bloqueada",
-        description:
-          "Leitos fixos (V/A/Z/U) não podem ser permutados. Use o fluxo de leito vago.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setSubmitting(target.id);
     try {
-      // Use UNIQUE temp bed_numbers per row to avoid unique-constraint clashes
-      // on (hospital, dept, sector, bed_number).
-      const stamp = Date.now();
-      const tempA = `__SWAP_A_${stamp}`;
-      const tempB = `__SWAP_B_${stamp}`;
-
-      // 1) Park both patients on unique temp bed_numbers (sector unchanged).
-      const { error: e1 } = await supabase
+      const { data: targetRecord, error: targetError } = await supabase
         .from("patients")
-        .update({ bed_number: tempA })
-        .eq("id", patient.id);
-      if (e1) throw e1;
+        .select("*")
+        .eq("id", target.id)
+        .single();
+      if (targetError) throw targetError;
 
-      const { error: e2 } = await supabase
-        .from("patients")
-        .update({ bed_number: tempB })
-        .eq("id", target.id);
-      if (e2) throw e2;
+      const [originUpdate, targetUpdate] = await Promise.all([
+        supabase
+          .from("patients")
+          .update(buildPatientSlotPayloadFromRecord(targetRecord, patient.sector) as any)
+          .eq("id", patient.id),
+        supabase
+          .from("patients")
+          .update(buildPatientSlotPayloadFromPatient(patient, target.sector as Patient['sector']) as any)
+          .eq("id", target.id),
+      ]);
 
-      // 2) Move target B into A's original slot
-      const { error: e3 } = await supabase
-        .from("patients")
-        .update({
-          bed_number: patient.bedNumber,
-          sector: patient.sector,
-          display_order: patient.displayOrder ?? 0,
-        })
-        .eq("id", target.id);
-      if (e3) throw e3;
-
-      // 3) Move A into B's original slot
-      const { error: e4 } = await supabase
-        .from("patients")
-        .update({
-          bed_number: target.bed_number,
-          sector: target.sector,
-          display_order: target.display_order ?? 0,
-        })
-        .eq("id", patient.id);
-      if (e4) throw e4;
+      if (originUpdate.error) throw originUpdate.error;
+      if (targetUpdate.error) throw targetUpdate.error;
 
       toast({
         title: "Permuta realizada",
