@@ -175,7 +175,7 @@ export function ReallocateFromHistoryDialog({
 
             <div className="space-y-2">
               <Label htmlFor="target-sector">Setor de Destino *</Label>
-              <Select value={selectedSector} onValueChange={setSelectedSector}>
+              <Select value={selectedSector} onValueChange={(value) => setSelectedSector(value as SectorType)}>
                 <SelectTrigger id="target-sector">
                   <SelectValue placeholder="Selecione o setor" />
                 </SelectTrigger>
