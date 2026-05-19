@@ -88,6 +88,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { DeathReviewBadge } from "@/components/DeathReviewBadge";
+import { buildPatientSlotPayloadFromPatient, vacantPatientSlotPayload } from "@/utils/patientSlotPayload";
 
 const STORAGE_KEY = "hospital_patients_data";
 const HISTORY_KEY = "hospital_patients_history";
