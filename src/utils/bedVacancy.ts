@@ -41,9 +41,7 @@ export async function vacateOrDeletePatient(args: {
   if (fixed) {
     const { error } = await supabase
       .from("patients")
-      .update({
-        ...vacantPatientSlotPayload,
-      } as any)
+      .update(vacantPatientSlotPayload)
       .eq("id", id);
     return { vacated: true, error: error ?? undefined };
   }
