@@ -6,6 +6,7 @@ import { Department } from "@/contexts/DepartmentContext";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatBirthDateDisplay, birthDateToISO } from "@/utils/calculateDetailedAge";
+import { vacantPatientSlotPayload } from "@/utils/patientSlotPayload";
 
 const UTI_FIXED_BEDS = Array.from({ length: 10 }, (_, index) => `U${String(index + 1).padStart(2, '0')}`);
 const isFixedUtiBed = (sector?: string, bedNumber?: string) =>
@@ -488,46 +489,7 @@ export function usePatients(department?: Department) {
 
         const { error } = await supabase
           .from('patients')
-          .update({
-            name: '',
-            age: null,
-            birth_date: null,
-            diagnoses: null,
-            medical_history: null,
-            relevant_exams: null,
-            pendencies: null,
-            schedule: null,
-            admission_history: null,
-            admission_date: null,
-            internment_status: null,
-            internment_notes: null,
-            clinical_status: null,
-            patient_category: null,
-            psm_status: null,
-            allocation_status: null,
-            is_door_patient: false,
-            medical_responsibility: null,
-            highlighted_diagnoses: [],
-            highlighted_medical_history: [],
-            highlighted_conducts: [],
-            highlighted_pendencies: [],
-            // Clear UTI-specific fields when vacating a UTI fixed bed
-            uti_admission_date: null,
-            uti_admission_reason: null,
-            uti_allergies: null,
-            uti_current_status: null,
-            uti_devices: null,
-            uti_cultures_antibiotics: null,
-            uti_specialties: null,
-            uti_origin_sector: null,
-            uti_discharge_prediction: null,
-            uti_daily_conducts: null,
-            is_vacant: true,
-            bed_status: 'available',
-            bed_maintenance_reason: null,
-            bed_maintenance_started_at: null,
-            bed_maintenance_started_by: null,
-          } as any)
+          .update(vacantPatientSlotPayload as any)
           .eq('id', patientId);
 
         if (error) {
