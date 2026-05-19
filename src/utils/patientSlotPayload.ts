@@ -1,5 +1,9 @@
 import type { Patient, SectorType } from "@/types/patient";
+import type { Database } from "@/integrations/supabase/types";
 import { birthDateToISO } from "@/utils/calculateDetailedAge";
+
+type PatientRow = Database["public"]["Tables"]["patients"]["Row"];
+type PatientUpdate = Database["public"]["Tables"]["patients"]["Update"];
 
 const linesToText = (value: unknown): string | null => {
   if (Array.isArray(value)) return value.filter(Boolean).join("\n") || null;
@@ -12,7 +16,7 @@ const normalizedAge = (value: unknown): string | null => {
   return String(value);
 };
 
-export const vacantPatientSlotPayload = {
+export const vacantPatientSlotPayload: PatientUpdate = {
   name: "",
   age: null,
   birth_date: null,
@@ -110,7 +114,7 @@ export const buildPatientSlotPayloadFromPatient = (patient: Patient, destination
   bed_maintenance_started_by: null,
 });
 
-export const buildPatientSlotPayloadFromRecord = (record: any, destinationSector: SectorType) => ({
+export const buildPatientSlotPayloadFromRecord = (record: PatientRow, destinationSector: SectorType): PatientUpdate => ({
   name: record.name || "",
   age: normalizedAge(record.age),
   birth_date: record.birth_date || null,
@@ -159,7 +163,7 @@ export const buildPatientSlotPayloadFromRecord = (record: any, destinationSector
   bed_maintenance_started_by: null,
 });
 
-export const buildPatientSlotPayloadFromSnapshot = (snapshot: any, fallbackName: string, destinationSector: SectorType) => ({
+export const buildPatientSlotPayloadFromSnapshot = (snapshot: Partial<Patient> | null | undefined, fallbackName: string, destinationSector: SectorType): PatientUpdate => ({
   name: snapshot?.name || fallbackName || "",
   age: normalizedAge(snapshot?.age),
   birth_date: birthDateToISO(snapshot?.birthDate) || null,
