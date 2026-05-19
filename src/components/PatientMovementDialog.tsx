@@ -189,7 +189,9 @@ export function PatientMovementDialog({
 
       // 2) Create the post-death review record (best-effort — must not block
       //    the rest of the flow if the table/policy fails for any reason).
-      if (movementType === "ÓBITO") {
+      //    SKIP for non-UTI departments (Urgência/Emergência): bed is released
+      //    immediately without post-death audit checklist.
+      if (movementType === "ÓBITO" && patientDepartment === "UTI") {
         try {
           const { data: existingReview, error: lookupError } = await supabase
             .from('death_reviews' as any)
