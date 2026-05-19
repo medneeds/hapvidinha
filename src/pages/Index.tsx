@@ -367,6 +367,39 @@ const Index = () => {
   const totalPatients = patients.length;
   const criticalPatients = redPatients.length;
 
+  const buildPatientStateAfterMove = (patient: Patient, sector: Patient['sector'], bedNumber: string, displayOrder?: number): Patient => ({
+    ...patient,
+    sector,
+    bedNumber,
+    displayOrder: displayOrder ?? patient.displayOrder,
+    isDoorPatient: sector === 'outside',
+    isVacant: false,
+    bedStatus: 'available',
+    bedMaintenanceReason: null,
+    bedMaintenanceStartedAt: null,
+    bedMaintenanceStartedBy: null,
+  });
+
+  const insertMovedPatient = async (patient: Patient, sector: Patient['sector'], bedNumber: string, displayOrder: number) => {
+    if (!currentHospital || !currentState) throw new Error('Hospital unit and state must be selected');
+    const { data, error } = await supabase
+      .from('patients')
+      .insert({
+        bed_number: bedNumber,
+        sector,
+        department: currentDepartment,
+        state_id: currentState.id,
+        hospital_unit_id: currentHospital.id,
+        created_by: user?.id || null,
+        display_order: displayOrder,
+        ...buildPatientSlotPayloadFromPatient(patient, sector),
+      } as any)
+      .select('id')
+      .single();
+    if (error) throw error;
+    return data.id as string;
+  };
+
   const handleUpdatePatient = async (updatedPatient: Patient) => {
     saveToHistory(patients);
     
