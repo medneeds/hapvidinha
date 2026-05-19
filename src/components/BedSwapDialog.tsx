@@ -48,6 +48,8 @@ interface SwapCandidate {
   display_order: number | null;
 }
 
+type CandidateRow = SwapCandidate & { is_vacant: boolean | null };
+
 export function BedSwapDialog({ open, onOpenChange, patient, onSwapped }: BedSwapDialogProps) {
   const { currentHospital, currentState } = useHospital();
   const { currentDepartment } = useDepartment();
@@ -75,9 +77,9 @@ export function BedSwapDialog({ open, onOpenChange, patient, onSwapped }: BedSwa
         setCandidates([]);
       } else {
         setCandidates(
-          (data || [])
-            .filter((p: any) => !p.is_vacant && (p.name?.trim() || "").length > 0)
-            .map((p: any) => ({
+          ((data || []) as CandidateRow[])
+            .filter((p) => !p.is_vacant && (p.name?.trim() || "").length > 0)
+            .map((p) => ({
               id: p.id,
               name: p.name,
               bed_number: p.bed_number,
@@ -117,11 +119,11 @@ export function BedSwapDialog({ open, onOpenChange, patient, onSwapped }: BedSwa
       const [originUpdate, targetUpdate] = await Promise.all([
         supabase
           .from("patients")
-          .update(buildPatientSlotPayloadFromRecord(targetRecord, patient.sector) as any)
+          .update(buildPatientSlotPayloadFromRecord(targetRecord, patient.sector))
           .eq("id", patient.id),
         supabase
           .from("patients")
-          .update(buildPatientSlotPayloadFromPatient(patient, target.sector as Patient['sector']) as any)
+          .update(buildPatientSlotPayloadFromPatient(patient, target.sector as Patient['sector']))
           .eq("id", target.id),
       ]);
 
@@ -133,7 +135,7 @@ export function BedSwapDialog({ open, onOpenChange, patient, onSwapped }: BedSwa
         description: `${patient.name} ↔ ${target.name} trocaram de leito.`,
       });
 
-      onSwapped && (await onSwapped());
+      if (onSwapped) await onSwapped();
       onOpenChange(false);
     } catch (err) {
       console.error("[BedSwap] failed", err);
