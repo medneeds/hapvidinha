@@ -22,6 +22,7 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { RotateCcw, ArrowRight } from "lucide-react";
 import { BedSelectionDialog } from "@/components/BedSelectionDialog";
+import { buildPatientSlotPayloadFromSnapshot } from "@/utils/patientSlotPayload";
 
 interface PatientMovement {
   id: string;
@@ -95,39 +96,23 @@ export function ReallocateFromHistoryDialog({
     try {
       const snapshot = movement.patient_snapshot;
 
-      // If reusing a vacant placeholder, remove it first to free the bed_number
       if (vacantPlaceholderId) {
-        const { error: deleteVacantError } = await supabase
+        const { error: fillVacantError } = await supabase
           .from("patients")
-          .delete()
+          .update(buildPatientSlotPayloadFromSnapshot(snapshot, movement.patient_name, selectedSector as any) as any)
           .eq("id", vacantPlaceholderId);
-        if (deleteVacantError) throw deleteVacantError;
+        if (fillVacantError) throw fillVacantError;
+      } else {
+        const { error: insertError } = await supabase.from("patients").insert({
+          bed_number: bedNumber,
+          sector: selectedSector,
+          department: currentDepartment,
+          state_id: currentState.id,
+          hospital_unit_id: currentHospital.id,
+          ...buildPatientSlotPayloadFromSnapshot(snapshot, movement.patient_name, selectedSector as any),
+        } as any);
+        if (insertError) throw insertError;
       }
-
-      const { error: insertError } = await supabase.from("patients").insert({
-        name: snapshot.name || movement.patient_name,
-        age: snapshot.age || null,
-        bed_number: bedNumber,
-        sector: selectedSector,
-        diagnoses: snapshot.diagnoses?.join("\n") || null,
-        medical_history: snapshot.medicalHistory?.join("\n") || null,
-        relevant_exams: snapshot.relevantExams?.join("\n") || null,
-        pendencies: snapshot.pendencies?.join("\n") || null,
-        highlighted_pendencies: snapshot.highlightedPendencies || [],
-        highlighted_diagnoses: snapshot.highlightedDiagnoses || [],
-        highlighted_medical_history: snapshot.highlightedMedicalHistory || [],
-        highlighted_conducts: snapshot.highlightedConducts || [],
-        schedule: snapshot.schedule?.join("\n") || null,
-        admission_history: snapshot.admissionHistory || null,
-        admission_date: snapshot.admissionDate || new Date().toISOString(),
-        department: currentDepartment,
-        state_id: currentState.id,
-        hospital_unit_id: currentHospital.id,
-        medical_responsibility: snapshot.medicalResponsibility || null,
-        is_vacant: false,
-      });
-
-      if (insertError) throw insertError;
 
       toast({
         title: "Paciente realocado com sucesso",
