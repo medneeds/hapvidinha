@@ -170,11 +170,15 @@ export function SectorSection({
   // Pending post-death reviews for THIS sector (beds no longer in the list)
   const department = (patients[0] as any)?.department as string | undefined;
   const { reviews: pendingReviews } = useDeathReviews(department);
-  const ghostReviews = pendingReviews.filter(
-    (r) =>
-      r.patient_sector === sector &&
-      !patients.some((p) => p.bedNumber === r.patient_bed)
-  );
+  // Only UTI keeps post-death review ghost cards. In Urgência/Emergência
+  // the bed is released immediately without an audit checklist.
+  const ghostReviews = department === "UTI"
+    ? pendingReviews.filter(
+        (r) =>
+          r.patient_sector === sector &&
+          !patients.some((p) => p.bedNumber === r.patient_bed)
+      )
+    : [];
   
   // Auto-expand when patients are added, auto-collapse when all removed.
   // Fixed-bed sectors (V/A/Z) stay open by default since slots are always present.
