@@ -1,5 +1,5 @@
 import type { Patient, SectorType } from "@/types/patient";
-import type { Database } from "@/integrations/supabase/types";
+import type { Database, Json } from "@/integrations/supabase/types";
 import { birthDateToISO } from "@/utils/calculateDetailedAge";
 
 type PatientRow = Database["public"]["Tables"]["patients"]["Row"];
@@ -15,6 +15,8 @@ const normalizedAge = (value: unknown): string | null => {
   if (value === undefined || value === null || value === "") return null;
   return String(value);
 };
+
+const asJson = (value: unknown): Json | null => (value ? (value as Json) : null);
 
 export const vacantPatientSlotPayload: PatientUpdate = {
   name: "",
@@ -76,7 +78,7 @@ export const buildPatientSlotPayloadFromPatient = (patient: Patient, destination
   schedule: linesToText(patient.schedule),
   admission_history: patient.admissionHistory || null,
   admission_date: patient.admissionDate || null,
-  medical_responsibility: patient.medicalResponsibility || null,
+  medical_responsibility: asJson(patient.medicalResponsibility),
   internment_status: patient.internmentStatus || null,
   internment_notes: patient.internmentNotes || null,
   is_door_patient: destinationSector === "outside",
@@ -174,7 +176,7 @@ export const buildPatientSlotPayloadFromSnapshot = (snapshot: Partial<Patient> |
   schedule: linesToText(snapshot?.schedule),
   admission_history: snapshot?.admissionHistory || null,
   admission_date: snapshot?.admissionDate || new Date().toISOString(),
-  medical_responsibility: snapshot?.medicalResponsibility || null,
+  medical_responsibility: asJson(snapshot?.medicalResponsibility),
   internment_status: snapshot?.internmentStatus || null,
   internment_notes: snapshot?.internmentNotes || null,
   is_door_patient: destinationSector === "outside",
