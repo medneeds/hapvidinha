@@ -1036,7 +1036,7 @@ const Index = () => {
                   <div className="min-w-0 flex-1 flex flex-col gap-1.5">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h1 className="text-base sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes</h1>
-                      <DeathReviewBadge department={currentDepartment} />
+                      {currentDepartment === "UTI" && <DeathReviewBadge department={currentDepartment} />}
                     </div>
                     <div className="print:hidden">
                       <DropdownMenu>
