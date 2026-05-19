@@ -732,14 +732,6 @@ const Index = () => {
       }
       newBedNumber = targetBedNumber;
 
-      // If a vacant placeholder exists for this bed, delete it from DB
-      if (vacantPlaceholderId) {
-        try {
-          await supabase.from("patients").delete().eq("id", vacantPlaceholderId);
-        } catch (e) {
-          console.error("[transfer] failed to delete vacant placeholder", e);
-        }
-      }
     } else {
       newBedNumber = getNextBedNumber(newSector, existingBedNumbers, currentDepartment);
     }
@@ -750,34 +742,46 @@ const Index = () => {
 
     const oldSector = patient.sector;
     const oldBedNumber = patient.bedNumber;
-    const isFixedSector = (s: string) => s === 'red' || s === 'yellow' || s === 'blue';
-    const sameSectorMove = oldSector === newSector && oldBedNumber !== newBedNumber;
-
-    const updatedPatient = { ...patient, sector: newSector, bedNumber: newBedNumber, displayOrder: newDisplayOrder };
+    const originIsFixed = isFixedBed(currentDepartment, oldSector, oldBedNumber);
+    const destinationIsFixed = isFixedBed(currentDepartment, newSector, newBedNumber);
+    const updatedPatient = buildPatientStateAfterMove(patient, newSector, newBedNumber, newDisplayOrder);
 
     try {
-      if (sameSectorMove) {
-        // Two-step swap-safe update to avoid unique-constraint conflicts on (sector, bed_number)
-        const tempBed = `__TMP_${patientId.slice(0, 8)}`;
-        await supabase.from("patients").update({ bed_number: tempBed }).eq("id", patientId);
-      }
-      await dbUpdatePatient(patientId, updatedPatient);
-
-      // If we vacated a fixed-capacity bed, recreate a vacant placeholder for it
-      if (isFixedSector(oldSector) && oldBedNumber && oldBedNumber !== newBedNumber) {
-        try {
-          await supabase.from("patients").insert({
-            bed_number: oldBedNumber,
-            sector: oldSector,
-            name: '',
-            is_vacant: true,
-            department: currentDepartment,
-            state_id: (patient as any).stateId || (patient as any).state_id,
-            hospital_unit_id: (patient as any).hospitalUnitId || (patient as any).hospital_unit_id,
-          } as any);
-        } catch (e) {
-          console.error("[transfer] failed to recreate vacant placeholder for old bed", e);
+      if (originIsFixed || destinationIsFixed) {
+        if (destinationIsFixed && vacantPlaceholderId) {
+          const { error: fillError } = await supabase
+            .from('patients')
+            .update({
+              ...buildPatientSlotPayloadFromPatient(patient, newSector),
+              display_order: newDisplayOrder,
+            } as any)
+            .eq('id', vacantPlaceholderId);
+          if (fillError) throw fillError;
+        } else if (destinationIsFixed) {
+          await insertMovedPatient(patient, newSector, newBedNumber, newDisplayOrder);
         }
+
+        if (originIsFixed) {
+          const { error: vacateError } = await supabase
+            .from('patients')
+            .update(vacantPatientSlotPayload as any)
+            .eq('id', patientId);
+          if (vacateError) throw vacateError;
+        } else {
+          const { error: deleteError } = await supabase.from('patients').delete().eq('id', patientId);
+          if (deleteError) throw deleteError;
+        }
+
+        if (!destinationIsFixed) {
+          await insertMovedPatient(patient, newSector, newBedNumber, newDisplayOrder);
+        }
+      } else {
+        const sameSectorMove = oldSector === newSector && oldBedNumber !== newBedNumber;
+        if (sameSectorMove) {
+          const tempBed = `__TMP_${patientId.slice(0, 8)}`;
+          await supabase.from("patients").update({ bed_number: tempBed }).eq("id", patientId);
+        }
+        await dbUpdatePatient(patientId, updatedPatient);
       }
 
       setPatients(prev => prev.map(p => p.id === patientId ? updatedPatient : p));
@@ -791,10 +795,7 @@ const Index = () => {
         } (leito ${newBedNumber}).`,
       });
 
-      // Refetch to pick up placeholder changes
-      if (vacantPlaceholderId || isFixedSector(oldSector)) {
-        await refetch();
-      }
+      await refetch();
     } catch (error) {
       console.error("Failed to transfer patient:", error);
       toast({
