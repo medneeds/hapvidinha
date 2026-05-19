@@ -22,6 +22,11 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { RotateCcw, ArrowRight } from "lucide-react";
 import { BedSelectionDialog } from "@/components/BedSelectionDialog";
+import { buildPatientSlotPayloadFromSnapshot } from "@/utils/patientSlotPayload";
+import type { Patient, SectorType } from "@/types/patient";
+import type { Database } from "@/integrations/supabase/types";
+
+type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
 
 interface PatientMovement {
   id: string;
@@ -33,7 +38,7 @@ interface PatientMovement {
   notes: string | null;
   responsible_doctor: string | null;
   created_at: string;
-  patient_snapshot: any;
+  patient_snapshot: Partial<Patient> | null;
 }
 
 interface ReallocateFromHistoryDialogProps {
@@ -61,7 +66,7 @@ export function ReallocateFromHistoryDialog({
   onClose,
   onSuccess,
 }: ReallocateFromHistoryDialogProps) {
-  const [selectedSector, setSelectedSector] = useState("");
+  const [selectedSector, setSelectedSector] = useState<SectorType | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bedPickerOpen, setBedPickerOpen] = useState(false);
   const { toast } = useToast();
@@ -95,39 +100,24 @@ export function ReallocateFromHistoryDialog({
     try {
       const snapshot = movement.patient_snapshot;
 
-      // If reusing a vacant placeholder, remove it first to free the bed_number
       if (vacantPlaceholderId) {
-        const { error: deleteVacantError } = await supabase
+        const { error: fillVacantError } = await supabase
           .from("patients")
-          .delete()
+          .update(buildPatientSlotPayloadFromSnapshot(snapshot, movement.patient_name, selectedSector))
           .eq("id", vacantPlaceholderId);
-        if (deleteVacantError) throw deleteVacantError;
+        if (fillVacantError) throw fillVacantError;
+      } else {
+        const insertPayload: PatientInsert = {
+          bed_number: bedNumber,
+          sector: selectedSector,
+          department: currentDepartment,
+          state_id: currentState.id,
+          hospital_unit_id: currentHospital.id,
+          ...buildPatientSlotPayloadFromSnapshot(snapshot, movement.patient_name, selectedSector),
+        };
+        const { error: insertError } = await supabase.from("patients").insert(insertPayload);
+        if (insertError) throw insertError;
       }
-
-      const { error: insertError } = await supabase.from("patients").insert({
-        name: snapshot.name || movement.patient_name,
-        age: snapshot.age || null,
-        bed_number: bedNumber,
-        sector: selectedSector,
-        diagnoses: snapshot.diagnoses?.join("\n") || null,
-        medical_history: snapshot.medicalHistory?.join("\n") || null,
-        relevant_exams: snapshot.relevantExams?.join("\n") || null,
-        pendencies: snapshot.pendencies?.join("\n") || null,
-        highlighted_pendencies: snapshot.highlightedPendencies || [],
-        highlighted_diagnoses: snapshot.highlightedDiagnoses || [],
-        highlighted_medical_history: snapshot.highlightedMedicalHistory || [],
-        highlighted_conducts: snapshot.highlightedConducts || [],
-        schedule: snapshot.schedule?.join("\n") || null,
-        admission_history: snapshot.admissionHistory || null,
-        admission_date: snapshot.admissionDate || new Date().toISOString(),
-        department: currentDepartment,
-        state_id: currentState.id,
-        hospital_unit_id: currentHospital.id,
-        medical_responsibility: snapshot.medicalResponsibility || null,
-        is_vacant: false,
-      });
-
-      if (insertError) throw insertError;
 
       toast({
         title: "Paciente realocado com sucesso",
@@ -185,7 +175,7 @@ export function ReallocateFromHistoryDialog({
 
             <div className="space-y-2">
               <Label htmlFor="target-sector">Setor de Destino *</Label>
-              <Select value={selectedSector} onValueChange={setSelectedSector}>
+              <Select value={selectedSector} onValueChange={(value) => setSelectedSector(value as SectorType)}>
                 <SelectTrigger id="target-sector">
                   <SelectValue placeholder="Selecione o setor" />
                 </SelectTrigger>
