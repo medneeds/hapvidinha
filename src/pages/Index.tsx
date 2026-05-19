@@ -63,6 +63,7 @@ import { cn } from "@/lib/utils";
 import { usePatients } from "@/hooks/usePatients";
 import { usePatientVersions } from "@/hooks/usePatientVersions";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useHospital } from "@/contexts/HospitalContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -227,6 +228,7 @@ const Index = () => {
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
   const { saveVersion, fetchVersions } = usePatientVersions();
+  const { currentState, currentHospital } = useHospital();
   const isMobile = useIsMobile();
   const { namesHidden, toggleNamesHidden } = usePrivacy();
 
