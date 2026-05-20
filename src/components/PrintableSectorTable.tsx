@@ -139,7 +139,7 @@ export function PrintableSectorTable({
             {isUti ? 'Condutas + Programações' : 'Exames'}
           </th>
           <th style={{ ...headerCellStyle, width: '18%' }}>
-            {isUti ? 'Pendências' : 'Programações'}
+            {isUti ? 'Pendências' : 'Programações / Pendências'}
           </th>
           {isUti && <th style={{ ...headerCellStyle, width: '38px', textAlign: 'center' }}>DIH</th>}
         </tr>
@@ -216,11 +216,11 @@ export function PrintableSectorTable({
                   : renderList(patient.relevantExams, ITEM_LIMIT)}
               </td>
 
-              {/* Pendências (UTI) ou Programações (geral) */}
+              {/* Pendências (UTI) ou Programações / Pendências (geral) */}
               <td style={cellStyle}>
                 {isUti
                   ? renderList(patient.pendencies, ITEM_LIMIT, patient.highlightedPendencies)
-                  : renderList(patient.schedule, ITEM_LIMIT, patient.highlightedPendencies)}
+                  : renderList(patient.pendencies, ITEM_LIMIT, patient.highlightedPendencies)}
               </td>
 
               {/* DIH (somente UTI) */}
