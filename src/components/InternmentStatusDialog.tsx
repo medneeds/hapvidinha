@@ -96,15 +96,11 @@ export function InternmentStatusDialog({
 
       if (fetchError) throw fetchError;
 
-      // Parse existing pendencies
-      let currentPendencies: string[] = [];
-      if (patientData.pendencies) {
-        try {
-          currentPendencies = JSON.parse(patientData.pendencies);
-        } catch {
-          currentPendencies = [];
-        }
-      }
+      // Parse existing pendencies stored as one item per line.
+      const currentPendencies = (patientData.pendencies || "")
+        .split("\n")
+        .map((item) => item.trim())
+        .filter(Boolean);
 
       // Map status to pendency text
       const statusToPendencyText: Record<string, string> = {
@@ -129,7 +125,7 @@ export function InternmentStatusDialog({
         .update({
           internment_status: status || null,
           internment_notes: notes || null,
-          pendencies: JSON.stringify(currentPendencies),
+          pendencies: currentPendencies.join("\n") || null,
         })
         .eq("id", patientId);
 
