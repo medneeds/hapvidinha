@@ -216,11 +216,11 @@ export function PrintableSectorTable({
                   : renderList(patient.relevantExams, ITEM_LIMIT)}
               </td>
 
-              {/* Pendências (UTI) ou Programações (geral) */}
+              {/* Pendências (UTI) ou Programações / Pendências (geral) */}
               <td style={cellStyle}>
                 {isUti
                   ? renderList(patient.pendencies, ITEM_LIMIT, patient.highlightedPendencies)
-                  : renderList(patient.schedule, ITEM_LIMIT, patient.highlightedPendencies)}
+                  : renderList(patient.pendencies, ITEM_LIMIT, patient.highlightedPendencies)}
               </td>
 
               {/* DIH (somente UTI) */}
