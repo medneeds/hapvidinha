@@ -13,8 +13,15 @@ export default function RegulacoesPage() {
       file: "modelo-anamnese-regulacao.pdf",
       type: "Modelo",
       description: "Documento padrão para solicitações de regulação SUS"
+    },
+    {
+      title: "FORMULÁRIO REGULAÇÃO SUS - UTI",
+      file: "form-regulacao-sus-uti.pdf",
+      type: "Formulário",
+      description: "Formulário oficial para solicitação de regulação de leito de UTI via SUS"
     }
   ];
+
 
   const filteredDocuments = documents.filter(doc =>
     doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
