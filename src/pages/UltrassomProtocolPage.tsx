@@ -1,0 +1,39 @@
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export default function UltrassomProtocolPage() {
+  const navigate = useNavigate();
+  const fileUrl = "/documents/protocolo-us.odt";
+
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = "PROTOCOLO_US.odt";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+      <div className="max-w-2xl w-full space-y-8">
+        <div className="flex items-center gap-4 mb-8">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/documents")}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-2xl font-bold uppercase">PROTOCOLO DE ULTRASSONOGRAFIA</h1>
+        </div>
+
+        <div className="bg-card border rounded-lg p-8 space-y-6">
+          <div className="grid gap-4">
+            <Button size="lg" className="w-full h-16 text-lg" onClick={handleDownload}>
+              <Download className="mr-2 h-5 w-5" />
+              DOWNLOAD PROTOCOLO US
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

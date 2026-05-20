@@ -17,6 +17,7 @@ import HandoversPage from "./pages/HandoversPage";
 import VersionsPage from "./pages/VersionsPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import SepsisProtocolPage from "./pages/SepsisProtocolPage";
+import UltrassomProtocolPage from "./pages/UltrassomProtocolPage";
 import TomografiasPage from "./pages/TomografiasPage";
 import HemoderivadosPage from "./pages/HemoderivadosPage";
 import RegulacoesPage from "./pages/RegulacoesPage";
@@ -158,6 +159,17 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/documents/protocolo-us"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <UltrassomProtocolPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/documents/controle-glicemico"
           element={
