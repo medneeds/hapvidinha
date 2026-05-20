@@ -36,6 +36,15 @@ export default function DocumentsPage() {
       color: "text-red-500",
       bgColor: "bg-red-500/10"
     },
+    {
+      id: "protocolo-us",
+      title: "Protocolo US",
+      description: "Protocolo institucional de ultrassonografia",
+      route: "/documents/protocolo-us",
+      icon: Radar,
+      color: "text-sky-500",
+      bgColor: "bg-sky-500/10"
+    },
     { 
       id: "controle-glicemico", 
       title: "Controle Glicêmico", 
