@@ -248,6 +248,10 @@ export function usePatients(department?: Department) {
       if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate && updates.admissionDate !== '' ? updates.admissionDate : null;
       if (updates.medicalResponsibility !== undefined) dbUpdates.medical_responsibility = updates.medicalResponsibility;
       if (updates.displayOrder !== undefined) dbUpdates.display_order = updates.displayOrder;
+      if (updates.internmentStatus !== undefined) dbUpdates.internment_status = updates.internmentStatus || null;
+      if (updates.internmentNotes !== undefined) dbUpdates.internment_notes = updates.internmentNotes || null;
+      if (updates.isDoorPatient !== undefined) dbUpdates.is_door_patient = updates.isDoorPatient;
+      if (updates.allocationStatus !== undefined) dbUpdates.allocation_status = updates.allocationStatus || null;
       // UTI fields
       if (updates.utiAdmissionDate !== undefined) {
         // Convert DD/MM/YYYY format back to ISO format for database storage
@@ -348,6 +352,9 @@ export function usePatients(department?: Department) {
         relevant_exams: patient.relevantExams.join('\n'),
         pendencies: patient.pendencies.join('\n'),
         highlighted_pendencies: patient.highlightedPendencies || [],
+        highlighted_diagnoses: patient.highlightedDiagnoses || [],
+        highlighted_medical_history: patient.highlightedMedicalHistory || [],
+        highlighted_conducts: patient.highlightedConducts || [],
         schedule: patient.schedule.join('\n'),
         admission_history: patient.admissionHistory,
         admission_date: patient.admissionDate,
@@ -357,6 +364,21 @@ export function usePatients(department?: Department) {
         medical_responsibility: patient.medicalResponsibility || null,
         created_by: user?.id || null,
         patient_category: patient.patientCategory || null,
+        internment_status: patient.internmentStatus || null,
+        internment_notes: patient.internmentNotes || null,
+        is_door_patient: patient.isDoorPatient ?? patient.sector === 'outside',
+        allocation_status: patient.allocationStatus || null,
+        psm_status: patient.psmStatus || null,
+        clinical_status: patient.clinicalStatus || null,
+        medical_record_number: patient.medicalRecordNumber || null,
+        attendance_number: patient.attendanceNumber || null,
+        cpf: patient.cpf || null,
+        mother_name: patient.motherName || null,
+        insurance_company: patient.insuranceCompany || null,
+        insurance_plan: patient.insurancePlan || null,
+        insurance_plan_type: patient.insurancePlanType || null,
+        insurance_card_number: patient.insuranceCardNumber || null,
+        insurance_duration: patient.insuranceDuration || null,
         is_vacant: patient.isVacant ?? false,
         bed_status: patient.bedStatus || 'available',
         bed_maintenance_reason: patient.bedMaintenanceReason || null,
