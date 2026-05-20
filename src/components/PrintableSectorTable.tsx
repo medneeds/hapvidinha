@@ -139,7 +139,7 @@ export function PrintableSectorTable({
             {isUti ? 'Condutas + Programações' : 'Exames'}
           </th>
           <th style={{ ...headerCellStyle, width: '18%' }}>
-            {isUti ? 'Pendências' : 'Programações'}
+            {isUti ? 'Pendências' : 'Programações / Pendências'}
           </th>
           {isUti && <th style={{ ...headerCellStyle, width: '38px', textAlign: 'center' }}>DIH</th>}
         </tr>
