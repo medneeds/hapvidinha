@@ -139,7 +139,8 @@ export function PrintUtiPreviewDialog({
             }
             .sector-section {
               margin-bottom: ${isCompact ? '8px' : '12px'};
-              page-break-inside: avoid;
+              page-break-inside: auto;
+              break-inside: auto;
             }
             .sector-header {
               padding: ${isCompact ? '5px 8px' : '6px 10px'};
@@ -148,6 +149,8 @@ export function PrintUtiPreviewDialog({
               font-weight: 600;
               font-size: ${isCompact ? '8.5pt' : '9.5pt'};
               text-transform: uppercase;
+              page-break-after: avoid;
+              break-after: avoid;
             }
             .patient-row {
               display: grid;
@@ -157,6 +160,8 @@ export function PrintUtiPreviewDialog({
               border-bottom: 1px solid #e5e7eb;
               font-size: ${isCompact ? '7.5pt' : '8.5pt'};
               align-items: start;
+              page-break-inside: avoid;
+              break-inside: avoid;
             }
             .patient-row:last-child {
               border-bottom: none;
