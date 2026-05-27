@@ -8,6 +8,7 @@ import {
   History,
   User,
   FolderOpen,
+  FolderArchive,
   BarChart3,
   LockKeyhole,
   Shield,
@@ -135,6 +136,11 @@ export function AppSidebar({
          { name: "RELATÓRIOS EMITIDOS", link: "/report-history" },
        ],
      },
+    {
+      title: "REPOSITÓRIO",
+      icon: FolderArchive,
+      link: "/repositorio",
+    },
     {
       title: "VERSÕES",
       icon: History,

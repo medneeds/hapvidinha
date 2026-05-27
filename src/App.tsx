@@ -56,6 +56,7 @@ import GoIndicatorsPage from "./pages/go/GoIndicatorsPage";
 import BedManagementPage from "./pages/BedManagementPage";
 import BedManagementRegistrationPage from "./pages/BedManagementRegistrationPage";
 import BedRequestsPanelPage from "./pages/BedRequestsPanelPage";
+import RepositoryPage from "./pages/RepositoryPage";
 
 const queryClient = new QueryClient();
 
@@ -452,6 +453,16 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
                 <BedRequestsPanelPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/repositorio"
+          element={
+            <ProtectedRoute>
+              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
+                <RepositoryPage />
               </MainLayout>
             </ProtectedRoute>
           }
