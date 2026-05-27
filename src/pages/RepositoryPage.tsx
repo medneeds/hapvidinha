@@ -1,5 +1,4 @@
-import { useCallback, useRef, useState, useMemo } from "react";
-import { Helmet } from "react-helmet-async";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import {
   Upload, Search, FileText, FileImage, FileArchive, Trash2, Download,
   Sparkles, Loader2, X, Camera, Tag,
