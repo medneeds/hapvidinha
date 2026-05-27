@@ -939,6 +939,54 @@ export type Database = {
           },
         ]
       }
+      hospital_files: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_name: string
+          hospital_unit_id: string
+          id: string
+          mime_type: string | null
+          size_bytes: number
+          state_id: string
+          storage_path: string
+          tags: string[] | null
+          updated_at: string
+          uploaded_by: string
+          uploaded_by_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_name: string
+          hospital_unit_id: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number
+          state_id: string
+          storage_path: string
+          tags?: string[] | null
+          updated_at?: string
+          uploaded_by: string
+          uploaded_by_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          hospital_unit_id?: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number
+          state_id?: string
+          storage_path?: string
+          tags?: string[] | null
+          updated_at?: string
+          uploaded_by?: string
+          uploaded_by_name?: string | null
+        }
+        Relationships: []
+      }
       hospital_units: {
         Row: {
           address: string | null
