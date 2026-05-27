@@ -455,7 +455,7 @@ export default function RepositoryPage() {
 
 function ThumbImg({ path, getUrl }: { path: string; getUrl: (p: string) => Promise<string> }) {
   const [url, setUrl] = useState<string | null>(null);
-  useMemo(() => { getUrl(path).then(setUrl).catch(() => {}); }, [path]);
+  useEffect(() => { let m = true; getUrl(path).then(u => m && setUrl(u)).catch(() => {}); return () => { m = false; }; }, [path]);
   if (!url) return <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />;
   return <img src={url} alt="" className="w-full h-full object-cover" loading="lazy" />;
 }
