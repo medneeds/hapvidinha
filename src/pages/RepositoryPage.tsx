@@ -199,10 +199,7 @@ export default function RepositoryPage() {
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
     >
-      <Helmet>
-        <title>Repositório de Arquivos | HAPMAP</title>
-        <meta name="description" content="Repositório compartilhado de arquivos do hospital com upload, conversão e compressão." />
-      </Helmet>
+      {(() => { document.title = "Repositório de Arquivos | HAPMAP"; return null; })()}
 
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">REPOSITÓRIO DE ARQUIVOS</h1>
