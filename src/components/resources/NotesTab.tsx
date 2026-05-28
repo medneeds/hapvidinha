@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Download, Copy, Trash2, FileInput, Save, FolderOpen, Printer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { internmentTemplate } from "@/data/internmentTemplate";
+import { utiRotinaTemplate } from "@/data/utiRotinaTemplate";
 import {
   Dialog,
   DialogContent,
@@ -55,6 +56,14 @@ const NotesTab = () => {
     toast({
       title: "MODELO IMPORTADO",
       description: "TEMPLATE DE SOLICITAÇÃO DE INTERNAÇÃO CARREGADO COM SUCESSO",
+    });
+  };
+
+  const handleImportUtiTemplate = () => {
+    setNotes(utiRotinaTemplate);
+    toast({
+      title: "MODELO UTI IMPORTADO",
+      description: "TEMPLATE DE EVOLUÇÃO MÉDICA ROTINA UTI CARREGADO COM SUCESSO",
     });
   };
 
@@ -182,7 +191,17 @@ const NotesTab = () => {
             <FileInput className="h-4 w-4" />
             IMPORTAR MODELO PADRÃO
           </Button>
-          
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleImportUtiTemplate}
+            className="gap-2 hover:bg-cyan-500/10 hover:text-cyan-600 hover:border-cyan-500/50 transition-all uppercase"
+          >
+            <FileInput className="h-4 w-4" />
+            IMPORTAR MODELO UTI
+          </Button>
+
           <Button
             variant="outline"
             size="sm"

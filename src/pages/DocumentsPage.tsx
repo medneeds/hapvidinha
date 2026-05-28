@@ -213,6 +213,43 @@ export default function DocumentsPage() {
           </CardContent>
         </Card>
 
+        {/* UTI Rotina Document */}
+        <Card 
+          className="relative overflow-hidden border-cyan-500/30 shadow-lg bg-gradient-to-r from-cyan-500/5 via-background to-cyan-500/5 group cursor-pointer hover:shadow-xl hover:border-cyan-500/50 transition-all duration-500"
+          onClick={() => {
+            const link = document.createElement("a");
+            link.href = "/documents/evolucao-medica-rotina-uti.docx";
+            link.download = "EVOLUCAO_MEDICA_ROTINA_UTI.docx";
+            link.click();
+          }}
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <CardContent className="p-6 flex items-center gap-5 relative z-10">
+            <div className="relative flex-shrink-0">
+              <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Activity className="h-8 w-8 text-cyan-500" />
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-bold text-lg text-foreground group-hover:text-cyan-600 transition-colors">
+                  Evolução Médica - Rotina UTI
+                </h3>
+                <Badge className="bg-cyan-500/15 text-cyan-600 border-cyan-500/30 text-[10px]">
+                  UTI
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Modelo padronizado de evolução médica diária para pacientes em UTI
+              </p>
+            </div>
+            <Button variant="outline" size="sm" className="gap-2 group-hover:bg-cyan-500 group-hover:text-white group-hover:border-cyan-500 transition-all flex-shrink-0">
+              <Download className="h-4 w-4" />
+              Download
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Documents Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredDocuments.length === 0 ? (
