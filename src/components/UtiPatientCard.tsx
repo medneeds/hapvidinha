@@ -70,24 +70,44 @@ interface UtiPatientCardProps {
   currentUtiUnit?: string; // "UTI 1" or "UTI 2"
 }
 
+// Parse date robustly: prefer DD/MM/YYYY (BR), fallback ISO YYYY-MM-DD. Uses UTC to evitar shift de fuso.
+function parseAdmissionDate(dateStr: string): Date | null {
+  if (!dateStr) return null;
+  const s = dateStr.trim();
+  // DD/MM/YYYY or DD-MM-YYYY
+  const dmy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if (dmy) {
+    let [, d, m, y] = dmy;
+    let year = parseInt(y, 10);
+    if (year < 100) year += 2000;
+    const day = parseInt(d, 10);
+    const month = parseInt(m, 10);
+    if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+    const dt = new Date(Date.UTC(year, month - 1, day));
+    if (dt.getUTCDate() !== day || dt.getUTCMonth() !== month - 1) return null;
+    return dt;
+  }
+  // ISO YYYY-MM-DD
+  const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) {
+    const dt = new Date(Date.UTC(+iso[1], +iso[2] - 1, +iso[3]));
+    if (dt.getUTCDate() !== +iso[3] || dt.getUTCMonth() !== +iso[2] - 1) return null;
+    return dt;
+  }
+  return null;
+}
+
 // Calculate days in UTI
 function calculateDaysInUti(admissionDate: string[] | undefined): number {
   if (!admissionDate || admissionDate.length === 0) return 0;
   const dateStr = admissionDate[0];
   if (!dateStr) return 0;
-  
-  const parsed = new Date(dateStr);
-  if (isNaN(parsed.getTime())) {
-    const parts = dateStr.split('/');
-    if (parts.length === 3) {
-      const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-      if (!isNaN(d.getTime())) {
-        return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
-      }
-    }
-    return 0;
-  }
-  return Math.floor((Date.now() - parsed.getTime()) / (1000 * 60 * 60 * 24));
+  const parsed = parseAdmissionDate(dateStr);
+  if (!parsed) return 0;
+  const now = new Date();
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.floor((today - parsed.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.max(0, diff);
 }
 
 // Sortable Item for drag-and-drop with optional highlight
