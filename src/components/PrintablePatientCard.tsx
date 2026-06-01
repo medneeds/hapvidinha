@@ -1,5 +1,5 @@
 import { Patient } from "@/types/patient";
-import { formatAgeDisplay } from "@/utils/ageDisplay";
+import { formatAgeDisplay, getPatientAgeDisplay } from "@/utils/ageDisplay";
 
 interface PrintablePatientCardProps {
   patient: Patient;
