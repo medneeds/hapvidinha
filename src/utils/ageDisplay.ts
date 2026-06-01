@@ -1,3 +1,23 @@
+import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetailedAge";
+
+/**
+ * Resolve idade preferindo cálculo a partir de birthDate (alinhado com o card da UTI),
+ * com fallback para o campo `age` livre.
+ */
+export function getPatientAgeDisplay(patient: { age?: string | number; birthDate?: string | null }): string {
+  if (patient?.birthDate) {
+    const detailed = calculateDetailedAge(patient.birthDate);
+    if (detailed) {
+      if (detailed.years >= 1) {
+        return detailed.years === 1 ? '1 ANO' : `${detailed.years} ANOS`;
+      }
+      const formatted = formatDetailedAge(detailed);
+      if (formatted) return formatted.toUpperCase();
+    }
+  }
+  return formatAgeDisplay(patient?.age);
+}
+
 /**
  * Formata a idade para exibição com unidades de medida apropriadas
  */

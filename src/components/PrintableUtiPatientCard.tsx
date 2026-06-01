@@ -1,5 +1,5 @@
 import { Patient } from "@/types/patient";
-import { formatAgeDisplay } from "@/utils/ageDisplay";
+import { formatAgeDisplay, getPatientAgeDisplay } from "@/utils/ageDisplay";
 
 interface PrintableUtiPatientCardProps {
   patient: Patient;
@@ -99,7 +99,7 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
               {patient.name || 'SEM NOME'}
             </span>
             <span style={{ fontSize: '6.5pt', color: '#6b7280', marginLeft: '6px' }}>
-              {formatAgeDisplay(patient.age)}
+              {getPatientAgeDisplay(patient)}
             </span>
           </div>
           <div style={{ 
@@ -301,7 +301,7 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
             {patient.name || 'SEM NOME'}
           </div>
           <div style={{ fontSize: '8pt', color: '#6b7280' }}>
-            {formatAgeDisplay(patient.age)}
+            {getPatientAgeDisplay(patient)}
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
