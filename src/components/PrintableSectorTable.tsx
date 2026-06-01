@@ -180,7 +180,7 @@ export function PrintableSectorTable({
                   {patient.name || 'SEM NOME'}
                 </div>
                 <div style={{ fontSize: '7pt', color: '#475569', marginTop: '1px' }}>
-                  {formatAgeDisplay(patient.age)}
+                  {getPatientAgeDisplay(patient)}
                 </div>
                 {patient.medicalRecordNumber && (
                   <div style={{ fontSize: '6.5pt', color: '#64748b', marginTop: '1px' }}>

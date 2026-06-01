@@ -92,7 +92,7 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
               {patient.name || 'SEM NOME'}
             </div>
             <div style={{ fontSize: '7.5pt', color: '#6b7280' }}>
-              {formatAgeDisplay(patient.age)}
+              {getPatientAgeDisplay(patient)}
             </div>
           </div>
 
@@ -241,7 +241,7 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
             {patient.name || 'SEM NOME'}
           </div>
           <div style={{ fontSize: '8pt', color: '#6b7280' }}>
-            {formatAgeDisplay(patient.age)}
+            {getPatientAgeDisplay(patient)}
           </div>
         </div>
 
