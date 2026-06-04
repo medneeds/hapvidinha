@@ -132,6 +132,38 @@ export function UtiReallocationDialog({
       const isSameUnit = targetUnit === currentUtiUnit;
       const originalBedNumber = patient.bedNumber;
 
+      // SAFEGUARD B: Re-fetch destination from DB and verify it is still vacant
+      // BEFORE overwriting. Aborts if another user filled the bed in the meantime.
+      const { data: freshTarget, error: fetchError } = await supabase
+        .from('patients')
+        .select('id, name, is_vacant, bed_number, sector')
+        .eq('id', targetBedPatient.id)
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+
+      if (!freshTarget) {
+        toast({
+          title: "Leito indisponível",
+          description: "O leito de destino não foi encontrado. Recarregue e tente novamente.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const targetIsVacant =
+        freshTarget.is_vacant === true &&
+        (!freshTarget.name || freshTarget.name.trim() === "");
+
+      if (!targetIsVacant) {
+        toast({
+          title: "Leito já ocupado",
+          description: `O leito ${freshTarget.bed_number} foi ocupado por outro paciente. Selecione outro leito vago.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Step 1: Move patient data to the target bed (update target bed with patient data)
       const { error: targetError } = await supabase
         .from('patients')
@@ -165,7 +197,8 @@ export function UtiReallocationDialog({
           bed_status: 'available',
           updated_at: new Date().toISOString(),
         })
-        .eq('id', targetBedPatient.id);
+        .eq('id', targetBedPatient.id)
+        .eq('is_vacant', true); // Extra guard: only update if still vacant
 
       if (targetError) throw targetError;
 
@@ -207,6 +240,7 @@ export function UtiReallocationDialog({
       if (sourceError) throw sourceError;
 
       // Register movement
+      // SAFEGUARD D: Always REALOCAÇÃO for UTI-internal moves (UTI 1 ↔ UTI 2 stays inside the UTI department).
       const { data: { user } } = await supabase.auth.getUser();
       
       await supabase
@@ -215,7 +249,7 @@ export function UtiReallocationDialog({
           patient_name: patient.name,
           patient_bed: originalBedNumber,
           patient_sector: patient.sector,
-          movement_type: isSameUnit ? 'REALOCAÇÃO' : 'TRANSFERÊNCIA',
+          movement_type: 'REALOCAÇÃO',
           destination: `${targetUnit} - Leito ${targetBedPatient.bedNumber}`,
           notes: `Realocação de ${currentUtiUnit} Leito ${originalBedNumber} para ${targetUnit} Leito ${targetBedPatient.bedNumber}`,
           created_by: user?.id,
@@ -226,10 +260,10 @@ export function UtiReallocationDialog({
         });
 
       toast({
-        title: isSameUnit ? "Paciente realocado" : "Paciente transferido",
+        title: "Paciente realocado",
         description: isSameUnit 
           ? `${patient.name} realocado para o leito ${targetBedPatient.bedNumber}.`
-          : `${patient.name} transferido para ${targetUnit}, leito ${targetBedPatient.bedNumber}.`,
+          : `${patient.name} realocado para ${targetUnit}, leito ${targetBedPatient.bedNumber}.`,
       });
 
       onSuccess?.();
