@@ -70,34 +70,26 @@ export function UtiReallocationDialog({
   };
 
   // Get fixed empty beds for each unit
+  // SAFEGUARD A: Strict vacancy filter — requires both is_vacant === true AND empty name
+  // to prevent overwriting beds whose UI state is stale.
   const emptyBeds = useMemo(() => {
-    const uti1EmptyBeds = allPatients.filter(p => {
-      const isUti1 = p.sector === "blue";
-      const isFixedBed = /^U(0[1-9]|10)$/.test(p.bedNumber);
-      const isEmpty = p.isVacant || !p.name || p.name.trim() === "";
-      const isNotCurrentPatient = p.id !== patient?.id;
-      return isUti1 && isFixedBed && isEmpty && isNotCurrentPatient;
-    }).sort((a, b) => {
-      const numA = parseInt(a.bedNumber) || 0;
-      const numB = parseInt(b.bedNumber) || 0;
-      return numA - numB;
-    });
+    const isStrictlyVacant = (p: Patient) =>
+      p.isVacant === true && (!p.name || p.name.trim() === "");
 
-    const uti2EmptyBeds = allPatients.filter(p => {
-      const isUti2 = p.sector === "yellow";
-      const isFixedBed = /^U(0[1-9]|10)$/.test(p.bedNumber);
-      const isEmpty = p.isVacant || !p.name || p.name.trim() === "";
-      const isNotCurrentPatient = p.id !== patient?.id;
-      return isUti2 && isFixedBed && isEmpty && isNotCurrentPatient;
-    }).sort((a, b) => {
-      const numA = parseInt(a.bedNumber) || 0;
-      const numB = parseInt(b.bedNumber) || 0;
-      return numA - numB;
-    });
+    const filterBySector = (sector: string) =>
+      allPatients.filter(p => {
+        const isFixedBed = /^U(0[1-9]|10)$/.test(p.bedNumber);
+        const isNotCurrentPatient = p.id !== patient?.id;
+        return p.sector === sector && isFixedBed && isStrictlyVacant(p) && isNotCurrentPatient;
+      }).sort((a, b) => {
+        const numA = parseInt(a.bedNumber) || 0;
+        const numB = parseInt(b.bedNumber) || 0;
+        return numA - numB;
+      });
 
     return {
-      "UTI 1": uti1EmptyBeds,
-      "UTI 2": uti2EmptyBeds,
+      "UTI 1": filterBySector("blue"),
+      "UTI 2": filterBySector("yellow"),
     };
   }, [allPatients, patient?.id]);
 
