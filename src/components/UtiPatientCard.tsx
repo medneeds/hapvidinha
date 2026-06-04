@@ -847,6 +847,15 @@ export function UtiPatientCard({
   }, [forceCollapsed]);
   const [activeColumn, setActiveColumn] = useState<'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias' | null>(null);
 
+  // SAFEGUARD C: Stabilize patient identity for async handlers so concurrent
+  // realtime updates can't make handleMovementSuccess target a different bed.
+  const patientIdRef = useRef(patient.id);
+  const patientBedRef = useRef({ bedNumber: patient.bedNumber, sector: patient.sector });
+  useEffect(() => {
+    patientIdRef.current = patient.id;
+    patientBedRef.current = { bedNumber: patient.bedNumber, sector: patient.sector };
+  }, [patient.id, patient.bedNumber, patient.sector]);
+
   // Movement handlers
   const handleMovement = (type: "ALTA" | "ÓBITO" | "TRANSFERÊNCIA") => {
     setMovementType(type);
@@ -855,9 +864,14 @@ export function UtiPatientCard({
 
   const handleMovementSuccess = async () => {
     // Clear patient data after discharge/death/transfer (but keep the bed slot)
-    // Mark the bed as vacant after movement
+    // Mark the bed as vacant after movement.
+    // Use the stable refs to guarantee we vacate the bed the user acted on,
+    // not whatever the latest realtime snapshot mutated `patient` into.
     const emptyPatient: Patient = {
       ...patient,
+      id: patientIdRef.current,
+      bedNumber: patientBedRef.current.bedNumber,
+      sector: patientBedRef.current.sector,
       name: "",
       age: "",
       diagnoses: [],
@@ -886,19 +900,13 @@ export function UtiPatientCard({
       medicalResponsibility: undefined,
       clinicalStatus: null,
       psmStatus: null,
-      isVacant: true, // Mark bed as vacant after movement
+      isVacant: true,
     };
-    
-    // Update the patient - this persists to database before the dialog finishes,
-    // so the bed is actually released and realtime cannot restore stale data.
+
     await onUpdate(emptyPatient);
-    
-    // Close dialog
+
     setIsMovementDialogOpen(false);
     setMovementType(null);
-    
-    // Note: Don't call onRefetch here as it may race with the update
-    // The realtime subscription will handle syncing the data
   };
 
   const handleReallocationSuccess = () => {
