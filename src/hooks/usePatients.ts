@@ -420,16 +420,14 @@ export function usePatients(department?: Department) {
         medicalResponsibility: (data.medical_responsibility as unknown) as Patient['medicalResponsibility'],
         // UTI fields
         utiAdmissionDate: data.uti_admission_date ? data.uti_admission_date.split('\n').filter(Boolean).map(date => {
-          try {
+          if (/^\d{4}-\d{2}-\d{2}T/.test(date)) {
             const parsedDate = new Date(date);
             if (!isNaN(parsedDate.getTime())) {
-              const day = String(parsedDate.getDate()).padStart(2, '0');
-              const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-              const year = parsedDate.getFullYear();
+              const day = String(parsedDate.getUTCDate()).padStart(2, '0');
+              const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0');
+              const year = parsedDate.getUTCFullYear();
               return `${day}/${month}/${year}`;
             }
-          } catch (e) {
-            // If parsing fails, return as is
           }
           return date;
         }) : [],
