@@ -61,7 +61,18 @@ export function PrintableSectorSection({
           </h2>
         </div>
       )}
-      <div>
+      <div
+        style={
+          !isCompact && isUti
+            ? {
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '6px',
+                alignItems: 'start',
+              }
+            : undefined
+        }
+      >
         {isCompact ? (
           // Hybrid mode: compact => dense table per sector
           <PrintableSectorTable

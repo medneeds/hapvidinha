@@ -153,18 +153,17 @@ export function usePatients(department?: Department) {
         medicalResponsibility: (p.medical_responsibility as unknown) as Patient['medicalResponsibility'],
         // UTI fields
         utiAdmissionDate: p.uti_admission_date ? p.uti_admission_date.split('\n').filter(Boolean).map(date => {
-          // Convert ISO timestamp to DD/MM/YYYY format if needed
-          try {
+          // Legacy ISO timestamps -> format using UTC to avoid -1 day drift in UTC-3
+          if (/^\d{4}-\d{2}-\d{2}T/.test(date)) {
             const parsedDate = new Date(date);
             if (!isNaN(parsedDate.getTime())) {
-              const day = String(parsedDate.getDate()).padStart(2, '0');
-              const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-              const year = parsedDate.getFullYear();
+              const day = String(parsedDate.getUTCDate()).padStart(2, '0');
+              const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0');
+              const year = parsedDate.getUTCFullYear();
               return `${day}/${month}/${year}`;
             }
-          } catch (e) {
-            // If parsing fails, return as is
           }
+          // Already in DD/MM/YYYY (or other plain text) — return as-is
           return date;
         }) : [],
         utiDischargePrediction: p.uti_discharge_prediction ? p.uti_discharge_prediction.split('\n').filter(Boolean) : [],
@@ -254,26 +253,15 @@ export function usePatients(department?: Department) {
       if (updates.allocationStatus !== undefined) dbUpdates.allocation_status = updates.allocationStatus || null;
       // UTI fields
       if (updates.utiAdmissionDate !== undefined) {
-        // Convert DD/MM/YYYY format back to ISO format for database storage
+        // Persist as DD/MM/YYYY text to avoid UTC timezone drift
+        // (previously toISOString shifted the date by -1 day in UTC-3)
         if (updates.utiAdmissionDate.length === 0) {
           dbUpdates.uti_admission_date = null;
         } else {
-          dbUpdates.uti_admission_date = updates.utiAdmissionDate.map(date => {
-            try {
-              // Check if it's already in DD/MM/YYYY format
-              const parts = date.split('/');
-              if (parts.length === 3) {
-                const [day, month, year] = parts;
-                const isoDate = new Date(`${year}-${month}-${day}`);
-                if (!isNaN(isoDate.getTime())) {
-                  return isoDate.toISOString();
-                }
-              }
-            } catch (e) {
-              // If parsing fails, return as is
-            }
-            return date;
-          }).join('\n');
+          dbUpdates.uti_admission_date = updates.utiAdmissionDate
+            .map(d => (d || '').trim())
+            .filter(Boolean)
+            .join('\n');
         }
       }
       if (updates.utiDischargePrediction !== undefined) dbUpdates.uti_discharge_prediction = updates.utiDischargePrediction.length > 0 ? updates.utiDischargePrediction.join('\n') : null;
@@ -388,21 +376,10 @@ export function usePatients(department?: Department) {
 
       // Add UTI fields if they exist
       if (patient.utiAdmissionDate && patient.utiAdmissionDate.length > 0) {
-        dbData.uti_admission_date = patient.utiAdmissionDate.map(date => {
-          try {
-            const parts = date.split('/');
-            if (parts.length === 3) {
-              const [day, month, year] = parts;
-              const isoDate = new Date(`${year}-${month}-${day}`);
-              if (!isNaN(isoDate.getTime())) {
-                return isoDate.toISOString();
-              }
-            }
-          } catch (e) {
-            // If parsing fails, return as is
-          }
-          return date;
-        }).join('\n');
+        dbData.uti_admission_date = patient.utiAdmissionDate
+          .map(d => (d || '').trim())
+          .filter(Boolean)
+          .join('\n');
       }
       if (patient.utiDischargePrediction && patient.utiDischargePrediction.length > 0) dbData.uti_discharge_prediction = patient.utiDischargePrediction.join('\n');
       if (patient.utiAllergies && patient.utiAllergies.length > 0) dbData.uti_allergies = patient.utiAllergies.join('\n');
@@ -443,16 +420,14 @@ export function usePatients(department?: Department) {
         medicalResponsibility: (data.medical_responsibility as unknown) as Patient['medicalResponsibility'],
         // UTI fields
         utiAdmissionDate: data.uti_admission_date ? data.uti_admission_date.split('\n').filter(Boolean).map(date => {
-          try {
+          if (/^\d{4}-\d{2}-\d{2}T/.test(date)) {
             const parsedDate = new Date(date);
             if (!isNaN(parsedDate.getTime())) {
-              const day = String(parsedDate.getDate()).padStart(2, '0');
-              const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-              const year = parsedDate.getFullYear();
+              const day = String(parsedDate.getUTCDate()).padStart(2, '0');
+              const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0');
+              const year = parsedDate.getUTCFullYear();
               return `${day}/${month}/${year}`;
             }
-          } catch (e) {
-            // If parsing fails, return as is
           }
           return date;
         }) : [],
@@ -662,15 +637,15 @@ export function usePatients(department?: Department) {
     admissionDate: record.admission_date || '',
     medicalResponsibility: (record.medical_responsibility as unknown) as Patient['medicalResponsibility'],
     utiAdmissionDate: record.uti_admission_date ? record.uti_admission_date.split('\n').filter(Boolean).map((date: string) => {
-      try {
+      if (/^\d{4}-\d{2}-\d{2}T/.test(date)) {
         const parsedDate = new Date(date);
         if (!isNaN(parsedDate.getTime())) {
-          const day = String(parsedDate.getDate()).padStart(2, '0');
-          const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-          const year = parsedDate.getFullYear();
+          const day = String(parsedDate.getUTCDate()).padStart(2, '0');
+          const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0');
+          const year = parsedDate.getUTCFullYear();
           return `${day}/${month}/${year}`;
         }
-      } catch (e) {}
+      }
       return date;
     }) : [],
     utiDischargePrediction: record.uti_discharge_prediction ? record.uti_discharge_prediction.split('\n').filter(Boolean) : [],
