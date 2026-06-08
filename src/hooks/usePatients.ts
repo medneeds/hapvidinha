@@ -153,18 +153,17 @@ export function usePatients(department?: Department) {
         medicalResponsibility: (p.medical_responsibility as unknown) as Patient['medicalResponsibility'],
         // UTI fields
         utiAdmissionDate: p.uti_admission_date ? p.uti_admission_date.split('\n').filter(Boolean).map(date => {
-          // Convert ISO timestamp to DD/MM/YYYY format if needed
-          try {
+          // Legacy ISO timestamps -> format using UTC to avoid -1 day drift in UTC-3
+          if (/^\d{4}-\d{2}-\d{2}T/.test(date)) {
             const parsedDate = new Date(date);
             if (!isNaN(parsedDate.getTime())) {
-              const day = String(parsedDate.getDate()).padStart(2, '0');
-              const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-              const year = parsedDate.getFullYear();
+              const day = String(parsedDate.getUTCDate()).padStart(2, '0');
+              const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0');
+              const year = parsedDate.getUTCFullYear();
               return `${day}/${month}/${year}`;
             }
-          } catch (e) {
-            // If parsing fails, return as is
           }
+          // Already in DD/MM/YYYY (or other plain text) — return as-is
           return date;
         }) : [],
         utiDischargePrediction: p.uti_discharge_prediction ? p.uti_discharge_prediction.split('\n').filter(Boolean) : [],
