@@ -637,15 +637,15 @@ export function usePatients(department?: Department) {
     admissionDate: record.admission_date || '',
     medicalResponsibility: (record.medical_responsibility as unknown) as Patient['medicalResponsibility'],
     utiAdmissionDate: record.uti_admission_date ? record.uti_admission_date.split('\n').filter(Boolean).map((date: string) => {
-      try {
+      if (/^\d{4}-\d{2}-\d{2}T/.test(date)) {
         const parsedDate = new Date(date);
         if (!isNaN(parsedDate.getTime())) {
-          const day = String(parsedDate.getDate()).padStart(2, '0');
-          const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-          const year = parsedDate.getFullYear();
+          const day = String(parsedDate.getUTCDate()).padStart(2, '0');
+          const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0');
+          const year = parsedDate.getUTCFullYear();
           return `${day}/${month}/${year}`;
         }
-      } catch (e) {}
+      }
       return date;
     }) : [],
     utiDischargePrediction: record.uti_discharge_prediction ? record.uti_discharge_prediction.split('\n').filter(Boolean) : [],
