@@ -254,26 +254,15 @@ export function usePatients(department?: Department) {
       if (updates.allocationStatus !== undefined) dbUpdates.allocation_status = updates.allocationStatus || null;
       // UTI fields
       if (updates.utiAdmissionDate !== undefined) {
-        // Convert DD/MM/YYYY format back to ISO format for database storage
+        // Persist as DD/MM/YYYY text to avoid UTC timezone drift
+        // (previously toISOString shifted the date by -1 day in UTC-3)
         if (updates.utiAdmissionDate.length === 0) {
           dbUpdates.uti_admission_date = null;
         } else {
-          dbUpdates.uti_admission_date = updates.utiAdmissionDate.map(date => {
-            try {
-              // Check if it's already in DD/MM/YYYY format
-              const parts = date.split('/');
-              if (parts.length === 3) {
-                const [day, month, year] = parts;
-                const isoDate = new Date(`${year}-${month}-${day}`);
-                if (!isNaN(isoDate.getTime())) {
-                  return isoDate.toISOString();
-                }
-              }
-            } catch (e) {
-              // If parsing fails, return as is
-            }
-            return date;
-          }).join('\n');
+          dbUpdates.uti_admission_date = updates.utiAdmissionDate
+            .map(d => (d || '').trim())
+            .filter(Boolean)
+            .join('\n');
         }
       }
       if (updates.utiDischargePrediction !== undefined) dbUpdates.uti_discharge_prediction = updates.utiDischargePrediction.length > 0 ? updates.utiDischargePrediction.join('\n') : null;
