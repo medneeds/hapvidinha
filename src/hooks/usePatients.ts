@@ -377,21 +377,10 @@ export function usePatients(department?: Department) {
 
       // Add UTI fields if they exist
       if (patient.utiAdmissionDate && patient.utiAdmissionDate.length > 0) {
-        dbData.uti_admission_date = patient.utiAdmissionDate.map(date => {
-          try {
-            const parts = date.split('/');
-            if (parts.length === 3) {
-              const [day, month, year] = parts;
-              const isoDate = new Date(`${year}-${month}-${day}`);
-              if (!isNaN(isoDate.getTime())) {
-                return isoDate.toISOString();
-              }
-            }
-          } catch (e) {
-            // If parsing fails, return as is
-          }
-          return date;
-        }).join('\n');
+        dbData.uti_admission_date = patient.utiAdmissionDate
+          .map(d => (d || '').trim())
+          .filter(Boolean)
+          .join('\n');
       }
       if (patient.utiDischargePrediction && patient.utiDischargePrediction.length > 0) dbData.uti_discharge_prediction = patient.utiDischargePrediction.join('\n');
       if (patient.utiAllergies && patient.utiAllergies.length > 0) dbData.uti_allergies = patient.utiAllergies.join('\n');
