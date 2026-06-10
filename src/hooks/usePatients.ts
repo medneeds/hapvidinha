@@ -244,7 +244,22 @@ export function usePatients(department?: Department) {
       if (updates.highlightedConducts !== undefined) dbUpdates.highlighted_conducts = updates.highlightedConducts;
       if (updates.schedule !== undefined) dbUpdates.schedule = updates.schedule.join('\n');
       if (updates.admissionHistory !== undefined) dbUpdates.admission_history = updates.admissionHistory || null;
-      if (updates.admissionDate !== undefined) dbUpdates.admission_date = updates.admissionDate && updates.admissionDate !== '' ? updates.admissionDate : null;
+      // Convert DD/MM/YYYY -> ISO at noon UTC so day never drifts across timezones.
+      // Pass-through if already ISO or any other format.
+      const toIsoNoonUtc = (raw: string): string => {
+        const s = (raw || '').trim();
+        if (!s) return s;
+        const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (m) {
+          const [, dd, mm, yyyy] = m;
+          return `${yyyy}-${mm}-${dd}T12:00:00.000Z`;
+        }
+        return s;
+      };
+      if (updates.admissionDate !== undefined) {
+        const v = (updates.admissionDate || '').trim();
+        dbUpdates.admission_date = v ? toIsoNoonUtc(v) : null;
+      }
       if (updates.medicalResponsibility !== undefined) dbUpdates.medical_responsibility = updates.medicalResponsibility;
       if (updates.displayOrder !== undefined) dbUpdates.display_order = updates.displayOrder;
       if (updates.internmentStatus !== undefined) dbUpdates.internment_status = updates.internmentStatus || null;
@@ -253,16 +268,12 @@ export function usePatients(department?: Department) {
       if (updates.allocationStatus !== undefined) dbUpdates.allocation_status = updates.allocationStatus || null;
       // UTI fields
       if (updates.utiAdmissionDate !== undefined) {
-        // Persist as DD/MM/YYYY text to avoid UTC timezone drift
-        // (previously toISOString shifted the date by -1 day in UTC-3)
-        if (updates.utiAdmissionDate.length === 0) {
-          dbUpdates.uti_admission_date = null;
-        } else {
-          dbUpdates.uti_admission_date = updates.utiAdmissionDate
-            .map(d => (d || '').trim())
-            .filter(Boolean)
-            .join('\n');
-        }
+        // Column is timestamptz; store noon-UTC ISO so DD/MM/YYYY survives timezone reads without -1 drift.
+        const cleaned = updates.utiAdmissionDate
+          .map(d => (d || '').trim())
+          .filter(Boolean)
+          .map(toIsoNoonUtc);
+        dbUpdates.uti_admission_date = cleaned.length > 0 ? cleaned.join('\n') : null;
       }
       if (updates.utiDischargePrediction !== undefined) dbUpdates.uti_discharge_prediction = updates.utiDischargePrediction.length > 0 ? updates.utiDischargePrediction.join('\n') : null;
       if (updates.utiAllergies !== undefined) dbUpdates.uti_allergies = updates.utiAllergies.length > 0 ? updates.utiAllergies.join('\n') : null;
