@@ -560,17 +560,7 @@ export default function AuthPage() {
 
           {/* Logo Section */}
           <div className="text-center mb-4 animate-in fade-in-0 slide-in-from-top-8 duration-1000">
-            <div className="inline-block relative group mb-2">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-white rounded-xl px-4 py-2 shadow-2xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105">
-                <img 
-                  src={whitelabel.logos.networkFull} 
-                  alt={whitelabel.institution.networkLogoAlt} 
-                  className="h-8 object-contain transition-all duration-500 group-hover:brightness-110"
-                />
-                <Sparkles className="absolute -top-1 -right-1 h-3 w-3 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
-              </div>
-            </div>
+            {/* Logo da rede removida a pedido */}
             
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
               <div className="inline-flex items-baseline gap-1">
