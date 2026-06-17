@@ -8,7 +8,7 @@ import { ClipboardCheck, Loader2 } from "lucide-react";
 import { Patient } from "@/types/patient";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { VoiceRecorder } from "@/components/VoiceRecorder";
+
 import { useDepartment } from "@/contexts/DepartmentContext";
 
 interface RegisterHandoverDialogProps {
@@ -217,12 +217,9 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="notes" className="uppercase text-sm font-semibold">
-                Observações - Opcional
-              </Label>
-              <VoiceRecorder onTranscriptionComplete={handleTranscription} />
-            </div>
+            <Label htmlFor="notes" className="uppercase text-sm font-semibold">
+              Observações - Opcional
+            </Label>
             <Textarea
               id="notes"
               value={notes}
