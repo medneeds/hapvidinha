@@ -224,7 +224,8 @@ export default function AuthPage() {
           }}
         />
 
-        {/* DESKTOP: Split-screen layout - more compact */}
+        {/* DESKTOP: Split-screen layout - only mounted when viewport >= lg */}
+        {isDesktop && (
         <div className="hidden lg:flex w-full h-screen relative z-10">
           {/* Left Panel - Branding - more compact */}
           <div className="w-[45%] xl:w-1/2 flex flex-col items-center justify-center p-6 xl:p-10 relative">
