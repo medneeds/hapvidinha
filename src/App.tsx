@@ -37,7 +37,7 @@ import PrivacyPage from "./pages/PrivacyPage";
 import AdminStatesPage from "./pages/AdminStatesPage";
 import AdminUnitsPage from "./pages/AdminUnitsPage";
 import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
-import TherapeuticTemplatesPage from "./pages/TherapeuticTemplatesPage";
+
 import ReportHistoryPage from "./pages/ReportHistoryPage";
 import PresentationPage from "./pages/PresentationPage";
 import SepsisProtocolsAdminPage from "./pages/SepsisProtocolsAdminPage";
@@ -319,16 +319,6 @@ const App = () => {
           element={
             <ProtectedRoute>
               <AdminCoordinatorsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/therapeutic-templates"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <TherapeuticTemplatesPage />
-              </MainLayout>
             </ProtectedRoute>
           }
         />

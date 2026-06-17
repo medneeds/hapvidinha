@@ -15,7 +15,7 @@ import { MedicalResponsibilityDialog } from "./MedicalResponsibilityDialog";
 import { MedicalResponsibilityIndicator } from "./MedicalResponsibilityIndicator";
 import { InternmentStatusDialog } from "./InternmentStatusDialog";
 import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
-import { ApplyTemplateDialog } from "./ApplyTemplateDialog";
+
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
 import { FEATURE_FLAGS } from "@/config/featureFlags";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
@@ -37,7 +37,7 @@ import { useSectorStayTimer } from "@/hooks/useSectorStayTimer";
 import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 import { useConductHistory } from "@/hooks/useConductHistory";
 import { ConductHistoryDialog } from "./ConductHistoryDialog";
-import { PatientEvolutionsPanel } from "./PatientEvolutionsPanel";
+
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { whitelabel } from "@/config/whitelabel";
 import { useHospital } from "@/contexts/HospitalContext";
@@ -797,7 +797,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [localMedicalResponsibility, setLocalMedicalResponsibility] = useState(patient.medicalResponsibility);
   const [internmentStatusDialogOpen, setInternmentStatusDialogOpen] = useState(false);
   const [quickTemplatesDialogOpen, setQuickTemplatesDialogOpen] = useState(false);
-  const [applyTemplateDialogOpen, setApplyTemplateDialogOpen] = useState(false);
+  
   const [examCurvesDialogOpen, setExamCurvesDialogOpen] = useState(false);
   const [bedAllocationDialogOpen, setBedAllocationDialogOpen] = useState(false);
   const [bedPickerSector, setBedPickerSector] = useState<Patient['sector'] | null>(null);
@@ -3621,16 +3621,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                    >
                     <Zap className="h-1.5 w-1.5" />
                   </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => setApplyTemplateDialogOpen(true)}
-                    className="h-4 w-4 p-0 hover:bg-accent transition-all print:hidden"
-                    style={{ color: sectorColorMap[patient.sector] }}
-                    title="Templates Terapêuticos (Protocolos)"
-                   >
-                    <FileText className="h-1.5 w-1.5" />
-                  </Button>
               </div>
               <DndContext
                 sensors={sensors}
@@ -4385,14 +4375,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
           </div>
 
-          {/* História Admissional - Collapsible */}
+          {/* História Admissional | Anamnese | Evoluções - Collapsible */}
           <Collapsible defaultOpen={false}>
             <div className="pt-2 border-t border-border/50 print:pt-1">
               <CollapsibleTrigger asChild>
                 <button className="w-full flex items-center justify-between group cursor-pointer">
                   <h4 className="font-semibold text-xs text-foreground uppercase print:text-[8.5px] flex items-center gap-1.5">
                     <Stethoscope className="h-3 w-3 text-primary" />
-                    História Admissional / Anamnese
+                    História Admissional | Anamnese | Evoluções
                   </h4>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-transform print:hidden data-[state=open]:rotate-180" />
                 </button>
@@ -4401,24 +4391,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <p className="text-xs leading-snug text-foreground whitespace-pre-wrap uppercase print:text-[7.5px] print:leading-tight mt-1">
                   {patient.admissionHistory}
                 </p>
-              </CollapsibleContent>
-            </div>
-          </Collapsible>
-
-          {/* Evoluções Clínicas - Collapsible */}
-          <Collapsible defaultOpen={false}>
-            <div className="pt-2 border-t border-border/50 print:hidden">
-              <CollapsibleTrigger asChild>
-                <button className="w-full flex items-center justify-between group cursor-pointer">
-                  <h4 className="font-semibold text-xs text-foreground uppercase flex items-center gap-1.5">
-                    <FileEdit className="h-3 w-3 text-primary" />
-                    Evoluções Clínicas
-                  </h4>
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-transform data-[state=open]:rotate-180" />
-                </button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-1">
-                <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
               </CollapsibleContent>
             </div>
           </Collapsible>
@@ -4667,12 +4639,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               Adicionar Nova Hipótese / Diagnóstico
             </Button>
             
-            {/* História Admissional / Anamnese */}
+            {/* História Admissional | Anamnese | Evoluções */}
             {patient.admissionHistory && (
               <div className="mt-6 pt-6 border-t border-border/30">
                 <h4 className="text-lg font-bold text-primary uppercase mb-3 flex items-center gap-2">
                   <div className="w-1 h-5 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
-                  História Admissional / Anamnese
+                  História Admissional | Anamnese | Evoluções
                 </h4>
                 <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm">
                   <p className="text-sm text-foreground leading-relaxed uppercase whitespace-pre-wrap">
@@ -4681,11 +4653,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
             )}
-
-            {/* Evoluções Clínicas */}
-            <div className="mt-6 pt-6 border-t border-border/30">
-              <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
-            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -4827,12 +4794,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               Adicionar Novo Exame
             </Button>
             
-            {/* História Admissional / Anamnese */}
+            {/* História Admissional | Anamnese | Evoluções */}
             {patient.admissionHistory && (
               <div className="mt-6 pt-6 border-t border-border/30">
                 <h4 className="text-lg font-bold text-primary uppercase mb-3 flex items-center gap-2">
                   <div className="w-1 h-5 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
-                  História Admissional / Anamnese
+                  História Admissional | Anamnese | Evoluções
                 </h4>
                 <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm">
                   <p className="text-sm text-foreground leading-relaxed uppercase whitespace-pre-wrap">
@@ -4841,11 +4808,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
             )}
-
-            {/* Evoluções Clínicas */}
-            <div className="mt-6 pt-6 border-t border-border/30">
-              <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
-            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -4987,12 +4949,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               Adicionar Novo Antecedente
             </Button>
             
-            {/* História Admissional / Anamnese */}
+            {/* História Admissional | Anamnese | Evoluções */}
             {patient.admissionHistory && (
               <div className="mt-6 pt-6 border-t border-border/30">
                 <h4 className="text-lg font-bold text-primary uppercase mb-3 flex items-center gap-2">
                   <div className="w-1 h-5 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
-                  História Admissional / Anamnese
+                  História Admissional | Anamnese | Evoluções
                 </h4>
                 <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm">
                   <p className="text-sm text-foreground leading-relaxed uppercase whitespace-pre-wrap">
@@ -5001,11 +4963,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
             )}
-
-            {/* Evoluções Clínicas */}
-            <div className="mt-6 pt-6 border-t border-border/30">
-              <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
-            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -5147,12 +5104,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               Adicionar Nova Programação / Pendência
             </Button>
             
-            {/* História Admissional / Anamnese */}
+            {/* História Admissional | Anamnese | Evoluções */}
             {patient.admissionHistory && (
               <div className="mt-6 pt-6 border-t border-border/30">
                 <h4 className="text-lg font-bold text-primary uppercase mb-3 flex items-center gap-2">
                   <div className="w-1 h-5 bg-gradient-to-b from-primary to-primary/50 rounded-full" />
-                  História Admissional / Anamnese
+                  História Admissional | Anamnese | Evoluções
                 </h4>
                 <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5 shadow-sm">
                   <p className="text-sm text-foreground leading-relaxed uppercase whitespace-pre-wrap">
@@ -5161,11 +5118,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
               </div>
             )}
-
-            {/* Evoluções Clínicas */}
-            <div className="mt-6 pt-6 border-t border-border/30">
-              <PatientEvolutionsPanel patientId={patient.id} patientName={patient.name} />
-            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -5205,65 +5157,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         }}
       />
 
-      {/* Apply Therapeutic Template Dialog */}
-      <ApplyTemplateDialog
-        open={applyTemplateDialogOpen}
-        onOpenChange={setApplyTemplateDialogOpen}
-        patientName={patient.name}
-        onApply={async (templateItems: string[]) => {
-          if (!templateItems || templateItems.length === 0) return;
-          try {
-            const currentPendencies = patient.pendencies || [];
-            const updatedPendencies = [...currentPendencies, ...templateItems];
-            const pendenciesString = updatedPendencies.join('\n');
-            const { error } = await supabase
-              .from('patients')
-              .update({ pendencies: pendenciesString, updated_at: new Date().toISOString() })
-              .eq('id', patient.id);
-            if (error) throw error;
-            const { data: updatedPatient, error: fetchError } = await supabase
-              .from('patients')
-              .select('*')
-              .eq('id', patient.id)
-              .maybeSingle();
-            if (fetchError) throw fetchError;
-            toast.success(`${templateItems.length} item(ns) do protocolo adicionado(s)`);
-            if (updatedPatient) {
-              const mappedPatient: Patient = {
-                id: updatedPatient.id,
-                bedNumber: updatedPatient.bed_number,
-                name: updatedPatient.name,
-                age: updatedPatient.age,
-                sector: updatedPatient.sector as SectorType,
-                diagnoses: parseTextArray(updatedPatient.diagnoses),
-                medicalHistory: parseTextArray(updatedPatient.medical_history),
-                relevantExams: parseTextArray(updatedPatient.relevant_exams),
-                pendencies: parseTextArray(updatedPatient.pendencies),
-                schedule: parseTextArray(updatedPatient.schedule),
-                admissionHistory: updatedPatient.admission_history || '',
-                admissionDate: updatedPatient.admission_date || '',
-                internmentStatus: updatedPatient.internment_status as any,
-                internmentNotes: updatedPatient.internment_notes,
-                medicalResponsibility: updatedPatient.medical_responsibility as unknown as MedicalResponsibility | undefined,
-                highlightedPendencies: updatedPatient.highlighted_pendencies || [],
-                utiAdmissionDate: parseTextArray(updatedPatient.uti_admission_date),
-                utiAdmissionReason: parseTextArray(updatedPatient.uti_admission_reason),
-                utiDischargePrediction: parseTextArray(updatedPatient.uti_discharge_prediction),
-                utiAllergies: parseTextArray(updatedPatient.uti_allergies),
-                utiCurrentStatus: parseTextArray(updatedPatient.uti_current_status),
-                utiDevices: parseTextArray(updatedPatient.uti_devices),
-                utiSpecialties: parseTextArray(updatedPatient.uti_specialties),
-                utiCulturesAntibiotics: parseTextArray(updatedPatient.uti_cultures_antibiotics),
-                utiOriginSector: parseTextArray(updatedPatient.uti_origin_sector)
-              };
-              onUpdate(mappedPatient);
-            }
-          } catch (error) {
-            console.error('Error:', error);
-            toast.error('Erro ao aplicar template terapêutico');
-          }
-        }}
-      />
 
       {/* Quick Templates Dialog */}
       <QuickTemplatesDialog

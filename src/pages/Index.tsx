@@ -1358,20 +1358,6 @@ const Index = () => {
                           </TooltipTrigger>
                           <TooltipContent><p>{namesHidden ? "Mostrar nomes dos pacientes" : "Ocultar nomes (Proteção de Dados)"}</p></TooltipContent>
                         </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => window.dispatchEvent(new CustomEvent("hapmap:open-training-center"))}
-                              aria-label="Rever treinamentos"
-                              className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-violet-500 to-fuchsia-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(168,85,247,0.6)] hover:shadow-[0_0_20px_-2px_rgba(168,85,247,0.85)] hover:brightness-110 hover:scale-105 transition-all"
-                            >
-                              <GraduationCap className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent><p>Rever treinamento</p></TooltipContent>
-                        </Tooltip>
                       </div>
 
                       {/* Separator */}
