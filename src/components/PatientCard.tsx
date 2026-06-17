@@ -5407,18 +5407,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 <Copy className="h-3.5 w-3.5" />
                 Copiar
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setReportDialogOpen(false);
-                  navigate(`/report-history?patient=${encodeURIComponent(patient.name)}`);
-                }}
-                className="flex items-center gap-1.5 text-primary"
-              >
-                <FileText className="h-3.5 w-3.5" />
-                Histórico
-              </Button>
             </div>
             <div className="flex gap-2">
               <Button variant="ghost" size="sm" onClick={() => setReportDialogOpen(false)}>
