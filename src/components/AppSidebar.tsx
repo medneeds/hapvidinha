@@ -71,17 +71,17 @@ export function AppSidebar({
   // Hook for pending password reset requests
   const { pendingCount: pendingResets } = usePendingPasswordResets();
   
-  // Check if user is COORDENADOR
-  const isCoordinator = user?.email === "coordenador@sistema.local";
-  
-  // Check if user is Gestor Master (full access without password)
-  const isGestorMaster = user?.email === "artur.batista@sistema.local";
-  
+  // Privileged access is determined by server-enforced role only
+  const isCoordinator = role === "admin";
+
+  // Gestor Master = admin role (full access without password gates)
+  const isGestorMaster = role === "admin";
+
   // Check if user is BIGDOOR (porta role)
   const isDoorUser = role === "porta";
-  
-  // Check if user is Coordenador Médico (admin role but NOT gestor master)
-  const isCoordenadorMedico = role === "admin" && !isGestorMaster;
+
+  // Coordenador Médico tier removed in favor of single admin role
+  const isCoordenadorMedico = false;
 
   // Check if user is Recepção or Enfermagem (view-only roles)
   const isRecepcao = role === "recepcao";
