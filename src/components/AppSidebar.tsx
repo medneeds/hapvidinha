@@ -13,6 +13,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   KeyRound,
+  ArrowRightLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { whitelabel } from "@/config/whitelabel";
