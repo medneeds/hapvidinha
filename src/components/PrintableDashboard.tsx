@@ -80,8 +80,8 @@ export function PrintableDashboard({
   requestsByDestination,
 }: PrintableDashboardProps) {
   const departmentLabels: Record<string, string> = {
-    "urgencia-emergencia-adulto": "Urgência e Emergência Adulto",
-    "urgencia-emergencia-pediatrica": "Urgência e Emergência Pediátrica",
+    "urgencia-emergencia-adulto": "UE Adulto",
+    "urgencia-emergencia-pediatrica": "UE Pediátrica",
     "uti": "UTI",
     "posto-internacao": "Posto Internação",
   };

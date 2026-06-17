@@ -27,7 +27,7 @@ import { RequestUtiAllocationDialog } from "@/components/RequestUtiAllocationDia
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
+import { useDepartment, DEPARTMENTS, Department, getDepartmentLabel } from "@/contexts/DepartmentContext";
 import { supabase } from "@/integrations/supabase/client";
 import { usePrivacy } from "@/contexts/PrivacyContext";
 import { getNextBedNumber } from "@/utils/bedNaming";
@@ -1085,12 +1085,9 @@ const Index = () => {
                           <button className="inline-flex items-center gap-1.5 h-9 md:h-7 px-4 md:px-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm md:text-xs font-semibold hover:bg-white/20 hover:border-white/40 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
                             <Building2 className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0" />
                             <span className="md:hidden truncate">
-                              {currentDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" ? "URG E EMERG..." : 
-                               currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA" ? "URG E EMERG PED..." :
-                               
-                               currentDepartment}
+                              {getDepartmentLabel(currentDepartment)}
                             </span>
-                            <span className="hidden md:inline truncate max-w-none">{currentDepartment}</span>
+                            <span className="hidden md:inline truncate max-w-none">{getDepartmentLabel(currentDepartment)}</span>
                             <ChevronDown className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0 opacity-70" />
                           </button>
                         </DropdownMenuTrigger>
@@ -1121,7 +1118,7 @@ const Index = () => {
                                     setCurrentDepartment(dept);
                                     toast({
                                       title: "Setor alterado",
-                                      description: `Alternado para: ${dept}`,
+                                      description: `Alternado para: ${getDepartmentLabel(dept)}`,
                                     });
                                   } else {
                                     // Usuários não-admin NÃO podem trocar de departamento
@@ -1136,7 +1133,7 @@ const Index = () => {
                               }}
                             >
                               <Building2 className="h-4 w-4 mr-2 opacity-60" />
-                              {dept}
+                              {getDepartmentLabel(dept)}
                             </DropdownMenuItem>
                           ))
                           )}
