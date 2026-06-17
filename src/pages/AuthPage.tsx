@@ -564,7 +564,7 @@ export default function AuthPage() {
             
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
               <div className="inline-flex items-baseline gap-1">
-                <h1 className="text-3xl tracking-tighter inline-flex items-baseline">
+                <h1 className="text-5xl tracking-tighter inline-flex items-baseline">
                   <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
                     {whitelabel.platform.name.slice(0, 3)}
                   </span>
