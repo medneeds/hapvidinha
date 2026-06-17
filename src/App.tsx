@@ -83,16 +83,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-         <Route
-           path="/report-history"
-           element={
-             <ProtectedRoute>
-               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                 <ReportHistoryPage />
-               </MainLayout>
-             </ProtectedRoute>
-           }
-         />
         <Route
           path="/documents"
           element={
