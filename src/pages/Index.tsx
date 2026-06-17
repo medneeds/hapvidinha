@@ -34,7 +34,7 @@ import { getNextBedNumber } from "@/utils/bedNaming";
 import { vacateOrDeletePatient, isFixedBed } from "@/utils/bedVacancy";
 import { RegisterHandoverDialog } from "@/components/RegisterHandoverDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import NotesTabOptimized from "@/components/resources/NotesTabOptimized";
+
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -61,7 +61,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { usePatients } from "@/hooks/usePatients";
-import { usePatientVersions } from "@/hooks/usePatientVersions";
+
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useHospital } from "@/contexts/HospitalContext";
 import {
@@ -229,7 +229,8 @@ const Index = () => {
   const [bedSelectionCategory, setBedSelectionCategory] = useState<PatientCategory | undefined>(undefined);
   const { toast } = useToast();
   const { signOut, user, role, allowedDepartments, loading: authLoading } = useAuth();
-  const { saveVersion, fetchVersions } = usePatientVersions();
+  const saveVersion = async (..._args: any[]) => {};
+  const fetchVersions = async (..._args: any[]) => {};
   const { currentState, currentHospital } = useHospital();
   const isMobile = useIsMobile();
   const { namesHidden, toggleNamesHidden } = usePrivacy();
@@ -1358,20 +1359,6 @@ const Index = () => {
                           </TooltipTrigger>
                           <TooltipContent><p>{namesHidden ? "Mostrar nomes dos pacientes" : "Ocultar nomes (Proteção de Dados)"}</p></TooltipContent>
                         </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => window.dispatchEvent(new CustomEvent("hapmap:open-training-center"))}
-                              aria-label="Rever treinamentos"
-                              className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-violet-500 to-fuchsia-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(168,85,247,0.6)] hover:shadow-[0_0_20px_-2px_rgba(168,85,247,0.85)] hover:brightness-110 hover:scale-105 transition-all"
-                            >
-                              <GraduationCap className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent><p>Rever treinamento</p></TooltipContent>
-                        </Tooltip>
                       </div>
 
                       {/* Separator */}
@@ -1727,27 +1714,6 @@ const Index = () => {
                 </>
               )}
 
-              {/* Anotações e Lembretes Section */}
-              <Collapsible open={isNotesSectionOpen} onOpenChange={setIsNotesSectionOpen} className="space-y-3 mb-4 print:hidden">
-                <div className="bg-gradient-card rounded-xl p-2 border border-border/50 shadow-md transition-all duration-200 min-h-[48px] flex items-center">
-                  <div className="flex items-center justify-between w-full">
-                    <CollapsibleTrigger asChild>
-                      <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                        <ChevronDown className={`h-5 w-5 transition-transform ${isNotesSectionOpen ? '' : '-rotate-90'}`} />
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">📝</span>
-                          <h2 className="text-lg font-bold text-foreground uppercase">Anotações, Lembretes e Check-lists</h2>
-                        </div>
-                      </button>
-                    </CollapsibleTrigger>
-                  </div>
-                </div>
-                <CollapsibleContent>
-                  <div className="mt-3">
-                    <NotesTabOptimized />
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
             </div>
           </main>
 

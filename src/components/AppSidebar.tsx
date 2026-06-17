@@ -94,18 +94,10 @@ export function AppSidebar({
       link: "/",
     },
     {
-      title: "PACIENTES",
-      icon: Users,
-      items: [
-        { name: "MOVIMENTAÇÕES", link: "/movements" },
-      ],
-    },
-    {
        title: "DOCUMENTOS",
        icon: FolderOpen,
        items: [
          { name: "PROTOCOLOS E FORMULÁRIOS", link: "/documents" },
-         { name: "TEMPLATES TERAPÊUTICOS", link: "/therapeutic-templates" },
          { name: "RELATÓRIOS EMITIDOS", link: "/report-history" },
        ],
      },
@@ -330,7 +322,7 @@ export function AppSidebar({
               defaultOpen={section.title === "MAPA"}
               open={section.requiresPassword 
                 ? (isGestorMaster || unlockedSections.includes(section.title)) 
-                  ? (adminSectionOpen[section.title] ?? true)
+                  ? (adminSectionOpen[section.title] ?? false)
                   : false
                 : undefined}
               onOpenChange={(isOpen) => {
