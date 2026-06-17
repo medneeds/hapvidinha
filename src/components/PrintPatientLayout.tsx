@@ -401,22 +401,23 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
 
         {patient.pendencies.length > 0 && (
           <SectionCard title="Programações e Pendências">
-            <ul style={{ margin: 0, paddingLeft: '16px', listStyleType: 'decimal' }}>
+            <ul style={{ margin: 0, paddingLeft: '18px', listStyleType: 'decimal' }}>
               {patient.pendencies.map((pendency, idx) => {
                 const isHighlighted = patient.highlightedPendencies?.includes(idx);
                 return (
                   <li 
                     key={idx} 
                     style={{ 
-                      fontSize: '8pt', 
+                      fontSize: '9pt', 
                       color: '#374151', 
-                      marginBottom: '3px', 
-                      lineHeight: '1.35',
+                      marginBottom: '5px', 
+                      lineHeight: '1.45',
+                      paddingLeft: '2px',
                       fontWeight: isHighlighted ? '600' : 'normal',
                       backgroundColor: isHighlighted ? colors.light : 'transparent',
-                      padding: isHighlighted ? '2px 4px' : '0',
-                      marginLeft: isHighlighted ? '-4px' : '0',
-                      borderRadius: isHighlighted ? '2px' : '0',
+                      padding: isHighlighted ? '3px 6px' : '0 0 0 2px',
+                      marginLeft: isHighlighted ? '-6px' : '0',
+                      borderRadius: isHighlighted ? '3px' : '0',
                       border: isHighlighted ? `1px solid ${colors.border}` : 'none'
                     }}
                   >
