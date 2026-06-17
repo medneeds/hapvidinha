@@ -50,7 +50,7 @@ import { ChestPainActiveBanner } from "./ChestPainActiveBanner";
 import { SepsisProtocolWizardDialog } from "./SepsisProtocolWizardDialog";
 import { StrokeProtocolWizardDialog } from "./StrokeProtocolWizardDialog";
 import { ChestPainProtocolWizardDialog } from "./ChestPainProtocolWizardDialog";
-import { PatientInfoPasteDialog } from "./PatientInfoPasteDialog";
+
 import { PatientInfoDialog } from "./PatientInfoDialog";
 import { Info } from "lucide-react";
 import {
@@ -783,7 +783,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [editValue, setEditValue] = useState("");
   const [editingArrayIndex, setEditingArrayIndex] = useState<number>(-1);
   const [expandedSection, setExpandedSection] = useState<'diagnoses' | 'exams' | 'medicalHistory' | 'pendencies' | null>(null);
-  const [loadingCid, setLoadingCid] = useState<number | null>(null);
+  
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
   const ageInputRef = useRef<HTMLInputElement>(null);
@@ -809,7 +809,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   const [sepsisWizardOpen, setSepsisWizardOpen] = useState(false);
   const [strokeWizardOpen, setStrokeWizardOpen] = useState(false);
   const [chestPainWizardOpen, setChestPainWizardOpen] = useState(false);
-  const [infoPasteDialogOpen, setInfoPasteDialogOpen] = useState(false);
+  
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const { activeProtocol: activeSepsisProtocol, isProtocolActive: hasSepsisActive, refetch: refetchSepsis } = useSepsisProtocol(patient.id);
   const { activeProtocol: activeStrokeProtocol, isProtocolActive: hasStrokeActive, refetch: refetchStroke } = useStrokeProtocol(patient.id);
@@ -945,55 +945,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }
   }, [patient.name, toastHook]);
 
-  const getCidCode = useCallback(async (diagnosis: string, index: number) => {
-    if (!diagnosis.trim()) {
-      toast.error("Digite um diagnóstico antes de buscar o CID");
-      return;
-    }
-
-    setLoadingCid(index);
-    try {
-      const { data, error } = await supabase.functions.invoke('get-cid-code', {
-        body: { diagnosis }
-      });
-
-      if (error) throw error;
-
-      if (data?.cidCode) {
-        const diagnosisWithCid = `${diagnosis} (${data.cidCode})`;
-        
-        // Se estiver em modo de edição, atualiza o valor de edição e salva automaticamente
-        if (editingField === "diagnoses" && editingArrayIndex === index) {
-          setEditValue(diagnosisWithCid);
-          
-          // Salva automaticamente
-          const updatedPatient = { ...patient };
-          updatedPatient.diagnoses = patient.diagnoses.map((d, i) => 
-            i === index ? diagnosisWithCid : d
-          );
-          onUpdate(updatedPatient);
-          
-          // Cancela o modo de edição
-          setEditingField(null);
-          setEditValue("");
-          setEditingArrayIndex(-1);
-        } else {
-          // Caso não esteja em edição, atualiza diretamente
-          const updatedDiagnoses = patient.diagnoses.map((d, i) => 
-            i === index ? diagnosisWithCid : d
-          );
-          onUpdate({ ...patient, diagnoses: updatedDiagnoses });
-        }
-        
-        toast.success(`CID ${data.cidCode} adicionado`);
-      }
-    } catch (error) {
-      console.error('Error getting CID code:', error);
-      toast.error("Erro ao buscar código CID");
-    } finally {
-      setLoadingCid(null);
-    }
-  }, [patient, editingField, editingArrayIndex, onUpdate]);
 
   // When user picks a destination sector, we open the bed picker first
   // (the menu just toggles state; actual onTransfer happens after a specific
@@ -1837,15 +1788,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>{stayTimer.displayShort}</span>
                     </div>
                   )}
-                  {/* AI paste icon */}
-                  <button
-                    type="button"
-                    onClick={(e) => { e.stopPropagation(); setInfoPasteDialogOpen(true); }}
-                    className="inline-flex items-center justify-center h-4 w-4 rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors print:hidden"
-                    title="Colar dados do paciente (IA reconhece automaticamente)"
-                  >
-                    <Sparkles className="h-3 w-3" />
-                  </button>
                   {/* Info dialog icon */}
                   <button
                     type="button"
@@ -2569,8 +2511,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === patient.diagnoses.length - 1}
-                            onGetCid={(diagnosis, index) => getCidCode(diagnosis, index)}
-                            loadingCid={loadingCid === idx}
                           />
                         ))}
                       </ol>
@@ -3371,8 +3311,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onKeyDown={handleKeyDown}
                         inputRef={inputRef}
                         isLast={idx === patient.diagnoses.length - 1}
-                        onGetCid={(diagnosis, index) => getCidCode(diagnosis, index)}
-                        loadingCid={loadingCid === idx}
                       />
                     ))}
                   </ol>
@@ -4527,13 +4465,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         existingProtocolId={activeStrokeProtocol?.id || null}
       />
 
-      <PatientInfoPasteDialog
-        open={infoPasteDialogOpen}
-        onOpenChange={setInfoPasteDialogOpen}
-        onApply={async (updates) => {
-          onUpdate({ ...patient, ...updates });
-        }}
-      />
 
       <PatientInfoDialog
         open={infoDialogOpen}

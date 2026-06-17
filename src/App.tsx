@@ -10,11 +10,7 @@ import { PalliativeFarewellProvider } from "@/contexts/PalliativeFarewellContext
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
-import ResourcesPage from "./pages/ResourcesPage";
-import MedicalCodesPage from "./pages/MedicalCodesPage";
-import SurgicalCodesPage from "./pages/SurgicalCodesPage";
 import HandoversPage from "./pages/HandoversPage";
-import VersionsPage from "./pages/VersionsPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import SepsisProtocolPage from "./pages/SepsisProtocolPage";
 import UltrassomProtocolPage from "./pages/UltrassomProtocolPage";
@@ -26,7 +22,7 @@ import AltoCustoPage from "./pages/AltoCustoPage";
 import SadtPage from "./pages/SadtPage";
 import MovementsPage from "./pages/MovementsPage";
 import AuthPage from "./pages/AuthPage";
-import InternmentHistoryPage from "./pages/InternmentHistoryPage";
+
 import DashboardPage from "./pages/DashboardPage";
 import PriorizacaoCirurgicaPage from "./pages/PriorizacaoCirurgicaPage";
 import ControleGlicemicoPage from "./pages/ControleGlicemicoPage";
@@ -53,10 +49,7 @@ import GoOverviewPage from "./pages/go/GoOverviewPage";
 import GoConductorsPage from "./pages/go/GoConductorsPage";
 import GoBedsPage from "./pages/go/GoBedsPage";
 import GoIndicatorsPage from "./pages/go/GoIndicatorsPage";
-import BedManagementPage from "./pages/BedManagementPage";
-import BedManagementRegistrationPage from "./pages/BedManagementRegistrationPage";
-import BedRequestsPanelPage from "./pages/BedRequestsPanelPage";
-import RepositoryPage from "./pages/RepositoryPage";
+
 
 const queryClient = new QueryClient();
 
@@ -80,36 +73,6 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/resources"
-            element={
-              <ProtectedRoute>
-                <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                  <ResourcesPage />
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-        <Route
-          path="/codigos"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <MedicalCodesPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/codigos-cirurgicos"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <SurgicalCodesPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/handovers"
           element={
@@ -120,16 +83,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-           path="/versions"
-           element={
-             <ProtectedRoute>
-               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                 <VersionsPage />
-               </MainLayout>
-             </ProtectedRoute>
-           }
-         />
          <Route
            path="/report-history"
            element={
@@ -282,16 +235,6 @@ const App = () => {
           }
         />
         <Route
-          path="/internment-history"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <InternmentHistoryPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
@@ -427,46 +370,6 @@ const App = () => {
         <Route path="/go/beds" element={<GoProtectedRoute><GoBedsPage /></GoProtectedRoute>} />
         <Route path="/go/indicators" element={<GoProtectedRoute><GoIndicatorsPage /></GoProtectedRoute>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route
-          path="/leitos"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <BedManagementPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/leitos/cadastro"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <BedManagementRegistrationPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/leitos/painel"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <BedRequestsPanelPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/repositorio"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <RepositoryPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -7,7 +7,7 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
 import { PageTransition } from "@/components/PageTransition";
-import { TrainingScheduler } from "@/components/TrainingScheduler";
+
 import { FloatingSidebarTrigger } from "@/components/FloatingSidebarTrigger";
 
 interface MainLayoutProps {
@@ -46,7 +46,7 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
 
       <GlobalSearchDialog />
       <KeyboardShortcutsDialog open={showShortcuts} onOpenChange={setShowShortcuts} />
-      <TrainingScheduler />
+      
     </SidebarProvider>
   );
 }
