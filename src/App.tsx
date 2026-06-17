@@ -235,16 +235,6 @@ const App = () => {
           }
         />
         <Route
-          path="/internment-history"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <InternmentHistoryPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
@@ -380,46 +370,6 @@ const App = () => {
         <Route path="/go/beds" element={<GoProtectedRoute><GoBedsPage /></GoProtectedRoute>} />
         <Route path="/go/indicators" element={<GoProtectedRoute><GoIndicatorsPage /></GoProtectedRoute>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route
-          path="/leitos"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <BedManagementPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/leitos/cadastro"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <BedManagementRegistrationPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/leitos/painel"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <BedRequestsPanelPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/repositorio"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <RepositoryPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
