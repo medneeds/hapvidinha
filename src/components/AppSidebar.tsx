@@ -129,7 +129,7 @@ export function AppSidebar({
     : isRecepcao
     ? allMenuItems.filter(item => item.title === "MAPA")
     : isEnfermagem
-    ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "DOCUMENTOS")
+    ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "MOVIMENTAÇÕES" || item.title === "PROTOCOLOS E FORMULÁRIOS")
     : isCoordenadorMedico
     ? allMenuItems.map(item => {
         if (item.title === "PAINEL ADMIN") {
