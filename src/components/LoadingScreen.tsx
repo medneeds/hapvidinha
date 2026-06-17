@@ -77,23 +77,7 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center gap-10">
-        {/* Logo Container */}
-        <div 
-          className="relative"
-          style={{ 
-            animation: 'fadeSlideUp 0.8s ease-out forwards',
-            opacity: 0
-          }}
-        >
-          <div className="absolute inset-0 bg-white/20 rounded-2xl blur-2xl scale-110" />
-          <div className="relative bg-white/95 backdrop-blur-xl px-6 py-4 rounded-2xl shadow-2xl border border-white/30">
-            <img
-              src={whitelabel.logos.networkFull}
-              alt={whitelabel.institution.networkLogoAlt}
-              className="h-12 sm:h-14 object-contain"
-            />
-          </div>
-        </div>
+        {/* Logo da rede removida a pedido */}
 
         {/* Brand Name - HapMap 2.0 */}
         <div 
