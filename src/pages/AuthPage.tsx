@@ -561,8 +561,10 @@ export default function AuthPage() {
             </div>
           </div>
         </div>
+        )}
 
-        {/* MOBILE: Original centered layout */}
+        {/* MOBILE: Original centered layout - only mounted when viewport < lg */}
+        {!isDesktop && (
         <div className="lg:hidden w-full max-w-[480px] relative z-10">
           {/* Gradient orbs */}
           <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
