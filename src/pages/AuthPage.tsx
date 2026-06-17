@@ -887,6 +887,7 @@ export default function AuthPage() {
             <p className="text-white/50 text-[10px] font-semibold mt-0.5">{whitelabel.credits.developerName}</p>
           </div>
         </div>
+        )}
       </div>
     </>
   );
