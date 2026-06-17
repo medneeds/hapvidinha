@@ -51,7 +51,7 @@ export function PrintablePatientCard({ patient, mode, bedColor = '#6b7280' }: Pr
       >
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: '45px 1.8fr 3fr 2.2fr 2.2fr 3.2fr',
+          gridTemplateColumns: '45px 1.8fr 2.6fr 2fr 2fr 4.4fr',
           gap: '12px',
           alignItems: 'start'
         }}>
