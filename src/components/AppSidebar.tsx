@@ -13,6 +13,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   KeyRound,
+  ArrowRightLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { whitelabel } from "@/config/whitelabel";
@@ -94,13 +95,15 @@ export function AppSidebar({
       link: "/",
     },
     {
-       title: "DOCUMENTOS",
-       icon: FolderOpen,
-       items: [
-         { name: "PROTOCOLOS E FORMULÁRIOS", link: "/documents" },
-         { name: "RELATÓRIOS EMITIDOS", link: "/report-history" },
-       ],
-     },
+      title: "MOVIMENTAÇÕES",
+      icon: ArrowRightLeft,
+      link: "/movements",
+    },
+    {
+      title: "PROTOCOLOS E FORMULÁRIOS",
+      icon: FolderOpen,
+      link: "/documents",
+    },
     {
       title: "PAINEL ADMIN",
       icon: BarChart3,
@@ -126,7 +129,7 @@ export function AppSidebar({
     : isRecepcao
     ? allMenuItems.filter(item => item.title === "MAPA")
     : isEnfermagem
-    ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "DOCUMENTOS")
+    ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "MOVIMENTAÇÕES" || item.title === "PROTOCOLOS E FORMULÁRIOS")
     : isCoordenadorMedico
     ? allMenuItems.map(item => {
         if (item.title === "PAINEL ADMIN") {
