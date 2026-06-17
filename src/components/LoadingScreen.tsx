@@ -88,7 +88,7 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
           }}
         >
           <div className="inline-flex items-baseline gap-2">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl tracking-tighter inline-flex items-baseline">
+            <h1 className="text-7xl sm:text-8xl md:text-9xl tracking-tighter inline-flex items-baseline">
               <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
                 {whitelabel.platform.name.slice(0, 3)}
               </span>
