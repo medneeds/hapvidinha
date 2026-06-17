@@ -93,8 +93,7 @@ const DashboardPage = () => {
     { value: "all", label: "Todos os Setores" },
     { value: "URGÊNCIA E EMERGÊNCIA ADULTO", label: "Urgência e Emergência Adulto" },
     { value: "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA", label: "Urgência e Emergência Pediátrica" },
-    { value: "UTI", label: "UTI" },
-    { value: "POSTO INTERNAÇÃO", label: "Posto Internação" }
+    { value: "UTI", label: "UTI" }
   ];
 
   useEffect(() => {
@@ -498,7 +497,7 @@ const DashboardPage = () => {
                 {selectedDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" && "Visão geral da Urgência e Emergência Adulto"}
                 {selectedDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA" && "Visão geral da Urgência e Emergência Pediátrica"}
                 {selectedDepartment === "UTI" && "Visão geral da Unidade de Terapia Intensiva"}
-                {selectedDepartment === "POSTO INTERNAÇÃO" && "Visão geral do Posto de Internação"}
+                
                 {selectedDepartment === "all" && "Visão geral de todos os setores"}
               </p>
             </div>

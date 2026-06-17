@@ -3,8 +3,7 @@ import { createContext, useContext, useState, ReactNode, useEffect } from "react
 export type Department = 
   | "URGÊNCIA E EMERGÊNCIA ADULTO"
   | "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA"
-  | "UTI"
-  | "POSTO INTERNAÇÃO";
+  | "UTI";
 
 interface DepartmentContextType {
   currentDepartment: Department;
@@ -49,5 +48,4 @@ export const DEPARTMENTS: Department[] = [
   "URGÊNCIA E EMERGÊNCIA ADULTO",
   "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA",
   "UTI",
-  "POSTO INTERNAÇÃO",
 ];
