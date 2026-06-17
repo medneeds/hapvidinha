@@ -100,7 +100,7 @@ export function AppSidebar({
       link: "/movements",
     },
     {
-      title: "PROTOCOLOS E FORMULÁRIOS",
+      title: "DOCUMENTOS",
       icon: FolderOpen,
       link: "/documents",
     },
@@ -129,7 +129,7 @@ export function AppSidebar({
     : isRecepcao
     ? allMenuItems.filter(item => item.title === "MAPA")
     : isEnfermagem
-    ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "MOVIMENTAÇÕES" || item.title === "PROTOCOLOS E FORMULÁRIOS")
+    ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "MOVIMENTAÇÕES" || item.title === "DOCUMENTOS")
     : isCoordenadorMedico
     ? allMenuItems.map(item => {
         if (item.title === "PAINEL ADMIN") {
