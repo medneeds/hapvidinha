@@ -46,6 +46,17 @@ export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>("login");
+  const [isDesktop, setIsDesktop] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : true
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia("(min-width: 1024px)");
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
   
   const [loginData, setLoginData] = useState({
     username: "",
@@ -213,7 +224,8 @@ export default function AuthPage() {
           }}
         />
 
-        {/* DESKTOP: Split-screen layout - more compact */}
+        {/* DESKTOP: Split-screen layout - only mounted when viewport >= lg */}
+        {isDesktop && (
         <div className="hidden lg:flex w-full h-screen relative z-10">
           {/* Left Panel - Branding - more compact */}
           <div className="w-[45%] xl:w-1/2 flex flex-col items-center justify-center p-6 xl:p-10 relative">
@@ -549,8 +561,10 @@ export default function AuthPage() {
             </div>
           </div>
         </div>
+        )}
 
-        {/* MOBILE: Original centered layout */}
+        {/* MOBILE: Original centered layout - only mounted when viewport < lg */}
+        {!isDesktop && (
         <div className="lg:hidden w-full max-w-[480px] relative z-10">
           {/* Gradient orbs */}
           <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
@@ -873,6 +887,7 @@ export default function AuthPage() {
             <p className="text-white/50 text-[10px] font-semibold mt-0.5">{whitelabel.credits.developerName}</p>
           </div>
         </div>
+        )}
       </div>
     </>
   );
