@@ -945,55 +945,6 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }
   }, [patient.name, toastHook]);
 
-  const getCidCode = useCallback(async (diagnosis: string, index: number) => {
-    if (!diagnosis.trim()) {
-      toast.error("Digite um diagnóstico antes de buscar o CID");
-      return;
-    }
-
-    setLoadingCid(index);
-    try {
-      const { data, error } = await supabase.functions.invoke('get-cid-code', {
-        body: { diagnosis }
-      });
-
-      if (error) throw error;
-
-      if (data?.cidCode) {
-        const diagnosisWithCid = `${diagnosis} (${data.cidCode})`;
-        
-        // Se estiver em modo de edição, atualiza o valor de edição e salva automaticamente
-        if (editingField === "diagnoses" && editingArrayIndex === index) {
-          setEditValue(diagnosisWithCid);
-          
-          // Salva automaticamente
-          const updatedPatient = { ...patient };
-          updatedPatient.diagnoses = patient.diagnoses.map((d, i) => 
-            i === index ? diagnosisWithCid : d
-          );
-          onUpdate(updatedPatient);
-          
-          // Cancela o modo de edição
-          setEditingField(null);
-          setEditValue("");
-          setEditingArrayIndex(-1);
-        } else {
-          // Caso não esteja em edição, atualiza diretamente
-          const updatedDiagnoses = patient.diagnoses.map((d, i) => 
-            i === index ? diagnosisWithCid : d
-          );
-          onUpdate({ ...patient, diagnoses: updatedDiagnoses });
-        }
-        
-        toast.success(`CID ${data.cidCode} adicionado`);
-      }
-    } catch (error) {
-      console.error('Error getting CID code:', error);
-      toast.error("Erro ao buscar código CID");
-    } finally {
-      setLoadingCid(null);
-    }
-  }, [patient, editingField, editingArrayIndex, onUpdate]);
 
   // When user picks a destination sector, we open the bed picker first
   // (the menu just toggles state; actual onTransfer happens after a specific
