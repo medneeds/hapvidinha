@@ -49,3 +49,15 @@ export const DEPARTMENTS: Department[] = [
   "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA",
   "UTI",
 ];
+
+export const DEPARTMENT_LABELS: Record<Department, string> = {
+  "URGÊNCIA E EMERGÊNCIA ADULTO": "UE ADULTO",
+  "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA": "UE PEDIÁTRICA",
+  "UTI": "UTI",
+};
+
+export function getDepartmentLabel(dept: Department | string | null | undefined): string {
+  if (!dept) return "";
+  return (DEPARTMENT_LABELS as Record<string, string>)[dept] ?? String(dept);
+}
+

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHospital } from "@/contexts/HospitalContext";
-import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
+import { useDepartment, DEPARTMENTS, Department, getDepartmentLabel } from "@/contexts/DepartmentContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -345,7 +345,7 @@ export function IndividualSignUpForm({
             <SelectContent>
               {DEPARTMENTS.map((dept) => (
                 <SelectItem key={dept} value={dept} className="text-xs">
-                  {dept}
+                  {getDepartmentLabel(dept)}
                 </SelectItem>
               ))}
             </SelectContent>

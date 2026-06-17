@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useDepartment, DEPARTMENTS, Department } from "@/contexts/DepartmentContext";
+import { useDepartment, DEPARTMENTS, Department, getDepartmentLabel } from "@/contexts/DepartmentContext";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -440,7 +440,7 @@ export default function AuthPage() {
                       <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                         {DEPARTMENTS.map((dept) => (
                           <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                            {dept}
+                            {getDepartmentLabel(dept)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -755,7 +755,7 @@ export default function AuthPage() {
                     <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
                       {DEPARTMENTS.map((dept) => (
                         <SelectItem key={dept} value={dept} className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                          {dept}
+                          {getDepartmentLabel(dept)}
                         </SelectItem>
                       ))}
                     </SelectContent>

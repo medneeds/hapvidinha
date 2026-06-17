@@ -91,8 +91,8 @@ const DashboardPage = () => {
 
   const departments = [
     { value: "all", label: "Todos os Setores" },
-    { value: "URGÊNCIA E EMERGÊNCIA ADULTO", label: "Urgência e Emergência Adulto" },
-    { value: "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA", label: "Urgência e Emergência Pediátrica" },
+    { value: "URGÊNCIA E EMERGÊNCIA ADULTO", label: "UE ADULTO" },
+    { value: "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA", label: "UE PEDIÁTRICA" },
     { value: "UTI", label: "UTI" }
   ];
 
@@ -494,8 +494,8 @@ const DashboardPage = () => {
                 </h1>
               </div>
               <p className="text-white/80 text-sm ml-[100px]">
-                {selectedDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" && "Visão geral da Urgência e Emergência Adulto"}
-                {selectedDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA" && "Visão geral da Urgência e Emergência Pediátrica"}
+                {selectedDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" && "Visão geral da UE Adulto"}
+                {selectedDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA" && "Visão geral da UE Pediátrica"}
                 {selectedDepartment === "UTI" && "Visão geral da Unidade de Terapia Intensiva"}
                 
                 {selectedDepartment === "all" && "Visão geral de todos os setores"}
