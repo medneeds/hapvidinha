@@ -38,7 +38,7 @@ import AdminStatesPage from "./pages/AdminStatesPage";
 import AdminUnitsPage from "./pages/AdminUnitsPage";
 import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
 
-import ReportHistoryPage from "./pages/ReportHistoryPage";
+
 import PresentationPage from "./pages/PresentationPage";
 import SepsisProtocolsAdminPage from "./pages/SepsisProtocolsAdminPage";
 import StrokeProtocolsAdminPage from "./pages/StrokeProtocolsAdminPage";
