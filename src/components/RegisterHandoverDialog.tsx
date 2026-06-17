@@ -33,25 +33,6 @@ export function RegisterHandoverDialog({ open, onOpenChange, patients }: Registe
   const occupiedBeds = patients.filter(p => p.name.trim() !== "").length;
   const totalPatients = patients.length;
 
-  const handleTranscription = (data: {
-    summary: string;
-    clinicalStatus: string;
-    pendingProcedures: string;
-    relevantObservations: string;
-  }) => {
-    // Combine all transcribed data into notes
-    const combinedNotes = [
-      data.summary,
-      data.clinicalStatus && `STATUS CLÍNICO: ${data.clinicalStatus}`,
-      data.pendingProcedures && `PENDÊNCIAS: ${data.pendingProcedures}`,
-      data.relevantObservations && `OBSERVAÇÕES: ${data.relevantObservations}`,
-    ]
-      .filter(Boolean)
-      .join('\n\n')
-      .toUpperCase();
-    
-    setNotes(combinedNotes);
-  };
 
   const handleRegister = async () => {
     setIsLoading(true);
