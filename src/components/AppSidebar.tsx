@@ -1,14 +1,11 @@
 import {
-  FileSearch,
   Users,
   BookOpen,
   LogOut,
   ClipboardCheck,
   LayoutDashboard,
-  History,
   User,
   FolderOpen,
-  FolderArchive,
   BarChart3,
   LockKeyhole,
   Shield,
@@ -16,7 +13,6 @@ import {
   PanelLeftClose,
   PanelLeft,
   KeyRound,
-  BedDouble,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { whitelabel } from "@/config/whitelabel";
@@ -98,33 +94,10 @@ export function AppSidebar({
       link: "/",
     },
     {
-      title: "GERENCIAMENTO DE LEITOS",
-      icon: BedDouble,
-      items: [
-        { name: "MAPA DE LEITOS", link: "/leitos" },
-        { name: "PAINEL DE SOLICITAÇÕES", link: "/leitos/painel" },
-        { name: "CADASTRO DE LEITOS", link: "/leitos/cadastro" },
-      ],
-    },
-    {
       title: "PACIENTES",
       icon: Users,
       items: [
-        // { name: "DESOSPITALIZAÇÕES", link: "/dhd" }, // Stand-by temporariamente
         { name: "MOVIMENTAÇÕES", link: "/movements" },
-        { name: "SOLICITAÇÕES", link: "/resources" },
-        { name: "HISTÓRICO", link: "/internment-history" },
-      ],
-    },
-    {
-      title: "CÓDIGOS",
-      icon: FileSearch,
-      items: [
-        { name: "EXAMES", link: "/codigos?category=exames" },
-        { name: "PROCEDIMENTOS", link: "/codigos?category=procedimentos" },
-        { name: "MATERIAIS", link: "/codigos?category=materiais" },
-        { name: "MEDICAÇÕES", link: "/codigos?category=medicacoes" },
-        { name: "CIRÚRGICOS (CBHPM)", link: "/codigos-cirurgicos" },
       ],
     },
     {
@@ -136,16 +109,6 @@ export function AppSidebar({
          { name: "RELATÓRIOS EMITIDOS", link: "/report-history" },
        ],
      },
-    {
-      title: "REPOSITÓRIO",
-      icon: FolderArchive,
-      link: "/repositorio",
-    },
-    {
-      title: "VERSÕES",
-      icon: History,
-      link: "/versions",
-    },
     {
       title: "PAINEL ADMIN",
       icon: BarChart3,
