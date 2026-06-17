@@ -147,10 +147,7 @@ export function AppSidebar({
       })
     : allMenuItems;
 
-  // GERENCIAMENTO DE LEITOS: fluxo em validação — visível apenas para o Gestor Master (Artur Batista).
-  const menuItems = isGestorMaster
-    ? baseMenuItems
-    : baseMenuItems.filter(item => item.title !== "GERENCIAMENTO DE LEITOS");
+  const menuItems = baseMenuItems;
 
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
