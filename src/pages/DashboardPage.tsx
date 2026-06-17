@@ -93,8 +93,7 @@ const DashboardPage = () => {
     { value: "all", label: "Todos os Setores" },
     { value: "URGÊNCIA E EMERGÊNCIA ADULTO", label: "Urgência e Emergência Adulto" },
     { value: "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA", label: "Urgência e Emergência Pediátrica" },
-    { value: "UTI", label: "UTI" },
-    { value: "POSTO INTERNAÇÃO", label: "Posto Internação" }
+    { value: "UTI", label: "UTI" }
   ];
 
   useEffect(() => {

@@ -1087,7 +1087,7 @@ const Index = () => {
                             <span className="md:hidden truncate">
                               {currentDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" ? "URG E EMERG..." : 
                                currentDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA" ? "URG E EMERG PED..." :
-                               currentDepartment === "POSTO INTERNAÇÃO" ? "POSTO INT..." :
+                               
                                currentDepartment}
                             </span>
                             <span className="hidden md:inline truncate max-w-none">{currentDepartment}</span>
