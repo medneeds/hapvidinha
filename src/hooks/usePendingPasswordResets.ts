@@ -3,10 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function usePendingPasswordResets() {
-  const { user, role } = useAuth();
-  
-  // Check if user has admin access
-  const isAdmin = role === "admin" || user?.email === "coordenador@sistema.local" || user?.email === "artur.batista@sistema.local";
+  const { role } = useAuth();
+
+  // Admin access is determined by server-enforced role only
+  const isAdmin = role === "admin";
 
   const { data: pendingCount = 0, refetch } = useQuery({
     queryKey: ["pending-password-resets-count"],

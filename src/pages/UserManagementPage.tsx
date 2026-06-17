@@ -111,7 +111,7 @@ const ROLE_CONFIG: Record<string, { label: string; color: string; category: stri
 
 export default function UserManagementPage() {
   const { user, role: currentUserRole } = useAuth();
-  const isGestorMaster = user?.email === "artur.batista@sistema.local";
+  const isGestorMaster = currentUserRole === "admin";
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
