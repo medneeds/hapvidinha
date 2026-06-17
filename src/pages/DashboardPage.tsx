@@ -497,7 +497,7 @@ const DashboardPage = () => {
                 {selectedDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" && "Visão geral da Urgência e Emergência Adulto"}
                 {selectedDepartment === "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA" && "Visão geral da Urgência e Emergência Pediátrica"}
                 {selectedDepartment === "UTI" && "Visão geral da Unidade de Terapia Intensiva"}
-                {selectedDepartment === "POSTO INTERNAÇÃO" && "Visão geral do Posto de Internação"}
+                
                 {selectedDepartment === "all" && "Visão geral de todos os setores"}
               </p>
             </div>
