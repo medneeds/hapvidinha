@@ -327,7 +327,7 @@ export function PrintableUtiPatientCard({ patient, mode, colorVariant = 'blue' }
       {/* 4-column grid */}
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: '1fr 1fr 1fr 1.2fr',
+        gridTemplateColumns: '1fr 1fr 1fr 1.8fr',
         gap: '12px',
         marginBottom: '8px'
       }}>
