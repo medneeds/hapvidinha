@@ -22,7 +22,7 @@ import AltoCustoPage from "./pages/AltoCustoPage";
 import SadtPage from "./pages/SadtPage";
 import MovementsPage from "./pages/MovementsPage";
 import AuthPage from "./pages/AuthPage";
-import InternmentHistoryPage from "./pages/InternmentHistoryPage";
+
 import DashboardPage from "./pages/DashboardPage";
 import PriorizacaoCirurgicaPage from "./pages/PriorizacaoCirurgicaPage";
 import ControleGlicemicoPage from "./pages/ControleGlicemicoPage";
@@ -49,7 +49,7 @@ import GoOverviewPage from "./pages/go/GoOverviewPage";
 import GoConductorsPage from "./pages/go/GoConductorsPage";
 import GoBedsPage from "./pages/go/GoBedsPage";
 import GoIndicatorsPage from "./pages/go/GoIndicatorsPage";
-import BedManagementPage from "./pages/BedManagementPage";
+
 
 const queryClient = new QueryClient();
 
