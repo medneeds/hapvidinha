@@ -222,18 +222,7 @@ export default function AuthPage() {
             <div className="absolute bottom-[15%] right-[10%] w-64 h-64 bg-gradient-radial from-white/8 to-transparent rounded-full blur-3xl animate-[float_12s_ease-in-out_infinite_2s]" />
             
             <div className="relative z-10 text-center max-w-md animate-in fade-in-0 slide-in-from-left-8 duration-1000">
-              {/* Logo */}
-              <div className="inline-block relative group mb-5">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/10 to-transparent rounded-2xl blur-2xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative bg-white rounded-xl px-4 py-3 shadow-xl shadow-black/30 transform transition-all duration-500 group-hover:scale-105 group-hover:shadow-white/20">
-                  <img 
-                    src={whitelabel.logos.networkFull} 
-                    alt={whitelabel.institution.networkLogoAlt} 
-                    className="h-9 xl:h-10 object-contain transition-all duration-500 group-hover:brightness-110"
-                  />
-                  <Sparkles className="absolute -top-1.5 -right-1.5 h-4 w-4 text-yellow-400 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
-                </div>
-              </div>
+              {/* Logo da rede removida a pedido */}
               
               {/* Brand Name - Logo Style - smaller */}
               <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3">
