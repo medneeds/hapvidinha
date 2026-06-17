@@ -95,13 +95,15 @@ export function AppSidebar({
       link: "/",
     },
     {
-       title: "DOCUMENTOS",
-       icon: FolderOpen,
-       items: [
-         { name: "PROTOCOLOS E FORMULÁRIOS", link: "/documents" },
-         { name: "RELATÓRIOS EMITIDOS", link: "/report-history" },
-       ],
-     },
+      title: "MOVIMENTAÇÕES",
+      icon: ArrowRightLeft,
+      link: "/movements",
+    },
+    {
+      title: "PROTOCOLOS E FORMULÁRIOS",
+      icon: FolderOpen,
+      link: "/documents",
+    },
     {
       title: "PAINEL ADMIN",
       icon: BarChart3,
