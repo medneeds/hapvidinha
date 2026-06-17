@@ -73,36 +73,6 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/resources"
-            element={
-              <ProtectedRoute>
-                <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                  <ResourcesPage />
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-        <Route
-          path="/codigos"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <MedicalCodesPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/codigos-cirurgicos"
-          element={
-            <ProtectedRoute>
-              <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                <SurgicalCodesPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/handovers"
           element={
@@ -113,16 +83,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-           path="/versions"
-           element={
-             <ProtectedRoute>
-               <MainLayout onOpenHandover={() => setIsHandoverOpen(true)}>
-                 <VersionsPage />
-               </MainLayout>
-             </ProtectedRoute>
-           }
-         />
          <Route
            path="/report-history"
            element={
