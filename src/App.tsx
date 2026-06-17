@@ -10,7 +10,6 @@ import { PalliativeFarewellProvider } from "@/contexts/PalliativeFarewellContext
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
-import MedicalCodesPage from "./pages/MedicalCodesPage";
 import HandoversPage from "./pages/HandoversPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import SepsisProtocolPage from "./pages/SepsisProtocolPage";
@@ -51,9 +50,6 @@ import GoConductorsPage from "./pages/go/GoConductorsPage";
 import GoBedsPage from "./pages/go/GoBedsPage";
 import GoIndicatorsPage from "./pages/go/GoIndicatorsPage";
 import BedManagementPage from "./pages/BedManagementPage";
-import BedManagementRegistrationPage from "./pages/BedManagementRegistrationPage";
-import BedRequestsPanelPage from "./pages/BedRequestsPanelPage";
-import RepositoryPage from "./pages/RepositoryPage";
 
 const queryClient = new QueryClient();
 
