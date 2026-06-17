@@ -1468,7 +1468,7 @@ const Index = () => {
                         onUpdatePatient={handleUpdatePatient}
                         onUndeletePatient={handleUndeletePatient}
                         onPrintSector={() => handlePrintSector("blue")}
-                        onAddExtraBed={() => { handleAddExtraBed("blue"); }}
+                        
                         selectionMode={selectionMode}
                         selectedPatients={selectedPatients}
                         onToggleSelection={handleToggleSelection}
@@ -1490,7 +1490,7 @@ const Index = () => {
                         onUpdatePatient={handleUpdatePatient}
                         onUndeletePatient={handleUndeletePatient}
                         onPrintSector={() => handlePrintSector("yellow")}
-                        onAddExtraBed={() => { handleAddExtraBed("yellow"); }}
+                        
                         selectionMode={selectionMode}
                         selectedPatients={selectedPatients}
                         onToggleSelection={handleToggleSelection}
