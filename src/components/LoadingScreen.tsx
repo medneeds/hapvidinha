@@ -89,7 +89,7 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
         >
           <div
             aria-label="HapMap"
-            className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mb-2 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
+            className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mb-1 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
             style={{
               WebkitMaskImage: "url(/logo-hm.png)",
               maskImage: "url(/logo-hm.png)",
@@ -102,15 +102,10 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
             }}
           />
           <div className="inline-flex items-baseline gap-2">
-            <h1 className="font-brand text-7xl sm:text-8xl md:text-9xl tracking-tight inline-flex items-baseline lowercase">
-              <span className="font-bold bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-                {whitelabel.platform.name.slice(0, 3).toLowerCase()}
-              </span>
-              <span className="font-light text-white/80">
-                {whitelabel.platform.name.slice(3).toLowerCase()}
-              </span>
+            <h1 className="font-brand font-medium text-6xl sm:text-7xl md:text-8xl tracking-wide lowercase text-white/95 drop-shadow-lg">
+              {whitelabel.platform.name.toLowerCase()}
             </h1>
-            <span className="text-[10px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-2 py-0.5 self-start mt-2">
+            <span className="text-[10px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-2 py-0.5 self-start mt-2 uppercase">
               {whitelabel.platform.version}
             </span>
           </div>
