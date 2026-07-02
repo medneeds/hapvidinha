@@ -238,6 +238,11 @@ export default function AuthPage() {
               
               {/* Brand Name - Logo Style - smaller */}
               <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3">
+                <img
+                  src="/favicon.png"
+                  alt="HapMap"
+                  className="w-24 h-24 xl:w-28 xl:h-28 mx-auto mb-3 drop-shadow-2xl"
+                />
                 <div className="inline-flex items-baseline gap-1.5">
                   <h1 className="text-6xl xl:text-7xl tracking-tighter inline-flex items-baseline">
                     <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
@@ -577,6 +582,11 @@ export default function AuthPage() {
             {/* Logo da rede removida a pedido */}
             
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
+              <img
+                src="/favicon.png"
+                alt="HapMap"
+                className="w-20 h-20 mx-auto mb-2 drop-shadow-2xl"
+              />
               <div className="inline-flex items-baseline gap-1">
                 <h1 className="text-5xl tracking-tighter inline-flex items-baseline">
                   <span className="font-black bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
