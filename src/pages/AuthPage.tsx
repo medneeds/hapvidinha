@@ -588,7 +588,7 @@ export default function AuthPage() {
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
               <div
                 aria-label="HapMap"
-                className="w-20 h-20 mx-auto mb-2 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
+                className="w-20 h-20 mx-auto mb-1 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
                 style={{
                   WebkitMaskImage: "url(/logo-hm.png)",
                   maskImage: "url(/logo-hm.png)",
@@ -600,16 +600,11 @@ export default function AuthPage() {
                   maskSize: "contain",
                 }}
               />
-              <div className="inline-flex items-baseline gap-1">
-                <h1 className="font-brand text-5xl tracking-tight inline-flex items-baseline lowercase">
-                  <span className="font-bold bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-                    {whitelabel.platform.name.slice(0, 3).toLowerCase()}
-                  </span>
-                  <span className="font-light text-white/80">
-                    {whitelabel.platform.name.slice(3).toLowerCase()}
-                  </span>
+              <div className="inline-flex items-baseline gap-1.5">
+                <h1 className="font-brand font-medium text-4xl tracking-wide lowercase text-white/95 drop-shadow-lg">
+                  {whitelabel.platform.name.toLowerCase()}
                 </h1>
-                <span className="text-[7px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-1 py-0.5 self-start">
+                <span className="text-[7px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1 py-0.5 self-start uppercase">
                   {whitelabel.platform.version}
                 </span>
               </div>
