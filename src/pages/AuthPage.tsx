@@ -591,10 +591,19 @@ export default function AuthPage() {
             {/* Logo da rede removida a pedido */}
             
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
-              <img
-                src="/favicon.png"
-                alt="HapMap"
-                className="w-20 h-20 mx-auto mb-2 drop-shadow-2xl"
+              <div
+                aria-label="HapMap"
+                className="w-20 h-20 mx-auto mb-2 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
+                style={{
+                  WebkitMaskImage: "url(/logo-hm.png)",
+                  maskImage: "url(/logo-hm.png)",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskRepeat: "no-repeat",
+                  WebkitMaskPosition: "center",
+                  maskPosition: "center",
+                  WebkitMaskSize: "contain",
+                  maskSize: "contain",
+                }}
               />
               <div className="inline-flex items-baseline gap-1">
                 <h1 className="text-5xl tracking-tighter inline-flex items-baseline">
