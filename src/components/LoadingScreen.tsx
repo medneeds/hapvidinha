@@ -87,10 +87,19 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
             opacity: 0
           }}
         >
-          <img
-            src="/favicon.png"
-            alt="HapMap"
-            className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mb-2 drop-shadow-2xl"
+          <div
+            aria-label="HapMap"
+            className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mb-2 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
+            style={{
+              WebkitMaskImage: "url(/logo-hm.png)",
+              maskImage: "url(/logo-hm.png)",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+              WebkitMaskPosition: "center",
+              maskPosition: "center",
+              WebkitMaskSize: "contain",
+              maskSize: "contain",
+            }}
           />
           <div className="inline-flex items-baseline gap-2">
             <h1 className="text-7xl sm:text-8xl md:text-9xl tracking-tighter inline-flex items-baseline">
