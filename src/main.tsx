@@ -6,6 +6,9 @@ import { DepartmentProvider } from "./contexts/DepartmentContext";
 import { HospitalProvider } from "./contexts/HospitalContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import App from "./App.tsx";
+import "@fontsource/comfortaa/300.css";
+import "@fontsource/comfortaa/400.css";
+import "@fontsource/comfortaa/700.css";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
