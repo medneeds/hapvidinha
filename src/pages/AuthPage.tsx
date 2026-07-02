@@ -237,10 +237,10 @@ export default function AuthPage() {
               {/* Logo da rede removida a pedido */}
               
               {/* Brand Name - Logo Style - smaller */}
-              <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3">
+              <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3 flex flex-col items-center">
                 <div
                   aria-label="HapMap"
-                  className="w-24 h-24 xl:w-28 xl:h-28 mx-auto mb-3 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
+                  className="w-24 h-24 xl:w-28 xl:h-28 mb-1 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
                   style={{
                     WebkitMaskImage: "url(/logo-hm.png)",
                     maskImage: "url(/logo-hm.png)",
@@ -252,20 +252,15 @@ export default function AuthPage() {
                     maskSize: "contain",
                   }}
                 />
-                <div className="inline-flex items-baseline gap-1.5">
-                  <h1 className="font-brand text-6xl xl:text-7xl tracking-tight inline-flex items-baseline lowercase">
-                    <span className="font-bold bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent drop-shadow-lg">
-                      {whitelabel.platform.name.slice(0, 3).toLowerCase()}
-                    </span>
-                    <span className="font-light text-white/80">
-                      {whitelabel.platform.name.slice(3).toLowerCase()}
-                    </span>
+                <div className="inline-flex items-baseline gap-2">
+                  <h1 className="font-brand font-medium text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg">
+                    {whitelabel.platform.name.toLowerCase()}
                   </h1>
-                  <span className="text-[9px] font-medium text-white/40 tracking-wider border border-white/20 rounded-full px-1.5 py-0.5 self-start mt-1.5">
+                  <span className="text-[9px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1.5 py-0.5 self-start mt-1.5 uppercase">
                     {whitelabel.platform.version}
                   </span>
                 </div>
-                <div className="h-0.5 w-16 mx-auto mt-1.5 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full" />
+                <div className="h-px w-20 mt-2 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
               </div>
               
               {/* Slogan - smaller */}
