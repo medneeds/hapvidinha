@@ -240,10 +240,10 @@ export default function AuthPage() {
               <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3 flex flex-col items-center">
                 <div
                   aria-label="HapMap"
-                  className="w-28 h-28 xl:w-32 xl:h-32 mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[71%_29%_58%_42%/38%_65%_35%_62%]"
+                  className="w-20 h-20 xl:w-24 xl:h-24 mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[71%_29%_58%_42%/38%_65%_35%_62%]"
                 >
                   <div
-                    className="w-[70%] h-[70%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
+                    className="w-[95%] h-[95%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
                     style={{
                       WebkitMaskImage: "url(/logo-hm.png)",
                       maskImage: "url(/logo-hm.png)",
