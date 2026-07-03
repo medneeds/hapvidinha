@@ -89,7 +89,7 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
         >
           <div
             aria-label="HapMap"
-            className="w-24 h-24 sm:w-26 sm:h-26 md:w-32 md:h-32 mx-auto mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[71%_29%_58%_42%/38%_65%_35%_62%]"
+            className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 mx-auto mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[71%_29%_58%_42%/38%_65%_35%_62%]"
           >
             <div
               className="w-[95%] h-[95%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
