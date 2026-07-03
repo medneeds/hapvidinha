@@ -106,8 +106,8 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
             />
           </div>
           <div className="inline-flex items-baseline gap-2">
-            <h1 className="font-brand font-medium text-6xl sm:text-7xl md:text-8xl tracking-wide lowercase text-white/95 drop-shadow-lg">
-              {whitelabel.platform.name.toLowerCase()}
+            <h1 className="font-brand text-6xl sm:text-7xl md:text-8xl tracking-wide lowercase text-white/95 drop-shadow-lg">
+              <span className="font-medium">hap</span><span className="font-light">map</span>
             </h1>
             <span className="text-[10px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-2 py-0.5 self-start mt-2 uppercase">
               {whitelabel.platform.version}
