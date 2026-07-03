@@ -89,18 +89,22 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
         >
           <div
             aria-label="HapMap"
-            className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mb-1 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
-            style={{
-              WebkitMaskImage: "url(/logo-hm.png)",
-              maskImage: "url(/logo-hm.png)",
-              WebkitMaskRepeat: "no-repeat",
-              maskRepeat: "no-repeat",
-              WebkitMaskPosition: "center",
-              maskPosition: "center",
-              WebkitMaskSize: "contain",
-              maskSize: "contain",
-            }}
-          />
+            className="w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 mx-auto mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[62%_38%_55%_45%/48%_58%_42%_52%]"
+          >
+            <div
+              className="w-[70%] h-[70%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
+              style={{
+                WebkitMaskImage: "url(/logo-hm.png)",
+                maskImage: "url(/logo-hm.png)",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+                WebkitMaskPosition: "center",
+                maskPosition: "center",
+                WebkitMaskSize: "contain",
+                maskSize: "contain",
+              }}
+            />
+          </div>
           <div className="inline-flex items-baseline gap-2">
             <h1 className="font-brand font-medium text-6xl sm:text-7xl md:text-8xl tracking-wide lowercase text-white/95 drop-shadow-lg">
               {whitelabel.platform.name.toLowerCase()}
