@@ -257,8 +257,8 @@ export default function AuthPage() {
                   />
                 </div>
                 <div className="inline-flex items-baseline gap-2">
-                  <h1 className="font-brand font-medium text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg">
-                    {whitelabel.platform.name.toLowerCase()}
+                  <h1 className="font-brand text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg">
+                    <span className="font-medium">hap</span><span className="font-light">map</span>
                   </h1>
                   <span className="text-[9px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1.5 py-0.5 self-start mt-1.5 uppercase">
                     {whitelabel.platform.version}
