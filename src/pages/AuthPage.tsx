@@ -240,18 +240,22 @@ export default function AuthPage() {
               <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3 flex flex-col items-center">
                 <div
                   aria-label="HapMap"
-                  className="w-24 h-24 xl:w-28 xl:h-28 mb-1 bg-gradient-to-br from-white via-white to-white/70 drop-shadow-2xl"
-                  style={{
-                    WebkitMaskImage: "url(/logo-hm.png)",
-                    maskImage: "url(/logo-hm.png)",
-                    WebkitMaskRepeat: "no-repeat",
-                    maskRepeat: "no-repeat",
-                    WebkitMaskPosition: "center",
-                    maskPosition: "center",
-                    WebkitMaskSize: "contain",
-                    maskSize: "contain",
-                  }}
-                />
+                  className="w-28 h-28 xl:w-32 xl:h-32 mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[62%_38%_55%_45%/48%_58%_42%_52%]"
+                >
+                  <div
+                    className="w-[70%] h-[70%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
+                    style={{
+                      WebkitMaskImage: "url(/logo-hm.png)",
+                      maskImage: "url(/logo-hm.png)",
+                      WebkitMaskRepeat: "no-repeat",
+                      maskRepeat: "no-repeat",
+                      WebkitMaskPosition: "center",
+                      maskPosition: "center",
+                      WebkitMaskSize: "contain",
+                      maskSize: "contain",
+                    }}
+                  />
+                </div>
                 <div className="inline-flex items-baseline gap-2">
                   <h1 className="font-brand font-medium text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg">
                     {whitelabel.platform.name.toLowerCase()}
