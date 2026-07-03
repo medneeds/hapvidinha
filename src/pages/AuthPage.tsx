@@ -240,7 +240,7 @@ export default function AuthPage() {
               <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3 flex flex-col items-center">
                 <div
                   aria-label="HapMap"
-                  className="w-28 h-28 xl:w-32 xl:h-32 mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[62%_38%_55%_45%/48%_58%_42%_52%]"
+                  className="w-28 h-28 xl:w-32 xl:h-32 mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[71%_29%_58%_42%/38%_65%_35%_62%]"
                 >
                   <div
                     className="w-[70%] h-[70%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
@@ -258,7 +258,7 @@ export default function AuthPage() {
                 </div>
                 <div className="inline-flex items-baseline gap-2">
                   <h1 className="font-brand text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg">
-                    <span className="font-medium">hap</span><span className="font-light">map</span>
+                    <span className="font-medium">hap</span><span className="font-light tracking-[0.05em]" style={{fontWeight:200}}>map</span>
                   </h1>
                   <span className="text-[9px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1.5 py-0.5 self-start mt-1.5 uppercase">
                     {whitelabel.platform.version}
@@ -592,7 +592,7 @@ export default function AuthPage() {
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
               <div
                 aria-label="HapMap"
-                className="w-24 h-24 mx-auto mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[62%_38%_55%_45%/48%_58%_42%_52%]"
+                className="w-24 h-24 mx-auto mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[71%_29%_58%_42%/38%_65%_35%_62%]"
               >
                 <div
                   className="w-[70%] h-[70%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
@@ -610,7 +610,7 @@ export default function AuthPage() {
               </div>
               <div className="inline-flex items-baseline gap-1.5">
                 <h1 className="font-brand text-4xl tracking-wide lowercase text-white/95 drop-shadow-lg">
-                  <span className="font-medium">hap</span><span className="font-light">map</span>
+                  <span className="font-medium">hap</span><span className="font-light tracking-[0.05em]" style={{fontWeight:200}}>map</span>
                 </h1>
                 <span className="text-[7px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1 py-0.5 self-start uppercase">
                   {whitelabel.platform.version}
