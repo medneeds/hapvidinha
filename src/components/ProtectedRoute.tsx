@@ -23,6 +23,7 @@ const ALLOWED_ROLES = new Set(["medico", "admin"]);
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading, status, role, signOut } = useAuth();
+  const { isReady: prefetchReady } = usePatientsPrefetch();
   const navigate = useNavigate();
   const [showTermsDialog, setShowTermsDialog] = useState(false);
   const [checkingTerms, setCheckingTerms] = useState(true);
