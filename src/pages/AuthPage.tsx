@@ -192,11 +192,19 @@ export default function AuthPage() {
         />
       )}
       
-      <div className={cn(
-        "min-h-screen bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] flex items-center justify-center p-4 relative overflow-hidden transition-opacity duration-500",
-        "lg:p-0",
-        showLoadingScreen && "opacity-0"
-      )}>
+      <div
+        className={cn(
+          "min-h-screen flex items-center justify-center p-4 relative overflow-hidden transition-opacity duration-500",
+          "lg:p-0",
+          showLoadingScreen && "opacity-0"
+        )}
+        style={{
+          background:
+            "radial-gradient(ellipse at center, #0152d4 0%, #0146bd 40%, #013ba6 75%, #01297a 100%)",
+          paddingTop: "max(1rem, env(safe-area-inset-top))",
+          paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+        }}
+      >
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse" />
@@ -240,8 +248,13 @@ export default function AuthPage() {
               <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3 flex items-center justify-center gap-4">
                 <div
                   aria-label="HapMap"
-                  className="w-20 h-20 xl:w-24 xl:h-24 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%] shrink-0"
-                  style={{ transform: "rotate(42deg)" }}
+                  className="w-20 h-20 xl:w-24 xl:h-24 bg-white flex items-center justify-center rounded-[28%] shrink-0"
+                  style={{
+                    transform: "rotate(42deg)",
+                    boxShadow:
+                      "0 20px 40px -12px rgba(0,0,0,0.35), inset 0 2px 8px rgba(1,59,166,0.08)",
+                    animation: "logoEntrance 0.9s cubic-bezier(0.22,1,0.36,1) 0.2s both",
+                  }}
                 >
                   <div
                     className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
@@ -258,14 +271,14 @@ export default function AuthPage() {
                     }}
                   />
                 </div>
-                <div className="flex flex-col items-start leading-[0.85]">
+                <div className="relative flex flex-col items-start leading-[0.85]">
                   <h1 className="font-brand text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg font-black">
                     hap
                   </h1>
-                  <h1 className="font-brand text-5xl xl:text-6xl tracking-[0.12em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 100 }}>
+                  <h1 className="font-brand text-5xl xl:text-6xl tracking-[0.08em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 100 }}>
                     map
                   </h1>
-                  <span className="text-[9px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1.5 py-0.5 mt-1 uppercase">
+                  <span className="absolute -top-1 -right-7 text-[9px] font-medium text-white/60 tracking-[0.15em] border border-white/25 rounded-full px-1.5 py-0.5 uppercase bg-white/5 backdrop-blur-sm">
                     {whitelabel.platform.version}
                   </span>
                 </div>
@@ -296,24 +309,21 @@ export default function AuthPage() {
                 ))}
               </div>
               
-              {/* LGPD Compliance Badge - smaller */}
-              <div className="mt-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-700">
-                <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2">
-                  <div className="h-8 w-8 rounded-md bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-400/30 flex items-center justify-center">
-                    <FileCheck className="h-4 w-4 text-green-400" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-[10px] font-semibold text-white/90 uppercase tracking-wide">{whitelabel.compliance.complianceBadgeTitle}</p>
-                    <p className="text-[9px] text-white/50">{whitelabel.compliance.legalReferences}</p>
-                  </div>
-                </div>
-              </div>
             </div>
-            
-            {/* Footer on left panel - smaller */}
-            <div className="absolute bottom-4 left-0 right-0 text-center">
-              <p className="text-[9px] text-white/30 uppercase tracking-widest">{whitelabel.credits.developerLabel}</p>
-              <p className="text-[10px] text-white/50 font-semibold mt-0.5">{whitelabel.credits.developerName}</p>
+
+            {/* Unified footer: credits + LGPD compliance in one line */}
+            <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-3 px-4 animate-in fade-in-0 duration-1000 delay-700">
+              <FileCheck className="h-3 w-3 text-green-400 shrink-0" />
+              <p className="text-[9px] text-white/50 tracking-wide truncate">
+                <span className="text-white/70 font-semibold">{whitelabel.compliance.complianceBadgeTitle}</span>
+                <span className="mx-1.5 text-white/25">·</span>
+                {whitelabel.compliance.legalReferences}
+              </p>
+              <span className="h-3 w-px bg-white/20 shrink-0" />
+              <p className="text-[9px] text-white/40 tracking-wide shrink-0">
+                <span className="uppercase tracking-[0.15em] text-white/30">{whitelabel.credits.developerLabel}</span>{" "}
+                <span className="font-semibold text-white/60">{whitelabel.credits.developerName}</span>
+              </p>
             </div>
           </div>
           
@@ -535,7 +545,7 @@ export default function AuthPage() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-8 mt-1 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d80] hover:to-[#013ba6] text-white font-bold uppercase rounded text-[11px] shadow-md shadow-[#013ba6]/25 transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
+                  className="w-full h-8 mt-1 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d80] hover:to-[#013ba6] text-white font-bold uppercase rounded text-[11px] shadow-md shadow-[#013ba6]/25 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
                 >
                   {loading ? (
                     <div className="flex items-center gap-1.5">
@@ -597,8 +607,13 @@ export default function AuthPage() {
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 flex items-center justify-center gap-3">
               <div
                 aria-label="HapMap"
-                className="w-16 h-16 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%] shrink-0"
-                style={{ transform: "rotate(42deg)" }}
+                className="w-14 h-14 bg-white flex items-center justify-center rounded-[28%] shrink-0"
+                style={{
+                  transform: "rotate(42deg)",
+                  boxShadow:
+                    "0 16px 32px -12px rgba(0,0,0,0.35), inset 0 2px 6px rgba(1,59,166,0.08)",
+                  animation: "logoEntrance 0.9s cubic-bezier(0.22,1,0.36,1) 0.2s both",
+                }}
               >
                 <div
                   className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
@@ -615,14 +630,14 @@ export default function AuthPage() {
                   }}
                 />
               </div>
-              <div className="flex flex-col items-start leading-[0.85]">
+              <div className="relative flex flex-col items-start leading-[0.85]">
                 <h1 className="font-brand text-4xl tracking-wide lowercase text-white/95 drop-shadow-lg font-black">
                   hap
                 </h1>
-                <h1 className="font-brand text-4xl tracking-[0.12em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 100 }}>
+                <h1 className="font-brand text-4xl tracking-[0.08em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 100 }}>
                   map
                 </h1>
-                <span className="text-[7px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1 py-0.5 mt-1 uppercase">
+                <span className="absolute -top-0.5 -right-6 text-[8px] font-medium text-white/60 tracking-[0.15em] border border-white/25 rounded-full px-1 py-0.5 uppercase bg-white/5 backdrop-blur-sm">
                   {whitelabel.platform.version}
                 </span>
               </div>
@@ -671,7 +686,7 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="state-select-mobile"
-                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
+                      className="h-11 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
                     >
                       <SelectValue placeholder="SELECIONE O ESTADO" />
                     </SelectTrigger>
@@ -701,7 +716,7 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="hospital-select-mobile"
-                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-50"
+                      className="h-11 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-50"
                     >
                       <SelectValue placeholder={selectedState ? "SELECIONE" : "SELECIONE ESTADO PRIMEIRO"} />
                     </SelectTrigger>
@@ -731,7 +746,7 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="usertype-select-mobile"
-                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
+                      className="h-11 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
                     >
                       <SelectValue placeholder="SELECIONE A CATEGORIA" />
                     </SelectTrigger>
@@ -778,7 +793,7 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="department-select-mobile"
-                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-60"
+                      className="h-11 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-60"
                     >
                       <SelectValue placeholder="SELECIONE O SETOR" />
                     </SelectTrigger>
@@ -808,7 +823,7 @@ export default function AuthPage() {
                     id="login-username-mobile"
                     type="text"
                     placeholder="DIGITE SEU USUÁRIO"
-                    className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 placeholder:text-gray-500"
+                    className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 placeholder:text-gray-500"
                     value={loginData.username}
                     onChange={(e) => {
                       // Forçar uppercase e só permitir A-Z, 0-9 e ponto
@@ -838,7 +853,7 @@ export default function AuthPage() {
                       id="login-password-mobile"
                       type={showPassword ? "text" : "password"}
                       placeholder="EX: ABC123"
-                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg pr-9 text-xs font-mono uppercase tracking-widest text-gray-900 placeholder:text-gray-500"
+                      className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl pr-9 text-xs font-mono uppercase tracking-widest text-gray-900 placeholder:text-gray-500"
                       value={loginData.password}
                       onChange={(e) => {
                         // Forçar uppercase e só permitir A-Z e 0-9, max 6 caracteres
@@ -865,7 +880,7 @@ export default function AuthPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-10 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-xs rounded-lg shadow-md shadow-[#013ba6]/30 mt-3 uppercase"
+                className="w-full h-11 bg-gradient-to-r from-[#013ba6] to-[#0152d4] hover:from-[#012d7a] hover:to-[#013ba6] text-white font-bold text-xs rounded-xl shadow-md shadow-[#013ba6]/30 mt-3 uppercase transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
@@ -909,19 +924,21 @@ export default function AuthPage() {
             </div>
           </div>
           
-          {/* LGPD Compliance Badge - Mobile */}
-          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg mx-auto">
-            <FileCheck className="h-3.5 w-3.5 text-green-400" />
-            <div className="text-center">
-              <p className="text-[9px] font-medium text-white/80">{whitelabel.compliance.complianceBadgeTitle}</p>
-              <p className="text-[8px] text-white/40">{whitelabel.compliance.legalReferences}</p>
+          {/* Unified footer: LGPD + credits in one compact line */}
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-3 px-3">
+            <div className="flex items-center gap-1.5">
+              <FileCheck className="h-3 w-3 text-green-400 shrink-0" />
+              <p className="text-[9px] text-white/60">
+                <span className="font-semibold text-white/80">{whitelabel.compliance.complianceBadgeTitle}</span>
+                <span className="mx-1 text-white/25">·</span>
+                <span className="text-white/50">{whitelabel.compliance.legalReferences}</span>
+              </p>
             </div>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center mt-3">
-            <p className="text-white/30 text-[9px] uppercase tracking-widest">{whitelabel.credits.developerLabel}</p>
-            <p className="text-white/50 text-[10px] font-semibold mt-0.5">{whitelabel.credits.developerName}</p>
+            <span className="h-3 w-px bg-white/20 hidden sm:inline-block" />
+            <p className="text-[9px] text-white/40">
+              <span className="uppercase tracking-[0.15em] text-white/30">{whitelabel.credits.developerLabel}</span>{" "}
+              <span className="font-semibold text-white/60">{whitelabel.credits.developerName}</span>
+            </p>
           </div>
         </div>
         )}
