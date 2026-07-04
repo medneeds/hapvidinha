@@ -77,6 +77,18 @@ export default function AuthPage() {
     }
   }, [user, navigate]);
 
+  // Fixar Estado (Maranhão) e Unidade (Hospital Guarás) automaticamente
+  useEffect(() => {
+    if (hospitalLoading || states.length === 0 || hospitals.length === 0) return;
+    const ma = states.find(s => s.abbreviation === 'MA');
+    if (ma && !selectedState) setSelectedState(ma.id);
+    const guaras = hospitals.find(h =>
+      h.name.toUpperCase().includes('GUARÁS') || h.name.toUpperCase().includes('GUARAS')
+    );
+    if (guaras && !selectedHospitalId) setSelectedHospitalId(guaras.id);
+  }, [hospitalLoading, states, hospitals, selectedState, selectedHospitalId]);
+
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -347,7 +359,8 @@ export default function AuthPage() {
                 {/* Hierarchical Selection Section */}
                 <div className="space-y-1.5 pb-2 border-b border-gray-100">
                   {/* State Selection */}
-                  <div className="group">
+                  <div className="group hidden">
+
                     <Label htmlFor="state-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
                       Estado
                     </Label>
@@ -376,7 +389,8 @@ export default function AuthPage() {
                   </div>
 
                   {/* Hospital Unit Selection */}
-                  <div className="group">
+                  <div className="group hidden">
+
                     <Label htmlFor="hospital-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
                       Unidade
                     </Label>
@@ -615,10 +629,11 @@ export default function AuthPage() {
             <form onSubmit={handleLogin} className="space-y-2.5 relative z-10">
               {/* Hierarchical Selection Section */}
               <div className="space-y-2.5 pb-2.5 border-b border-gray-200">
-                <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">LOCALIZAÇÃO</p>
+                <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">SETOR</p>
                 
                 {/* State Selection */}
-                <div className="space-y-0.5">
+                <div className="space-y-0.5 hidden">
+
                   <Label 
                     htmlFor="state-select-mobile" 
                     className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
@@ -651,7 +666,8 @@ export default function AuthPage() {
                 </div>
 
                 {/* Hospital Unit Selection */}
-                <div className="space-y-0.5">
+                <div className="space-y-0.5 hidden">
+
                   <Label 
                     htmlFor="hospital-select-mobile" 
                     className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
