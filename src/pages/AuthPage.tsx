@@ -389,7 +389,8 @@ export default function AuthPage() {
                   </div>
 
                   {/* Hospital Unit Selection */}
-                  <div className="group">
+                  <div className="group hidden">
+
                     <Label htmlFor="hospital-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
                       Unidade
                     </Label>
