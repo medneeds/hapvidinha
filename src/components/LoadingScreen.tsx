@@ -87,34 +87,40 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
             opacity: 0
           }}
         >
-          <div
-            aria-label="HapMap"
-            className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 mx-auto mb-1 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%]"
-            style={{ transform: "rotate(42deg)" }}
-          >
+          <div className="flex items-center justify-center gap-5">
             <div
-              className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
-              style={{
-                transform: "rotate(-42deg)",
-                WebkitMaskImage: "url(/logo-hm.png)",
-                maskImage: "url(/logo-hm.png)",
-                WebkitMaskRepeat: "no-repeat",
-                maskRepeat: "no-repeat",
-                WebkitMaskPosition: "center",
-                maskPosition: "center",
-                WebkitMaskSize: "contain",
-                maskSize: "contain",
-              }}
-            />
+              aria-label="HapMap"
+              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%] shrink-0"
+              style={{ transform: "rotate(42deg)" }}
+            >
+              <div
+                className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
+                style={{
+                  transform: "rotate(-42deg)",
+                  WebkitMaskImage: "url(/logo-hm.png)",
+                  maskImage: "url(/logo-hm.png)",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskRepeat: "no-repeat",
+                  WebkitMaskPosition: "center",
+                  maskPosition: "center",
+                  WebkitMaskSize: "contain",
+                  maskSize: "contain",
+                }}
+              />
+            </div>
+            <div className="flex flex-col items-start leading-[0.85]">
+              <h1 className="font-brand text-6xl sm:text-7xl md:text-8xl tracking-wide lowercase text-white/95 drop-shadow-lg font-bold">
+                hap
+              </h1>
+              <h1 className="font-brand text-6xl sm:text-7xl md:text-8xl tracking-[0.08em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 200 }}>
+                map
+              </h1>
+              <span className="text-[10px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-2 py-0.5 mt-2 uppercase">
+                {whitelabel.platform.version}
+              </span>
+            </div>
           </div>
-          <div className="inline-flex items-baseline gap-2">
-            <h1 className="font-brand text-6xl sm:text-7xl md:text-8xl tracking-wide lowercase text-white/95 drop-shadow-lg">
-              <span className="font-medium">hap</span><span className="font-light tracking-[0.05em]" style={{fontWeight:200}}>map</span>
-            </h1>
-            <span className="text-[10px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-2 py-0.5 self-start mt-2 uppercase">
-              {whitelabel.platform.version}
-            </span>
-          </div>
+
           
           {/* Elegant divider */}
           <div className="flex items-center justify-center gap-3">
