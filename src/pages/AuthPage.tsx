@@ -259,10 +259,10 @@ export default function AuthPage() {
                   />
                 </div>
                 <div className="flex flex-col items-start leading-[0.85]">
-                  <h1 className="font-brand text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg font-bold">
+                  <h1 className="font-brand text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg font-black">
                     hap
                   </h1>
-                  <h1 className="font-brand text-5xl xl:text-6xl tracking-[0.08em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 200 }}>
+                  <h1 className="font-brand text-5xl xl:text-6xl tracking-[0.12em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 100 }}>
                     map
                   </h1>
                   <span className="text-[9px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1.5 py-0.5 mt-1 uppercase">
