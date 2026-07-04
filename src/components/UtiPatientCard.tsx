@@ -1364,23 +1364,27 @@ export function UtiPatientCard({
                         Realocar Leito/UTI
                       </DropdownMenuItem>
                       
-                      <DropdownMenuSeparator />
-                      <DropdownMenuLabel className="text-xs text-muted-foreground">Movimentações</DropdownMenuLabel>
-                      
-                      <DropdownMenuItem onClick={() => handleMovement("ALTA")}>
-                        <TrendingUp className="h-4 w-4 mr-2 text-green-500" />
-                        Alta
-                      </DropdownMenuItem>
-                      
-                      <DropdownMenuItem onClick={() => handleMovement("TRANSFERÊNCIA")}>
-                        <ArrowLeftRight className="h-4 w-4 mr-2 text-blue-500" />
-                        Transferência
-                      </DropdownMenuItem>
-                      
-                      <DropdownMenuItem onClick={() => handleMovement("ÓBITO")}>
-                        <Skull className="h-4 w-4 mr-2 text-red-500" />
-                        Óbito
-                      </DropdownMenuItem>
+                      {canMove && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuLabel className="text-xs text-muted-foreground">Movimentações</DropdownMenuLabel>
+
+                          <DropdownMenuItem onClick={() => handleMovement("ALTA")}>
+                            <TrendingUp className="h-4 w-4 mr-2 text-green-500" />
+                            Alta
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem onClick={() => handleMovement("TRANSFERÊNCIA")}>
+                            <ArrowLeftRight className="h-4 w-4 mr-2 text-blue-500" />
+                            Transferência
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem onClick={() => handleMovement("ÓBITO")}>
+                            <Skull className="h-4 w-4 mr-2 text-red-500" />
+                            Óbito
+                          </DropdownMenuItem>
+                        </>
+                      )}
                     </>
                   )}
                   
