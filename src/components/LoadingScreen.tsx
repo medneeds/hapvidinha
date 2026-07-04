@@ -108,22 +108,25 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
                 animation: "logoEntrance 0.9s cubic-bezier(0.22,1,0.36,1) 0.1s both",
               }}
             >
-              {/* Progress ring (rotates slowly to feel alive) */}
+              {/* Progress ring — rotação lenta e majestosa (20s) */}
               <svg
                 width={ringSize}
                 height={ringSize}
                 className="absolute inset-0"
                 aria-hidden="true"
-                style={{ animation: "ringSpin 12s linear infinite", transformOrigin: "center" }}
+                style={{
+                  animation: isGate ? "ringSpin 20s linear infinite" : undefined,
+                  transformOrigin: "center",
+                }}
               >
                 <defs>
                   <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(255,255,255,0.95)" />
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.98)" />
                     <stop offset="60%" stopColor="rgba(255,255,255,0.75)" />
-                    <stop offset="100%" stopColor="rgba(255,255,255,0.35)" />
+                    <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
                   </linearGradient>
                   <filter id="ringGlow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feGaussianBlur stdDeviation="3.2" result="blur" />
                     <feMerge>
                       <feMergeNode in="blur" />
                       <feMergeNode in="SourceGraphic" />
@@ -136,7 +139,7 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
                   cy={ringSize / 2}
                   r={radius}
                   fill="none"
-                  stroke="rgba(255,255,255,0.10)"
+                  stroke="rgba(255,255,255,0.08)"
                   strokeWidth={stroke}
                 />
                 {/* Progress arc */}
@@ -148,16 +151,30 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
                   stroke="url(#ringGradient)"
                   strokeWidth={stroke}
                   strokeLinecap="round"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={dashOffset}
                   filter="url(#ringGlow)"
-                  style={{
-                    transition: "stroke-dashoffset 600ms cubic-bezier(0.4,0,0.2,1)",
-                    transform: "rotate(-90deg)",
-                    transformOrigin: "center",
-                  }}
+                  style={
+                    isGate
+                      ? {
+                          // Animação única, progressiva e elegante: o traço "respira"
+                          // desenhando lentamente ao longo do anel — 7s por ciclo.
+                          strokeDasharray: circumference,
+                          transform: "rotate(-90deg)",
+                          transformOrigin: "center",
+                          animation: `ringDraw 7s cubic-bezier(0.65, 0, 0.35, 1) infinite`,
+                          // CSS custom prop para o keyframe usar o perímetro exato
+                          ["--ring-c" as any]: `${circumference}`,
+                        }
+                      : {
+                          strokeDasharray: circumference,
+                          strokeDashoffset: dashOffset,
+                          transition: "stroke-dashoffset 600ms cubic-bezier(0.4,0,0.2,1)",
+                          transform: "rotate(-90deg)",
+                          transformOrigin: "center",
+                        }
+                  }
                 />
               </svg>
+
 
               {/* Inner soft glow behind losango */}
               <div
