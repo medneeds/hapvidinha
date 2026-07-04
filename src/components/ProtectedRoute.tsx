@@ -66,22 +66,16 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
-    } else if (!loading && user && !hasShownLoading) {
-      setShowLoadingScreen(true);
-      setHasShownLoading(true);
     }
-  }, [user, loading, navigate, hasShownLoading]);
+  }, [user, loading, navigate]);
 
+  // Enquanto autentica ou verifica termos: mostrar LoadingScreen (evita flash branco)
   if (loading || checkingTerms) {
-    return null;
+    return <LoadingScreen duration={1200} />;
   }
 
   if (!user) {
-    return null;
-  }
-
-  if (showLoadingScreen) {
-    return <LoadingScreen onComplete={() => setShowLoadingScreen(false)} />;
+    return <LoadingScreen duration={1200} />;
   }
 
   // Mostrar diálogo de termos se ainda não aceitou
