@@ -241,39 +241,35 @@ export function AppSidebar({
         <div className="flex items-center justify-between relative">
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
-              <div className="flex items-center justify-center animate-fade-in w-full">
-                {/* Monograma hm — discreto */}
-                <div className="flex items-baseline leading-none">
-                  <span className="font-brand text-3xl lowercase text-primary font-black">
-                    h
-                  </span>
-                  <span
-                    className="font-brand text-3xl lowercase text-muted-foreground/70 tracking-[0.08em]"
-                    style={{ fontWeight: 100 }}
-                  >
-                    m
-                  </span>
+              <div className="flex items-center gap-2.5 animate-fade-in">
+                {/* Losango com monograma hm */}
+                <div className="relative h-10 w-10 shrink-0">
+                  <div className="absolute inset-0 rotate-45 rounded-[8px] bg-background shadow-sm border border-border/40" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="flex items-baseline leading-none">
+                      <span className="font-brand text-base lowercase text-primary font-black">h</span>
+                      <span className="font-brand text-base lowercase text-primary/80 tracking-[0.06em]" style={{ fontWeight: 300 }}>m</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Wordmark hap/map empilhado */}
+                <div className="flex flex-col leading-[0.85]">
+                  <span className="font-brand text-2xl lowercase text-foreground font-bold">hap</span>
+                  <span className="font-brand text-2xl lowercase text-foreground/90 tracking-[0.06em]" style={{ fontWeight: 300 }}>map</span>
                 </div>
               </div>
-
-
-
             ) : (
-              <div className="flex flex-col items-center gap-0.5">
-                <div className="flex items-baseline leading-none">
-                  <span className="font-brand text-lg lowercase text-primary font-black">
-                    h
-                  </span>
-                  <span
-                    className="font-brand text-lg lowercase text-muted-foreground/70 tracking-[0.08em]"
-                    style={{ fontWeight: 100 }}
-                  >
-                    m
-                  </span>
+              <div className="relative h-8 w-8">
+                <div className="absolute inset-0 rotate-45 rounded-[6px] bg-background shadow-sm border border-border/40" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="flex items-baseline leading-none">
+                    <span className="font-brand text-xs lowercase text-primary font-black">h</span>
+                    <span className="font-brand text-xs lowercase text-primary/80 tracking-[0.06em]" style={{ fontWeight: 300 }}>m</span>
+                  </div>
                 </div>
-                <div className="h-0.5 w-3 rounded-full bg-gradient-to-r from-primary/40 to-primary/10" />
               </div>
             )}
+
           </div>
           {!isCollapsed && (
             <Button
