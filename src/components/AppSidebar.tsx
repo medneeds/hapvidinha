@@ -241,33 +241,24 @@ export function AppSidebar({
         <div className="flex items-center justify-between relative">
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
-              <div className="flex flex-col items-center gap-1.5 animate-fade-in w-full">
-                {/* Main logo text — mesma tipografia da tela de login/loading */}
-                <div className="relative flex items-baseline">
-                  <h1 className="font-brand text-3xl tracking-wide lowercase text-primary font-black leading-none">
+              <div className="flex flex-col items-center animate-fade-in w-full">
+                {/* Wordmark empilhado — igual à tela de login/loading */}
+                <div className="relative flex flex-col items-start leading-[0.85]">
+                  <h1 className="font-brand text-4xl tracking-wide lowercase text-primary font-black">
                     hap
                   </h1>
                   <h1
-                    className="font-brand text-3xl tracking-[0.08em] lowercase text-muted-foreground/70 leading-none"
+                    className="font-brand text-4xl tracking-[0.08em] lowercase text-muted-foreground/70"
                     style={{ fontWeight: 100 }}
                   >
                     map
                   </h1>
-                  <span className="absolute -top-0.5 -right-6 text-[8px] font-medium text-primary/70 tracking-[0.15em] border border-primary/25 rounded-full px-1 py-0.5 uppercase bg-primary/5 backdrop-blur-sm">
+                  <span className="absolute -top-1 -right-8 text-[8px] font-medium text-primary/70 tracking-[0.15em] border border-primary/25 rounded-full px-1 py-0.5 uppercase bg-primary/5 backdrop-blur-sm">
                     {whitelabel.platform.version}
                   </span>
                 </div>
-                {/* Decorative divider */}
-                <div className="flex items-center gap-2 w-full px-2 mt-1">
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-                  <div className="h-1 w-1 rounded-full bg-primary/30" />
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-                </div>
-                {/* Slogan micro-text */}
-                <p className="text-[8px] text-muted-foreground/50 tracking-wider font-light italic text-center leading-tight px-1">
-                  {whitelabel.platform.slogan.split('.')[0]}
-                </p>
               </div>
+
             ) : (
               <div className="flex flex-col items-center gap-0.5">
                 <div className="flex items-baseline leading-none">
