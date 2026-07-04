@@ -71,6 +71,18 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
   }, [user, loading, navigate]);
 
+  // Bloqueia acesso de qualquer role que não seja médico/admin
+  useEffect(() => {
+    if (!loading && user && role && !ALLOWED_ROLES.has(role) && !roleBlocked) {
+      setRoleBlocked(true);
+      (async () => {
+        const { toast } = await import("sonner");
+        toast.error("ACESSO RESTRITO A MÉDICOS COM CRM.");
+        await signOut();
+      })();
+    }
+  }, [loading, user, role, roleBlocked, signOut]);
+
   // Enquanto autentica ou verifica termos: mostrar LoadingScreen (evita flash branco)
   if (loading || checkingTerms) {
     return <LoadingScreen duration={1200} />;
