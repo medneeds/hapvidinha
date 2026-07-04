@@ -3912,6 +3912,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     )}
 
 
+                    {/* MOVIMENTAÇÕES - somente médicos com CRM (e admin de gestão) */}
+                    {(role === 'medico' || role === 'admin') && (
+                    <>
                     {/* MOVIMENTAÇÕES - Priority Category with Gradient Accent */}
                     <Collapsible className="group">
                       <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold hover:bg-accent/60 transition-all duration-200 group-data-[state=open]:bg-accent/40">
@@ -3980,6 +3983,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </DropdownMenuItem>
                       </CollapsibleContent>
                     </Collapsible>
+
+                    </>
+                    )}
 
                     {/* Elegant Divider */}
                     <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />

@@ -65,7 +65,6 @@ export default function AuthPage() {
   const [selectedState, setSelectedState] = useState<string>("");
   const [selectedHospitalId, setSelectedHospitalId] = useState<string>("");
   const [selectedDepartment, setSelectedDepartment] = useState<Department>("URGÊNCIA E EMERGÊNCIA ADULTO");
-  const [selectedUserType, setSelectedUserType] = useState<string>("");
 
   // Filter hospitals by selected state
   const filteredHospitals = selectedState 
@@ -81,11 +80,6 @@ export default function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate selections
-    if (!selectedUserType) {
-      toast.error("SELECIONE A CATEGORIA DE USUÁRIO");
-      return;
-    }
     if (!selectedState) {
       toast.error("SELECIONE UM ESTADO");
       return;
@@ -407,50 +401,7 @@ export default function AuthPage() {
                     </Select>
                   </div>
 
-                  {/* User Type Selection */}
-                  <div className="group">
-                    <Label htmlFor="usertype-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
-                      Categoria de Usuário
-                    </Label>
-                    <Select
-                      value={selectedUserType}
-                      onValueChange={setSelectedUserType}
-                      disabled={loading}
-                    >
-                      <SelectTrigger 
-                        id="usertype-select-desktop"
-                        className="h-7 bg-gray-50/80 dark:bg-gray-50/80 border border-gray-200 focus:border-[#013ba6] focus:ring-1 focus:ring-[#013ba6]/10 rounded text-[10px] font-medium uppercase text-gray-900 dark:text-gray-900"
-                      >
-                        <SelectValue placeholder="Selecione a categoria" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-xl z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
-                        <SelectItem value="medicina" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                          MEDICINA
-                        </SelectItem>
-                        <SelectItem value="enfermagem" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                          ENFERMAGEM
-                        </SelectItem>
-                        <SelectItem value="fisioterapia" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                          FISIOTERAPIA
-                        </SelectItem>
-                        <SelectItem value="administrativo" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                          ADMINISTRATIVO
-                        </SelectItem>
-                        <SelectItem value="gestao" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                          GESTÃO
-                        </SelectItem>
-                        <SelectItem value="hotelaria" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                          HOTELARIA
-                        </SelectItem>
-                        <SelectItem value="condutor" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                          CONDUTOR
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Department Selection - oculto para categorias de acesso amplo/operacional */}
-                  {selectedUserType !== "administrativo" && selectedUserType !== "gestao" && selectedUserType !== "hotelaria" && selectedUserType !== "condutor" && (
+                  {/* Department Selection */}
                   <div className="group">
                     <Label htmlFor="department-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
                       Setor
@@ -475,7 +426,6 @@ export default function AuthPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  )}
                 </div>
 
                 {/* Authentication Fields Section */}
@@ -730,54 +680,7 @@ export default function AuthPage() {
                   </Select>
                 </div>
 
-                {/* User Type Selection */}
-                <div className="space-y-0.5">
-                  <Label 
-                    htmlFor="usertype-select-mobile" 
-                    className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
-                  >
-                    <Users className="h-2.5 w-2.5 text-gray-500" />
-                    CATEGORIA DE USUÁRIO
-                  </Label>
-                  <Select
-                    value={selectedUserType}
-                    onValueChange={setSelectedUserType}
-                    disabled={loading}
-                  >
-                    <SelectTrigger 
-                      id="usertype-select-mobile"
-                      className="h-11 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
-                    >
-                      <SelectValue placeholder="SELECIONE A CATEGORIA" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-white border border-gray-200 shadow-lg z-[9999] rounded-lg text-gray-900 dark:text-gray-900">
-                      <SelectItem value="medicina" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                        MEDICINA
-                      </SelectItem>
-                      <SelectItem value="enfermagem" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                        ENFERMAGEM
-                      </SelectItem>
-                      <SelectItem value="fisioterapia" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                        FISIOTERAPIA
-                      </SelectItem>
-                      <SelectItem value="administrativo" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                        ADMINISTRATIVO
-                      </SelectItem>
-                      <SelectItem value="gestao" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                        GESTÃO
-                      </SelectItem>
-                      <SelectItem value="hotelaria" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                        HOTELARIA
-                      </SelectItem>
-                      <SelectItem value="condutor" className="text-xs font-medium py-1.5 text-gray-900 dark:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-100 focus:text-gray-900 dark:focus:text-gray-900">
-                        CONDUTOR
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Department Selection - oculto para categorias de acesso amplo/operacional */}
-                {selectedUserType !== "administrativo" && selectedUserType !== "gestao" && selectedUserType !== "hotelaria" && selectedUserType !== "condutor" && (
+                {/* Department Selection */}
                 <div className="space-y-0.5">
                   <Label 
                     htmlFor="department-select-mobile" 
@@ -806,7 +709,6 @@ export default function AuthPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                )}
               </div>
 
               {/* Authentication Fields Section */}
