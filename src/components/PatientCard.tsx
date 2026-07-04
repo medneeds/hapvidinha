@@ -3984,6 +3984,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       </CollapsibleContent>
                     </Collapsible>
 
+                    </>
+                    )}
+
                     {/* Elegant Divider */}
                     <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
 
