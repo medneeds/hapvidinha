@@ -119,6 +119,13 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <PendingApprovalScreen status="pending" />;
   }
 
+  // Aguarda o prefetch dos pacientes concluir antes de revelar o app
+  // (evita "flash" de mapa vazio ao abrir/atualizar). Roles não-médicas
+  // já terão sido deslogadas antes de chegar aqui.
+  if (!prefetchReady) {
+    return <LoadingScreen duration={1200} />;
+  }
+
   // Envolver com SessionTimeoutProvider para ativar timeout LGPD/CFM
   return (
     <SessionTimeoutProvider>
