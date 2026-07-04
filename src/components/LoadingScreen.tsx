@@ -21,10 +21,10 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
     const tick = () => {
       const elapsed = performance.now() - start;
       if (isGate) {
-        // Ring "respirando" entre 15% e 92% de forma senoidal — sensação de progresso.
-        const t = (elapsed % 2400) / 2400;
+        // Ring "respirando" entre 10% e 90% de forma senoidal lenta (5s) — evidencia a logo.
+        const t = (elapsed % 5000) / 5000;
         const eased = 0.5 - 0.5 * Math.cos(t * Math.PI * 2);
-        setProgress(15 + eased * 77);
+        setProgress(10 + eased * 80);
         raf = requestAnimationFrame(tick);
         return;
       }
