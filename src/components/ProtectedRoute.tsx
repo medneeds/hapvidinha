@@ -6,6 +6,7 @@ import { SessionTimeoutProvider } from "./SessionTimeoutProvider";
 import { PendingApprovalScreen } from "./PendingApprovalScreen";
 import { ConsentTermsDialog, CURRENT_TERMS_VERSION } from "./ConsentTermsDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { usePatientsPrefetch } from "@/contexts/PatientsPrefetchContext";
 
 // Logins genéricos que não precisam de aprovação (período de transição)
 const LEGACY_GENERIC_USERS = [
@@ -22,6 +23,7 @@ const ALLOWED_ROLES = new Set(["medico", "admin"]);
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading, status, role, signOut } = useAuth();
+  const { isReady: prefetchReady } = usePatientsPrefetch();
   const navigate = useNavigate();
   const [showTermsDialog, setShowTermsDialog] = useState(false);
   const [checkingTerms, setCheckingTerms] = useState(true);
@@ -115,6 +117,13 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   // Usuários individuais pendentes veem a tela de espera
   if (status === "pending" && !isLegacyGenericUser) {
     return <PendingApprovalScreen status="pending" />;
+  }
+
+  // Aguarda o prefetch dos pacientes concluir antes de revelar o app
+  // (evita "flash" de mapa vazio ao abrir/atualizar). Roles não-médicas
+  // já terão sido deslogadas antes de chegar aqui.
+  if (!prefetchReady) {
+    return <LoadingScreen duration={1200} />;
   }
 
   // Envolver com SessionTimeoutProvider para ativar timeout LGPD/CFM

@@ -11,16 +11,32 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(0);
 
+  // Se onComplete não é passado, tratamos como "gate" — o ring cicla suavemente
+  // e o componente NÃO se auto-esconde: some apenas quando o pai o desmonta.
+  const isGate = !onComplete;
+
   useEffect(() => {
     const start = performance.now();
     let raf = 0;
     const tick = () => {
       const elapsed = performance.now() - start;
+      if (isGate) {
+        // Ring "respirando" entre 15% e 92% de forma senoidal — sensação de progresso.
+        const t = (elapsed % 2400) / 2400;
+        const eased = 0.5 - 0.5 * Math.cos(t * Math.PI * 2);
+        setProgress(15 + eased * 77);
+        raf = requestAnimationFrame(tick);
+        return;
+      }
       const pct = Math.min(100, (elapsed / duration) * 100);
       setProgress(pct);
       if (pct < 100) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
+
+    if (isGate) {
+      return () => cancelAnimationFrame(raf);
+    }
 
     const timer = setTimeout(() => {
       setIsVisible(false);
@@ -33,7 +49,7 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
       clearTimeout(timer);
       cancelAnimationFrame(raf);
     };
-  }, [duration, onComplete]);
+  }, [duration, onComplete, isGate]);
 
   // Circular progress ring math
   const ringSize = 168;

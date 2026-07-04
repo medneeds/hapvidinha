@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { DepartmentProvider } from "./contexts/DepartmentContext";
 import { HospitalProvider } from "./contexts/HospitalContext";
+import { PatientsPrefetchProvider } from "./contexts/PatientsPrefetchContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import App from "./App.tsx";
 import "@fontsource/comfortaa/300.css";
@@ -18,7 +19,9 @@ createRoot(document.getElementById("root")!).render(
         <AuthProvider>
           <HospitalProvider>
             <DepartmentProvider>
-              <App />
+              <PatientsPrefetchProvider>
+                <App />
+              </PatientsPrefetchProvider>
             </DepartmentProvider>
           </HospitalProvider>
         </AuthProvider>
