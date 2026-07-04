@@ -20,8 +20,6 @@ const LEGACY_GENERIC_USERS = [
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading, status } = useAuth();
   const navigate = useNavigate();
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
-  const [hasShownLoading, setHasShownLoading] = useState(false);
   const [showTermsDialog, setShowTermsDialog] = useState(false);
   const [checkingTerms, setCheckingTerms] = useState(true);
   const [termsAccepted, setTermsAccepted] = useState(false);
