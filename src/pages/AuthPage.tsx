@@ -65,7 +65,6 @@ export default function AuthPage() {
   const [selectedState, setSelectedState] = useState<string>("");
   const [selectedHospitalId, setSelectedHospitalId] = useState<string>("");
   const [selectedDepartment, setSelectedDepartment] = useState<Department>("URGÊNCIA E EMERGÊNCIA ADULTO");
-  const [selectedUserType, setSelectedUserType] = useState<string>("");
 
   // Filter hospitals by selected state
   const filteredHospitals = selectedState 
@@ -81,11 +80,6 @@ export default function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate selections
-    if (!selectedUserType) {
-      toast.error("SELECIONE A CATEGORIA DE USUÁRIO");
-      return;
-    }
     if (!selectedState) {
       toast.error("SELECIONE UM ESTADO");
       return;
