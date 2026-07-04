@@ -16,27 +16,19 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
   const isGate = !onComplete;
 
   useEffect(() => {
+    // Gate mode: ring é 100% CSS (indeterminate elegante). Não precisamos animar
+    // o progresso por rAF — evita jank e deixa a curva realmente fluida.
+    if (isGate) return;
+
     const start = performance.now();
     let raf = 0;
     const tick = () => {
       const elapsed = performance.now() - start;
-      if (isGate) {
-        // Ring "respirando" entre 10% e 90% de forma senoidal lenta (5s) — evidencia a logo.
-        const t = (elapsed % 5000) / 5000;
-        const eased = 0.5 - 0.5 * Math.cos(t * Math.PI * 2);
-        setProgress(10 + eased * 80);
-        raf = requestAnimationFrame(tick);
-        return;
-      }
       const pct = Math.min(100, (elapsed / duration) * 100);
       setProgress(pct);
       if (pct < 100) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-
-    if (isGate) {
-      return () => cancelAnimationFrame(raf);
-    }
 
     const timer = setTimeout(() => {
       setIsVisible(false);
@@ -57,6 +49,7 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
   const radius = (ringSize - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference - (progress / 100) * circumference;
+
 
   return (
     <div
