@@ -45,7 +45,7 @@ export function PatientsPrefetchProvider({ children }: { children: ReactNode }) 
     setIsReady(false);
 
     let cancelled = false;
-    const MIN_GATE_MS = 5000; // duração mínima do gate de carregamento
+    const MIN_GATE_MS = 3000; // duração mínima do gate de carregamento
     const startedAt = performance.now();
     (async () => {
       try {
