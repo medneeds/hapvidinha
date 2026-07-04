@@ -23,9 +23,9 @@ export const whitelabel = {
     /** Nome principal da plataforma (ex: "HapMap") */
     name: "HapMap",
     /** Versão exibida ao lado do nome */
-    version: "2.0",
+    version: "3.0",
     /** Nome completo para documentos e títulos */
-    fullName: "HapMap 2.0",
+    fullName: "HapMap 3.0",
     /** Slogan principal exibido na tela de login e loading */
     slogan: "Tecnologia que valoriza seu tempo. Inteligência que salva vidas.",
     /** Texto de carregamento */
