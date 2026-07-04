@@ -16,27 +16,19 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
   const isGate = !onComplete;
 
   useEffect(() => {
+    // Gate mode: ring é 100% CSS (indeterminate elegante). Não precisamos animar
+    // o progresso por rAF — evita jank e deixa a curva realmente fluida.
+    if (isGate) return;
+
     const start = performance.now();
     let raf = 0;
     const tick = () => {
       const elapsed = performance.now() - start;
-      if (isGate) {
-        // Ring "respirando" entre 10% e 90% de forma senoidal lenta (5s) — evidencia a logo.
-        const t = (elapsed % 5000) / 5000;
-        const eased = 0.5 - 0.5 * Math.cos(t * Math.PI * 2);
-        setProgress(10 + eased * 80);
-        raf = requestAnimationFrame(tick);
-        return;
-      }
       const pct = Math.min(100, (elapsed / duration) * 100);
       setProgress(pct);
       if (pct < 100) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-
-    if (isGate) {
-      return () => cancelAnimationFrame(raf);
-    }
 
     const timer = setTimeout(() => {
       setIsVisible(false);
@@ -57,6 +49,7 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
   const radius = (ringSize - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference - (progress / 100) * circumference;
+
 
   return (
     <div
@@ -115,22 +108,25 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
                 animation: "logoEntrance 0.9s cubic-bezier(0.22,1,0.36,1) 0.1s both",
               }}
             >
-              {/* Progress ring (rotates slowly to feel alive) */}
+              {/* Progress ring — rotação lenta e majestosa (20s) */}
               <svg
                 width={ringSize}
                 height={ringSize}
                 className="absolute inset-0"
                 aria-hidden="true"
-                style={{ animation: "ringSpin 12s linear infinite", transformOrigin: "center" }}
+                style={{
+                  animation: isGate ? "ringSpin 20s linear infinite" : undefined,
+                  transformOrigin: "center",
+                }}
               >
                 <defs>
                   <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(255,255,255,0.95)" />
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.98)" />
                     <stop offset="60%" stopColor="rgba(255,255,255,0.75)" />
-                    <stop offset="100%" stopColor="rgba(255,255,255,0.35)" />
+                    <stop offset="100%" stopColor="rgba(255,255,255,0.25)" />
                   </linearGradient>
                   <filter id="ringGlow" x="-30%" y="-30%" width="160%" height="160%">
-                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feGaussianBlur stdDeviation="3.2" result="blur" />
                     <feMerge>
                       <feMergeNode in="blur" />
                       <feMergeNode in="SourceGraphic" />
@@ -143,7 +139,7 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
                   cy={ringSize / 2}
                   r={radius}
                   fill="none"
-                  stroke="rgba(255,255,255,0.10)"
+                  stroke="rgba(255,255,255,0.08)"
                   strokeWidth={stroke}
                 />
                 {/* Progress arc */}
@@ -155,16 +151,30 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
                   stroke="url(#ringGradient)"
                   strokeWidth={stroke}
                   strokeLinecap="round"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={dashOffset}
                   filter="url(#ringGlow)"
-                  style={{
-                    transition: "stroke-dashoffset 600ms cubic-bezier(0.4,0,0.2,1)",
-                    transform: "rotate(-90deg)",
-                    transformOrigin: "center",
-                  }}
+                  style={
+                    isGate
+                      ? {
+                          // Animação única, progressiva e elegante: o traço "respira"
+                          // desenhando lentamente ao longo do anel — 7s por ciclo.
+                          strokeDasharray: circumference,
+                          transform: "rotate(-90deg)",
+                          transformOrigin: "center",
+                          animation: `ringDraw 7s cubic-bezier(0.65, 0, 0.35, 1) infinite`,
+                          // CSS custom prop para o keyframe usar o perímetro exato
+                          ["--ring-c" as any]: `${circumference}`,
+                        }
+                      : {
+                          strokeDasharray: circumference,
+                          strokeDashoffset: dashOffset,
+                          transition: "stroke-dashoffset 600ms cubic-bezier(0.4,0,0.2,1)",
+                          transform: "rotate(-90deg)",
+                          transformOrigin: "center",
+                        }
+                  }
                 />
               </svg>
+
 
               {/* Inner soft glow behind losango */}
               <div
@@ -241,8 +251,11 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
           className="text-[10px] text-white/50 font-light tracking-[0.35em] uppercase"
           style={{ animation: "fadeSlideUp 0.8s ease-out 0.4s forwards", opacity: 0 }}
         >
-          {whitelabel.platform.loadingText} · {Math.round(progress)}%
+          {isGate
+            ? whitelabel.platform.loadingText
+            : `${whitelabel.platform.loadingText} · ${Math.round(progress)}%`}
         </p>
+
       </div>
 
       {/* Unified footer: credits + compliance in one line */}
@@ -293,6 +306,23 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
           0%, 100% { opacity: 0.55; transform: scale(1); }
           50% { opacity: 0.9; transform: scale(1.06); }
         }
+        /* Animação única e progressiva do anel: um traço luminoso que se
+           desenha lentamente, respira e desliza — sensação de "carregando com calma" */
+        @keyframes ringDraw {
+          0% {
+            stroke-dasharray: 1px var(--ring-c);
+            stroke-dashoffset: 0;
+          }
+          50% {
+            stroke-dasharray: calc(var(--ring-c) * 0.55) var(--ring-c);
+            stroke-dashoffset: calc(var(--ring-c) * -0.18);
+          }
+          100% {
+            stroke-dasharray: 1px var(--ring-c);
+            stroke-dashoffset: calc(var(--ring-c) * -1);
+          }
+        }
+
       `}</style>
     </div>
   );
