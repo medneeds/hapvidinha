@@ -346,6 +346,13 @@ export default function AuthPage() {
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-[#013ba6]/5 to-transparent" />
             
             <div className="w-full max-w-[320px] relative z-10 animate-in fade-in-0 slide-in-from-right-8 duration-1000 delay-300">
+              {/* Faixa: hospital ativo */}
+              <div className="mb-3 -mx-2 rounded-md bg-gradient-to-r from-[#013ba6] to-[#0152d4] px-3 py-1.5 flex items-center justify-center gap-1.5 shadow-sm shadow-[#013ba6]/20">
+                <Building2 className="h-3 w-3 text-white/90" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-white">
+                  Hospital Guarás · Maranhão
+                </span>
+              </div>
               {/* Form header - minimal */}
               <div className="mb-3 text-center">
                 <div className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-gradient-to-br from-[#013ba6] to-[#0152d4] shadow-md shadow-[#013ba6]/25 mb-1.5">
@@ -353,6 +360,7 @@ export default function AuthPage() {
                 </div>
                 <h2 className="text-base font-bold text-gray-900 uppercase">Acesse sua conta</h2>
               </div>
+
 
               {/* Form content - minimal spacing */}
               <form onSubmit={handleLogin} className="space-y-2">
@@ -610,10 +618,20 @@ export default function AuthPage() {
           </div>
 
           {/* Login Card */}
-          <div className="bg-white backdrop-blur-2xl rounded-2xl shadow-2xl shadow-black/30 p-5 border border-white/40 relative overflow-hidden animate-in fade-in-0 zoom-in-95 duration-1000 delay-500">
+          <div className="bg-white backdrop-blur-2xl rounded-2xl shadow-2xl shadow-black/30 border border-white/40 relative overflow-hidden animate-in fade-in-0 zoom-in-95 duration-1000 delay-500">
+            {/* Faixa: hospital ativo */}
+            <div className="bg-gradient-to-r from-[#013ba6] to-[#0152d4] px-4 py-2 flex items-center justify-center gap-2 relative z-10">
+              <Building2 className="h-3.5 w-3.5 text-white/90" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white">
+                Hospital Guarás · Maranhão
+              </span>
+            </div>
+            <div className="p-5 relative">
             <div className="absolute inset-0 opacity-20 pointer-events-none">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#013ba6]/10 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
             </div>
+            
+
             
             {/* Header inside card */}
             <div className="flex items-center gap-3 mb-4 relative z-10">
@@ -840,7 +858,10 @@ export default function AuthPage() {
                 Esqueci minha senha
               </button>
             </div>
+            </div>
           </div>
+          
+
           
           {/* Unified footer: LGPD + credits in one compact line */}
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-3 px-3">
