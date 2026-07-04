@@ -457,6 +457,17 @@
     }
   }
 
+  @keyframes logoEntrance {
+    from {
+      opacity: 0;
+      transform: rotate(42deg) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(42deg) scale(1);
+    }
+  }
+
   .bg-gradient-radial {
     background: radial-gradient(circle, var(--tw-gradient-stops));
   }
