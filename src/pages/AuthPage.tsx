@@ -666,7 +666,8 @@ export default function AuthPage() {
                 </div>
 
                 {/* Hospital Unit Selection */}
-                <div className="space-y-0.5">
+                <div className="space-y-0.5 hidden">
+
                   <Label 
                     htmlFor="hospital-select-mobile" 
                     className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
