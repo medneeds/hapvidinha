@@ -838,6 +838,8 @@ export function UtiPatientCard({
   // Derive current UTI unit from colorVariant if not provided
   const derivedUtiUnit = currentUtiUnit || (colorVariant === 'blue' ? 'UTI 1' : 'UTI 2');
   const { namesHidden } = usePrivacy();
+  const { role } = useAuth();
+  const canMove = role === 'medico' || role === 'admin';
   const displayName = maskName(patient.name, namesHidden);
 
   // Sync with forceCollapsed prop when it changes
