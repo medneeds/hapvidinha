@@ -359,7 +359,8 @@ export default function AuthPage() {
                 {/* Hierarchical Selection Section */}
                 <div className="space-y-1.5 pb-2 border-b border-gray-100">
                   {/* State Selection */}
-                  <div className="group">
+                  <div className="group hidden">
+
                     <Label htmlFor="state-select-desktop" className="text-[8px] font-semibold text-gray-500 uppercase mb-0.5 block">
                       Estado
                     </Label>
