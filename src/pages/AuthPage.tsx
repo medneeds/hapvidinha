@@ -858,7 +858,10 @@ export default function AuthPage() {
                 Esqueci minha senha
               </button>
             </div>
+            </div>
           </div>
+          
+
           
           {/* Unified footer: LGPD + credits in one compact line */}
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-3 px-3">
