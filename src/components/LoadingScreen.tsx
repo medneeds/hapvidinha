@@ -52,8 +52,8 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
   }, [duration, onComplete, isGate]);
 
   // Circular progress ring math
-  const ringSize = 168;
-  const stroke = 2;
+  const ringSize = 210;
+  const stroke = 3.5;
   const radius = (ringSize - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference - (progress / 100) * circumference;
