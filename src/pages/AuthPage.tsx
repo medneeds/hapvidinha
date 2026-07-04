@@ -686,7 +686,7 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="state-select-mobile"
-                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
+                      className="h-11 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
                     >
                       <SelectValue placeholder="SELECIONE O ESTADO" />
                     </SelectTrigger>
@@ -716,7 +716,7 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="hospital-select-mobile"
-                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-50"
+                      className="h-11 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-50"
                     >
                       <SelectValue placeholder={selectedState ? "SELECIONE" : "SELECIONE ESTADO PRIMEIRO"} />
                     </SelectTrigger>
@@ -746,7 +746,7 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="usertype-select-mobile"
-                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
+                      className="h-11 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 dark:text-gray-900"
                     >
                       <SelectValue placeholder="SELECIONE A CATEGORIA" />
                     </SelectTrigger>
@@ -793,7 +793,7 @@ export default function AuthPage() {
                   >
                     <SelectTrigger 
                       id="department-select-mobile"
-                      className="h-9 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-60"
+                      className="h-11 bg-gray-50 dark:bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 dark:text-gray-900 disabled:opacity-60"
                     >
                       <SelectValue placeholder="SELECIONE O SETOR" />
                     </SelectTrigger>
@@ -823,7 +823,7 @@ export default function AuthPage() {
                     id="login-username-mobile"
                     type="text"
                     placeholder="DIGITE SEU USUÁRIO"
-                    className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg text-xs font-medium uppercase text-gray-900 placeholder:text-gray-500"
+                    className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl text-xs font-medium uppercase text-gray-900 placeholder:text-gray-500"
                     value={loginData.username}
                     onChange={(e) => {
                       // Forçar uppercase e só permitir A-Z, 0-9 e ponto
@@ -853,7 +853,7 @@ export default function AuthPage() {
                       id="login-password-mobile"
                       type={showPassword ? "text" : "password"}
                       placeholder="EX: ABC123"
-                      className="h-9 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-lg pr-9 text-xs font-mono uppercase tracking-widest text-gray-900 placeholder:text-gray-500"
+                      className="h-11 bg-gray-50 border border-gray-200 focus:border-[#013ba6] rounded-xl pr-9 text-xs font-mono uppercase tracking-widest text-gray-900 placeholder:text-gray-500"
                       value={loginData.password}
                       onChange={(e) => {
                         // Forçar uppercase e só permitir A-Z e 0-9, max 6 caracteres
