@@ -285,6 +285,14 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
           0%, 100% { opacity: 0.5; transform: scale(1); }
           50% { opacity: 0.8; transform: scale(1.05); }
         }
+        @keyframes ringSpin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes haloPulse {
+          0%, 100% { opacity: 0.55; transform: scale(1); }
+          50% { opacity: 0.9; transform: scale(1.06); }
+        }
       `}</style>
     </div>
   );
