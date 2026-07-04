@@ -12,7 +12,6 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Smooth progress animation
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
@@ -36,25 +35,34 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
     };
   }, [duration, onComplete]);
 
+  // Circular progress ring math
+  const ringSize = 168;
+  const stroke = 2;
+  const radius = (ringSize - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const dashOffset = circumference - (progress / 100) * circumference;
+
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] transition-all duration-400 ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-all duration-400 ${
         isVisible ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
       }`}
+      style={{
+        background:
+          "radial-gradient(ellipse at center, #0152d4 0%, #0146bd 40%, #013ba6 75%, #01297a 100%)",
+        paddingTop: "env(safe-area-inset-top)",
+        paddingBottom: "env(safe-area-inset-bottom)",
+      }}
     >
-      {/* Animated background orbs */}
+      {/* Ambient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div 
+        <div
           className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl"
-          style={{ animation: 'pulse 4s ease-in-out infinite' }}
+          style={{ animation: "pulse 4s ease-in-out infinite" }}
         />
-        <div 
+        <div
           className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl"
-          style={{ animation: 'pulse 4s ease-in-out infinite 1s' }}
-        />
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-white/3 rounded-full blur-3xl"
-          style={{ animation: 'pulse 5s ease-in-out infinite 2s' }}
+          style={{ animation: "pulse 4s ease-in-out infinite 1s" }}
         />
       </div>
 
@@ -69,7 +77,7 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
               height: `${4 + Math.random() * 4}px`,
               left: `${10 + Math.random() * 80}%`,
               top: `${10 + Math.random() * 80}%`,
-              animation: `float ${5 + Math.random() * 5}s ease-in-out infinite ${Math.random() * 3}s`
+              animation: `float ${5 + Math.random() * 5}s ease-in-out infinite ${Math.random() * 3}s`,
             }}
           />
         ))}
@@ -77,142 +85,155 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center gap-10">
-        {/* Logo da rede removida a pedido */}
-
-        {/* Brand Name - HapMap 2.0 */}
-        <div 
-          className="flex flex-col items-center gap-4"
-          style={{ 
-            animation: 'fadeSlideUp 0.8s ease-out 0.2s forwards',
-            opacity: 0
-          }}
+        <div
+          className="flex flex-col items-center gap-6"
+          style={{ animation: "fadeSlideUp 0.8s ease-out 0.2s forwards", opacity: 0 }}
         >
           <div className="flex items-center justify-center gap-5">
+            {/* Logo losango with progress ring */}
             <div
-              aria-label="HapMap"
-              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%] shrink-0"
-              style={{ transform: "rotate(42deg)" }}
+              className="relative flex items-center justify-center shrink-0"
+              style={{
+                width: ringSize,
+                height: ringSize,
+                animation: "logoEntrance 0.9s cubic-bezier(0.22,1,0.36,1) 0.1s both",
+              }}
             >
+              {/* Progress ring */}
+              <svg
+                width={ringSize}
+                height={ringSize}
+                className="absolute inset-0 -rotate-90"
+                aria-hidden="true"
+              >
+                <circle
+                  cx={ringSize / 2}
+                  cy={ringSize / 2}
+                  r={radius}
+                  fill="none"
+                  stroke="rgba(255,255,255,0.12)"
+                  strokeWidth={stroke}
+                />
+                <circle
+                  cx={ringSize / 2}
+                  cy={ringSize / 2}
+                  r={radius}
+                  fill="none"
+                  stroke="rgba(255,255,255,0.9)"
+                  strokeWidth={stroke}
+                  strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={dashOffset}
+                  style={{ transition: "stroke-dashoffset 100ms linear" }}
+                />
+              </svg>
+
+              {/* Losango */}
               <div
-                className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
+                aria-label="HapMap"
+                className="w-[68%] h-[68%] bg-white flex items-center justify-center rounded-[28%]"
                 style={{
-                  transform: "rotate(-42deg)",
-                  WebkitMaskImage: "url(/logo-hm.png)",
-                  maskImage: "url(/logo-hm.png)",
-                  WebkitMaskRepeat: "no-repeat",
-                  maskRepeat: "no-repeat",
-                  WebkitMaskPosition: "center",
-                  maskPosition: "center",
-                  WebkitMaskSize: "contain",
-                  maskSize: "contain",
+                  transform: "rotate(42deg)",
+                  boxShadow:
+                    "0 20px 40px -12px rgba(0,0,0,0.35), inset 0 2px 8px rgba(1,59,166,0.08)",
                 }}
-              />
+              >
+                <div
+                  className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
+                  style={{
+                    transform: "rotate(-42deg)",
+                    WebkitMaskImage: "url(/logo-hm.png)",
+                    maskImage: "url(/logo-hm.png)",
+                    WebkitMaskRepeat: "no-repeat",
+                    maskRepeat: "no-repeat",
+                    WebkitMaskPosition: "center",
+                    maskPosition: "center",
+                    WebkitMaskSize: "contain",
+                    maskSize: "contain",
+                  }}
+                />
+              </div>
             </div>
-            <div className="flex flex-col items-start leading-[0.85]">
+
+            {/* Wordmark */}
+            <div className="relative flex flex-col items-start leading-[0.85]">
               <h1 className="font-brand text-6xl sm:text-7xl md:text-8xl tracking-wide lowercase text-white/95 drop-shadow-lg font-black">
                 hap
               </h1>
-              <h1 className="font-brand text-6xl sm:text-7xl md:text-8xl tracking-[0.12em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 100 }}>
+              <h1
+                className="font-brand text-6xl sm:text-7xl md:text-8xl tracking-[0.08em] lowercase text-white/95 drop-shadow-lg"
+                style={{ fontWeight: 100 }}
+              >
                 map
               </h1>
-              <span className="text-[10px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-2 py-0.5 mt-2 uppercase">
+              {/* Version as superscript tag */}
+              <span className="absolute -top-1 -right-8 text-[10px] font-medium text-white/60 tracking-[0.15em] border border-white/25 rounded-full px-1.5 py-0.5 uppercase bg-white/5 backdrop-blur-sm">
                 {whitelabel.platform.version}
               </span>
             </div>
           </div>
 
-          
           {/* Elegant divider */}
           <div className="flex items-center justify-center gap-3">
             <div className="h-px w-12 bg-gradient-to-r from-transparent to-white/40" />
             <Sparkles className="h-3 w-3 text-white/50" />
             <div className="h-px w-12 bg-gradient-to-l from-transparent to-white/40" />
           </div>
-          
+
           {/* Slogan */}
-          <p className="text-white/50 text-sm sm:text-base font-light tracking-wide italic text-center px-4">
+          <p className="text-white/55 text-sm sm:text-base font-light tracking-wide italic text-center px-4 max-w-md">
             {whitelabel.platform.slogan}
           </p>
         </div>
 
-        {/* Loading Progress */}
-        <div 
-          className="flex flex-col items-center gap-4 w-64"
-          style={{ 
-            animation: 'fadeSlideUp 0.8s ease-out 0.4s forwards',
-            opacity: 0
-          }}
+        {/* Loading label (progress is now the ring) */}
+        <p
+          className="text-[10px] text-white/50 font-light tracking-[0.35em] uppercase"
+          style={{ animation: "fadeSlideUp 0.8s ease-out 0.4s forwards", opacity: 0 }}
         >
-          {/* Progress bar */}
-          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-white/60 via-white to-white/60 rounded-full transition-all duration-100 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          
-          {/* Loading text */}
-          <p className="text-xs text-white/40 font-light tracking-widest uppercase">
-            {whitelabel.platform.loadingText}
-          </p>
-        </div>
-
-        {/* Developer Badge */}
-        <div 
-          className="mt-6"
-          style={{ 
-            animation: 'fadeSlideUp 0.8s ease-out 0.6s forwards',
-            opacity: 0
-          }}
-        >
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-[10px] text-white/30 uppercase tracking-widest">{whitelabel.credits.developerLabel}</p>
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-4 py-2">
-              <p className="text-sm font-semibold text-white/70 tracking-wide">
-                {whitelabel.credits.developerName}
-              </p>
-            </div>
-          </div>
-        </div>
+          {whitelabel.platform.loadingText} · {progress}%
+        </p>
       </div>
 
-      {/* Custom keyframes */}
+      {/* Unified footer: credits + compliance in one line */}
+      <div
+        className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-3 px-4"
+        style={{
+          animation: "fadeSlideUp 0.8s ease-out 0.6s forwards",
+          opacity: 0,
+          paddingBottom: "env(safe-area-inset-bottom)",
+        }}
+      >
+        <p className="text-[10px] text-white/40 tracking-wide">
+          <span className="uppercase tracking-[0.2em] text-white/30">
+            {whitelabel.credits.developerLabel}
+          </span>{" "}
+          <span className="font-semibold text-white/60">{whitelabel.credits.developerName}</span>
+        </p>
+        <span className="h-3 w-px bg-white/20" />
+        <p className="text-[10px] text-white/40 tracking-wide">
+          {whitelabel.compliance.legalReferences}
+        </p>
+      </div>
+
       <style>{`
         @keyframes fadeSlideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        
+        @keyframes logoEntrance {
+          from { opacity: 0; transform: scale(0.9); }
+          to { opacity: 1; transform: scale(1); }
+        }
         @keyframes float {
-          0%, 100% {
-            transform: translateY(0) translateX(0);
-          }
-          25% {
-            transform: translateY(-15px) translateX(5px);
-          }
-          50% {
-            transform: translateY(-5px) translateX(-5px);
-          }
-          75% {
-            transform: translateY(-20px) translateX(3px);
-          }
+          0%, 100% { transform: translateY(0) translateX(0); }
+          25% { transform: translateY(-15px) translateX(5px); }
+          50% { transform: translateY(-5px) translateX(-5px); }
+          75% { transform: translateY(-20px) translateX(3px); }
         }
-        
         @keyframes pulse {
-          0%, 100% {
-            opacity: 0.5;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.8;
-            transform: scale(1.05);
-          }
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.05); }
         }
       `}</style>
     </div>
