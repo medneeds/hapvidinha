@@ -192,11 +192,19 @@ export default function AuthPage() {
         />
       )}
       
-      <div className={cn(
-        "min-h-screen bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4] flex items-center justify-center p-4 relative overflow-hidden transition-opacity duration-500",
-        "lg:p-0",
-        showLoadingScreen && "opacity-0"
-      )}>
+      <div
+        className={cn(
+          "min-h-screen flex items-center justify-center p-4 relative overflow-hidden transition-opacity duration-500",
+          "lg:p-0",
+          showLoadingScreen && "opacity-0"
+        )}
+        style={{
+          background:
+            "radial-gradient(ellipse at center, #0152d4 0%, #0146bd 40%, #013ba6 75%, #01297a 100%)",
+          paddingTop: "max(1rem, env(safe-area-inset-top))",
+          paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+        }}
+      >
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse" />
