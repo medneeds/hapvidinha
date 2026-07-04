@@ -1,4 +1,5 @@
 import { PanelLeft } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -12,8 +13,21 @@ export function FloatingSidebarTrigger() {
   const { state, setOpen, setOpenMobile } = useSidebar();
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
+  const [hasPageTrigger, setHasPageTrigger] = useState(false);
 
-  if (!isCollapsed && !isMobile) return null;
+  useEffect(() => {
+    const updateHasPageTrigger = () => {
+      setHasPageTrigger(document.querySelector('[data-sidebar="trigger"]') !== null);
+    };
+
+    updateHasPageTrigger();
+    const observer = new MutationObserver(updateHasPageTrigger);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
+
+  if (hasPageTrigger || (!isCollapsed && !isMobile)) return null;
 
   return (
     <Button
