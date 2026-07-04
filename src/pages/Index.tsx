@@ -1133,6 +1133,7 @@ const Index = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
+                    {currentDepartment === "UTI" && <DeathReviewBadge department={currentDepartment} />}
                   </div>
                 </div>
 
