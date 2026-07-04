@@ -251,8 +251,11 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
           className="text-[10px] text-white/50 font-light tracking-[0.35em] uppercase"
           style={{ animation: "fadeSlideUp 0.8s ease-out 0.4s forwards", opacity: 0 }}
         >
-          {whitelabel.platform.loadingText} · {Math.round(progress)}%
+          {isGate
+            ? whitelabel.platform.loadingText
+            : `${whitelabel.platform.loadingText} · ${Math.round(progress)}%`}
         </p>
+
       </div>
 
       {/* Unified footer: credits + compliance in one line */}
