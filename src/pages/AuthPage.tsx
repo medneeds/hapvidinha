@@ -594,10 +594,10 @@ export default function AuthPage() {
           <div className="text-center mb-4 animate-in fade-in-0 slide-in-from-top-8 duration-1000">
             {/* Logo da rede removida a pedido */}
             
-            <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150">
+            <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 flex items-center justify-center gap-3">
               <div
                 aria-label="HapMap"
-                className="w-16 h-16 mx-auto mb-3 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%]"
+                className="w-16 h-16 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%] shrink-0"
                 style={{ transform: "rotate(42deg)" }}
               >
                 <div
@@ -615,15 +615,19 @@ export default function AuthPage() {
                   }}
                 />
               </div>
-              <div className="inline-flex items-baseline gap-1.5">
-                <h1 className="font-brand text-4xl tracking-wide lowercase text-white/95 drop-shadow-lg">
-                  <span className="font-medium">hap</span><span className="font-light tracking-[0.05em]" style={{fontWeight:200}}>map</span>
+              <div className="flex flex-col items-start leading-[0.85]">
+                <h1 className="font-brand text-4xl tracking-wide lowercase text-white/95 drop-shadow-lg font-bold">
+                  hap
                 </h1>
-                <span className="text-[7px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1 py-0.5 self-start uppercase">
+                <h1 className="font-brand text-4xl tracking-[0.08em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 200 }}>
+                  map
+                </h1>
+                <span className="text-[7px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1 py-0.5 mt-1 uppercase">
                   {whitelabel.platform.version}
                 </span>
               </div>
             </div>
+
           </div>
 
           {/* Login Card */}
