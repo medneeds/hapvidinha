@@ -242,19 +242,20 @@ export function AppSidebar({
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
               <div className="flex items-center justify-center animate-fade-in w-full">
-                {/* Wordmark empilhado — discreto, sem losango e sem badges */}
-                <div className="flex flex-col items-start leading-[0.85]">
-                  <h1 className="font-brand text-3xl tracking-wide lowercase text-primary font-black">
-                    hap
-                  </h1>
-                  <h1
-                    className="font-brand text-3xl tracking-[0.08em] lowercase text-muted-foreground/70"
+                {/* Monograma hm — discreto */}
+                <div className="flex items-baseline leading-none">
+                  <span className="font-brand text-3xl lowercase text-primary font-black">
+                    h
+                  </span>
+                  <span
+                    className="font-brand text-3xl lowercase text-muted-foreground/70 tracking-[0.08em]"
                     style={{ fontWeight: 100 }}
                   >
-                    map
-                  </h1>
+                    m
+                  </span>
                 </div>
               </div>
+
 
 
             ) : (
