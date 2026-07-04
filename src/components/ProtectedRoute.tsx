@@ -17,12 +17,16 @@ const LEGACY_GENERIC_USERS = [
   "coordenador@sistema.local",
 ];
 
+// Roles autorizadas a acessar a plataforma (apenas médicos com CRM + admin de gestão)
+const ALLOWED_ROLES = new Set(["medico", "admin"]);
+
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading, status } = useAuth();
+  const { user, loading, status, role, signOut } = useAuth();
   const navigate = useNavigate();
   const [showTermsDialog, setShowTermsDialog] = useState(false);
   const [checkingTerms, setCheckingTerms] = useState(true);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [roleBlocked, setRoleBlocked] = useState(false);
 
   // Verificar se é um usuário genérico legado (não precisa de aprovação nem termos)
   const isLegacyGenericUser = user?.email && LEGACY_GENERIC_USERS.includes(user.email.toLowerCase());
