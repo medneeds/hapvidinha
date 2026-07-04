@@ -77,6 +77,18 @@ export default function AuthPage() {
     }
   }, [user, navigate]);
 
+  // Fixar Estado (Maranhão) e Unidade (Hospital Guarás) automaticamente
+  useEffect(() => {
+    if (hospitalLoading || states.length === 0 || hospitals.length === 0) return;
+    const ma = states.find(s => s.abbreviation === 'MA');
+    if (ma && !selectedState) setSelectedState(ma.id);
+    const guaras = hospitals.find(h =>
+      h.name.toUpperCase().includes('GUARÁS') || h.name.toUpperCase().includes('GUARAS')
+    );
+    if (guaras && !selectedHospitalId) setSelectedHospitalId(guaras.id);
+  }, [hospitalLoading, states, hospitals, selectedState, selectedHospitalId]);
+
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
