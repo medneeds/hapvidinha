@@ -924,19 +924,21 @@ export default function AuthPage() {
             </div>
           </div>
           
-          {/* LGPD Compliance Badge - Mobile */}
-          <div className="flex items-center justify-center gap-2 mt-3 px-3 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg mx-auto">
-            <FileCheck className="h-3.5 w-3.5 text-green-400" />
-            <div className="text-center">
-              <p className="text-[9px] font-medium text-white/80">{whitelabel.compliance.complianceBadgeTitle}</p>
-              <p className="text-[8px] text-white/40">{whitelabel.compliance.legalReferences}</p>
+          {/* Unified footer: LGPD + credits in one compact line */}
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-3 px-3">
+            <div className="flex items-center gap-1.5">
+              <FileCheck className="h-3 w-3 text-green-400 shrink-0" />
+              <p className="text-[9px] text-white/60">
+                <span className="font-semibold text-white/80">{whitelabel.compliance.complianceBadgeTitle}</span>
+                <span className="mx-1 text-white/25">·</span>
+                <span className="text-white/50">{whitelabel.compliance.legalReferences}</span>
+              </p>
             </div>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center mt-3">
-            <p className="text-white/30 text-[9px] uppercase tracking-widest">{whitelabel.credits.developerLabel}</p>
-            <p className="text-white/50 text-[10px] font-semibold mt-0.5">{whitelabel.credits.developerName}</p>
+            <span className="h-3 w-px bg-white/20 hidden sm:inline-block" />
+            <p className="text-[9px] text-white/40">
+              <span className="uppercase tracking-[0.15em] text-white/30">{whitelabel.credits.developerLabel}</span>{" "}
+              <span className="font-semibold text-white/60">{whitelabel.credits.developerName}</span>
+            </p>
           </div>
         </div>
         )}
