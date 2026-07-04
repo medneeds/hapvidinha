@@ -19,7 +19,9 @@ createRoot(document.getElementById("root")!).render(
         <AuthProvider>
           <HospitalProvider>
             <DepartmentProvider>
-              <App />
+              <PatientsPrefetchProvider>
+                <App />
+              </PatientsPrefetchProvider>
             </DepartmentProvider>
           </HospitalProvider>
         </AuthProvider>
