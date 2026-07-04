@@ -309,24 +309,21 @@ export default function AuthPage() {
                 ))}
               </div>
               
-              {/* LGPD Compliance Badge - smaller */}
-              <div className="mt-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-700">
-                <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg px-3 py-2">
-                  <div className="h-8 w-8 rounded-md bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-400/30 flex items-center justify-center">
-                    <FileCheck className="h-4 w-4 text-green-400" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-[10px] font-semibold text-white/90 uppercase tracking-wide">{whitelabel.compliance.complianceBadgeTitle}</p>
-                    <p className="text-[9px] text-white/50">{whitelabel.compliance.legalReferences}</p>
-                  </div>
-                </div>
-              </div>
             </div>
-            
-            {/* Footer on left panel - smaller */}
-            <div className="absolute bottom-4 left-0 right-0 text-center">
-              <p className="text-[9px] text-white/30 uppercase tracking-widest">{whitelabel.credits.developerLabel}</p>
-              <p className="text-[10px] text-white/50 font-semibold mt-0.5">{whitelabel.credits.developerName}</p>
+
+            {/* Unified footer: credits + LGPD compliance in one line */}
+            <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-3 px-4 animate-in fade-in-0 duration-1000 delay-700">
+              <FileCheck className="h-3 w-3 text-green-400 shrink-0" />
+              <p className="text-[9px] text-white/50 tracking-wide truncate">
+                <span className="text-white/70 font-semibold">{whitelabel.compliance.complianceBadgeTitle}</span>
+                <span className="mx-1.5 text-white/25">·</span>
+                {whitelabel.compliance.legalReferences}
+              </p>
+              <span className="h-3 w-px bg-white/20 shrink-0" />
+              <p className="text-[9px] text-white/40 tracking-wide shrink-0">
+                <span className="uppercase tracking-[0.15em] text-white/30">{whitelabel.credits.developerLabel}</span>{" "}
+                <span className="font-semibold text-white/60">{whitelabel.credits.developerName}</span>
+              </p>
             </div>
           </div>
           
