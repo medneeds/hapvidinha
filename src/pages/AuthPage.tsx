@@ -346,20 +346,16 @@ export default function AuthPage() {
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-[#013ba6]/5 to-transparent" />
             
             <div className="w-full max-w-[320px] relative z-10 animate-in fade-in-0 slide-in-from-right-8 duration-1000 delay-300">
-              {/* Faixa: hospital ativo */}
-              <div className="mb-3 -mx-2 rounded-md bg-gradient-to-r from-[#013ba6] to-[#0152d4] px-3 py-1.5 flex items-center justify-center gap-1.5 shadow-sm shadow-[#013ba6]/20">
+              {/* Faixa: hospital ativo + acesso */}
+              <div className="mb-3 -mx-2 rounded-md bg-gradient-to-r from-[#013ba6] to-[#0152d4] px-3 py-2 flex items-center justify-center gap-2 shadow-sm shadow-[#013ba6]/20">
+                <LogIn className="h-3.5 w-3.5 text-white" />
+                <span className="h-3 w-px bg-white/30" />
                 <Building2 className="h-3 w-3 text-white/90" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-white">
                   Hospital Guarás · Maranhão
                 </span>
               </div>
-              {/* Form header - minimal */}
-              <div className="mb-3 text-center">
-                <div className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-gradient-to-br from-[#013ba6] to-[#0152d4] shadow-md shadow-[#013ba6]/25 mb-1.5">
-                  <LogIn className="h-4 w-4 text-white" />
-                </div>
-                <h2 className="text-base font-bold text-gray-900 uppercase">Acesse sua conta</h2>
-              </div>
+
 
 
               {/* Form content - minimal spacing */}
