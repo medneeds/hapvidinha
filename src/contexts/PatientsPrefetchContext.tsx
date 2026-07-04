@@ -45,7 +45,7 @@ export function PatientsPrefetchProvider({ children }: { children: ReactNode }) 
     setIsReady(false);
 
     let cancelled = false;
-    const MIN_GATE_MS = 2200; // tempo mínimo para a animação do anel ter presença
+    const MIN_GATE_MS = 4800; // deixa o anel completar ao menos um ciclo elegante
     const startedAt = performance.now();
     (async () => {
       try {
