@@ -1074,21 +1074,14 @@ const Index = () => {
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:text-white hover:bg-white/25 border-white/30 hover:border-white/50 data-[state=open]:bg-white/25 transition-all duration-200" />
                   
-                  <div className="min-w-0 flex-1 flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h1 className="text-base sm:text-2xl font-bold text-white print:text-xs uppercase tracking-tight truncate">Mapa de Pacientes</h1>
-                      {currentDepartment === "UTI" && <DeathReviewBadge department={currentDepartment} />}
-                    </div>
+                  <div className="min-w-0 flex-1 flex items-center gap-2 sm:gap-3 flex-wrap">
                     <div className="print:hidden">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="inline-flex items-center gap-1.5 h-9 md:h-7 px-4 md:px-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm md:text-xs font-semibold hover:bg-white/20 hover:border-white/40 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
-                            <Building2 className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0" />
-                            <span className="md:hidden truncate">
-                              {getDepartmentLabel(currentDepartment)}
-                            </span>
-                            <span className="hidden md:inline truncate max-w-none">{getDepartmentLabel(currentDepartment)}</span>
-                            <ChevronDown className="h-4 md:h-3.5 w-4 md:w-3.5 flex-shrink-0 opacity-70" />
+                          <button className="inline-flex items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 bg-white/10 backdrop-blur-sm border border-white/25 text-white text-base sm:text-lg font-bold uppercase tracking-tight hover:bg-white/20 hover:border-white/50 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                            <Building2 className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-90" />
+                            <span className="truncate">{getDepartmentLabel(currentDepartment)}</span>
+                            <ChevronDown className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-70" />
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-background border border-border shadow-lg z-[9999] min-w-[280px]">
@@ -1140,6 +1133,7 @@ const Index = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
+                    {currentDepartment === "UTI" && <DeathReviewBadge department={currentDepartment} />}
                   </div>
                 </div>
 

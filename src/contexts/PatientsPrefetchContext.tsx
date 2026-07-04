@@ -45,6 +45,8 @@ export function PatientsPrefetchProvider({ children }: { children: ReactNode }) 
     setIsReady(false);
 
     let cancelled = false;
+    const MIN_GATE_MS = 2200; // tempo mínimo para a animação do anel ter presença
+    const startedAt = performance.now();
     (async () => {
       try {
         const { data } = await supabase
@@ -66,7 +68,11 @@ export function PatientsPrefetchProvider({ children }: { children: ReactNode }) 
       } catch (e) {
         console.error("[PatientsPrefetch] falha:", e);
       } finally {
-        if (!cancelled) setIsReady(true);
+        const elapsed = performance.now() - startedAt;
+        const remaining = Math.max(0, MIN_GATE_MS - elapsed);
+        setTimeout(() => {
+          if (!cancelled) setIsReady(true);
+        }, remaining);
       }
     })();
 
