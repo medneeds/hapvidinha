@@ -306,6 +306,23 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
           0%, 100% { opacity: 0.55; transform: scale(1); }
           50% { opacity: 0.9; transform: scale(1.06); }
         }
+        /* Animação única e progressiva do anel: um traço luminoso que se
+           desenha lentamente, respira e desliza — sensação de "carregando com calma" */
+        @keyframes ringDraw {
+          0% {
+            stroke-dasharray: 1px var(--ring-c);
+            stroke-dashoffset: 0;
+          }
+          50% {
+            stroke-dasharray: calc(var(--ring-c) * 0.55) var(--ring-c);
+            stroke-dashoffset: calc(var(--ring-c) * -0.18);
+          }
+          100% {
+            stroke-dasharray: 1px var(--ring-c);
+            stroke-dashoffset: calc(var(--ring-c) * -1);
+          }
+        }
+
       `}</style>
     </div>
   );
