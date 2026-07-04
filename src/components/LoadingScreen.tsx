@@ -115,34 +115,68 @@ export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProp
                 animation: "logoEntrance 0.9s cubic-bezier(0.22,1,0.36,1) 0.1s both",
               }}
             >
-              {/* Progress ring */}
+              {/* Progress ring (rotates slowly to feel alive) */}
               <svg
                 width={ringSize}
                 height={ringSize}
-                className="absolute inset-0 -rotate-90"
+                className="absolute inset-0"
                 aria-hidden="true"
+                style={{ animation: "ringSpin 12s linear infinite", transformOrigin: "center" }}
               >
+                <defs>
+                  <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.95)" />
+                    <stop offset="60%" stopColor="rgba(255,255,255,0.75)" />
+                    <stop offset="100%" stopColor="rgba(255,255,255,0.35)" />
+                  </linearGradient>
+                  <filter id="ringGlow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+                {/* Track */}
                 <circle
                   cx={ringSize / 2}
                   cy={ringSize / 2}
                   r={radius}
                   fill="none"
-                  stroke="rgba(255,255,255,0.12)"
+                  stroke="rgba(255,255,255,0.10)"
                   strokeWidth={stroke}
                 />
+                {/* Progress arc */}
                 <circle
                   cx={ringSize / 2}
                   cy={ringSize / 2}
                   r={radius}
                   fill="none"
-                  stroke="rgba(255,255,255,0.9)"
+                  stroke="url(#ringGradient)"
                   strokeWidth={stroke}
                   strokeLinecap="round"
                   strokeDasharray={circumference}
                   strokeDashoffset={dashOffset}
-                  style={{ transition: "stroke-dashoffset 100ms linear" }}
+                  filter="url(#ringGlow)"
+                  style={{
+                    transition: "stroke-dashoffset 600ms cubic-bezier(0.4,0,0.2,1)",
+                    transform: "rotate(-90deg)",
+                    transformOrigin: "center",
+                  }}
                 />
               </svg>
+
+              {/* Inner soft glow behind losango */}
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  inset: "12%",
+                  background:
+                    "radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%)",
+                  animation: "haloPulse 4s ease-in-out infinite",
+                }}
+              />
+
 
               {/* Losango */}
               <div
