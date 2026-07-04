@@ -237,10 +237,10 @@ export default function AuthPage() {
               {/* Logo da rede removida a pedido */}
               
               {/* Brand Name - Logo Style - smaller */}
-              <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3 flex flex-col items-center">
+              <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 mb-3 flex items-center justify-center gap-4">
                 <div
                   aria-label="HapMap"
-                  className="w-20 h-20 xl:w-24 xl:h-24 mb-3 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%]"
+                  className="w-20 h-20 xl:w-24 xl:h-24 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%] shrink-0"
                   style={{ transform: "rotate(42deg)" }}
                 >
                   <div
@@ -258,16 +258,19 @@ export default function AuthPage() {
                     }}
                   />
                 </div>
-                <div className="inline-flex items-baseline gap-2">
-                  <h1 className="font-brand text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg">
-                    <span className="font-medium">hap</span><span className="font-light tracking-[0.05em]" style={{fontWeight:200}}>map</span>
+                <div className="flex flex-col items-start leading-[0.85]">
+                  <h1 className="font-brand text-5xl xl:text-6xl tracking-wide lowercase text-white/95 drop-shadow-lg font-bold">
+                    hap
                   </h1>
-                  <span className="text-[9px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1.5 py-0.5 self-start mt-1.5 uppercase">
+                  <h1 className="font-brand text-5xl xl:text-6xl tracking-[0.08em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 200 }}>
+                    map
+                  </h1>
+                  <span className="text-[9px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1.5 py-0.5 mt-1 uppercase">
                     {whitelabel.platform.version}
                   </span>
                 </div>
-                <div className="h-px w-20 mt-2 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
               </div>
+
               
               {/* Slogan - smaller */}
               <p className="text-white/60 text-sm xl:text-base font-light tracking-wide animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-300 mb-6 italic">
