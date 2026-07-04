@@ -607,8 +607,13 @@ export default function AuthPage() {
             <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000 delay-150 flex items-center justify-center gap-3">
               <div
                 aria-label="HapMap"
-                className="w-16 h-16 bg-white flex items-center justify-center shadow-2xl shadow-black/20 rounded-[28%] shrink-0"
-                style={{ transform: "rotate(42deg)" }}
+                className="w-14 h-14 bg-white flex items-center justify-center rounded-[28%] shrink-0"
+                style={{
+                  transform: "rotate(42deg)",
+                  boxShadow:
+                    "0 16px 32px -12px rgba(0,0,0,0.35), inset 0 2px 6px rgba(1,59,166,0.08)",
+                  animation: "logoEntrance 0.9s cubic-bezier(0.22,1,0.36,1) 0.2s both",
+                }}
               >
                 <div
                   className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
@@ -625,14 +630,14 @@ export default function AuthPage() {
                   }}
                 />
               </div>
-              <div className="flex flex-col items-start leading-[0.85]">
+              <div className="relative flex flex-col items-start leading-[0.85]">
                 <h1 className="font-brand text-4xl tracking-wide lowercase text-white/95 drop-shadow-lg font-black">
                   hap
                 </h1>
-                <h1 className="font-brand text-4xl tracking-[0.12em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 100 }}>
+                <h1 className="font-brand text-4xl tracking-[0.08em] lowercase text-white/95 drop-shadow-lg" style={{ fontWeight: 100 }}>
                   map
                 </h1>
-                <span className="text-[7px] font-medium text-white/40 tracking-[0.2em] border border-white/20 rounded-full px-1 py-0.5 mt-1 uppercase">
+                <span className="absolute -top-0.5 -right-6 text-[8px] font-medium text-white/60 tracking-[0.15em] border border-white/25 rounded-full px-1 py-0.5 uppercase bg-white/5 backdrop-blur-sm">
                   {whitelabel.platform.version}
                 </span>
               </div>
