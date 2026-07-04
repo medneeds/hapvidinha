@@ -242,22 +242,23 @@ export function AppSidebar({
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
               <div className="flex flex-col items-center gap-1.5 animate-fade-in w-full">
-                {/* Main logo text */}
-                <div className="flex items-baseline gap-1.5">
-                  <h1 className="text-3xl tracking-tighter inline-flex items-baseline">
-                    <span className="font-black bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent drop-shadow-sm">
-                      {whitelabel.platform.name.slice(0, 3)}
-                    </span>
-                    <span className="font-extralight bg-gradient-to-b from-muted-foreground to-muted-foreground/50 bg-clip-text text-transparent -ml-0.5">
-                      {whitelabel.platform.name.slice(3)}
-                    </span>
+                {/* Main logo text — mesma tipografia da tela de login/loading */}
+                <div className="relative flex items-baseline">
+                  <h1 className="font-brand text-3xl tracking-wide lowercase text-primary font-black leading-none">
+                    hap
                   </h1>
-                  <span className="text-[7px] font-semibold bg-gradient-to-r from-primary/80 to-primary/50 bg-clip-text text-transparent tracking-widest border border-primary/20 rounded-full px-2 py-0.5 self-start mt-1.5 backdrop-blur-sm">
+                  <h1
+                    className="font-brand text-3xl tracking-[0.08em] lowercase text-muted-foreground/70 leading-none"
+                    style={{ fontWeight: 100 }}
+                  >
+                    map
+                  </h1>
+                  <span className="absolute -top-0.5 -right-6 text-[8px] font-medium text-primary/70 tracking-[0.15em] border border-primary/25 rounded-full px-1 py-0.5 uppercase bg-primary/5 backdrop-blur-sm">
                     {whitelabel.platform.version}
                   </span>
                 </div>
                 {/* Decorative divider */}
-                <div className="flex items-center gap-2 w-full px-2">
+                <div className="flex items-center gap-2 w-full px-2 mt-1">
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
                   <div className="h-1 w-1 rounded-full bg-primary/30" />
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
@@ -269,9 +270,17 @@ export function AppSidebar({
               </div>
             ) : (
               <div className="flex flex-col items-center gap-0.5">
-                <span className="text-xl font-black bg-gradient-to-br from-primary to-primary/60 bg-clip-text text-transparent tracking-tighter leading-none">
-                  {whitelabel.platform.name.slice(0, 2)}
-                </span>
+                <div className="flex items-baseline leading-none">
+                  <span className="font-brand text-lg lowercase text-primary font-black">
+                    h
+                  </span>
+                  <span
+                    className="font-brand text-lg lowercase text-muted-foreground/70 tracking-[0.08em]"
+                    style={{ fontWeight: 100 }}
+                  >
+                    m
+                  </span>
+                </div>
                 <div className="h-0.5 w-3 rounded-full bg-gradient-to-r from-primary/40 to-primary/10" />
               </div>
             )}
