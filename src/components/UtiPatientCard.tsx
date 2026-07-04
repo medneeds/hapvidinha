@@ -55,6 +55,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ColorVariant = 'blue' | 'yellow';
 
