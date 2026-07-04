@@ -615,8 +615,10 @@ export default function AuthPage() {
 
           {/* Login Card */}
           <div className="bg-white backdrop-blur-2xl rounded-2xl shadow-2xl shadow-black/30 border border-white/40 relative overflow-hidden animate-in fade-in-0 zoom-in-95 duration-1000 delay-500">
-            {/* Faixa: hospital ativo */}
-            <div className="bg-gradient-to-r from-[#013ba6] to-[#0152d4] px-4 py-2 flex items-center justify-center gap-2 relative z-10">
+            {/* Faixa: hospital ativo + acesso */}
+            <div className="bg-gradient-to-r from-[#013ba6] to-[#0152d4] px-4 py-2.5 flex items-center justify-center gap-2.5 relative z-10">
+              <LogIn className="h-4 w-4 text-white" />
+              <span className="h-3.5 w-px bg-white/30" />
               <Building2 className="h-3.5 w-3.5 text-white/90" />
               <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white">
                 Hospital Guarás · Maranhão
@@ -626,19 +628,7 @@ export default function AuthPage() {
             <div className="absolute inset-0 opacity-20 pointer-events-none">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#013ba6]/10 to-transparent -translate-x-full animate-[shimmer_3s_ease-in-out_infinite]" />
             </div>
-            
 
-            
-            {/* Header inside card */}
-            <div className="flex items-center gap-3 mb-4 relative z-10">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-[#013ba6] to-[#0152d4] flex items-center justify-center shadow-md shadow-[#013ba6]/40">
-                <LogIn className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <h2 className="text-sm font-bold text-gray-800 uppercase">Acesse sua conta</h2>
-                <p className="text-[10px] text-gray-500 italic">{whitelabel.platform.slogan.split('.')[0]}</p>
-              </div>
-            </div>
 
             <form onSubmit={handleLogin} className="space-y-2.5 relative z-10">
               {/* Hierarchical Selection Section */}
