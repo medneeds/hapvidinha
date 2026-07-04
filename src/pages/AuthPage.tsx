@@ -629,10 +629,11 @@ export default function AuthPage() {
             <form onSubmit={handleLogin} className="space-y-2.5 relative z-10">
               {/* Hierarchical Selection Section */}
               <div className="space-y-2.5 pb-2.5 border-b border-gray-200">
-                <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">LOCALIZAÇÃO</p>
+                <p className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">SETOR</p>
                 
                 {/* State Selection */}
-                <div className="space-y-0.5">
+                <div className="space-y-0.5 hidden">
+
                   <Label 
                     htmlFor="state-select-mobile" 
                     className="text-[10px] font-semibold text-gray-600 flex items-center gap-1 uppercase"
