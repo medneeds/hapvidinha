@@ -7,31 +7,31 @@ interface LoadingScreenProps {
   duration?: number;
 }
 
-export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProps) {
+export function LoadingScreen({ onComplete, duration = 1400 }: LoadingScreenProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, duration / 60);
+    const start = performance.now();
+    let raf = 0;
+    const tick = () => {
+      const elapsed = performance.now() - start;
+      const pct = Math.min(100, (elapsed / duration) * 100);
+      setProgress(pct);
+      if (pct < 100) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
 
     const timer = setTimeout(() => {
       setIsVisible(false);
       setTimeout(() => {
         onComplete?.();
-      }, 400);
+      }, 300);
     }, duration);
 
     return () => {
       clearTimeout(timer);
-      clearInterval(progressInterval);
+      cancelAnimationFrame(raf);
     };
   }, [duration, onComplete]);
 
@@ -191,7 +191,7 @@ export function LoadingScreen({ onComplete, duration = 2500 }: LoadingScreenProp
           className="text-[10px] text-white/50 font-light tracking-[0.35em] uppercase"
           style={{ animation: "fadeSlideUp 0.8s ease-out 0.4s forwards", opacity: 0 }}
         >
-          {whitelabel.platform.loadingText} · {progress}%
+          {whitelabel.platform.loadingText} · {Math.round(progress)}%
         </p>
       </div>
 
