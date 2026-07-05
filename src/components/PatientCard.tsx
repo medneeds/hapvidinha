@@ -31,7 +31,7 @@ import { useAgeCalculator } from "@/hooks/useAgeCalculator";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBedAllocationRequests } from "@/hooks/useBedAllocationRequests";
-import { formatAgeDisplay } from "@/utils/ageDisplay";
+import { formatAgeDisplay, getPatientAgeDisplay } from "@/utils/ageDisplay";
 import { differenceInDays, differenceInHours, differenceInMinutes, parseISO, isValid, parse } from "date-fns";
 import { useSectorStayTimer } from "@/hooks/useSectorStayTimer";
 import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
@@ -1965,7 +1965,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                           onClick={() => canEdit && startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
                           title={canEdit ? "Clique para editar idade" : undefined}
                         >
-                          {formatAgeDisplay(patient.age)}
+                          {getPatientAgeDisplay(patient)}
                         </p>
                       )}
 
@@ -4526,7 +4526,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    {formatAgeDisplay(patient.age)}
+                    {getPatientAgeDisplay(patient)}
                   </span>
                   <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
@@ -4681,7 +4681,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    {formatAgeDisplay(patient.age)}
+                    {getPatientAgeDisplay(patient)}
                   </span>
                   <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
@@ -4836,7 +4836,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    {formatAgeDisplay(patient.age)}
+                    {getPatientAgeDisplay(patient)}
                   </span>
                   <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
@@ -4991,7 +4991,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   </span>
                   <span className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    {formatAgeDisplay(patient.age)}
+                    {getPatientAgeDisplay(patient)}
                   </span>
                   <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
