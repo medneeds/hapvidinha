@@ -271,20 +271,8 @@ export function AppSidebar({
             )}
 
           </div>
-          {!isCollapsed && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpen(false);
-              }}
-              className="h-7 w-7 flex-shrink-0 text-muted-foreground/60 hover:text-foreground absolute top-0 right-0"
-              title="Retrair menu"
-            >
-              <PanelLeftClose className="h-3.5 w-3.5" />
-            </Button>
-          )}
+          {/* Botão de retração movido para fora da sidebar (FloatingSidebarTrigger) */}
+
         </div>
       </SidebarHeader>
 
