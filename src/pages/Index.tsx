@@ -1264,24 +1264,8 @@ const Index = () => {
                           </TooltipTrigger>
                           <TooltipContent><p>Refazer ação</p></TooltipContent>
                         </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="outline" size="icon" onClick={handleSaveVersion}
-                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200">
-                              <Save className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent><p>Salvar versão atual</p></TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="outline" size="icon" onClick={handleRefreshMap} disabled={isRefreshing}
-                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200">
-                              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent><p>Atualizar mapa</p></TooltipContent>
-                        </Tooltip>
+                        {/* Botões Salvar e Atualizar ocultos do cabeçalho a pedido do usuário (permanecem no menu ⋮) */}
+
                       </div>
 
                       {/* Separator */}
