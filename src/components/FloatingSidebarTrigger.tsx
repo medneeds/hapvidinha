@@ -1,49 +1,61 @@
-import { PanelLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { PanelLeft, PanelLeftClose } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 /**
- * Floating sidebar toggle that's ALWAYS visible — guarantees the user
- * can re-open the sidebar even when fully collapsed.
+ * Único controle de retração/expansão da sidebar.
+ * Sempre visível, posicionado FORA da sidebar, ancorado à sua borda direita
+ * e acompanhando a largura conforme o estado (expandida/colapsada).
  */
 export function FloatingSidebarTrigger() {
-  const { state, setOpen, setOpenMobile } = useSidebar();
+  const { state, setOpen, openMobile, setOpenMobile } = useSidebar();
   const isMobile = useIsMobile();
   const isCollapsed = state === "collapsed";
-  const [hasPageTrigger, setHasPageTrigger] = useState(false);
 
-  useEffect(() => {
-    const updateHasPageTrigger = () => {
-      setHasPageTrigger(document.querySelector('[data-sidebar="trigger"]') !== null);
-    };
+  const isOpenNow = isMobile ? openMobile : !isCollapsed;
 
-    updateHasPageTrigger();
-    const observer = new MutationObserver(updateHasPageTrigger);
-    observer.observe(document.body, { childList: true, subtree: true });
+  const handleToggle = () => {
+    if (isMobile) {
+      setOpenMobile(!openMobile);
+    } else {
+      setOpen(isCollapsed);
+    }
+  };
 
-    return () => observer.disconnect();
-  }, []);
-
-  if (hasPageTrigger || (!isCollapsed && !isMobile)) return null;
+  // Ancoragem à borda externa da sidebar
+  // Desktop: usa as CSS vars do shadcn (--sidebar-width / --sidebar-width-icon)
+  // Mobile: quando o drawer está aberto, cola na borda direita dele
+  const leftStyle = isMobile
+    ? openMobile
+      ? "calc(var(--sidebar-width-mobile, 18rem) - 18px)"
+      : "12px"
+    : isCollapsed
+      ? "calc(var(--sidebar-width-icon) - 14px)"
+      : "calc(var(--sidebar-width) - 14px)";
 
   return (
     <Button
       variant="default"
       size="icon"
-      onClick={() => (isMobile ? setOpenMobile(true) : setOpen(true))}
+      onClick={handleToggle}
+      style={{ left: leftStyle }}
       className={cn(
-        "fixed top-3 left-3 z-50 h-9 w-9 rounded-full shadow-lg",
+        "fixed top-4 z-50 h-8 w-8 rounded-full shadow-lg print:hidden",
         "bg-primary/90 hover:bg-primary text-primary-foreground",
         "backdrop-blur-sm border border-primary/30",
-        "animate-fade-in"
+        "transition-[left,transform,background-color] duration-200 ease-out",
+        "hover:scale-105"
       )}
-      title="Expandir menu"
-      aria-label="Expandir menu lateral"
+      title={isOpenNow ? "Retrair menu" : "Expandir menu"}
+      aria-label={isOpenNow ? "Retrair menu lateral" : "Expandir menu lateral"}
     >
-      <PanelLeft className="h-4 w-4" />
+      {isOpenNow ? (
+        <PanelLeftClose className="h-4 w-4" />
+      ) : (
+        <PanelLeft className="h-4 w-4" />
+      )}
     </Button>
   );
 }
