@@ -242,15 +242,30 @@ export function AppSidebar({
           <div className="flex items-center justify-center flex-1">
             {!isCollapsed ? (
               <div className="flex items-center gap-2.5 animate-fade-in">
-                {/* Losango com monograma hm */}
-                <div className="relative h-10 w-10 shrink-0">
-                  <div className="absolute inset-0 rotate-45 rounded-[8px] bg-background shadow-sm border border-border/40" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex items-baseline leading-none">
-                      <span className="font-brand text-base lowercase text-primary font-black">h</span>
-                      <span className="font-brand text-base lowercase text-primary/80 tracking-[0.06em]" style={{ fontWeight: 300 }}>m</span>
-                    </div>
-                  </div>
+                {/* Símbolo hm — mesmo formato da tela de login */}
+                <div
+                  aria-label="HapMap"
+                  className="h-10 w-10 bg-background flex items-center justify-center rounded-[28%] shrink-0 border border-border/40"
+                  style={{
+                    transform: "rotate(42deg)",
+                    boxShadow:
+                      "0 8px 16px -8px rgba(1,59,166,0.35), inset 0 1px 4px rgba(1,59,166,0.08)",
+                  }}
+                >
+                  <div
+                    className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
+                    style={{
+                      transform: "rotate(-42deg)",
+                      WebkitMaskImage: "url(/logo-hm.png)",
+                      maskImage: "url(/logo-hm.png)",
+                      WebkitMaskRepeat: "no-repeat",
+                      maskRepeat: "no-repeat",
+                      WebkitMaskPosition: "center",
+                      maskPosition: "center",
+                      WebkitMaskSize: "contain",
+                      maskSize: "contain",
+                    }}
+                  />
                 </div>
                 {/* Wordmark hap/map empilhado */}
                 <div className="flex flex-col leading-[0.85]">
@@ -259,16 +274,32 @@ export function AppSidebar({
                 </div>
               </div>
             ) : (
-              <div className="relative h-8 w-8">
-                <div className="absolute inset-0 rotate-45 rounded-[6px] bg-background shadow-sm border border-border/40" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="flex items-baseline leading-none">
-                    <span className="font-brand text-xs lowercase text-primary font-black">h</span>
-                    <span className="font-brand text-xs lowercase text-primary/80 tracking-[0.06em]" style={{ fontWeight: 300 }}>m</span>
-                  </div>
-                </div>
+              <div
+                aria-label="HapMap"
+                className="h-8 w-8 bg-background flex items-center justify-center rounded-[28%] shrink-0 border border-border/40"
+                style={{
+                  transform: "rotate(42deg)",
+                  boxShadow:
+                    "0 6px 12px -6px rgba(1,59,166,0.35), inset 0 1px 3px rgba(1,59,166,0.08)",
+                }}
+              >
+                <div
+                  className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
+                  style={{
+                    transform: "rotate(-42deg)",
+                    WebkitMaskImage: "url(/logo-hm.png)",
+                    maskImage: "url(/logo-hm.png)",
+                    WebkitMaskRepeat: "no-repeat",
+                    maskRepeat: "no-repeat",
+                    WebkitMaskPosition: "center",
+                    maskPosition: "center",
+                    WebkitMaskSize: "contain",
+                    maskSize: "contain",
+                  }}
+                />
               </div>
             )}
+
 
           </div>
           {/* Botão de retração movido para fora da sidebar (FloatingSidebarTrigger) */}
