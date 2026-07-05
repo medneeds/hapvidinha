@@ -234,12 +234,16 @@ export function AppSidebar({
 
   const sidebarContent = (
     <>
-       <SidebarHeader className="border-b border-border/20 px-3 py-5 bg-background relative overflow-hidden">
+       <SidebarHeader className={cn(
+         "border-b border-border/20 py-5 bg-background relative overflow-hidden",
+         isCollapsed ? "px-0" : "px-3"
+       )}>
         {/* Subtle gradient accent line at top */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
         
-        <div className="flex items-center justify-between relative">
-          <div className="flex items-center justify-center flex-1">
+        <div className="flex items-center justify-center relative w-full">
+          <div className="flex items-center justify-center">
+
             {!isCollapsed ? (
               <div className="flex items-center gap-2.5 animate-fade-in">
                 {/* Símbolo hm — mesmo formato da tela de login */}
