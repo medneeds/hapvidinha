@@ -144,12 +144,10 @@ export default function DocumentsPage() {
 
   return (
     <div className="bg-gradient-to-br from-background via-background to-muted/20">
+      <AppPageHeader title="Documentos" icon={FileText} />
       <div className="p-6 md:p-8 space-y-8 max-w-7xl">
         {/* Header */}
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent uppercase">
-            DOCUMENTOS
-          </h1>
           <p className="text-muted-foreground text-lg uppercase">
             Central de documentos médicos institucionais
           </p>
@@ -157,6 +155,7 @@ export default function DocumentsPage() {
             {documents.length} categorias disponíveis
           </Badge>
         </div>
+
 
         {/* Search Bar */}
         <Card className="border-primary/20 shadow-lg">
