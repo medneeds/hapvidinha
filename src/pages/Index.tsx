@@ -52,6 +52,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { PasswordConfirmDialog } from "@/components/PasswordConfirmDialog";
 import {
   Select,
   SelectContent,
