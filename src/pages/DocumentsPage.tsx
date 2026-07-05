@@ -21,6 +21,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { AppPageHeader } from "@/components/AppPageHeader";
+
 
 export default function DocumentsPage() {
   const navigate = useNavigate();
