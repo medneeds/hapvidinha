@@ -1071,12 +1071,10 @@ const Index = () => {
             <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
                 {/* Left side: Sidebar button + Title + Department selector */}
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 pl-10 sm:pl-12">
                   {/* Trigger da sidebar unificado no FloatingSidebarTrigger (fora da sidebar) */}
-
-
-                  
                   <div className="min-w-0 flex-1 flex items-center gap-2 sm:gap-3 flex-wrap">
+
                     <div className="print:hidden">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
