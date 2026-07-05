@@ -280,7 +280,7 @@ export function AppSidebar({
             ) : (
               <div
                 aria-label="HapMap"
-                className="h-8 w-8 bg-background flex items-center justify-center rounded-[28%] shrink-0 border border-border/40"
+                className="h-7 w-7 bg-background flex items-center justify-center rounded-[28%] shrink-0 mx-auto border border-border/40"
                 style={{
                   transform: "rotate(42deg)",
                   boxShadow:
