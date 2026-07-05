@@ -43,7 +43,7 @@ export function FloatingSidebarTrigger() {
       onClick={handleToggle}
       style={{ left: leftStyle }}
       className={cn(
-        "fixed top-4 z-50 h-8 w-8 rounded-full shadow-lg print:hidden",
+        "fixed top-4 z-[60] h-8 w-8 rounded-full shadow-lg print:hidden",
         "bg-primary/90 hover:bg-primary text-primary-foreground",
         "backdrop-blur-sm border border-primary/30",
         "transition-[left,transform,background-color] duration-200 ease-out",
