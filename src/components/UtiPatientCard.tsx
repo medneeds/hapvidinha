@@ -1135,38 +1135,8 @@ export function UtiPatientCard({
 
                 {/* Mobile: Chips wrap to second line */}
                 <div className="flex items-center gap-1 flex-wrap md:flex-nowrap w-full md:w-auto mt-1 md:mt-0">
-                  {/* Clinical Status Selector - Fixed width */}
-                  <Select
-                    value={patient.clinicalStatus || ""}
-                    onValueChange={(v) => handleUpdateField("clinicalStatus", v)}
-                  >
-                    <SelectTrigger 
-                      className={cn(
-                        "shrink-0 h-5 w-[145px] md:w-[170px] px-1.5 md:px-2 text-[8px] md:text-[9px] font-bold border-0 rounded",
-                        patient.clinicalStatus 
-                          ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.color || "bg-muted"
-                          : "bg-muted text-muted-foreground"
-                      )}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <SelectValue placeholder="CLASSIFICAÇÃO">
-                        {patient.clinicalStatus 
-                          ? CLINICAL_STATUS_OPTIONS.find(o => o.value === patient.clinicalStatus)?.label 
-                          : "CLASSIFICAÇÃO"
-                        }
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CLINICAL_STATUS_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          <div className="flex items-center gap-2">
-                            <div className={cn("w-2.5 h-2.5 rounded-full", option.color)} />
-                            <span className="text-xs font-medium">{option.label}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {/* Clinical Status indicator removido a pedido do usuário */}
+
 
                   {/* Days in UTI - Fixed width for consistent alignment */}
                   <div className={cn(
