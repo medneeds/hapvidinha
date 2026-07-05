@@ -4461,43 +4461,40 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         existingProtocolId={activeChestPainProtocol?.id || null}
       />
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="dark:bg-gray-900 dark:border-gray-700">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="dark:text-white text-lg font-semibold">Confirmar Exclusão</AlertDialogTitle>
-            <AlertDialogDescription className="dark:text-gray-300 text-base">
-              Tem certeza que deseja excluir o leito <strong className="dark:text-white font-bold">{patient.bedNumber}</strong> do paciente <strong className="dark:text-white font-bold">{patient.name}</strong>?
-              <br />
-              <span className="dark:text-red-400 text-destructive font-medium mt-2 inline-block">Esta ação não poderá ser desfeita.</span>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (onDelete) {
-                  const deletedPatient = { ...patient };
-                  setIsDeleting(true);
-                  
-                  // Wait for animation to complete before actually deleting
-                  setTimeout(() => {
-                    onDelete(patient.id);
-                    toastHook({
-                      title: "Paciente excluído",
-                      description: `Leito ${patient.bedNumber} - ${patient.name} foi removido.`,
-                      action: onUndelete ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => onUndelete(deletedPatient)}
-                          className="ml-auto"
-                        >
-                          Desfazer
-                        </Button>
-                      ) : undefined,
-                    });
-                  }, 300);
-                }
+      <PasswordConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="Excluir paciente permanentemente"
+        confirmLabel="Excluir definitivamente"
+        description={
+          <>
+            Você está prestes a excluir o leito{" "}
+            <strong className="dark:text-white font-bold">{patient.bedNumber}</strong> do paciente{" "}
+            <strong className="dark:text-white font-bold">{patient.name}</strong>.
+          </>
+        }
+        onConfirmed={async () => {
+          if (onDelete) {
+            const deletedPatient = { ...patient };
+            setIsDeleting(true);
+            setTimeout(() => {
+              onDelete(patient.id);
+              toastHook({
+                title: "Paciente excluído",
+                description: `Leito ${patient.bedNumber} - ${patient.name} foi removido.`,
+                action: onUndelete ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onUndelete(deletedPatient)}
+                    className="ml-auto"
+                  >
+                    Desfazer
+                  </Button>
+                ) : undefined,
+              });
+            }, 300);
+          }
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 dark:bg-red-600 dark:text-white dark:hover:bg-red-700 font-semibold shadow-lg"
             >
