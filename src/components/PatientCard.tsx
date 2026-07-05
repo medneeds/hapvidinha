@@ -4495,14 +4495,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               });
             }, 300);
           }
-              }}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 dark:bg-red-600 dark:text-white dark:hover:bg-red-700 font-semibold shadow-lg"
-            >
-              Excluir
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        }}
+      />
+
 
 
       {/* Dialog expandido para Hipóteses / Diagnósticos */}
