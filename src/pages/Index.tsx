@@ -52,6 +52,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { PasswordConfirmDialog } from "@/components/PasswordConfirmDialog";
 import {
   Select,
   SelectContent,
@@ -1651,27 +1652,20 @@ const Index = () => {
 
       {/* Department Change Password Dialog - Removido, apenas admin pode trocar */}
 
-      {/* Delete Multiple Patients Confirmation Dialog */}
-      <AlertDialog open={isDeleteSelectedDialogOpen} onOpenChange={setIsDeleteSelectedDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar Exclusão Múltipla</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir <strong>{selectedPatients.size} leito(s)</strong> selecionado(s)?
-              Esta ação não poderá ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDeleteSelected}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Excluir Todos
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Delete Multiple Patients Confirmation Dialog (com senha) */}
+      <PasswordConfirmDialog
+        open={isDeleteSelectedDialogOpen}
+        onOpenChange={setIsDeleteSelectedDialogOpen}
+        title="Exclusão múltipla de pacientes"
+        confirmLabel="Excluir todos definitivamente"
+        description={
+          <>
+            Você está prestes a excluir{" "}
+            <strong>{selectedPatients.size} leito(s)</strong> selecionado(s).
+          </>
+        }
+        onConfirmed={confirmDeleteSelected}
+      />
 
       <GlobalSearchDialog externalOpen={searchOpen} onExternalOpenChange={setSearchOpen} />
 
