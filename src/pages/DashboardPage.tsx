@@ -484,7 +484,7 @@ const DashboardPage = () => {
           <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,transparent,white)]" />
           <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 pl-10 md:pl-12">
                 {/* Trigger da sidebar unificado no FloatingSidebarTrigger (fora da sidebar) */}
                 <div className="rounded-xl bg-white/20 p-3 backdrop-blur-sm">
                   <BarChart3 className="h-6 w-6 text-white" />
