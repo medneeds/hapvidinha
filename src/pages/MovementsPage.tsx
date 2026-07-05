@@ -18,6 +18,8 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { AppPageHeader } from "@/components/AppPageHeader";
+
 
 interface PatientMovement {
   id: string;
