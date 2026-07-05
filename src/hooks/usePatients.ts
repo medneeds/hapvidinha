@@ -696,8 +696,21 @@ export function usePatients(department?: Department) {
 
     fetchPatients();
 
-    // Subscribe to realtime changes with simplified filter
-    const channelName = `patients-changes-${currentHospital.id}-${department || 'all'}`;
+    // Refetch on tab focus / visibility change to catch any missed events
+    const onFocus = () => { fetchPatients(); };
+    const onVisibility = () => { if (document.visibilityState === 'visible') fetchPatients(); };
+    const onOnline = () => { fetchPatients(); };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('online', onOnline);
+
+    // Periodic safety refetch (every 45s) — cheap insurance vs missed realtime events
+    const pollId = window.setInterval(() => {
+      if (document.visibilityState === 'visible') fetchPatients();
+    }, 45000);
+
+    // Subscribe to realtime changes (filter also by state_id to avoid cross-state noise)
+    const channelName = `patients-changes-${currentHospital.id}-${currentState.id}-${department || 'all'}-${Math.random().toString(36).slice(2, 8)}`;
     const channel = supabase
       .channel(channelName)
       .on(
@@ -709,15 +722,15 @@ export function usePatients(department?: Department) {
           filter: `hospital_unit_id=eq.${currentHospital.id}`,
         },
         (payload) => {
-          console.log('Realtime patient change:', payload.eventType, payload);
-          
           const eventType = payload.eventType;
-          
+          const newRecord = payload.new as any;
+          const oldRecord = payload.old as any;
+
+          // Ignore cross-state payloads defensively
+          if (newRecord?.state_id && newRecord.state_id !== currentState.id) return;
+
           if (eventType === 'INSERT') {
-            const newRecord = payload.new as any;
-            // Filter by department if needed
             if (department && newRecord.department !== department) return;
-            
             const newPatient = mapRecordToPatient(newRecord);
             setPatients(prev => {
               if (prev.some(p => p.id === newPatient.id)) return prev;
@@ -729,23 +742,16 @@ export function usePatients(department?: Department) {
               });
             });
           } else if (eventType === 'UPDATE') {
-            const updatedRecord = payload.new as any;
-            // Filter by department if needed
-            if (department && updatedRecord.department !== department) {
-              // Patient was moved to another department, remove from list
-              setPatients(prev => prev.filter(p => p.id !== updatedRecord.id));
+            if (department && newRecord.department !== department) {
+              setPatients(prev => prev.filter(p => p.id !== newRecord.id));
               return;
             }
-            
-            const updatedPatient = mapRecordToPatient(updatedRecord);
+            const updatedPatient = mapRecordToPatient(newRecord);
             setPatients(prev => {
-              // Check if patient exists in current list
               const exists = prev.some(p => p.id === updatedPatient.id);
               if (exists) {
-                // Update in-place without re-sorting to preserve current position
                 return prev.map(p => p.id === updatedPatient.id ? updatedPatient : p);
               } else {
-                // Patient was moved to this department, add to list and sort
                 const sortFn = (a: Patient, b: Patient) => {
                   const orderDiff = (a.displayOrder || 0) - (b.displayOrder || 0);
                   if (orderDiff !== 0) return orderDiff;
@@ -756,16 +762,28 @@ export function usePatients(department?: Department) {
               }
             });
           } else if (eventType === 'DELETE') {
-            const deletedId = (payload.old as any).id;
-            setPatients(prev => prev.filter(p => p.id !== deletedId));
+            const deletedId = oldRecord?.id;
+            if (deletedId) setPatients(prev => prev.filter(p => p.id !== deletedId));
+            else fetchPatients();
           }
         }
       )
       .subscribe((status) => {
-        console.log('Patients realtime subscription status:', status);
+        console.log('[usePatients] realtime status:', status);
+        // On (re)subscription, resync to recover any events missed during connection gap
+        if (status === 'SUBSCRIBED') {
+          fetchPatients();
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          // Best-effort resync when the socket hiccups
+          fetchPatients();
+        }
       });
 
     return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('online', onOnline);
+      window.clearInterval(pollId);
       supabase.removeChannel(channel);
     };
   }, [department, currentHospital, currentState]);
