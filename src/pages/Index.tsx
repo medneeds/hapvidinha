@@ -1316,15 +1316,8 @@ const Index = () => {
                           </TooltipTrigger>
                           <TooltipContent><p>Imprimir mapa</p></TooltipContent>
                         </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="outline" size="icon" onClick={toggleFullscreen}
-                              className="hidden sm:flex h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200">
-                              {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent><p>{isFullscreen ? "Sair da tela cheia" : "Tela cheia"}</p></TooltipContent>
-                        </Tooltip>
+                        {/* Botão Tela Cheia ocultado do cabeçalho a pedido do usuário (permanece no menu ⋮) */}
+
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={toggleNamesHidden}
