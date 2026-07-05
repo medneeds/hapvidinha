@@ -29,11 +29,12 @@ export function FloatingSidebarTrigger() {
   // Mobile: quando o drawer está aberto, cola na borda direita dele
   const leftStyle = isMobile
     ? openMobile
-      ? "calc(var(--sidebar-width-mobile, 18rem) - 18px)"
+      ? "calc(var(--sidebar-width-mobile, 18rem) + 8px)"
       : "12px"
     : isCollapsed
-      ? "calc(var(--sidebar-width-icon) - 14px)"
-      : "calc(var(--sidebar-width) - 14px)";
+      ? "calc(var(--sidebar-width-icon) + 10px)"
+      : "calc(var(--sidebar-width) + 10px)";
+
 
   return (
     <Button
