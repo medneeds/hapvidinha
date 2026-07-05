@@ -1072,7 +1072,9 @@ const Index = () => {
               <div className="flex items-center justify-between gap-2">
                 {/* Left side: Sidebar button + Title + Department selector */}
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                  <SidebarTrigger className="print:hidden flex-shrink-0 text-white hover:text-white hover:bg-white/25 border-white/30 hover:border-white/50 data-[state=open]:bg-white/25 transition-all duration-200" />
+                  {/* Trigger da sidebar unificado no FloatingSidebarTrigger (fora da sidebar) */}
+
+
                   
                   <div className="min-w-0 flex-1 flex items-center gap-2 sm:gap-3 flex-wrap">
                     <div className="print:hidden">
