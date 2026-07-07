@@ -92,15 +92,29 @@ export default function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedState) {
-      toast.error("SELECIONE UM ESTADO");
+    // Resolve Estado/Unidade automaticamente (Maranhão / Hospital Guarás)
+    let stateId = selectedState;
+    let hospitalId = selectedHospitalId;
+    if (!stateId) {
+      const ma = states.find(s => s.abbreviation === 'MA');
+      if (ma) { stateId = ma.id; setSelectedState(ma.id); }
+    }
+    if (!hospitalId) {
+      const guaras = hospitals.find(h =>
+        h.name.toUpperCase().includes('GUARÁS') || h.name.toUpperCase().includes('GUARAS')
+      );
+      if (guaras) { hospitalId = guaras.id; setSelectedHospitalId(guaras.id); }
+    }
+
+    if (!stateId || !hospitalId) {
+      if (hospitalLoading) {
+        toast.error("AGUARDE, CARREGANDO UNIDADE HOSPITALAR...");
+      } else {
+        toast.error("UNIDADE HOSPITALAR INDISPONÍVEL. RECARREGUE A PÁGINA.");
+      }
       return;
     }
-    if (!selectedHospitalId) {
-      toast.error("SELECIONE UMA UNIDADE HOSPITALAR");
-      return;
-    }
-    
+
     setLoading(true);
 
     try {
@@ -116,7 +130,7 @@ export default function AuthPage() {
         setLoading(false);
       } else {
         // Set hospital and department after successful login
-        const selectedHospital = hospitals.find(h => h.id === selectedHospitalId);
+        const selectedHospital = hospitals.find(h => h.id === hospitalId);
         if (selectedHospital) {
           setCurrentHospital(selectedHospital);
         }
