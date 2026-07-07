@@ -130,7 +130,7 @@ export default function AuthPage() {
         setLoading(false);
       } else {
         // Set hospital and department after successful login
-        const selectedHospital = hospitals.find(h => h.id === selectedHospitalId);
+        const selectedHospital = hospitals.find(h => h.id === hospitalId);
         if (selectedHospital) {
           setCurrentHospital(selectedHospital);
         }
