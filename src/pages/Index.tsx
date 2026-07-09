@@ -226,6 +226,8 @@ const Index = () => {
   const [allocationDialogOpen, setAllocationDialogOpen] = useState(false);
   const [allocationTargetSector, setAllocationTargetSector] = useState<"Cuidados Especiais" | "Observação Amarela" | "Observação Azul">("Cuidados Especiais");
   const [utiAllocationDialogOpen, setUtiAllocationDialogOpen] = useState(false);
+  const [utiPrioritiesOpen, setUtiPrioritiesOpen] = useState(false);
+  const { priorities: utiPrioritiesList } = useUtiPriorities();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [bedSelectionOpen, setBedSelectionOpen] = useState(false);
