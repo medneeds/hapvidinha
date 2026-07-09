@@ -14,7 +14,14 @@ import {
   PanelLeft,
   KeyRound,
   ArrowRightLeft,
+  ListChecks,
+  StickyNote,
+  BookMarked,
 } from "lucide-react";
+import { QuickChecklistDialog } from "@/components/QuickChecklistDialog";
+import { QuickNotesDialog } from "@/components/QuickNotesDialog";
+import { MedicalCodesDialog } from "@/components/MedicalCodesDialog";
+import { useUnitChecklist } from "@/hooks/useUnitChecklist";
 import { useNavigate } from "react-router-dom";
 import { whitelabel } from "@/config/whitelabel";
 import { useState } from "react";
