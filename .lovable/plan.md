@@ -1,61 +1,107 @@
-# Enxugamento da Plataforma HapMap
+# Prioridades UTI — UE Adulto
 
-Objetivo: reduzir a superfície da plataforma removendo módulos solicitados, sem afetar o MAPA, Movimentações, Documentos, Dashboard, Admin (estados/unidades/coordenadores/protocolos), Privacidade/Auditoria e o módulo HAPMAP GO.
+Feature que consolida em um único lugar os pacientes candidatos a leito de UTI, permitindo priorização por ordem (drag-and-drop), persistência até movimentação, e impressão de documento oficial para entrega ao setor de liberação de leito.
 
-## O que será REMOVIDO
+## 1. Modelo de dados (Lovable Cloud)
 
-### 1. Menus do sidebar (`src/components/AppSidebar.tsx`)
-- Bloco **GERENCIAMENTO DE LEITOS** (MAPA DE LEITOS, PAINEL DE SOLICITAÇÕES, CADASTRO DE LEITOS).
-- Em PACIENTES: subitens **SOLICITAÇÕES** (`/resources`) e **HISTÓRICO** (`/internment-history`). Mantém apenas **MOVIMENTAÇÕES**.
-- Bloco **CÓDIGOS** inteiro (exames, procedimentos, materiais, medicações, cirúrgicos CBHPM).
-- Bloco **REPOSITÓRIO**.
-- Bloco **VERSÕES**.
-- Limpeza dos ícones não usados (`BedDouble`, `FileSearch`, `FolderArchive`, `History`).
+Nova tabela `uti_priorities` com escopo por hospital/estado (mesmo padrão das demais):
 
-### 2. Rotas (`src/App.tsx`)
-Remover rotas e imports correspondentes:
-- `/leitos`, `/leitos/cadastro`, `/leitos/painel` → `BedManagementPage`, `BedManagementRegistrationPage`, `BedRequestsPanelPage`.
-- `/resources` → `ResourcesPage`.
-- `/internment-history` → `InternmentHistoryPage`.
-- `/codigos`, `/codigos-cirurgicos` → `MedicalCodesPage`, `SurgicalCodesPage`.
-- `/repositorio` → `RepositoryPage`.
-- `/versions` → `VersionsPage`.
+| Campo | Tipo | Observação |
+|---|---|---|
+| id | uuid PK | |
+| patient_id | uuid FK → patients | UNIQUE por hospital+estado (paciente não duplica na fila) |
+| hospital_unit_id | uuid | escopo |
+| state_id | uuid | escopo |
+| position | integer | ordem de prioridade (1 = mais prioritário) |
+| notes | text | observação opcional do médico |
+| added_by | uuid | quem adicionou |
+| added_by_email | text | snapshot para auditoria |
+| created_at / updated_at | timestamptz | |
 
-### 3. Processamento com IA
-- Remover dialogs/painéis: `ClinikusAIDialog.tsx`, `ExaminusAIDialog.tsx`, `ClinicusAccessPanel.tsx`, `PatientInfoPasteDialog.tsx`, `VoiceRecorder.tsx`.
-- Remover página `src/pages/IAPage.tsx` (se houver rota, remover também).
-- Remover hook `src/hooks/useAgeCalculator.ts` (chama edge function de IA) — substituir uso em `PatientCard.tsx` por cálculo determinístico local já existente em `src/utils/calculateDetailedAge.ts` / `ageDisplay.ts`.
-- Remover referências no `MainLayout.tsx`, `PatientCard.tsx` e `RegisterHandoverDialog.tsx` (botão de voz some; transcrição manual permanece via texto).
-- Excluir edge functions de IA: `clinicus-ai`, `examinus-chat`, `extract-patient-info`, `transcribe-audio`, `calculate-age`, `format-pediatric-age`, `get-cid-code` (via tool de delete de edge functions).
+Regras automáticas:
+- Trigger remove o paciente da fila quando ele é movimentado (discharge/óbito/transferência) ou quando o `patients.internmentStatus` deixa de ser um status UTI. Isso garante o "persiste até movimentação".
+- RLS igual às tabelas de fluxo clínico: leitura/escrita por usuários do hospital/estado; admin e médicos com departamento URGÊNCIA E EMERGÊNCIA ADULTO podem gerenciar.
 
-### 4. Central de Treinamentos
-- Remover `TrainingCenterDialog.tsx`, `TrainingTourDialog.tsx`, `TrainingScheduler.tsx`, `useTrainingScheduler.ts`, `src/data/trainingTours.ts`.
-- Remover gatilhos/uso em `MainLayout.tsx` (botão flutuante / dialog).
+## 2. UI
 
-### 5. Arquivos órfãos relacionados
-Após as remoções acima, apagar componentes que ficam sem consumidores:
-- Diálogos exclusivos de gerenciamento de leitos: `BedSelectionDialog`, `BedSwapDialog`, `RequestBedAllocationDialog`, `RequestNewAllocationDialog`, `RequestUtiAllocationDialog`, `UtiReallocationDialog`, `ReallocateFromHistoryDialog`, `bed-panel/*`, hooks `useBedAllocationRequests`, `useBedRequests`, `useBedRequestsPanel`, `useBedSlaConfigs`, `useManagedBeds`, `useBedLifecycle`, `BedAllocationNotifications`, `AllocationPendingBadge` — **apenas** se nenhum import remanescente for detectado (verificação com `rg` antes da exclusão).
-- `usePatientVersions.ts` (suporte à página Versões).
-- `src/components/resources/*` (tabs de Solicitações/Internação).
+**Ponto de entrada:** botão **"Prioridades UTI"** no header da página UE Adulto (`src/pages/Index.tsx`), ao lado das ações existentes, com badge mostrando quantos pacientes estão na fila.
 
-> Componentes que continuam em uso pelo MAPA (ex.: `PatientCard`, `SectorSection`, `PatientMovementDialog`) **NÃO** serão removidos.
+**Dialog `UtiPrioritiesDialog`** com duas áreas:
 
-## O que será PRESERVADO
-- MAPA principal e fluxo clínico (evoluções, condutas, óbito, paliativos, sepse/AVC/dor torácica).
-- Movimentações de pacientes (apenas a página, não o módulo de Solicitações).
-- Documentos, Templates Terapêuticos, Relatórios Emitidos.
-- Painel Admin (Dashboard, Usuários, Auditoria, LGPD, Estados, Unidades, Coordenadores, Protocolos Sepse/AVC/Dor Torácica).
-- Módulo HAPMAP GO.
-- Tabelas no banco serão **mantidas intactas** (sem migrations destrutivas) para preservar histórico — apenas o acesso pela UI será removido. Posso remover as tabelas em uma segunda etapa, se você confirmar.
+```text
+┌─────────────────────────────────────────────────┐
+│  Prioridades UTI              [Imprimir] [X]    │
+├──────────────────────┬──────────────────────────┤
+│ Adicionar paciente   │  Fila priorizada         │
+│                      │                          │
+│ [busca...]           │  1. ≡ Paciente A · V01   │
+│                      │  2. ≡ Paciente B · A03   │
+│ Candidatos (IR_PARA  │  3. ≡ Paciente C · Z02   │
+│ _UTI):               │       ...                │
+│  □ Paciente X        │                          │
+│  □ Paciente Y        │  (arraste para reordenar)│
+│  [+ Adicionar]       │                          │
+└──────────────────────┴──────────────────────────┘
+```
 
-## Verificação pós-execução
-1. Build/typecheck automático.
-2. `rg` confirmando ausência de imports quebrados para arquivos deletados.
-3. Sidebar exibindo apenas: MAPA · PACIENTES (Movimentações) · DOCUMENTOS · PAINEL ADMIN.
-4. MainLayout sem botões de IA / Central de Treinamentos.
+- **Coluna esquerda:** lista de pacientes da UE Adulto com `internmentStatus` de UTI que ainda não estão na fila.
+- **Coluna direita:** fila atual, drag-and-drop (usando `@dnd-kit/core` + `@dnd-kit/sortable`, já presente no projeto se houver — senão instalar). Cada linha mostra ordem, nome, leito/setor, botão remover.
+- Ações: **Imprimir** gera o PDF consolidado.
 
-## Pontos para confirmar antes de implementar
-1. **Banco de dados**: manter tabelas (`managed_beds`, `bed_allocation_requests`, `bed_requests`, `bed_sla_configs`, `bed_lifecycle_events`, `medical_codes`, `patient_versions`, `internment_requests`) ou também derrubar via migration? Recomendo **manter** por enquanto.
-2. **`VoiceRecorder` em handover**: remover totalmente o botão de gravação por voz dos handovers (consequência da remoção de IA). Confirma?
-3. **Cálculo de idade pediátrica**: hoje usa edge function de IA; passarei a calcular localmente com `calculateDetailedAge`. OK?
-4. **Página `/ia`**: confirmar que pode ser removida do menu/rotas (não vi referência ativa no sidebar, mas o arquivo existe).
+## 3. PDF consolidado
+
+Novo componente `PrintUtiPrioritiesLayout.tsx` + dialog de preview (mesmo padrão do `PrintPatientPreviewDialog`).
+
+Estrutura A4 retrato:
+
+```text
+┌────────────────────────────────────────────────┐
+│  [LOGO HAPVIDA]        PRIORIDADES UTI         │
+│                        UE Adulto · Hospital X  │
+│                        09/07/2026 14:32        │
+├────────────────────────────────────────────────┤
+│  #  PACIENTE            IDADE  LEITO  DIAGNÓSTICOS
+│  1  MARIA DA SILVA      67a    V01    ICC descompensada; IRA
+│  2  JOÃO PEREIRA        54a    A03    Sepse pulmonar
+│  3  ...                                          
+├────────────────────────────────────────────────┤
+│  Médico responsável: _______________________   │
+│  CRM: __________  Assinatura: _____________    │
+│                                                │
+│  Documento gerado em 09/07/2026 · Confidencial │
+└────────────────────────────────────────────────┘
+```
+
+- Tema claro forçado, fundo branco puro (regra de impressão do projeto).
+- Ordem = posição na fila.
+- Assinatura manual do médico responsável (linha para preencher à caneta) — como pedido.
+
+## 4. Arquivos previstos
+
+**Novos**
+- `supabase/migrations/<timestamp>_uti_priorities.sql` — tabela, GRANTs, RLS, trigger de limpeza.
+- `src/hooks/useUtiPriorities.ts` — query, add, remove, reorder (mutations com invalidação).
+- `src/components/UtiPrioritiesDialog.tsx` — dialog principal.
+- `src/components/PrintUtiPrioritiesLayout.tsx` — layout do PDF.
+- `src/components/PrintUtiPrioritiesPreviewDialog.tsx` — preview + trigger de impressão.
+
+**Editados**
+- `src/pages/Index.tsx` — botão no header + montagem do dialog.
+- `src/integrations/supabase/types.ts` — regenerado automaticamente após a migração.
+
+## 5. Permissões
+
+Mantém as regras atuais (memória `access-control-architecture`):
+- Recepção/Enfermagem: leitura apenas.
+- Médico/Porta/Líder/Admin com acesso à UE Adulto: podem adicionar, remover, reordenar e imprimir.
+
+## 6. Ordem de execução
+
+1. Migração da tabela + trigger (aguarda aprovação).
+2. Hook `useUtiPriorities`.
+3. Dialog + drag-and-drop.
+4. Layout de impressão + preview.
+5. Botão no header do Index.
+6. Verificação visual via Playwright (adicionar 2 pacientes fake, reordenar, abrir preview).
+
+Confirma esse desenho para eu iniciar pela migração?

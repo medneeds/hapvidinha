@@ -24,6 +24,9 @@ import { BedSelectionDialog } from "@/components/BedSelectionDialog";
 import { DoorPatientNotifications } from "@/components/DoorPatientNotifications";
 import { RequestNewAllocationDialog } from "@/components/RequestNewAllocationDialog";
 import { RequestUtiAllocationDialog } from "@/components/RequestUtiAllocationDialog";
+import { UtiPrioritiesDialog } from "@/components/UtiPrioritiesDialog";
+import { useUtiPriorities } from "@/hooks/useUtiPriorities";
+import { HeartPulse } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -223,6 +226,8 @@ const Index = () => {
   const [allocationDialogOpen, setAllocationDialogOpen] = useState(false);
   const [allocationTargetSector, setAllocationTargetSector] = useState<"Cuidados Especiais" | "Observação Amarela" | "Observação Azul">("Cuidados Especiais");
   const [utiAllocationDialogOpen, setUtiAllocationDialogOpen] = useState(false);
+  const [utiPrioritiesOpen, setUtiPrioritiesOpen] = useState(false);
+  const { priorities: utiPrioritiesList } = useUtiPriorities();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [bedSelectionOpen, setBedSelectionOpen] = useState(false);
@@ -1151,6 +1156,26 @@ const Index = () => {
                     <Search className="h-4 w-4" />
                   </Button>
 
+                  {/* Prioridades UTI - somente na UE Adulto */}
+                  {currentDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setUtiPrioritiesOpen(true)}
+                      className="print:hidden relative h-11 sm:h-8 px-2 sm:px-3 gap-1.5 bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 text-white border-0 shadow-[0_0_14px_-2px_rgba(244,63,94,0.55)] hover:shadow-[0_0_22px_-2px_rgba(244,63,94,0.85)] hover:brightness-110 transition-all"
+                      title="Prioridades UTI"
+                    >
+                      <HeartPulse className="h-4 w-4" />
+                      <span className="hidden sm:inline text-xs font-semibold">
+                        Prioridades UTI
+                      </span>
+                      {utiPrioritiesList.length > 0 && (
+                        <span className="ml-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-white text-[10px] font-bold text-red-600">
+                          {utiPrioritiesList.length}
+                        </span>
+                      )}
+                    </Button>
+                  )}
+
                   {/* Mobile: Show only essential buttons + dropdown menu */}
                   {isMobile ? (
                     <>
@@ -1648,6 +1673,13 @@ const Index = () => {
       <RequestUtiAllocationDialog
         open={utiAllocationDialogOpen}
         onOpenChange={setUtiAllocationDialogOpen}
+      />
+
+      {/* UTI Priorities Dialog */}
+      <UtiPrioritiesDialog
+        open={utiPrioritiesOpen}
+        onClose={() => setUtiPrioritiesOpen(false)}
+        allPatients={patients}
       />
 
       {/* Department Change Password Dialog - Removido, apenas admin pode trocar */}

@@ -2642,6 +2642,53 @@ export type Database = {
         }
         Relationships: []
       }
+      uti_priorities: {
+        Row: {
+          added_by: string | null
+          added_by_email: string | null
+          created_at: string
+          hospital_unit_id: string
+          id: string
+          notes: string | null
+          patient_id: string
+          position: number
+          state_id: string
+          updated_at: string
+        }
+        Insert: {
+          added_by?: string | null
+          added_by_email?: string | null
+          created_at?: string
+          hospital_unit_id: string
+          id?: string
+          notes?: string | null
+          patient_id: string
+          position?: number
+          state_id: string
+          updated_at?: string
+        }
+        Update: {
+          added_by?: string | null
+          added_by_email?: string | null
+          created_at?: string
+          hospital_unit_id?: string
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          position?: number
+          state_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uti_priorities_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
