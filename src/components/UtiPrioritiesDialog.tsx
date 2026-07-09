@@ -175,21 +175,30 @@ export function UtiPrioritiesDialog({
 
   const candidates = useMemo(() => {
     const term = search.trim().toLowerCase();
+    const sectorRank: Record<string, number> = { red: 0, yellow: 1, blue: 2, outside: 3 };
     return allPatients
       .filter(
         (p) =>
           p.name?.trim() &&
-          p.internmentStatus &&
-          UTI_STATUSES.includes(p.internmentStatus) &&
+          !p.isVacant &&
           !priorityPatientIds.has(p.id),
       )
       .filter(
         (p) =>
           !term ||
           p.name.toLowerCase().includes(term) ||
-          p.bedNumber.toLowerCase().includes(term),
+          p.bedNumber.toLowerCase().includes(term) ||
+          (p.diagnoses?.[0] ?? "").toLowerCase().includes(term),
       )
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => {
+        const aUti = a.internmentStatus && UTI_STATUSES.includes(a.internmentStatus) ? 0 : 1;
+        const bUti = b.internmentStatus && UTI_STATUSES.includes(b.internmentStatus) ? 0 : 1;
+        if (aUti !== bUti) return aUti - bUti;
+        const sa = sectorRank[a.sector] ?? 99;
+        const sb = sectorRank[b.sector] ?? 99;
+        if (sa !== sb) return sa - sb;
+        return a.bedNumber.localeCompare(b.bedNumber, undefined, { numeric: true });
+      });
   }, [allPatients, priorityPatientIds, search]);
 
   const handleDragEnd = (event: DragEndEvent) => {
