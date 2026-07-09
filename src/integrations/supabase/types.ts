@@ -711,6 +711,48 @@ export type Database = {
           },
         ]
       }
+      custom_medical_codes: {
+        Row: {
+          category: string
+          code: string
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          hospital_unit_id: string
+          id: string
+          name: string
+          state_id: string
+          system_description: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          code: string
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          hospital_unit_id: string
+          id?: string
+          name: string
+          state_id: string
+          system_description?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          hospital_unit_id?: string
+          id?: string
+          name?: string
+          state_id?: string
+          system_description?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       data_requests: {
         Row: {
           created_at: string
@@ -2532,6 +2574,93 @@ export type Database = {
           state_id?: string
           status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      unit_checklist_items: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          completed_by: string | null
+          completed_by_email: string | null
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          department: string
+          hospital_unit_id: string
+          id: string
+          position: number
+          state_id: string
+          text: string
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          completed_by?: string | null
+          completed_by_email?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          department: string
+          hospital_unit_id: string
+          id?: string
+          position?: number
+          state_id: string
+          text: string
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          completed_by?: string | null
+          completed_by_email?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          department?: string
+          hospital_unit_id?: string
+          id?: string
+          position?: number
+          state_id?: string
+          text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      unit_shared_notes: {
+        Row: {
+          content: string
+          created_at: string
+          department: string
+          hospital_unit_id: string
+          id: string
+          state_id: string
+          updated_at: string
+          updated_by: string | null
+          updated_by_email: string | null
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          department: string
+          hospital_unit_id: string
+          id?: string
+          state_id: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_email?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          department?: string
+          hospital_unit_id?: string
+          id?: string
+          state_id?: string
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_email?: string | null
         }
         Relationships: []
       }

@@ -14,7 +14,14 @@ import {
   PanelLeft,
   KeyRound,
   ArrowRightLeft,
+  ListChecks,
+  StickyNote,
+  BookMarked,
 } from "lucide-react";
+import { QuickChecklistDialog } from "@/components/QuickChecklistDialog";
+import { QuickNotesDialog } from "@/components/QuickNotesDialog";
+import { MedicalCodesDialog } from "@/components/MedicalCodesDialog";
+import { useUnitChecklist } from "@/hooks/useUnitChecklist";
 import { useNavigate } from "react-router-dom";
 import { whitelabel } from "@/config/whitelabel";
 import { useState } from "react";
@@ -66,6 +73,11 @@ export function AppSidebar({
   const isCollapsed = state === "collapsed";
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [showChangeOwnPassword, setShowChangeOwnPassword] = useState(false);
+  const [showChecklistDialog, setShowChecklistDialog] = useState(false);
+  const [showNotesDialog, setShowNotesDialog] = useState(false);
+  const [showCodesDialog, setShowCodesDialog] = useState(false);
+  const { items: checklistItems } = useUnitChecklist();
+  const pendingChecklist = checklistItems.filter((i) => !i.completed).length;
   const [password, setPassword] = useState("");
   
   // Hook for pending password reset requests
@@ -503,7 +515,69 @@ export function AppSidebar({
             )}
           </div>
         ))}
+
+        {/* ===== RECURSOS RÁPIDOS ===== */}
+        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-3 mx-4" />
+        <SidebarGroup className="py-0 my-0">
+          {!isCollapsed && (
+            <SidebarGroupLabel className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Recursos Rápidos
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent className="px-2">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => setShowChecklistDialog(true)}
+                  className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
+                  tooltip="Checklist da Unidade"
+                >
+                  <ListChecks className="h-4 w-4 text-primary" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="flex-1 text-left font-medium">Checklist</span>
+                      {pendingChecklist > 0 && (
+                        <Badge variant="secondary" className="h-5 min-w-5 px-1.5 text-[10px] font-bold">
+                          {pendingChecklist}
+                        </Badge>
+                      )}
+                    </>
+                  )}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => setShowNotesDialog(true)}
+                  className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
+                  tooltip="Anotações da Unidade"
+                >
+                  <StickyNote className="h-4 w-4 text-primary" />
+                  {!isCollapsed && (
+                    <span className="flex-1 text-left font-medium">Anotações</span>
+                  )}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => setShowCodesDialog(true)}
+                  className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
+                  tooltip="Códigos e Procedimentos"
+                >
+                  <BookMarked className="h-4 w-4 text-primary" />
+                  {!isCollapsed && (
+                    <span className="flex-1 text-left font-medium">Códigos & Procedimentos</span>
+                  )}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
+
+      <QuickChecklistDialog open={showChecklistDialog} onOpenChange={setShowChecklistDialog} />
+      <QuickNotesDialog open={showNotesDialog} onOpenChange={setShowNotesDialog} />
+      <MedicalCodesDialog open={showCodesDialog} onOpenChange={setShowCodesDialog} />
+
 
       <SidebarFooter className="border-t border-border/50 p-2 bg-muted/30">
         <div className={cn(
