@@ -73,6 +73,11 @@ export function AppSidebar({
   const isCollapsed = state === "collapsed";
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [showChangeOwnPassword, setShowChangeOwnPassword] = useState(false);
+  const [showChecklistDialog, setShowChecklistDialog] = useState(false);
+  const [showNotesDialog, setShowNotesDialog] = useState(false);
+  const [showCodesDialog, setShowCodesDialog] = useState(false);
+  const { items: checklistItems } = useUnitChecklist();
+  const pendingChecklist = checklistItems.filter((i) => !i.completed).length;
   const [password, setPassword] = useState("");
   
   // Hook for pending password reset requests
