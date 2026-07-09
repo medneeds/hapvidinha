@@ -319,9 +319,6 @@ export function UtiPrioritiesDialog({
                     );
                   })}
                 </div>
-                    </div>
-                  ))}
-                </div>
               </ScrollArea>
             </div>
 
