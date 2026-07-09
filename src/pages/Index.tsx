@@ -1655,6 +1655,13 @@ const Index = () => {
         onOpenChange={setUtiAllocationDialogOpen}
       />
 
+      {/* UTI Priorities Dialog */}
+      <UtiPrioritiesDialog
+        open={utiPrioritiesOpen}
+        onClose={() => setUtiPrioritiesOpen(false)}
+        allPatients={patients}
+      />
+
       {/* Department Change Password Dialog - Removido, apenas admin pode trocar */}
 
       {/* Delete Multiple Patients Confirmation Dialog (com senha) */}
