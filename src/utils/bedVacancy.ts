@@ -16,7 +16,7 @@ export function isFixedBed(
   if (department === "UTI") {
     return (sector === "blue" || sector === "yellow") && /^U(0[1-9]|10)$/.test(bedNumber);
   }
-  if (sector === "red") return /^V0[1-7]$/.test(bedNumber);
+  if (sector === "red") return /^V0[1-2]$/.test(bedNumber);
   if (sector === "yellow") return /^A0[1-6]$/.test(bedNumber);
   if (sector === "blue") return /^Z0[1-6]$/.test(bedNumber);
   return false;
