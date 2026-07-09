@@ -42,10 +42,10 @@ export function usePatients(department?: Department) {
       if (error) throw error;
 
       // Self-heal: garante que todos os leitos fixos da Urgência Adulto existam.
-      // Se algum leito V01-V07 / A01-A06 / Z01-Z06 estiver ausente, recria como vago.
+      // Se algum leito V01-V02 / A01-A06 / Z01-Z06 estiver ausente, recria como vago.
       if (department === 'URGÊNCIA E EMERGÊNCIA ADULTO') {
         const FIXED_BEDS: { bed_number: string; sector: string }[] = [
-          ...['V01','V02','V03','V04','V05','V06','V07'].map(b => ({ bed_number: b, sector: 'red' })),
+          ...['V01','V02'].map(b => ({ bed_number: b, sector: 'red' })),
           ...['A01','A02','A03','A04','A05','A06'].map(b => ({ bed_number: b, sector: 'yellow' })),
           ...['Z01','Z02','Z03','Z04','Z05','Z06'].map(b => ({ bed_number: b, sector: 'blue' })),
         ];
