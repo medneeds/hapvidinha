@@ -112,13 +112,17 @@ export function EditPatientDialog({
   const { currentDepartment } = useDepartment();
   const isUti = currentDepartment === "UTI";
 
-  // Reset form data when patient changes or dialog opens
+  // Reset form data only when dialog opens or when switching to a different patient.
+  // IMPORTANT: do NOT depend on the full `patient` object — realtime refetches (~45s)
+  // produce a new object reference for the same patient and would wipe the user's
+  // in-progress edits (especially the long "História Admissional" textarea).
   useEffect(() => {
     if (open) {
       setFormData(patient);
       setAdmissionHistoryLocal(patient.admissionHistory || "");
     }
-  }, [open, patient]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, patient.id]);
 
   const handleSave = () => {
     const finalFormData = {
