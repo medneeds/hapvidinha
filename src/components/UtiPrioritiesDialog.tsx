@@ -108,16 +108,16 @@ function SortableRow({ id, index, patient, onRemove }: SortableRowProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-2 p-2 border rounded-md bg-card hover:bg-accent/40 transition-colors"
+      className="flex items-center gap-2 p-2.5 border rounded-md bg-card hover:bg-accent/40 transition-colors"
     >
       <button
-        className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent"
+        className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent shrink-0"
         {...attributes}
         {...listeners}
       >
         <GripVertical className="h-4 w-4 text-muted-foreground" />
       </button>
-      <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold shrink-0">
+      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold shrink-0">
         {index + 1}
       </div>
       <div className="flex-1 min-w-0">
@@ -130,13 +130,14 @@ function SortableRow({ id, index, patient, onRemove }: SortableRowProps) {
         </div>
       </div>
       <Button
-        size="icon"
-        variant="ghost"
+        size="sm"
+        variant="outline"
         onClick={onRemove}
-        className="h-7 w-7"
-        title="Remover da lista"
+        className="h-8 gap-1.5 text-destructive border-destructive/40 hover:bg-destructive hover:text-destructive-foreground shrink-0"
+        title="Remover da fila"
       >
-        <Trash2 className="h-3.5 w-3.5 text-destructive" />
+        <Trash2 className="h-3.5 w-3.5" />
+        <span className="text-xs font-medium">Retirar</span>
       </Button>
     </div>
   );
@@ -214,7 +215,7 @@ export function UtiPrioritiesDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-        <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col">
+        <DialogContent className="max-w-[95vw] xl:max-w-7xl w-full max-h-[92vh] flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between gap-2">
               <span className="flex items-center gap-2">
