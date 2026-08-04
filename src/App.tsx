@@ -36,6 +36,7 @@ import UserManagementPage from "./pages/UserManagementPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import AdminStatesPage from "./pages/AdminStatesPage";
 import AdminUnitsPage from "./pages/AdminUnitsPage";
+import AdminBedsPage from "./pages/AdminBedsPage";
 import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
 
 
