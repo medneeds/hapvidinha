@@ -1,5 +1,7 @@
 import { Patient, SectorType } from "@/types/patient";
 import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
+import { getFixedBedCount } from "@/utils/bedCapacityStore";
+import { useDepartment } from "@/contexts/DepartmentContext";
 import { PatientCard } from "./PatientCard";
 import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
