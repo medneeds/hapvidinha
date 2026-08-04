@@ -159,6 +159,7 @@ export function SectorSection({
   onRefetch,
   onRequestFromQueue
 }: SectorSectionProps) {
+  const { currentDepartment } = useDepartment();
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
   const displayIcon = customIcon || info.icon;
