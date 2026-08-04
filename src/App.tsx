@@ -305,6 +305,15 @@ const App = () => {
           }
         />
         <Route
+          path="/admin/beds"
+          element={
+            <ProtectedRoute>
+              <AdminBedsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/admin/coordinators"
           element={
             <ProtectedRoute>
