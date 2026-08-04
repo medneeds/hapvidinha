@@ -127,6 +127,7 @@ export function AppSidebar({
         { name: "PRIVACIDADE LGPD", link: "/privacy" },
         { name: "CADASTRAR ESTADOS", link: "/admin/states" },
         { name: "CADASTRAR UNIDADES", link: "/admin/units" },
+        { name: "QUANTITATIVO DE LEITOS", link: "/admin/beds" },
         { name: "GERENCIAR COORDENADORES", link: "/admin/coordinators" },
         { name: "PROTOCOLOS SEPSE", link: "/admin/sepsis-protocols" },
         { name: "PROTOCOLOS AVC", link: "/admin/stroke-protocols" },
