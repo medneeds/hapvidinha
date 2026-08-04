@@ -7,10 +7,12 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatBirthDateDisplay, birthDateToISO } from "@/utils/calculateDetailedAge";
 import { vacantPatientSlotPayload } from "@/utils/patientSlotPayload";
+import { setCapacityRows, getFixedBedNumbers, isWithinFixedRange } from "@/utils/bedCapacityStore";
 
 const UTI_FIXED_BEDS = Array.from({ length: 10 }, (_, index) => `U${String(index + 1).padStart(2, '0')}`);
 const isFixedUtiBed = (sector?: string, bedNumber?: string) =>
-  (sector === 'blue' || sector === 'yellow') && !!bedNumber && /^U(0[1-9]|10)$/.test(bedNumber);
+  (sector === 'blue' || sector === 'yellow') && !!bedNumber && isWithinFixedRange('UTI', sector, bedNumber);
+
 
 export function usePatients(department?: Department) {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -41,14 +43,25 @@ export function usePatients(department?: Department) {
 
       if (error) throw error;
 
-      // Self-heal: garante que todos os leitos fixos da Urgência Adulto existam.
-      // Se algum leito V01-V02 / A01-A06 / Z01-Z06 estiver ausente, recria como vago.
-      if (department === 'URGÊNCIA E EMERGÊNCIA ADULTO') {
-        const FIXED_BEDS: { bed_number: string; sector: string }[] = [
-          ...['V01','V02'].map(b => ({ bed_number: b, sector: 'red' })),
-          ...['A01','A02','A03','A04','A05','A06'].map(b => ({ bed_number: b, sector: 'yellow' })),
-          ...['Z01','Z02','Z03','Z04','Z05','Z06'].map(b => ({ bed_number: b, sector: 'blue' })),
-        ];
+      // Load admin-configured fixed bed capacity for this unit (source of truth).
+      try {
+        const { data: capRows } = await supabase
+          .from('sector_bed_capacities')
+          .select('department, sector, bed_prefix, fixed_bed_count')
+          .eq('hospital_unit_id', currentHospital.id)
+          .eq('state_id', currentState.id);
+        setCapacityRows((capRows || []) as any);
+      } catch (capErr) {
+        console.error('[usePatients] Falha ao carregar quantitativo de leitos:', capErr);
+      }
+
+      // Self-heal: garante que todos os leitos fixos configurados existam.
+      // Se algum leito estiver ausente, recria como vago.
+      if (department && department !== 'UTI') {
+        const FIXED_BEDS: { bed_number: string; sector: string }[] = ['red', 'yellow', 'blue']
+          .flatMap(sector =>
+            getFixedBedNumbers(department, sector).map(bed_number => ({ bed_number, sector }))
+          );
         const existingKeys = new Set((data || []).map((p: any) => `${p.sector}:${p.bed_number}`));
         const missing = FIXED_BEDS.filter(b => !existingKeys.has(`${b.sector}:${b.bed_number}`));
         if (missing.length > 0) {
@@ -61,7 +74,7 @@ export function usePatients(department?: Department) {
                 name: '',
                 is_vacant: true,
                 bed_status: 'available',
-                department: 'URGÊNCIA E EMERGÊNCIA ADULTO',
+                department,
                 state_id: currentState.id,
                 hospital_unit_id: currentHospital.id,
               })) as any
@@ -72,7 +85,7 @@ export function usePatients(department?: Department) {
               .select('*')
               .eq('hospital_unit_id', currentHospital.id)
               .eq('state_id', currentState.id)
-              .eq('department', 'URGÊNCIA E EMERGÊNCIA ADULTO')
+              .eq('department', department)
               .order('display_order')
               .order('bed_number');
             if (refreshed) {
@@ -86,11 +99,10 @@ export function usePatients(department?: Department) {
       }
 
       // Self-heal: UTI 1 (blue) and UTI 2 (yellow) are fixed capacity units.
-      // U01-U10 must always exist in both units and must never be physically deleted.
       if (department === 'UTI') {
         const FIXED_UTI_BEDS: { bed_number: string; sector: string; display_order: number }[] = [
-          ...UTI_FIXED_BEDS.map((b, index) => ({ bed_number: b, sector: 'blue', display_order: index + 1 })),
-          ...UTI_FIXED_BEDS.map((b, index) => ({ bed_number: b, sector: 'yellow', display_order: index + 1 })),
+          ...getFixedBedNumbers('UTI', 'blue').map((b, index) => ({ bed_number: b, sector: 'blue', display_order: index + 1 })),
+          ...getFixedBedNumbers('UTI', 'yellow').map((b, index) => ({ bed_number: b, sector: 'yellow', display_order: index + 1 })),
         ];
         const existingKeys = new Set((data || []).map((p: any) => `${p.sector}:${p.bed_number}`));
         const missing = FIXED_UTI_BEDS.filter(b => !existingKeys.has(`${b.sector}:${b.bed_number}`));
@@ -127,6 +139,7 @@ export function usePatients(department?: Department) {
           }
         }
       }
+
 
       const visibleData = department === 'UTI'
         ? (data || []).filter((p: any) => isFixedUtiBed(p.sector, p.bed_number))

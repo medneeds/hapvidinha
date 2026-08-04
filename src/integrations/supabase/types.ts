@@ -1869,6 +1869,60 @@ export type Database = {
         }
         Relationships: []
       }
+      sector_bed_capacities: {
+        Row: {
+          bed_prefix: string
+          created_at: string
+          department: string
+          fixed_bed_count: number
+          hospital_unit_id: string
+          id: string
+          sector: string
+          state_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          bed_prefix: string
+          created_at?: string
+          department: string
+          fixed_bed_count?: number
+          hospital_unit_id: string
+          id?: string
+          sector: string
+          state_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          bed_prefix?: string
+          created_at?: string
+          department?: string
+          fixed_bed_count?: number
+          hospital_unit_id?: string
+          id?: string
+          sector?: string
+          state_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sector_bed_capacities_hospital_unit_id_fkey"
+            columns: ["hospital_unit_id"]
+            isOneToOne: false
+            referencedRelation: "hospital_units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sector_bed_capacities_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sepsis_protocols: {
         Row: {
           antibiotic_administration_date: string | null

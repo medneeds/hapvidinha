@@ -5,6 +5,9 @@
  * Extra beds (beyond capacity) follow: EXTRA + NUMBER (e.g., EXTRA1, EXTRA2)
  */
 
+import { getBedPrefix, getFixedBedCount } from '@/utils/bedCapacityStore';
+
+
 export interface SectorBedConfig {
   prefix: string;
   maxRegularBeds: number;
@@ -31,43 +34,25 @@ export function getNextBedNumber(
   existingBedNumbers: string[],
   department?: string
 ): string {
-  // UTI has its own fixed logic
-  if (department === 'UTI') {
-    const nums = existingBedNumbers
-      .map(b => parseInt(b.replace(/\D/g, ''), 10))
-      .filter(n => !isNaN(n));
-    const max = nums.length > 0 ? Math.max(...nums) : 0;
-    return `U${String(max + 1).padStart(2, '0')}`;
+  const prefix = getBedPrefix(department, sector);
+  const maxRegularBeds =
+    sector === 'outside' ? Infinity : getFixedBedCount(department, sector);
+
+  if (sector === 'outside') {
+    return `F${String(existingBedNumbers.length + 1).padStart(2, '0')}`;
   }
 
-  const config = SECTOR_BED_CONFIG[sector];
-  if (!config) {
-    // Fallback for unknown sectors
-    return `X${String(existingBedNumbers.length + 1).padStart(2, '0')}`;
-  }
-
-  // Count how many regular beds (with the sector prefix) exist
   const regularBedNumbers = existingBedNumbers
-    .filter(b => b.startsWith(config.prefix))
-    .map(b => parseInt(b.substring(config.prefix.length), 10))
+    .filter(b => b.startsWith(prefix) && !b.startsWith('EXTRA'))
+    .map(b => parseInt(b.substring(prefix.length), 10))
     .filter(n => !isNaN(n));
 
-  const regularCount = regularBedNumbers.length;
-
-  if (regularCount < config.maxRegularBeds) {
-    // Assign next regular bed number
-    const nextRegular = regularCount > 0 ? Math.max(...regularBedNumbers) + 1 : 1;
-    // Ensure we don't exceed max (fill gaps by using count+1 if max is already beyond)
-    const bedNum = Math.min(nextRegular, config.maxRegularBeds);
-    // Actually, find the first available slot
-    for (let i = 1; i <= config.maxRegularBeds; i++) {
-      if (!regularBedNumbers.includes(i)) {
-        return `${config.prefix}${String(i).padStart(2, '0')}`;
-      }
+  for (let i = 1; i <= maxRegularBeds; i++) {
+    if (!regularBedNumbers.includes(i)) {
+      return `${prefix}${String(i).padStart(2, '0')}`;
     }
-    // Shouldn't reach here, but fallback
-    return `${config.prefix}${String(config.maxRegularBeds).padStart(2, '0')}`;
   }
+
 
   // All regular beds occupied → assign EXTRA bed
   const extraBedNumbers = existingBedNumbers

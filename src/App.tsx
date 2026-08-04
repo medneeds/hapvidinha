@@ -36,6 +36,7 @@ import UserManagementPage from "./pages/UserManagementPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import AdminStatesPage from "./pages/AdminStatesPage";
 import AdminUnitsPage from "./pages/AdminUnitsPage";
+import AdminBedsPage from "./pages/AdminBedsPage";
 import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
 
 
@@ -304,6 +305,15 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin/beds"
+          element={
+            <ProtectedRoute>
+              <AdminBedsPage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/admin/coordinators"
           element={

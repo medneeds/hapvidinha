@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { SECTOR_BED_CONFIG, getNextBedNumber, isExtraBed, formatBedDisplay } from "@/utils/bedNaming";
+import { getFixedBedNumbers } from "@/utils/bedCapacityStore";
 
 export type BedSlot = {
   bed_number: string;
@@ -98,12 +99,10 @@ export function BedSelectionDialog({
 
       const map = new Map<string, BedSlot>();
       // 1) Generate fixed regular slots (V01..Vxx, A01..Axx, Z01..Zxx)
-      if (config && Number.isFinite(config.maxRegularBeds)) {
-        for (let i = 1; i <= config.maxRegularBeds; i++) {
-          const bn = `${config.prefix}${String(i).padStart(2, "0")}`;
-          map.set(bn, { bed_number: bn, status: "vacant" });
-        }
-      }
+      getFixedBedNumbers(currentDepartment, sector).forEach((bn) => {
+        map.set(bn, { bed_number: bn, status: "vacant" });
+      });
+
       // 2) Overlay actual data (occupied / vacant placeholder)
       existingBeds.forEach((b) => {
         map.set(b.bed_number, {
