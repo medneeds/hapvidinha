@@ -1,11 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
 import { vacantPatientSlotPayload } from "@/utils/patientSlotPayload";
+import { isWithinFixedRange } from "@/utils/bedCapacityStore";
 
 /**
  * Returns true if the given (department, sector, bed_number) corresponds to a
- * FIXED-capacity slot that must NEVER be deleted (only vacated):
- *  - UTI: U01–U10 in sectors blue/yellow
- *  - Urgência observation: V01–V07 (red), A01–A06 (yellow), Z01–Z06 (blue)
+ * FIXED-capacity slot that must NEVER be deleted (only vacated).
+ * The quantity per sector is configured in the admin panel
+ * (table `sector_bed_capacities`), with historical defaults as fallback.
  */
 export function isFixedBed(
   department: string | null | undefined,
@@ -13,14 +14,10 @@ export function isFixedBed(
   bedNumber: string | null | undefined,
 ): boolean {
   if (!sector || !bedNumber) return false;
-  if (department === "UTI") {
-    return (sector === "blue" || sector === "yellow") && /^U(0[1-9]|10)$/.test(bedNumber);
-  }
-  if (sector === "red") return /^V0[1-7]$/.test(bedNumber);
-  if (sector === "yellow") return /^A0[1-6]$/.test(bedNumber);
-  if (sector === "blue") return /^Z0[1-6]$/.test(bedNumber);
-  return false;
+  if (department === "UTI" && sector !== "blue" && sector !== "yellow") return false;
+  return isWithinFixedRange(department, sector, bedNumber);
 }
+
 
 /**
  * After a successful Alta/Óbito/Transferência, free the bed:
