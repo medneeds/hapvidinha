@@ -5,6 +5,9 @@
  * Extra beds (beyond capacity) follow: EXTRA + NUMBER (e.g., EXTRA1, EXTRA2)
  */
 
+import { getBedPrefix, getFixedBedCount } from '@/utils/bedCapacityStore';
+
+
 export interface SectorBedConfig {
   prefix: string;
   maxRegularBeds: number;
