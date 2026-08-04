@@ -7,6 +7,7 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatBirthDateDisplay, birthDateToISO } from "@/utils/calculateDetailedAge";
 import { vacantPatientSlotPayload } from "@/utils/patientSlotPayload";
+import { setCapacityRows, getFixedBedNumbers } from "@/utils/bedCapacityStore";
 
 const UTI_FIXED_BEDS = Array.from({ length: 10 }, (_, index) => `U${String(index + 1).padStart(2, '0')}`);
 const isFixedUtiBed = (sector?: string, bedNumber?: string) =>
