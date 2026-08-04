@@ -11,7 +11,8 @@ import { setCapacityRows, getFixedBedNumbers } from "@/utils/bedCapacityStore";
 
 const UTI_FIXED_BEDS = Array.from({ length: 10 }, (_, index) => `U${String(index + 1).padStart(2, '0')}`);
 const isFixedUtiBed = (sector?: string, bedNumber?: string) =>
-  (sector === 'blue' || sector === 'yellow') && !!bedNumber && /^U(0[1-9]|10)$/.test(bedNumber);
+  (sector === 'blue' || sector === 'yellow') && !!bedNumber && isWithinFixedRange('UTI', sector, bedNumber);
+
 
 export function usePatients(department?: Department) {
   const [patients, setPatients] = useState<Patient[]>([]);
