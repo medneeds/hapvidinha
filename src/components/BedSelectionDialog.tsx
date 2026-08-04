@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { SECTOR_BED_CONFIG, getNextBedNumber, isExtraBed, formatBedDisplay } from "@/utils/bedNaming";
+import { getFixedBedNumbers } from "@/utils/bedCapacityStore";
 
 export type BedSlot = {
   bed_number: string;
