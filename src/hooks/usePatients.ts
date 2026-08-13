@@ -794,15 +794,15 @@ export function usePatients(department?: Department) {
         }
       )
       .subscribe((status) => {
-        console.log('[usePatients] realtime status:', status);
         // On (re)subscription, resync to recover any events missed during connection gap
         if (status === 'SUBSCRIBED') {
-          fetchPatients();
-        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          throttledFetch();
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
           // Best-effort resync when the socket hiccups
-          fetchPatients();
+          throttledFetch();
         }
       });
+
 
     return () => {
       window.removeEventListener('focus', onFocus);
