@@ -145,18 +145,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (username: string, password: string) => {
     // Converter username para formato de email interno para Supabase
     const internalEmail = `${username.toLowerCase()}@sistema.local`;
-    
-    const { error } = await supabase.auth.signInWithPassword({
-      email: internalEmail,
-      password,
-    });
-    
-    if (!error) {
-      navigate("/");
+
+    // Tentativas com backoff para sobreviver ao rate limit (HTTP 429) do
+    // endpoint de token — comum quando várias máquinas do hospital
+    // compartilham o mesmo IP público.
+    const delays = [1200, 2500, 4000];
+    let lastError: any = null;
+
+    for (let attempt = 0; attempt <= delays.length; attempt++) {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: internalEmail,
+        password,
+      });
+
+      if (!error) {
+        navigate("/");
+        return { error: null };
+      }
+
+      lastError = error;
+      const isRateLimited =
+        (error as any)?.status === 429 ||
+        /rate limit/i.test(error.message || "");
+
+      if (!isRateLimited || attempt === delays.length) break;
+      await new Promise((r) => setTimeout(r, delays[attempt]));
     }
-    
-    return { error };
+
+    if (
+      (lastError as any)?.status === 429 ||
+      /rate limit/i.test(lastError?.message || "")
+    ) {
+      lastError = {
+        ...lastError,
+        message:
+          "MUITAS TENTATIVAS DE ACESSO NESTA REDE. AGUARDE ALGUNS SEGUNDOS E TENTE NOVAMENTE.",
+      };
+    }
+
+    // Diagnóstico: relógio do computador desajustado faz o navegador
+    // considerar o token sempre expirado e entrar em loop de renovação
+    // (o que gera o rate limit e impede o acesso).
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/health`, {
+        method: "GET",
+        headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+      });
+      const serverDate = res.headers.get("date");
+      if (serverDate) {
+        const skewSec = Math.abs(Date.now() - new Date(serverDate).getTime()) / 1000;
+        if (skewSec > 120) {
+          lastError = {
+            ...lastError,
+            message:
+              "O RELÓGIO DESTE COMPUTADOR ESTÁ DESAJUSTADO. CORRIJA A DATA/HORA DO SISTEMA PARA CONSEGUIR ACESSAR.",
+          };
+        }
+      }
+    } catch {
+      /* diagnóstico opcional */
+    }
+
+    return { error: lastError };
   };
+
+
 
   const signUp = async (username: string, password: string, fullName: string, role: "admin" | "medico" | "porta" | "visitante" | "prescritor" | "uti" | "recepcao" | "enfermagem" = "medico") => {
     const redirectUrl = `${window.location.origin}/`;

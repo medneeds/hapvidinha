@@ -707,20 +707,32 @@ export function usePatients(department?: Department) {
   useEffect(() => {
     if (!currentHospital || !currentState) return;
 
+    // Throttle: evita rajadas de requisições (foco/visibilidade/reconexão)
+    // que disparam renovações de sessão em excesso e levam a HTTP 429.
+    let lastFetchAt = 0;
+    const throttledFetch = () => {
+      const now = Date.now();
+      if (now - lastFetchAt < 8000) return;
+      lastFetchAt = now;
+      fetchPatients();
+    };
+
+    lastFetchAt = Date.now();
     fetchPatients();
 
     // Refetch on tab focus / visibility change to catch any missed events
-    const onFocus = () => { fetchPatients(); };
-    const onVisibility = () => { if (document.visibilityState === 'visible') fetchPatients(); };
-    const onOnline = () => { fetchPatients(); };
+    const onFocus = () => { throttledFetch(); };
+    const onVisibility = () => { if (document.visibilityState === 'visible') throttledFetch(); };
+    const onOnline = () => { throttledFetch(); };
     window.addEventListener('focus', onFocus);
     document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('online', onOnline);
 
     // Periodic safety refetch (every 45s) — cheap insurance vs missed realtime events
     const pollId = window.setInterval(() => {
-      if (document.visibilityState === 'visible') fetchPatients();
+      if (document.visibilityState === 'visible') throttledFetch();
     }, 45000);
+
 
     // Subscribe to realtime changes (filter also by state_id to avoid cross-state noise)
     const channelName = `patients-changes-${currentHospital.id}-${currentState.id}-${department || 'all'}-${Math.random().toString(36).slice(2, 8)}`;
@@ -782,15 +794,15 @@ export function usePatients(department?: Department) {
         }
       )
       .subscribe((status) => {
-        console.log('[usePatients] realtime status:', status);
         // On (re)subscription, resync to recover any events missed during connection gap
         if (status === 'SUBSCRIBED') {
-          fetchPatients();
-        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          throttledFetch();
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
           // Best-effort resync when the socket hiccups
-          fetchPatients();
+          throttledFetch();
         }
       });
+
 
     return () => {
       window.removeEventListener('focus', onFocus);
