@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -28,44 +28,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<UserStatus>(null);
   const [allowedDepartments, setAllowedDepartments] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const loadedUserIdRef = useRef<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Defer role and departments fetching with setTimeout to avoid deadlock
-        if (session?.user) {
-          setTimeout(() => {
-            fetchUserRoleAndDepartments(session.user.id);
-          }, 0);
-        } else {
-          setRole(null);
-          setStatus(null);
-          setAllowedDepartments([]);
-          setLoading(false);
-        }
-      }
-    );
+    let active = true;
+    let subscription: { unsubscribe: () => void } | null = null;
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        setTimeout(() => {
-          fetchUserRoleAndDepartments(session.user.id);
-        }, 0);
+    const applySession = (nextSession: Session | null) => {
+      if (!active) return;
+
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+
+      if (nextSession?.user) {
+        if (loadedUserIdRef.current !== nextSession.user.id) {
+          loadedUserIdRef.current = nextSession.user.id;
+          void fetchUserRoleAndDepartments(nextSession.user.id);
+        }
       } else {
+        loadedUserIdRef.current = null;
+        setRole(null);
+        setStatus(null);
+        setAllowedDepartments([]);
         setLoading(false);
       }
-    });
+    };
 
-    return () => subscription.unsubscribe();
+    const initializeAuth = async () => {
+      // A aplicação possui timeout próprio de 30 minutos. Manter o renovador
+      // automático ativo criou uma tempestade de /token em computadores/tabs
+      // compartilhando a sessão, revogando tokens rotacionados e gerando 429.
+      await supabase.auth.initialize();
+      await supabase.auth.stopAutoRefresh();
+
+      if (!active) return;
+
+      const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
+        (_event, nextSession) => applySession(nextSession)
+      );
+      subscription = authSubscription;
+
+      const { data: { session: existingSession }, error } = await supabase.auth.getSession();
+      if (!active) return;
+
+      if (error) {
+        await supabase.auth.signOut({ scope: "local" });
+        applySession(null);
+        return;
+      }
+
+      applySession(existingSession);
+    };
+
+    void initializeAuth();
+
+    return () => {
+      active = false;
+      subscription?.unsubscribe();
+    };
   }, []);
 
   const fetchUserRoleAndDepartments = async (userId: string) => {
@@ -146,31 +167,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Converter username para formato de email interno para Supabase
     const internalEmail = `${username.toLowerCase()}@sistema.local`;
 
-    // Tentativas com backoff para sobreviver ao rate limit (HTTP 429) do
-    // endpoint de token — comum quando várias máquinas do hospital
-    // compartilham o mesmo IP público.
-    const delays = [1200, 2500, 4000];
-    let lastError: any = null;
+    // Uma única tentativa evita ampliar o bloqueio por IP quando a rede do
+    // hospital já está próxima do limite de autenticação.
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: internalEmail,
+      password,
+    });
 
-    for (let attempt = 0; attempt <= delays.length; attempt++) {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: internalEmail,
-        password,
-      });
-
-      if (!error) {
-        navigate("/");
-        return { error: null };
-      }
-
-      lastError = error;
-      const isRateLimited =
-        (error as any)?.status === 429 ||
-        /rate limit/i.test(error.message || "");
-
-      if (!isRateLimited || attempt === delays.length) break;
-      await new Promise((r) => setTimeout(r, delays[attempt]));
+    if (!signInError) {
+      await supabase.auth.stopAutoRefresh();
+      navigate("/");
+      return { error: null };
     }
+
+    let lastError: any = signInError;
 
     if (
       (lastError as any)?.status === 429 ||
