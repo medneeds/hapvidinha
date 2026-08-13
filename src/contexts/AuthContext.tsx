@@ -183,8 +183,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
     }
 
+    // Diagnóstico: relógio do computador desajustado faz o navegador
+    // considerar o token sempre expirado e entrar em loop de renovação
+    // (o que gera o rate limit e impede o acesso).
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/health`, {
+        method: "GET",
+        headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+      });
+      const serverDate = res.headers.get("date");
+      if (serverDate) {
+        const skewSec = Math.abs(Date.now() - new Date(serverDate).getTime()) / 1000;
+        if (skewSec > 120) {
+          lastError = {
+            ...lastError,
+            message:
+              "O RELÓGIO DESTE COMPUTADOR ESTÁ DESAJUSTADO. CORRIJA A DATA/HORA DO SISTEMA PARA CONSEGUIR ACESSAR.",
+          };
+        }
+      }
+    } catch {
+      /* diagnóstico opcional */
+    }
+
     return { error: lastError };
   };
+
 
 
   const signUp = async (username: string, password: string, fullName: string, role: "admin" | "medico" | "porta" | "visitante" | "prescritor" | "uti" | "recepcao" | "enfermagem" = "medico") => {
