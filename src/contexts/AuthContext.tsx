@@ -145,18 +145,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (username: string, password: string) => {
     // Converter username para formato de email interno para Supabase
     const internalEmail = `${username.toLowerCase()}@sistema.local`;
-    
-    const { error } = await supabase.auth.signInWithPassword({
-      email: internalEmail,
-      password,
-    });
-    
-    if (!error) {
-      navigate("/");
+
+    // Tentativas com backoff para sobreviver ao rate limit (HTTP 429) do
+    // endpoint de token — comum quando várias máquinas do hospital
+    // compartilham o mesmo IP público.
+    const delays = [1200, 2500, 4000];
+    let lastError: any = null;
+
+    for (let attempt = 0; attempt <= delays.length; attempt++) {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: internalEmail,
+        password,
+      });
+
+      if (!error) {
+        navigate("/");
+        return { error: null };
+      }
+
+      lastError = error;
+      const isRateLimited =
+        (error as any)?.status === 429 ||
+        /rate limit/i.test(error.message || "");
+
+      if (!isRateLimited || attempt === delays.length) break;
+      await new Promise((r) => setTimeout(r, delays[attempt]));
     }
-    
-    return { error };
+
+    if (
+      (lastError as any)?.status === 429 ||
+      /rate limit/i.test(lastError?.message || "")
+    ) {
+      lastError = {
+        ...lastError,
+        message:
+          "MUITAS TENTATIVAS DE ACESSO NESTA REDE. AGUARDE ALGUNS SEGUNDOS E TENTE NOVAMENTE.",
+      };
+    }
+
+    return { error: lastError };
   };
+
 
   const signUp = async (username: string, password: string, fullName: string, role: "admin" | "medico" | "porta" | "visitante" | "prescritor" | "uti" | "recepcao" | "enfermagem" = "medico") => {
     const redirectUrl = `${window.location.origin}/`;
