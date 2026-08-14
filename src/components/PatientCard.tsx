@@ -3484,13 +3484,14 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
               <div className="flex flex-col md:col-span-3 relative">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
-                {FEATURE_FLAGS.EXAMINUS_AI_ENABLED && (
+                {(FEATURE_FLAGS.EXAMINUS_AI_ENABLED || FEATURE_FLAGS.EXAMINUS_AI_ASSIST_ENABLED) && (
                   <Button
                     size="icon"
                     variant="ghost"
                     onClick={() => setExamCurvesDialogOpen(true)}
                     className="h-4 w-4 p-0.5 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110 hover:shadow-lg print:hidden group"
-                    title="Adicionar Curva de Exames"
+                    title="Examinus IA — apoio para exames"
+
                     style={{ color: sectorColorMap[patient.sector] }}
                   >
                     <TrendingUp
