@@ -5236,6 +5236,25 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         open={examCurvesDialogOpen}
         onOpenChange={setExamCurvesDialogOpen}
         patientName={patient.name}
+        patient={patient}
+        onAddExams={async (exams: string[]) => {
+          if (!exams || exams.length === 0) return;
+          const updatedExams = [...(patient.relevantExams || []), ...exams];
+          try {
+            const { error } = await supabase
+              .from('patients')
+              .update({
+                relevant_exams: updatedExams.join('\n'),
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', patient.id);
+            if (error) throw error;
+            onUpdate({ ...patient, relevantExams: updatedExams });
+          } catch (e) {
+            toast.error('Não foi possível adicionar os exames');
+          }
+        }}
+
         onAddCurves={async (curves: string[]) => {
           if (!curves || curves.length === 0) return;
 
