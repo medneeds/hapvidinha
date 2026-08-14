@@ -1,107 +1,35 @@
-# Prioridades UTI — UE Adulto
+# Examinus IA — Sugestão e Análise de Exames
 
-Feature que consolida em um único lugar os pacientes candidatos a leito de UTI, permitindo priorização por ordem (drag-and-drop), persistência até movimentação, e impressão de documento oficial para entrega ao setor de liberação de leito.
+Nova aba de inteligência artificial dentro do Examinus (diálogo aberto pelo ícone de tendência no card do paciente), voltada a apoiar a decisão sobre exames complementares.
 
-## 1. Modelo de dados (Lovable Cloud)
+## O que o médico poderá fazer
 
-Nova tabela `uti_priorities` com escopo por hospital/estado (mesmo padrão das demais):
+Um campo único de comando, com 4 modos rápidos:
 
-| Campo | Tipo | Observação |
-|---|---|---|
-| id | uuid PK | |
-| patient_id | uuid FK → patients | UNIQUE por hospital+estado (paciente não duplica na fila) |
-| hospital_unit_id | uuid | escopo |
-| state_id | uuid | escopo |
-| position | integer | ordem de prioridade (1 = mais prioritário) |
-| notes | text | observação opcional do médico |
-| added_by | uuid | quem adicionou |
-| added_by_email | text | snapshot para auditoria |
-| created_at / updated_at | timestamptz | |
+1. **Sugerir exames** — comando curto ("marcadores cancerígenos", "painel de tireoide") e a IA devolve a lista de exames com descrição do que cada um avalia.
+2. **Caso clínico → exames** — cola-se ou usa-se o caso do paciente; a IA separa exames **obrigatórios**, **recomendados** e **complementares**, com justificativa curta.
+3. **Contraindicações** — informa-se um exame ou procedimento; a IA retorna contraindicações absolutas/relativas, cuidados de preparo e alertas (função renal, gestação, alergia a contraste, marca-passo etc.).
+4. **Entender exame/procedimento** — explicação objetiva do exame: o que é, indicação, preparo, tempo, riscos e interpretação básica.
 
-Regras automáticas:
-- Trigger remove o paciente da fila quando ele é movimentado (discharge/óbito/transferência) ou quando o `patients.internmentStatus` deixa de ser um status UTI. Isso garante o "persiste até movimentação".
-- RLS igual às tabelas de fluxo clínico: leitura/escrita por usuários do hospital/estado; admin e médicos com departamento URGÊNCIA E EMERGÊNCIA ADULTO podem gerenciar.
+## Contexto automático do paciente
 
-## 2. UI
+Ao abrir pelo card, a consulta já leva idade, sexo, setor, diagnósticos/hipóteses, antecedentes e exames já lançados. O **nome do paciente não é enviado** ao modelo (LGPD) — o restante do quadro clínico vai automaticamente e fica visível na tela antes do envio, com opção de desligar o contexto em um clique.
 
-**Ponto de entrada:** botão **"Prioridades UTI"** no header da página UE Adulto (`src/pages/Index.tsx`), ao lado das ações existentes, com badge mostrando quantos pacientes estão na fila.
+## O que fazer com a resposta
 
-**Dialog `UtiPrioritiesDialog`** com duas áreas:
+- **Copiar** o texto.
+- **Inserir nos exames do paciente**: cada exame sugerido vem com uma caixa de seleção; os marcados entram direto na lista de exames do card (em MAIÚSCULAS, conforme o padrão do sistema).
+- **Exportar PDF** no layout de impressão do HapMap (tema claro, margens padrão, cabeçalho institucional).
+- **Histórico**: cada consulta fica salva por paciente/unidade, com data e autor, consultável na própria aba.
 
-```text
-┌─────────────────────────────────────────────────┐
-│  Prioridades UTI              [Imprimir] [X]    │
-├──────────────────────┬──────────────────────────┤
-│ Adicionar paciente   │  Fila priorizada         │
-│                      │                          │
-│ [busca...]           │  1. ≡ Paciente A · V01   │
-│                      │  2. ≡ Paciente B · A03   │
-│ Candidatos (IR_PARA  │  3. ≡ Paciente C · Z02   │
-│ _UTI):               │       ...                │
-│  □ Paciente X        │                          │
-│  □ Paciente Y        │  (arraste para reordenar)│
-│  [+ Adicionar]       │                          │
-└──────────────────────┴──────────────────────────┘
-```
+## Aviso clínico
 
-- **Coluna esquerda:** lista de pacientes da UE Adulto com `internmentStatus` de UTI que ainda não estão na fila.
-- **Coluna direita:** fila atual, drag-and-drop (usando `@dnd-kit/core` + `@dnd-kit/sortable`, já presente no projeto se houver — senão instalar). Cada linha mostra ordem, nome, leito/setor, botão remover.
-- Ações: **Imprimir** gera o PDF consolidado.
+Rodapé fixo e no PDF: conteúdo de apoio à decisão, não substitui o julgamento médico. Somente médicos e administradores veem a aba.
 
-## 3. PDF consolidado
+## Detalhes técnicos
 
-Novo componente `PrintUtiPrioritiesLayout.tsx` + dialog de preview (mesmo padrão do `PrintPatientPreviewDialog`).
-
-Estrutura A4 retrato:
-
-```text
-┌────────────────────────────────────────────────┐
-│  [LOGO HAPVIDA]        PRIORIDADES UTI         │
-│                        UE Adulto · Hospital X  │
-│                        09/07/2026 14:32        │
-├────────────────────────────────────────────────┤
-│  #  PACIENTE            IDADE  LEITO  DIAGNÓSTICOS
-│  1  MARIA DA SILVA      67a    V01    ICC descompensada; IRA
-│  2  JOÃO PEREIRA        54a    A03    Sepse pulmonar
-│  3  ...                                          
-├────────────────────────────────────────────────┤
-│  Médico responsável: _______________________   │
-│  CRM: __________  Assinatura: _____________    │
-│                                                │
-│  Documento gerado em 09/07/2026 · Confidencial │
-└────────────────────────────────────────────────┘
-```
-
-- Tema claro forçado, fundo branco puro (regra de impressão do projeto).
-- Ordem = posição na fila.
-- Assinatura manual do médico responsável (linha para preencher à caneta) — como pedido.
-
-## 4. Arquivos previstos
-
-**Novos**
-- `supabase/migrations/<timestamp>_uti_priorities.sql` — tabela, GRANTs, RLS, trigger de limpeza.
-- `src/hooks/useUtiPriorities.ts` — query, add, remove, reorder (mutations com invalidação).
-- `src/components/UtiPrioritiesDialog.tsx` — dialog principal.
-- `src/components/PrintUtiPrioritiesLayout.tsx` — layout do PDF.
-- `src/components/PrintUtiPrioritiesPreviewDialog.tsx` — preview + trigger de impressão.
-
-**Editados**
-- `src/pages/Index.tsx` — botão no header + montagem do dialog.
-- `src/integrations/supabase/types.ts` — regenerado automaticamente após a migração.
-
-## 5. Permissões
-
-Mantém as regras atuais (memória `access-control-architecture`):
-- Recepção/Enfermagem: leitura apenas.
-- Médico/Porta/Líder/Admin com acesso à UE Adulto: podem adicionar, remover, reordenar e imprimir.
-
-## 6. Ordem de execução
-
-1. Migração da tabela + trigger (aguarda aprovação).
-2. Hook `useUtiPriorities`.
-3. Dialog + drag-and-drop.
-4. Layout de impressão + preview.
-5. Botão no header do Index.
-6. Verificação visual via Playwright (adicionar 2 pacientes fake, reordenar, abrir preview).
-
-Confirma esse desenho para eu iniciar pela migração?
+- **Backend**: nova edge function `examinus-ai` (a entrada `examinus-chat` do config está órfã e será substituída). Usa AI SDK + Lovable AI Gateway com modelo Gemini, resposta **em streaming** para o texto aparecer progressivamente. Valida JWT em código, exige papel `medico`/`admin`, valida entrada com Zod e trata 429/402 com mensagem clara na interface.
+- **Prompt**: system prompt clínico em português, orientado a medicina de emergência/hospitalar, com formato de saída padronizado por modo (lista de exames com nome, sigla e justificativa) para permitir a seleção e inserção no card.
+- **Banco**: nova tabela `examinus_ai_queries` (unidade, departamento, paciente opcional, modo, comando, resposta, autor, data) com GRANTs e RLS — leitura para equipe clínica da mesma unidade, escrita pelo próprio autor, sem exclusão.
+- **Front**: `ExamCurvesDialog` passa a ter abas (`Curvas` / `IA`); novo componente `ExaminusAiPanel.tsx` com o composer, modos, streaming, seleção de exames e histórico; novo `PrintExaminusAiDialog.tsx` reaproveitando os padrões de impressão existentes.
+- **Flag**: adiciona-se `EXAMINUS_AI_ASSIST_ENABLED: true` mantendo `EXAMINUS_AI_ENABLED` (curvas) desligada; o ícone no card passa a aparecer quando qualquer uma das duas estiver ativa, abrindo direto na aba IA.
