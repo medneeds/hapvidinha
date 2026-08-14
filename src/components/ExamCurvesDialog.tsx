@@ -331,6 +331,8 @@ export function ExamCurvesDialog({
             Adicionar {selectedExams.length > 0 && `(${selectedExams.length})`}
           </Button>
         </DialogFooter>
+        )}
+
       </DialogContent>
     </Dialog>
   );
