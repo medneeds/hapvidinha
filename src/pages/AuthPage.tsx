@@ -72,10 +72,12 @@ export default function AuthPage() {
     : [];
 
   useEffect(() => {
-    if (user) {
+    // Durante um login iniciado nesta tela, a animação conclui antes da
+    // navegação. Este efeito permanece apenas para quem abre /auth já logado.
+    if (user && !loading && !showLoadingScreen) {
       navigate("/");
     }
-  }, [user, navigate]);
+  }, [user, loading, showLoadingScreen, navigate]);
 
   // Fixar Estado (Maranhão) e Unidade (Hospital Guarás) automaticamente
   useEffect(() => {
