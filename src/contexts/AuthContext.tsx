@@ -60,7 +60,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // automático ativo criou uma tempestade de /token em computadores/tabs
       // compartilhando a sessão, revogando tokens rotacionados e gerando 429.
       await supabase.auth.initialize();
-      await supabase.auth.stopAutoRefresh();
 
       if (!active) return;
 
@@ -175,7 +174,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (!signInError) {
-      await supabase.auth.stopAutoRefresh();
       navigate("/");
       return { error: null };
     }
