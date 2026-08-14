@@ -29,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [allowedDepartments, setAllowedDepartments] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const loadedUserIdRef = useRef<string | null>(null);
+  const signInPromiseRef = useRef<ReturnType<typeof supabase.auth.signInWithPassword> | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,13 +57,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const initializeAuth = async () => {
-      // A aplicação possui timeout próprio de 30 minutos. Manter o renovador
-      // automático ativo criou uma tempestade de /token em computadores/tabs
-      // compartilhando a sessão, revogando tokens rotacionados e gerando 429.
-      await supabase.auth.initialize();
-
-      if (!active) return;
-
       const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
         (_event, nextSession) => applySession(nextSession)
       );
@@ -168,9 +162,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Uma única tentativa evita ampliar o bloqueio por IP quando a rede do
     // hospital já está próxima do limite de autenticação.
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: internalEmail,
-      password,
+    if (!signInPromiseRef.current) {
+      signInPromiseRef.current = supabase.auth.signInWithPassword({
+        email: internalEmail,
+        password,
+      });
+    }
+
+    const { error: signInError } = await signInPromiseRef.current.finally(() => {
+      signInPromiseRef.current = null;
     });
 
     if (!signInError) {
