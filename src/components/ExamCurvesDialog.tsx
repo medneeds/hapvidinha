@@ -216,7 +216,9 @@ export function ExamCurvesDialog({
 
 
         {/* Conteúdo com scroll */}
+        {activeTab === 'curvas' && (
         <ScrollArea className="flex-1 px-6">
+
           <div className="py-6 space-y-4">
             {filteredExams.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
