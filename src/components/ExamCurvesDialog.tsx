@@ -313,9 +313,12 @@ export function ExamCurvesDialog({
             )}
           </div>
         </ScrollArea>
+        )}
 
         {/* Footer com botões */}
+        {activeTab === 'curvas' && (
         <DialogFooter className="px-6 py-4 border-t bg-muted/30 gap-2">
+
           <Button variant="outline" onClick={handleCancel} className="flex-1">
             Cancelar
           </Button>
