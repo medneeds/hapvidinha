@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/app-client";
 import { useNavigate } from "react-router-dom";
 
 type UserRole = "admin" | "medico" | "porta" | "visitante" | "prescritor" | "uti" | "recepcao" | "enfermagem" | "fisioterapia" | null;
@@ -169,12 +169,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     }
 
-    const { error: signInError } = await signInPromiseRef.current.finally(() => {
+    const { data: signInData, error: signInError } = await signInPromiseRef.current.finally(() => {
       signInPromiseRef.current = null;
     });
 
-    if (!signInError) {
-      navigate("/");
+    if (!signInError && signInData.session) {
+      // Aplicação imediata evita depender do tempo do evento assíncrono antes
+      // de a rota protegida ser montada.
+      setSession(signInData.session);
+      setUser(signInData.user);
+      loadedUserIdRef.current = signInData.user.id;
+      await fetchUserRoleAndDepartments(signInData.user.id);
       return { error: null };
     }
 
@@ -244,7 +249,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Logout local: um timeout ou saída em um computador não pode revogar as
+    // sessões dos demais postos do hospital.
+    await supabase.auth.signOut({ scope: "local" });
     setUser(null);
     setSession(null);
     setRole(null);

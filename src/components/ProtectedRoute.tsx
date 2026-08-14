@@ -5,7 +5,7 @@ import { LoadingScreen } from "./LoadingScreen";
 import { SessionTimeoutProvider } from "./SessionTimeoutProvider";
 import { PendingApprovalScreen } from "./PendingApprovalScreen";
 import { ConsentTermsDialog, CURRENT_TERMS_VERSION } from "./ConsentTermsDialog";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/app-client";
 import { usePatientsPrefetch } from "@/contexts/PatientsPrefetchContext";
 
 // Logins genéricos que não precisam de aprovação (período de transição)
