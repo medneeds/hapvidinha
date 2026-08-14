@@ -981,59 +981,6 @@ export type Database = {
           },
         ]
       }
-      examinus_ai_queries: {
-        Row: {
-          clinical_context: string | null
-          created_at: string
-          created_by: string
-          created_by_name: string | null
-          department: string | null
-          hospital_unit_id: string | null
-          id: string
-          mode: string
-          patient_bed: string | null
-          patient_id: string | null
-          prompt: string
-          response: string
-        }
-        Insert: {
-          clinical_context?: string | null
-          created_at?: string
-          created_by: string
-          created_by_name?: string | null
-          department?: string | null
-          hospital_unit_id?: string | null
-          id?: string
-          mode: string
-          patient_bed?: string | null
-          patient_id?: string | null
-          prompt: string
-          response: string
-        }
-        Update: {
-          clinical_context?: string | null
-          created_at?: string
-          created_by?: string
-          created_by_name?: string | null
-          department?: string | null
-          hospital_unit_id?: string | null
-          id?: string
-          mode?: string
-          patient_bed?: string | null
-          patient_id?: string | null
-          prompt?: string
-          response?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "examinus_ai_queries_hospital_unit_id_fkey"
-            columns: ["hospital_unit_id"]
-            isOneToOne: false
-            referencedRelation: "hospital_units"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       hospital_files: {
         Row: {
           created_at: string

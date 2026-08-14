@@ -7,19 +7,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, TrendingUp, Search, X, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { FEATURE_FLAGS } from '@/config/featureFlags';
-import { ExaminusAiPanel } from './ExaminusAiPanel';
-import { Patient } from '@/types/patient';
 
 interface ExamCurvesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddCurves: (curves: string[]) => void;
   patientName?: string;
-  patient?: Patient;
-  onAddExams?: (exams: string[]) => void;
 }
-
 
 interface ExamTemplate {
   id: string;
@@ -51,16 +45,10 @@ export function ExamCurvesDialog({
   onOpenChange,
   onAddCurves,
   patientName,
-  patient,
-  onAddExams,
 }: ExamCurvesDialogProps) {
-  const curvesEnabled = FEATURE_FLAGS.EXAMINUS_AI_ENABLED;
-  const aiEnabled = FEATURE_FLAGS.EXAMINUS_AI_ASSIST_ENABLED;
-  const [activeTab, setActiveTab] = useState<'curvas' | 'ia'>(curvesEnabled ? 'curvas' : 'ia');
   const [selectedExams, setSelectedExams] = useState<string[]>([]);
   const [examValues, setExamValues] = useState<ExamValues>({});
   const [searchTerm, setSearchTerm] = useState('');
-
 
   const handleToggleExam = (examId: string) => {
     setSelectedExams((prev) => {
@@ -141,22 +129,16 @@ export function ExamCurvesDialog({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
-                {activeTab === 'ia' ? (
-                  <Sparkles className="h-5 w-5 text-primary-foreground" />
-                ) : (
-                  <TrendingUp className="h-5 w-5 text-primary-foreground" />
-                )}
+                <TrendingUp className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <DialogTitle className="text-lg font-semibold">
-                  {activeTab === 'ia' ? 'Examinus IA' : 'Curvas de Exames'}
-                </DialogTitle>
+                <DialogTitle className="text-lg font-semibold">Curvas de Exames</DialogTitle>
                 {patientName && (
                   <p className="text-xs text-muted-foreground mt-0.5">{patientName}</p>
                 )}
               </div>
             </div>
-            {activeTab === 'curvas' && selectedExams.length > 0 && (
+            {selectedExams.length > 0 && (
               <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full animate-in fade-in zoom-in duration-300">
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
                 <span className="text-xs font-medium text-primary">
@@ -166,28 +148,7 @@ export function ExamCurvesDialog({
             )}
           </div>
 
-          {/* Abas */}
-          {curvesEnabled && aiEnabled && (
-            <div className="mt-4 inline-flex rounded-lg border bg-background p-0.5 self-start">
-              {(['curvas', 'ia'] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={cn(
-                    'px-4 py-1.5 rounded-md text-xs font-medium transition-all',
-                    activeTab === tab
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
-                  )}
-                >
-                  {tab === 'curvas' ? 'Curvas' : 'IA'}
-                </button>
-              ))}
-            </div>
-          )}
-
           {/* Barra de pesquisa */}
-          {activeTab === 'curvas' && (
           <div className="relative mt-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -207,18 +168,10 @@ export function ExamCurvesDialog({
               </Button>
             )}
           </div>
-          )}
         </DialogHeader>
 
-        {activeTab === 'ia' && (
-          <ExaminusAiPanel patient={patient} onAddExams={onAddExams} />
-        )}
-
-
         {/* Conteúdo com scroll */}
-        {activeTab === 'curvas' && (
         <ScrollArea className="flex-1 px-6">
-
           <div className="py-6 space-y-4">
             {filteredExams.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
@@ -313,12 +266,9 @@ export function ExamCurvesDialog({
             )}
           </div>
         </ScrollArea>
-        )}
 
         {/* Footer com botões */}
-        {activeTab === 'curvas' && (
         <DialogFooter className="px-6 py-4 border-t bg-muted/30 gap-2">
-
           <Button variant="outline" onClick={handleCancel} className="flex-1">
             Cancelar
           </Button>
@@ -331,8 +281,6 @@ export function ExamCurvesDialog({
             Adicionar {selectedExams.length > 0 && `(${selectedExams.length})`}
           </Button>
         </DialogFooter>
-        )}
-
       </DialogContent>
     </Dialog>
   );
