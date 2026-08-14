@@ -7,13 +7,19 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, TrendingUp, Search, X, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { FEATURE_FLAGS } from '@/config/featureFlags';
+import { ExaminusAiPanel } from './ExaminusAiPanel';
+import { Patient } from '@/types/patient';
 
 interface ExamCurvesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddCurves: (curves: string[]) => void;
   patientName?: string;
+  patient?: Patient;
+  onAddExams?: (exams: string[]) => void;
 }
+
 
 interface ExamTemplate {
   id: string;
