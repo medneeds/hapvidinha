@@ -51,10 +51,16 @@ export function ExamCurvesDialog({
   onOpenChange,
   onAddCurves,
   patientName,
+  patient,
+  onAddExams,
 }: ExamCurvesDialogProps) {
+  const curvesEnabled = FEATURE_FLAGS.EXAMINUS_AI_ENABLED;
+  const aiEnabled = FEATURE_FLAGS.EXAMINUS_AI_ASSIST_ENABLED;
+  const [activeTab, setActiveTab] = useState<'curvas' | 'ia'>(curvesEnabled ? 'curvas' : 'ia');
   const [selectedExams, setSelectedExams] = useState<string[]>([]);
   const [examValues, setExamValues] = useState<ExamValues>({});
   const [searchTerm, setSearchTerm] = useState('');
+
 
   const handleToggleExam = (examId: string) => {
     setSelectedExams((prev) => {
