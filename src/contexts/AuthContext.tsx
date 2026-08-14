@@ -177,9 +177,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Aplicação imediata evita depender do tempo do evento assíncrono antes
       // de a rota protegida ser montada.
       setSession(signInData.session);
-      setUser(signInData.user);
-      loadedUserIdRef.current = signInData.user.id;
-      await fetchUserRoleAndDepartments(signInData.user.id);
+      setUser(signInData.session.user);
+      loadedUserIdRef.current = signInData.session.user.id;
+      await fetchUserRoleAndDepartments(signInData.session.user.id);
       return { error: null };
     }
 
