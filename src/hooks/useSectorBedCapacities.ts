@@ -61,7 +61,9 @@ export function useSectorBedCapacities() {
       return false;
     }
     await fetchCapacities();
+    window.dispatchEvent(new CustomEvent("hapmap:bed-capacity-updated"));
     return true;
+
   };
 
   const getCount = (department: string, sector: string) =>
