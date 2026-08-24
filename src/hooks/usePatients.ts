@@ -838,6 +838,8 @@ export function usePatients(department?: Department) {
       window.removeEventListener('focus', onFocus);
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('online', onOnline);
+      window.removeEventListener('hapmap:bed-capacity-updated', onCapacityChanged);
+
       window.clearInterval(pollId);
       supabase.removeChannel(channel);
     };
