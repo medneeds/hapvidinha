@@ -10,6 +10,8 @@ import { DEPARTMENTS, DEPARTMENT_LABELS, Department } from "@/contexts/Departmen
 import { useHospital } from "@/contexts/HospitalContext";
 import { useSectorBedCapacities } from "@/hooks/useSectorBedCapacities";
 import { CONFIGURABLE_SECTORS, getBedPrefix, getSectorGroup, padBed } from "@/utils/bedCapacityStore";
+import { supabase } from "@/integrations/supabase/client";
+
 
 const SECTOR_LABELS: Record<string, string> = {
   red: "Sala de Cuidados Especiais (Vermelha)",
