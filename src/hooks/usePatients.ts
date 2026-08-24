@@ -750,9 +750,13 @@ export function usePatients(department?: Department) {
     const onFocus = () => { throttledFetch(); };
     const onVisibility = () => { if (document.visibilityState === 'visible') throttledFetch(); };
     const onOnline = () => { throttledFetch(); };
+    // Atualização imediata quando o quantitativo de leitos muda no painel admin
+    const onCapacityChanged = () => { lastFetchAt = Date.now(); fetchPatients(); };
     window.addEventListener('focus', onFocus);
     document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('online', onOnline);
+    window.addEventListener('hapmap:bed-capacity-updated', onCapacityChanged);
+
 
     // Periodic safety refetch (every 45s) — cheap insurance vs missed realtime events
     const pollId = window.setInterval(() => {
