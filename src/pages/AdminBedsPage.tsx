@@ -10,6 +10,8 @@ import { DEPARTMENTS, DEPARTMENT_LABELS, Department } from "@/contexts/Departmen
 import { useHospital } from "@/contexts/HospitalContext";
 import { useSectorBedCapacities } from "@/hooks/useSectorBedCapacities";
 import { CONFIGURABLE_SECTORS, getBedPrefix, getSectorGroup, padBed } from "@/utils/bedCapacityStore";
+import { supabase } from "@/integrations/supabase/client";
+
 
 const SECTOR_LABELS: Record<string, string> = {
   red: "Sala de Cuidados Especiais (Vermelha)",
@@ -43,12 +45,38 @@ export default function AdminBedsPage() {
     setSaving(null);
     if (ok) {
       toast.success("Quantitativo de leitos atualizado.");
+      // Alerta sobre leitos OCUPADOS acima do novo quantitativo (não são removidos)
+      try {
+        const prefix = getBedPrefix(dept, sector);
+        const { data } = await supabase
+          .from("patients")
+          .select("bed_number, is_vacant")
+          .eq("department", dept)
+          .eq("sector", sector)
+          .eq("is_vacant", false);
+        const blocked = (data || [])
+          .map((p: any) => p.bed_number as string)
+          .filter((bn) => {
+            if (!bn?.startsWith(prefix)) return false;
+            const n = parseInt(bn.slice(prefix.length), 10);
+            return !Number.isNaN(n) && n > value;
+          });
+        if (blocked.length > 0) {
+          toast.warning(
+            `Leitos ocupados acima do novo limite permanecem no mapa: ${blocked.sort().join(", ")}. Eles serão removidos ao ficarem vagos.`,
+            { duration: 8000 },
+          );
+        }
+      } catch {
+        /* aviso é opcional */
+      }
       setDrafts((d) => {
         const next = { ...d };
         delete next[k];
         return next;
       });
     }
+
   };
 
   return (
