@@ -7,7 +7,9 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatBirthDateDisplay, birthDateToISO } from "@/utils/calculateDetailedAge";
 import { vacantPatientSlotPayload } from "@/utils/patientSlotPayload";
-import { setCapacityRows, getFixedBedNumbers, isWithinFixedRange } from "@/utils/bedCapacityStore";
+import { setCapacityRows, getFixedBedNumbers, isWithinFixedRange, getBedPrefix } from "@/utils/bedCapacityStore";
+import { isExtraBed } from "@/utils/bedNaming";
+
 
 const UTI_FIXED_BEDS = Array.from({ length: 10 }, (_, index) => `U${String(index + 1).padStart(2, '0')}`);
 const isFixedUtiBed = (sector?: string, bedNumber?: string) =>
@@ -64,6 +66,30 @@ export function usePatients(department?: Department) {
           );
         const existingKeys = new Set((data || []).map((p: any) => `${p.sector}:${p.bed_number}`));
         const missing = FIXED_BEDS.filter(b => !existingKeys.has(`${b.sector}:${b.bed_number}`));
+
+        // Poda: remove leitos fixos VAGOS que ficaram acima do quantitativo configurado.
+        // Leitos ocupados nunca são removidos automaticamente.
+        const fixedKeys = new Set(FIXED_BEDS.map(b => `${b.sector}:${b.bed_number}`));
+        const surplus = (data || []).filter((p: any) =>
+          ['red', 'yellow', 'blue'].includes(p.sector) &&
+          !!p.is_vacant &&
+          !isExtraBed(p.bed_number || '') &&
+          p.bed_number?.startsWith(getBedPrefix(department, p.sector)) &&
+          !fixedKeys.has(`${p.sector}:${p.bed_number}`)
+        );
+        if (surplus.length > 0) {
+          console.warn('[usePatients] Removendo leitos vagos excedentes:', surplus.map((s: any) => s.bed_number));
+          try {
+            await supabase.from('patients').delete().in('id', surplus.map((s: any) => s.id));
+            const surplusIds = new Set(surplus.map((s: any) => s.id));
+            const kept = (data || []).filter((p: any) => !surplusIds.has(p.id));
+            (data as any).length = 0;
+            (data as any).push(...kept);
+          } catch (pruneErr) {
+            console.error('[usePatients] Falha ao remover leitos excedentes:', pruneErr);
+          }
+        }
+
         if (missing.length > 0) {
           console.warn('[usePatients] Restaurando leitos fixos ausentes:', missing.map(m => m.bed_number));
           try {
@@ -724,9 +750,13 @@ export function usePatients(department?: Department) {
     const onFocus = () => { throttledFetch(); };
     const onVisibility = () => { if (document.visibilityState === 'visible') throttledFetch(); };
     const onOnline = () => { throttledFetch(); };
+    // Atualização imediata quando o quantitativo de leitos muda no painel admin
+    const onCapacityChanged = () => { lastFetchAt = Date.now(); fetchPatients(); };
     window.addEventListener('focus', onFocus);
     document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('online', onOnline);
+    window.addEventListener('hapmap:bed-capacity-updated', onCapacityChanged);
+
 
     // Periodic safety refetch (every 45s) — cheap insurance vs missed realtime events
     const pollId = window.setInterval(() => {
@@ -808,6 +838,8 @@ export function usePatients(department?: Department) {
       window.removeEventListener('focus', onFocus);
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('online', onOnline);
+      window.removeEventListener('hapmap:bed-capacity-updated', onCapacityChanged);
+
       window.clearInterval(pollId);
       supabase.removeChannel(channel);
     };
