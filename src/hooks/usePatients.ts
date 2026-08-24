@@ -64,6 +64,30 @@ export function usePatients(department?: Department) {
           );
         const existingKeys = new Set((data || []).map((p: any) => `${p.sector}:${p.bed_number}`));
         const missing = FIXED_BEDS.filter(b => !existingKeys.has(`${b.sector}:${b.bed_number}`));
+
+        // Poda: remove leitos fixos VAGOS que ficaram acima do quantitativo configurado.
+        // Leitos ocupados nunca são removidos automaticamente.
+        const fixedKeys = new Set(FIXED_BEDS.map(b => `${b.sector}:${b.bed_number}`));
+        const surplus = (data || []).filter((p: any) =>
+          ['red', 'yellow', 'blue'].includes(p.sector) &&
+          !!p.is_vacant &&
+          !isExtraBed(p.bed_number || '') &&
+          p.bed_number?.startsWith(getBedPrefix(department, p.sector)) &&
+          !fixedKeys.has(`${p.sector}:${p.bed_number}`)
+        );
+        if (surplus.length > 0) {
+          console.warn('[usePatients] Removendo leitos vagos excedentes:', surplus.map((s: any) => s.bed_number));
+          try {
+            await supabase.from('patients').delete().in('id', surplus.map((s: any) => s.id));
+            const surplusIds = new Set(surplus.map((s: any) => s.id));
+            const kept = (data || []).filter((p: any) => !surplusIds.has(p.id));
+            (data as any).length = 0;
+            (data as any).push(...kept);
+          } catch (pruneErr) {
+            console.error('[usePatients] Falha ao remover leitos excedentes:', pruneErr);
+          }
+        }
+
         if (missing.length > 0) {
           console.warn('[usePatients] Restaurando leitos fixos ausentes:', missing.map(m => m.bed_number));
           try {
