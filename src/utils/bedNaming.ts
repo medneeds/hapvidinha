@@ -39,8 +39,19 @@ export function getNextBedNumber(
     sector === 'outside' ? Infinity : getFixedBedCount(department, sector);
 
   if (sector === 'outside') {
-    return `F${String(existingBedNumbers.length + 1).padStart(2, '0')}`;
+    // "Fora das Alas": sequential F01, F02... always picking the first free slot,
+    // so deleted/discharged beds are reused and duplicates never happen.
+    const used = new Set(
+      existingBedNumbers
+        .filter((b) => /^F\d+$/i.test(b))
+        .map((b) => parseInt(b.slice(1), 10))
+        .filter((n) => !isNaN(n))
+    );
+    let n = 1;
+    while (used.has(n)) n++;
+    return `F${String(n).padStart(2, '0')}`;
   }
+
 
   const regularBedNumbers = existingBedNumbers
     .filter(b => b.startsWith(prefix) && !b.startsWith('EXTRA'))

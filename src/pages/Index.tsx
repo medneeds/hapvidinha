@@ -444,9 +444,12 @@ const Index = () => {
         .from('patients')
         .select('bed_number')
         .eq('sector', sector)
-        .eq('department', currentDepartment);
+        .eq('department', currentDepartment)
+        .eq('hospital_unit_id', currentHospital?.id ?? '')
+        .eq('state_id', currentState?.id ?? '');
       const existingBedNumbers = (allSectorPatients || []).map(p => p.bed_number);
       newBedNumber = getNextBedNumber(sector, existingBedNumbers, currentDepartment);
+
     }
 
     // If user picked a fixed vacant placeholder, reuse it instead of deleting the slot.
