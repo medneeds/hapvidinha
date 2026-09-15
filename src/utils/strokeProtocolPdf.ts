@@ -74,7 +74,7 @@ export function generateStrokeProtocolPdf(data: StrokeProtocolPdfData) {
 
   try { doc.addImage(networkFullLogo, 'PNG', M, y - 7, 32, 7.4); } catch {
     doc.setFont("helvetica", "bold"); doc.setFontSize(13);
-    doc.setTextColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]); doc.text("HAPVIDA", M, y);
+    doc.setTextColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]); doc.text("Hapvida", M, y);
   }
 
   doc.setFont("helvetica", "bold"); doc.setFontSize(10);
@@ -238,7 +238,7 @@ export function generateStrokeProtocolPdf(data: StrokeProtocolPdfData) {
   const fY = 282;
   doc.setDrawColor(200, 200, 200); doc.line(M, fY, W - M, fY);
   doc.setFont("helvetica", "normal"); doc.setFontSize(6); doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
-  doc.text("HAPVIDA NOTREDAME INTERMÉDICA — Protocolo de AVC Adulto", M, fY + 3);
+  doc.text("Hapvida NotreDame Intermédica — Protocolo de AVC Adulto", M, fY + 3);
   doc.text(`Gerado em: ${new Date().toLocaleString("pt-BR")}`, W - M, fY + 3, { align: "right" });
   doc.setFillColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]); doc.rect(0, 293, W, 1.5, "F");
   doc.setFillColor(ACCENT[0], ACCENT[1], ACCENT[2]); doc.rect(0, 294.5, W, 3, "F");
