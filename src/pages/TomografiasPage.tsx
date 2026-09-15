@@ -15,6 +15,7 @@ export default function TomografiasPage() {
     { title: "QUESTIONÁRIO - ABDOME E PELVE", file: "questionario-abdome-pelve.pdf", type: "Questionário" },
     { title: "QUESTIONÁRIO - MEMBROS", file: "questionario-membros.pdf", type: "Questionário" },
     { title: "QUESTIONÁRIO - ANGIOS", file: "questionario-angios.pdf", type: "Questionário" },
+    { title: "QUESTIONÁRIO - CARDIOVASCULAR", file: "questionario-cardiovascular.pdf", type: "Questionário" },
     { title: "TERMO DE CONSENTIMENTO - GESTANTE", file: "termo-consentimento-gestante.pdf", type: "Termo" },
     { title: "TERMO DE CONSENTIMENTO - TC", file: "termo-consentimento-tc.pdf", type: "Termo" },
     { title: "FICHA DE ACOMPANHAMENTO - TC", file: "ficha-acompanhamento-tc.pdf", type: "Ficha" },
