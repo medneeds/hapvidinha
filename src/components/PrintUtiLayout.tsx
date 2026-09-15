@@ -124,7 +124,7 @@ export function PrintUtiLayout({
       <div style={containerStyle}>
         {/* Fixed Watermark - appears on all pages */}
         <img 
-          src={whitelabel.logos.networkFull} 
+          src={whitelabel.logos.networkPrint} 
           alt={whitelabel.institution.networkLogoAlt}
           className="print-watermark-fixed"
           style={{ 

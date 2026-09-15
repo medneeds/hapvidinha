@@ -116,7 +116,7 @@ export function PrintUtiPrioritiesPreviewDialog({
             >
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <img
-                  src={whitelabel.logos.networkFull}
+                  src={whitelabel.logos.networkPrint}
                   alt={whitelabel.institution.networkLogoAlt}
                   style={{ height: "42px", width: "auto" }}
                 />

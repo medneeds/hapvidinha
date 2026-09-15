@@ -125,7 +125,7 @@ export function PrintPatientLayout({ patient }: PrintPatientLayoutProps) {
       <div style={containerStyle}>
         {/* Logo Watermark */}
         <img 
-          src={whitelabel.logos.networkFull} 
+          src={whitelabel.logos.networkPrint} 
           alt={whitelabel.institution.networkLogoAlt}
           style={{ 
             position: 'absolute',

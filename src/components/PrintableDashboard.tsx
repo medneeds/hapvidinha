@@ -169,7 +169,7 @@ export function PrintableDashboard({
             </p>
           </div>
         </div>
-        <img src={whitelabel.logos.networkFull} alt={whitelabel.institution.networkLogoAlt} className="h-16 object-contain" />
+        <img src={whitelabel.logos.networkPrint} alt={whitelabel.institution.networkLogoAlt} className="h-16 object-contain" />
       </div>
 
       {/* KPIs Grid */}

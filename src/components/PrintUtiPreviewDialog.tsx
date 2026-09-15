@@ -299,7 +299,7 @@ export function PrintUtiPreviewDialog({
           >
             {/* Watermark - Fixed position for all pages */}
             <img 
-              src={whitelabel.logos.networkFull} 
+              src={whitelabel.logos.networkPrint} 
               alt={whitelabel.institution.networkLogoAlt}
               className="watermark"
               style={{ 

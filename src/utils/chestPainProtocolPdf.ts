@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import networkFullLogo from "@/assets/hapvida-notredame-full-logo.png";
+import networkFullLogo from "@/assets/hapvida-only-logo.png";
 
 export interface ChestPainProtocolPdfData {
   patient_name: string;
@@ -88,7 +88,7 @@ export function generateChestPainProtocolPdf(data: ChestPainProtocolPdfData) {
   doc.setFillColor(ACCENT[0], ACCENT[1], ACCENT[2]); doc.rect(0, 5, W, 1.5, "F");
   y = 15;
 
-  try { doc.addImage(networkFullLogo, 'PNG', M, y - 7, 42, 9); } catch {
+  try { doc.addImage(networkFullLogo, 'PNG', M, y - 7, 32, 7.4); } catch {
     doc.setFont("helvetica", "bold"); doc.setFontSize(13);
     doc.setTextColor(PRIMARY[0], PRIMARY[1], PRIMARY[2]); doc.text("HAPVIDA", M, y);
   }

@@ -11,6 +11,7 @@
 // ─── LOGOS ────────────────────────────────────────────────────────────────────
 // Importe os assets de logo aqui. Para white-label, substitua os imports.
 import networkFullLogo from "@/assets/hapvida-notredame-full-logo.png";
+import networkPrintLogo from "@/assets/hapvida-only-logo.png";
 import networkCompactLogo from "@/assets/hapvida-notredame-logo.png";
 import hospitalLogo from "@/assets/hospital-guaras-logo.png";
 import hapmapLogo from "@/assets/hapmap-logo.png";
@@ -48,8 +49,10 @@ export const whitelabel = {
 
   // ── Logos ──
   logos: {
-    /** Logo completo da rede (usado em loading, login, impressão) */
+    /** Logo completo da rede (usado em loading e login) */
     networkFull: networkFullLogo,
+    /** Logo usado em documentos impressos e PDFs (somente Hapvida) */
+    networkPrint: networkPrintLogo,
     /** Logo compacto da rede (usado na sidebar) */
     networkCompact: networkCompactLogo,
     /** Logo do hospital (usado em cabeçalhos de documentos) */

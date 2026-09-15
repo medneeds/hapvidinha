@@ -332,7 +332,7 @@ export function PrintableDietDocument({
             {/* Header - Only Logos */}
             <div className="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '12px', borderBottom: '2px solid #1e40af' }}>
               <img src={whitelabel.logos.hospital} alt={whitelabel.institution.hospitalLogoAlt} className="logo-left" style={{ height: '70px', width: 'auto', objectFit: 'contain' }} />
-              <img src={whitelabel.logos.networkCompact} alt={whitelabel.institution.networkShortName} className="logo-right" style={{ height: '55px', width: 'auto', objectFit: 'contain' }} />
+              <img src={whitelabel.logos.networkPrint} alt={whitelabel.institution.networkShortName} className="logo-right" style={{ height: '55px', width: 'auto', objectFit: 'contain' }} />
             </div>
 
             {/* Title Section */}
