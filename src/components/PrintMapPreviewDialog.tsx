@@ -214,7 +214,7 @@ export function PrintMapPreviewDialog({
           >
             {/* Watermark */}
             <img 
-              src={whitelabel.logos.networkFull} 
+              src={whitelabel.logos.networkPrint} 
               alt={whitelabel.institution.networkLogoAlt}
               className="watermark"
               style={{ 

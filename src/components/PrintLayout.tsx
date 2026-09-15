@@ -73,7 +73,7 @@ export function PrintLayout({
       <div style={containerStyle}>
       {/* Logo as watermark */}
       <img 
-        src={whitelabel.logos.networkFull} 
+        src={whitelabel.logos.networkPrint} 
         alt={whitelabel.institution.networkLogoAlt}
         style={{ 
           position: 'absolute',
