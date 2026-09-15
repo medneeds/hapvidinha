@@ -17,7 +17,11 @@ export default function TomografiasPage() {
     { title: "QUESTIONÁRIO - ANGIOS", file: "questionario-angios.pdf", type: "Questionário" },
     { title: "QUESTIONÁRIO - CARDIOVASCULAR", file: "questionario-cardiovascular.pdf", type: "Questionário" },
     { title: "TERMO DE CONSENTIMENTO - GESTANTE", file: "termo-consentimento-gestante.pdf", type: "Termo" },
-    { title: "TERMO DE CONSENTIMENTO - TC", file: "termo-consentimento-tc.pdf", type: "Termo" },
+    { title: "TERMO DE CONSENTIMENTO - TC E RAIO-X CONTRASTADO", file: "termo-consentimento-tc.pdf", type: "Termo" },
+    { title: "TERMO DE CONSENTIMENTO - ENDOSCOPIA", file: "termo-consentimento-endoscopia.pdf", type: "Termo" },
+    { title: "TERMO DE CONSENTIMENTO - COLONOSCOPIA", file: "termo-consentimento-colonoscopia.pdf", type: "Termo" },
+    { title: "TERMO DE CONSENTIMENTO - RETOSSIGMOIDOSCOPIA", file: "termo-consentimento-retossigmoidoscopia.pdf", type: "Termo" },
+    { title: "TERMO DE RECUSA DE PROCEDIMENTO", file: "termo-recusa-procedimento.pdf", type: "Termo" },
     { title: "FICHA DE ACOMPANHAMENTO - TC", file: "ficha-acompanhamento-tc.pdf", type: "Ficha" },
   ];
 
