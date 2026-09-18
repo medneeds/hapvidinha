@@ -414,14 +414,14 @@ const extractBaseContext = (text: string): string => {
   const upper = text.toUpperCase();
   // Remove PSM status portions including parentheses
   let base = upper
-    .replace(/\s*\(?\s*(AGUARDANDO PSM|PSM FAVOR[AÁ]VEL|PSM DESFAVOR[AÁ]VEL)\s*\)?\s*/g, '')
+    .replace(/\s*\(?\s*(AGUARDANDO PSM|PSM FAVOR[AÁ]VEL|PSM DESFAVOR[AÁ]VEL|EM AUDITORIA|AGUARDANDO AUTORIZA[ÇC][ÃA]O|EM AUTORIZA[ÇC][ÃA]O|SOLICITADO PROCEDIMENTO)\s*\)?\s*/g, '')
     .trim();
   return base;
 };
 
 const isPsmText = (text: string) => {
   const upper = text.toUpperCase();
-  return upper.includes('AGUARDANDO PSM') || 
+  return matchesAguardandoStatus(upper) || 
          upper.includes('PSM FAVORÁVEL') || upper.includes('PSM FAVORAVEL') ||
          upper.includes('PSM DESFAVORÁVEL') || upper.includes('PSM DESFAVORAVEL') ||
          upper.includes('IR PARA');
@@ -432,7 +432,7 @@ const getPsmCycleIndex = (text: string) => {
   if (upper.includes('IR PARA')) return 3;
   if (upper.includes('PSM DESFAVORÁVEL') || upper.includes('PSM DESFAVORAVEL')) return 2;
   if (upper.includes('PSM FAVORÁVEL') || upper.includes('PSM FAVORAVEL')) return 1;
-  if (upper.includes('AGUARDANDO PSM')) return 0;
+  if (matchesAguardandoStatus(upper)) return 0;
   return -1;
 };
 
@@ -526,7 +526,9 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
       newText = pendency;
       for (const psm of PSM_CYCLE) {
         if (psm.status === 'ir_para') continue; // skip IR PARA patterns for in-place replacement
-        const variants = [psm.text, psm.text.replace('Á', 'A').replace('É', 'E')];
+        const variants = psm.status === 'aguardando'
+          ? AGUARDANDO_ALIASES
+          : [psm.text, psm.text.replace('Á', 'A').replace('É', 'E')];
         for (const variant of variants) {
           const idx = upper.indexOf(variant);
           if (idx >= 0) {
@@ -1866,8 +1868,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                               );
                             }
                             
-                            // Check for AGUARDANDO PSM - show clock icon
-                            if (pendenciesText.includes('AGUARDANDO PSM')) {
+                            // Check for AGUARDANDO PSM (e terminologias equivalentes) - show clock icon
+                            if (matchesAguardandoStatus(pendenciesText)) {
                               return (
                                 <div title="Aguardando PSM">
                                   <Clock className="h-4 w-4 text-amber-500 flex-shrink-0" />
