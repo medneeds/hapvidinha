@@ -372,6 +372,20 @@ const PSM_CYCLE = [
   { text: 'IR PARA', status: 'ir_para' as const, icon: ArrowUpCircle, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/30' },
 ];
 
+// Terminologias equivalentes a "AGUARDANDO PSM" (reagem com o mesmo status visual)
+const AGUARDANDO_ALIASES = [
+  'AGUARDANDO PSM',
+  'EM AUDITORIA',
+  'AGUARDANDO AUTORIZAÇÃO',
+  'AGUARDANDO AUTORIZACAO',
+  'EM AUTORIZAÇÃO',
+  'EM AUTORIZACAO',
+  'SOLICITADO PROCEDIMENTO',
+];
+
+const matchesAguardandoStatus = (upper: string) =>
+  AGUARDANDO_ALIASES.some(alias => upper.includes(alias));
+
 // Map internment context to "IR PARA" destination
 const INTERNMENT_TO_DESTINATION: { pattern: string; destination: string }[] = [
   { pattern: 'UTI', destination: 'IR PARA LEITO DE UTI' },
