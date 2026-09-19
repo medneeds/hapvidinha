@@ -340,7 +340,7 @@
     left: 1cm;
     width: 120px;
     height: 40px;
-    background-image: url('/hapvida-logo.jpg');
+    background-image: url('/__l5e/assets-v1/38e34d52-567a-4ed4-9216-43c6a8fd4128/hapvida-logo-2026.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: left center;
@@ -349,7 +349,7 @@
     pointer-events: none;
   }
   
-  /* Marca d'água - Logo Hapvida Notre Dame à direita */
+  /* Marca d'água - Logo Hapvida à direita */
   body::after {
     content: "";
     position: fixed;
@@ -357,7 +357,7 @@
     right: 1cm;
     width: 180px;
     height: 40px;
-    background-image: url('/hapvida-notredame-full-logo.png');
+    background-image: url('/__l5e/assets-v1/38e34d52-567a-4ed4-9216-43c6a8fd4128/hapvida-logo-2026.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: right center;

@@ -1,5 +1,7 @@
 import jsPDF from "jspdf";
-import networkFullLogo from "@/assets/hapvida-only-logo.png";
+import networkLogoAsset from "@/assets/hapvida-logo-2026.png.asset.json";
+
+const networkFullLogo = networkLogoAsset.url;
 
 export interface StrokeProtocolPdfData {
   patient_name: string;
