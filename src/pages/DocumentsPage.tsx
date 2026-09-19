@@ -220,7 +220,7 @@ export default function DocumentsPage() {
           onClick={() => {
             const link = document.createElement("a");
             link.href = "/documents/evolucao-medica-rotina-uti.docx";
-            link.download = "EVOLUCAO_MEDICA_ROTINA_UTI.docx";
+            link.download = "EVOLUCAO_MEDICA_UTI_ADULTO.docx";
             link.click();
           }}
         >
@@ -234,14 +234,14 @@ export default function DocumentsPage() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-bold text-lg text-foreground group-hover:text-cyan-600 transition-colors">
-                  Evolução Médica - Rotina UTI
+                  Evolução Médica UTI Adulto
                 </h3>
                 <Badge className="bg-cyan-500/15 text-cyan-600 border-cyan-500/30 text-[10px]">
                   UTI
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                Modelo padronizado de evolução médica diária para pacientes em UTI
+                Modelo institucional estruturado para evolução médica diária da UTI Adulto
               </p>
             </div>
             <Button variant="outline" size="sm" className="gap-2 group-hover:bg-cyan-500 group-hover:text-white group-hover:border-cyan-500 transition-all flex-shrink-0">
