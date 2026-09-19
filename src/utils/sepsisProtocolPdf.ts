@@ -1,5 +1,7 @@
 import jsPDF from "jspdf";
-import networkFullLogo from "@/assets/hapvida-only-logo.png";
+import networkLogoAsset from "@/assets/hapvida-logo-2026.png.asset.json";
+
+const networkFullLogo = networkLogoAsset.url;
 
 interface ProtocolData {
   patient_name: string;
@@ -87,7 +89,7 @@ export function generateSepsisProtocolPdf(data: ProtocolData) {
 
   // Logo - proportional (original aspect ~4.5:1, use 40x9mm)
   try {
-    doc.addImage(networkFullLogo, 'PNG', M, y - 7, 32, 7.4);
+    doc.addImage(networkFullLogo, 'PNG', M, y - 7, 30.2, 7.4);
   } catch {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(13);
