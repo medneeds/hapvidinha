@@ -1100,12 +1100,6 @@ const Index = () => {
                             </DropdownMenuItem>
                           ) : (
                             DEPARTMENTS
-                              .filter(dept => {
-                                // Admin (COORDENADOR) vê todos os departamentos
-                                if (role === 'admin') return true;
-                                // Outros usuários veem apenas seus departamentos permitidos
-                                return allowedDepartments.includes(dept);
-                              })
                               .map((dept) => (
                             <DropdownMenuItem 
                               key={dept} 
@@ -1115,22 +1109,11 @@ const Index = () => {
                               )}
                               onClick={() => {
                                 if (dept !== currentDepartment) {
-                                  // Admin pode trocar sem senha
-                                  if (role === 'admin') {
-                                    setCurrentDepartment(dept);
-                                    toast({
-                                      title: "Setor alterado",
-                                      description: `Alternado para: ${getDepartmentLabel(dept)}`,
-                                    });
-                                  } else {
-                                    // Usuários não-admin NÃO podem trocar de departamento
-                                    // (eles só veem seus departamentos permitidos no dropdown)
-                                    toast({
-                                      title: "Acesso negado",
-                                      description: "Você não tem permissão para alterar departamentos.",
-                                      variant: "destructive",
-                                    });
-                                  }
+                                  setCurrentDepartment(dept);
+                                  toast({
+                                    title: "Setor alterado",
+                                    description: `Alternado para: ${getDepartmentLabel(dept)}`,
+                                  });
                                 }
                               }}
                             >
