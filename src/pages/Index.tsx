@@ -1160,7 +1160,7 @@ const Index = () => {
                             variant="outline"
                             size="icon"
                             onClick={handlePrintSelected}
-                            className="print:hidden h-11 w-11 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_18px_-2px_rgba(56,189,248,0.65)] hover:shadow-[0_0_24px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 transition-all"
+                            className="print:hidden h-11 w-11 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 transition-all duration-200"
                             title={`Imprimir ${selectedPatients.size}`}
                           >
                             <Printer className="h-4 w-4" />
@@ -1282,7 +1282,7 @@ const Index = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button variant="outline" size="icon" onClick={handlePrintSelected}
-                                  className="h-9 w-9 rounded-lg bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
+                                  className={HEADER_ICON_BUTTON}>
                                   <Printer className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
@@ -1302,7 +1302,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={handlePrintCompact}
-                              className="hidden sm:flex h-9 w-9 rounded-lg bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
+                              className={`hidden sm:flex ${HEADER_ICON_BUTTON}`}>
                               <Printer className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
