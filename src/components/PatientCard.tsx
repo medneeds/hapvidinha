@@ -2120,6 +2120,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiOriginSector || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2401,6 +2402,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiAllergies || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2489,6 +2491,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiAdmissionReason || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2566,6 +2569,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === patient.diagnoses.length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2667,6 +2671,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiCurrentStatus || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2766,6 +2771,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiSpecialties || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2870,6 +2876,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiDevices || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2980,6 +2987,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === patient.relevantExams.length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -3081,6 +3089,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiCulturesAntibiotics || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -3366,7 +3375,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onKeyDown={handleKeyDown}
                         inputRef={inputRef}
                         isLast={idx === patient.diagnoses.length - 1}
-                      />
+                        sector={patient.sector}
+                          />
                     ))}
                   </ol>
                 </SortableContext>
@@ -3470,7 +3480,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onKeyDown={handleKeyDown}
                         inputRef={inputRef}
                         isLast={idx === patient.medicalHistory.length - 1}
-                      />
+                        sector={patient.sector}
+                          />
                     ))}
                   </ol>
                 </SortableContext>
@@ -3597,7 +3608,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onKeyDown={handleKeyDown}
                         inputRef={inputRef}
                         isLast={idx === patient.relevantExams.length - 1}
-                      />
+                        sector={patient.sector}
+                          />
                     ))}
                   </ol>
                 </SortableContext>
