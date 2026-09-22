@@ -1148,7 +1148,7 @@ const Index = () => {
                     <Button
                       variant="outline"
                       onClick={() => setUtiPrioritiesOpen(true)}
-                      className="print:hidden relative h-11 sm:h-8 px-2 sm:px-3 gap-1.5 bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 text-white border-0 shadow-[0_0_14px_-2px_rgba(244,63,94,0.55)] hover:shadow-[0_0_22px_-2px_rgba(244,63,94,0.85)] hover:brightness-110 transition-all"
+                      className="print:hidden relative h-9 px-3 gap-1.5 rounded-lg bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 text-white border-0 shadow-[0_0_14px_-2px_rgba(244,63,94,0.55)] hover:shadow-[0_0_22px_-2px_rgba(244,63,94,0.85)] hover:brightness-110 transition-all"
                       title="Prioridades UTI"
                     >
                       <HeartPulse className="h-4 w-4" />
