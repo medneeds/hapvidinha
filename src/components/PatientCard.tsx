@@ -981,6 +981,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     }
   }, [patient.sector, sectorColorMap]);
 
+  const patientDataHover = {
+    red: "hover:bg-critical/[0.07] hover:border-critical/25",
+    yellow: "hover:bg-warning/[0.07] hover:border-warning/25",
+    blue: "hover:bg-stable/[0.07] hover:border-stable/25",
+    outside: "hover:bg-muted-foreground/[0.07] hover:border-muted-foreground/25",
+  }[patient.sector];
+
   useEffect(() => {
     if (editingField && inputRef.current) {
       inputRef.current.focus();
@@ -1695,7 +1702,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             )}
             <div className="flex-1 flex flex-col gap-3 md:grid md:grid-cols-19 md:gap-1.5 md:items-start">
               {/* Mobile: Leito + Paciente na mesma linha */}
-              <div className="flex items-start gap-3 md:contents">
+              <div className={cn(
+                "flex items-start gap-3 rounded border border-transparent transition-colors duration-200 md:col-span-5 md:grid md:grid-cols-5 md:gap-1.5",
+                patientDataHover
+              )}>
                 {/* Leito - chip alinhado ao slot compacto "Leito disponível" */}
                 <div className="flex flex-col shrink-0 md:col-span-1">
                   <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
@@ -1955,7 +1965,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                            <p 
                             className={cn(
                               "font-semibold text-base md:text-sm text-foreground leading-tight break-words rounded px-1 -mx-1 inline",
-                              canEdit && "cursor-pointer hover:bg-accent/50"
+                              canEdit && cn("cursor-pointer", patientDataHover)
                             )}
                             onClick={() => canEdit && startEditing("name", patient.name)}
                             title={canEdit ? "Clique para editar" : undefined}
@@ -2008,7 +2018,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <p 
                           className={cn(
                             "text-sm md:text-[11px] text-muted-foreground mt-0.5 rounded px-1 -mx-1 italic",
-                            canEdit && "cursor-pointer hover:bg-accent/50"
+                            canEdit && cn("cursor-pointer", patientDataHover)
                           )}
                           onClick={() => canEdit && startEditing("age", "")}
                           title={canEdit ? "Clique para adicionar idade" : undefined}
@@ -2019,7 +2029,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         <p
                           className={cn(
                             "text-sm md:text-[11px] text-muted-foreground mt-0.5 rounded px-1 -mx-1",
-                            canEdit && "cursor-pointer hover:bg-accent/50"
+                            canEdit && cn("cursor-pointer", patientDataHover)
                           )}
                           onClick={() => canEdit && startEditing("age", typeof patient.age === 'number' ? patient.age.toString() : patient.age)}
                           title={canEdit ? "Clique para editar idade" : undefined}

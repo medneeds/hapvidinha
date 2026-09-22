@@ -965,6 +965,9 @@ export function UtiPatientCard({
   };
 
   const colors = colorSchemes[colorVariant];
+  const patientDataHover = colorVariant === 'yellow'
+    ? "hover:bg-warning/[0.07] hover:border-warning/25"
+    : "hover:bg-stable/[0.07] hover:border-stable/25";
 
   const daysInUti = useMemo(() => calculateDaysInUti(patient.utiAdmissionDate), [patient.utiAdmissionDate]);
 
@@ -1079,7 +1082,10 @@ export function UtiPatientCard({
             {/* Main Content - Collapsed View */}
             <div className="flex-1 p-1.5 md:p-1.5 space-y-1.5 md:space-y-1 min-w-0">
               {/* Row 1: Identification Header - Mobile optimized */}
-              <div className="flex flex-wrap items-center gap-1 md:gap-1.5">
+              <div className={cn(
+                "flex flex-wrap items-center gap-1 md:gap-1.5 rounded border border-transparent transition-colors duration-200",
+                patientDataHover
+              )}>
                 {/* Collapse/Expand Toggle Button */}
                 <Button
                   variant="ghost"
@@ -1197,7 +1203,7 @@ export function UtiPatientCard({
                   </div>
 
                   {/* UTI Admission Date */}
-                  <div className="hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
+                  <div className={cn("hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
                     <span className="text-[9px]">Admissão UTI:</span>
                     <InlineEditableField
                       value={patient.utiAdmissionDate?.[0] || ""}
@@ -1209,7 +1215,7 @@ export function UtiPatientCard({
                   </div>
 
                   {/* Discharge Prediction */}
-                  <div className="hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
+                  <div className={cn("hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
                     <span className="text-[9px]">Previsão de Alta:</span>
                     <InlineEditableField
                       value={previsaoAlta[0] || ""}
