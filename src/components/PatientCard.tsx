@@ -2108,7 +2108,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             {currentDepartment === "UTI" && (
               <>
                 {/* Bloco Administrativo - Linha 1 */}
-                <div className="w-full md:col-span-12 border-l-2 border-primary/20 pl-3 py-2 bg-muted/5 rounded-r">
+                <div className="w-full md:col-span-12 border-l border-primary/20 pl-3 py-2 bg-muted/5 rounded-r">
                   <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:gap-2">
                     {/* Setor de Origem */}
                     <div className="flex flex-col md:col-span-4">
@@ -2479,7 +2479,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Bloco Investigação - Linha 2 */}
-                <div className="w-full md:col-span-12 border-l-2 border-muted-foreground/20 pl-3 py-2 bg-muted/10 rounded-r">
+                <div className="w-full md:col-span-12 border-l border-muted-foreground/20 pl-3 py-2 bg-muted/10 rounded-r">
                   <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:gap-2">
                     {/* Motivo da Admissão */}
                     <div className="flex flex-col md:col-span-2">
@@ -2864,7 +2864,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                 {/* Bloco Clínico - Linha 3 */}
-                <div className="w-full md:col-span-12 border-l-2 border-accent/30 pl-3 py-2 bg-accent/5 rounded-r">
+                <div className="w-full md:col-span-12 border-l border-accent/30 pl-3 py-2 bg-accent/5 rounded-r">
                   <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:gap-2">
                     {/* Dispositivos */}
                     <div className="flex flex-col md:col-span-2">
@@ -3372,7 +3372,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Hipóteses / Diagnósticos - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className={cn("flex flex-col md:col-span-3 relative border-l-2 rounded-r px-1.5 -mx-1 transition-colors duration-200", patientSectionHover)}>
+              <div className={cn("flex flex-col md:col-span-3 relative border-l rounded-r px-1.5 -mx-1 transition-colors duration-200", patientSectionHover)}>
                 <div className="flex items-center gap-1 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Hipóteses / Diagnósticos</span>
               </div>
@@ -3469,7 +3469,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Antecedentes - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className={cn("flex flex-col md:col-span-3 relative border-l-2 rounded-r px-1.5 -mx-1 transition-colors duration-200", patientSectionHover)}>
+              <div className={cn("flex flex-col md:col-span-3 relative border-l rounded-r px-1.5 -mx-1 transition-colors duration-200", patientSectionHover)}>
                 <div className="flex items-center gap-1 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Antecedentes</span>
               </div>
@@ -3574,7 +3574,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Exames - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className={cn("flex flex-col md:col-span-3 relative border-l-2 rounded-r px-1.5 -mx-1 transition-colors duration-200", patientSectionHover)}>
+              <div className={cn("flex flex-col md:col-span-3 relative border-l rounded-r px-1.5 -mx-1 transition-colors duration-200", patientSectionHover)}>
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Exames</span>
                 {FEATURE_FLAGS.EXAMINUS_AI_ENABLED && (
@@ -3702,7 +3702,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Programações / Pendências - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className={cn("flex flex-col md:col-span-5 relative border-l-2 rounded-r px-1.5 -mx-1 transition-colors duration-200", patientSectionHover)}>
+              <div className={cn("flex flex-col md:col-span-5 relative border-l rounded-r px-1.5 -mx-1 transition-colors duration-200", patientSectionHover)}>
                 <div className="flex items-center gap-3 mb-0.5">
                   <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
                   

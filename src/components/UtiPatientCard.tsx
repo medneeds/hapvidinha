@@ -937,7 +937,7 @@ export function UtiPatientCard({
   // Color schemes — neutral & clean. Base branca/slate, acento fino azul (UTI 1) ou slate-grafite (UTI 2)
   const colorSchemes = {
     blue: {
-      card: "bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/60 border-l-2 border-l-blue-500/60",
+      card: "bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/60 border-l border-l-blue-500/60",
       bedBg: "bg-blue-50 dark:bg-blue-950/40 border-blue-200/70 dark:border-blue-800/40",
       bedText: "text-blue-700 dark:text-blue-300",
       col1: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
@@ -950,7 +950,7 @@ export function UtiPatientCard({
       col4Icon: "text-slate-500 dark:text-slate-400",
     },
     yellow: {
-      card: "bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/60 border-l-2 border-l-slate-500/60",
+      card: "bg-white dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-700/60 border-l border-l-slate-500/60",
       bedBg: "bg-slate-100 dark:bg-slate-800/50 border-slate-300/60 dark:border-slate-600/50",
       bedText: "text-slate-700 dark:text-slate-200",
       col1: "bg-slate-50/80 dark:bg-slate-800/30 border-slate-200/70 dark:border-slate-700/40",
@@ -1245,7 +1245,7 @@ export function UtiPatientCard({
               {/* Row 2: 4 columns on desktop, 2x2 grid on mobile - Collapsible */}
               {!isCollapsed && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-l-2 backdrop-blur-sm transition-colors duration-200", colors.col1, patientSectionHover)}>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-l backdrop-blur-sm transition-colors duration-200", colors.col1, patientSectionHover)}>
                     <InlineEditableArray
                       items={diagnosticos}
                       onUpdate={(items) => handleUpdateField("diagnoses", items)}
@@ -1263,7 +1263,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-l-2 backdrop-blur-sm transition-colors duration-200", colors.col2, patientSectionHover)}>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-l backdrop-blur-sm transition-colors duration-200", colors.col2, patientSectionHover)}>
                     <InlineEditableArray
                       items={antecedentes}
                       onUpdate={(items) => handleUpdateField("medicalHistory", items)}
@@ -1281,7 +1281,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-l-2 backdrop-blur-sm transition-colors duration-200", colors.col3, patientSectionHover)}>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-l backdrop-blur-sm transition-colors duration-200", colors.col3, patientSectionHover)}>
                     <InlineEditableArray
                       items={condutasDia}
                       onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
@@ -1299,7 +1299,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-l-2 backdrop-blur-sm transition-colors duration-200", colors.col4, patientSectionHover)}>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-l backdrop-blur-sm transition-colors duration-200", colors.col4, patientSectionHover)}>
                     <InlineEditableArray
                       items={pendencias}
                       onUpdate={(items) => handleUpdateField("pendencies", items)}
