@@ -64,6 +64,7 @@ export default {
           DEFAULT: "hsl(var(--stable))",
           foreground: "hsl(var(--stable-foreground))",
         },
+        "auth-success": "hsl(var(--auth-success))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

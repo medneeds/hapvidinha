@@ -330,7 +330,7 @@ export default function AuthPage() {
           </div>
 
           <footer className="mt-9 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[10px] text-muted-foreground">
-            <span className="flex items-center gap-1.5"><Shield className="h-3 w-3 text-[hsl(var(--auth-success))]" /> Conexão segura</span>
+            <span className="flex items-center gap-1.5"><Shield className="h-3 w-3 text-auth-success" /> Conexão segura</span>
             <span aria-hidden="true" className="h-3 w-px bg-border" />
             <span className="flex items-center gap-1.5"><FileCheck className="h-3 w-3" /> {whitelabel.compliance.complianceBadgeTitle}</span>
             <span aria-hidden="true" className="h-3 w-px bg-border" />
