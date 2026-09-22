@@ -3105,9 +3105,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                   {/* Programações / Pendências */}
-                  <div className="flex flex-col md:col-span-5 relative">
-                  <div className="flex items-center gap-1 mb-0.5 flex-wrap">
-                    <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
+                  <div className="clinical-pendency-panel flex flex-col md:col-span-5 relative">
+                  <div className="flex items-center gap-1 mb-1 flex-wrap">
+                    <span className="clinical-pendency-label text-[9px] text-muted-foreground">Programações / Pendências</span>
                     
                     {/* Internment Status Badge */}
                     {patient.internmentStatus && internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig] && (
@@ -3624,9 +3624,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Programações / Pendências - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className="flex flex-col md:col-span-5 relative">
-                <div className="flex items-center gap-3 mb-0.5">
-                  <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
+              <div className="clinical-pendency-panel flex flex-col md:col-span-5 relative">
+                <div className="flex items-center gap-3 mb-1">
+                  <span className="clinical-pendency-label text-[9px] text-muted-foreground">Programações / Pendências</span>
                   
                    <Button
                     size="icon"
