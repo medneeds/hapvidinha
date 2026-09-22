@@ -1238,8 +1238,7 @@ export function UtiPatientCard({
                       items={diagnosticos}
                       onUpdate={(items) => handleUpdateField("diagnoses", items)}
                       label="Hipóteses / Diagnósticos"
-                      icon={<Stethoscope className={cn("h-2.5 w-2.5", colors.col1Icon)} highlightColorVariant={colorVariant}
-                      />}
+                      icon={<Stethoscope className={cn("h-2.5 w-2.5", colors.col1Icon)} />}
                       iconColorClass={colors.col1Icon}
                       alwaysShowAll
                       highlightedIndices={patient.highlightedDiagnoses || []}
@@ -1257,8 +1256,7 @@ export function UtiPatientCard({
                       items={antecedentes}
                       onUpdate={(items) => handleUpdateField("medicalHistory", items)}
                       label="Antecedentes / Comorbidades"
-                      icon={<Activity className={cn("h-2.5 w-2.5", colors.col2Icon)} highlightColorVariant={colorVariant}
-                      />}
+                      icon={<Activity className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
                       iconColorClass={colors.col2Icon}
                       alwaysShowAll
                       highlightedIndices={patient.highlightedMedicalHistory || []}
@@ -1276,8 +1274,7 @@ export function UtiPatientCard({
                       items={condutasDia}
                       onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
                       label="Plano Terapêutico"
-                      icon={<FileText className={cn("h-2.5 w-2.5", colors.col3Icon)} highlightColorVariant={colorVariant}
-                      />}
+                      icon={<FileText className={cn("h-2.5 w-2.5", colors.col3Icon)} />}
                       iconColorClass={colors.col3Icon}
                       alwaysShowAll
                       highlightedIndices={patient.highlightedConducts || []}
@@ -1295,8 +1292,7 @@ export function UtiPatientCard({
                       items={pendencias}
                       onUpdate={(items) => handleUpdateField("pendencies", items)}
                       label="Programações / Pendências"
-                      icon={<ClipboardList className={cn("h-2.5 w-2.5", colors.col4Icon)} highlightColorVariant={colorVariant}
-                      />}
+                      icon={<ClipboardList className={cn("h-2.5 w-2.5", colors.col4Icon)} />}
                       iconColorClass={colors.col4Icon}
                       alwaysShowAll
                       highlightedIndices={patient.highlightedPendencies || []}
@@ -1415,7 +1411,7 @@ export function UtiPatientCard({
                     label="DISPOSITIVOS"
                     colorClass="bg-red-50/50 dark:bg-red-900/10 border border-red-200/30 dark:border-red-800/20"
                     alwaysShowAll
-                  highlightColorVariant={colorVariant}
+                    highlightColorVariant={colorVariant}
                   />
                   <InlineEditableArray
                     items={alergias}
@@ -1423,16 +1419,16 @@ export function UtiPatientCard({
                     label="ALERGIAS"
                     colorClass="bg-red-50/50 dark:bg-red-900/10 border border-red-200/30 dark:border-red-800/20"
                     alwaysShowAll
-                  highlightColorVariant={colorVariant}
+                    highlightColorVariant={colorVariant}
                   />
                   <InlineEditableArray
                     items={culturasAtb}
                     onUpdate={(items) => handleUpdateField("utiCulturesAntibiotics", items)}
                     label="CULTURAS / ATB"
-                    icon={<Pill className="h-3 w-3 text-red-400" highlightColorVariant={colorVariant}
-                    />}
+                    icon={<Pill className="h-3 w-3 text-red-400" />}
                     colorClass="bg-red-50/50 dark:bg-red-900/10 border border-red-200/30 dark:border-red-800/20"
                     alwaysShowAll
+                    highlightColorVariant={colorVariant}
                   />
                 </div>
               </div>
@@ -1450,7 +1446,7 @@ export function UtiPatientCard({
                     label="ESPECIALIDADES"
                     colorClass="bg-muted/50 border border-border/50"
                     alwaysShowAll
-                  highlightColorVariant={colorVariant}
+                    highlightColorVariant={colorVariant}
                   />
                   <InlineEditableArray
                     items={exames}
@@ -1458,7 +1454,7 @@ export function UtiPatientCard({
                     label="EXAMES"
                     colorClass="bg-muted/50 border border-border/50"
                     alwaysShowAll
-                  highlightColorVariant={colorVariant}
+                    highlightColorVariant={colorVariant}
                   />
                 </div>
               </div>
@@ -1474,7 +1470,7 @@ export function UtiPatientCard({
                     value={patient.admissionHistory || ""}
                     onUpdate={(v) => handleUpdateField("admissionHistory", v)}
                     placeholder="HISTÓRIA ADMISSIONAL / ANAMNESE..."
-                  colorVariant={colorVariant}
+                    colorVariant={colorVariant}
                   />
                 </div>
               </div>
@@ -1492,7 +1488,7 @@ export function UtiPatientCard({
                     label="SETOR DE ORIGEM"
                     colorClass="bg-muted/30 border border-border/30"
                     alwaysShowAll
-                  highlightColorVariant={colorVariant}
+                    highlightColorVariant={colorVariant}
                   />
                   <InlineEditableArray
                     items={motivoAdmissao}
@@ -1500,7 +1496,7 @@ export function UtiPatientCard({
                     label="MOTIVO DA ADMISSÃO"
                     colorClass="bg-muted/30 border border-border/30"
                     alwaysShowAll
-                  highlightColorVariant={colorVariant}
+                    highlightColorVariant={colorVariant}
                   />
                   <div className="bg-muted/30 border border-border/30 rounded-md p-2">
                     <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide block mb-1">ADMISSÃO UTI</span>
@@ -1509,7 +1505,7 @@ export function UtiPatientCard({
                       onUpdate={(v) => handleUpdateField("utiAdmissionDate", v ? [v] : [])}
                       placeholder="DD/MM/AAAA"
                       className="text-sm"
-                    colorVariant={colorVariant}
+                      colorVariant={colorVariant}
                     />
                   </div>
                   <div className="bg-muted/30 border border-border/30 rounded-md p-2">
@@ -1519,7 +1515,7 @@ export function UtiPatientCard({
                       onUpdate={(v) => handleUpdateField("utiDischargePrediction", v ? [v] : [])}
                       placeholder="DD/MM/AAAA"
                       className="text-sm"
-                    colorVariant={colorVariant}
+                      colorVariant={colorVariant}
                     />
                   </div>
                 </div>
