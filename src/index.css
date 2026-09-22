@@ -18,20 +18,20 @@
   }
   
   :root {
-    --background: 210 23% 97%;
-    --foreground: 212 23% 19%;
+    --background: 220 23% 98%;
+    --foreground: 213 28% 13%;
     --card: 0 0% 100%;
     --card-foreground: 210 20% 12%;
     --popover: 0 0% 100%;
     --popover-foreground: 210 20% 12%;
-    --primary: 212 63% 40%;
+    --primary: 209 88% 36%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 18% 94%;
-    --secondary-foreground: 210 20% 12%;
-    --muted: 210 19% 94%;
-    --muted-foreground: 211 11% 43%;
-    --accent: 210 35% 91%;
-    --accent-foreground: 212 63% 31%;
+    --secondary: 216 20% 96%;
+    --secondary-foreground: 213 28% 13%;
+    --muted: 216 20% 96%;
+    --muted-foreground: 215 14% 40%;
+    --accent: 211 45% 93%;
+    --accent-foreground: 209 88% 30%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     --critical: 0 72% 51%;
@@ -40,26 +40,26 @@
     --warning-foreground: 0 0% 100%;
     --stable: 210 80% 42%;
     --stable-foreground: 0 0% 100%;
-    --border: 210 17% 85%;
-    --input: 210 17% 85%;
-    --ring: 212 63% 40%;
-    --radius: 0.5rem;
+    --border: 214 20% 85%;
+    --input: 214 20% 85%;
+    --ring: 209 88% 36%;
+    --radius: 0.625rem;
 
-    --clinical-header: 212 23% 19%;
-    --clinical-header-foreground: 210 23% 97%;
+    --clinical-header: 213 28% 13%;
+    --clinical-header-foreground: 220 23% 98%;
     --clinical-surface: 0 0% 100%;
-    --clinical-surface-muted: 210 23% 97%;
-    --clinical-divider: 210 17% 87%;
+    --clinical-surface-muted: 220 23% 98%;
+    --clinical-divider: 214 20% 88%;
 
-    --auth-background: 220 20% 98%;
+    --auth-background: 220 23% 98%;
     --auth-surface: 0 0% 100%;
-    --auth-foreground: 240 3% 12%;
-    --auth-muted: 240 2% 51%;
-    --auth-field: 240 10% 96%;
-    --auth-border: 240 5% 83%;
+    --auth-foreground: 213 28% 13%;
+    --auth-muted: 215 14% 40%;
+    --auth-field: 216 20% 96%;
+    --auth-border: 214 20% 85%;
     --auth-success: 150 62% 39%;
-    --auth-dot: 215 18% 74%;
-    --auth-shadow: 0 24px 70px -32px hsl(212 23% 19% / 0.18);
+    --auth-dot: 214 20% 85%;
+    --auth-shadow: 0 1px 2px hsl(213 28% 13% / 0.04), 0 12px 32px -24px hsl(213 28% 13% / 0.18);
     
     --gradient-primary: linear-gradient(135deg, hsl(210 80% 42%) 0%, hsl(210 70% 35%) 100%);
     --gradient-card: linear-gradient(to bottom, hsl(0 0% 100% / 0.95) 0%, hsl(0 0% 100% / 0.9) 50%, hsl(0 0% 100% / 0.8) 100%);
@@ -67,9 +67,9 @@
     --gradient-warning: linear-gradient(to right, hsl(45 93% 47% / 0.2) 0%, hsl(45 93% 47% / 0.05) 100%);
     --gradient-stable: linear-gradient(to right, hsl(210 80% 42% / 0.2) 0%, hsl(210 80% 42% / 0.05) 100%);
     
-    --shadow-sm: 0 1px 2px 0 hsl(210 20% 12% / 0.05);
-    --shadow-md: 0 2px 8px -2px hsl(212 23% 19% / 0.12);
-    --shadow-lg: 0 8px 24px -12px hsl(212 23% 19% / 0.24);
+    --shadow-sm: 0 1px 2px 0 hsl(213 28% 13% / 0.05);
+    --shadow-md: 0 4px 12px -6px hsl(213 28% 13% / 0.16);
+    --shadow-lg: 0 12px 28px -16px hsl(213 28% 13% / 0.22);
     --shadow-glow: 0 0 40px hsl(210 80% 42% / 0.15);
     
     --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -80,13 +80,13 @@
     --status-discussing: 199 89% 48%;
     --status-rejected: 0 72% 51%;
 
-    --sidebar-background: 210 23% 97%;
-    --sidebar-foreground: 212 23% 19%;
-    --sidebar-primary: 212 63% 40%;
+    --sidebar-background: 220 23% 98%;
+    --sidebar-foreground: 213 28% 13%;
+    --sidebar-primary: 209 88% 36%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 210 35% 91%;
-    --sidebar-accent-foreground: 212 63% 31%;
-    --sidebar-border: 210 17% 85%;
+    --sidebar-accent: 211 45% 93%;
+    --sidebar-accent-foreground: 209 88% 30%;
+    --sidebar-border: 214 20% 85%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -180,7 +180,6 @@
 @layer components {
   .clinical-shell {
     background-color: hsl(var(--background));
-    background-image: linear-gradient(to bottom, hsl(var(--clinical-surface-muted) / 0.9), hsl(var(--background)) 18rem);
   }
 
   .clinical-topbar {
@@ -195,7 +194,8 @@
   }
 
   .clinical-section-title {
-    font-family: "Instrument Serif", Georgia, serif;
+    font-family: "Sora", "Manrope", system-ui, sans-serif;
+    font-weight: 600;
     letter-spacing: 0;
   }
 
@@ -218,25 +218,23 @@
 
   .auth-shell {
     background-color: hsl(var(--auth-background));
-    background-image: radial-gradient(hsl(var(--auth-dot) / 0.34) 0.7px, transparent 0.7px);
-    background-size: 28px 28px;
   }
 
   .auth-card {
-    background-color: hsl(var(--auth-surface) / 0.92);
-    border: 1px solid hsl(var(--auth-border) / 0.58);
+    background-color: hsl(var(--auth-surface));
+    border: 1px solid hsl(var(--auth-border));
     box-shadow: var(--auth-shadow);
-    backdrop-filter: blur(20px);
   }
 
   .auth-brand-mark {
     background: hsl(var(--primary));
-    box-shadow: 0 16px 34px -18px hsl(var(--primary) / 0.58);
+    box-shadow: var(--shadow-sm);
   }
 
   .auth-title {
     color: hsl(var(--auth-foreground));
-    font-family: "Instrument Serif", Georgia, serif;
+    font-family: "Sora", "Manrope", system-ui, sans-serif;
+    font-weight: 600;
     letter-spacing: 0;
   }
 
