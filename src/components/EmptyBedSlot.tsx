@@ -89,9 +89,9 @@ export function EmptyBedSlot({
           </span>
         </div>
         {isMaintenance ? (
-          <Wrench className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <Wrench className="h-4 w-4 shrink-0 text-muted-foreground" />
         ) : (
-          <DoorOpen className={cn("h-3.5 w-3.5 shrink-0 opacity-70", tokens.accent)} />
+          <DoorOpen className={cn("h-4 w-4 shrink-0 opacity-70", tokens.accent)} />
         )}
         <span className="text-xs font-medium italic text-muted-foreground truncate" title={maintenanceReason || undefined}>
           {isMaintenance ? `Interditado${maintenanceReason ? ` · ${maintenanceReason}` : ""}` : "Leito disponível"}
@@ -104,14 +104,14 @@ export function EmptyBedSlot({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-6 px-2 text-xs gap-1 opacity-70 hover:opacity-100",
+              "h-7 px-2 text-xs gap-1.5 opacity-80 hover:opacity-100",
               tokens.accent,
               tokens.ring,
             )}
           >
-            {isMaintenance ? <Wrench className="h-3 w-3" /> : <UserPlus className="h-3 w-3" />}
+            {isMaintenance ? <Wrench className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
             {isMaintenance ? "Manutenção" : "Alocar"}
-            <ChevronDown className="h-3 w-3 opacity-60" />
+            <ChevronDown className="h-4 w-4 opacity-60" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-52 bg-popover z-50">
