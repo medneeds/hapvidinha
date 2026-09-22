@@ -259,62 +259,24 @@ export function AppSidebar({
           <div className="flex items-center justify-center">
 
             {!isCollapsed ? (
-              <div className="flex items-center gap-2.5 animate-fade-in">
-                {/* Símbolo hm — mesmo formato da tela de login */}
+              <div className="flex items-center animate-fade-in" aria-label="HapMap">
+                {/* Wordmark hap/map empilhado com brilho */}
                 <div
-                  aria-label="HapMap"
-                  className="h-10 w-10 bg-background flex items-center justify-center rounded-[28%] shrink-0 border border-border/40"
-                  style={{
-                    transform: "rotate(42deg)",
-                    boxShadow:
-                      "0 8px 16px -8px rgba(1,59,166,0.35), inset 0 1px 4px rgba(1,59,166,0.08)",
-                  }}
+                  className="flex flex-col leading-[0.85]"
+                  style={{ filter: "drop-shadow(0 2px 10px hsl(var(--primary) / 0.35))" }}
                 >
-                  <div
-                    className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
-                    style={{
-                      transform: "rotate(-42deg)",
-                      WebkitMaskImage: "url(/logo-hm.png)",
-                      maskImage: "url(/logo-hm.png)",
-                      WebkitMaskRepeat: "no-repeat",
-                      maskRepeat: "no-repeat",
-                      WebkitMaskPosition: "center",
-                      maskPosition: "center",
-                      WebkitMaskSize: "contain",
-                      maskSize: "contain",
-                    }}
-                  />
-                </div>
-                {/* Wordmark hap/map empilhado */}
-                <div className="flex flex-col leading-[0.85]">
-                  <span className="font-brand text-2xl lowercase text-foreground font-bold">hap</span>
-                  <span className="font-brand text-2xl lowercase text-foreground/90 tracking-[0.06em]" style={{ fontWeight: 300 }}>map</span>
+                  <span className="font-brand text-3xl lowercase text-foreground font-bold">hap</span>
+                  <span className="font-brand text-3xl lowercase text-foreground/90 tracking-[0.06em]" style={{ fontWeight: 300 }}>map</span>
                 </div>
               </div>
             ) : (
               <div
                 aria-label="HapMap"
-                className="h-7 w-7 bg-background flex items-center justify-center rounded-[28%] shrink-0 mx-auto border border-border/40"
-                style={{
-                  transform: "rotate(42deg)",
-                  boxShadow:
-                    "0 6px 12px -6px rgba(1,59,166,0.35), inset 0 1px 3px rgba(1,59,166,0.08)",
-                }}
+                className="flex flex-col leading-[0.8] items-center mx-auto animate-fade-in"
+                style={{ filter: "drop-shadow(0 2px 8px hsl(var(--primary) / 0.35))" }}
               >
-                <div
-                  className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
-                  style={{
-                    transform: "rotate(-42deg)",
-                    WebkitMaskImage: "url(/logo-hm.png)",
-                    maskImage: "url(/logo-hm.png)",
-                    WebkitMaskRepeat: "no-repeat",
-                    maskRepeat: "no-repeat",
-                    WebkitMaskPosition: "center",
-                    maskPosition: "center",
-                    WebkitMaskSize: "contain",
-                    maskSize: "contain",
-                  }}
-                />
+                <span className="font-brand text-sm lowercase text-foreground font-bold">hap</span>
+                <span className="font-brand text-sm lowercase text-foreground/90 tracking-[0.04em]" style={{ fontWeight: 300 }}>map</span>
               </div>
             )}
 
