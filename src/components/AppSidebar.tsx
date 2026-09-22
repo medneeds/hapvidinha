@@ -56,6 +56,7 @@ import { ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { SIDEBAR_ICON, SIDEBAR_ICON_MUTED } from "@/lib/headerButtonStyles";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePendingPasswordResets } from "@/hooks/usePendingPasswordResets";
@@ -447,7 +448,7 @@ export function AppSidebar({
                                         {itemName}
                                       </span>
                                     </div>
-                                    <ChevronDown className="h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]/nested:rotate-180 mr-2" />
+                                    <ChevronDown className={cn(SIDEBAR_ICON_MUTED, "transition-transform group-data-[state=open]/nested:rotate-180 mr-2")} />
                                   </SidebarMenuButton>
                                 </SidebarMenuItem>
                               </CollapsibleTrigger>
@@ -527,7 +528,7 @@ export function AppSidebar({
                   className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
                   tooltip="Checklist da Unidade"
                 >
-                  <ListChecks className="h-4 w-4 text-primary" />
+                  <ListChecks className={SIDEBAR_ICON} />
                   {!isCollapsed && (
                     <>
                       <span className="flex-1 text-left font-medium">Checklist</span>
@@ -546,7 +547,7 @@ export function AppSidebar({
                   className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
                   tooltip="Anotações da Unidade"
                 >
-                  <StickyNote className="h-4 w-4 text-primary" />
+                  <StickyNote className={SIDEBAR_ICON} />
                   {!isCollapsed && (
                     <span className="flex-1 text-left font-medium">Anotações</span>
                   )}
@@ -558,7 +559,7 @@ export function AppSidebar({
                   className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
                   tooltip="Códigos e Procedimentos"
                 >
-                  <BookMarked className="h-4 w-4 text-primary" />
+                  <BookMarked className={SIDEBAR_ICON} />
                   {!isCollapsed && (
                     <span className="flex-1 text-left font-medium">Códigos & Procedimentos</span>
                   )}
@@ -584,7 +585,7 @@ export function AppSidebar({
           {!isCollapsed && (
             <>
               <div className="bg-primary/10 rounded-full flex items-center justify-center h-9 w-9 flex-shrink-0">
-                <User className="text-primary h-4 w-4" />
+                <User className={SIDEBAR_ICON} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold truncate">
@@ -610,7 +611,7 @@ export function AppSidebar({
               )}
               title="Alterar minha senha"
             >
-              <KeyRound className="h-4 w-4" />
+              <KeyRound className={SIDEBAR_ICON} />
             </Button>
             <Button
               variant="ghost"
@@ -622,7 +623,7 @@ export function AppSidebar({
               )}
               title="Sair"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className={cn(SIDEBAR_ICON, "text-destructive")} />
             </Button>
           </div>
         </div>
