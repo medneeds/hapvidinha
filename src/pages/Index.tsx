@@ -34,9 +34,9 @@ import { useDepartment, DEPARTMENTS, Department, getDepartmentLabel } from "@/co
 
 // Estado ativo do modo de seleção adaptado à cor de identidade de cada setor
 const SELECTION_ACTIVE_STYLES: Record<Department, string> = {
-  "URGÊNCIA E EMERGÊNCIA ADULTO": "bg-warning text-warning-foreground border-warning shadow-sm hover:bg-warning/90",
-  "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA": "bg-stable text-stable-foreground border-stable shadow-sm hover:bg-stable/90",
-  "UTI": "bg-stable text-stable-foreground border-stable shadow-sm hover:bg-stable/90",
+  "URGÊNCIA E EMERGÊNCIA ADULTO": "bg-warning/10 text-warning border-warning/40 shadow-none hover:bg-warning/15",
+  "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA": "bg-stable/10 text-stable border-stable/40 shadow-none hover:bg-stable/15",
+  "UTI": "bg-stable/10 text-stable border-stable/40 shadow-none hover:bg-stable/15",
 };
 import { supabase } from "@/integrations/supabase/client";
 import { usePrivacy } from "@/contexts/PrivacyContext";

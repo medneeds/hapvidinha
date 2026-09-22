@@ -197,13 +197,13 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
   // Highlight color styles — borda lateral sutil na cor do setor (tokens semânticos)
   const highlightStyles = {
     blue: {
-      bg: "bg-stable/10 border-l-[3px] border-l-stable border-y border-r border-y-stable/25 border-r-stable/25 shadow-sm pl-1.5",
+      bg: "bg-stable/[0.05] border-l-2 border-l-stable/70 border-y border-r border-y-stable/15 border-r-stable/15 pl-1.5",
       number: "text-stable",
       text: "text-foreground font-semibold",
       star: "fill-stable text-stable"
     },
     yellow: {
-      bg: "bg-warning/10 border-l-[3px] border-l-warning border-y border-r border-y-warning/25 border-r-warning/25 shadow-sm pl-1.5",
+      bg: "bg-warning/[0.05] border-l-2 border-l-warning/70 border-y border-r border-y-warning/15 border-r-warning/15 pl-1.5",
       number: "text-warning",
       text: "text-foreground font-semibold",
       star: "fill-warning text-warning"
