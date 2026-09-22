@@ -580,7 +580,7 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
       style={style}
       className={cn(
         "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
-        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50",
+        isDragging ? "bg-accent/50 z-50" : sectorHoverColors[sector],
         isHighlighted && `${highlightColors[sector]} shadow-sm`
       )}
     >
