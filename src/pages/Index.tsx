@@ -1138,16 +1138,7 @@ const Index = () => {
 
                 {/* Right side: Action buttons + Theme toggle */}
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
-                  {/* Search button - always visible */}
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setSearchOpen(true)}
-                    className={`print:hidden ${HEADER_ICON_BUTTON}`}
-                    title="Buscar paciente (Ctrl+K)"
-                  >
-                    <Search className="h-4 w-4" />
-                  </Button>
+                  {/* Busca de paciente por nome - funcionalidade oculta (código preservado) */}
 
                   {/* Prioridades UTI - funcionalidade oculta (código preservado) */}
 
