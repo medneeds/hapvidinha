@@ -267,17 +267,17 @@ interface PatientCardProps {
 const sectorConfig = {
   red: {
     label: "Sala Vermelha",
-    color: "bg-critical/10 border-critical/30 text-critical-foreground",
+    color: "bg-critical/[0.04] border-critical/20 text-critical-foreground",
     badgeColor: "bg-critical text-critical-foreground hover:bg-critical/90"
   },
   yellow: {
     label: "Observação Amarela",
-    color: "bg-warning/10 border-warning/30 text-warning-foreground",
+    color: "bg-warning/[0.04] border-warning/20 text-warning-foreground",
     badgeColor: "bg-warning text-warning-foreground hover:bg-warning/90"
   },
   blue: {
     label: "Observação Azul",
-    color: "bg-stable/10 border-stable/30 text-stable-foreground",
+    color: "bg-stable/[0.04] border-stable/20 text-stable-foreground",
     badgeColor: "bg-stable text-stable-foreground hover:bg-stable/90"
   },
   outside: {
@@ -320,10 +320,10 @@ const SortablePendencyItem = memo(function SortablePendencyItem({ id, index, pen
   };
 
   const highlightColors = {
-    red: "bg-critical/10 border-l-[3px] border-l-critical border-y border-r border-y-critical/25 border-r-critical/25",
-    yellow: "bg-warning/10 border-l-[3px] border-l-warning border-y border-r border-y-warning/25 border-r-warning/25",
-    blue: "bg-stable/10 border-l-[3px] border-l-stable border-y border-r border-y-stable/25 border-r-stable/25",
-    outside: "bg-muted-foreground/10 border-l-[3px] border-l-muted-foreground border-y border-r border-y-muted-foreground/25 border-r-muted-foreground/25"
+    red: "bg-critical/[0.05] border-l-2 border-l-critical/70 border-y border-r border-y-critical/15 border-r-critical/15",
+    yellow: "bg-warning/[0.05] border-l-2 border-l-warning/70 border-y border-r border-y-warning/15 border-r-warning/15",
+    blue: "bg-stable/[0.05] border-l-2 border-l-stable/70 border-y border-r border-y-stable/15 border-r-stable/15",
+    outside: "bg-muted-foreground/[0.05] border-l-2 border-l-muted-foreground/70 border-y border-r border-y-muted-foreground/15 border-r-muted-foreground/15"
   };
 
   const highlightNumberColors = {
@@ -493,9 +493,9 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
   };
 
   const highlightColors = {
-    red: "bg-critical/10 border-l-[3px] border-l-critical border-y border-r border-y-critical/25 border-r-critical/25",
-    yellow: "bg-warning/10 border-l-[3px] border-l-warning border-y border-r border-y-warning/25 border-r-warning/25",
-    blue: "bg-stable/10 border-l-[3px] border-l-stable border-y border-r border-y-stable/25 border-r-stable/25",
+    red: "bg-critical/[0.05] border-l-2 border-l-critical/70 border-y border-r border-y-critical/15 border-r-critical/15",
+    yellow: "bg-warning/[0.05] border-l-2 border-l-warning/70 border-y border-r border-y-warning/15 border-r-warning/15",
+    blue: "bg-stable/[0.05] border-l-2 border-l-stable/70 border-y border-r border-y-stable/15 border-r-stable/15",
     outside: "bg-muted-foreground/10 border-l-[3px] border-l-muted-foreground border-y border-r border-y-muted-foreground/25 border-r-muted-foreground/25"
   };
 
@@ -592,9 +592,9 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
             onClick={handleCyclePsm}
             className={cn(
               "inline-flex items-center justify-center size-6 min-w-6 min-h-6 rounded-full border cursor-pointer print:hidden transition-all duration-300",
-              sector === 'red' && "border-critical/40 bg-critical/10 hover:bg-critical/20",
-              sector === 'yellow' && "border-warning/40 bg-warning/10 hover:bg-warning/20",
-              sector === 'blue' && "border-stable/40 bg-stable/10 hover:bg-stable/20",
+              sector === 'red' && "border-critical/25 bg-critical/[0.05] hover:bg-critical/10",
+              sector === 'yellow' && "border-warning/25 bg-warning/[0.05] hover:bg-warning/10",
+              sector === 'blue' && "border-stable/25 bg-stable/[0.05] hover:bg-stable/10",
               sector === 'outside' && "border-muted-foreground/40 bg-muted/50 hover:bg-muted",
               isAnimating && "scale-125 rotate-12"
             )}
@@ -1478,10 +1478,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   }[patient.sector];
 
   const selectionRingColor = {
-    red: "ring-2 ring-critical",
-    yellow: "ring-2 ring-warning",
-    blue: "ring-2 ring-stable",
-    outside: "ring-2 ring-muted-foreground"
+    red: "ring-1 ring-critical/60",
+    yellow: "ring-1 ring-warning/60",
+    blue: "ring-1 ring-stable/60",
+    outside: "ring-1 ring-muted-foreground/60"
   }[patient.sector];
 
   // Allocation Status Bar configuration
@@ -1675,11 +1675,11 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                   {(() => {
                     const bedChipTokens =
                       patient.sector === 'red'
-                        ? 'bg-critical/15 border-critical/40 text-critical'
+                        ? 'bg-critical/[0.07] border-critical/25 text-critical'
                         : patient.sector === 'yellow'
-                        ? 'bg-warning/15 border-warning/40 text-warning'
+                        ? 'bg-warning/[0.07] border-warning/25 text-warning'
                         : patient.sector === 'blue'
-                        ? 'bg-stable/15 border-stable/40 text-stable'
+                        ? 'bg-stable/[0.07] border-stable/25 text-stable'
                         : 'bg-muted/60 border-border text-muted-foreground';
                     return (
                       <div

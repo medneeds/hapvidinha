@@ -59,25 +59,25 @@ const sectorInfo = {
     title: "Cuidados Especiais",
     subtitle: "Leitos V01-V02",
     icon: "🔴",
-    gradientClass: "bg-critical/15 dark:bg-critical/25 border-l-4 border-l-critical"
+    gradientClass: "bg-critical/[0.06] dark:bg-critical/10 border-l-2 border-l-critical/60"
   },
   yellow: {
     title: "Observação Amarela",
     subtitle: "Leitos A01-A06",
     icon: "🟡",
-    gradientClass: "bg-warning/15 dark:bg-warning/25 border-l-4 border-l-warning"
+    gradientClass: "bg-warning/[0.06] dark:bg-warning/10 border-l-2 border-l-warning/60"
   },
   blue: {
     title: "Observação Azul",
     subtitle: "Leitos Z01-Z06",
     icon: "🔵",
-    gradientClass: "bg-stable/15 dark:bg-stable/25 border-l-4 border-l-stable"
+    gradientClass: "bg-stable/[0.06] dark:bg-stable/10 border-l-2 border-l-stable/60"
   },
   outside: {
     title: "Fora das Alas",
     subtitle: "Pacientes externos",
     icon: "⚪",
-    gradientClass: "bg-muted/30 dark:bg-muted/40 border-l-4 border-l-muted-foreground/50"
+    gradientClass: "bg-muted/20 dark:bg-muted/30 border-l-2 border-l-muted-foreground/40"
   }
 };
 
@@ -250,7 +250,7 @@ export function SectorSection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-3 mb-4 print:space-y-0.5 print:mb-1 print:break-inside-avoid">
-      <div className={`${info.gradientClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex flex-col`}>
+      <div className={`${info.gradientClass} rounded-lg p-2 border border-border/40 shadow-sm print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex flex-col`}>
         <div className="flex items-center justify-between w-full gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
