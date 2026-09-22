@@ -15,10 +15,9 @@ import {
   KeyRound,
   ArrowRightLeft,
   ListChecks,
-  StickyNote,
-  BookMarked,
   FolderArchive,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { QuickChecklistDialog } from "@/components/QuickChecklistDialog";
 import { QuickNotesDialog } from "@/components/QuickNotesDialog";
 import { MedicalCodesDialog } from "@/components/MedicalCodesDialog";
@@ -63,6 +62,22 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { usePendingPasswordResets } from "@/hooks/usePendingPasswordResets";
 import { ChangeOwnPasswordDialog } from "@/components/ChangeOwnPasswordDialog";
 
+type SidebarSubitem = {
+  name: string;
+  link?: string | null;
+  action?: string;
+  badge?: number;
+  subsections?: SidebarSubitem[];
+};
+
+type SidebarSection = {
+  title: string;
+  icon: LucideIcon;
+  link?: string;
+  requiresPassword?: boolean;
+  items?: SidebarSubitem[];
+};
+
 export function AppSidebar({ 
   onOpenHandover
 }: { 
@@ -102,7 +117,7 @@ export function AppSidebar({
   const isEnfermagem = role === "enfermagem";
   const isViewOnlyRole = isRecepcao || isEnfermagem;
 
-  const allMenuItems = [
+  const allMenuItems: SidebarSection[] = [
     {
       title: "MAPA",
       icon: LayoutDashboard,
@@ -165,14 +180,25 @@ export function AppSidebar({
   ];
   const canAccessRepository = !!user && REPOSITORY_USER_IDS.includes(user.id);
 
-  const menuItems = (() => {
-    if (!canAccessRepository) return baseMenuItems;
+  const quickResourcesItem: SidebarSection = {
+    title: "RECURSOS RÁPIDOS",
+    icon: ListChecks,
+    items: [
+      { name: "CHECKLIST", action: "openChecklist", badge: pendingChecklist > 0 ? pendingChecklist : undefined },
+      { name: "ANOTAÇÕES", action: "openNotes" },
+      { name: "CÓDIGOS & PROCEDIMENTOS", action: "openCodes" },
+    ],
+  };
+
+  const menuItems: SidebarSection[] = (() => {
+    const itemsWithQuickResources = [...baseMenuItems, quickResourcesItem];
+    if (!canAccessRepository) return itemsWithQuickResources;
     const docsIndex = baseMenuItems.findIndex(item => item.title === "DOCUMENTOS");
-    const insertAt = docsIndex >= 0 ? docsIndex + 1 : baseMenuItems.length;
+    const insertAt = docsIndex >= 0 ? docsIndex + 1 : itemsWithQuickResources.length;
     return [
-      ...baseMenuItems.slice(0, insertAt),
+      ...itemsWithQuickResources.slice(0, insertAt),
       { title: "REPOSITÓRIO", icon: FolderArchive, link: "/repositorio" },
-      ...baseMenuItems.slice(insertAt),
+      ...itemsWithQuickResources.slice(insertAt),
     ];
   })();
 
@@ -250,6 +276,15 @@ export function AppSidebar({
         if (isMobile) {
           setOpenMobile(false);
         }
+      } else if (item.action === 'openChecklist') {
+        setShowChecklistDialog(true);
+        if (isMobile) setOpenMobile(false);
+      } else if (item.action === 'openNotes') {
+        setShowNotesDialog(true);
+        if (isMobile) setOpenMobile(false);
+      } else if (item.action === 'openCodes') {
+        setShowCodesDialog(true);
+        if (isMobile) setOpenMobile(false);
       } else if (item.action === 'openSepsisProtocol') {
         navigate('/sepsis-protocol');
         if (isMobile) {
@@ -490,62 +525,6 @@ export function AppSidebar({
           </div>
         ))}
 
-        {/* ===== RECURSOS RÁPIDOS ===== */}
-        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-3 mx-4" />
-        <SidebarGroup className="py-0 my-0">
-          {!isCollapsed && (
-            <SidebarGroupLabel className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Recursos Rápidos
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent className="px-2">
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => setShowChecklistDialog(true)}
-                  className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
-                  tooltip="Checklist da Unidade"
-                >
-                  <ListChecks className={SIDEBAR_ICON} />
-                  {!isCollapsed && (
-                    <>
-                      <span className="flex-1 text-left font-medium">Checklist</span>
-                      {pendingChecklist > 0 && (
-                        <Badge variant="secondary" className="h-5 min-w-5 px-1.5 text-[10px] font-bold">
-                          {pendingChecklist}
-                        </Badge>
-                      )}
-                    </>
-                  )}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => setShowNotesDialog(true)}
-                  className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
-                  tooltip="Anotações da Unidade"
-                >
-                  <StickyNote className={SIDEBAR_ICON} />
-                  {!isCollapsed && (
-                    <span className="flex-1 text-left font-medium">Anotações</span>
-                  )}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => setShowCodesDialog(true)}
-                  className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
-                  tooltip="Códigos e Procedimentos"
-                >
-                  <BookMarked className={SIDEBAR_ICON} />
-                  {!isCollapsed && (
-                    <span className="flex-1 text-left font-medium">Códigos & Procedimentos</span>
-                  )}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
 
       <QuickChecklistDialog open={showChecklistDialog} onOpenChange={setShowChecklistDialog} />
