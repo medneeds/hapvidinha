@@ -17,6 +17,7 @@ import {
   ListChecks,
   FolderArchive,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { QuickChecklistDialog } from "@/components/QuickChecklistDialog";
 import { QuickNotesDialog } from "@/components/QuickNotesDialog";
 import { MedicalCodesDialog } from "@/components/MedicalCodesDialog";
@@ -61,6 +62,22 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { usePendingPasswordResets } from "@/hooks/usePendingPasswordResets";
 import { ChangeOwnPasswordDialog } from "@/components/ChangeOwnPasswordDialog";
 
+type SidebarSubitem = {
+  name: string;
+  link?: string | null;
+  action?: string;
+  badge?: number;
+  subsections?: SidebarSubitem[];
+};
+
+type SidebarSection = {
+  title: string;
+  icon: LucideIcon;
+  link?: string;
+  requiresPassword?: boolean;
+  items?: SidebarSubitem[];
+};
+
 export function AppSidebar({ 
   onOpenHandover
 }: { 
@@ -100,7 +117,7 @@ export function AppSidebar({
   const isEnfermagem = role === "enfermagem";
   const isViewOnlyRole = isRecepcao || isEnfermagem;
 
-  const allMenuItems = [
+  const allMenuItems: SidebarSection[] = [
     {
       title: "MAPA",
       icon: LayoutDashboard,
@@ -163,7 +180,7 @@ export function AppSidebar({
   ];
   const canAccessRepository = !!user && REPOSITORY_USER_IDS.includes(user.id);
 
-  const quickResourcesItem = {
+  const quickResourcesItem: SidebarSection = {
     title: "RECURSOS RÁPIDOS",
     icon: ListChecks,
     items: [
@@ -173,7 +190,7 @@ export function AppSidebar({
     ],
   };
 
-  const menuItems = (() => {
+  const menuItems: SidebarSection[] = (() => {
     const itemsWithQuickResources = [...baseMenuItems, quickResourcesItem];
     if (!canAccessRepository) return itemsWithQuickResources;
     const docsIndex = baseMenuItems.findIndex(item => item.title === "DOCUMENTOS");
