@@ -73,7 +73,7 @@ export function EmptyBedSlot({
   return (
     <div
       className={cn(
-        "group flex items-center justify-between gap-2 px-2 py-1.5 rounded-md border border-dashed transition-colors",
+        "clinical-empty-bed group flex items-center justify-between gap-2 px-2.5 py-2 border border-dashed transition-colors",
         isMaintenance ? "bg-muted/60 border-muted-foreground/40" : tokens.container,
       )}
     >

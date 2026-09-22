@@ -222,8 +222,8 @@ export function UtiSectorSection({
   // Drag-and-drop for beds removed - beds are fixed, vacancy toggle used instead
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
-      <div className={`${headerClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center`}>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 mb-5 print:space-y-0.5 print:mb-1 print:break-inside-avoid">
+      <div className={`${headerClass} clinical-section-header p-2 border border-border print:p-1 print:mb-0.5 print:rounded-md transition-colors duration-200 min-h-[44px] print:h-auto flex items-center`}>
         <div className="flex items-center justify-between w-full gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
@@ -246,7 +246,7 @@ export function UtiSectorSection({
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${chevronClass} ${isOpen ? '' : '-rotate-90'}`} />
               <div className="flex items-center gap-2 print:gap-1">
                 <SectorBedIcon sectorIcon={typeof displayIcon === 'string' ? displayIcon : info.icon} size="md" />
-                <h2 className={`text-lg font-bold print:text-[10px] uppercase ${titleClass}`}>{displayTitle}</h2>
+                <h2 className={`clinical-section-title text-sm sm:text-base font-semibold print:text-[10px] uppercase ${titleClass}`}>{displayTitle}</h2>
               </div>
             </button>
           </CollapsibleTrigger>
@@ -288,7 +288,7 @@ export function UtiSectorSection({
                 <Printer className="h-3.5 w-3.5" />
               </Button>
             )}
-            <div className={`flex items-center justify-center h-8 w-8 backdrop-blur-sm rounded-lg border print:h-6 print:w-6 ${counterClass}`}>
+            <div className={`flex items-center justify-center h-8 min-w-[2.25rem] px-2 rounded-md border print:h-6 print:min-w-6 ${counterClass}`}>
               <p className={`text-base font-bold print:text-[10px] ${titleClass}`}>{patients.length}</p>
             </div>
           </div>

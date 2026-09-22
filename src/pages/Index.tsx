@@ -162,7 +162,7 @@ function DynamicHeader({ children }: { children: React.ReactNode }) {
   
   return (
     <header 
-      className="border-b border-white/10 bg-gradient-to-r from-[#011d54] via-[#013ba6] to-[#0256d4] backdrop-blur-xl fixed top-0 right-0 z-50 shadow-[0_4px_20px_-4px_rgba(1,59,166,0.5)] print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
+      className="clinical-topbar border-b border-primary-foreground/10 fixed top-0 right-0 z-50 print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
       style={{
         left: isMobile ? 0 : (state === 'collapsed' ? 'var(--sidebar-width-icon)' : 'var(--sidebar-width)')
       }}
@@ -1073,7 +1073,7 @@ const Index = () => {
           />
         )}
         
-        <div className={printMode ? 'print-hide' : ''}>
+        <div className={cn("clinical-shell min-h-screen", printMode && "print-hide")}>
           {/* Header */}
           <DynamicHeader>
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
@@ -1087,7 +1087,7 @@ const Index = () => {
                     <div className="print:hidden">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="inline-flex items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 bg-white/10 backdrop-blur-sm border border-white/25 text-white text-base sm:text-lg font-bold uppercase tracking-tight hover:bg-white/20 hover:border-white/50 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                          <button className="inline-flex items-center gap-2 h-10 px-3.5 sm:px-4 bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground font-heading text-sm sm:text-base font-semibold uppercase hover:bg-primary-foreground/15 hover:border-primary-foreground/35 transition-colors duration-150 rounded-md cursor-pointer">
                             <Building2 className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-90" />
                             <span className="truncate">{getDepartmentLabel(currentDepartment)}</span>
                             <ChevronDown className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-70" />
@@ -1397,7 +1397,7 @@ const Index = () => {
           </DynamicHeader>
 
           {/* Main Content */}
-          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1 pt-[120px] sm:pt-[110px] print:pt-3">
+          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-5 print:py-0 print:px-1 pt-[120px] sm:pt-[104px] print:pt-3">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
               {currentDepartment === "UTI" ? (
                 selectedUtiUnit === null ? (

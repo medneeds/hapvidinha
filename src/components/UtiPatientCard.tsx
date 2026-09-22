@@ -1019,7 +1019,7 @@ export function UtiPatientCard({
   return (
     <>
       <div 
-        className={cn("border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200", colors.card)}
+        className={cn("clinical-patient-card border overflow-hidden transition-[border-color,box-shadow] duration-150", colors.card)}
         data-patient-id={patient.id}
       >
         {/* VACANT BED VIEW */}
