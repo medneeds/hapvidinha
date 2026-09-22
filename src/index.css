@@ -1083,3 +1083,11 @@ input:-webkit-autofill:active {
 .duration-1500 {
   transition-duration: 1500ms;
 }
+
+/* Identidade visual uniforme dos ícones (sidebar + cabeçalho) - uniform-icon-stroke */
+@layer base {
+  [data-sidebar] svg.lucide,
+  header svg.lucide {
+    stroke-width: 1.75;
+  }
+}

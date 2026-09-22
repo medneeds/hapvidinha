@@ -1180,7 +1180,7 @@ const Index = () => {
                         className={`print:hidden h-11 w-11 transition-all duration-200 ${selectionMode ? SELECTION_ACTIVE_STYLES[currentDepartment] : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}
                         title="Modo de seleção"
                       >
-                        <CheckSquare className="h-5 w-5" />
+                        <CheckSquare className="h-4 w-4" />
                       </Button>
                       {selectionMode && selectedPatients.size > 0 && (
                         <>
@@ -1191,7 +1191,7 @@ const Index = () => {
                             className="print:hidden h-11 w-11 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_18px_-2px_rgba(56,189,248,0.65)] hover:shadow-[0_0_24px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 transition-all"
                             title={`Imprimir ${selectedPatients.size}`}
                           >
-                            <Printer className="h-5 w-5" />
+                            <Printer className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="destructive"
@@ -1200,7 +1200,7 @@ const Index = () => {
                             className="print:hidden h-11 w-11 bg-red-600 text-white hover:bg-red-700 border-0"
                             title={`Deletar ${selectedPatients.size}`}
                           >
-                            <Trash2 className="h-5 w-5" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </>
                       )}
@@ -1211,7 +1211,7 @@ const Index = () => {
                             size="icon"
                             className="print:hidden h-11 w-11 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 transition-all duration-200"
                           >
-                            <MoreVertical className="h-5 w-5" />
+                            <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48 bg-background z-50">
@@ -1365,7 +1365,7 @@ const Index = () => {
                       {/* Patient count + User info */}
                       <div className="hidden md:flex items-center gap-2 bg-sidebar-accent/60 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-sidebar-border">
                         <div className="flex items-center justify-center w-7 h-7 rounded-md bg-sidebar-accent border border-sidebar-border">
-                          <Users className="h-3.5 w-3.5 text-sidebar-foreground" />
+                          <Users className="h-4 w-4 text-sidebar-foreground" />
                         </div>
                         <div className="flex flex-col justify-center">
                           <p className="text-[8px] text-muted-foreground uppercase leading-none tracking-wide font-medium">Total</p>
