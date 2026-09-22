@@ -19,7 +19,7 @@ import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, Ch
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
-import { BedAllocationNotifications } from "@/components/BedAllocationNotifications";
+// import { BedAllocationNotifications } from "@/components/BedAllocationNotifications"; // funcionalidade oculta (código preservado)
 import { BedSelectionDialog } from "@/components/BedSelectionDialog";
 import { DoorPatientNotifications } from "@/components/DoorPatientNotifications";
 import { RequestNewAllocationDialog } from "@/components/RequestNewAllocationDialog";
@@ -1327,7 +1327,8 @@ const Index = () => {
                       {/* Notifications & Info group */}
                       <div className="flex items-center gap-1 print:hidden">
                         <NotificationCenter />
-                        <BedAllocationNotifications />
+                        {/* Solicitações de Alocação — funcionalidade oculta (código preservado) */}
+                        {/* <BedAllocationNotifications /> */}
                         <DoorPatientNotifications />
                       </div>
 
