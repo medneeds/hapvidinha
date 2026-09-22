@@ -1717,8 +1717,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             <div className="flex-1 flex flex-col gap-3 md:grid md:grid-cols-19 md:gap-1.5 md:items-start">
               {/* Mobile: Leito + Paciente na mesma linha */}
               <div className={cn(
-                "flex items-start gap-3 border-l rounded-r pl-1.5 md:col-span-5 md:grid md:grid-cols-5 md:gap-1.5",
-                patientDataDivider
+                "flex items-start gap-3 pl-1.5 md:col-span-5 md:grid md:grid-cols-5 md:gap-1.5"
               )}>
                 {/* Leito - chip alinhado ao slot compacto "Leito disponível" */}
                 <div className="flex flex-col shrink-0 md:col-span-1">
