@@ -258,27 +258,25 @@ export function AppSidebar({
         <div className="flex items-center justify-center relative w-full">
           <div className="flex items-center justify-center">
 
-            {!isCollapsed ? (
-              <div className="flex items-center animate-fade-in" aria-label="HapMap">
-                {/* Wordmark hap/map empilhado com brilho */}
-                <div
-                  className="flex flex-col leading-[0.85]"
-                  style={{ filter: "drop-shadow(0 2px 10px hsl(var(--primary) / 0.35))" }}
-                >
-                  <span className="font-brand text-3xl lowercase text-foreground font-bold">hap</span>
-                  <span className="font-brand text-3xl lowercase text-foreground/90 tracking-[0.06em]" style={{ fontWeight: 300 }}>map</span>
-                </div>
-              </div>
-            ) : (
-              <div
-                aria-label="HapMap"
-                className="flex flex-col leading-[0.8] items-center mx-auto animate-fade-in"
-                style={{ filter: "drop-shadow(0 2px 8px hsl(var(--primary) / 0.35))" }}
-              >
-                <span className="font-brand text-sm lowercase text-foreground font-bold">hap</span>
-                <span className="font-brand text-sm lowercase text-foreground/90 tracking-[0.04em]" style={{ fontWeight: 300 }}>map</span>
-              </div>
-            )}
+            {/* Símbolo hm com brilho (mesmo da tela de login) */}
+            <div
+              aria-label="HapMap"
+              className={cn(
+                "animate-fade-in bg-gradient-to-br from-primary via-primary to-primary/80",
+                isCollapsed ? "w-9 h-9 mx-auto" : "w-14 h-14"
+              )}
+              style={{
+                filter: "drop-shadow(0 2px 10px hsl(var(--primary) / 0.4))",
+                WebkitMaskImage: "url(/logo-hm.png)",
+                maskImage: "url(/logo-hm.png)",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+                WebkitMaskPosition: "center",
+                maskPosition: "center",
+                WebkitMaskSize: "contain",
+                maskSize: "contain",
+              }}
+            />
 
 
           </div>
