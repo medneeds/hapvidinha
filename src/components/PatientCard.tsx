@@ -1647,7 +1647,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           className={cn(
             "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
             config.color,
-            isSelected && "ring-2 ring-primary",
+            isSelected && selectionRingColor,
             isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
             (allocationStatusBarConfig
               || (hasSepsisActive && activeSepsisProtocol?.outcome == null)
