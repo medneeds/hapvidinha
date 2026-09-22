@@ -62,7 +62,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { PasswordConfirmDialog } from "@/components/PasswordConfirmDialog";
-import { HEADER_ICON_BUTTON, HEADER_ICON_BUTTON_ACTIVE, HEADER_ICON_BUTTON_DANGER } from "@/lib/headerButtonStyles";
+import { HEADER_ICON_BUTTON, HEADER_ICON_BUTTON_ACTIVE, HEADER_ICON_BUTTON_DANGER, SECTION_ICON, SECTION_ICON_BUTTON } from "@/lib/headerButtonStyles";
 import {
   Select,
   SelectContent,
@@ -1549,21 +1549,21 @@ const Index = () => {
                               variant="outline"
                               size="icon"
                               onClick={() => handleAddExtraBed("outside")}
-                              className="h-8 w-8"
+                              className={SECTION_ICON_BUTTON}
                               title="Adicionar paciente"
                             >
-                              <Plus className="h-3.5 w-3.5" />
+                              <Plus className={SECTION_ICON} />
                             </Button>
                             <Button
                               variant="outline"
                               size="icon"
                               onClick={() => handlePrintSector("outside")}
-                              className="h-8 w-8"
+                              className={SECTION_ICON_BUTTON}
                               title="Imprimir seção"
                             >
-                              <Printer className="h-3.5 w-3.5" />
+                              <Printer className={SECTION_ICON} />
                             </Button>
-                            <div className="flex items-center justify-center h-8 w-8 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
+                            <div className="flex items-center justify-center h-9 w-9 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50">
                               <p className="text-base font-bold text-foreground">{outsidePatients.length}</p>
                             </div>
                           </div>
