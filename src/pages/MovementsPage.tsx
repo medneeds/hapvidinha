@@ -689,7 +689,7 @@ export default function MovementsPage() {
                                 }}
                                 className="h-7 gap-1.5"
                               >
-                                <FileText className="h-3.5 w-3.5" />
+                                <FileText className="h-4 w-4" />
                                 Ver Dados
                               </Button>
                             )}
@@ -700,7 +700,7 @@ export default function MovementsPage() {
                                 onClick={() => handleOpenReallocateDialog(movement)}
                                 className="h-7 gap-1.5"
                               >
-                                <RotateCcw className="h-3.5 w-3.5" />
+                                <RotateCcw className="h-4 w-4" />
                                 Realocar
                               </Button>
                             )}

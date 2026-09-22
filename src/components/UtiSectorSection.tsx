@@ -8,6 +8,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { SECTION_ICON, SECTION_ICON_BUTTON } from "@/lib/headerButtonStyles";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 
 type ColorVariant = 'blue' | 'yellow';
@@ -120,7 +121,7 @@ function UtiRow(props: UtiRowProps) {
         size="icon"
         onClick={handleToggleVacancy}
         className={cn(
-          "h-8 w-8 flex-shrink-0 print:hidden hidden md:flex transition-all",
+          SECTION_ICON_BUTTON, "flex-shrink-0 print:hidden hidden md:flex",
           props.patient.isVacant ? variantStyles.vacant : variantStyles.occupied
         )}
         title={props.patient.isVacant ? "Liberar para preenchimento" : "Marcar como vago"}
@@ -261,13 +262,13 @@ export function UtiSectorSection({
                 variant="outline"
                 size="icon"
                 onClick={() => setAllCardsCollapsed(!allCardsCollapsed)}
-                className={`h-8 w-8 print:hidden ${buttonClass}`}
+                className={cn(SECTION_ICON_BUTTON, "print:hidden", buttonClass)}
                 title={allCardsCollapsed ? "Expandir todos os pacientes" : "Retrair todos os pacientes"}
               >
                 {allCardsCollapsed ? (
-                  <ChevronsUpDown className="h-3.5 w-3.5" />
+                  <ChevronsUpDown className={SECTION_ICON} />
                 ) : (
-                  <ChevronsDownUp className="h-3.5 w-3.5" />
+                  <ChevronsDownUp className={SECTION_ICON} />
                 )}
               </Button>
             )}
@@ -276,10 +277,10 @@ export function UtiSectorSection({
                 variant="outline"
                 size="icon"
                 onClick={onAddExtraBed}
-                className={`h-8 w-8 print:hidden ${buttonClass}`}
+                className={cn(SECTION_ICON_BUTTON, "print:hidden", buttonClass)}
                 title="Adicionar leito extra"
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus className={SECTION_ICON} />
               </Button>
             )}
             {onPrintSector && (
@@ -287,13 +288,13 @@ export function UtiSectorSection({
                 variant="outline"
                 size="icon"
                 onClick={onPrintSector}
-                className="h-8 w-8 print:hidden bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all"
+                className={cn(SECTION_ICON_BUTTON, "print:hidden")}
                 title="Imprimir setor"
               >
-                <Printer className="h-3.5 w-3.5" />
+                <Printer className={SECTION_ICON} />
               </Button>
             )}
-            <div className={`flex items-center justify-center h-8 w-8 backdrop-blur-sm rounded-lg border print:h-6 print:w-6 ${counterClass}`}>
+            <div className={`flex items-center justify-center h-9 w-9 backdrop-blur-sm rounded-lg border print:h-6 print:w-6 ${counterClass}`}>
               <p className={`text-base font-bold print:text-[10px] ${titleClass}`}>{patients.length}</p>
             </div>
           </div>
