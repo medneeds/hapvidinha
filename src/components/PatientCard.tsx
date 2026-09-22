@@ -506,6 +506,13 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
     outside: "bg-muted-foreground/[0.05] border border-muted-foreground/40 hover:bg-muted-foreground/10 hover:border-muted-foreground/60"
   };
 
+  const sectorHoverColors = {
+    red: "hover:bg-critical/[0.07]",
+    yellow: "hover:bg-warning/[0.07]",
+    blue: "hover:bg-stable/[0.07]",
+    outside: "hover:bg-muted-foreground/[0.07]"
+  };
+
   const highlightNumberColors = {
     red: "text-critical",
     yellow: "text-warning",
