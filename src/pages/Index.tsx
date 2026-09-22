@@ -15,7 +15,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
 import { Patient, PatientCategory } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2, Search, GraduationCap } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2, GraduationCap } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
@@ -1138,16 +1138,7 @@ const Index = () => {
 
                 {/* Right side: Action buttons + Theme toggle */}
                 <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
-                  {/* Search button - always visible */}
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setSearchOpen(true)}
-                    className={`print:hidden ${HEADER_ICON_BUTTON}`}
-                    title="Buscar paciente (Ctrl+K)"
-                  >
-                    <Search className="h-4 w-4" />
-                  </Button>
+                  {/* Busca de paciente por nome - funcionalidade oculta (código preservado) */}
 
                   {/* Prioridades UTI - funcionalidade oculta (código preservado) */}
 
