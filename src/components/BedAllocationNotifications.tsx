@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { HEADER_ICON_BUTTON, HEADER_ICON } from "@/lib/headerButtonStyles";
 import { useBedAllocationRequests, BedAllocationRequest } from "@/hooks/useBedAllocationRequests";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -309,7 +310,7 @@ export function BedAllocationNotifications() {
       {/* Bed allocation icon with counter */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="relative h-8 w-8 bg-sidebar-accent/50 border border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:border-sidebar-foreground/30 transition-all duration-200" title="Solicitações de Alocação">
+          <Button variant="ghost" size="icon" className={`relative ${HEADER_ICON_BUTTON}`} title="Solicitações de Alocação">
             <Bed className="h-4 w-4" />
             {pendingCount > 0 && (
               <Badge 

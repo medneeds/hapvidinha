@@ -18,6 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useBedAllocationRequests, BedAllocationRequest } from "@/hooks/useBedAllocationRequests";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { HEADER_ICON_BUTTON, HEADER_ICON } from "@/lib/headerButtonStyles";
 import { useHospital } from "@/contexts/HospitalContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -127,8 +128,8 @@ export function DoorPatientNotifications() {
       {/* Bell icon with counter */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className={`relative ${HEADER_ICON_BUTTON}`} title="Minhas Solicitações">
+            <Bell className={HEADER_ICON} />
             {notificationCount > 0 && (
               <Badge 
                 className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-blue-500 text-white text-xs"

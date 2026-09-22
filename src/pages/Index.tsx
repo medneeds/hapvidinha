@@ -56,6 +56,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { PasswordConfirmDialog } from "@/components/PasswordConfirmDialog";
+import { HEADER_ICON_BUTTON, HEADER_ICON_BUTTON_ACTIVE, HEADER_ICON_BUTTON_DANGER } from "@/lib/headerButtonStyles";
 import {
   Select,
   SelectContent,
@@ -1136,7 +1137,7 @@ const Index = () => {
                     variant="outline"
                     size="icon"
                     onClick={() => setSearchOpen(true)}
-                    className="print:hidden h-11 w-11 sm:h-8 sm:w-8 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 transition-all duration-200"
+                    className={`print:hidden ${HEADER_ICON_BUTTON}`}
                     title="Buscar paciente (Ctrl+K)"
                   >
                     <Search className="h-4 w-4" />
@@ -1147,7 +1148,7 @@ const Index = () => {
                     <Button
                       variant="outline"
                       onClick={() => setUtiPrioritiesOpen(true)}
-                      className="print:hidden relative h-11 sm:h-8 px-2 sm:px-3 gap-1.5 bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 text-white border-0 shadow-[0_0_14px_-2px_rgba(244,63,94,0.55)] hover:shadow-[0_0_22px_-2px_rgba(244,63,94,0.85)] hover:brightness-110 transition-all"
+                      className="print:hidden relative h-9 px-3 gap-1.5 rounded-lg bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 text-white border-0 shadow-[0_0_14px_-2px_rgba(244,63,94,0.55)] hover:shadow-[0_0_22px_-2px_rgba(244,63,94,0.85)] hover:brightness-110 transition-all"
                       title="Prioridades UTI"
                     >
                       <HeartPulse className="h-4 w-4" />
@@ -1261,7 +1262,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={handleUndo} disabled={history.length === 0}
-                              className="h-8 w-8 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 disabled:opacity-40 transition-all duration-200">
+                              className={`${HEADER_ICON_BUTTON} disabled:opacity-40`}>
                               <Undo className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1270,7 +1271,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={handleRedo} disabled={redoHistory.length === 0}
-                              className="h-8 w-8 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 disabled:opacity-40 transition-all duration-200">
+                              className={`${HEADER_ICON_BUTTON} disabled:opacity-40`}>
                               <Redo className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1291,7 +1292,7 @@ const Index = () => {
                               variant={selectionMode ? "default" : "outline"}
                               size="icon"
                               onClick={handleToggleSelectionMode}
-                              className={`h-8 w-8 transition-all duration-200 ${selectionMode ? 'bg-primary text-primary-foreground shadow-md' : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}>
+                              className={selectionMode ? HEADER_ICON_BUTTON_ACTIVE : HEADER_ICON_BUTTON}>
                               <CheckSquare className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1302,7 +1303,7 @@ const Index = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button variant="outline" size="icon" onClick={handlePrintSelected}
-                                  className="h-8 w-8 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
+                                  className="h-9 w-9 rounded-lg bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
                                   <Printer className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
@@ -1311,7 +1312,7 @@ const Index = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button variant="destructive" size="icon" onClick={handleDeleteSelected}
-                                  className="h-8 w-8 bg-red-600 text-white hover:bg-red-700 border-0">
+                                  className={HEADER_ICON_BUTTON_DANGER}>
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
@@ -1322,7 +1323,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={handlePrintCompact}
-                              className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
+                              className="hidden sm:flex h-9 w-9 rounded-lg bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
                               <Printer className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1333,7 +1334,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={toggleNamesHidden}
-                              className={`hidden sm:flex h-8 w-8 transition-all duration-200 ${namesHidden ? 'bg-primary text-primary-foreground shadow-md' : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}>
+                              className={`hidden sm:flex ${namesHidden ? HEADER_ICON_BUTTON_ACTIVE : HEADER_ICON_BUTTON}`}>
                               {namesHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </Button>
                           </TooltipTrigger>
@@ -1377,7 +1378,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={signOut}
-                              className="h-8 w-8 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200">
+                              className="h-9 w-9 rounded-lg bg-sidebar-accent/50 border border-sidebar-border text-sidebar-foreground hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200">
                               <LogOut className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
