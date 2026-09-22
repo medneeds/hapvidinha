@@ -493,10 +493,17 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
   };
 
   const highlightColors = {
-    red: "bg-critical/20 border-critical/50",
-    yellow: "bg-warning/20 border-warning/50",
-    blue: "bg-stable/20 border-stable/50",
-    outside: "bg-muted-foreground/20 border-muted-foreground/50"
+    red: "bg-critical/10 border-l-[3px] border-l-critical border-y border-r border-y-critical/25 border-r-critical/25",
+    yellow: "bg-warning/10 border-l-[3px] border-l-warning border-y border-r border-y-warning/25 border-r-warning/25",
+    blue: "bg-stable/10 border-l-[3px] border-l-stable border-y border-r border-y-stable/25 border-r-stable/25",
+    outside: "bg-muted-foreground/10 border-l-[3px] border-l-muted-foreground border-y border-r border-y-muted-foreground/25 border-r-muted-foreground/25"
+  };
+
+  const highlightNumberColors = {
+    red: "text-critical",
+    yellow: "text-warning",
+    blue: "text-stable",
+    outside: "text-muted-foreground"
   };
 
   const starColors = {
