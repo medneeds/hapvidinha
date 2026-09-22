@@ -7,4 +7,4 @@
 - [x] Padronizar cabeçalhos das telas estruturais
 - [x] Validar desktop, mobile e compilação; fluxo autenticado depende de sessão disponível
 
-- [ ] Aplicar direção Apple minimalist clinical à tela de acesso e linguagem global
+- [x] Aplicar direção Apple minimalist clinical à tela de acesso e linguagem global

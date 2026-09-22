@@ -15,8 +15,8 @@ export default {
     extend: {
       fontFamily: {
         brand: ['Comfortaa', 'system-ui', 'sans-serif'],
-        sans: ['Manrope', 'system-ui', 'sans-serif'],
-        heading: ['Sora', 'Manrope', 'system-ui', 'sans-serif'],
+        sans: ['Work Sans', 'system-ui', 'sans-serif'],
+        heading: ['Instrument Serif', 'Georgia', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
