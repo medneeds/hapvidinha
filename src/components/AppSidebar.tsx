@@ -340,7 +340,7 @@ export function AppSidebar({
                         "border-b border-border/50"
                       )}
                     >
-                      <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
+                      <section.icon className={SIDEBAR_ICON} />
                       <span className="text-xs font-medium uppercase tracking-wide text-foreground">
                         {section.title}
                       </span>
@@ -385,16 +385,13 @@ export function AppSidebar({
                       "flex items-center w-full",
                       isCollapsed ? "justify-center" : "gap-3"
                     )}>
-                      <section.icon className={cn(
-                        "text-primary transition-all duration-200",
-                        isCollapsed ? "h-5 w-5" : "h-5 w-5"
-                      )} />
+                      <section.icon className={SIDEBAR_ICON} />
                       {!isCollapsed && (
                         <>
                           <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
                             {section.title}
                           </span>
-                          <LockKeyhole className="h-3 w-3 opacity-60" />
+                          <LockKeyhole className={cn(SIDEBAR_ICON_MUTED, "opacity-60")} />
                         </>
                       )}
                     </div>
@@ -413,16 +410,13 @@ export function AppSidebar({
                       "flex items-center w-full",
                       isCollapsed ? "justify-center" : "gap-3"
                     )}>
-                      <section.icon className={cn(
-                        "text-primary transition-all duration-200",
-                        isCollapsed ? "h-5 w-5" : "h-5 w-5"
-                      )} />
+                      <section.icon className={SIDEBAR_ICON} />
                       {!isCollapsed && (
                         <>
                           <span className="text-xs font-medium uppercase tracking-wide text-foreground flex-1 text-left">
                             {section.title}
                           </span>
-                          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                          <ChevronDown className={cn(SIDEBAR_ICON_MUTED, "transition-transform group-data-[state=open]/collapsible:rotate-180")} />
                         </>
                       )}
                     </div>
