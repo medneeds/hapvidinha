@@ -4022,7 +4022,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     {/* Elegant Divider */}
                     <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
 
-                    {/* HISTÓRICO DE CONDUTAS */}
+                    {/* HISTÓRICO DE CONDUTAS — funcionalidade oculta (código preservado)
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
@@ -4033,6 +4033,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <Clock className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                       <span>Histórico de Condutas</span>
                     </DropdownMenuItem>
+                    */}
 
                     {/* IMPRIMIR CASO - Independent Action */}
                     {onPrintPatient && (
