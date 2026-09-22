@@ -15,8 +15,8 @@ export default {
     extend: {
       fontFamily: {
         brand: ['Comfortaa', 'system-ui', 'sans-serif'],
-        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Arial', 'sans-serif'],
-        heading: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Arial', 'sans-serif'],
+        sans: ['Arial', 'sans-serif'],
+        heading: ['Arial', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
