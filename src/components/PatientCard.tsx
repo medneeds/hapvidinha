@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils, MessageSquare, XCircle, Stethoscope, Scissors, Brain, LayoutList, Crown, UsersRound, Baby, Bone, ArrowUpCircle, ShieldAlert } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Calendar, Edit, Trash2, Copy, ArrowRightLeft, Printer, Check, X, GripVertical, MoreVertical, Maximize2, TrendingUp, Heart, Skull, Sparkles, Star, FileText, Pencil, Plus, CheckCircle2, BedDouble, Settings, Zap, AlertCircle, CircleCheck, Activity, Shuffle, FileEdit, AlertTriangle, Utensils, MessageSquare, XCircle, Stethoscope, Brain, LayoutList, ArrowUpCircle, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -1672,143 +1672,131 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 {/* Leito - chip alinhado ao slot compacto "Leito disponível" */}
                 <div className="flex flex-col shrink-0 md:col-span-1">
                   <span className="text-xs md:text-[9px] font-medium text-muted-foreground mb-0.5">Leito</span>
-                  {(() => {
-                    const bedChipTokens =
-                      patient.sector === 'red'
-                        ? 'bg-critical/[0.07] border-critical/25 text-critical'
-                        : patient.sector === 'yellow'
-                        ? 'bg-warning/[0.07] border-warning/25 text-warning'
-                        : patient.sector === 'blue'
-                        ? 'bg-stable/[0.07] border-stable/25 text-stable'
-                        : 'bg-muted/60 border-border text-muted-foreground';
-                    return (
-                      <div
-                        className={cn(
-                          'w-fit shrink-0 rounded border px-1.5 py-0.5',
-                          bedChipTokens,
-                        )}
-                      >
-                        <span className="text-xs font-bold tabular-nums leading-none">
-                          {patient.bedNumber}
-                        </span>
-                      </div>
-                    );
-                  })()}
-                  {/* Medical Responsibility Badge - Prominent chip below bed number */}
-                  {(() => {
-                    const respType = localMedicalResponsibility?.type;
-                    const sColor = sectorColorMap[patient.sector] || sectorColorMap.blue;
-                    if (!respType) {
+                  {/* Bed chip + Medical responsibility badge compartilham a largura (w-fit no wrapper, w-full nos filhos) para as bordas ficarem alinhadas */}
+                  <div className="w-fit flex flex-col items-stretch">
+                    {(() => {
+                      const bedChipTokens =
+                        patient.sector === 'red'
+                          ? 'bg-critical/[0.07] border-critical/25 text-critical'
+                          : patient.sector === 'yellow'
+                          ? 'bg-warning/[0.07] border-warning/25 text-warning'
+                          : patient.sector === 'blue'
+                          ? 'bg-stable/[0.07] border-stable/25 text-stable'
+                          : 'bg-muted/60 border-border text-muted-foreground';
+                      return (
+                        <div
+                          className={cn(
+                            'w-full shrink-0 rounded border px-1.5 py-0.5 text-center',
+                            bedChipTokens,
+                          )}
+                        >
+                          <span className="text-xs font-bold tabular-nums leading-none">
+                            {patient.bedNumber}
+                          </span>
+                        </div>
+                      );
+                    })()}
+                    {/* Medical Responsibility Badge - discreto, alinhado ao quadrado do leito */}
+                    {(() => {
+                      const respType = localMedicalResponsibility?.type;
+                      const sColor = sectorColorMap[patient.sector] || sectorColorMap.blue;
+                      if (!respType) {
+                        return (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
+                            className="inline-flex items-center justify-center rounded border border-dashed border-muted-foreground/25 px-1 py-0.5 text-[9px] font-medium leading-none text-muted-foreground/40 hover:border-muted-foreground/50 hover:text-muted-foreground/70 transition-colors cursor-pointer print:hidden mt-1 w-full"
+                            title="Definir responsabilidade médica"
+                          >
+                            <span>+</span>
+                          </button>
+                        );
+                      }
+
+                      const respConfig: Record<string, { label: string }> = {
+                        porta: { label: 'PRT' },
+                        lider: { label: 'LDR' },
+                        conjunto: { label: 'CONJUNTO' },
+                        obstetra: { label: 'OBS' },
+                        cirurgiao_geral: { label: 'CIR' },
+                        traumatologista: { label: 'ORTOP' },
+                      };
+
+                      const cfg = respConfig[respType] || { label: respType.toUpperCase() };
+
+                      // For "conjunto", render stacked pills separated by "+"
+                      if (respType === 'conjunto' && localMedicalResponsibility?.conjuntoWith?.length) {
+                        const specConfig: Record<string, { label: string }> = {
+                          porta: { label: 'PRT' },
+                          lider: { label: 'LDR' },
+                          obstetra: { label: 'OBS' },
+                          cirurgiao_geral: { label: 'CIR' },
+                          traumatologista: { label: 'ORTOP' },
+                        };
+                        const officeText = localMedicalResponsibility?.officeNumber ? `C${localMedicalResponsibility.officeNumber}` : '';
+
+                        return (
+                          <div
+                            className="flex flex-col items-center gap-0.5 mt-1 cursor-pointer print:hidden w-full"
+                            onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
+                            title="Seguimento Conjunto — Clique para alterar"
+                          >
+                            {localMedicalResponsibility.conjuntoWith.map((specType, idx) => {
+                              const spec = specConfig[specType] || { label: specType.toUpperCase() };
+                              return (
+                                <div key={specType} className="flex flex-col items-center w-full">
+                                  {idx > 0 && (
+                                    <Plus className="h-2.5 w-2.5 my-0" style={{ color: sColor }} strokeWidth={3} />
+                                  )}
+                                  <div
+                                    className="inline-flex flex-col items-center gap-0 rounded border px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wide transition-colors duration-200 w-full"
+                                    style={{
+                                      color: sColor,
+                                      backgroundColor: 'transparent',
+                                      borderColor: `${sColor}40`,
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.borderColor = `${sColor}80`;
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.borderColor = `${sColor}40`;
+                                    }}
+                                  >
+                                    <span className="leading-none">{spec.label}</span>
+                                    {idx === 0 && officeText && <span className="opacity-60 text-[8px] leading-none mt-0.5">{officeText}</span>}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      }
+
+                      const displayText = cfg.label;
+                      const officeText = localMedicalResponsibility?.officeNumber ? `C${localMedicalResponsibility.officeNumber}` : '';
+
                       return (
                         <button
                           onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
-                          className="inline-flex items-center justify-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-medium border border-dashed border-muted-foreground/30 text-muted-foreground/50 hover:border-muted-foreground/60 hover:text-muted-foreground/80 transition-all cursor-pointer print:hidden mt-1 w-fit"
-                          title="Definir responsabilidade médica"
+                          className="inline-flex flex-col items-center gap-0 rounded border px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wide leading-none cursor-pointer transition-colors duration-200 print:hidden mt-1 w-full"
+                          style={{
+                            color: sColor,
+                            backgroundColor: 'transparent',
+                            borderColor: `${sColor}40`,
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = `${sColor}80`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = `${sColor}40`;
+                          }}
+                          title={`Responsabilidade: ${displayText}${officeText ? ` • ${officeText}` : ''} — Clique para alterar`}
                         >
-                          <Stethoscope className="h-2.5 w-2.5" />
-                          <span>+</span>
+                          <span className="leading-none">{displayText}</span>
+                          {officeText && <span className="opacity-60 text-[8px] leading-none mt-0.5">{officeText}</span>}
                         </button>
                       );
-                    }
-                    
-                    const respConfig: Record<string, { label: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
-                      porta: { label: 'PRT', icon: Stethoscope },
-                      lider: { label: 'LDR', icon: Crown },
-                      conjunto: { label: 'CONJUNTO', icon: UsersRound },
-                      obstetra: { label: 'OBS', icon: Baby },
-                      cirurgiao_geral: { label: 'CIR', icon: Scissors },
-                      traumatologista: { label: 'ORTOP', icon: Bone },
-                    };
-                    
-                    const cfg = respConfig[respType] || { label: respType.toUpperCase(), icon: Stethoscope };
-                    const RespIcon = cfg.icon;
-                    
-                    // For "conjunto", render stacked pills separated by "+"
-                    if (respType === 'conjunto' && localMedicalResponsibility?.conjuntoWith?.length) {
-                      const specConfig: Record<string, { label: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }> = {
-                        porta: { label: 'PRT', icon: Stethoscope },
-                        lider: { label: 'LDR', icon: Crown },
-                        obstetra: { label: 'OBS', icon: Baby },
-                        cirurgiao_geral: { label: 'CIR', icon: Scissors },
-                        traumatologista: { label: 'ORTOP', icon: Bone },
-                      };
-                      const officeText = localMedicalResponsibility?.officeNumber ? `C${localMedicalResponsibility.officeNumber}` : '';
-                      
-                      return (
-                        <div 
-                          className="flex flex-col items-center gap-0.5 mt-1 cursor-pointer print:hidden"
-                          onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
-                          title="Seguimento Conjunto — Clique para alterar"
-                        >
-                          {localMedicalResponsibility.conjuntoWith.map((specType, idx) => {
-                            const spec = specConfig[specType] || { label: specType.toUpperCase(), icon: Stethoscope };
-                            const SpecIcon = spec.icon;
-                            return (
-                              <div key={specType} className="flex flex-col items-center">
-                                {idx > 0 && (
-                                  <Plus className="h-2.5 w-2.5 my-0" style={{ color: sColor }} strokeWidth={3} />
-                                )}
-                                <div
-                                  className="inline-flex flex-col items-center gap-0 px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide border-2 transition-all duration-200 hover:shadow-md w-fit"
-                                  style={{
-                                    color: sColor,
-                                    backgroundColor: `${sColor}12`,
-                                    borderColor: `${sColor}50`,
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = `${sColor}25`;
-                                    e.currentTarget.style.borderColor = `${sColor}80`;
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = `${sColor}12`;
-                                    e.currentTarget.style.borderColor = `${sColor}50`;
-                                  }}
-                                >
-                                  <div className="flex items-center gap-0.5">
-                                    <SpecIcon className="h-3 w-3" style={{ color: sColor }} />
-                                    <span className="leading-none">{spec.label}</span>
-                                  </div>
-                                  {idx === 0 && officeText && <span className="opacity-70 text-[8px] leading-none">{officeText}</span>}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    }
-                    
-                    let displayText = cfg.label;
-                    const officeText = localMedicalResponsibility?.officeNumber ? `C${localMedicalResponsibility.officeNumber}` : '';
-                    
-                    return (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setMedicalResponsibilityDialogOpen(true); }}
-                        className="inline-flex flex-col items-center gap-0 px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide border-2 cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105 print:hidden mt-1 w-fit"
-                        style={{
-                          color: sColor,
-                          backgroundColor: `${sColor}12`,
-                          borderColor: `${sColor}50`,
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = `${sColor}25`;
-                          e.currentTarget.style.borderColor = `${sColor}80`;
-                          e.currentTarget.style.boxShadow = `0 2px 8px ${sColor}30`;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = `${sColor}12`;
-                          e.currentTarget.style.borderColor = `${sColor}50`;
-                          e.currentTarget.style.boxShadow = 'none';
-                        }}
-                        title={`Responsabilidade: ${displayText}${officeText ? ` • ${officeText}` : ''} — Clique para alterar`}
-                      >
-                        <div className="flex items-center gap-0.5">
-                          <RespIcon className="h-3 w-3" style={{ color: sColor }} />
-                          <span className="leading-none">{displayText}</span>
-                        </div>
-                        {officeText && <span className="opacity-70 text-[8px] leading-none">{officeText}</span>}
-                      </button>
-                    );
-                  })()}
+                    })()}
+                  </div>
                 </div>
 
                 {/* Nome e Idade - mais espaço para nome completo */}
