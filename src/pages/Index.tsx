@@ -1150,25 +1150,7 @@ const Index = () => {
                     <Search className="h-4 w-4" />
                   </Button>
 
-                  {/* Prioridades UTI - somente na UE Adulto */}
-                  {currentDepartment === "URGÊNCIA E EMERGÊNCIA ADULTO" && (
-                    <Button
-                      variant="outline"
-                      onClick={() => setUtiPrioritiesOpen(true)}
-                      className="print:hidden relative h-9 px-3 gap-1.5 rounded-lg bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 text-white border-0 shadow-[0_0_14px_-2px_rgba(244,63,94,0.55)] hover:shadow-[0_0_22px_-2px_rgba(244,63,94,0.85)] hover:brightness-110 transition-all"
-                      title="Prioridades UTI"
-                    >
-                      <HeartPulse className="h-4 w-4" />
-                      <span className="hidden sm:inline text-xs font-semibold">
-                        Prioridades UTI
-                      </span>
-                      {utiPrioritiesList.length > 0 && (
-                        <span className="ml-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-white text-[10px] font-bold text-red-600">
-                          {utiPrioritiesList.length}
-                        </span>
-                      )}
-                    </Button>
-                  )}
+                  {/* Prioridades UTI - funcionalidade oculta (código preservado) */}
 
                   {/* Mobile: Show only essential buttons + dropdown menu */}
                   {isMobile ? (
