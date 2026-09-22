@@ -20,3 +20,16 @@ export const HEADER_ICON = "h-4 w-4";
  */
 export const SIDEBAR_ICON = "h-4 w-4 text-primary shrink-0 transition-all duration-200";
 export const SIDEBAR_ICON_MUTED = "h-4 w-4 text-muted-foreground shrink-0 transition-all duration-200";
+
+/**
+ * Padrão visual único para os botões de ícone dentro do mapa
+ * (cabeçalhos de ala, leitos vagos e ações das telas).
+ * Mesma escala, formato e traço do cabeçalho.
+ */
+export const SECTION_ICON_BUTTON =
+  "h-9 w-9 rounded-lg bg-card/80 border border-border/50 text-foreground hover:bg-accent hover:text-accent-foreground hover:border-foreground/20 transition-all duration-200";
+
+export const SECTION_ICON_BUTTON_PRIMARY =
+  "h-9 w-9 rounded-lg bg-primary text-primary-foreground border border-primary shadow-sm hover:bg-primary/90 transition-all duration-200";
+
+export const SECTION_ICON = "h-4 w-4";
