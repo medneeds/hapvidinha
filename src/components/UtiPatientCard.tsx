@@ -210,6 +210,12 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     }
   };
   const hStyles = highlightStyles[highlightColorVariant];
+  const sectorHover = highlightColorVariant === 'yellow'
+    ? "hover:bg-warning/[0.07]"
+    : "hover:bg-stable/[0.07]";
+  const sectorTextHover = highlightColorVariant === 'yellow'
+    ? "hover:text-warning"
+    : "hover:text-stable";
 
   return (
     <div 
@@ -218,7 +224,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       className={cn(
         "flex items-center gap-1 group py-1 rounded-sm px-1 -mx-0.5 transition-all duration-150",
         isDragging && "z-50 shadow-sm",
-        isHighlighted ? hStyles.bg : "hover:bg-muted/30"
+        isHighlighted ? hStyles.bg : sectorHover
       )}
     >
       {showDragHandle && (
@@ -255,7 +261,8 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
         <>
           <span 
             className={cn(
-              "flex-1 text-[11px] break-words cursor-pointer hover:text-primary transition-colors leading-relaxed tracking-tight",
+              "flex-1 text-[11px] break-words cursor-pointer transition-colors leading-relaxed tracking-tight",
+              sectorTextHover,
               isHighlighted ? hStyles.text : "text-foreground/90"
             )}
             onClick={(e) => {
@@ -657,9 +664,10 @@ interface InlineEditableFieldProps {
   onUpdate: (value: string) => void;
   placeholder?: string;
   className?: string;
+  colorVariant?: 'blue' | 'yellow';
 }
 
-function InlineEditableField({ value, onUpdate, placeholder = "-", className }: InlineEditableFieldProps) {
+function InlineEditableField({ value, onUpdate, placeholder = "-", className, colorVariant = 'blue' }: InlineEditableFieldProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -698,7 +706,11 @@ function InlineEditableField({ value, onUpdate, placeholder = "-", className }: 
 
   return (
     <span 
-      className={cn("cursor-pointer hover:text-primary transition-colors", className)}
+      className={cn(
+        "cursor-pointer transition-colors rounded-sm px-0.5 -mx-0.5",
+        colorVariant === 'yellow' ? "hover:bg-warning/[0.07] hover:text-warning" : "hover:bg-stable/[0.07] hover:text-stable",
+        className
+      )}
       onClick={(e) => {
         e.stopPropagation();
         setIsEditing(true);
@@ -714,9 +726,10 @@ interface InlineEditableTextareaProps {
   value: string;
   onUpdate: (value: string) => void;
   placeholder?: string;
+  colorVariant?: 'blue' | 'yellow';
 }
 
-function InlineEditableTextarea({ value, onUpdate, placeholder = "-" }: InlineEditableTextareaProps) {
+function InlineEditableTextarea({ value, onUpdate, placeholder = "-", colorVariant = 'blue' }: InlineEditableTextareaProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
   const [localValue, setLocalValue] = useState(value);
@@ -774,7 +787,8 @@ function InlineEditableTextarea({ value, onUpdate, placeholder = "-" }: InlineEd
       <div 
         ref={contentRef}
         className={cn(
-          "cursor-pointer hover:text-primary transition-all duration-200 text-xs whitespace-pre-wrap overflow-hidden",
+          "cursor-pointer transition-all duration-200 text-xs whitespace-pre-wrap overflow-hidden rounded-sm px-1 -mx-1",
+          colorVariant === 'yellow' ? "hover:bg-warning/[0.07] hover:text-warning" : "hover:bg-stable/[0.07] hover:text-stable",
           !isTextExpanded && hasOverflow ? "max-h-[48px]" : "max-h-none"
         )}
         onClick={(e) => {

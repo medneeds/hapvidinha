@@ -679,6 +679,7 @@ interface SortableDiagnosisItemCollapsedProps {
   onGetCid?: (diagnosis: string, index: number) => void;
   loadingCid?: boolean;
   daysCalculation?: string | null;
+  sector: Patient['sector'];
 }
 
 const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollapsed({
@@ -698,7 +699,8 @@ const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollap
   inputRef,
   onGetCid,
   loadingCid,
-  daysCalculation
+  daysCalculation,
+  sector
 }: SortableDiagnosisItemCollapsedProps) {
   const {
     attributes,
@@ -713,6 +715,13 @@ const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollap
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+  };
+
+  const sectorHoverColors = {
+    red: "hover:bg-critical/[0.07]",
+    yellow: "hover:bg-warning/[0.07]",
+    blue: "hover:bg-stable/[0.07]",
+    outside: "hover:bg-muted-foreground/[0.07]"
   };
 
   if (isEditing) {
@@ -774,7 +783,7 @@ const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollap
       style={style}
       className={cn(
         "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
-        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50"
+        isDragging ? "bg-accent/50 z-50" : sectorHoverColors[sector]
       )}
     >
       <div
