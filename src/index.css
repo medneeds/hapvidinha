@@ -50,6 +50,16 @@
     --clinical-surface: 0 0% 100%;
     --clinical-surface-muted: 210 23% 97%;
     --clinical-divider: 210 17% 87%;
+
+    --auth-background: 220 20% 98%;
+    --auth-surface: 0 0% 100%;
+    --auth-foreground: 240 3% 12%;
+    --auth-muted: 240 2% 51%;
+    --auth-field: 240 10% 96%;
+    --auth-border: 240 5% 83%;
+    --auth-success: 150 62% 39%;
+    --auth-dot: 215 18% 74%;
+    --auth-shadow: 0 24px 70px -32px hsl(212 23% 19% / 0.18);
     
     --gradient-primary: linear-gradient(135deg, hsl(210 80% 42%) 0%, hsl(210 70% 35%) 100%);
     --gradient-card: linear-gradient(to bottom, hsl(0 0% 100% / 0.95) 0%, hsl(0 0% 100% / 0.9) 50%, hsl(0 0% 100% / 0.8) 100%);
@@ -185,7 +195,7 @@
   }
 
   .clinical-section-title {
-    font-family: Sora, Manrope, system-ui, sans-serif;
+    font-family: "Instrument Serif", Georgia, serif;
     letter-spacing: 0;
   }
 
@@ -204,6 +214,41 @@
   .clinical-empty-bed {
     border-radius: 0.375rem;
     background-color: hsl(var(--clinical-surface) / 0.72);
+  }
+
+  .auth-shell {
+    background-color: hsl(var(--auth-background));
+    background-image: radial-gradient(hsl(var(--auth-dot) / 0.34) 0.7px, transparent 0.7px);
+    background-size: 28px 28px;
+  }
+
+  .auth-card {
+    background-color: hsl(var(--auth-surface) / 0.92);
+    border: 1px solid hsl(var(--auth-border) / 0.58);
+    box-shadow: var(--auth-shadow);
+    backdrop-filter: blur(20px);
+  }
+
+  .auth-brand-mark {
+    background: hsl(var(--primary));
+    box-shadow: 0 16px 34px -18px hsl(var(--primary) / 0.58);
+  }
+
+  .auth-title {
+    color: hsl(var(--auth-foreground));
+    font-family: "Instrument Serif", Georgia, serif;
+    letter-spacing: 0;
+  }
+
+  .auth-field {
+    background-color: hsl(var(--auth-field));
+    border-color: hsl(var(--auth-border));
+    color: hsl(var(--auth-foreground));
+  }
+
+  .auth-field:focus-visible {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.1);
   }
 }
 

@@ -6,3 +6,5 @@
 - [x] Modernizar setores e cartões da UTI
 - [x] Padronizar cabeçalhos das telas estruturais
 - [x] Validar desktop, mobile e compilação; fluxo autenticado depende de sessão disponível
+
+- [x] Aplicar direção Apple minimalist clinical à tela de acesso e linguagem global
