@@ -267,22 +267,22 @@ interface PatientCardProps {
 const sectorConfig = {
   red: {
     label: "Sala Vermelha",
-    color: "clinical-patient-card patient-card-red border-l-2 border-l-critical",
+    color: "bg-critical/10 border-critical/30 text-critical-foreground",
     badgeColor: "bg-critical text-critical-foreground hover:bg-critical/90"
   },
   yellow: {
     label: "Observação Amarela",
-    color: "clinical-patient-card patient-card-yellow border-l-2 border-l-warning",
+    color: "bg-warning/10 border-warning/30 text-warning-foreground",
     badgeColor: "bg-warning text-warning-foreground hover:bg-warning/90"
   },
   blue: {
     label: "Observação Azul",
-    color: "clinical-patient-card patient-card-blue border-l-2 border-l-stable",
+    color: "bg-stable/10 border-stable/30 text-stable-foreground",
     badgeColor: "bg-stable text-stable-foreground hover:bg-stable/90"
   },
   outside: {
     label: "Fora das Alas",
-    color: "clinical-patient-card patient-card-outside border-l-2 border-l-muted-foreground/50",
+    color: "bg-muted/50 border-muted-foreground/30 text-foreground",
     badgeColor: "bg-muted-foreground text-background hover:bg-muted-foreground/90"
   }
 };
@@ -1618,7 +1618,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         <Card 
           data-patient-id={patient.id}
           className={cn(
-            "overflow-hidden transition-[border-color,box-shadow] duration-150 print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
+            "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
             config.color,
             isSelected && "ring-2 ring-primary",
             isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
@@ -3105,9 +3105,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 </div>
 
                   {/* Programações / Pendências */}
-                  <div className="clinical-pendency-panel flex flex-col md:col-span-5 relative">
-                  <div className="flex items-center gap-1 mb-1 flex-wrap">
-                    <span className="clinical-pendency-label text-[9px] text-muted-foreground">Programações / Pendências</span>
+                  <div className="flex flex-col md:col-span-5 relative">
+                  <div className="flex items-center gap-1 mb-0.5 flex-wrap">
+                    <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
                     
                     {/* Internment Status Badge */}
                     {patient.internmentStatus && internmentStatusConfig[patient.internmentStatus as keyof typeof internmentStatusConfig] && (
@@ -3624,9 +3624,9 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
             {/* Programações / Pendências - apenas para outros departamentos */}
             {currentDepartment !== "UTI" && (
-              <div className="clinical-pendency-panel flex flex-col md:col-span-5 relative">
-                <div className="flex items-center gap-3 mb-1">
-                  <span className="clinical-pendency-label text-[9px] text-muted-foreground">Programações / Pendências</span>
+              <div className="flex flex-col md:col-span-5 relative">
+                <div className="flex items-center gap-3 mb-0.5">
+                  <span className="text-[10px] font-medium text-muted-foreground">Programações / Pendências</span>
                   
                    <Button
                     size="icon"

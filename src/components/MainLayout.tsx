@@ -25,7 +25,7 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="clinical-shell min-h-screen flex w-full relative">
+      <div className="min-h-screen flex w-full bg-background relative">
         <AppSidebar onOpenHandover={onOpenHandover} />
         <FloatingSidebarTrigger />
         

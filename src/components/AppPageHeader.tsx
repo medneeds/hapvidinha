@@ -20,7 +20,7 @@ export function AppPageHeader({ title, icon: Icon, right }: AppPageHeaderProps) 
   return (
     <>
       <header
-        className="clinical-topbar border-b border-primary-foreground/10 fixed top-0 right-0 z-50 print:hidden transition-[left] duration-200 ease-linear"
+        className="border-b border-white/10 bg-gradient-to-r from-[#011d54] via-[#013ba6] to-[#0256d4] backdrop-blur-xl fixed top-0 right-0 z-50 shadow-[0_4px_20px_-4px_rgba(1,59,166,0.5)] print:hidden transition-[left] duration-200 ease-linear"
         style={{
           left: isMobile
             ? 0
@@ -33,11 +33,11 @@ export function AppPageHeader({ title, icon: Icon, right }: AppPageHeaderProps) 
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 min-w-0 flex-1 pl-10 sm:pl-12">
               {Icon && (
-                <div className="rounded-md bg-primary-foreground/10 p-2 flex-shrink-0 border border-primary-foreground/10">
-                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
+                <div className="rounded-lg bg-white/15 p-2 backdrop-blur-sm flex-shrink-0">
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                 </div>
               )}
-              <h1 className="font-heading text-base sm:text-lg font-semibold uppercase text-primary-foreground truncate">
+              <h1 className="text-base sm:text-lg font-bold tracking-tight uppercase text-white truncate">
                 {title}
               </h1>
             </div>

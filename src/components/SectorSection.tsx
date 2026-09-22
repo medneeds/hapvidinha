@@ -249,8 +249,8 @@ export function SectorSection({
   );
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 mb-5 print:space-y-0.5 print:mb-1 print:break-inside-avoid">
-      <div className={`${info.gradientClass} clinical-section-header p-2 border border-border print:p-1 print:mb-0.5 print:rounded-md transition-colors duration-200 min-h-[44px] print:h-auto flex flex-col`}>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-3 mb-4 print:space-y-0.5 print:mb-1 print:break-inside-avoid">
+      <div className={`${info.gradientClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex flex-col`}>
         <div className="flex items-center justify-between w-full gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
@@ -273,7 +273,7 @@ export function SectorSection({
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
               <div className="flex items-center gap-2 print:gap-1">
                 <SectorBedIcon sectorIcon={displayIcon} size="md" />
-                <h2 className="clinical-section-title text-base sm:text-lg text-foreground print:text-[10px] uppercase">{displayTitle}</h2>
+                <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">{displayTitle}</h2>
               </div>
             </button>
           </CollapsibleTrigger>
@@ -299,7 +299,7 @@ export function SectorSection({
                 <Printer className="h-3.5 w-3.5" />
               </Button>
             )}
-            <div className="flex items-center justify-center h-8 min-w-[2.25rem] px-2 bg-card rounded-md border border-border print:h-6 print:min-w-[1.5rem]">
+            <div className="flex items-center justify-center h-8 min-w-[2rem] px-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:min-w-[1.5rem]">
               <p className="text-base font-bold text-foreground print:text-[10px]">
                 {isFixedBedSector ? sortedPatients.filter(p => !p.isVacant).length : patients.length}
                 {isFixedBedSector && (

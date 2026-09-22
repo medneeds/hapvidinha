@@ -248,10 +248,11 @@ export function AppSidebar({
   const sidebarContent = (
     <>
        <SidebarHeader className={cn(
-         "border-b border-border py-5 bg-sidebar relative overflow-hidden",
+         "border-b border-border/20 py-5 bg-background relative overflow-hidden",
          isCollapsed ? "px-0" : "px-3"
        )}>
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary" />
+        {/* Subtle gradient accent line at top */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
         
         <div className="flex items-center justify-center relative w-full">
           <div className="flex items-center justify-center">
@@ -261,14 +262,15 @@ export function AppSidebar({
                 {/* Símbolo hm — mesmo formato da tela de login */}
                 <div
                   aria-label="HapMap"
-                  className="h-10 w-10 bg-card flex items-center justify-center rounded-md shrink-0 border border-border"
+                  className="h-10 w-10 bg-background flex items-center justify-center rounded-[28%] shrink-0 border border-border/40"
                   style={{
                     transform: "rotate(42deg)",
-                    boxShadow: "var(--shadow-sm)",
+                    boxShadow:
+                      "0 8px 16px -8px rgba(1,59,166,0.35), inset 0 1px 4px rgba(1,59,166,0.08)",
                   }}
                 >
                   <div
-                    className="w-[80%] h-[80%] bg-primary"
+                    className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
                     style={{
                       transform: "rotate(-42deg)",
                       WebkitMaskImage: "url(/logo-hm.png)",
@@ -291,14 +293,15 @@ export function AppSidebar({
             ) : (
               <div
                 aria-label="HapMap"
-                  className="h-7 w-7 bg-card flex items-center justify-center rounded-md shrink-0 mx-auto border border-border"
+                className="h-7 w-7 bg-background flex items-center justify-center rounded-[28%] shrink-0 mx-auto border border-border/40"
                 style={{
                   transform: "rotate(42deg)",
-                    boxShadow: "var(--shadow-sm)",
+                  boxShadow:
+                    "0 6px 12px -6px rgba(1,59,166,0.35), inset 0 1px 3px rgba(1,59,166,0.08)",
                 }}
               >
                 <div
-                  className="w-[80%] h-[80%] bg-primary"
+                  className="w-[80%] h-[80%] bg-gradient-to-br from-[#013ba6] via-[#0146bd] to-[#0152d4]"
                   style={{
                     transform: "rotate(-42deg)",
                     WebkitMaskImage: "url(/logo-hm.png)",
@@ -332,9 +335,9 @@ export function AppSidebar({
                     <SidebarMenuButton
                       onClick={() => handleItemClick(section.link)}
                       className={cn(
-                        "transition-colors duration-150 hover:bg-accent",
+                        "transition-all duration-200 hover:bg-accent/80 hover:scale-105",
                         "justify-start px-4 py-3 h-auto",
-                        "border-b border-border"
+                        "border-b border-border/50"
                       )}
                     >
                       <section.icon className="h-5 w-5 text-primary transition-all duration-200" />
@@ -372,9 +375,9 @@ export function AppSidebar({
                   // Locked: show button that triggers password dialog
                   <SidebarGroupLabel 
                     className={cn(
-                       "transition-colors duration-150 hover:bg-accent cursor-pointer !opacity-100 !mt-0",
-                       isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3",
-                       "h-auto border-b border-border"
+                      "transition-all duration-200 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
+                      isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3 hover:scale-105",
+                      "h-auto border-b border-border/50"
                     )}
                     onClick={() => handleAdminSectionClick(section.title)}
                   >
@@ -401,9 +404,9 @@ export function AppSidebar({
                   <CollapsibleTrigger className="w-full">
                     <SidebarGroupLabel 
                       className={cn(
-                         "transition-colors duration-150 hover:bg-accent cursor-pointer !opacity-100 !mt-0",
-                         isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3",
-                         "h-auto border-b border-border"
+                        "transition-all duration-200 hover:bg-accent/80 cursor-pointer !opacity-100 !mt-0",
+                        isCollapsed ? "justify-center px-2 py-3" : "justify-between px-4 py-3 hover:scale-105",
+                        "h-auto border-b border-border/50"
                       )}
                     >
                     <div className={cn(
@@ -441,7 +444,7 @@ export function AppSidebar({
                               <CollapsibleTrigger className="w-full">
                                 <SidebarMenuItem>
                                   <SidebarMenuButton
-                                     className="group/item hover:bg-accent transition-colors duration-150 uppercase text-[11px] rounded-md cursor-pointer gap-3 mb-1 justify-between"
+                                    className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 mb-1 justify-between"
                                     tooltip={itemName}
                                   >
                                     <div className="flex items-center gap-3 flex-1">
@@ -482,7 +485,7 @@ export function AppSidebar({
                         return (
                           <SidebarMenuItem key={itemKey}>
                                      <SidebarMenuButton
-                                        className="group/item hover:bg-accent transition-colors duration-150 uppercase text-[11px] rounded-md cursor-pointer gap-3 mb-1"
+                                        className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all duration-200 uppercase text-[11px] rounded-lg hover:shadow-sm cursor-pointer gap-3 hover:translate-x-1 mb-1"
                                         tooltip={itemName}
                                         onClick={() => handleItemClick(item, section)}
                                       >
@@ -527,7 +530,7 @@ export function AppSidebar({
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => setShowChecklistDialog(true)}
-                  className="group/item hover:bg-accent transition-colors uppercase text-[11px] rounded-md gap-3 mb-1"
+                  className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
                   tooltip="Checklist da Unidade"
                 >
                   <ListChecks className="h-4 w-4 text-primary" />
@@ -546,7 +549,7 @@ export function AppSidebar({
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => setShowNotesDialog(true)}
-                  className="group/item hover:bg-accent transition-colors uppercase text-[11px] rounded-md gap-3 mb-1"
+                  className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
                   tooltip="Anotações da Unidade"
                 >
                   <StickyNote className="h-4 w-4 text-primary" />
@@ -558,7 +561,7 @@ export function AppSidebar({
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => setShowCodesDialog(true)}
-                  className="group/item hover:bg-accent transition-colors uppercase text-[11px] rounded-md gap-3 mb-1"
+                  className="group/item hover:bg-accent/80 hover:border-l-2 hover:border-l-primary/50 transition-all uppercase text-[11px] rounded-lg gap-3 hover:translate-x-1 mb-1"
                   tooltip="Códigos e Procedimentos"
                 >
                   <BookMarked className="h-4 w-4 text-primary" />
@@ -579,7 +582,7 @@ export function AppSidebar({
 
       <SidebarFooter className="border-t border-border/50 p-2 bg-muted/30">
         <div className={cn(
-          "rounded-md transition-colors duration-150",
+          "rounded-xl transition-all duration-200",
           isCollapsed
             ? "flex flex-col items-center gap-1 p-1"
             : "flex items-center gap-3 p-2 bg-card/50"
@@ -656,7 +659,7 @@ export function AppSidebar({
     <>
       <Sidebar 
         collapsible="icon" 
-        className="border-r border-border bg-sidebar transition-all duration-300 data-[state=collapsed]:w-[72px]"
+        className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
       >
         {sidebarContent}
       </Sidebar>

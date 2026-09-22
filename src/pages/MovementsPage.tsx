@@ -419,7 +419,7 @@ export default function MovementsPage() {
   return (
     <>
       <AppPageHeader title="Histórico de Movimentações" icon={ArrowLeftRight} />
-      <div className="clinical-shell min-h-[calc(100vh-4rem)] p-4 md:p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
