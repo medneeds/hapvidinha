@@ -215,15 +215,14 @@ export const NotificationCenter = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="relative h-8 w-8 sm:h-10 sm:w-10 hover:bg-sidebar-accent transition-all duration-300 group rounded-full"
+          className={`relative ${HEADER_ICON_BUTTON}`}
           title="Central de Notificações"
         >
-          <div className="absolute inset-0 rounded-full bg-sidebar-accent/60 group-hover:bg-sidebar-accent transition-all duration-300" />
-          <Bell className="relative h-4 w-4 sm:h-5 sm:w-5 text-sidebar-foreground group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
+          <Bell className={`${HEADER_ICON} text-sidebar-foreground`} />
           {unreadNotifications > 0 && (
             <Badge
               variant="destructive"
-              className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center p-0 text-[9px] sm:text-[10px] font-bold shadow-lg animate-pulse"
+              className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[9px] font-bold shadow-lg animate-pulse"
             >
               {unreadNotifications > 9 ? '9+' : unreadNotifications}
             </Badge>
