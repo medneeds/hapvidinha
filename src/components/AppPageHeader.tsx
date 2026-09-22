@@ -34,7 +34,7 @@ export function AppPageHeader({ title, icon: Icon, right }: AppPageHeaderProps) 
             <div className="flex items-center gap-3 min-w-0 flex-1 pl-10 sm:pl-12">
               {Icon && (
                 <div className="rounded-lg bg-sidebar-accent p-2 backdrop-blur-sm flex-shrink-0">
-                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-sidebar-accent-foreground" />
+                  <Icon className="h-4 w-4 text-sidebar-accent-foreground" />
                 </div>
               )}
               <h1 className="text-base sm:text-lg font-bold tracking-tight uppercase text-sidebar-foreground truncate">
