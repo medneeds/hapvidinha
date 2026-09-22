@@ -1,8 +1,8 @@
 # HapMap 3.0
 
-- [ ] Aplicar fundação visual, fontes e tokens
-- [ ] Refinar cabeçalho e sidebar
-- [ ] Modernizar setores, leitos vagos e cartões da UE
-- [ ] Modernizar setores e cartões da UTI
-- [ ] Padronizar cabeçalhos das telas estruturais
-- [ ] Validar desktop, mobile, tema escuro e interações principais
+- [x] Aplicar fundação visual, fontes e tokens
+- [x] Refinar cabeçalho e sidebar
+- [x] Modernizar setores, leitos vagos e cartões da UE
+- [x] Modernizar setores e cartões da UTI
+- [x] Padronizar cabeçalhos das telas estruturais
+- [x] Validar desktop, mobile e compilação; fluxo autenticado depende de sessão disponível
