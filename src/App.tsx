@@ -38,6 +38,7 @@ import AdminStatesPage from "./pages/AdminStatesPage";
 import AdminUnitsPage from "./pages/AdminUnitsPage";
 import AdminBedsPage from "./pages/AdminBedsPage";
 import AdminCoordinatorsPage from "./pages/AdminCoordinatorsPage";
+import RepositoryPage from "./pages/RepositoryPage";
 
 
 import PresentationPage from "./pages/PresentationPage";
@@ -90,6 +91,16 @@ const App = () => {
             <ProtectedRoute>
               <MainLayout>
                 <DocumentsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/repositorio"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <RepositoryPage />
               </MainLayout>
             </ProtectedRoute>
           }

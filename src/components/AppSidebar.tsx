@@ -17,6 +17,7 @@ import {
   ListChecks,
   StickyNote,
   BookMarked,
+  FolderArchive,
 } from "lucide-react";
 import { QuickChecklistDialog } from "@/components/QuickChecklistDialog";
 import { QuickNotesDialog } from "@/components/QuickNotesDialog";
@@ -156,7 +157,23 @@ export function AppSidebar({
       })
     : allMenuItems;
 
-  const menuItems = baseMenuItems;
+  // Repositório: habilitado apenas para usuários autorizados
+  const REPOSITORY_USER_IDS = [
+    "a84c5c12-9c26-4075-b6c9-8172ab40cd7f", // Pedro Rebouças
+    "0a793d7d-7f5d-402b-8f69-ad33edf6d5d4", // Marcio Serra
+  ];
+  const canAccessRepository = !!user && REPOSITORY_USER_IDS.includes(user.id);
+
+  const menuItems = (() => {
+    if (!canAccessRepository) return baseMenuItems;
+    const docsIndex = baseMenuItems.findIndex(item => item.title === "DOCUMENTOS");
+    const insertAt = docsIndex >= 0 ? docsIndex + 1 : baseMenuItems.length;
+    return [
+      ...baseMenuItems.slice(0, insertAt),
+      { title: "REPOSITÓRIO", icon: FolderArchive, link: "/repositorio" },
+      ...baseMenuItems.slice(insertAt),
+    ];
+  })();
 
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
