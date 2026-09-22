@@ -1471,10 +1471,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   };
 
   const checkboxColor = {
-    red: "border-critical data-[state=checked]:bg-critical data-[state=checked]:border-critical",
-    yellow: "border-warning data-[state=checked]:bg-warning data-[state=checked]:border-warning",
-    blue: "border-stable data-[state=checked]:bg-stable data-[state=checked]:border-stable",
-    outside: "border-muted-foreground data-[state=checked]:bg-muted-foreground data-[state=checked]:border-muted-foreground"
+    red: "!border-critical data-[state=checked]:!bg-critical data-[state=checked]:!border-critical",
+    yellow: "!border-warning data-[state=checked]:!bg-warning data-[state=checked]:!border-warning",
+    blue: "!border-stable data-[state=checked]:!bg-stable data-[state=checked]:!border-stable",
+    outside: "!border-muted-foreground data-[state=checked]:!bg-muted-foreground data-[state=checked]:!border-muted-foreground"
   }[patient.sector];
 
   const selectionRingColor = {

@@ -103,7 +103,15 @@ function UtiRow(props: UtiRowProps) {
         <Checkbox
           checked={props.isSelected}
           onCheckedChange={() => props.onToggleSelection?.(props.patient.id)}
-          className="flex-shrink-0"
+          className={`flex-shrink-0 h-5 w-5 border-2 ${
+            props.patient.sector === 'red'
+              ? 'border-critical data-[state=checked]:bg-critical data-[state=checked]:border-critical'
+              : props.patient.sector === 'yellow'
+              ? 'border-warning data-[state=checked]:bg-warning data-[state=checked]:border-warning'
+              : props.patient.sector === 'blue'
+              ? 'border-stable data-[state=checked]:bg-stable data-[state=checked]:border-stable'
+              : 'border-muted-foreground data-[state=checked]:bg-muted-foreground data-[state=checked]:border-muted-foreground'
+          }`}
         />
       )}
       {/* Vacancy Toggle Button - replaces drag handle */}
