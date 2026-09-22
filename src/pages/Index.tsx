@@ -31,6 +31,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepartment, DEPARTMENTS, Department, getDepartmentLabel } from "@/contexts/DepartmentContext";
+
+// Estado ativo do modo de seleção adaptado à cor de identidade de cada setor
+const SELECTION_ACTIVE_STYLES: Record<Department, string> = {
+  "URGÊNCIA E EMERGÊNCIA ADULTO": "bg-warning text-warning-foreground border-warning shadow-sm hover:bg-warning/90",
+  "URGÊNCIA E EMERGÊNCIA PEDIÁTRICA": "bg-stable text-stable-foreground border-stable shadow-sm hover:bg-stable/90",
+  "UTI": "bg-stable text-stable-foreground border-stable shadow-sm hover:bg-stable/90",
+};
 import { supabase } from "@/integrations/supabase/client";
 import { usePrivacy } from "@/contexts/PrivacyContext";
 import { getNextBedNumber } from "@/utils/bedNaming";
@@ -1170,7 +1177,7 @@ const Index = () => {
                         variant={selectionMode ? "default" : "outline"}
                         size="icon"
                         onClick={handleToggleSelectionMode}
-                        className={`print:hidden h-11 w-11 transition-all duration-200 ${selectionMode ? 'bg-primary text-primary-foreground shadow-md' : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}
+                        className={`print:hidden h-11 w-11 transition-all duration-200 ${selectionMode ? SELECTION_ACTIVE_STYLES[currentDepartment] : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}
                         title="Modo de seleção"
                       >
                         <CheckSquare className="h-5 w-5" />
@@ -1292,7 +1299,7 @@ const Index = () => {
                               variant={selectionMode ? "default" : "outline"}
                               size="icon"
                               onClick={handleToggleSelectionMode}
-                              className={selectionMode ? HEADER_ICON_BUTTON_ACTIVE : HEADER_ICON_BUTTON}>
+                              className={selectionMode ? `${HEADER_ICON_BUTTON} ${SELECTION_ACTIVE_STYLES[currentDepartment]}` : HEADER_ICON_BUTTON}>
                               <CheckSquare className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
