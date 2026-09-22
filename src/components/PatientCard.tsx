@@ -1668,8 +1668,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         <Card 
           data-patient-id={patient.id}
           className={cn(
-            "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
+            "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full [&_li]:transition-colors",
             config.color,
+            patient.sector === "red" && "[&_li:hover]:bg-critical/[0.07]",
+            patient.sector === "yellow" && "[&_li:hover]:bg-warning/[0.07]",
+            patient.sector === "blue" && "[&_li:hover]:bg-stable/[0.07]",
+            patient.sector === "outside" && "[&_li:hover]:bg-muted-foreground/[0.07]",
             isSelected && selectionRingColor,
             isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
             (allocationStatusBarConfig
