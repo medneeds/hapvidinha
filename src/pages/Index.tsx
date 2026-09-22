@@ -162,7 +162,7 @@ function DynamicHeader({ children }: { children: React.ReactNode }) {
   
   return (
     <header 
-      className="border-b border-white/10 bg-gradient-to-r from-[#011d54] via-[#013ba6] to-[#0256d4] backdrop-blur-xl fixed top-0 right-0 z-50 shadow-[0_4px_20px_-4px_rgba(1,59,166,0.5)] print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
+      className="border-b border-sidebar-border bg-sidebar text-sidebar-foreground backdrop-blur-xl fixed top-0 right-0 z-50 shadow-sm print:static print:bg-white print:text-black print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
       style={{
         left: isMobile ? 0 : (state === 'collapsed' ? 'var(--sidebar-width-icon)' : 'var(--sidebar-width)')
       }}
@@ -1076,7 +1076,7 @@ const Index = () => {
         <div className={printMode ? 'print-hide' : ''}>
           {/* Header */}
           <DynamicHeader>
-            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
+            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-sidebar-border/40 to-transparent print:hidden"></div>
             <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
                 {/* Left side: Sidebar button + Title + Department selector */}
@@ -1087,7 +1087,7 @@ const Index = () => {
                     <div className="print:hidden">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="inline-flex items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 bg-white/10 backdrop-blur-sm border border-white/25 text-white text-base sm:text-lg font-bold uppercase tracking-tight hover:bg-white/20 hover:border-white/50 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                          <button className="inline-flex items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 bg-sidebar-accent/70 backdrop-blur-sm border border-sidebar-border text-sidebar-foreground text-base sm:text-lg font-bold uppercase tracking-tight hover:bg-sidebar-accent hover:border-sidebar-foreground/30 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
                             <Building2 className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-90" />
                             <span className="truncate">{getDepartmentLabel(currentDepartment)}</span>
                             <ChevronDown className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-70" />
@@ -1136,7 +1136,7 @@ const Index = () => {
                     variant="outline"
                     size="icon"
                     onClick={() => setSearchOpen(true)}
-                    className="print:hidden h-11 w-11 sm:h-8 sm:w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
+                    className="print:hidden h-11 w-11 sm:h-8 sm:w-8 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 transition-all duration-200"
                     title="Buscar paciente (Ctrl+K)"
                   >
                     <Search className="h-4 w-4" />
@@ -1169,7 +1169,7 @@ const Index = () => {
                         variant={selectionMode ? "default" : "outline"}
                         size="icon"
                         onClick={handleToggleSelectionMode}
-                        className={`print:hidden h-11 w-11 transition-all duration-200 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}
+                        className={`print:hidden h-11 w-11 transition-all duration-200 ${selectionMode ? 'bg-primary text-primary-foreground shadow-md' : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}
                         title="Modo de seleção"
                       >
                         <CheckSquare className="h-5 w-5" />
@@ -1201,7 +1201,7 @@ const Index = () => {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="print:hidden h-11 w-11 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 transition-all duration-200"
+                            className="print:hidden h-11 w-11 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 transition-all duration-200"
                           >
                             <MoreVertical className="h-5 w-5" />
                           </Button>
@@ -1261,7 +1261,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={handleUndo} disabled={history.length === 0}
-                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200">
+                              className="h-8 w-8 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 disabled:opacity-40 transition-all duration-200">
                               <Undo className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1270,7 +1270,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={handleRedo} disabled={redoHistory.length === 0}
-                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40 disabled:opacity-40 transition-all duration-200">
+                              className="h-8 w-8 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 disabled:opacity-40 transition-all duration-200">
                               <Redo className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1281,7 +1281,7 @@ const Index = () => {
                       </div>
 
                       {/* Separator */}
-                      <div className="h-6 w-px bg-white/20 print:hidden hidden sm:block" />
+                      <div className="h-6 w-px bg-sidebar-border print:hidden hidden sm:block" />
 
                       {/* Selection & Print group */}
                       <div className="flex items-center gap-1 print:hidden">
@@ -1291,7 +1291,7 @@ const Index = () => {
                               variant={selectionMode ? "default" : "outline"}
                               size="icon"
                               onClick={handleToggleSelectionMode}
-                              className={`h-8 w-8 transition-all duration-200 ${selectionMode ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}>
+                              className={`h-8 w-8 transition-all duration-200 ${selectionMode ? 'bg-primary text-primary-foreground shadow-md' : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}>
                               <CheckSquare className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1333,7 +1333,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={toggleNamesHidden}
-                              className={`hidden sm:flex h-8 w-8 transition-all duration-200 ${namesHidden ? 'bg-white text-[#013ba6] shadow-md' : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/40'}`}>
+                              className={`hidden sm:flex h-8 w-8 transition-all duration-200 ${namesHidden ? 'bg-primary text-primary-foreground shadow-md' : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}>
                               {namesHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </Button>
                           </TooltipTrigger>
@@ -1342,7 +1342,7 @@ const Index = () => {
                       </div>
 
                       {/* Separator */}
-                      <div className="h-6 w-px bg-white/20 print:hidden hidden sm:block" />
+                      <div className="h-6 w-px bg-sidebar-border print:hidden hidden sm:block" />
 
                       {/* Notifications & Info group */}
                       <div className="flex items-center gap-1 print:hidden">
@@ -1352,32 +1352,32 @@ const Index = () => {
                       </div>
 
                       {/* Separator */}
-                      <div className="h-6 w-px bg-white/20 print:hidden hidden md:block" />
+                      <div className="h-6 w-px bg-sidebar-border print:hidden hidden md:block" />
 
                       {/* Patient count + User info */}
-                      <div className="hidden md:flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/20">
-                        <div className="flex items-center justify-center w-7 h-7 rounded-md bg-white/10 border border-white/20">
-                          <Users className="h-3.5 w-3.5 text-white" />
+                      <div className="hidden md:flex items-center gap-2 bg-sidebar-accent/60 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-sidebar-border">
+                        <div className="flex items-center justify-center w-7 h-7 rounded-md bg-sidebar-accent border border-sidebar-border">
+                          <Users className="h-3.5 w-3.5 text-sidebar-foreground" />
                         </div>
                         <div className="flex flex-col justify-center">
-                          <p className="text-[8px] text-white/70 uppercase leading-none tracking-wide font-medium">Total</p>
-                          <p className="text-base font-bold text-white leading-tight">{totalPatients}</p>
+                          <p className="text-[8px] text-muted-foreground uppercase leading-none tracking-wide font-medium">Total</p>
+                          <p className="text-base font-bold text-sidebar-foreground leading-tight">{totalPatients}</p>
                         </div>
                       </div>
 
                       <div className="hidden lg:flex items-center gap-2 print:hidden">
                         <div className="text-right">
-                          <p className="text-[10px] font-semibold text-white uppercase tracking-tight">
+                          <p className="text-[10px] font-semibold text-sidebar-foreground uppercase tracking-tight">
                             {user?.user_metadata?.username || user?.email?.split('@')[0]}
                           </p>
-                          <p className="text-[9px] text-white/70 uppercase">
+                          <p className="text-[9px] text-muted-foreground uppercase">
                             {role === 'admin' ? 'Administrador' : 'Médico'}
                           </p>
                         </div>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={signOut}
-                              className="h-8 w-8 bg-white/10 border-white/20 text-white hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200">
+                              className="h-8 w-8 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200">
                               <LogOut className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
