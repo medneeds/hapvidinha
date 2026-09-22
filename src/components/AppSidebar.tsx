@@ -15,8 +15,6 @@ import {
   KeyRound,
   ArrowRightLeft,
   ListChecks,
-  StickyNote,
-  BookMarked,
   FolderArchive,
 } from "lucide-react";
 import { QuickChecklistDialog } from "@/components/QuickChecklistDialog";
