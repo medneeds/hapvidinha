@@ -1327,7 +1327,8 @@ const Index = () => {
                       {/* Notifications & Info group */}
                       <div className="flex items-center gap-1 print:hidden">
                         <NotificationCenter />
-                        <BedAllocationNotifications />
+                        {/* Solicitações de Alocação — funcionalidade oculta (código preservado) */}
+                        {/* <BedAllocationNotifications /> */}
                         <DoorPatientNotifications />
                       </div>
 
