@@ -288,10 +288,10 @@ export function SectorSection({
                 variant="outline"
                 size="icon"
                 onClick={() => onAddExtraBed()}
-                className="h-8 w-8 print:hidden"
+                className={cn(SECTION_ICON_BUTTON, "print:hidden")}
                 title="Adicionar leito extra"
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus className={SECTION_ICON} />
               </Button>
             )}
             {onPrintSector && (
@@ -299,9 +299,10 @@ export function SectorSection({
                 variant="outline"
                 size="icon"
                 onClick={onPrintSector}
-                className="h-8 w-8 print:hidden"
+                className={cn(SECTION_ICON_BUTTON, "print:hidden")}
+                title="Imprimir setor"
               >
-                <Printer className="h-3.5 w-3.5" />
+                <Printer className={SECTION_ICON} />
               </Button>
             )}
             <div className="flex items-center justify-center h-8 min-w-[2rem] px-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:min-w-[1.5rem]">
