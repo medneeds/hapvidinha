@@ -26,7 +26,6 @@ import { RequestNewAllocationDialog } from "@/components/RequestNewAllocationDia
 import { RequestUtiAllocationDialog } from "@/components/RequestUtiAllocationDialog";
 import { UtiPrioritiesDialog } from "@/components/UtiPrioritiesDialog";
 import { useUtiPriorities } from "@/hooks/useUtiPriorities";
-import { HeartPulse } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
