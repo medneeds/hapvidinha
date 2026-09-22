@@ -18,6 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useBedAllocationRequests, BedAllocationRequest } from "@/hooks/useBedAllocationRequests";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { HEADER_ICON_BUTTON, HEADER_ICON } from "@/lib/headerButtonStyles";
 import { useHospital } from "@/contexts/HospitalContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";

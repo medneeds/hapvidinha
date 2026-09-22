@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { cn } from "@/lib/utils";
+import { HEADER_ICON_BUTTON, HEADER_ICON } from "@/lib/headerButtonStyles";
 import {
   Sheet,
   SheetContent,

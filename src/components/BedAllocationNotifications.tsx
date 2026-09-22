@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { HEADER_ICON_BUTTON, HEADER_ICON } from "@/lib/headerButtonStyles";
 import { useBedAllocationRequests, BedAllocationRequest } from "@/hooks/useBedAllocationRequests";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
