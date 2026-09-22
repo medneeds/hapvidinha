@@ -143,10 +143,10 @@ export default function AuthPage() {
 
   const AuthBrand = () => (
     <div className="text-center">
-      <div className="auth-brand-mark mx-auto mb-5 flex h-16 w-16 rotate-[42deg] items-center justify-center rounded-[22%]">
+      <div className="auth-brand-mark mx-auto mb-4 flex h-12 w-12 rotate-[42deg] items-center justify-center rounded-lg">
         <div
           aria-label="HapMap"
-          className="h-11 w-11 -rotate-[42deg] bg-primary-foreground"
+          className="h-8 w-8 -rotate-[42deg] bg-primary-foreground"
           style={{
             WebkitMaskImage: "url(/logo-hm.png)",
             maskImage: "url(/logo-hm.png)",
@@ -159,13 +159,13 @@ export default function AuthPage() {
           }}
         />
       </div>
-      <div className="flex items-start justify-center gap-2">
-        <h1 className="auth-title text-5xl leading-none">HapMap</h1>
-        <span className="mt-1 rounded-full border border-border bg-card px-1.5 py-0.5 text-[8px] font-semibold uppercase text-muted-foreground">
+      <div className="flex items-center justify-center gap-2">
+        <h1 className="auth-title text-3xl leading-none">HapMap</h1>
+        <span className="rounded-md border border-border bg-card px-1.5 py-0.5 text-[8px] font-semibold uppercase text-muted-foreground">
           {whitelabel.platform.version}
         </span>
       </div>
-      <p className="mt-2 text-sm text-muted-foreground">Gestão clínica com clareza e precisão.</p>
+      <p className="mt-2 text-xs font-medium text-muted-foreground">GESTÃO CLÍNICA</p>
     </div>
   );
 
@@ -214,10 +214,10 @@ export default function AuthPage() {
           showLoadingScreen && "opacity-0"
         )}
       >
-        <div className="w-full max-w-[420px] animate-in fade-in-0 slide-in-from-bottom-3 duration-500">
-          <div className="mb-9"><AuthBrand /></div>
+        <div className="w-full max-w-[420px] animate-in fade-in-0 duration-300">
+          <div className="mb-8"><AuthBrand /></div>
 
-          <section className="auth-card rounded-2xl p-6 sm:p-8" aria-label="Acesso ao HapMap">
+          <section className="auth-card rounded-xl p-6 sm:p-8" aria-label="Acesso ao HapMap">
             <div className="mb-6 flex items-center justify-center gap-2 border-b border-border pb-5 text-muted-foreground">
               <Building2 className="h-4 w-4 text-primary" />
               <span className="text-xs font-semibold uppercase">Hospital Guarás · Maranhão</span>
@@ -231,7 +231,7 @@ export default function AuthPage() {
                   onValueChange={(value: Department) => setSelectedDepartment(value)}
                   disabled={loading}
                 >
-                  <SelectTrigger id="department-select" className="auth-field h-[50px] rounded-xl px-4 text-sm font-medium uppercase focus:ring-0">
+                  <SelectTrigger id="department-select" className="auth-field h-12 rounded-lg px-4 text-sm font-medium uppercase focus:ring-0">
                     <SelectValue placeholder="SELECIONE O SETOR" />
                   </SelectTrigger>
                   <SelectContent className="border-border bg-popover text-popover-foreground shadow-lg">
@@ -259,7 +259,7 @@ export default function AuthPage() {
                       if (newUsername === "MEDICOPORTA") setSelectedDepartment("URGÊNCIA E EMERGÊNCIA ADULTO");
                     }}
                     placeholder="DIGITE SEU USUÁRIO"
-                    className="auth-field h-[50px] rounded-xl pl-11 text-sm font-medium uppercase placeholder:text-muted-foreground"
+                    className="auth-field h-12 rounded-lg pl-11 text-sm font-medium uppercase placeholder:text-muted-foreground"
                     disabled={loading}
                     autoComplete="username"
                     maxLength={50}
@@ -285,7 +285,7 @@ export default function AuthPage() {
                       setLoginData((current) => ({ ...current, password: newPassword }));
                     }}
                     placeholder="6 CARACTERES"
-                    className="auth-field h-[50px] rounded-xl px-11 text-sm font-mono font-medium uppercase placeholder:font-sans placeholder:text-muted-foreground"
+                    className="auth-field h-12 rounded-lg px-11 text-sm font-mono font-medium uppercase placeholder:font-sans placeholder:text-muted-foreground"
                     disabled={loading}
                     autoComplete="current-password"
                     maxLength={6}
@@ -306,7 +306,7 @@ export default function AuthPage() {
               <Button
                 type="submit"
                 disabled={loading || hospitalLoading}
-                className="mt-2 h-[50px] w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition-[background-color,transform,box-shadow] duration-200 hover:bg-primary/90 hover:shadow-md active:scale-[0.99]"
+                className="mt-2 h-12 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground shadow-sm transition-[background-color,transform] duration-200 hover:bg-primary/90 active:scale-[0.99]"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
