@@ -145,12 +145,12 @@ export default function DocumentsPage() {
   );
 
   return (
-    <div className="bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="clinical-shell">
       <AppPageHeader title="Documentos" icon={FileText} />
-      <div className="p-6 md:p-8 space-y-8 max-w-7xl">
+      <div className="p-4 md:p-6 space-y-6 max-w-7xl">
         {/* Header */}
         <div className="space-y-2">
-          <p className="text-muted-foreground text-lg uppercase">
+            <p className="text-muted-foreground text-sm uppercase font-medium">
             Central de documentos médicos institucionais
           </p>
           <Badge variant="secondary" className="mt-2">
@@ -160,7 +160,7 @@ export default function DocumentsPage() {
 
 
         {/* Search Bar */}
-        <Card className="border-primary/20 shadow-lg">
+        <Card className="border-border shadow-sm">
           <CardContent className="p-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
