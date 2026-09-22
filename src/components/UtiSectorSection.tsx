@@ -244,10 +244,7 @@ export function UtiSectorSection({
           <CollapsibleTrigger asChild>
             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${chevronClass} ${isOpen ? '' : '-rotate-90'}`} />
-              <div className="flex items-center gap-2 print:gap-1">
-                <SectorBedIcon sectorIcon={typeof displayIcon === 'string' ? displayIcon : info.icon} size="md" />
-                <h2 className={`text-lg font-bold print:text-[10px] uppercase ${titleClass}`}>{displayTitle}</h2>
-              </div>
+              <h2 className={`text-lg font-bold print:text-[10px] uppercase ${titleClass}`}>{displayTitle}</h2>
             </button>
           </CollapsibleTrigger>
           <div className="flex items-center gap-2">
