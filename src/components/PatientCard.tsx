@@ -4022,7 +4022,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                     {/* Elegant Divider */}
                     <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />
 
-                    {/* HISTÓRICO DE CONDUTAS */}
+                    {/* HISTÓRICO DE CONDUTAS — funcionalidade oculta (código preservado)
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
@@ -4033,6 +4033,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <Clock className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                       <span>Histórico de Condutas</span>
                     </DropdownMenuItem>
+                    */}
 
                     {/* IMPRIMIR CASO - Independent Action */}
                     {onPrintPatient && (
@@ -4073,7 +4074,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>Liberar Dieta</span>
                     </DropdownMenuItem>
 
-                    {/* PROTOCOLOS — menu unificado */}
+                    {/* PROTOCOLOS — menu unificado — funcionalidade oculta (código preservado)
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer">
                         <ShieldAlert className={cn("h-4 w-4", hasAnyProtocolActive ? "text-orange-500 animate-pulse" : "text-red-600 dark:text-red-400")} />
@@ -4105,6 +4106,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
+                    */}
 
 
                     {/* PSM STATUS - Collapsible with three options */}
