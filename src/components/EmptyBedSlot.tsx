@@ -25,22 +25,22 @@ const sectorTokens: Record<
   { container: string; bedBg: string; bedText: string; ring: string; accent: string }
 > = {
   red: {
-    container: "bg-critical/5 hover:bg-critical/10 border-critical/30",
-    bedBg: "bg-critical/15 border-critical/40",
+    container: "bg-critical/[0.03] hover:bg-critical/[0.06] border-critical/20",
+    bedBg: "bg-critical/[0.07] border-critical/25",
     bedText: "text-critical",
     ring: "focus-visible:ring-critical/40",
     accent: "text-critical",
   },
   yellow: {
-    container: "bg-warning/5 hover:bg-warning/10 border-warning/30",
-    bedBg: "bg-warning/15 border-warning/40",
+    container: "bg-warning/[0.03] hover:bg-warning/[0.06] border-warning/20",
+    bedBg: "bg-warning/[0.07] border-warning/25",
     bedText: "text-warning",
     ring: "focus-visible:ring-warning/40",
     accent: "text-warning",
   },
   blue: {
-    container: "bg-stable/5 hover:bg-stable/10 border-stable/30",
-    bedBg: "bg-stable/15 border-stable/40",
+    container: "bg-stable/[0.03] hover:bg-stable/[0.06] border-stable/20",
+    bedBg: "bg-stable/[0.07] border-stable/25",
     bedText: "text-stable",
     ring: "focus-visible:ring-stable/40",
     accent: "text-stable",

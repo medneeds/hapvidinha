@@ -592,9 +592,9 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
             onClick={handleCyclePsm}
             className={cn(
               "inline-flex items-center justify-center size-6 min-w-6 min-h-6 rounded-full border cursor-pointer print:hidden transition-all duration-300",
-              sector === 'red' && "border-critical/40 bg-critical/10 hover:bg-critical/20",
-              sector === 'yellow' && "border-warning/40 bg-warning/10 hover:bg-warning/20",
-              sector === 'blue' && "border-stable/40 bg-stable/10 hover:bg-stable/20",
+              sector === 'red' && "border-critical/25 bg-critical/[0.05] hover:bg-critical/10",
+              sector === 'yellow' && "border-warning/25 bg-warning/[0.05] hover:bg-warning/10",
+              sector === 'blue' && "border-stable/25 bg-stable/[0.05] hover:bg-stable/10",
               sector === 'outside' && "border-muted-foreground/40 bg-muted/50 hover:bg-muted",
               isAnimating && "scale-125 rotate-12"
             )}
