@@ -194,19 +194,19 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     }
   };
 
-  // Highlight color styles — neutral, sutil, sem barulho visual
+  // Highlight color styles — borda lateral sutil na cor do setor (tokens semânticos)
   const highlightStyles = {
     blue: {
-      bg: "bg-blue-50/70 dark:bg-blue-950/30 border-l-2 border-l-blue-400/70 dark:border-l-blue-400/70 pl-1.5",
-      number: "text-blue-600 dark:text-blue-300",
-      text: "text-slate-800 dark:text-slate-100",
-      star: "fill-blue-500 text-blue-500"
+      bg: "bg-stable/10 border-l-[3px] border-l-stable border-y border-r border-y-stable/25 border-r-stable/25 shadow-sm pl-1.5",
+      number: "text-stable",
+      text: "text-foreground font-semibold",
+      star: "fill-stable text-stable"
     },
     yellow: {
-      bg: "bg-slate-100/80 dark:bg-slate-800/40 border-l-2 border-l-slate-500/70 dark:border-l-slate-400/70 pl-1.5",
-      number: "text-slate-600 dark:text-slate-300",
-      text: "text-slate-800 dark:text-slate-100",
-      star: "fill-slate-500 text-slate-500"
+      bg: "bg-warning/10 border-l-[3px] border-l-warning border-y border-r border-y-warning/25 border-r-warning/25 shadow-sm pl-1.5",
+      number: "text-warning",
+      text: "text-foreground font-semibold",
+      star: "fill-warning text-warning"
     }
   };
   const hStyles = highlightStyles[highlightColorVariant];
@@ -266,17 +266,20 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
             {value}
           </span>
           {onToggleHighlight && (
-            <Button 
-              size="icon" 
-              variant="ghost" 
-              className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+            <Button
+              size="icon"
+              variant="ghost"
+              className={cn(
+                "h-4 w-4 transition-opacity flex-shrink-0",
+                isHighlighted ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+              )}
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleHighlight();
               }}
             >
               <Star className={cn(
-                "h-2.5 w-2.5 transition-colors",
+                "h-3 w-3 transition-colors",
                 isHighlighted ? hStyles.star : "text-muted-foreground"
               )} />
             </Button>

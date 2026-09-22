@@ -320,10 +320,17 @@ const SortablePendencyItem = memo(function SortablePendencyItem({ id, index, pen
   };
 
   const highlightColors = {
-    red: "bg-critical/20 border-critical/50",
-    yellow: "bg-warning/20 border-warning/50",
-    blue: "bg-stable/20 border-stable/50",
-    outside: "bg-muted-foreground/20 border-muted-foreground/50"
+    red: "bg-critical/10 border-l-[3px] border-l-critical border-y border-r border-y-critical/25 border-r-critical/25",
+    yellow: "bg-warning/10 border-l-[3px] border-l-warning border-y border-r border-y-warning/25 border-r-warning/25",
+    blue: "bg-stable/10 border-l-[3px] border-l-stable border-y border-r border-y-stable/25 border-r-stable/25",
+    outside: "bg-muted-foreground/10 border-l-[3px] border-l-muted-foreground border-y border-r border-y-muted-foreground/25 border-r-muted-foreground/25"
+  };
+
+  const highlightNumberColors = {
+    red: "text-critical",
+    yellow: "text-warning",
+    blue: "text-stable",
+    outside: "text-muted-foreground"
   };
 
   const starColors = {
@@ -340,7 +347,7 @@ const SortablePendencyItem = memo(function SortablePendencyItem({ id, index, pen
       className={cn(
         "text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight flex items-center gap-2 rounded px-2 -mx-1 py-1.5 group",
         isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/30",
-        isHighlighted && `${highlightColors[sector]} border shadow-sm`
+        isHighlighted && `${highlightColors[sector]} shadow-sm`
       )}
     >
       <div
@@ -350,13 +357,16 @@ const SortablePendencyItem = memo(function SortablePendencyItem({ id, index, pen
       >
         <GripVertical className="h-3 w-3 text-muted-foreground flex-shrink-0" />
       </div>
-      <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
+      <span className={cn("font-semibold flex-shrink-0", isHighlighted ? highlightNumberColors[sector] : "text-muted-foreground")}>{index + 1}.</span>
       <span className={cn("flex-1", isHighlighted && "font-bold")}>{pendency}</span>
       <Button
         variant="ghost"
         size="sm"
         onClick={onToggleHighlight}
-        className="h-5 w-5 p-0 print:hidden opacity-0 group-hover:opacity-100 transition-opacity"
+        className={cn(
+          "h-5 w-5 p-0 print:hidden transition-opacity",
+          isHighlighted ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+        )}
       >
         <Star className={cn("h-3 w-3", isHighlighted ? starColors[sector] : "text-muted-foreground")} />
       </Button>
@@ -483,10 +493,17 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
   };
 
   const highlightColors = {
-    red: "bg-critical/20 border-critical/50",
-    yellow: "bg-warning/20 border-warning/50",
-    blue: "bg-stable/20 border-stable/50",
-    outside: "bg-muted-foreground/20 border-muted-foreground/50"
+    red: "bg-critical/10 border-l-[3px] border-l-critical border-y border-r border-y-critical/25 border-r-critical/25",
+    yellow: "bg-warning/10 border-l-[3px] border-l-warning border-y border-r border-y-warning/25 border-r-warning/25",
+    blue: "bg-stable/10 border-l-[3px] border-l-stable border-y border-r border-y-stable/25 border-r-stable/25",
+    outside: "bg-muted-foreground/10 border-l-[3px] border-l-muted-foreground border-y border-r border-y-muted-foreground/25 border-r-muted-foreground/25"
+  };
+
+  const highlightNumberColors = {
+    red: "text-critical",
+    yellow: "text-warning",
+    blue: "text-stable",
+    outside: "text-muted-foreground"
   };
 
   const starColors = {
@@ -550,7 +567,7 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
       className={cn(
         "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
         isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50",
-        isHighlighted && `${highlightColors[sector]} border shadow-sm`
+        isHighlighted && `${highlightColors[sector]} shadow-sm`
       )}
     >
       <div
@@ -564,7 +581,7 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
         className="break-words flex items-start gap-1 flex-1 cursor-pointer"
         onClick={onEdit}
       >
-        <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
+        <span className={cn("font-semibold flex-shrink-0", isHighlighted ? highlightNumberColors[sector] : "text-muted-foreground")}>{index + 1}.</span>
         <span className={cn("break-words", isHighlighted && "font-bold")}>
           {pendency}
         </span>
@@ -595,9 +612,12 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
             e.stopPropagation();
             onToggleHighlight?.();
           }}
-          className="opacity-0 group-hover/item:opacity-100 hover:text-primary print:hidden"
+          className={cn(
+            "hover:text-primary print:hidden transition-opacity",
+            isHighlighted ? "opacity-100" : "opacity-0 group-hover/item:opacity-100"
+          )}
         >
-          <Star className={cn("h-2.5 w-2.5", isHighlighted ? starColors[sector] : "text-muted-foreground")} />
+          <Star className={cn("h-3 w-3", isHighlighted ? starColors[sector] : "text-muted-foreground")} />
         </button>
         <button
           onClick={(e) => {
