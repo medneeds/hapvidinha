@@ -194,7 +194,7 @@
   }
 
   .clinical-section-title {
-    font-family: "Sora", "Manrope", system-ui, sans-serif;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
     font-weight: 600;
     letter-spacing: 0;
   }
@@ -208,7 +208,22 @@
 
   .clinical-patient-card:hover {
     box-shadow: 0 4px 14px -8px hsl(var(--foreground) / 0.28);
-    border-color: hsl(var(--primary) / 0.35);
+  }
+
+  .clinical-patient-card.patient-card-red:hover {
+    border-color: hsl(var(--critical) / 0.42);
+  }
+
+  .clinical-patient-card.patient-card-yellow:hover {
+    border-color: hsl(var(--warning) / 0.42);
+  }
+
+  .clinical-patient-card.patient-card-blue:hover {
+    border-color: hsl(var(--stable) / 0.42);
+  }
+
+  .clinical-patient-card.patient-card-outside:hover {
+    border-color: hsl(var(--muted-foreground) / 0.32);
   }
 
   .clinical-empty-bed {
@@ -233,7 +248,7 @@
 
   .auth-title {
     color: hsl(var(--auth-foreground));
-    font-family: "Sora", "Manrope", system-ui, sans-serif;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
     font-weight: 600;
     letter-spacing: 0;
   }

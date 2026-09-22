@@ -267,22 +267,22 @@ interface PatientCardProps {
 const sectorConfig = {
   red: {
     label: "Sala Vermelha",
-    color: "clinical-patient-card border-l-2 border-l-critical",
+    color: "clinical-patient-card patient-card-red border-l-2 border-l-critical",
     badgeColor: "bg-critical text-critical-foreground hover:bg-critical/90"
   },
   yellow: {
     label: "Observação Amarela",
-    color: "clinical-patient-card border-l-2 border-l-warning",
+    color: "clinical-patient-card patient-card-yellow border-l-2 border-l-warning",
     badgeColor: "bg-warning text-warning-foreground hover:bg-warning/90"
   },
   blue: {
     label: "Observação Azul",
-    color: "clinical-patient-card border-l-2 border-l-stable",
+    color: "clinical-patient-card patient-card-blue border-l-2 border-l-stable",
     badgeColor: "bg-stable text-stable-foreground hover:bg-stable/90"
   },
   outside: {
     label: "Fora das Alas",
-    color: "clinical-patient-card border-l-2 border-l-muted-foreground/50",
+    color: "clinical-patient-card patient-card-outside border-l-2 border-l-muted-foreground/50",
     badgeColor: "bg-muted-foreground text-background hover:bg-muted-foreground/90"
   }
 };
