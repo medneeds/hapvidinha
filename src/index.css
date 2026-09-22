@@ -194,7 +194,7 @@
   }
 
   .clinical-section-title {
-    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
     font-weight: 600;
     letter-spacing: 0;
   }
@@ -248,7 +248,7 @@
 
   .auth-title {
     color: hsl(var(--auth-foreground));
-    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
     font-weight: 600;
     letter-spacing: 0;
   }
