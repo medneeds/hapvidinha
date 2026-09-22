@@ -679,6 +679,7 @@ interface SortableDiagnosisItemCollapsedProps {
   onGetCid?: (diagnosis: string, index: number) => void;
   loadingCid?: boolean;
   daysCalculation?: string | null;
+  sector: Patient['sector'];
 }
 
 const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollapsed({
@@ -698,7 +699,8 @@ const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollap
   inputRef,
   onGetCid,
   loadingCid,
-  daysCalculation
+  daysCalculation,
+  sector
 }: SortableDiagnosisItemCollapsedProps) {
   const {
     attributes,
@@ -713,6 +715,13 @@ const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollap
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+  };
+
+  const sectorHoverColors = {
+    red: "hover:bg-critical/[0.07]",
+    yellow: "hover:bg-warning/[0.07]",
+    blue: "hover:bg-stable/[0.07]",
+    outside: "hover:bg-muted-foreground/[0.07]"
   };
 
   if (isEditing) {
@@ -774,7 +783,7 @@ const SortableDiagnosisItemCollapsed = memo(function SortableDiagnosisItemCollap
       style={style}
       className={cn(
         "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
-        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50"
+        isDragging ? "bg-accent/50 z-50" : sectorHoverColors[sector]
       )}
     >
       <div
@@ -1659,8 +1668,12 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         <Card 
           data-patient-id={patient.id}
           className={cn(
-            "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
+            "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full [&_li]:transition-colors",
             config.color,
+            patient.sector === "red" && "[&_li:hover]:bg-critical/[0.07]",
+            patient.sector === "yellow" && "[&_li:hover]:bg-warning/[0.07]",
+            patient.sector === "blue" && "[&_li:hover]:bg-stable/[0.07]",
+            patient.sector === "outside" && "[&_li:hover]:bg-muted-foreground/[0.07]",
             isSelected && selectionRingColor,
             isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
             (allocationStatusBarConfig
@@ -2111,6 +2124,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiOriginSector || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2392,6 +2406,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiAllergies || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2480,6 +2495,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiAdmissionReason || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2557,6 +2573,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === patient.diagnoses.length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2658,6 +2675,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiCurrentStatus || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2757,6 +2775,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiSpecialties || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2861,6 +2880,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiDevices || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -2971,6 +2991,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === patient.relevantExams.length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -3072,6 +3093,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                             onKeyDown={handleKeyDown}
                             inputRef={inputRef}
                             isLast={idx === (patient.utiCulturesAntibiotics || []).length - 1}
+                            sector={patient.sector}
                           />
                         ))}
                       </ol>
@@ -3357,7 +3379,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onKeyDown={handleKeyDown}
                         inputRef={inputRef}
                         isLast={idx === patient.diagnoses.length - 1}
-                      />
+                        sector={patient.sector}
+                          />
                     ))}
                   </ol>
                 </SortableContext>
@@ -3461,7 +3484,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onKeyDown={handleKeyDown}
                         inputRef={inputRef}
                         isLast={idx === patient.medicalHistory.length - 1}
-                      />
+                        sector={patient.sector}
+                          />
                     ))}
                   </ol>
                 </SortableContext>
@@ -3588,7 +3612,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         onKeyDown={handleKeyDown}
                         inputRef={inputRef}
                         isLast={idx === patient.relevantExams.length - 1}
-                      />
+                        sector={patient.sector}
+                          />
                     ))}
                   </ol>
                 </SortableContext>
