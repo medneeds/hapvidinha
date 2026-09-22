@@ -162,7 +162,7 @@ function DynamicHeader({ children }: { children: React.ReactNode }) {
   
   return (
     <header 
-      className="border-b border-white/10 bg-gradient-to-r from-[#011d54] via-[#013ba6] to-[#0256d4] backdrop-blur-xl fixed top-0 right-0 z-50 shadow-[0_4px_20px_-4px_rgba(1,59,166,0.5)] print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
+      className="clinical-topbar border-b border-primary-foreground/10 fixed top-0 right-0 z-50 print:static print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
       style={{
         left: isMobile ? 0 : (state === 'collapsed' ? 'var(--sidebar-width-icon)' : 'var(--sidebar-width)')
       }}
@@ -1073,7 +1073,7 @@ const Index = () => {
           />
         )}
         
-        <div className={printMode ? 'print-hide' : ''}>
+        <div className={cn("clinical-shell min-h-screen", printMode && "print-hide")}>
           {/* Header */}
           <DynamicHeader>
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent print:hidden"></div>
@@ -1087,7 +1087,7 @@ const Index = () => {
                     <div className="print:hidden">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="inline-flex items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 bg-white/10 backdrop-blur-sm border border-white/25 text-white text-base sm:text-lg font-bold uppercase tracking-tight hover:bg-white/20 hover:border-white/50 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                          <button className="inline-flex items-center gap-2 h-10 px-3.5 sm:px-4 bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground font-heading text-sm sm:text-base font-semibold uppercase hover:bg-primary-foreground/15 hover:border-primary-foreground/35 transition-colors duration-150 rounded-md cursor-pointer">
                             <Building2 className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-90" />
                             <span className="truncate">{getDepartmentLabel(currentDepartment)}</span>
                             <ChevronDown className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-70" />
@@ -1180,7 +1180,7 @@ const Index = () => {
                             variant="outline"
                             size="icon"
                             onClick={handlePrintSelected}
-                            className="print:hidden h-11 w-11 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_18px_-2px_rgba(56,189,248,0.65)] hover:shadow-[0_0_24px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 transition-all"
+                            className="print:hidden h-11 w-11 bg-primary text-primary-foreground border-0 shadow-sm hover:bg-primary/90 hover:shadow-md transition-colors"
                             title={`Imprimir ${selectedPatients.size}`}
                           >
                             <Printer className="h-5 w-5" />
@@ -1302,7 +1302,7 @@ const Index = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button variant="outline" size="icon" onClick={handlePrintSelected}
-                                  className="h-8 w-8 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
+                                  className="h-8 w-8 bg-primary text-primary-foreground border-0 shadow-sm hover:bg-primary/90 hover:shadow-md transition-colors">
                                   <Printer className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
@@ -1322,7 +1322,7 @@ const Index = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={handlePrintCompact}
-                              className="hidden sm:flex h-8 w-8 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white border-0 shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)] hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105 transition-all">
+                              className="hidden sm:flex h-8 w-8 bg-primary text-primary-foreground border-0 shadow-sm hover:bg-primary/90 hover:shadow-md transition-colors">
                               <Printer className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1397,7 +1397,7 @@ const Index = () => {
           </DynamicHeader>
 
           {/* Main Content */}
-          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 print:py-0 print:px-1 pt-[120px] sm:pt-[110px] print:pt-3">
+          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-5 print:py-0 print:px-1 pt-[120px] sm:pt-[104px] print:pt-3">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
               {currentDepartment === "UTI" ? (
                 selectedUtiUnit === null ? (
@@ -1408,15 +1408,15 @@ const Index = () => {
                 ) : (
                   <div className="space-y-4">
                     {/* UTI Unit Toggle (top) */}
-                    <div className="flex items-center justify-between gap-3 p-2 rounded-xl border border-slate-200/70 dark:border-slate-700/60 bg-white dark:bg-slate-900/40 print:hidden">
-                      <div className="inline-flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-lg p-1">
+                      <div className="flex items-center justify-between gap-3 p-2 rounded-md border border-border bg-card print:hidden">
+                       <div className="inline-flex items-center gap-1 bg-muted rounded-md p-1">
                         <button
                           onClick={() => setSelectedUtiUnit('UTI 1')}
                           className={cn(
-                            "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
+                            "px-3 py-1.5 text-xs font-semibold rounded-sm transition-colors",
                             selectedUtiUnit === 'UTI 1'
-                              ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-sm border-l-2 border-l-blue-500/70"
-                              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                              ? "bg-card text-primary shadow-sm border-l-2 border-l-primary"
+                              : "text-muted-foreground hover:text-foreground"
                           )}
                         >
                           UTI 1
@@ -1424,10 +1424,10 @@ const Index = () => {
                         <button
                           onClick={() => setSelectedUtiUnit('UTI 2')}
                           className={cn(
-                            "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
+                            "px-3 py-1.5 text-xs font-semibold rounded-sm transition-colors",
                             selectedUtiUnit === 'UTI 2'
-                              ? "bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-sm border-l-2 border-l-slate-500/70"
-                              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                              ? "bg-card text-foreground shadow-sm border-l-2 border-l-muted-foreground"
+                              : "text-muted-foreground hover:text-foreground"
                           )}
                         >
                           UTI 2
@@ -1435,7 +1435,7 @@ const Index = () => {
                       </div>
                       <button
                         onClick={() => setSelectedUtiUnit(null)}
-                        className="text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors px-2 py-1 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                        className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-muted"
                       >
                         Trocar unidade
                       </button>

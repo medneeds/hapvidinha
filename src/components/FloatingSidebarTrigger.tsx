@@ -43,11 +43,10 @@ export function FloatingSidebarTrigger() {
       onClick={handleToggle}
       style={{ left: leftStyle }}
       className={cn(
-        "fixed top-4 z-[60] h-8 w-8 rounded-full print:hidden border-0",
-        "bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white",
-        "shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)]",
-        "hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105",
-        "transition-all duration-200 ease-out"
+        "fixed top-4 z-[60] h-8 w-8 rounded-md print:hidden border border-primary-foreground/15",
+        "bg-primary text-primary-foreground shadow-md",
+        "hover:bg-primary/90 hover:shadow-lg",
+        "transition-[left,background-color,box-shadow] duration-200 ease-out"
       )}
 
       title={isOpenNow ? "Retrair menu" : "Expandir menu"}

@@ -11,6 +11,7 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useSectorBedCapacities } from "@/hooks/useSectorBedCapacities";
 import { CONFIGURABLE_SECTORS, getBedPrefix, getSectorGroup, padBed } from "@/utils/bedCapacityStore";
 import { supabase } from "@/integrations/supabase/client";
+import { AppPageHeader } from "@/components/AppPageHeader";
 
 
 const SECTOR_LABELS: Record<string, string> = {
@@ -81,11 +82,11 @@ export default function AdminBedsPage() {
 
   return (
     <MainLayout>
-      <div className="container mx-auto p-6 space-y-6">
+      <AppPageHeader title="Quantitativo de Leitos" icon={BedDouble} />
+      <div className="clinical-shell min-h-[calc(100vh-4rem)] container mx-auto p-4 md:p-6 space-y-6">
         <div className="flex items-center gap-3">
-          <BedDouble className="h-7 w-7 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold">Quantitativo de Leitos Fixos</h1>
+            <h1 className="font-heading text-xl font-semibold">Quantitativo de Leitos Fixos</h1>
             <p className="text-sm text-muted-foreground">
               {currentHospital?.name ?? "Unidade atual"} — define quantos leitos fixos existem em
               cada setor. Leitos criados a mais são preservados; leitos faltantes são recriados

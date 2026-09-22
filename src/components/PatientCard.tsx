@@ -267,22 +267,22 @@ interface PatientCardProps {
 const sectorConfig = {
   red: {
     label: "Sala Vermelha",
-    color: "bg-critical/10 border-critical/30 text-critical-foreground",
+    color: "clinical-patient-card border-l-2 border-l-critical",
     badgeColor: "bg-critical text-critical-foreground hover:bg-critical/90"
   },
   yellow: {
     label: "Observação Amarela",
-    color: "bg-warning/10 border-warning/30 text-warning-foreground",
+    color: "clinical-patient-card border-l-2 border-l-warning",
     badgeColor: "bg-warning text-warning-foreground hover:bg-warning/90"
   },
   blue: {
     label: "Observação Azul",
-    color: "bg-stable/10 border-stable/30 text-stable-foreground",
+    color: "clinical-patient-card border-l-2 border-l-stable",
     badgeColor: "bg-stable text-stable-foreground hover:bg-stable/90"
   },
   outside: {
     label: "Fora das Alas",
-    color: "bg-muted/50 border-muted-foreground/30 text-foreground",
+    color: "clinical-patient-card border-l-2 border-l-muted-foreground/50",
     badgeColor: "bg-muted-foreground text-background hover:bg-muted-foreground/90"
   }
 };
@@ -1618,7 +1618,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
         <Card 
           data-patient-id={patient.id}
           className={cn(
-            "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
+            "overflow-hidden transition-[border-color,box-shadow] duration-150 print:shadow-none print:break-inside-avoid print:mb-0 print:w-full", 
             config.color,
             isSelected && "ring-2 ring-primary",
             isDeleting && "animate-[slide-out-left_0.3s_ease-out_forwards]",
