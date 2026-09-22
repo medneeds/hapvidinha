@@ -18,7 +18,7 @@ export const HEADER_ICON = "h-4 w-4";
  * Padrão visual único para os ícones da sidebar.
  * Mesma escala e cor de acento usadas no cabeçalho.
  */
-export const SIDEBAR_ICON = "h-4 w-4 text-primary shrink-0 transition-all duration-200";
+export const SIDEBAR_ICON = "h-4 w-4 text-sidebar-foreground/70 shrink-0 transition-all duration-200";
 export const SIDEBAR_ICON_MUTED = "h-4 w-4 text-muted-foreground shrink-0 transition-all duration-200";
 
 /**
