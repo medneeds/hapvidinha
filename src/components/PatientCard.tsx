@@ -1477,6 +1477,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     outside: "border-muted-foreground data-[state=checked]:bg-muted-foreground data-[state=checked]:border-muted-foreground"
   }[patient.sector];
 
+  const selectionRingColor = {
+    red: "ring-2 ring-critical",
+    yellow: "ring-2 ring-warning",
+    blue: "ring-2 ring-stable",
+    outside: "ring-2 ring-muted-foreground"
+  }[patient.sector];
+
   // Allocation Status Bar configuration
   const allocationStatusBarConfig = useMemo(() => {
     if (!patient.allocationStatus || patient.allocationStatus === 'approved' || !patient.isDoorPatient) {
