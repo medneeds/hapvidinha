@@ -567,7 +567,7 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
       className={cn(
         "text-[10px] text-foreground leading-snug uppercase group/item rounded px-1 -mx-1 flex items-start justify-between gap-1 py-0.5",
         isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/50",
-        isHighlighted && `${highlightColors[sector]} border shadow-sm`
+        isHighlighted && `${highlightColors[sector]} shadow-sm`
       )}
     >
       <div
@@ -581,7 +581,7 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
         className="break-words flex items-start gap-1 flex-1 cursor-pointer"
         onClick={onEdit}
       >
-        <span className="font-semibold text-muted-foreground flex-shrink-0">{index + 1}.</span>
+        <span className={cn("font-semibold flex-shrink-0", isHighlighted ? highlightNumberColors[sector] : "text-muted-foreground")}>{index + 1}.</span>
         <span className={cn("break-words", isHighlighted && "font-bold")}>
           {pendency}
         </span>
@@ -612,9 +612,12 @@ const SortablePendencyItemCollapsed = memo(function SortablePendencyItemCollapse
             e.stopPropagation();
             onToggleHighlight?.();
           }}
-          className="opacity-0 group-hover/item:opacity-100 hover:text-primary print:hidden"
+          className={cn(
+            "hover:text-primary print:hidden transition-opacity",
+            isHighlighted ? "opacity-100" : "opacity-0 group-hover/item:opacity-100"
+          )}
         >
-          <Star className={cn("h-2.5 w-2.5", isHighlighted ? starColors[sector] : "text-muted-foreground")} />
+          <Star className={cn("h-3 w-3", isHighlighted ? starColors[sector] : "text-muted-foreground")} />
         </button>
         <button
           onClick={(e) => {
