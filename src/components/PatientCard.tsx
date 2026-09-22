@@ -4074,7 +4074,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                       <span>Liberar Dieta</span>
                     </DropdownMenuItem>
 
-                    {/* PROTOCOLOS — menu unificado */}
+                    {/* PROTOCOLOS — menu unificado — funcionalidade oculta (código preservado)
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors cursor-pointer">
                         <ShieldAlert className={cn("h-4 w-4", hasAnyProtocolActive ? "text-orange-500 animate-pulse" : "text-red-600 dark:text-red-400")} />
@@ -4106,6 +4106,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
+                    */}
 
 
                     {/* PSM STATUS - Collapsible with three options */}
