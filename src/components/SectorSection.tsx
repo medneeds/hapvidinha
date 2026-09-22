@@ -273,7 +273,7 @@ export function SectorSection({
               <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
               <div className="flex items-center gap-2 print:gap-1">
                 <SectorBedIcon sectorIcon={displayIcon} size="md" />
-                <h2 className="clinical-section-title text-sm sm:text-base text-foreground print:text-[10px] uppercase">{displayTitle}</h2>
+                <h2 className="clinical-section-title text-base sm:text-lg text-foreground print:text-[10px] uppercase">{displayTitle}</h2>
               </div>
             </button>
           </CollapsibleTrigger>
