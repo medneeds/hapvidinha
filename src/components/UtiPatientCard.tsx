@@ -972,8 +972,8 @@ export function UtiPatientCard({
     ? "border-l-warning/25"
     : "border-l-stable/25";
   const patientSectionHover = colorVariant === 'yellow'
-    ? "border-l-warning/25 hover:border-l-warning/60 hover:bg-warning/[0.07]"
-    : "border-l-stable/25 hover:border-l-stable/60 hover:bg-stable/[0.07]";
+    ? "border-t-warning/25 border-l-warning/25 hover:border-t-warning/60 hover:border-l-warning/60 hover:bg-warning/[0.07] active:bg-warning/[0.07]"
+    : "border-t-stable/25 border-l-stable/25 hover:border-t-stable/60 hover:border-l-stable/60 hover:bg-stable/[0.07] active:bg-stable/[0.07]";
 
   const daysInUti = useMemo(() => calculateDaysInUti(patient.utiAdmissionDate), [patient.utiAdmissionDate]);
 

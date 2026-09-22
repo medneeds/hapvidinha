@@ -996,10 +996,10 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
   }[patient.sector];
 
   const patientSectionHover = {
-    red: "border-l-critical/25 hover:border-l-critical/60 hover:bg-critical/[0.07]",
-    yellow: "border-l-warning/25 hover:border-l-warning/60 hover:bg-warning/[0.07]",
-    blue: "border-l-stable/25 hover:border-l-stable/60 hover:bg-stable/[0.07]",
-    outside: "border-l-muted-foreground/25 hover:border-l-muted-foreground/60 hover:bg-muted-foreground/[0.07]",
+    red: "border-t-critical/25 border-l-critical/25 hover:border-t-critical/60 hover:border-l-critical/60 hover:bg-critical/[0.07] active:bg-critical/[0.07]",
+    yellow: "border-t-warning/25 border-l-warning/25 hover:border-t-warning/60 hover:border-l-warning/60 hover:bg-warning/[0.07] active:bg-warning/[0.07]",
+    blue: "border-t-stable/25 border-l-stable/25 hover:border-t-stable/60 hover:border-l-stable/60 hover:bg-stable/[0.07] active:bg-stable/[0.07]",
+    outside: "border-t-muted-foreground/25 border-l-muted-foreground/25 hover:border-t-muted-foreground/60 hover:border-l-muted-foreground/60 hover:bg-muted-foreground/[0.07] active:bg-muted-foreground/[0.07]",
   }[patient.sector];
 
   useEffect(() => {
