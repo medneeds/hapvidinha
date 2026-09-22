@@ -988,6 +988,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     outside: "hover:bg-muted-foreground/[0.07] hover:border-muted-foreground/25",
   }[patient.sector];
 
+  const patientDataDivider = {
+    red: "border-l-critical/25",
+    yellow: "border-l-warning/25",
+    blue: "border-l-stable/25",
+    outside: "border-l-muted-foreground/25",
+  }[patient.sector];
+
   const patientSectionHover = {
     red: "border-l-critical/25 hover:border-l-critical/60 hover:bg-critical/[0.07]",
     yellow: "border-l-warning/25 hover:border-l-warning/60 hover:bg-warning/[0.07]",
@@ -1710,8 +1717,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
             <div className="flex-1 flex flex-col gap-3 md:grid md:grid-cols-19 md:gap-1.5 md:items-start">
               {/* Mobile: Leito + Paciente na mesma linha */}
               <div className={cn(
-                "flex items-start gap-3 rounded border border-transparent transition-colors duration-200 md:col-span-5 md:grid md:grid-cols-5 md:gap-1.5",
-                patientDataHover
+                "flex items-start gap-3 border-l rounded-r pl-1.5 md:col-span-5 md:grid md:grid-cols-5 md:gap-1.5",
+                patientDataDivider
               )}>
                 {/* Leito - chip alinhado ao slot compacto "Leito disponível" */}
                 <div className="flex flex-col shrink-0 md:col-span-1">

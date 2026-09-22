@@ -968,6 +968,9 @@ export function UtiPatientCard({
   const patientDataHover = colorVariant === 'yellow'
     ? "hover:bg-warning/[0.07] hover:border-warning/25"
     : "hover:bg-stable/[0.07] hover:border-stable/25";
+  const patientDataDivider = colorVariant === 'yellow'
+    ? "border-l-warning/25"
+    : "border-l-stable/25";
   const patientSectionHover = colorVariant === 'yellow'
     ? "border-l-warning/25 hover:border-l-warning/60 hover:bg-warning/[0.07]"
     : "border-l-stable/25 hover:border-l-stable/60 hover:bg-stable/[0.07]";
@@ -1086,8 +1089,8 @@ export function UtiPatientCard({
             <div className="flex-1 p-1.5 md:p-1.5 space-y-1.5 md:space-y-1 min-w-0">
               {/* Row 1: Identification Header - Mobile optimized */}
               <div className={cn(
-                "flex flex-wrap items-center gap-1 md:gap-1.5 rounded border border-transparent transition-colors duration-200",
-                patientDataHover
+                "flex flex-wrap items-center gap-1 md:gap-1.5 border-l rounded-r pl-1.5",
+                patientDataDivider
               )}>
                 {/* Collapse/Expand Toggle Button */}
                 <Button
