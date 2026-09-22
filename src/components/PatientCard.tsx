@@ -326,6 +326,13 @@ const SortablePendencyItem = memo(function SortablePendencyItem({ id, index, pen
     outside: "bg-muted-foreground/[0.05] border border-muted-foreground/40 hover:bg-muted-foreground/10 hover:border-muted-foreground/60"
   };
 
+  const sectorHoverColors = {
+    red: "hover:bg-critical/[0.07]",
+    yellow: "hover:bg-warning/[0.07]",
+    blue: "hover:bg-stable/[0.07]",
+    outside: "hover:bg-muted-foreground/[0.07]"
+  };
+
   const highlightNumberColors = {
     red: "text-critical",
     yellow: "text-warning",
@@ -346,7 +353,7 @@ const SortablePendencyItem = memo(function SortablePendencyItem({ id, index, pen
       style={style}
       className={cn(
         "text-xs text-foreground leading-tight print:text-[7.5px] print:leading-tight flex items-center gap-2 rounded px-2 -mx-1 py-1.5 group",
-        isDragging ? "bg-accent/50 z-50" : "hover:bg-accent/30",
+        isDragging ? "bg-accent/50 z-50" : sectorHoverColors[sector],
         isHighlighted && `${highlightColors[sector]} shadow-sm`
       )}
     >
