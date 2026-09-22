@@ -309,7 +309,7 @@ export function BedAllocationNotifications() {
       {/* Bed allocation icon with counter */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="relative h-8 w-8 bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:border-white/40 transition-all duration-200" title="Solicitações de Alocação">
+          <Button variant="ghost" size="icon" className="relative h-8 w-8 bg-sidebar-accent/50 border border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:border-sidebar-foreground/30 transition-all duration-200" title="Solicitações de Alocação">
             <Bed className="h-4 w-4" />
             {pendingCount > 0 && (
               <Badge 

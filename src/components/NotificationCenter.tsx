@@ -215,11 +215,11 @@ export const NotificationCenter = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="relative h-8 w-8 sm:h-10 sm:w-10 hover:bg-white/20 transition-all duration-300 group rounded-full"
+          className="relative h-8 w-8 sm:h-10 sm:w-10 hover:bg-sidebar-accent transition-all duration-300 group rounded-full"
           title="Central de Notificações"
         >
-          <div className="absolute inset-0 rounded-full bg-white/10 group-hover:bg-white/20 transition-all duration-300" />
-          <Bell className="relative h-4 w-4 sm:h-5 sm:w-5 text-white group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
+          <div className="absolute inset-0 rounded-full bg-sidebar-accent/60 group-hover:bg-sidebar-accent transition-all duration-300" />
+          <Bell className="relative h-4 w-4 sm:h-5 sm:w-5 text-sidebar-foreground group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
           {unreadNotifications > 0 && (
             <Badge
               variant="destructive"
