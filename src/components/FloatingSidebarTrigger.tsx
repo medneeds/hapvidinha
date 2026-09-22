@@ -3,11 +3,13 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { HEADER_ICON_BUTTON } from "@/lib/headerButtonStyles";
 
 /**
  * Único controle de retração/expansão da sidebar.
  * Sempre visível, posicionado FORA da sidebar, ancorado à sua borda direita
  * e acompanhando a largura conforme o estado (expandida/colapsada).
+ * Visual padronizado com os demais botões de ícone do cabeçalho.
  */
 export function FloatingSidebarTrigger() {
   const { state, setOpen, openMobile, setOpenMobile } = useSidebar();
@@ -38,16 +40,13 @@ export function FloatingSidebarTrigger() {
 
   return (
     <Button
-      variant="default"
+      variant="outline"
       size="icon"
       onClick={handleToggle}
       style={{ left: leftStyle }}
       className={cn(
-        "fixed top-4 z-[60] h-8 w-8 rounded-full print:hidden border-0",
-        "bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 text-white",
-        "shadow-[0_0_14px_-2px_rgba(56,189,248,0.6)]",
-        "hover:shadow-[0_0_20px_-2px_rgba(56,189,248,0.85)] hover:brightness-110 hover:scale-105",
-        "transition-all duration-200 ease-out"
+        "fixed top-3 z-[60] print:hidden",
+        HEADER_ICON_BUTTON
       )}
 
       title={isOpenNow ? "Retrair menu" : "Expandir menu"}
