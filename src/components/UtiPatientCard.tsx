@@ -59,6 +59,20 @@ import { useAuth } from "@/contexts/AuthContext";
 
 type ColorVariant = 'blue' | 'yellow';
 
+const updateClinicalGlassPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+  if (event.pointerType === "touch") return;
+  const bounds = event.currentTarget.getBoundingClientRect();
+  const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+  const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+  event.currentTarget.style.setProperty("--clinical-glass-x", `${x}%`);
+  event.currentTarget.style.setProperty("--clinical-glass-y", `${y}%`);
+};
+
+const resetClinicalGlassPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+  event.currentTarget.style.setProperty("--clinical-glass-x", "35%");
+  event.currentTarget.style.setProperty("--clinical-glass-y", "20%");
+};
+
 interface UtiPatientCardProps {
   patient: Patient;
   onUpdate: (patient: Patient) => void;
@@ -1050,6 +1064,8 @@ export function UtiPatientCard({
       <div 
         className={cn("border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200", colors.card, patientCardGlass)}
         data-patient-id={patient.id}
+        onPointerMove={updateClinicalGlassPointer}
+        onPointerLeave={resetClinicalGlassPointer}
       >
         {/* VACANT BED VIEW */}
         {patient.isVacant ? (

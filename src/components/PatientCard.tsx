@@ -136,6 +136,20 @@ const parseTextArray = (value: string | null): string[] => {
   return value.split('\n').filter(line => line.trim());
 };
 
+const updateClinicalGlassPointer = (event: React.PointerEvent<HTMLElement>) => {
+  if (event.pointerType === "touch") return;
+  const bounds = event.currentTarget.getBoundingClientRect();
+  const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+  const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+  event.currentTarget.style.setProperty("--clinical-glass-x", `${x}%`);
+  event.currentTarget.style.setProperty("--clinical-glass-y", `${y}%`);
+};
+
+const resetClinicalGlassPointer = (event: React.PointerEvent<HTMLElement>) => {
+  event.currentTarget.style.setProperty("--clinical-glass-x", "35%");
+  event.currentTarget.style.setProperty("--clinical-glass-y", "20%");
+};
+
 // Helper to extract index from drag-and-drop ID (format: "prefix-X" or "prefix-sub-X")
 const extractIndexFromDragId = (id: string | number): number => {
   const parts = String(id).split('-');
@@ -1695,6 +1709,8 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
 
         <Card 
           data-patient-id={patient.id}
+          onPointerMove={updateClinicalGlassPointer}
+          onPointerLeave={resetClinicalGlassPointer}
           className={cn(
             "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full [&_li]:transition-colors",
             config.color,

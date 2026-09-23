@@ -171,6 +171,8 @@
 /* Continuous clinical glass: one mirrored plane per card, sector-aware sections. */
 .clinical-glass-card {
   --clinical-glass-tone: var(--muted-foreground);
+  --clinical-glass-x: 35%;
+  --clinical-glass-y: 20%;
   isolation: isolate;
   position: relative;
   background:
@@ -191,7 +193,15 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.028) 37%, transparent 63%);
+  background:
+    radial-gradient(
+      180px circle at var(--clinical-glass-x) var(--clinical-glass-y),
+      hsl(var(--clinical-glass-tone) / 0.075),
+      hsl(var(--clinical-glass-tone) / 0.025) 42%,
+      transparent 72%
+    ),
+    linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.02) 37%, transparent 63%);
+  transition: opacity 280ms ease;
 }
 
 .clinical-glass-card > * {
@@ -225,6 +235,10 @@
 }
 
 @media (max-width: 767px) {
+  .clinical-glass-card::before {
+    background: linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.02) 37%, transparent 63%);
+  }
+
   .clinical-glass-section {
     border-left-color: transparent;
     border-top-color: hsl(var(--clinical-glass-tone) / 0.24);
@@ -233,6 +247,12 @@
   .clinical-glass-section:active,
   .clinical-glass-section:focus-within {
     transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clinical-glass-card::before {
+    transition: none;
   }
 }
 
