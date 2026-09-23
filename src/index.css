@@ -232,7 +232,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .clinical-glass-focus-group:has(> .clinical-glass-section:hover) > .clinical-glass-section:not(:hover) {
-    opacity: 0.84;
+    opacity: 0.94;
     transform: scale(0.996);
   }
 }
@@ -1158,6 +1158,12 @@ input:-webkit-autofill:active {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .clinical-glass-section,
+  .clinical-glass-section::after {
+    transition-duration: 1ms !important;
+    transform: none !important;
+  }
+
   .farewell-backdrop,
   .farewell-backdrop-exit,
   .farewell-butterfly-enter,
