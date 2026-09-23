@@ -972,8 +972,8 @@ export function UtiPatientCard({
     ? "border-l-warning/25"
     : "border-l-stable/25";
   const patientSectionHover = colorVariant === 'yellow'
-    ? "border-t-warning/25 border-l-warning/25 hover:border-t-warning/60 hover:border-l-warning/60 hover:bg-warning/[0.07] active:bg-warning/[0.07]"
-    : "border-t-stable/25 border-l-stable/25 hover:border-t-stable/60 hover:border-l-stable/60 hover:bg-stable/[0.07] active:bg-stable/[0.07]";
+    ? "clinical-glass-section clinical-glass-warning"
+    : "clinical-glass-section clinical-glass-stable";
 
   const daysInUti = useMemo(() => calculateDaysInUti(patient.utiAdmissionDate), [patient.utiAdmissionDate]);
 
@@ -1244,8 +1244,8 @@ export function UtiPatientCard({
 
               {/* Row 2: 4 columns on desktop, 2x2 grid on mobile - Collapsible */}
               {!isCollapsed && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-t-2 md:border-t md:border-l backdrop-blur-sm transition-colors duration-200", colors.col1, patientSectionHover)}>
+                <div className="clinical-glass-focus-group grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col1, patientSectionHover)}>
                     <InlineEditableArray
                       items={diagnosticos}
                       onUpdate={(items) => handleUpdateField("diagnoses", items)}
@@ -1263,7 +1263,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-t-2 md:border-t md:border-l backdrop-blur-sm transition-colors duration-200", colors.col2, patientSectionHover)}>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col2, patientSectionHover)}>
                     <InlineEditableArray
                       items={antecedentes}
                       onUpdate={(items) => handleUpdateField("medicalHistory", items)}
@@ -1281,7 +1281,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-t-2 md:border-t md:border-l backdrop-blur-sm transition-colors duration-200", colors.col3, patientSectionHover)}>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col3, patientSectionHover)}>
                     <InlineEditableArray
                       items={condutasDia}
                       onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
@@ -1299,7 +1299,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 shadow-sm border border-t-2 md:border-t md:border-l backdrop-blur-sm transition-colors duration-200", colors.col4, patientSectionHover)}>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col4, patientSectionHover)}>
                     <InlineEditableArray
                       items={pendencias}
                       onUpdate={(items) => handleUpdateField("pendencies", items)}
