@@ -177,6 +177,8 @@ export function AppSidebar({
     "a84c5c12-9c26-4075-b6c9-8172ab40cd7f", // Pedro Rebouças
     "0a793d7d-7f5d-402b-8f69-ad33edf6d5d4", // Marcio Serra
     "988e9a9a-a04e-406a-93ea-5dc579ed34f8", // Artur Batista
+    "a81bfb8e-0740-4dff-a4a7-eb47edc4b34b", // Leandro de Araujo Albuquerque
+    "7bd2b654-d680-4b85-a9b8-40597a7ee584", // Luciara Cunha Duarte
   ];
   const canAccessRepository = !!user && REPOSITORY_USER_IDS.includes(user.id);
 
