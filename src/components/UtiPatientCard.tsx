@@ -974,6 +974,9 @@ export function UtiPatientCard({
   const patientSectionHover = colorVariant === 'yellow'
     ? "clinical-glass-section clinical-glass-warning"
     : "clinical-glass-section clinical-glass-stable";
+  const patientCardGlass = colorVariant === 'yellow'
+    ? "clinical-glass-card clinical-glass-warning"
+    : "clinical-glass-card clinical-glass-stable";
 
   const daysInUti = useMemo(() => calculateDaysInUti(patient.utiAdmissionDate), [patient.utiAdmissionDate]);
 
@@ -1045,7 +1048,7 @@ export function UtiPatientCard({
   return (
     <>
       <div 
-        className={cn("border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200", colors.card)}
+        className={cn("border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200", colors.card, patientCardGlass)}
         data-patient-id={patient.id}
       >
         {/* VACANT BED VIEW */}
@@ -1244,7 +1247,7 @@ export function UtiPatientCard({
 
               {/* Row 2: 4 columns on desktop, 2x2 grid on mobile - Collapsible */}
               {!isCollapsed && (
-                <div className="clinical-glass-focus-group grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
                   <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col1, patientSectionHover)}>
                     <InlineEditableArray
                       items={diagnosticos}

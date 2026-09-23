@@ -1002,6 +1002,13 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
     outside: "clinical-glass-section clinical-glass-neutral",
   }[patient.sector];
 
+  const patientCardGlass = {
+    red: "clinical-glass-card clinical-glass-critical",
+    yellow: "clinical-glass-card clinical-glass-warning",
+    blue: "clinical-glass-card clinical-glass-stable",
+    outside: "clinical-glass-card clinical-glass-neutral",
+  }[patient.sector];
+
   useEffect(() => {
     if (editingField && inputRef.current) {
       inputRef.current.focus();
@@ -1691,6 +1698,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
           className={cn(
             "overflow-hidden transition-all duration-200 hover:shadow-lg print:shadow-none print:break-inside-avoid print:mb-0 print:w-full [&_li]:transition-colors",
             config.color,
+            patientCardGlass,
             patient.sector === "red" && "[&_li:hover]:bg-critical/[0.07]",
             patient.sector === "yellow" && "[&_li:hover]:bg-warning/[0.07]",
             patient.sector === "blue" && "[&_li:hover]:bg-stable/[0.07]",
@@ -1714,7 +1722,7 @@ export function PatientCard({ patient, onUpdate, onDelete, onUndelete, selection
                 />
               </div>
             )}
-            <div className="clinical-glass-focus-group flex-1 flex flex-col gap-3 md:grid md:grid-cols-19 md:gap-1.5 md:items-start">
+            <div className="flex-1 flex flex-col gap-3 md:grid md:grid-cols-19 md:gap-1.5 md:items-start">
               {/* Mobile: Leito + Paciente na mesma linha */}
               <div className={cn(
                 "flex items-start gap-3 pl-1.5 md:col-span-5 md:grid md:grid-cols-5 md:gap-1.5"
