@@ -1,14 +1,13 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { whitelabel } from "@/config/whitelabel";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppTopNav } from "@/components/AppTopNav";
 import { useUserPresence } from "@/hooks/useUserPresence";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
 import { PageTransition } from "@/components/PageTransition";
 
-import { FloatingSidebarTrigger } from "@/components/FloatingSidebarTrigger";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -82,10 +81,9 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
   });
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full bg-background relative">
-        <AppSidebar onOpenHandover={onOpenHandover} />
-        <FloatingSidebarTrigger />
+        <AppTopNav />
         
         <div className="flex-1 flex flex-col w-full">
           <main

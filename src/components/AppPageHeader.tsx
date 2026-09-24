@@ -22,16 +22,12 @@ export function AppPageHeader({ title, icon: Icon, right }: AppPageHeaderProps) 
       <header
         className="app-glass-header border-b border-sidebar-border bg-sidebar text-sidebar-foreground backdrop-blur-xl fixed top-0 right-0 z-50 shadow-sm print:bg-white print:text-black transition-[left] duration-200 ease-linear"
         style={{
-          left: isMobile
-            ? 0
-            : state === "collapsed"
-              ? "var(--sidebar-width-icon)"
-              : "var(--sidebar-width)",
+          left: 0,
         }}
       >
         <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-3 min-w-0 flex-1 pl-10 sm:pl-12">
+            <div className="flex items-center gap-3 min-w-0 flex-1 pl-12 md:pl-[21rem]">
               {Icon && (
                 <div className="rounded-lg bg-sidebar-accent p-2 backdrop-blur-sm flex-shrink-0">
                   <Icon className="h-4 w-4 text-sidebar-accent-foreground" />
