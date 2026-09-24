@@ -60,25 +60,25 @@ const sectorInfo = {
     title: "Cuidados Especiais",
     subtitle: "Leitos V01-V02",
     icon: "🔴",
-    gradientClass: "bg-critical/[0.06] dark:bg-critical/10 border-l-2 border-l-critical/60"
+    gradientClass: "clinical-glass-critical bg-critical/[0.06] dark:bg-critical/10 border-l-2 border-l-critical/60"
   },
   yellow: {
     title: "Observação Amarela",
     subtitle: "Leitos A01-A06",
     icon: "🟡",
-    gradientClass: "bg-warning/[0.06] dark:bg-warning/10 border-l-2 border-l-warning/60"
+    gradientClass: "clinical-glass-warning bg-warning/[0.06] dark:bg-warning/10 border-l-2 border-l-warning/60"
   },
   blue: {
     title: "Observação Azul",
     subtitle: "Leitos Z01-Z06",
     icon: "🔵",
-    gradientClass: "bg-stable/[0.06] dark:bg-stable/10 border-l-2 border-l-stable/60"
+    gradientClass: "clinical-glass-stable bg-stable/[0.06] dark:bg-stable/10 border-l-2 border-l-stable/60"
   },
   outside: {
     title: "Fora das Alas",
     subtitle: "Pacientes externos",
     icon: "⚪",
-    gradientClass: "bg-muted/20 dark:bg-muted/30 border-l-2 border-l-muted-foreground/40"
+    gradientClass: "clinical-glass-neutral bg-muted/20 dark:bg-muted/30 border-l-2 border-l-muted-foreground/40"
   }
 };
 
