@@ -1,4 +1,4 @@
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { whitelabel } from "@/config/whitelabel";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -44,6 +44,38 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
     activeGlassSurface.current?.style.removeProperty("--app-glass-y");
     activeGlassSurface.current = null;
   };
+
+  // Reflexo suave dos botões acompanhando o cursor (global, herda a cor do setor)
+  useEffect(() => {
+    let active: HTMLElement | null = null;
+
+    const clear = () => {
+      active?.style.removeProperty("--btn-glass-x");
+      active?.style.removeProperty("--btn-glass-y");
+      active = null;
+    };
+
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      const target = event.target instanceof Element ? event.target : null;
+      const button = target?.closest<HTMLElement>("button") ?? null;
+      if (button !== active) clear();
+      if (!button) return;
+      active = button;
+      const bounds = button.getBoundingClientRect();
+      if (!bounds.width || !bounds.height) return;
+      button.style.setProperty("--btn-glass-x", `${((event.clientX - bounds.left) / bounds.width) * 100}%`);
+      button.style.setProperty("--btn-glass-y", `${((event.clientY - bounds.top) / bounds.height) * 100}%`);
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerdown", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onMove);
+      clear();
+    };
+  }, []);
 
   useKeyboardShortcuts({
     onShowHelp: () => setShowShortcuts(true),
