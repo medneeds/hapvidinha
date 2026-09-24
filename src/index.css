@@ -1447,7 +1447,7 @@ input:-webkit-autofill:active {
   .clinical-glass-neutral,
   .app-glass-surface
 ) button:not([role="checkbox"]):not([role="switch"]):not([class*="bg-gradient"]):not([data-no-glass]):focus-visible {
-  --btn-glass-alpha: 0.22;
+  --btn-glass-alpha: var(--glass-btn-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
