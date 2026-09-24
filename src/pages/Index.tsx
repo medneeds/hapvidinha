@@ -1136,7 +1136,7 @@ const Index = () => {
                 </div>
 
                 {/* Right side: Action buttons + Theme toggle */}
-                <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0 pr-[88px] sm:pr-[104px]">
+                <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0 pr-[52px] sm:pr-[104px]">
                   {/* Busca de paciente por nome - funcionalidade oculta (código preservado) */}
 
                   {/* Prioridades UTI - funcionalidade oculta (código preservado) */}
