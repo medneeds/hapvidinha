@@ -1095,7 +1095,7 @@ const Index = () => {
                         <DropdownMenuTrigger asChild>
                           <button className="inline-flex max-w-full min-w-0 items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 bg-sidebar-accent/70 backdrop-blur-sm border border-sidebar-border text-sidebar-foreground text-base sm:text-lg font-bold uppercase tracking-tight hover:bg-sidebar-accent hover:border-sidebar-foreground/30 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
                             <Building2 className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-90" />
-                            <span className="truncate">{getDepartmentLabel(currentDepartment)}</span>
+                            <span className="truncate md:hidden lg:inline">{getDepartmentLabel(currentDepartment)}</span>
                             <ChevronDown className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-70" />
                           </button>
                         </DropdownMenuTrigger>
@@ -1233,7 +1233,7 @@ const Index = () => {
                     <>
                       <TooltipProvider delayDuration={300}>
                       {/* Action buttons group */}
-                      <div className="flex items-center gap-1 print:hidden">
+                      <div className="flex items-center gap-1.5 print:hidden">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button variant="outline" size="icon" onClick={handleUndo} disabled={history.length === 0}
@@ -1260,7 +1260,7 @@ const Index = () => {
                       <div className="h-6 w-px bg-sidebar-border print:hidden hidden sm:block" />
 
                       {/* Selection & Print group */}
-                      <div className="flex items-center gap-1 print:hidden">
+                      <div className="flex items-center gap-1.5 print:hidden">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
@@ -1321,7 +1321,7 @@ const Index = () => {
                       <div className="h-6 w-px bg-sidebar-border print:hidden hidden sm:block" />
 
                       {/* Notifications & Info group */}
-                      <div className="flex items-center gap-1 print:hidden">
+                      <div className="flex items-center gap-1.5 print:hidden">
                         <NotificationCenter />
                         {/* Solicitações de Alocação — funcionalidade oculta (código preservado) */}
                         {/* <BedAllocationNotifications /> */}
