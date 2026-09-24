@@ -171,7 +171,7 @@ function DynamicHeader({ children }: { children: React.ReactNode }) {
     <header 
       className="app-glass-header border-b border-sidebar-border bg-sidebar text-sidebar-foreground backdrop-blur-xl fixed top-0 right-0 z-50 shadow-sm print:static print:bg-white print:text-black print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
       style={{
-        left: isMobile ? 0 : (state === 'collapsed' ? 'var(--sidebar-width-icon)' : 'var(--sidebar-width)')
+        left: 0
       }}
     >
       {children}
@@ -1087,7 +1087,7 @@ const Index = () => {
             <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
                 {/* Left side: Sidebar button + Title + Department selector */}
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 pl-10 sm:pl-12">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 pl-12 md:pl-[21rem]">
                   {/* Trigger da sidebar unificado no FloatingSidebarTrigger (fora da sidebar) */}
                   <div className="min-w-0 flex-1 flex items-center gap-2 sm:gap-3 flex-wrap">
 
