@@ -81,7 +81,7 @@ export default function AdminBedsPage() {
 
   return (
     <MainLayout>
-      <div className="container mx-auto p-6 space-y-6">
+      <div className="app-glass-scope container mx-auto p-6 space-y-6">
         <div className="flex items-center gap-3">
           <BedDouble className="h-7 w-7 text-primary" />
           <div>

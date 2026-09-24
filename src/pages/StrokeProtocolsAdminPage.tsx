@@ -61,7 +61,7 @@ export default function StrokeProtocolsAdminPage() {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="app-glass-scope space-y-6 p-4 md:p-6">
       <div className="flex items-center gap-3">
         <Brain className="h-6 w-6 text-purple-600" />
         <div>

@@ -143,7 +143,7 @@ export default function SepsisProtocolsAdminPage() {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="app-glass-scope space-y-6 p-4 md:p-6">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Activity className="h-6 w-6 text-destructive" />

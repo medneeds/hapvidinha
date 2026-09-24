@@ -61,7 +61,7 @@ export default function ChestPainProtocolsAdminPage() {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="app-glass-scope space-y-6 p-4 md:p-6">
       <div className="flex items-center gap-3">
         <HeartPulse className="h-6 w-6 text-red-600" />
         <div>

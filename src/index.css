@@ -214,6 +214,57 @@
 .clinical-glass-stable { --clinical-glass-tone: var(--stable); }
 .clinical-glass-neutral { --clinical-glass-tone: var(--muted-foreground); }
 
+/* Neutral continuous glass for repository and administrative surfaces. */
+:is(
+  .app-glass-surface,
+  .app-glass-scope .rounded-lg.border.bg-card,
+  .app-glass-scope .rounded-xl.border.bg-card
+):not(.bg-amber-50):not([class*="bg-gradient"]) {
+  --app-glass-x: 35%;
+  --app-glass-y: 20%;
+  isolation: isolate;
+  position: relative;
+  background:
+    linear-gradient(142deg, hsl(var(--card) / 0.9) 0%, hsl(var(--card) / 0.7) 52%, hsl(var(--card) / 0.8) 100%),
+    linear-gradient(105deg, hsl(var(--muted-foreground) / 0.035), transparent 58%);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--foreground) / 0.04),
+    inset 0 -1px 0 hsl(var(--background) / 0.38),
+    0 7px 18px -14px hsl(var(--foreground) / 0.22);
+  -webkit-backdrop-filter: blur(14px) saturate(118%);
+  backdrop-filter: blur(14px) saturate(118%);
+}
+
+:is(
+  .app-glass-surface,
+  .app-glass-scope .rounded-lg.border.bg-card,
+  .app-glass-scope .rounded-xl.border.bg-card
+):not(.bg-amber-50):not([class*="bg-gradient"])::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      200px circle at var(--app-glass-x) var(--app-glass-y),
+      hsl(var(--primary) / 0.055),
+      hsl(var(--muted-foreground) / 0.018) 44%,
+      transparent 74%
+    ),
+    linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.018) 37%, transparent 63%);
+  transition: opacity 280ms ease;
+}
+
+:is(
+  .app-glass-surface,
+  .app-glass-scope .rounded-lg.border.bg-card,
+  .app-glass-scope .rounded-xl.border.bg-card
+):not(.bg-amber-50):not([class*="bg-gradient"]) > * {
+  position: relative;
+  z-index: 1;
+}
+
 .clinical-glass-section {
   background: transparent;
   border-color: hsl(var(--clinical-glass-tone) / 0.2);
@@ -239,6 +290,14 @@
     background: linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.02) 37%, transparent 63%);
   }
 
+  :is(
+    .app-glass-surface,
+    .app-glass-scope .rounded-lg.border.bg-card,
+    .app-glass-scope .rounded-xl.border.bg-card
+  )::before {
+    background: linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.018) 37%, transparent 63%);
+  }
+
   .clinical-glass-section {
     border-left-color: transparent;
     border-top-color: hsl(var(--clinical-glass-tone) / 0.24);
@@ -251,13 +310,21 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .clinical-glass-card::before {
+  .clinical-glass-card::before,
+  :is(
+    .app-glass-surface,
+    .app-glass-scope .rounded-lg.border.bg-card,
+    .app-glass-scope .rounded-xl.border.bg-card
+  )::before {
     transition: none;
   }
 }
 
 @media print {
   .clinical-glass-card,
+  .app-glass-surface,
+  .app-glass-scope .rounded-lg.border.bg-card,
+  .app-glass-scope .rounded-xl.border.bg-card,
   .clinical-glass-section,
   .clinical-glass-section:hover,
   .clinical-glass-section:focus-within {
@@ -268,7 +335,10 @@
     transform: none;
   }
 
-  .clinical-glass-card::before {
+  .clinical-glass-card::before,
+  .app-glass-surface::before,
+  .app-glass-scope .rounded-lg.border.bg-card::before,
+  .app-glass-scope .rounded-xl.border.bg-card::before {
     display: none;
   }
 }

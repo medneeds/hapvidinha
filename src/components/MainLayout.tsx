@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { whitelabel } from "@/config/whitelabel";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -18,6 +18,32 @@ interface MainLayoutProps {
 export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
   useUserPresence();
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const activeGlassSurface = useRef<HTMLElement | null>(null);
+
+  const handleGlassPointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    if (event.pointerType === "touch") return;
+    const target = event.target instanceof Element ? event.target : null;
+    const surface = target?.closest<HTMLElement>(
+      ".app-glass-surface, .app-glass-scope .rounded-lg.border.bg-card, .app-glass-scope .rounded-xl.border.bg-card",
+    );
+
+    if (activeGlassSurface.current !== surface) {
+      activeGlassSurface.current?.style.removeProperty("--app-glass-x");
+      activeGlassSurface.current?.style.removeProperty("--app-glass-y");
+      activeGlassSurface.current = surface ?? null;
+    }
+    if (!surface) return;
+
+    const bounds = surface.getBoundingClientRect();
+    surface.style.setProperty("--app-glass-x", `${((event.clientX - bounds.left) / bounds.width) * 100}%`);
+    surface.style.setProperty("--app-glass-y", `${((event.clientY - bounds.top) / bounds.height) * 100}%`);
+  };
+
+  const resetGlassPointer = () => {
+    activeGlassSurface.current?.style.removeProperty("--app-glass-x");
+    activeGlassSurface.current?.style.removeProperty("--app-glass-y");
+    activeGlassSurface.current = null;
+  };
 
   useKeyboardShortcuts({
     onShowHelp: () => setShowShortcuts(true),
@@ -30,7 +56,11 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
         <FloatingSidebarTrigger />
         
         <div className="flex-1 flex flex-col w-full">
-          <main className="flex-1 overflow-auto">
+          <main
+            className="flex-1 overflow-auto"
+            onPointerMove={handleGlassPointerMove}
+            onPointerLeave={resetGlassPointer}
+          >
             <PageTransition>
               {children}
             </PageTransition>
