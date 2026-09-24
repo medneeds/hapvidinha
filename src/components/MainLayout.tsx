@@ -57,6 +57,14 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
     const onMove = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
       const target = event.target instanceof Element ? event.target : null;
+      const bar = target?.closest<HTMLElement>(".clinical-glass-bar") ?? null;
+      if (bar) {
+        const b = bar.getBoundingClientRect();
+        if (b.width && b.height) {
+          bar.style.setProperty("--clinical-glass-x", `${((event.clientX - b.left) / b.width) * 100}%`);
+          bar.style.setProperty("--clinical-glass-y", `${((event.clientY - b.top) / b.height) * 100}%`);
+        }
+      }
       const button = target?.closest<HTMLElement>("button") ?? null;
       if (button !== active) clear();
       if (!button) return;
