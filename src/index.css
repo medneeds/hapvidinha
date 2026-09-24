@@ -171,25 +171,25 @@
 /* Continuous clinical glass: one mirrored plane per card, sector-aware sections. */
 @property --clinical-glass-x {
   syntax: "<percentage>";
-  inherits: false;
+  inherits: true;
   initial-value: 35%;
 }
 
 @property --clinical-glass-y {
   syntax: "<percentage>";
-  inherits: false;
+  inherits: true;
   initial-value: 20%;
 }
 
 @property --app-glass-x {
   syntax: "<percentage>";
-  inherits: false;
+  inherits: true;
   initial-value: 35%;
 }
 
 @property --app-glass-y {
   syntax: "<percentage>";
-  inherits: false;
+  inherits: true;
   initial-value: 20%;
 }
 
@@ -1456,3 +1456,31 @@ input:-webkit-autofill:active {
     background-image: none !important;
   }
 }
+
+/* Barra de título da seção: reflexo que acompanha o cursor na cor do setor */
+.clinical-glass-bar {
+  --clinical-glass-x: 35%;
+  --clinical-glass-y: 50%;
+  position: relative;
+  isolation: isolate;
+}
+.clinical-glass-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    240px circle at var(--clinical-glass-x) var(--clinical-glass-y),
+    hsl(var(--clinical-glass-tone, var(--primary)) / 0.12),
+    hsl(var(--clinical-glass-tone, var(--primary)) / 0.035) 45%,
+    transparent 80%
+  );
+  transition: opacity 420ms ease, --clinical-glass-x 190ms cubic-bezier(0.22, 1, 0.36, 1), --clinical-glass-y 190ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.clinical-glass-bar:hover::before { opacity: 1; }
+.clinical-glass-bar > * { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .clinical-glass-bar::before { transition: none; } }
+@media print { .clinical-glass-bar::before { display: none; } }
