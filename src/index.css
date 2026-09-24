@@ -243,7 +243,7 @@
   position: relative;
   overflow: hidden;
   background:
-    linear-gradient(142deg, hsl(var(--sidebar) / 0.94) 0%, hsl(var(--sidebar) / 0.78) 52%, hsl(var(--sidebar) / 0.88) 100%),
+    linear-gradient(142deg, hsl(var(--sidebar-background) / 0.94) 0%, hsl(var(--sidebar-background) / 0.78) 52%, hsl(var(--sidebar-background) / 0.88) 100%),
     linear-gradient(105deg, hsl(var(--sidebar-foreground) / 0.035), transparent 58%) !important;
   box-shadow:
     inset 0 1px 0 hsl(var(--sidebar-foreground) / 0.055),
