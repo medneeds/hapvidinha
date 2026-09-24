@@ -24,7 +24,7 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
     if (event.pointerType === "touch") return;
     const target = event.target instanceof Element ? event.target : null;
     const surface = target?.closest<HTMLElement>(
-      ".app-glass-surface, .app-glass-scope .rounded-lg.border.bg-card, .app-glass-scope .rounded-xl.border.bg-card",
+      ".app-glass-surface, .app-glass-header, .app-glass-scope .rounded-lg.border.bg-card, .app-glass-scope .rounded-xl.border.bg-card",
     );
 
     if (activeGlassSurface.current !== surface) {

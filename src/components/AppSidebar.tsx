@@ -24,7 +24,8 @@ import { MedicalCodesDialog } from "@/components/MedicalCodesDialog";
 import { useUnitChecklist } from "@/hooks/useUnitChecklist";
 import { useNavigate } from "react-router-dom";
 import { whitelabel } from "@/config/whitelabel";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -96,6 +97,24 @@ export function AppSidebar({
   const { items: checklistItems } = useUnitChecklist();
   const pendingChecklist = checklistItems.filter((i) => !i.completed).length;
   const [password, setPassword] = useState("");
+  const sidebarGlassSurface = useRef<HTMLElement | null>(null);
+
+  const handleSidebarGlassPointer = (event: ReactPointerEvent<HTMLElement>) => {
+    if (event.pointerType === "touch") return;
+    const target = event.target instanceof Element ? event.target : null;
+    const surface = target?.closest<HTMLElement>(".app-glass-sidebar");
+    if (!surface) return;
+    sidebarGlassSurface.current = surface;
+    const bounds = surface.getBoundingClientRect();
+    surface.style.setProperty("--app-glass-x", `${((event.clientX - bounds.left) / bounds.width) * 100}%`);
+    surface.style.setProperty("--app-glass-y", `${((event.clientY - bounds.top) / bounds.height) * 100}%`);
+  };
+
+  const resetSidebarGlassPointer = () => {
+    sidebarGlassSurface.current?.style.removeProperty("--app-glass-x");
+    sidebarGlassSurface.current?.style.removeProperty("--app-glass-y");
+    sidebarGlassSurface.current = null;
+  };
   
   // Hook for pending password reset requests
   const { pendingCount: pendingResets } = usePendingPasswordResets();
@@ -597,7 +616,7 @@ export function AppSidebar({
   if (isMobile) {
     return (
       <Drawer open={openMobile} onOpenChange={setOpenMobile} modal={true}>
-        <DrawerContent className="max-h-[85vh]">
+        <DrawerContent className="app-glass-sidebar max-h-[85vh]" onPointerMove={handleSidebarGlassPointer} onPointerLeave={resetSidebarGlassPointer}>
           <DrawerHeader className="border-b pb-3 pt-2">
             <DrawerTitle className="text-center text-sm font-semibold uppercase tracking-wide">Menu de Navegação</DrawerTitle>
           </DrawerHeader>
@@ -613,7 +632,9 @@ export function AppSidebar({
     <>
       <Sidebar 
         collapsible="icon" 
-        className="border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
+        className="app-glass-sidebar border-r border-border bg-card transition-all duration-300 data-[state=collapsed]:w-[72px]"
+        onPointerMove={handleSidebarGlassPointer}
+        onPointerLeave={resetSidebarGlassPointer}
       >
         {sidebarContent}
       </Sidebar>

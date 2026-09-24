@@ -235,6 +235,46 @@
   backdrop-filter: blur(14px) saturate(118%);
 }
 
+/* Continuous neutral glass for fixed navigation surfaces. */
+:is(.app-glass-header, .app-glass-sidebar) {
+  --app-glass-x: 35%;
+  --app-glass-y: 20%;
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(142deg, hsl(var(--sidebar) / 0.94) 0%, hsl(var(--sidebar) / 0.78) 52%, hsl(var(--sidebar) / 0.88) 100%),
+    linear-gradient(105deg, hsl(var(--sidebar-foreground) / 0.035), transparent 58%);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--sidebar-foreground) / 0.055),
+    inset 0 -1px 0 hsl(var(--background) / 0.34),
+    0 7px 18px -14px hsl(var(--foreground) / 0.22);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(16px) saturate(120%);
+}
+
+:is(.app-glass-header, .app-glass-sidebar)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      220px circle at var(--app-glass-x) var(--app-glass-y),
+      hsl(var(--primary) / 0.07),
+      hsl(var(--sidebar-foreground) / 0.018) 44%,
+      transparent 74%
+    ),
+    linear-gradient(118deg, transparent 10%, hsl(var(--sidebar-foreground) / 0.022) 37%, transparent 63%);
+  transition: opacity 280ms ease;
+}
+
+:is(.app-glass-header, .app-glass-sidebar) > * {
+  position: relative;
+  z-index: 1;
+}
+
 :is(
   .app-glass-surface,
   .app-glass-scope .rounded-lg.border.bg-card,
@@ -298,6 +338,10 @@
     background: linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.018) 37%, transparent 63%);
   }
 
+  :is(.app-glass-header, .app-glass-sidebar)::before {
+    background: linear-gradient(118deg, transparent 10%, hsl(var(--sidebar-foreground) / 0.022) 37%, transparent 63%);
+  }
+
   .clinical-glass-section {
     border-left-color: transparent;
     border-top-color: hsl(var(--clinical-glass-tone) / 0.24);
@@ -311,6 +355,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .clinical-glass-card::before,
+  .app-glass-header::before,
+  .app-glass-sidebar::before,
   :is(
     .app-glass-surface,
     .app-glass-scope .rounded-lg.border.bg-card,
@@ -335,7 +381,17 @@
     transform: none;
   }
 
+  .app-glass-header,
+  .app-glass-sidebar {
+    background: hsl(var(--card));
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .clinical-glass-card::before,
+  .app-glass-header::before,
+  .app-glass-sidebar::before,
   .app-glass-surface::before,
   .app-glass-scope .rounded-lg.border.bg-card::before,
   .app-glass-scope .rounded-xl.border.bg-card::before {
