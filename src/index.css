@@ -337,8 +337,8 @@
   background:
     radial-gradient(
       270px circle at var(--app-glass-x) var(--app-glass-y),
-      hsl(var(--primary) / 0.075),
-      hsl(var(--muted-foreground) / 0.026) 44%,
+      hsl(var(--primary) / var(--glass-surface-glow)),
+      hsl(var(--muted-foreground) / var(--glass-surface-glow-edge)) 44%,
       transparent 80%
     ),
     linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.02) 37%, transparent 63%);
