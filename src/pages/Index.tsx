@@ -169,7 +169,7 @@ function DynamicHeader({ children }: { children: React.ReactNode }) {
   
   return (
     <header 
-      className="border-b border-sidebar-border bg-sidebar text-sidebar-foreground backdrop-blur-xl fixed top-0 right-0 z-50 shadow-sm print:static print:bg-white print:text-black print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
+      className="app-glass-header border-b border-sidebar-border bg-sidebar text-sidebar-foreground backdrop-blur-xl fixed top-0 right-0 z-50 shadow-sm print:static print:bg-white print:text-black print:border-b print:shadow-none print:mb-1 print:pb-0.5 transition-[left] duration-200 ease-linear"
       style={{
         left: isMobile ? 0 : (state === 'collapsed' ? 'var(--sidebar-width-icon)' : 'var(--sidebar-width)')
       }}

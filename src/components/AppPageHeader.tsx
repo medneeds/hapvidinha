@@ -20,7 +20,7 @@ export function AppPageHeader({ title, icon: Icon, right }: AppPageHeaderProps) 
   return (
     <>
       <header
-        className="border-b border-sidebar-border bg-sidebar text-sidebar-foreground backdrop-blur-xl fixed top-0 right-0 z-50 shadow-sm print:bg-white print:text-black transition-[left] duration-200 ease-linear"
+        className="app-glass-header border-b border-sidebar-border bg-sidebar text-sidebar-foreground backdrop-blur-xl fixed top-0 right-0 z-50 shadow-sm print:bg-white print:text-black transition-[left] duration-200 ease-linear"
         style={{
           left: isMobile
             ? 0
