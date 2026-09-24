@@ -1329,10 +1329,10 @@ const Index = () => {
                       </div>
 
                       {/* Separator */}
-                      <div className="h-6 w-px bg-sidebar-border print:hidden hidden md:block" />
+                      <div className="h-6 w-px bg-sidebar-border print:hidden hidden lg:block" />
 
                       {/* Patient count + User info */}
-                      <div className="hidden md:flex items-center gap-2 bg-sidebar-accent/60 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-sidebar-border">
+                      <div className="hidden lg:flex items-center gap-2 bg-sidebar-accent/60 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-sidebar-border">
                         <div className="flex items-center justify-center w-7 h-7 rounded-md bg-sidebar-accent border border-sidebar-border">
                           <Users className="h-4 w-4 text-sidebar-foreground" />
                         </div>
