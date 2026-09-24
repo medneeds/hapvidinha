@@ -245,8 +245,8 @@
   background:
     radial-gradient(
       260px circle at var(--clinical-glass-x) var(--clinical-glass-y),
-      hsl(var(--clinical-glass-tone) / 0.1),
-      hsl(var(--clinical-glass-tone) / 0.032) 44%,
+      hsl(var(--clinical-glass-tone) / var(--glass-card-glow)),
+      hsl(var(--clinical-glass-tone) / var(--glass-card-glow-edge)) 44%,
       transparent 80%
     ),
     linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.022) 37%, transparent 63%);
