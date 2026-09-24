@@ -1377,6 +1377,10 @@ input:-webkit-autofill:active {
   .app-glass-header,
   .app-glass-sidebar,
   .clinical-glass-card,
+  .clinical-glass-critical,
+  .clinical-glass-warning,
+  .clinical-glass-stable,
+  .clinical-glass-neutral,
   .app-glass-surface
 ) button:not([role="checkbox"]):not([role="switch"]):not([class*="bg-gradient"]):not([data-no-glass]) {
   --btn-glass-x: 50%;
@@ -1401,6 +1405,10 @@ input:-webkit-autofill:active {
   .app-glass-header,
   .app-glass-sidebar,
   .clinical-glass-card,
+  .clinical-glass-critical,
+  .clinical-glass-warning,
+  .clinical-glass-stable,
+  .clinical-glass-neutral,
   .app-glass-surface
 ) button:not([role="checkbox"]):not([role="switch"]):not([class*="bg-gradient"]):not([data-no-glass]):hover,
 :is(
@@ -1408,6 +1416,10 @@ input:-webkit-autofill:active {
   .app-glass-header,
   .app-glass-sidebar,
   .clinical-glass-card,
+  .clinical-glass-critical,
+  .clinical-glass-warning,
+  .clinical-glass-stable,
+  .clinical-glass-neutral,
   .app-glass-surface
 ) button:not([role="checkbox"]):not([role="switch"]):not([class*="bg-gradient"]):not([data-no-glass]):focus-visible {
   --btn-glass-alpha: 0.16;
@@ -1419,6 +1431,10 @@ input:-webkit-autofill:active {
     .app-glass-header,
     .app-glass-sidebar,
     .clinical-glass-card,
+    .clinical-glass-critical,
+    .clinical-glass-warning,
+    .clinical-glass-stable,
+    .clinical-glass-neutral,
     .app-glass-surface
   ) button {
     transition: none;
@@ -1431,6 +1447,10 @@ input:-webkit-autofill:active {
     .app-glass-header,
     .app-glass-sidebar,
     .clinical-glass-card,
+    .clinical-glass-critical,
+    .clinical-glass-warning,
+    .clinical-glass-stable,
+    .clinical-glass-neutral,
     .app-glass-surface
   ) button {
     background-image: none !important;
