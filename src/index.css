@@ -193,6 +193,31 @@
   initial-value: 20%;
 }
 
+/* Intensidade do reflexo que acompanha o cursor — discreta no escuro, visível no claro. */
+:root {
+  --glass-card-glow: 0.1;
+  --glass-card-glow-edge: 0.032;
+  --glass-surface-glow: 0.075;
+  --glass-surface-glow-edge: 0.026;
+  --glass-header-glow: 0.085;
+  --glass-header-glow-edge: 0.026;
+  --glass-bar-glow: 0.12;
+  --glass-bar-glow-edge: 0.035;
+  --glass-btn-hover: 0.22;
+}
+
+.dark {
+  --glass-card-glow: 0.05;
+  --glass-card-glow-edge: 0.016;
+  --glass-surface-glow: 0.045;
+  --glass-surface-glow-edge: 0.014;
+  --glass-header-glow: 0.05;
+  --glass-header-glow-edge: 0.015;
+  --glass-bar-glow: 0.06;
+  --glass-bar-glow-edge: 0.018;
+  --glass-btn-hover: 0.13;
+}
+
 .clinical-glass-card {
   --clinical-glass-tone: var(--muted-foreground);
   --clinical-glass-x: 35%;
