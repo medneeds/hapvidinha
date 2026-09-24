@@ -326,7 +326,7 @@ export default function UserManagementPage() {
 
   return (
     <MainLayout>
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="app-glass-scope p-4 md:p-6 space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -419,7 +419,7 @@ export default function UserManagementPage() {
         </div>
 
         {/* Users Table */}
-        <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+        <div className="app-glass-surface rounded-xl border bg-card shadow-sm overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">

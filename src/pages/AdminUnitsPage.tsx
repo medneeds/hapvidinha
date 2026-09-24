@@ -199,7 +199,7 @@ export default function AdminUnitsPage() {
 
   return (
     <MainLayout>
-      <div className="container mx-auto py-6 px-4 max-w-5xl">
+      <div className="app-glass-scope container mx-auto py-6 px-4 max-w-5xl">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
