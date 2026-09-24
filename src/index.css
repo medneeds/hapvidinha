@@ -193,6 +193,31 @@
   initial-value: 20%;
 }
 
+/* Intensidade do reflexo que acompanha o cursor — discreta no escuro, visível no claro. */
+:root {
+  --glass-card-glow: 0.1;
+  --glass-card-glow-edge: 0.032;
+  --glass-surface-glow: 0.075;
+  --glass-surface-glow-edge: 0.026;
+  --glass-header-glow: 0.085;
+  --glass-header-glow-edge: 0.026;
+  --glass-bar-glow: 0.12;
+  --glass-bar-glow-edge: 0.035;
+  --glass-btn-hover: 0.22;
+}
+
+.dark {
+  --glass-card-glow: 0.05;
+  --glass-card-glow-edge: 0.016;
+  --glass-surface-glow: 0.045;
+  --glass-surface-glow-edge: 0.014;
+  --glass-header-glow: 0.05;
+  --glass-header-glow-edge: 0.015;
+  --glass-bar-glow: 0.06;
+  --glass-bar-glow-edge: 0.018;
+  --glass-btn-hover: 0.13;
+}
+
 .clinical-glass-card {
   --clinical-glass-tone: var(--muted-foreground);
   --clinical-glass-x: 35%;
@@ -220,8 +245,8 @@
   background:
     radial-gradient(
       260px circle at var(--clinical-glass-x) var(--clinical-glass-y),
-      hsl(var(--clinical-glass-tone) / 0.1),
-      hsl(var(--clinical-glass-tone) / 0.032) 44%,
+      hsl(var(--clinical-glass-tone) / var(--glass-card-glow)),
+      hsl(var(--clinical-glass-tone) / var(--glass-card-glow-edge)) 44%,
       transparent 80%
     ),
     linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.022) 37%, transparent 63%);
@@ -286,8 +311,8 @@
   background:
     radial-gradient(
       290px circle at var(--app-glass-x) var(--app-glass-y),
-      hsl(var(--primary) / 0.085),
-      hsl(var(--sidebar-foreground) / 0.026) 44%,
+      hsl(var(--primary) / var(--glass-header-glow)),
+      hsl(var(--sidebar-foreground) / var(--glass-header-glow-edge)) 44%,
       transparent 80%
     ),
     linear-gradient(118deg, transparent 10%, hsl(var(--sidebar-foreground) / 0.024) 37%, transparent 63%);
@@ -312,8 +337,8 @@
   background:
     radial-gradient(
       270px circle at var(--app-glass-x) var(--app-glass-y),
-      hsl(var(--primary) / 0.075),
-      hsl(var(--muted-foreground) / 0.026) 44%,
+      hsl(var(--primary) / var(--glass-surface-glow)),
+      hsl(var(--muted-foreground) / var(--glass-surface-glow-edge)) 44%,
       transparent 80%
     ),
     linear-gradient(118deg, transparent 10%, hsl(var(--foreground) / 0.02) 37%, transparent 63%);
@@ -1422,7 +1447,7 @@ input:-webkit-autofill:active {
   .clinical-glass-neutral,
   .app-glass-surface
 ) button:not([role="checkbox"]):not([role="switch"]):not([class*="bg-gradient"]):not([data-no-glass]):focus-visible {
-  --btn-glass-alpha: 0.22;
+  --btn-glass-alpha: var(--glass-btn-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1474,8 +1499,8 @@ input:-webkit-autofill:active {
   opacity: 0;
   background: radial-gradient(
     240px circle at var(--clinical-glass-x) var(--clinical-glass-y),
-    hsl(var(--clinical-glass-tone, var(--primary)) / 0.12),
-    hsl(var(--clinical-glass-tone, var(--primary)) / 0.035) 45%,
+    hsl(var(--clinical-glass-tone, var(--primary)) / var(--glass-bar-glow)),
+    hsl(var(--clinical-glass-tone, var(--primary)) / var(--glass-bar-glow-edge)) 45%,
     transparent 80%
   );
   transition: opacity 420ms ease, --clinical-glass-x 190ms cubic-bezier(0.22, 1, 0.36, 1), --clinical-glass-y 190ms cubic-bezier(0.22, 1, 0.36, 1);
