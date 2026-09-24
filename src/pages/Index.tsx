@@ -50,7 +50,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -1137,7 +1136,7 @@ const Index = () => {
                 </div>
 
                 {/* Right side: Action buttons + Theme toggle */}
-                <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0">
+                <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0 pr-[52px] sm:pr-[104px]">
                   {/* Busca de paciente por nome - funcionalidade oculta (código preservado) */}
 
                   {/* Prioridades UTI - funcionalidade oculta (código preservado) */}
@@ -1228,9 +1227,6 @@ const Index = () => {
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                      <div className="print:hidden">
-                        <ThemeToggle />
-                      </div>
                     </>
                   ) : (
                     /* Desktop: Show all buttons */
@@ -1346,30 +1342,7 @@ const Index = () => {
                         </div>
                       </div>
 
-                      <div className="hidden lg:flex items-center gap-2 print:hidden">
-                        <div className="text-right">
-                          <p className="text-[10px] font-semibold text-sidebar-foreground uppercase tracking-tight">
-                            {user?.user_metadata?.username || user?.email?.split('@')[0]}
-                          </p>
-                          <p className="text-[9px] text-muted-foreground uppercase">
-                            {role === 'admin' ? 'Administrador' : 'Médico'}
-                          </p>
-                        </div>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="outline" size="icon" onClick={signOut}
-                              className="h-9 w-9 rounded-lg bg-sidebar-accent/50 border border-sidebar-border text-sidebar-foreground hover:bg-red-500/80 hover:text-white hover:border-red-400/50 transition-all duration-200">
-                              <LogOut className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent><p>Sair do sistema</p></TooltipContent>
-                        </Tooltip>
-                      </div>
-
                       </TooltipProvider>
-                      <div className="print:hidden">
-                        <ThemeToggle />
-                      </div>
                     </>
                   )}
                 </div>

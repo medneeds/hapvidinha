@@ -1,3 +1,5 @@
+import { Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import {
   LayoutDashboard,
   ArrowRightLeft,
@@ -27,6 +29,7 @@ import { QuickChecklistDialog } from "@/components/QuickChecklistDialog";
 import { QuickNotesDialog } from "@/components/QuickNotesDialog";
 import { MedicalCodesDialog } from "@/components/MedicalCodesDialog";
 import { ChangeOwnPasswordDialog } from "@/components/ChangeOwnPasswordDialog";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,14 +76,16 @@ const REPOSITORY_USER_IDS = [
 
 /**
  * Navegação principal no cabeçalho (substitui a sidebar).
+ * Distribuição: navegação funcional à esquerda; identidade/conta/tema à direita.
  * Ícones agrupados por tipo: dica ao passar o mouse + menu descritivo ao clicar.
- * No celular, um único botão abre todas as opções.
+ * No celular, um único botão abre as opções funcionais; conta e tema ficam à direita.
  */
 export function AppTopNav() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isMobile = useIsMobile();
   const { signOut, user, role } = useAuth();
+  const { theme, setTheme } = useTheme();
   const { items: checklistItems } = useUnitChecklist();
   const pendingChecklist = checklistItems.filter((i) => !i.completed).length;
   const { pendingCount: pendingResets } = usePendingPasswordResets();
@@ -167,7 +172,11 @@ export function AppTopNav() {
   }
 
   const accountName = (user?.user_metadata?.username || user?.email?.split("@")[0] || "").toUpperCase();
-  groups.push({
+  const initials = accountName
+    ? accountName.split(/[\s._\-@]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("") || "?"
+    : "?";
+
+  const accountGroup: NavGroup = {
     key: "conta",
     title: "MINHA CONTA",
     description: accountName || "Senha e sessão",
@@ -176,7 +185,7 @@ export function AppTopNav() {
       { name: "ALTERAR MINHA SENHA", description: "Defina uma nova senha", icon: KeyRound, action: "password" },
       { name: "SAIR", description: "Encerrar a sessão", icon: LogOut, action: "signout", danger: true },
     ],
-  });
+  };
 
   const runItem = (item: NavItem, group: NavGroup) => {
     if (item.link) {
@@ -256,73 +265,132 @@ export function AppTopNav() {
     />
   );
 
+  const renderGroupButton = (g: NavGroup) => {
+    const Icon = g.icon;
+    const active = g.items.some(isItemActive);
+    const badge = groupBadge(g);
+    return (
+      <DropdownMenu key={g.key}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DropdownMenuTrigger asChild>
+              <button
+                aria-label={g.title}
+                className={cn(
+                  HEADER_ICON_BUTTON,
+                  "relative inline-flex items-center justify-center",
+                  active && "bg-sidebar-accent border-sidebar-foreground/30",
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {active && <span className="absolute -bottom-[5px] left-1/2 h-[2px] w-4 -translate-x-1/2 rounded-full bg-primary" />}
+                {badge > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-destructive px-1 text-[9px] font-bold leading-4 text-destructive-foreground">
+                    {badge}
+                  </span>
+                )}
+              </button>
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="text-left">
+            <p className="text-xs font-semibold">{g.title}</p>
+            <p className="text-[11px] text-muted-foreground">{g.description}</p>
+          </TooltipContent>
+        </Tooltip>
+        <DropdownMenuContent align="start" className="w-72 max-h-[75vh] overflow-y-auto">
+          <DropdownMenuLabel className="text-[10px] tracking-wider text-muted-foreground">{g.title}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {renderItems(g)}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
+
+  const renderAccountButton = () => (
+    <DropdownMenu>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <button
+              aria-label="MINHA CONTA"
+              className={cn(
+                HEADER_ICON_BUTTON,
+                "relative inline-flex items-center justify-center rounded-full p-0 text-primary font-bold uppercase overflow-hidden",
+              )}
+            >
+              <span className="text-[11px] leading-none">{initials}</span>
+            </button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="text-left">
+          <p className="text-xs font-semibold">MINHA CONTA</p>
+          <p className="text-[11px] text-muted-foreground">{accountName || "Senha e sessão"}</p>
+        </TooltipContent>
+      </Tooltip>
+      <DropdownMenuContent align="end" className="w-72 max-h-[75vh] overflow-y-auto">
+        <DropdownMenuLabel className="text-[10px] tracking-wider text-muted-foreground">MINHA CONTA</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {renderItems(accountGroup)}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  const rightCluster = (
+    <div className="app-glass-scope flex items-center gap-1.5 pointer-events-auto">
+      <div className="hidden sm:block">
+        <ThemeToggle />
+      </div>
+      {renderAccountButton()}
+    </div>
+  );
+
   return (
     <TooltipProvider delayDuration={250}>
       <nav
         aria-label="Navegação principal"
-        className="fixed top-[14px] sm:top-[18px] left-2 sm:left-4 z-[60] flex items-center gap-1.5 print:hidden"
+        className="fixed top-[14px] sm:top-[18px] inset-x-0 z-[60] flex items-center justify-between gap-2 px-2 sm:px-4 pointer-events-none print:hidden"
       >
         {isMobile ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className={cn(HEADER_ICON_BUTTON, "inline-flex items-center justify-center")} aria-label="Abrir menu">
-                <Menu className="h-4 w-4" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-72 max-h-[80vh] overflow-y-auto">
-              {groups.map((g, i) => (
-                <div key={g.key}>
-                  {i > 0 && <DropdownMenuSeparator />}
-                  <DropdownMenuLabel className="text-[10px] tracking-wider text-muted-foreground">{g.title}</DropdownMenuLabel>
-                  {renderItems(g)}
-                </div>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <>
+            <div className="app-glass-scope flex items-center gap-1.5 pointer-events-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className={cn(HEADER_ICON_BUTTON, "inline-flex items-center justify-center")} aria-label="Abrir menu">
+                    <Menu className="h-4 w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-72 max-h-[80vh] overflow-y-auto">
+                  {groups.map((g, i) => (
+                    <div key={g.key}>
+                      {i > 0 && <DropdownMenuSeparator />}
+                      <DropdownMenuLabel className="text-[10px] tracking-wider text-muted-foreground">{g.title}</DropdownMenuLabel>
+                      {renderItems(g)}
+                    </div>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="flex items-center gap-3 py-2 cursor-pointer"
+                    onSelect={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  >
+                    {theme === "dark" ? <Sun className="h-4 w-4 text-muted-foreground" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold leading-tight">ALTERAR TEMA</p>
+                      <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">Claro / Escuro</p>
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            {rightCluster}
+          </>
         ) : (
           <>
-            {logo}
-            <div className="h-6 w-px bg-sidebar-border mx-1" />
-            {groups.map((g) => {
-              const Icon = g.icon;
-              const active = g.items.some(isItemActive);
-              const badge = groupBadge(g);
-              return (
-                <DropdownMenu key={g.key}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <DropdownMenuTrigger asChild>
-                        <button
-                          aria-label={g.title}
-                          className={cn(
-                            HEADER_ICON_BUTTON,
-                            "relative inline-flex items-center justify-center",
-                            active && "bg-sidebar-accent border-sidebar-foreground/30",
-                          )}
-                        >
-                          <Icon className={cn("h-4 w-4", g.key === "conta" ? "" : "")} />
-                          {active && <span className="absolute -bottom-[5px] left-1/2 h-[2px] w-4 -translate-x-1/2 rounded-full bg-primary" />}
-                          {badge > 0 && (
-                            <span className="absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-destructive px-1 text-[9px] font-bold leading-4 text-destructive-foreground">
-                              {badge}
-                            </span>
-                          )}
-                        </button>
-                      </DropdownMenuTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" className="text-left">
-                      <p className="text-xs font-semibold">{g.title}</p>
-                      <p className="text-[11px] text-muted-foreground">{g.description}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <DropdownMenuContent align="start" className="w-72 max-h-[75vh] overflow-y-auto">
-                    <DropdownMenuLabel className="text-[10px] tracking-wider text-muted-foreground">{g.title}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {renderItems(g)}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              );
-            })}
+            <div className="app-glass-scope flex items-center gap-1.5 pointer-events-auto">
+              {logo}
+              <div className="h-6 w-px bg-sidebar-border mx-1" />
+              {groups.map((g) => renderGroupButton(g))}
+            </div>
+            {rightCluster}
           </>
         )}
       </nav>

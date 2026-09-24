@@ -37,7 +37,7 @@ export function AppPageHeader({ title, icon: Icon, right }: AppPageHeaderProps) 
                 {title}
               </h1>
             </div>
-            {right && <div className="flex items-center gap-2 flex-shrink-0">{right}</div>}
+            {right && <div className="flex items-center gap-2 flex-shrink-0 pr-[52px] sm:pr-[104px]">{right}</div>}
           </div>
         </div>
       </header>
