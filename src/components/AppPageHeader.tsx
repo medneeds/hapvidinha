@@ -27,7 +27,7 @@ export function AppPageHeader({ title, icon: Icon, right }: AppPageHeaderProps) 
       >
         <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-3 min-w-0 flex-1 pl-12 md:pl-[21rem]">
+            <div className="flex items-center gap-3 min-w-0 flex-1 pl-12 md:pl-[15.5rem]">
               {Icon && (
                 <div className="rounded-lg bg-sidebar-accent p-2 backdrop-blur-sm flex-shrink-0">
                   <Icon className="h-4 w-4 text-sidebar-accent-foreground" />
@@ -37,7 +37,7 @@ export function AppPageHeader({ title, icon: Icon, right }: AppPageHeaderProps) 
                 {title}
               </h1>
             </div>
-            {right && <div className="flex items-center gap-2 flex-shrink-0 pr-[52px] sm:pr-[104px]">{right}</div>}
+            {right && <div className="flex items-center gap-2 flex-shrink-0 pr-[52px] sm:pr-[94px]">{right}</div>}
           </div>
         </div>
       </header>

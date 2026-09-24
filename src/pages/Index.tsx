@@ -1083,17 +1083,17 @@ const Index = () => {
           {/* Header */}
           <DynamicHeader>
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-sidebar-border/40 to-transparent print:hidden"></div>
-            <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
+            <div className="w-full px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
                 {/* Left side: Sidebar button + Title + Department selector */}
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 pl-12 md:pl-[21rem]">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 pl-12 md:pl-[15.5rem]">
                   {/* Trigger da sidebar unificado no FloatingSidebarTrigger (fora da sidebar) */}
                   <div className="min-w-0 flex-1 flex items-center gap-2 sm:gap-3 flex-wrap">
 
-                    <div className="print:hidden">
+                    <div className="print:hidden min-w-0 max-w-full">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="inline-flex items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 bg-sidebar-accent/70 backdrop-blur-sm border border-sidebar-border text-sidebar-foreground text-base sm:text-lg font-bold uppercase tracking-tight hover:bg-sidebar-accent hover:border-sidebar-foreground/30 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                          <button className="inline-flex max-w-full min-w-0 items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 bg-sidebar-accent/70 backdrop-blur-sm border border-sidebar-border text-sidebar-foreground text-base sm:text-lg font-bold uppercase tracking-tight hover:bg-sidebar-accent hover:border-sidebar-foreground/30 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
                             <Building2 className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-90" />
                             <span className="truncate">{getDepartmentLabel(currentDepartment)}</span>
                             <ChevronDown className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-70" />
@@ -1136,7 +1136,7 @@ const Index = () => {
                 </div>
 
                 {/* Right side: Action buttons + Theme toggle */}
-                <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0 pr-[52px] sm:pr-[104px]">
+                <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0 pr-[52px] sm:pr-[94px]">
                   {/* Busca de paciente por nome - funcionalidade oculta (código preservado) */}
 
                   {/* Prioridades UTI - funcionalidade oculta (código preservado) */}
