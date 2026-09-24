@@ -1351,7 +1351,7 @@ const Index = () => {
           </DynamicHeader>
 
           {/* Main Content */}
-          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 print:py-0 print:px-1 pt-[66px] sm:pt-[78px] print:pt-3">
+          <main className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 print:py-0 print:px-1 pt-[56px] sm:pt-[66px] print:pt-3">
             <div className="space-y-3 sm:space-y-4 print:space-y-1">
               {currentDepartment === "UTI" ? (
                 selectedUtiUnit === null ? (
