@@ -367,6 +367,17 @@ export function AppTopNav() {
                       {renderItems(g)}
                     </div>
                   ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="flex items-center gap-3 py-2 cursor-pointer"
+                    onSelect={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  >
+                    {theme === "dark" ? <Sun className="h-4 w-4 text-muted-foreground" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold leading-tight">ALTERAR TEMA</p>
+                      <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">Claro / Escuro</p>
+                    </div>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
