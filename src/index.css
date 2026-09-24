@@ -1499,8 +1499,8 @@ input:-webkit-autofill:active {
   opacity: 0;
   background: radial-gradient(
     240px circle at var(--clinical-glass-x) var(--clinical-glass-y),
-    hsl(var(--clinical-glass-tone, var(--primary)) / 0.12),
-    hsl(var(--clinical-glass-tone, var(--primary)) / 0.035) 45%,
+    hsl(var(--clinical-glass-tone, var(--primary)) / var(--glass-bar-glow)),
+    hsl(var(--clinical-glass-tone, var(--primary)) / var(--glass-bar-glow-edge)) 45%,
     transparent 80%
   );
   transition: opacity 420ms ease, --clinical-glass-x 190ms cubic-bezier(0.22, 1, 0.36, 1), --clinical-glass-y 190ms cubic-bezier(0.22, 1, 0.36, 1);
