@@ -311,8 +311,8 @@
   background:
     radial-gradient(
       290px circle at var(--app-glass-x) var(--app-glass-y),
-      hsl(var(--primary) / 0.085),
-      hsl(var(--sidebar-foreground) / 0.026) 44%,
+      hsl(var(--primary) / var(--glass-header-glow)),
+      hsl(var(--sidebar-foreground) / var(--glass-header-glow-edge)) 44%,
       transparent 80%
     ),
     linear-gradient(118deg, transparent 10%, hsl(var(--sidebar-foreground) / 0.024) 37%, transparent 63%);
