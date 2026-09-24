@@ -85,6 +85,7 @@ export function AppTopNav() {
   const { pathname } = useLocation();
   const isMobile = useIsMobile();
   const { signOut, user, role } = useAuth();
+  const { theme, setTheme } = useTheme();
   const { items: checklistItems } = useUnitChecklist();
   const pendingChecklist = checklistItems.filter((i) => !i.completed).length;
   const { pendingCount: pendingResets } = usePendingPasswordResets();
@@ -336,7 +337,9 @@ export function AppTopNav() {
 
   const rightCluster = (
     <div className="app-glass-scope flex items-center gap-1.5 pointer-events-auto">
-      <ThemeToggle />
+      <div className="hidden sm:block">
+        <ThemeToggle />
+      </div>
       {renderAccountButton()}
     </div>
   );
