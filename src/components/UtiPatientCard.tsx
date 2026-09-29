@@ -1596,6 +1596,9 @@ export function UtiPatientCard({
         currentUtiUnit={derivedUtiUnit}
         allPatients={allPatients}
       />
+      {patient.name && (
+        <PatientReportDialog patient={patient} open={reportDialogOpen} onOpenChange={setReportDialogOpen} />
+      )}
     </>
   );
 }
