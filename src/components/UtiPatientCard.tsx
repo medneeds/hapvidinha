@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus } from "lucide-react";
+import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus, FileEdit } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -25,6 +25,7 @@ const toUpperCase = (value: string) => value.toUpperCase();
 import { cn } from "@/lib/utils";
 import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetailedAge";
 import { EditPatientDialog } from "./EditPatientDialog";
+import { PatientReportDialog } from "./PatientReportDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { UtiReallocationDialog } from "./UtiReallocationDialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -872,6 +873,7 @@ export function UtiPatientCard({
   const { role } = useAuth();
   const canMove = role === 'medico' || role === 'admin';
   const displayName = maskName(patient.name, namesHidden);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
 
   // Sync with forceCollapsed prop when it changes
   useEffect(() => {
@@ -1366,6 +1368,12 @@ export function UtiPatientCard({
                     <DropdownMenuItem onClick={() => onPrintPatient(patient.id)}>
                       <Printer className="h-4 w-4 mr-2" />
                       Imprimir Caso
+                    </DropdownMenuItem>
+                  )}
+                  {patient.name && (
+                    <DropdownMenuItem onClick={() => setReportDialogOpen(true)}>
+                      <FileEdit className="h-4 w-4 mr-2 text-primary" />
+                      Emitir Relatório
                     </DropdownMenuItem>
                   )}
 

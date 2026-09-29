@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Patient } from "@/types/patient";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ interface Props {
 
 export function PatientReportDialog({ patient, open, onOpenChange }: Props) {
   const [reportText, setReportText] = useState("");
+  useEffect(() => { if (open) setReportText(""); }, [open]);
   const reportDialogOpen = open;
   const setReportDialogOpen = onOpenChange;
   const { namesHidden } = usePrivacy();
