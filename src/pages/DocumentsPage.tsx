@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { AppPageHeader } from "@/components/AppPageHeader";
+import termoConsentimentoGuaras from "@/assets/documents/termo-consentimento-guaras.pdf.asset.json";
 
 
 export default function DocumentsPage() {
@@ -245,6 +246,43 @@ export default function DocumentsPage() {
               </p>
             </div>
             <Button variant="outline" size="sm" className="gap-2 group-hover:bg-cyan-500 group-hover:text-white group-hover:border-cyan-500 transition-all flex-shrink-0">
+              <Download className="h-4 w-4" />
+              Download
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Termo de Consentimento Guarás */}
+        <Card 
+          className="relative overflow-hidden border-emerald-500/30 shadow-lg bg-gradient-to-r from-emerald-500/5 via-background to-emerald-500/5 group cursor-pointer hover:shadow-xl hover:border-emerald-500/50 transition-all duration-500"
+          onClick={() => {
+            const link = document.createElement("a");
+            link.href = termoConsentimentoGuaras.url;
+            link.download = "TERMO_DE_CONSENTIMENTO_GUARAS.pdf";
+            link.click();
+          }}
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <CardContent className="p-6 flex items-center gap-5 relative z-10">
+            <div className="relative flex-shrink-0">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <FileCheck className="h-8 w-8 text-emerald-500" />
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h3 className="font-bold text-lg text-foreground group-hover:text-emerald-600 transition-colors">
+                  Termo de Consentimento Livre e Esclarecido
+                </h3>
+                <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 text-[10px]">
+                  GUARÁS
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Termo geral de consentimento do paciente ou responsável legal (PDF para impressão)
+              </p>
+            </div>
+            <Button variant="outline" size="sm" className="gap-2 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all flex-shrink-0">
               <Download className="h-4 w-4" />
               Download
             </Button>
