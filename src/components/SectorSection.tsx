@@ -32,6 +32,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { releaseBedForFilling } from "@/utils/releaseBed";
 
 interface SectorSectionProps {
   sector: SectorType;
@@ -351,7 +352,10 @@ export function SectorSection({
                               bedNumber={patient.bedNumber}
                               sector={sector}
                               onAllocateNew={() =>
-                                onUpdatePatient({ ...patient, isVacant: false, bedStatus: 'available', bedMaintenanceReason: null, bedMaintenanceStartedAt: null, bedMaintenanceStartedBy: null })
+                                onUpdatePatient(releaseBedForFilling(patient, {
+                                  admissionDate: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                                  patientCategory: patient.patientCategory,
+                                }))
                               }
                               onAllocateFromQueue={
                                 onRequestFromQueue ? () => onRequestFromQueue(sector) : undefined
