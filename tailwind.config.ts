@@ -120,6 +120,14 @@ export default {
             height: "0",
           },
         },
+        "collapsible-down": {
+          from: { height: "0", opacity: "0" },
+          to: { height: "var(--radix-collapsible-content-height)", opacity: "1" },
+        },
+        "collapsible-up": {
+          from: { height: "var(--radix-collapsible-content-height)", opacity: "1" },
+          to: { height: "0", opacity: "0" },
+        },
         "slide-in-left": {
           "0%": {
             transform: "translateX(-100%)",
@@ -172,6 +180,8 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "collapsible-down": "collapsible-down 0.26s cubic-bezier(0.22, 1, 0.36, 1)",
+        "collapsible-up": "collapsible-up 0.2s ease-out",
         "slide-in-left": "slide-in-left 0.3s ease-out",
         "slide-out-left": "slide-out-left 0.3s ease-out",
         "float": "float 6s ease-in-out infinite",

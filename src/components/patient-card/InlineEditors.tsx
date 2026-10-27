@@ -795,3 +795,27 @@ export function InlineEditableTextarea({ value, onUpdate, placeholder = "-", col
   );
 }
 
+/**
+ * Smooth open/close for card sections (columns) without unmounting them,
+ * so typing state is kept and the motion is fluid. Respects reduced motion.
+ */
+export function SmoothCollapse({ open, children, className }: { open: boolean; children: React.ReactNode; className?: string }) {
+  const inertProps = open ? {} : ({ inert: "" } as Record<string, string>);
+  return (
+    <div
+      className={cn(
+        "grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+        open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+        className
+      )}
+      aria-hidden={!open}
+      {...inertProps}
+    >
+      <div className="min-h-0 overflow-hidden">{children}</div>
+    </div>
+  );
+}
+
+/** Animation classes for Radix CollapsibleContent (detail areas of the cards). */
+export const COLLAPSIBLE_CONTENT_MOTION =
+  "overflow-hidden data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up motion-reduce:animate-none";
