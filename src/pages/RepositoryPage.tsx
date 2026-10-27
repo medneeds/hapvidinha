@@ -193,7 +193,7 @@ export default function RepositoryPage() {
 
   return (
     <div
-      className="app-glass-scope container mx-auto px-4 py-6 max-w-7xl"
+      className="app-glass-scope container mx-auto px-3 py-4 md:px-4 md:py-6 max-w-7xl"
       onPaste={onPaste}
       onDragOver={e => { e.preventDefault(); setDragging(true); }}
       onDragLeave={() => setDragging(false)}
@@ -201,8 +201,8 @@ export default function RepositoryPage() {
     >
       {(() => { document.title = "Repositório de Arquivos | HAPMAP"; return null; })()}
 
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">REPOSITÓRIO DE ARQUIVOS</h1>
+      <header className="mb-4 md:mb-6">
+        <h1 className="hidden md:block text-2xl font-bold tracking-tight">REPOSITÓRIO DE ARQUIVOS</h1>
         <p className="text-sm text-muted-foreground">
           Compartilhado entre todos os usuários da sua unidade. Limite 25 MB por arquivo.
         </p>
@@ -215,7 +215,7 @@ export default function RepositoryPage() {
           dragging ? "border-primary bg-primary/5" : "border-border"
         )}
       >
-        <CardContent className="p-8 flex flex-col items-center justify-center gap-3 text-center">
+        <CardContent className="p-5 md:p-8 flex flex-col items-center justify-center gap-3 text-center">
           <Upload className="h-10 w-10 text-muted-foreground" />
           <div>
             <p className="font-medium">Arraste arquivos aqui, cole da área de transferência ou</p>

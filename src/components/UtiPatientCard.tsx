@@ -360,6 +360,96 @@ export function UtiPatientCard({
   // Count critical items for badge
   const criticalCount = dispositivos.length + culturasAtb.length + alergias.length;
 
+  // Ações do paciente: renderizadas na coluna lateral (tablet/computador)
+  // e no canto da linha do paciente (celular).
+  const actionControls = (
+    <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsEditDialogOpen(true)}
+                className="h-6 w-6 text-muted-foreground hover:text-primary"
+                title="Edição avançada"
+              >
+                <Edit className="h-3 w-3" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
+                    <MoreVertical className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50 w-48">
+                  {/* Print option */}
+                  {onPrintPatient && (
+                    <DropdownMenuItem onClick={() => onPrintPatient(patient.id)}>
+                      <Printer className="h-4 w-4 mr-2" />
+                      Imprimir Caso
+                    </DropdownMenuItem>
+                  )}
+                  {patient.name && (
+                    <DropdownMenuItem onClick={() => setReportDialogOpen(true)}>
+                      <FileEdit className="h-4 w-4 mr-2 text-primary" />
+                      Emitir Relatório
+                    </DropdownMenuItem>
+                  )}
+
+                  {/* Mark as vacant - always visible for occupied beds */}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => handleToggleVacancy(true)}>
+                    <DoorOpen className="h-4 w-4 mr-2 text-muted-foreground" />
+                    Marcar como Vago
+                  </DropdownMenuItem>
+                  
+                  {/* Only show movement options if patient has data */}
+                  {patient.name && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel className="text-xs text-muted-foreground">Realocação</DropdownMenuLabel>
+                      
+                      <DropdownMenuItem onClick={() => setIsReallocationDialogOpen(true)}>
+                        <BedDouble className="h-4 w-4 mr-2 text-blue-500" />
+                        Realocar Leito/UTI
+                      </DropdownMenuItem>
+                      
+                      {canMove && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuLabel className="text-xs text-muted-foreground">Movimentações</DropdownMenuLabel>
+
+                          <DropdownMenuItem onClick={() => handleMovement("ALTA")}>
+                            <TrendingUp className="h-4 w-4 mr-2 text-green-500" />
+                            Alta
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem onClick={() => handleMovement("TRANSFERÊNCIA")}>
+                            <ArrowLeftRight className="h-4 w-4 mr-2 text-blue-500" />
+                            Transferência
+                          </DropdownMenuItem>
+
+                          <DropdownMenuItem onClick={() => handleMovement("ÓBITO")}>
+                            <Skull className="h-4 w-4 mr-2 text-red-500" />
+                            Óbito
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </>
+                  )}
+                  
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <CollapsibleTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                >
+                  <ChevronDown className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")} />
+                </Button>
+              </CollapsibleTrigger>
+    </>
+  );
+
   return (
     <>
       <div 
@@ -435,15 +525,15 @@ export function UtiPatientCard({
                 </div>
                 
                 {/* Patient Name + Birth Date + Age - Flexible grow */}
-                <div className="flex-1 flex items-baseline gap-2 md:gap-3 min-w-0 flex-wrap">
+                <div className="flex-1 max-md:basis-full max-md:order-1 flex items-baseline gap-x-2 gap-y-0.5 md:gap-3 min-w-0 flex-wrap">
                   {namesHidden ? (
-                    <span className="text-xs md:text-sm font-semibold truncate tracking-widest opacity-70">{displayName}</span>
+                    <span className="text-xs md:text-sm font-semibold break-words basis-full md:basis-auto tracking-widest opacity-70">{displayName}</span>
                   ) : (
                     <InlineEditableField
                       value={patient.name}
                       onUpdate={(v) => handleUpdateField("name", v)}
                       placeholder="NOME DO PACIENTE"
-                      className="text-xs md:text-sm font-semibold truncate"
+                      className="text-xs md:text-sm font-semibold break-words basis-full md:basis-auto"
                     colorVariant={colorVariant}
                     />
                   )}
@@ -484,9 +574,13 @@ export function UtiPatientCard({
                     )}
                   </div>
                 </div>
+                {/* Ações (celular): no canto da linha do paciente */}
+                <div className="md:hidden ml-auto flex items-center gap-0.5 shrink-0 print:hidden">
+                  {actionControls}
+                </div>
 
                 {/* Mobile: Chips wrap to second line */}
-                <div className="flex items-center gap-1 flex-wrap md:flex-nowrap w-full md:w-auto mt-1 md:mt-0">
+                <div className="max-md:order-2 flex items-center gap-1 flex-wrap md:flex-nowrap w-full md:w-auto mt-0.5 md:mt-0">
                   {/* Clinical Status indicator removido a pedido do usuário */}
 
 
@@ -529,7 +623,7 @@ export function UtiPatientCard({
                   </div>
 
                   {/* UTI Admission Date */}
-                  <div className={cn("hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
+                  <div className={cn("flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
                     <span className="text-[9px]">Admissão UTI:</span>
                     <InlineEditableField
                       value={patient.utiAdmissionDate?.[0] || ""}
@@ -541,7 +635,7 @@ export function UtiPatientCard({
                   </div>
 
                   {/* Discharge Prediction */}
-                  <div className={cn("hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
+                  <div className={cn("flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
                     <span className="text-[9px]">Previsão de Alta:</span>
                     <InlineEditableField
                       value={previsaoAlta[0] || ""}
@@ -564,7 +658,7 @@ export function UtiPatientCard({
 
               {/* Row 2: 5 columns on desktop (Hipóteses · Antecedentes · Exames · Plano · Pendências), 2 per row on mobile */}
               <SmoothCollapse open={!isCollapsed} className="!mt-0">
-                <div className="grid grid-cols-2 md:grid-cols-[1.15fr_1fr_1fr_1.15fr_1.5fr] gap-y-1.5 md:gap-y-0 pt-1">
+                <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr_1fr_1.15fr_1.5fr] gap-y-0 pt-1">
                   <div className={cn(COLUMN_CELL, columnHover)}>
                     <InlineEditableArray
                       items={diagnosticos}
@@ -661,94 +755,12 @@ export function UtiPatientCard({
               </SmoothCollapse>
             </div>
 
-            {/* Right Actions + Expand Button - Horizontal when collapsed, Vertical when expanded */}
+            {/* Ações (tablet/computador) */}
             <div className={cn(
-              "flex items-center justify-center gap-0.5 px-1 py-1 border-l border-border/30 bg-muted/20 transition-all",
+              "hidden md:flex items-center justify-center gap-0.5 px-1 py-1 border-l border-border/30 bg-muted/20 transition-all",
               isCollapsed ? "flex-row" : "flex-col"
             )}>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsEditDialogOpen(true)}
-                className="h-6 w-6 text-muted-foreground hover:text-primary"
-                title="Edição avançada"
-              >
-                <Edit className="h-3 w-3" />
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
-                    <MoreVertical className="h-3 w-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50 w-48">
-                  {/* Print option */}
-                  {onPrintPatient && (
-                    <DropdownMenuItem onClick={() => onPrintPatient(patient.id)}>
-                      <Printer className="h-4 w-4 mr-2" />
-                      Imprimir Caso
-                    </DropdownMenuItem>
-                  )}
-                  {patient.name && (
-                    <DropdownMenuItem onClick={() => setReportDialogOpen(true)}>
-                      <FileEdit className="h-4 w-4 mr-2 text-primary" />
-                      Emitir Relatório
-                    </DropdownMenuItem>
-                  )}
-
-                  {/* Mark as vacant - always visible for occupied beds */}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleToggleVacancy(true)}>
-                    <DoorOpen className="h-4 w-4 mr-2 text-muted-foreground" />
-                    Marcar como Vago
-                  </DropdownMenuItem>
-                  
-                  {/* Only show movement options if patient has data */}
-                  {patient.name && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuLabel className="text-xs text-muted-foreground">Realocação</DropdownMenuLabel>
-                      
-                      <DropdownMenuItem onClick={() => setIsReallocationDialogOpen(true)}>
-                        <BedDouble className="h-4 w-4 mr-2 text-blue-500" />
-                        Realocar Leito/UTI
-                      </DropdownMenuItem>
-                      
-                      {canMove && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuLabel className="text-xs text-muted-foreground">Movimentações</DropdownMenuLabel>
-
-                          <DropdownMenuItem onClick={() => handleMovement("ALTA")}>
-                            <TrendingUp className="h-4 w-4 mr-2 text-green-500" />
-                            Alta
-                          </DropdownMenuItem>
-
-                          <DropdownMenuItem onClick={() => handleMovement("TRANSFERÊNCIA")}>
-                            <ArrowLeftRight className="h-4 w-4 mr-2 text-blue-500" />
-                            Transferência
-                          </DropdownMenuItem>
-
-                          <DropdownMenuItem onClick={() => handleMovement("ÓBITO")}>
-                            <Skull className="h-4 w-4 mr-2 text-red-500" />
-                            Óbito
-                          </DropdownMenuItem>
-                        </>
-                      )}
-                    </>
-                  )}
-                  
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <CollapsibleTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                >
-                  <ChevronDown className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")} />
-                </Button>
-              </CollapsibleTrigger>
+              {actionControls}
             </div>
           </div>
 

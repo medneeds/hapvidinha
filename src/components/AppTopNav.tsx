@@ -348,7 +348,7 @@ export function AppTopNav() {
     <TooltipProvider delayDuration={250}>
       <nav
         aria-label="Navegação principal"
-        className="fixed top-[14px] sm:top-[18px] inset-x-0 z-[60] flex items-center justify-between gap-2 px-2 sm:px-4 pointer-events-none print:hidden"
+        className="fixed top-[8px] md:top-[18px] inset-x-0 z-[60] flex items-center justify-between gap-2 px-2 sm:px-4 pointer-events-none print:hidden"
       >
         {isMobile ? (
           <>

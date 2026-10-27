@@ -17,3 +17,8 @@ export function useIsMobile() {
 
   return !!isMobile;
 }
+
+/** Synchronous check for initial state (e.g. cards start collapsed on phones). */
+export function isMobileViewport() {
+  return typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
+}

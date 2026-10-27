@@ -1,12 +1,10 @@
-# Roadmap — UE no estilo da UTI + transferência UE → UTI
+# Roadmap — mobile layout (plan approved 2026-10-27)
 
-- [x] Extrair editores inline (colunas, campos) para módulo compartilhado
-- [x] UTI: coluna Exames (5 colunas, Tab na nova ordem; sai do "Clínico")
-- [x] Formatador TPS (min/h/d) + teste
-- [x] Novo cartão da UE (identificação, 5 colunas, área expandida, menu de ações)
-- [x] Trocar cartão na UE Adulto e Pediátrica
-- [x] Função do banco transfer_patient_to_uti (atômica, médico/admin)
-- [x] Diálogo "Transferir para UTI" — só UE Adulto
-- [x] Testes: TPS, PSM, rótulos/leitos da transferência; simulação da função no banco (desfeita)
-- [x] Verificação na prévia (UE claro/escuro e UTI)
-- [ ] Próxima etapa (fora do escopo aprovado): impressão/PDF da UE no novo layout
+- [x] 1. Sticky compact top bar on mobile (AppTopNav + Index header + AppPageHeader + bar on other screens)
+- [x] 2. Sector bars on one line (UE + UTI)
+- [x] 3. Patient cards collapsed by default on mobile
+- [x] 4. Patient row reorganized (UE + UTI), names never truncated
+- [x] 5. One column per row on mobile
+- [x] 6. Signature footer not overlapping on mobile
+- [x] 7. Documents / Movements / Repository mobile fixes
+- [x] Verify 390px light/dark + 1280px unchanged

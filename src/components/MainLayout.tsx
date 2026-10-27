@@ -7,7 +7,30 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { KeyboardShortcutsDialog } from "@/components/KeyboardShortcutsDialog";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
 import { PageTransition } from "@/components/PageTransition";
+import { useLocation } from "react-router-dom";
 
+// Telas que já têm sua própria barra superior.
+const ROUTES_WITH_OWN_HEADER = new Set(["/", "/documents", "/movements"]);
+
+// Título curto mostrado na barra superior do celular nas demais telas.
+const MOBILE_BAR_TITLES: Array<[string, string]> = [
+  ["/repositorio", "REPOSITÓRIO"],
+  ["/documents/", "DOCUMENTOS"],
+  ["/dashboard", "DASHBOARD"],
+  ["/user-management", "USUÁRIOS"],
+  ["/audit-logs", "AUDITORIA"],
+  ["/privacy", "PRIVACIDADE"],
+  ["/admin/states", "ESTADOS"],
+  ["/admin/units", "UNIDADES"],
+  ["/admin/beds", "LEITOS"],
+  ["/admin/coordinators", "COORDENADORES"],
+  ["/admin/sepsis-protocols", "PROTOCOLOS SEPSE"],
+  ["/admin/stroke-protocols", "PROTOCOLOS AVC"],
+  ["/admin/chest-pain-protocols", "DOR TORÁCICA"],
+  ["/handovers", "PASSAGEM DE PLANTÃO"],
+  ["/sepsis-protocol", "PROTOCOLO SEPSE"],
+  ["/dhd", "DHD"],
+];
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -16,6 +39,9 @@ interface MainLayoutProps {
 
 export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
   useUserPresence();
+  const { pathname } = useLocation();
+  const needsMobileBar = !ROUTES_WITH_OWN_HEADER.has(pathname);
+  const mobileBarTitle = MOBILE_BAR_TITLES.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? "";
   const [showShortcuts, setShowShortcuts] = useState(false);
   const activeGlassSurface = useRef<HTMLElement | null>(null);
 
@@ -93,9 +119,14 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
       <div className="min-h-screen flex w-full bg-background relative">
         <AppTopNav />
         
-        <div className="flex-1 flex flex-col w-full">
+        <div className="flex-1 flex flex-col w-full min-w-0">
+          {needsMobileBar && (
+            <header className="app-glass-header md:hidden border-b border-sidebar-border text-sidebar-foreground flex items-center justify-center px-14 print:hidden">
+              <span className="text-sm font-bold tracking-tight uppercase truncate">{mobileBarTitle}</span>
+            </header>
+          )}
           <main
-            className="flex-1 overflow-auto"
+            className="flex-1 md:overflow-auto"
             onPointerMove={handleGlassPointerMove}
             onPointerLeave={resetGlassPointer}
           >
@@ -104,7 +135,7 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
             </PageTransition>
           </main>
           
-          <footer className="fixed bottom-2 right-4 z-50 pointer-events-none">
+          <footer className="px-4 pb-3 pt-1 text-right md:p-0 md:fixed md:bottom-2 md:right-4 z-50 pointer-events-none print:hidden">
             <p className="text-[10px] text-muted-foreground/40 italic">
               {whitelabel.credits.footerText}
             </p>

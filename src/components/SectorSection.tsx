@@ -1,3 +1,4 @@
+import { isMobileViewport } from "@/hooks/use-mobile";
 import { Patient, SectorType } from "@/types/patient";
 import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
 import { getFixedBedCount } from "@/utils/bedCapacityStore";
@@ -182,7 +183,7 @@ export function SectorSection({
     : patients;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
   // "Expandir/retrair todos" — mesma ação da barra de setor da UTI (colunas dos cartões)
-  const [allCardsCollapsed, setAllCardsCollapsed] = useState(false);
+  const [allCardsCollapsed, setAllCardsCollapsed] = useState(isMobileViewport);
   const hasOccupied = patients.some((p) => !p.isVacant);
 
   // Pending post-death reviews for THIS sector (beds no longer in the list)
@@ -266,8 +267,8 @@ export function SectorSection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-3 mb-4 print:space-y-0.5 print:mb-1 print:break-inside-avoid">
-      <div className={`${info.gradientClass} clinical-glass-bar rounded-lg p-2 border border-border/40 shadow-sm print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex flex-col`}>
-        <div className="flex items-center justify-between w-full gap-3">
+      <div className={`${info.gradientClass} clinical-glass-bar rounded-lg p-1.5 md:p-2 border border-border/40 shadow-sm print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[44px] md:min-h-[48px] print:h-auto flex flex-col`}>
+        <div className="flex items-center justify-between w-full gap-2 md:gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
               <Checkbox
@@ -285,18 +286,18 @@ export function SectorSection({
             </div>
           )}
           <CollapsibleTrigger asChild>
-            <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
-              <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
-              <h2 className="text-lg font-bold text-foreground print:text-[10px] uppercase">{displayTitle}</h2>
+            <button className="flex items-center gap-1.5 md:gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1 min-w-0">
+              <ChevronDown className={`h-4 w-4 md:h-5 md:w-5 shrink-0 transition-transform print:hidden ${isOpen ? '' : '-rotate-90'}`} />
+              <h2 className="text-sm md:text-lg font-bold text-foreground print:text-[10px] uppercase text-left leading-tight truncate md:whitespace-normal md:overflow-visible">{displayTitle}</h2>
             </button>
           </CollapsibleTrigger>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
             {hasOccupied && (
               <Button
                 variant="outline"
                 size="icon"
                 onClick={() => setAllCardsCollapsed(!allCardsCollapsed)}
-                className={cn(SECTION_ICON_BUTTON, "print:hidden")}
+                className={cn(SECTION_ICON_BUTTON, "max-md:h-8 max-md:w-8 print:hidden")}
                 title={allCardsCollapsed ? "Expandir todos os pacientes" : "Retrair todos os pacientes"}
               >
                 {allCardsCollapsed ? <ChevronsUpDown className={SECTION_ICON} /> : <ChevronsDownUp className={SECTION_ICON} />}
@@ -307,7 +308,7 @@ export function SectorSection({
                 variant="outline"
                 size="icon"
                 onClick={() => onAddExtraBed()}
-                className={cn(SECTION_ICON_BUTTON, "print:hidden")}
+                className={cn(SECTION_ICON_BUTTON, "max-md:h-8 max-md:w-8 print:hidden")}
                 title="Adicionar leito extra"
               >
                 <Plus className={SECTION_ICON} />
@@ -318,13 +319,13 @@ export function SectorSection({
                 variant="outline"
                 size="icon"
                 onClick={onPrintSector}
-                className={cn(SECTION_ICON_BUTTON, "print:hidden")}
+                className={cn(SECTION_ICON_BUTTON, "max-md:h-8 max-md:w-8 print:hidden")}
                 title="Imprimir setor"
               >
                 <Printer className={SECTION_ICON} />
               </Button>
             )}
-            <div className="flex items-center justify-center h-9 min-w-[2.25rem] px-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:min-w-[1.5rem]">
+            <div className="flex items-center justify-center h-8 md:h-9 min-w-[2rem] md:min-w-[2.25rem] px-2 bg-card/80 backdrop-blur-sm rounded-lg border border-border/50 print:h-6 print:min-w-[1.5rem]">
               <p className="text-base font-bold text-foreground print:text-[10px]">
                 {isFixedBedSector ? sortedPatients.filter(p => !p.isVacant).length : patients.length}
                 {isFixedBedSector && (
