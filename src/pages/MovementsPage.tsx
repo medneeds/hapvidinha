@@ -592,7 +592,7 @@ export default function MovementsPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-2 pt-2">
+              <div className="flex flex-col sm:flex-row gap-2 pt-2">
                 <Button
                   onClick={handleApplyFilters}
                   className="flex-1 uppercase font-semibold"
@@ -615,18 +615,18 @@ export default function MovementsPage() {
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="all">
-                Todas <Badge variant="secondary" className="ml-2">{counts.all}</Badge>
+            <TabsList className="flex w-full justify-start overflow-x-auto md:grid md:grid-cols-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <TabsTrigger value="all" className="shrink-0 px-2.5 md:px-3">
+                Todas <Badge variant="secondary" className="ml-1.5 md:ml-2">{counts.all}</Badge>
               </TabsTrigger>
-              <TabsTrigger value="ALTA">
-                Altas <Badge variant="secondary" className="ml-2">{counts.ALTA}</Badge>
+              <TabsTrigger value="ALTA" className="shrink-0 px-2.5 md:px-3">
+                Altas <Badge variant="secondary" className="ml-1.5 md:ml-2">{counts.ALTA}</Badge>
               </TabsTrigger>
-              <TabsTrigger value="ÓBITO">
-                Óbitos <Badge variant="secondary" className="ml-2">{counts.ÓBITO}</Badge>
+              <TabsTrigger value="ÓBITO" className="shrink-0 px-2.5 md:px-3">
+                Óbitos <Badge variant="secondary" className="ml-1.5 md:ml-2">{counts.ÓBITO}</Badge>
               </TabsTrigger>
-              <TabsTrigger value="TRANSFERÊNCIA">
-                Transferências <Badge variant="secondary" className="ml-2">{counts.TRANSFERÊNCIA}</Badge>
+              <TabsTrigger value="TRANSFERÊNCIA" className="shrink-0 px-2.5 md:px-3">
+                Transferências <Badge variant="secondary" className="ml-1.5 md:ml-2">{counts.TRANSFERÊNCIA}</Badge>
               </TabsTrigger>
             </TabsList>
 

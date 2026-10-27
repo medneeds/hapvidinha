@@ -148,10 +148,10 @@ export default function DocumentsPage() {
   return (
     <div className="bg-gradient-to-br from-background via-background to-muted/20">
       <AppPageHeader title="Documentos" icon={FileText} />
-      <div className="p-6 md:p-8 space-y-8 max-w-7xl">
+      <div className="px-3 py-4 sm:p-6 md:p-8 space-y-4 sm:space-y-8 max-w-7xl">
         {/* Header */}
         <div className="space-y-2">
-          <p className="text-muted-foreground text-lg uppercase">
+          <p className="text-muted-foreground text-sm md:text-lg uppercase">
             Central de documentos médicos institucionais
           </p>
           <Badge variant="secondary" className="mt-2">
@@ -162,7 +162,7 @@ export default function DocumentsPage() {
 
         {/* Search Bar */}
         <Card className="border-primary/20 shadow-lg">
-          <CardContent className="p-6">
+          <CardContent className="p-3 md:p-6">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -170,7 +170,7 @@ export default function DocumentsPage() {
                 placeholder="Buscar documentos por categoria ou descrição..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-14 text-base bg-background/50 border-border/50 focus:border-primary transition-all"
+                className="pl-12 h-11 md:h-14 text-base bg-background/50 border-border/50 focus:border-primary transition-all"
               />
             </div>
           </CardContent>
@@ -188,16 +188,16 @@ export default function DocumentsPage() {
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-          <CardContent className="p-6 flex items-center gap-5 relative z-10">
+          <CardContent className="p-4 md:p-6 flex flex-wrap md:flex-nowrap items-center gap-3 md:gap-5 relative z-10">
             <div className="relative flex-shrink-0">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <Sparkles className="h-8 w-8 text-primary animate-[pulse_3s_ease-in-out_infinite]" />
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Sparkles className="h-6 w-6 md:h-8 md:w-8 text-primary animate-[pulse_3s_ease-in-out_infinite]" />
               </div>
               <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-primary animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h3 className="font-bold text-base md:text-lg leading-tight text-foreground group-hover:text-primary transition-colors">
                   Modelo de Admissão / Evolução
                 </h3>
                 <Badge className="bg-primary/15 text-primary border-primary/30 text-[10px]">
@@ -208,7 +208,7 @@ export default function DocumentsPage() {
                 Modelo institucional padronizado para admissão e evolução médica
               </p>
             </div>
-            <Button variant="outline" size="sm" className="gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all flex-shrink-0">
+            <Button variant="outline" size="sm" className="gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all flex-shrink-0 w-full md:w-auto">
               <Download className="h-4 w-4" />
               Download
             </Button>
@@ -226,15 +226,15 @@ export default function DocumentsPage() {
           }}
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <CardContent className="p-6 flex items-center gap-5 relative z-10">
+          <CardContent className="p-4 md:p-6 flex flex-wrap md:flex-nowrap items-center gap-3 md:gap-5 relative z-10">
             <div className="relative flex-shrink-0">
-              <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <Activity className="h-8 w-8 text-cyan-500" />
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Activity className="h-6 w-6 md:h-8 md:w-8 text-cyan-500" />
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-bold text-lg text-foreground group-hover:text-cyan-600 transition-colors">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h3 className="font-bold text-base md:text-lg leading-tight text-foreground group-hover:text-cyan-600 transition-colors">
                   Evolução Médica UTI Adulto
                 </h3>
                 <Badge className="bg-cyan-500/15 text-cyan-600 border-cyan-500/30 text-[10px]">
@@ -245,7 +245,7 @@ export default function DocumentsPage() {
                 Modelo institucional estruturado para evolução médica diária da UTI Adulto
               </p>
             </div>
-            <Button variant="outline" size="sm" className="gap-2 group-hover:bg-cyan-500 group-hover:text-white group-hover:border-cyan-500 transition-all flex-shrink-0">
+            <Button variant="outline" size="sm" className="gap-2 group-hover:bg-cyan-500 group-hover:text-white group-hover:border-cyan-500 transition-all flex-shrink-0 w-full md:w-auto">
               <Download className="h-4 w-4" />
               Download
             </Button>
@@ -263,15 +263,15 @@ export default function DocumentsPage() {
           }}
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <CardContent className="p-6 flex items-center gap-5 relative z-10">
+          <CardContent className="p-4 md:p-6 flex flex-wrap md:flex-nowrap items-center gap-3 md:gap-5 relative z-10">
             <div className="relative flex-shrink-0">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <FileCheck className="h-8 w-8 text-emerald-500" />
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <FileCheck className="h-6 w-6 md:h-8 md:w-8 text-emerald-500" />
               </div>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <h3 className="font-bold text-lg text-foreground group-hover:text-emerald-600 transition-colors">
+                <h3 className="font-bold text-base md:text-lg leading-tight text-foreground group-hover:text-emerald-600 transition-colors">
                   Termo de Consentimento Livre e Esclarecido
                 </h3>
                 <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 text-[10px]">
@@ -282,7 +282,7 @@ export default function DocumentsPage() {
                 Termo geral de consentimento do paciente ou responsável legal (PDF para impressão)
               </p>
             </div>
-            <Button variant="outline" size="sm" className="gap-2 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all flex-shrink-0">
+            <Button variant="outline" size="sm" className="gap-2 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all flex-shrink-0 w-full md:w-auto">
               <Download className="h-4 w-4" />
               Download
             </Button>
@@ -290,7 +290,7 @@ export default function DocumentsPage() {
         </Card>
 
         {/* Documents Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {filteredDocuments.length === 0 ? (
             <Card className="col-span-full border-dashed">
               <CardContent className="flex flex-col items-center justify-center py-16">
@@ -309,14 +309,14 @@ export default function DocumentsPage() {
                 onClick={() => navigate(doc.route)}
               >
                 <CardContent className="p-0">
-                  <div className="p-6 space-y-4">
+                  <div className="p-4 md:p-6 space-y-3 md:space-y-4">
                     {/* Icon and Title */}
                     <div className="flex items-start gap-4">
-                      <div className={`flex-shrink-0 w-14 h-14 rounded-xl ${doc.bgColor} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                        <doc.icon className={`h-7 w-7 ${doc.color}`} />
+                      <div className={`flex-shrink-0 w-11 h-11 md:w-14 md:h-14 rounded-xl ${doc.bgColor} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                        <doc.icon className={`h-5 w-5 md:h-7 md:w-7 ${doc.color}`} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors mb-1">
+                        <h3 className="font-bold text-base md:text-lg leading-tight text-foreground group-hover:text-primary transition-colors mb-1">
                           {doc.title}
                         </h3>
                         <p className="text-sm text-muted-foreground line-clamp-2">
