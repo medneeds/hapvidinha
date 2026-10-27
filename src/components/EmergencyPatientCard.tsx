@@ -236,7 +236,7 @@ export function EmergencyPatientCard({
   const sector: Sector = patient.sector || "blue";
   const tone = CARD_TONE[sector] || CARD_TONE.blue;
 
-  const [isCollapsed, setIsCollapsed] = useState(forceCollapsed ?? false);
+  const [isCollapsed, setIsCollapsed] = useState(() => forceCollapsed ?? isMobileViewport());
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeColumn, setActiveColumn] = useState<UeColumn | null>(null);
   const [editingAdmission, setEditingAdmission] = useState(false);
