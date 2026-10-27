@@ -282,9 +282,20 @@ export function usePatients(department?: Department) {
     }
   };
 
-  const updatePatient = async (patientId: string, updates: Partial<Patient>) => {
-    try {
-      const currentPatient = patients.find(p => p.id === patientId);
+  const updatePatient = async (patientId: string, rawUpdates: Partial<Patient>) => {
+    const currentPatient = patientsRef.current.find(p => p.id === patientId);
+    // Persist only what actually changed (callers usually send the full patient).
+    const updates = getChangedPatientFields(currentPatient, rawUpdates);
+    if (Object.keys(updates).length === 0) return;
+
+    // Optimistic: show the edit immediately and make it the base for the next edit.
+    if (currentPatient) {
+      patientsRef.current = patientsRef.current.map(p => p.id === patientId ? { ...p, ...updates } : p);
+      setPatients(prev => prev.map(p => p.id === patientId ? { ...p, ...updates } : p));
+    }
+    pendingWritesRef.current.set(patientId, (pendingWritesRef.current.get(patientId) || 0) + 1);
+
+    const persist = async () => {
       const isProtectedUtiSlot = department === 'UTI' && isFixedUtiBed(currentPatient?.sector, currentPatient?.bedNumber);
       const dbUpdates: any = {};
       
