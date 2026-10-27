@@ -351,7 +351,7 @@ export function EmergencyPatientCard({
                           className="w-10 text-center"
                           colorVariant={sector}
                         />
-                        {patient.age && /^\d+$/.test(String(patient.age).trim()) && <span>{isPediatric ? "anos" : "anos"}</span>}
+                        {/^\d+$/.test(String(patient.age || "").replace(/\s*anos?\s*$/i, "").trim()) && <span>anos</span>}
                       </>
                     )}
                   </div>

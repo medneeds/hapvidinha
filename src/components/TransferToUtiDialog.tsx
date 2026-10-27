@@ -161,7 +161,7 @@ export function TransferToUtiDialog({ open, onOpenChange, patient, department, o
               ))}
             </ul>
             <p className="text-[11px] text-muted-foreground pt-1">
-              Na UTI: admissão hoje (DIH 0) e setor de origem "{originLabel}". O leito {patient.bedNumber} fica vago.
+              Na UTI: admissão hoje (DIH 0) e setor de origem "{originLabel}". O leito {patient.bedNumber} é liberado.
             </p>
           </div>
         </div>
