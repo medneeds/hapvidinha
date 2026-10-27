@@ -1,3 +1,4 @@
+import { isMobileViewport } from "@/hooks/use-mobile";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Patient } from "@/types/patient";
