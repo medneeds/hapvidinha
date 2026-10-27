@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus, FileEdit } from "lucide-react";
+import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus, FileEdit, FlaskConical } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -61,6 +61,7 @@ import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 type ColorVariant = 'blue' | 'yellow';
+type UtiColumn = 'diagnoses' | 'antecedentes' | 'exames' | 'condutas' | 'pendencias';
 
 const updateClinicalGlassPointer = (event: React.PointerEvent<HTMLDivElement>) => {
   if (event.pointerType === "touch") return;
@@ -162,7 +163,7 @@ export function UtiPatientCard({
       setIsCollapsed(forceCollapsed);
     }
   }, [forceCollapsed]);
-  const [activeColumn, setActiveColumn] = useState<'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias' | null>(null);
+  const [activeColumn, setActiveColumn] = useState<UtiColumn | null>(null);
 
   // SAFEGUARD C: Stabilize patient identity for async handlers so concurrent
   // realtime updates can't make handleMovementSuccess target a different bed.
@@ -334,8 +335,8 @@ export function UtiPatientCard({
   };
 
   // Tab navigation between columns: diagnoses → antecedentes → condutas → pendencias
-  const handleTabFromColumn = (column: 'diagnoses' | 'antecedentes' | 'condutas' | 'pendencias') => {
-    const columnOrder: ('diagnoses' | 'antecedentes' | 'condutas' | 'pendencias')[] = ['diagnoses', 'antecedentes', 'condutas', 'pendencias'];
+  const handleTabFromColumn = (column: UtiColumn) => {
+    const columnOrder: UtiColumn[] = ['diagnoses', 'antecedentes', 'exames', 'condutas', 'pendencias'];
     const currentIndex = columnOrder.indexOf(column);
     const nextIndex = (currentIndex + 1) % columnOrder.length;
     setActiveColumn(columnOrder[nextIndex]);
@@ -560,9 +561,9 @@ export function UtiPatientCard({
                 </div>
               </div>
 
-              {/* Row 2: 4 columns on desktop, 2x2 grid on mobile - Collapsible */}
+              {/* Row 2: 5 columns on desktop (Hipóteses · Antecedentes · Exames · Plano · Pendências), 2 per row on mobile */}
               {!isCollapsed && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
                   <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col1, patientSectionHover)}>
                     <InlineEditableArray
                       items={diagnosticos}
@@ -596,6 +597,21 @@ export function UtiPatientCard({
                       isActive={activeColumn === 'antecedentes'}
                       onTabPress={() => handleTabFromColumn('antecedentes')}
                       onEnterPress={() => setActiveColumn('antecedentes')}
+                      highlightColorVariant={colorVariant}
+                    />
+                  </div>
+                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col2, patientSectionHover)}>
+                    <InlineEditableArray
+                      items={exames}
+                      onUpdate={(items) => handleUpdateField("relevantExams", items)}
+                      label="Exames"
+                      icon={<FlaskConical className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
+                      iconColorClass={colors.col2Icon}
+                      alwaysShowAll
+                      fieldId="exames"
+                      isActive={activeColumn === 'exames'}
+                      onTabPress={() => handleTabFromColumn('exames')}
+                      onEnterPress={() => setActiveColumn('exames')}
                       highlightColorVariant={colorVariant}
                     />
                   </div>
