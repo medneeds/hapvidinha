@@ -595,7 +595,7 @@ export default function MovementsPage() {
               <div className="flex flex-col sm:flex-row gap-2 pt-2">
                 <Button
                   onClick={handleApplyFilters}
-                  className="flex-1 uppercase font-semibold"
+                  className="w-full sm:flex-1 uppercase font-semibold"
                   size="lg"
                 >
                   <Filter className="mr-2 h-4 w-4" />
@@ -604,7 +604,7 @@ export default function MovementsPage() {
                 <Button
                   variant="outline"
                   onClick={handleClearFilters}
-                  className="flex-1 uppercase"
+                  className="w-full sm:flex-1 uppercase"
                   size="lg"
                 >
                   Limpar Filtro
@@ -653,13 +653,13 @@ export default function MovementsPage() {
                   return (
                     <Card key={movement.id} className={`border ${config.color}`}>
                       <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex items-center gap-3 flex-1">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-start justify-between gap-2 sm:gap-4">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
                             <div className={`p-2 rounded-lg ${config.color} border`}>
                               <Icon className="h-5 w-5" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <CardTitle className="text-lg font-semibold">
+                              <CardTitle className="text-base md:text-lg font-semibold break-words">
                                 {movement.patient_name}
                               </CardTitle>
                               <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
@@ -675,7 +675,7 @@ export default function MovementsPage() {
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <Badge className={config.badgeColor}>
                               {config.label}
                             </Badge>
