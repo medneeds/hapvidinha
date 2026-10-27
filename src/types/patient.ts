@@ -54,7 +54,7 @@ export interface Patient {
   utiOriginSector?: string[];
   utiDailyConducts?: string[]; // Condutas instituídas do dia na UTI
   // PSM (Parecer de Solicitação Médica) status
-  psmStatus?: 'favoravel' | 'aguardando' | 'desfavoravel' | null;
+  psmStatus?: 'favoravel' | 'aguardando' | 'desfavoravel' | 'ir_para' | null;
   // Clinical status for UTI patients
   clinicalStatus?: 'gravissimo' | 'grave' | 'grave_estavel' | 'potencialmente_grave' | 'regular' | 'paliativado' | null;
   // UTI bed vacancy status
