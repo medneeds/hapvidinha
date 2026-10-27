@@ -29,6 +29,55 @@ import { CSS } from '@dnd-kit/utilities';
  */
 export type EditorColorVariant = 'blue' | 'yellow' | 'red' | 'outside';
 
+const HIGHLIGHT_STYLES: Record<EditorColorVariant, { bg: string; number: string; text: string; star: string }> = {
+  blue: {
+    bg: "bg-stable/[0.05] border border-stable/40 hover:bg-stable/10 hover:border-stable/60",
+    number: "text-stable",
+    text: "text-foreground font-semibold",
+    star: "fill-stable text-stable",
+  },
+  yellow: {
+    bg: "bg-warning/[0.05] border border-warning/40 hover:bg-warning/10 hover:border-warning/60",
+    number: "text-warning",
+    text: "text-foreground font-semibold",
+    star: "fill-warning text-warning",
+  },
+  red: {
+    bg: "bg-critical/[0.05] border border-critical/40 hover:bg-critical/10 hover:border-critical/60",
+    number: "text-critical",
+    text: "text-foreground font-semibold",
+    star: "fill-critical text-critical",
+  },
+  outside: {
+    bg: "bg-muted-foreground/[0.05] border border-muted-foreground/40 hover:bg-muted-foreground/10 hover:border-muted-foreground/60",
+    number: "text-muted-foreground",
+    text: "text-foreground font-semibold",
+    star: "fill-muted-foreground text-muted-foreground",
+  },
+};
+
+const SECTOR_ROW_HOVER: Record<EditorColorVariant, string> = {
+  blue: "hover:bg-stable/[0.07]",
+  yellow: "hover:bg-warning/[0.07]",
+  red: "hover:bg-critical/[0.07]",
+  outside: "hover:bg-muted-foreground/[0.07]",
+};
+
+const SECTOR_TEXT_HOVER: Record<EditorColorVariant, string> = {
+  blue: "hover:text-stable",
+  yellow: "hover:text-warning",
+  red: "hover:text-critical",
+  outside: "hover:text-foreground",
+};
+
+/** Hover tint for clickable inline values, in the sector colour. */
+export const SECTOR_FIELD_HOVER: Record<EditorColorVariant, string> = {
+  blue: "hover:bg-stable/[0.07] hover:text-stable",
+  yellow: "hover:bg-warning/[0.07] hover:text-warning",
+  red: "hover:bg-critical/[0.07] hover:text-critical",
+  outside: "hover:bg-muted-foreground/[0.07] hover:text-foreground",
+};
+
 // Sortable Item for drag-and-drop with optional highlight
 interface SortableItemProps {
   id: string;
@@ -112,28 +161,10 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     }
   };
 
-  // Highlight color styles — borda lateral sutil na cor do setor (tokens semânticos)
-  const highlightStyles = {
-    blue: {
-      bg: "bg-stable/[0.05] border border-stable/40 hover:bg-stable/10 hover:border-stable/60",
-      number: "text-stable",
-      text: "text-foreground font-semibold",
-      star: "fill-stable text-stable"
-    },
-    yellow: {
-      bg: "bg-warning/[0.05] border border-warning/40 hover:bg-warning/10 hover:border-warning/60",
-      number: "text-warning",
-      text: "text-foreground font-semibold",
-      star: "fill-warning text-warning"
-    }
-  };
-  const hStyles = highlightStyles[highlightColorVariant];
-  const sectorHover = highlightColorVariant === 'yellow'
-    ? "hover:bg-warning/[0.07]"
-    : "hover:bg-stable/[0.07]";
-  const sectorTextHover = highlightColorVariant === 'yellow'
-    ? "hover:text-warning"
-    : "hover:text-stable";
+  // Highlight color styles — borda sutil na cor do setor (tokens semânticos)
+  const hStyles = HIGHLIGHT_STYLES[highlightColorVariant];
+  const sectorHover = SECTOR_ROW_HOVER[highlightColorVariant];
+  const sectorTextHover = SECTOR_TEXT_HOVER[highlightColorVariant];
 
   return (
     <div 
