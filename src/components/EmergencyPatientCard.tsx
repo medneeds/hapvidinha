@@ -588,8 +588,8 @@ export function EmergencyPatientCard({
 
               {/* 5 colunas */}
               <SmoothCollapse open={!isCollapsed} className="!mt-0">
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-1.5 pt-1.5 md:pt-1">
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border bg-muted/30 border-border/60", SECTION_GLASS[sector])}>
+                <div className="grid grid-cols-2 md:grid-cols-[1.15fr_1fr_1fr_1.15fr_1.5fr] gap-y-1.5 md:gap-y-0 pt-1">
+                  <div className={cn(COLUMN_CELL, COLUMN_HOVER[sector])}>
                     <InlineEditableArray
                       items={patient.diagnoses || []}
                       onUpdate={(items) => update({ diagnoses: items })}
@@ -597,6 +597,7 @@ export function EmergencyPatientCard({
                       icon={<Stethoscope className="h-2.5 w-2.5 text-muted-foreground" />}
                       iconColorClass="text-muted-foreground hover:text-foreground"
                       alwaysShowAll
+                      compact
                       highlightedIndices={patient.highlightedDiagnoses || []}
                       onUpdateHighlights={(indices) => update({ highlightedDiagnoses: indices })}
                       onUpdateBoth={(items, highlights) => update({ diagnoses: items, highlightedDiagnoses: highlights })}
@@ -607,7 +608,7 @@ export function EmergencyPatientCard({
                       highlightColorVariant={sector}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border bg-muted/30 border-border/60", SECTION_GLASS[sector])}>
+                  <div className={cn(COLUMN_CELL, COLUMN_HOVER[sector])}>
                     <InlineEditableArray
                       items={patient.medicalHistory || []}
                       onUpdate={(items) => update({ medicalHistory: items })}
@@ -615,6 +616,7 @@ export function EmergencyPatientCard({
                       icon={<Activity className="h-2.5 w-2.5 text-muted-foreground" />}
                       iconColorClass="text-muted-foreground hover:text-foreground"
                       alwaysShowAll
+                      compact
                       highlightedIndices={patient.highlightedMedicalHistory || []}
                       onUpdateHighlights={(indices) => update({ highlightedMedicalHistory: indices })}
                       onUpdateBoth={(items, highlights) => update({ medicalHistory: items, highlightedMedicalHistory: highlights })}
@@ -625,7 +627,7 @@ export function EmergencyPatientCard({
                       highlightColorVariant={sector}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border bg-muted/30 border-border/60", SECTION_GLASS[sector])}>
+                  <div className={cn(COLUMN_CELL, COLUMN_HOVER[sector])}>
                     <InlineEditableArray
                       items={patient.relevantExams || []}
                       onUpdate={(items) => update({ relevantExams: items })}
@@ -644,6 +646,7 @@ export function EmergencyPatientCard({
                         </Button>
                       ) : undefined}
                       alwaysShowAll
+                      compact
                       fieldId="exames"
                       isActive={activeColumn === "exames"}
                       onTabPress={() => handleTab("exames")}
@@ -651,7 +654,7 @@ export function EmergencyPatientCard({
                       highlightColorVariant={sector}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border bg-muted/30 border-border/60", SECTION_GLASS[sector])}>
+                  <div className={cn(COLUMN_CELL, COLUMN_HOVER[sector])}>
                     <InlineEditableArray
                       items={patient.utiDailyConducts || []}
                       onUpdate={(items) => update({ utiDailyConducts: items })}
@@ -659,6 +662,7 @@ export function EmergencyPatientCard({
                       icon={<FileText className="h-2.5 w-2.5 text-muted-foreground" />}
                       iconColorClass="text-muted-foreground hover:text-foreground"
                       alwaysShowAll
+                      compact
                       highlightedIndices={patient.highlightedConducts || []}
                       onUpdateHighlights={(indices) => update({ highlightedConducts: indices })}
                       onUpdateBoth={(items, highlights) => update({ utiDailyConducts: items, highlightedConducts: highlights })}
@@ -669,7 +673,7 @@ export function EmergencyPatientCard({
                       highlightColorVariant={sector}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border bg-muted/30 border-border/60", SECTION_GLASS[sector])}>
+                  <div className={cn(COLUMN_CELL, COLUMN_HOVER[sector])}>
                     <InlineEditableArray
                       items={patient.pendencies || []}
                       onUpdate={(items) => update({ pendencies: items })}
@@ -703,6 +707,7 @@ export function EmergencyPatientCard({
                         );
                       }}
                       alwaysShowAll
+                      compact
                       highlightedIndices={patient.highlightedPendencies || []}
                       onUpdateHighlights={(indices) => update({ highlightedPendencies: indices })}
                       onUpdateBoth={(items, highlights) => update({ pendencies: items, highlightedPendencies: highlights })}

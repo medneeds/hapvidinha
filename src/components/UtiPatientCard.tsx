@@ -563,8 +563,8 @@ export function UtiPatientCard({
 
               {/* Row 2: 5 columns on desktop (Hipóteses · Antecedentes · Exames · Plano · Pendências), 2 per row on mobile */}
               <SmoothCollapse open={!isCollapsed} className="!mt-0">
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-1.5 pt-1.5 md:pt-1">
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col1, patientSectionHover)}>
+                <div className="grid grid-cols-2 md:grid-cols-[1.15fr_1fr_1fr_1.15fr_1.5fr] gap-y-1.5 md:gap-y-0 pt-1">
+                  <div className={cn(COLUMN_CELL, columnHover)}>
                     <InlineEditableArray
                       items={diagnosticos}
                       onUpdate={(items) => handleUpdateField("diagnoses", items)}
@@ -572,6 +572,7 @@ export function UtiPatientCard({
                       icon={<Stethoscope className={cn("h-2.5 w-2.5", colors.col1Icon)} />}
                       iconColorClass={colors.col1Icon}
                       alwaysShowAll
+                      compact
                       highlightedIndices={patient.highlightedDiagnoses || []}
                       onUpdateHighlights={(indices) => handleUpdateField("highlightedDiagnoses", indices)}
                       onUpdateBoth={(items, highlights) => handleUpdateBothFields("diagnoses", items, "highlightedDiagnoses", highlights)}
@@ -582,7 +583,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col2, patientSectionHover)}>
+                  <div className={cn(COLUMN_CELL, columnHover)}>
                     <InlineEditableArray
                       items={antecedentes}
                       onUpdate={(items) => handleUpdateField("medicalHistory", items)}
@@ -590,6 +591,7 @@ export function UtiPatientCard({
                       icon={<Activity className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
                       iconColorClass={colors.col2Icon}
                       alwaysShowAll
+                      compact
                       highlightedIndices={patient.highlightedMedicalHistory || []}
                       onUpdateHighlights={(indices) => handleUpdateField("highlightedMedicalHistory", indices)}
                       onUpdateBoth={(items, highlights) => handleUpdateBothFields("medicalHistory", items, "highlightedMedicalHistory", highlights)}
@@ -600,7 +602,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col2, patientSectionHover)}>
+                  <div className={cn(COLUMN_CELL, columnHover)}>
                     <InlineEditableArray
                       items={exames}
                       onUpdate={(items) => handleUpdateField("relevantExams", items)}
@@ -608,6 +610,7 @@ export function UtiPatientCard({
                       icon={<FlaskConical className={cn("h-2.5 w-2.5", colors.col2Icon)} />}
                       iconColorClass={colors.col2Icon}
                       alwaysShowAll
+                      compact
                       fieldId="exames"
                       isActive={activeColumn === 'exames'}
                       onTabPress={() => handleTabFromColumn('exames')}
@@ -615,7 +618,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col3, patientSectionHover)}>
+                  <div className={cn(COLUMN_CELL, columnHover)}>
                     <InlineEditableArray
                       items={condutasDia}
                       onUpdate={(items) => handleUpdateField("utiDailyConducts", items)}
@@ -623,6 +626,7 @@ export function UtiPatientCard({
                       icon={<FileText className={cn("h-2.5 w-2.5", colors.col3Icon)} />}
                       iconColorClass={colors.col3Icon}
                       alwaysShowAll
+                      compact
                       highlightedIndices={patient.highlightedConducts || []}
                       onUpdateHighlights={(indices) => handleUpdateField("highlightedConducts", indices)}
                       onUpdateBoth={(items, highlights) => handleUpdateBothFields("utiDailyConducts", items, "highlightedConducts", highlights)}
@@ -633,7 +637,7 @@ export function UtiPatientCard({
                       highlightColorVariant={colorVariant}
                     />
                   </div>
-                  <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col4, patientSectionHover)}>
+                  <div className={cn(COLUMN_CELL, columnHover)}>
                     <InlineEditableArray
                       items={pendencias}
                       onUpdate={(items) => handleUpdateField("pendencies", items)}
@@ -641,6 +645,7 @@ export function UtiPatientCard({
                       icon={<ClipboardList className={cn("h-2.5 w-2.5", colors.col4Icon)} />}
                       iconColorClass={colors.col4Icon}
                       alwaysShowAll
+                      compact
                       highlightedIndices={patient.highlightedPendencies || []}
                       onUpdateHighlights={(indices) => handleUpdateField("highlightedPendencies", indices)}
                       onUpdateBoth={(items, highlights) => handleUpdateBothFields("pendencies", items, "highlightedPendencies", highlights)}
