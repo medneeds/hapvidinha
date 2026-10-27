@@ -1,5 +1,12 @@
-# Roadmap
+# Roadmap — UE no estilo da UTI + transferência UE → UTI
 
-## Concluído
-- [x] Reorganizar cabeçalho: MINHA CONTA movida para a direita (avatar de iniciais) + ThemeToggle global no cluster direito; bloco duplicado de nome/Sair do MAPA removido; reserva de espaço à direita em AppPageHeader e Index; menu hambúrguer único no mobile (tema dentro do menu).
-- [x] Sobreposição de camadas no cabeçalho: resolvida com a reestruturação — validado via Playwright, sem camadas duplas/ghosting no desktop e sem colisão no mobile.
+- [x] Extrair editores inline (colunas, campos) para módulo compartilhado
+- [x] UTI: coluna Exames (5 colunas, Tab na nova ordem; sai do "Clínico")
+- [x] Formatador TPS (min/h/d) + teste
+- [x] Novo cartão da UE (identificação, 5 colunas, área expandida, menu de ações)
+- [x] Trocar cartão na UE Adulto e Pediátrica
+- [x] Função do banco transfer_patient_to_uti (atômica, médico/admin)
+- [x] Diálogo "Transferir para UTI" — só UE Adulto
+- [x] Testes: TPS, PSM, rótulos/leitos da transferência; simulação da função no banco (desfeita)
+- [x] Verificação na prévia (UE claro/escuro e UTI)
+- [ ] Próxima etapa (fora do escopo aprovado): impressão/PDF da UE no novo layout

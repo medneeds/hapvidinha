@@ -2,3 +2,6 @@
 
 - Patient edits go through `usePatients.updatePatient`, which applies them locally first, persists only changed fields (`getChangedPatientFields`) and queues saves per patient; background refetch/realtime must not overwrite a patient with saves in flight. Why: full-object saves without this caused quick successive entries to overwrite each other.
 - Releasing a vacant bed for a new patient must go through `releaseBedForFilling` / `RELEASED_BED_FIELDS` (`src/utils/releaseBed.ts`). Why: toggling `isVacant` alone brought back the previous occupant's birth date and admission dates.
+- UE and UTI patient cards share the inline editors in `src/components/patient-card/InlineEditors.tsx`; UE wards render `EmergencyPatientCard` (the old `PatientCard.tsx` is kept only as reference until the new card is validated). Why: one editing behaviour across sectors makes UE→UTI transfer 1:1.
+- UE→UTI transfer runs only through the `transfer_patient_to_uti` database function (copy to the UTI bed, free the UE bed, log the movement in one transaction). Why: a partial client-side transfer could duplicate or lose a patient.
+- Browser checks against the preview must block every write request and fulfil it immediately (never delay inside the route handler). Why: a delayed handler let a test write reach real patient data when the browser closed.

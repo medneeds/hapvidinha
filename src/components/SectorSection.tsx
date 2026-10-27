@@ -2,7 +2,7 @@ import { Patient, SectorType } from "@/types/patient";
 import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
 import { getFixedBedCount } from "@/utils/bedCapacityStore";
 import { useDepartment } from "@/contexts/DepartmentContext";
-import { PatientCard } from "./PatientCard";
+import { EmergencyPatientCard } from "./EmergencyPatientCard";
 import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
@@ -134,7 +134,7 @@ function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectio
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <PatientCard
+        <EmergencyPatientCard
           patient={patient}
           onUpdate={onUpdate}
           onDelete={onDelete}
