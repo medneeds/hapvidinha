@@ -525,7 +525,7 @@ export function UtiPatientCard({
                 </div>
                 
                 {/* Patient Name + Birth Date + Age - Flexible grow */}
-                <div className="flex-1 flex items-baseline gap-x-2 gap-y-0.5 md:gap-3 min-w-0 flex-wrap">
+                <div className="flex-1 max-md:basis-full max-md:order-1 flex items-baseline gap-x-2 gap-y-0.5 md:gap-3 min-w-0 flex-wrap">
                   {namesHidden ? (
                     <span className="text-xs md:text-sm font-semibold break-words basis-full md:basis-auto tracking-widest opacity-70">{displayName}</span>
                   ) : (
@@ -575,12 +575,12 @@ export function UtiPatientCard({
                   </div>
                 </div>
                 {/* Ações (celular): no canto da linha do paciente */}
-                <div className="md:hidden ml-auto self-start flex items-center gap-0.5 shrink-0 print:hidden">
+                <div className="md:hidden ml-auto flex items-center gap-0.5 shrink-0 print:hidden">
                   {actionControls}
                 </div>
 
                 {/* Mobile: Chips wrap to second line */}
-                <div className="flex items-center gap-1 flex-wrap md:flex-nowrap w-full md:w-auto mt-1 md:mt-0">
+                <div className="max-md:order-2 flex items-center gap-1 flex-wrap md:flex-nowrap w-full md:w-auto mt-0.5 md:mt-0">
                   {/* Clinical Status indicator removido a pedido do usuário */}
 
 

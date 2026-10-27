@@ -576,7 +576,7 @@ export function EmergencyPatientCard({
                 <BedResponsibilityChip patient={patient} onOpenResponsibility={() => canEdit && setResponsibilityOpen(true)} />
 
                 {/* Nome + DN + idade */}
-                <div className="flex-1 flex items-center gap-x-2 gap-y-0.5 md:gap-3 min-w-0 flex-wrap">
+                <div className="flex-1 max-md:basis-full max-md:order-1 flex items-center gap-x-2 gap-y-0.5 md:gap-3 min-w-0 flex-wrap">
                   {/* Celular: nome ocupa a linha inteira; no computador o wrapper some (md:contents) */}
                   <div className="flex w-full min-w-0 items-center gap-1 md:contents">
                   {isPalliative && <PalliativeButterflyIcon />}
@@ -662,12 +662,12 @@ export function EmergencyPatientCard({
                   )}
                 </div>
                 {/* Ações (celular): no canto da linha do paciente */}
-                <div className="md:hidden ml-auto self-start flex items-center gap-0.5 shrink-0 print:hidden">
+                <div className="md:hidden ml-auto flex items-center gap-0.5 shrink-0 print:hidden">
                   {actionControls}
                 </div>
 
                 {/* TPS · ADM emergência · PSM */}
-                <div className="flex items-center gap-1 flex-wrap md:flex-nowrap w-full md:w-auto mt-1 md:mt-0">
+                <div className="max-md:order-2 flex items-center gap-1 flex-wrap md:flex-nowrap w-full md:w-auto mt-0.5 md:mt-0">
                   <div
                     className={cn(
                       "shrink-0 flex items-center justify-center gap-1 min-w-[84px] px-2 py-0.5 rounded-md border",
