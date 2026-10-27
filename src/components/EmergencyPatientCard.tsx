@@ -20,7 +20,7 @@ import {
   Edit, FileEdit, FileText, FlaskConical, FolderOpen, MoreVertical, Printer, Shuffle, Skull,
   Stethoscope, Trash2, TrendingUp, Utensils, X,
 } from "lucide-react";
-import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SECTOR_FIELD_HOVER } from "@/components/patient-card/InlineEditors";
+import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SECTOR_FIELD_HOVER, SmoothCollapse, COLLAPSIBLE_CONTENT_MOTION } from "@/components/patient-card/InlineEditors";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { PatientReportDialog } from "./PatientReportDialog";
@@ -432,8 +432,8 @@ export function EmergencyPatientCard({
               </div>
 
               {/* 5 colunas */}
-              {!isCollapsed && (
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+              <SmoothCollapse open={!isCollapsed} className="!mt-0">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-1.5 pt-1.5 md:pt-1">
                   <div className={cn("rounded-lg p-1 md:p-1.5 border bg-muted/30 border-border/60", SECTION_GLASS[sector])}>
                     <InlineEditableArray
                       items={patient.diagnoses || []}
@@ -522,7 +522,7 @@ export function EmergencyPatientCard({
                     />
                   </div>
                 </div>
-              )}
+              </SmoothCollapse>
             </div>
 
             {/* Ações */}
@@ -666,7 +666,7 @@ export function EmergencyPatientCard({
           </div>
 
           {/* Área expandida: história admissional + administrativo */}
-          <CollapsibleContent>
+          <CollapsibleContent className={COLLAPSIBLE_CONTENT_MOTION}>
             <div className={cn("border-t border-border/30 p-3 space-y-3 bg-muted/5", !canEdit && "[&_.cursor-pointer]:pointer-events-none")}>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
