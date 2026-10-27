@@ -658,7 +658,7 @@ export function UtiPatientCard({
 
               {/* Row 2: 5 columns on desktop (Hipóteses · Antecedentes · Exames · Plano · Pendências), 2 per row on mobile */}
               <SmoothCollapse open={!isCollapsed} className="!mt-0">
-                <div className="grid grid-cols-2 md:grid-cols-[1.15fr_1fr_1fr_1.15fr_1.5fr] gap-y-1.5 md:gap-y-0 pt-1">
+                <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr_1fr_1.15fr_1.5fr] gap-y-0 pt-1">
                   <div className={cn(COLUMN_CELL, columnHover)}>
                     <InlineEditableArray
                       items={diagnosticos}
