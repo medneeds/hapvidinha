@@ -390,27 +390,33 @@ export function usePatients(department?: Department) {
     const task = previous.catch(() => undefined).then(persist);
     writeQueueRef.current.set(patientId, task.catch(() => undefined));
 
+    const finishWrite = () => {
+      const left = Math.max(0, (pendingWritesRef.current.get(patientId) || 1) - 1);
+      if (left === 0) pendingWritesRef.current.delete(patientId);
+      else pendingWritesRef.current.set(patientId, left);
+      return left;
+    };
+
     try {
       await task;
+      finishWrite();
+      lastWriteAtRef.current.set(patientId, Date.now());
       toast({
         title: "Paciente atualizado",
         description: "As informações foram salvas com sucesso.",
       });
     } catch (error) {
       console.error('Error updating patient:', error);
+      const left = finishWrite();
+      lastWriteAtRef.current.delete(patientId);
       toast({
         title: "Erro ao atualizar",
         description: "Não foi possível salvar as alterações.",
         variant: "destructive",
       });
       // Resync with what is really stored so the screen never shows unsaved data.
-      pendingWritesRef.current.set(patientId, Math.max(0, (pendingWritesRef.current.get(patientId) || 1) - 1));
-      lastWriteAtRef.current.delete(patientId);
-      fetchPatients();
+      if (left === 0) fetchPatients();
       throw error;
-    } finally {
-      const left = Math.max(0, (pendingWritesRef.current.get(patientId) || 0) - (pendingWritesRef.current.has(patientId) ? 0 : 0));
-      void left;
     }
   };
 
