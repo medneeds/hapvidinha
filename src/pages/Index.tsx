@@ -1511,7 +1511,7 @@ const Index = () => {
                           <CollapsibleTrigger asChild>
                             <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                               <ChevronDown className={`h-5 w-5 transition-transform ${isOutsideSectionOpen ? '' : '-rotate-90'}`} />
-                              <h2 className="text-lg font-bold text-foreground uppercase">Fora das Alas</h2>
+                              <h2 className="text-sm md:text-lg font-bold text-foreground uppercase">Fora das Alas</h2>
                             </button>
                           </CollapsibleTrigger>
                           <div className="flex items-center gap-2">
