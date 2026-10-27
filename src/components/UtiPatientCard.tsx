@@ -525,15 +525,15 @@ export function UtiPatientCard({
                 </div>
                 
                 {/* Patient Name + Birth Date + Age - Flexible grow */}
-                <div className="flex-1 flex items-baseline gap-2 md:gap-3 min-w-0 flex-wrap">
+                <div className="flex-1 flex items-baseline gap-x-2 gap-y-0.5 md:gap-3 min-w-0 flex-wrap">
                   {namesHidden ? (
-                    <span className="text-xs md:text-sm font-semibold truncate tracking-widest opacity-70">{displayName}</span>
+                    <span className="text-xs md:text-sm font-semibold break-words basis-full md:basis-auto tracking-widest opacity-70">{displayName}</span>
                   ) : (
                     <InlineEditableField
                       value={patient.name}
                       onUpdate={(v) => handleUpdateField("name", v)}
                       placeholder="NOME DO PACIENTE"
-                      className="text-xs md:text-sm font-semibold truncate"
+                      className="text-xs md:text-sm font-semibold break-words basis-full md:basis-auto"
                     colorVariant={colorVariant}
                     />
                   )}
@@ -623,7 +623,7 @@ export function UtiPatientCard({
                   </div>
 
                   {/* UTI Admission Date */}
-                  <div className={cn("hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
+                  <div className={cn("flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
                     <span className="text-[9px]">Admissão UTI:</span>
                     <InlineEditableField
                       value={patient.utiAdmissionDate?.[0] || ""}
@@ -635,7 +635,7 @@ export function UtiPatientCard({
                   </div>
 
                   {/* Discharge Prediction */}
-                  <div className={cn("hidden md:flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
+                  <div className={cn("flex shrink-0 items-center gap-1 text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-transparent transition-colors", patientDataHover)}>
                     <span className="text-[9px]">Previsão de Alta:</span>
                     <InlineEditableField
                       value={previsaoAlta[0] || ""}
