@@ -91,9 +91,11 @@ interface SortableItemProps {
   onKeyDown?: (e: React.KeyboardEvent) => void;
   autoFocus?: boolean;
   highlightColorVariant?: EditorColorVariant;
+  /** Extra always-visible action(s) for this item (e.g. PSM status cycle on UE pendencies). */
+  extraActions?: React.ReactNode;
 }
 
-function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus, highlightColorVariant = 'blue' }: SortableItemProps) {
+function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus, highlightColorVariant = 'blue', extraActions }: SortableItemProps) {
   const [isEditing, setIsEditing] = useState(autoFocus || false);
   const [localValue, setLocalValue] = useState(value);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -221,6 +223,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
           >
             {value}
           </span>
+          {extraActions}
           {onToggleHighlight && (
             <Button
               size="icon"
@@ -278,6 +281,10 @@ interface InlineEditableArrayProps {
   isActive?: boolean;
   iconColorClass?: string;
   highlightColorVariant?: EditorColorVariant;
+  /** Extra buttons in the column header, next to "+" (UE only: quick templates, exam curves). */
+  headerActions?: React.ReactNode;
+  /** Extra per-item action (UE only: PSM status cycle). */
+  renderItemActions?: (item: string, index: number) => React.ReactNode;
 }
 
 export function InlineEditableArray({ 
@@ -298,7 +305,9 @@ export function InlineEditableArray({
   fieldId,
   isActive,
   iconColorClass = "text-primary/60 hover:text-primary",
-  highlightColorVariant = 'blue'
+  highlightColorVariant = 'blue',
+  headerActions,
+  renderItemActions,
 }: InlineEditableArrayProps) {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
@@ -467,17 +476,21 @@ export function InlineEditableArray({
               <Badge variant="secondary" className="h-3.5 px-1 text-[9px] font-medium">{items.length}</Badge>
             )}
           </div>
-          <Button
-            size="icon"
-            variant="ghost"
-            className={cn("h-4 w-4", iconColorClass)}
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsAddingNew(true);
-            }}
-          >
-            <Plus className="h-3 w-3" />
-          </Button>
+          <div className="flex items-center gap-0.5">
+            {headerActions}
+            <Button
+              size="icon"
+              variant="ghost"
+              className={cn("h-4 w-4", iconColorClass)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsAddingNew(true);
+              }}
+              title="Adicionar item"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+          </div>
         </div>
       )}
       
@@ -524,6 +537,7 @@ export function InlineEditableArray({
                     onToggleHighlight={onUpdateHighlights ? () => toggleHighlight(realIdx) : undefined}
                     onKeyDown={handleItemKeyDown}
                     highlightColorVariant={highlightColorVariant}
+                    extraActions={renderItemActions?.(item, realIdx)}
                   />
                 );
               })}
