@@ -709,7 +709,7 @@ function InlineEditableField({ value, onUpdate, placeholder = "-", className, co
         type="text"
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value.toUpperCase())}
-        className={cn("bg-background border border-primary/30 rounded px-1.5 py-0.5 outline-none text-sm w-full uppercase", className)}
+        className={cn("bg-background text-foreground caret-primary border border-primary/50 rounded px-1.5 py-0.5 outline-none text-sm w-full uppercase focus:border-primary focus:ring-2 focus:ring-primary/20", className)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleSave();
           if (e.key === 'Escape') setIsEditing(false);
@@ -731,7 +731,7 @@ function InlineEditableField({ value, onUpdate, placeholder = "-", className, co
         setIsEditing(true);
       }}
     >
-      {value || <span className="text-muted-foreground/50">{placeholder}</span>}
+      {value || <span className="text-muted-foreground">{placeholder}</span>}
     </span>
   );
 }

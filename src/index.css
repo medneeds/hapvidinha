@@ -1065,6 +1065,20 @@ input:-webkit-autofill:active {
   opacity: 1 !important;
 }
 
+/* Cards that are white only in light mode (e.g. UTI patient cards: bg-white dark:bg-slate-900)
+   must follow the theme text color in dark mode — otherwise typed text turns dark-on-dark. */
+.dark .bg-white[class*="dark:bg-"]:not([class*="dark:bg-white"]) :is(input, textarea) {
+  color: hsl(var(--foreground)) !important;
+  -webkit-text-fill-color: hsl(var(--foreground)) !important;
+  caret-color: hsl(var(--foreground)) !important;
+}
+
+.dark .bg-white[class*="dark:bg-"]:not([class*="dark:bg-white"]) :is(input, textarea)::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
+  -webkit-text-fill-color: hsl(var(--muted-foreground)) !important;
+  opacity: 1 !important;
+}
+
 /* Ensure select values are visible on white backgrounds */
 .bg-white [data-radix-select-trigger] span {
   color: #111827 !important;
