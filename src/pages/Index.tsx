@@ -128,6 +128,7 @@ interface SortableOutsidePatientCardProps {
   onTransfer?: (patientId: string, newSector: Patient['sector'], targetBedNumber?: string, vacantPlaceholderId?: string) => void;
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
+  forceCollapsed?: boolean;
 }
 
 function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
@@ -1513,6 +1514,17 @@ const Index = () => {
                             </button>
                           </CollapsibleTrigger>
                           <div className="flex items-center gap-2">
+                            {outsidePatients.some((p) => !p.isVacant) && (
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => setOutsideCardsCollapsed(!outsideCardsCollapsed)}
+                                className={SECTION_ICON_BUTTON}
+                                title={outsideCardsCollapsed ? "Expandir todos os pacientes" : "Retrair todos os pacientes"}
+                              >
+                                {outsideCardsCollapsed ? <ChevronsUpDown className={SECTION_ICON} /> : <ChevronsDownUp className={SECTION_ICON} />}
+                              </Button>
+                            )}
                             <Button
                               variant="outline"
                               size="icon"
@@ -1568,6 +1580,7 @@ const Index = () => {
                                     onTransfer={handleTransferPatient}
                                     onPrintPatient={handlePrintPatient}
                                     onRefetch={refetch}
+                                    forceCollapsed={outsideCardsCollapsed}
                                   />
                                 ))}
                               </SortableContext>
