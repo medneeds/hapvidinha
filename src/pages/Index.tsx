@@ -15,7 +15,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { MainLayout } from "@/components/MainLayout";
 import { ShiftReminderDialog } from "@/components/ShiftReminderDialog";
 import { Patient, PatientCategory } from "@/types/patient";
-import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2, GraduationCap } from "lucide-react";
+import { Activity, Users, Clock, Printer, Eye, EyeOff, ClipboardList, LogOut, CheckSquare, Trash2, Undo, Redo, Plus, StickyNote, Edit, List, X, FileText, ChevronDown, GripVertical, ClipboardCheck, Save, MoreVertical, Building2, RefreshCw, Bell, Maximize2, Minimize2, GraduationCap, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { GlobalSearchDialog } from "@/components/GlobalSearchDialog";
@@ -206,6 +206,7 @@ const Index = () => {
   });
   const [newChecklistItem, setNewChecklistItem] = useState("");
   const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(false);
+  const [outsideCardsCollapsed, setOutsideCardsCollapsed] = useState(false);
   // UTI unit selector — persistent per session via sessionStorage
   const [selectedUtiUnit, setSelectedUtiUnit] = useState<'UTI 1' | 'UTI 2' | null>(() => {
     const saved = sessionStorage.getItem('selected_uti_unit');
