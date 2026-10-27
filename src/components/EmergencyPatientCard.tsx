@@ -361,6 +361,145 @@ export function EmergencyPatientCard({
   const hasTopBar = showAllocationBar || showSepsisBanner || showStrokeBanner || showChestPainBanner;
   const isPalliative = (patient.pendencies || []).some((p) => p.toUpperCase().includes("CUIDADOS PALIATIVOS"));
 
+  // Ações do paciente: renderizadas na coluna lateral (tablet/computador)
+  // e no canto da linha do paciente (celular).
+  const actionControls = (
+    <>
+              {canEdit && (
+                <Button variant="ghost" size="icon" onClick={() => setEditOpen(true)} className="h-6 w-6 text-muted-foreground hover:text-primary" title="Edição avançada">
+                  <Edit className="h-3 w-3" />
+                </Button>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground" title="Ações do paciente">
+                    <MoreVertical className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50 w-60">
+                  {role === "porta" && sector === "outside" && (
+                    <DropdownMenuItem onClick={() => setBedRequestOpen(true)}>
+                      <BedDouble className="h-4 w-4 mr-2 text-primary" />
+                      Solicitar Leito
+                    </DropdownMenuItem>
+                  )}
+
+                  {role !== "porta" && (
+                    <>
+                      {onTransfer && canEdit && (
+                        <DropdownMenuSub>
+                          <DropdownMenuSubTrigger>
+                            <Shuffle className="h-4 w-4 mr-2 text-muted-foreground" />
+                            Realocação
+                          </DropdownMenuSubTrigger>
+                          <DropdownMenuSubContent className="w-56">
+                            {(Object.keys(SECTOR_LABELS) as Sector[]).filter((s) => s !== sector).map((s) => (
+                              <DropdownMenuItem key={s} onClick={() => handleSectorChange(s)}>
+                                <ArrowRightLeft className="h-4 w-4 mr-2 text-muted-foreground" />
+                                {SECTOR_LABELS[s]}
+                              </DropdownMenuItem>
+                            ))}
+                            {sector !== "outside" && (
+                              <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => setBedPickerSector(sector)}>
+                                  <ArrowRightLeft className="h-4 w-4 mr-2 text-muted-foreground" />
+                                  Trocar de leito (mesmo setor)
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setBedSwapOpen(true)}>
+                                  <ArrowRightLeft className="h-4 w-4 mr-2 rotate-90 text-muted-foreground" />
+                                  Permutar com outro paciente
+                                </DropdownMenuItem>
+                              </>
+                            )}
+                          </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                      )}
+
+                      {canMove && patient.name && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuLabel className="text-xs text-muted-foreground">Movimentações</DropdownMenuLabel>
+                          {isAdultUe && (
+                            <DropdownMenuItem onClick={() => guardMovement(() => setUtiTransferOpen(true))}>
+                              <BedDouble className="h-4 w-4 mr-2 text-primary" />
+                              Transferir para UTI
+                              {activeProtocol && <AlertCircle className="h-3 w-3 ml-auto text-warning" />}
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => openMovement("TRANSFERÊNCIA")}>
+                            <ArrowLeftRight className="h-4 w-4 mr-2 text-stable" />
+                            Transferir (outro destino)
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openMovement("ALTA")}>
+                            <TrendingUp className="h-4 w-4 mr-2 text-success" />
+                            Alta
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openMovement("ÓBITO")}>
+                            <Skull className="h-4 w-4 mr-2 text-muted-foreground" />
+                            Óbito
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => navigate(`/resources?patientId=${patient.id}`)}>
+                            <FileText className="h-4 w-4 mr-2 text-warning" />
+                            Solicitar Internação
+                          </DropdownMenuItem>
+                        </>
+                      )}
+
+                      <DropdownMenuSeparator />
+                      {onPrintPatient && (
+                        <DropdownMenuItem onClick={() => onPrintPatient(patient.id)}>
+                          <Printer className="h-4 w-4 mr-2 text-muted-foreground" />
+                          Imprimir Caso
+                        </DropdownMenuItem>
+                      )}
+                      {patient.name && (
+                        <DropdownMenuItem onClick={() => setReportOpen(true)}>
+                          <FileEdit className="h-4 w-4 mr-2 text-primary" />
+                          Emitir Relatório
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem onClick={() => setDietOpen(true)}>
+                        <Utensils className="h-4 w-4 mr-2 text-success" />
+                        Liberar Dieta
+                      </DropdownMenuItem>
+
+                      {isFixedSlot && canEdit && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => {
+                              onUpdate({ ...patient, ...RELEASED_BED_FIELDS, isVacant: true, bedStatus: "available" });
+                              toast({ title: "Leito esvaziado", description: `${patient.bedNumber} voltou para o estado disponível.` });
+                            }}
+                          >
+                            <BedDouble className="h-4 w-4 mr-2 text-warning" />
+                            Esvaziar Leito
+                          </DropdownMenuItem>
+                        </>
+                      )}
+
+                      {onDelete && canEdit && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => setDeleteOpen(true)} className="text-destructive focus:text-destructive">
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Excluir Paciente
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground" title={isExpanded ? "Retrair detalhes" : "Expandir detalhes"}>
+                  <ChevronDown className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")} />
+                </Button>
+              </CollapsibleTrigger>
+    </>
+  );
+
   return (
     <>
       <div className="relative">
@@ -517,6 +656,10 @@ export function EmergencyPatientCard({
                       )}
                     </div>
                   )}
+                </div>
+                {/* Ações (celular): no canto da linha do paciente */}
+                <div className="md:hidden ml-auto self-start flex items-center gap-0.5 shrink-0 print:hidden">
+                  {actionControls}
                 </div>
 
                 {/* TPS · ADM emergência · PSM */}
@@ -722,143 +865,12 @@ export function EmergencyPatientCard({
               </SmoothCollapse>
             </div>
 
-            {/* Ações */}
+            {/* Ações (tablet/computador) */}
             <div className={cn(
-              "flex items-center justify-center gap-0.5 px-1 py-1 border-l border-border/30 bg-muted/20",
+              "hidden md:flex items-center justify-center gap-0.5 px-1 py-1 border-l border-border/30 bg-muted/20",
               isCollapsed ? "flex-row" : "flex-col"
             )}>
-              {canEdit && (
-                <Button variant="ghost" size="icon" onClick={() => setEditOpen(true)} className="h-6 w-6 text-muted-foreground hover:text-primary" title="Edição avançada">
-                  <Edit className="h-3 w-3" />
-                </Button>
-              )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground" title="Ações do paciente">
-                    <MoreVertical className="h-3 w-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-popover border shadow-lg z-50 w-60">
-                  {role === "porta" && sector === "outside" && (
-                    <DropdownMenuItem onClick={() => setBedRequestOpen(true)}>
-                      <BedDouble className="h-4 w-4 mr-2 text-primary" />
-                      Solicitar Leito
-                    </DropdownMenuItem>
-                  )}
-
-                  {role !== "porta" && (
-                    <>
-                      {onTransfer && canEdit && (
-                        <DropdownMenuSub>
-                          <DropdownMenuSubTrigger>
-                            <Shuffle className="h-4 w-4 mr-2 text-muted-foreground" />
-                            Realocação
-                          </DropdownMenuSubTrigger>
-                          <DropdownMenuSubContent className="w-56">
-                            {(Object.keys(SECTOR_LABELS) as Sector[]).filter((s) => s !== sector).map((s) => (
-                              <DropdownMenuItem key={s} onClick={() => handleSectorChange(s)}>
-                                <ArrowRightLeft className="h-4 w-4 mr-2 text-muted-foreground" />
-                                {SECTOR_LABELS[s]}
-                              </DropdownMenuItem>
-                            ))}
-                            {sector !== "outside" && (
-                              <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => setBedPickerSector(sector)}>
-                                  <ArrowRightLeft className="h-4 w-4 mr-2 text-muted-foreground" />
-                                  Trocar de leito (mesmo setor)
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setBedSwapOpen(true)}>
-                                  <ArrowRightLeft className="h-4 w-4 mr-2 rotate-90 text-muted-foreground" />
-                                  Permutar com outro paciente
-                                </DropdownMenuItem>
-                              </>
-                            )}
-                          </DropdownMenuSubContent>
-                        </DropdownMenuSub>
-                      )}
-
-                      {canMove && patient.name && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuLabel className="text-xs text-muted-foreground">Movimentações</DropdownMenuLabel>
-                          {isAdultUe && (
-                            <DropdownMenuItem onClick={() => guardMovement(() => setUtiTransferOpen(true))}>
-                              <BedDouble className="h-4 w-4 mr-2 text-primary" />
-                              Transferir para UTI
-                              {activeProtocol && <AlertCircle className="h-3 w-3 ml-auto text-warning" />}
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem onClick={() => openMovement("TRANSFERÊNCIA")}>
-                            <ArrowLeftRight className="h-4 w-4 mr-2 text-stable" />
-                            Transferir (outro destino)
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openMovement("ALTA")}>
-                            <TrendingUp className="h-4 w-4 mr-2 text-success" />
-                            Alta
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openMovement("ÓBITO")}>
-                            <Skull className="h-4 w-4 mr-2 text-muted-foreground" />
-                            Óbito
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/resources?patientId=${patient.id}`)}>
-                            <FileText className="h-4 w-4 mr-2 text-warning" />
-                            Solicitar Internação
-                          </DropdownMenuItem>
-                        </>
-                      )}
-
-                      <DropdownMenuSeparator />
-                      {onPrintPatient && (
-                        <DropdownMenuItem onClick={() => onPrintPatient(patient.id)}>
-                          <Printer className="h-4 w-4 mr-2 text-muted-foreground" />
-                          Imprimir Caso
-                        </DropdownMenuItem>
-                      )}
-                      {patient.name && (
-                        <DropdownMenuItem onClick={() => setReportOpen(true)}>
-                          <FileEdit className="h-4 w-4 mr-2 text-primary" />
-                          Emitir Relatório
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem onClick={() => setDietOpen(true)}>
-                        <Utensils className="h-4 w-4 mr-2 text-success" />
-                        Liberar Dieta
-                      </DropdownMenuItem>
-
-                      {isFixedSlot && canEdit && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => {
-                              onUpdate({ ...patient, ...RELEASED_BED_FIELDS, isVacant: true, bedStatus: "available" });
-                              toast({ title: "Leito esvaziado", description: `${patient.bedNumber} voltou para o estado disponível.` });
-                            }}
-                          >
-                            <BedDouble className="h-4 w-4 mr-2 text-warning" />
-                            Esvaziar Leito
-                          </DropdownMenuItem>
-                        </>
-                      )}
-
-                      {onDelete && canEdit && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => setDeleteOpen(true)} className="text-destructive focus:text-destructive">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Excluir Paciente
-                          </DropdownMenuItem>
-                        </>
-                      )}
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground" title={isExpanded ? "Retrair detalhes" : "Expandir detalhes"}>
-                  <ChevronDown className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-180")} />
-                </Button>
-              </CollapsibleTrigger>
+              {actionControls}
             </div>
           </div>
 
