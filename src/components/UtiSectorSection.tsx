@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { SECTION_ICON, SECTION_ICON_BUTTON } from "@/lib/headerButtonStyles";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
+import { releaseBedForFilling } from "@/utils/releaseBed";
 
 type ColorVariant = 'blue' | 'yellow';
 
@@ -76,9 +77,14 @@ interface UtiRowProps {
 function UtiRow(props: UtiRowProps) {
   // Toggle vacancy handler
   const handleToggleVacancy = () => {
+    if (props.patient.isVacant) {
+      // Releasing for a new patient: never carry over the previous patient's data.
+      props.onUpdate(releaseBedForFilling(props.patient));
+      return;
+    }
     props.onUpdate({
       ...props.patient,
-      isVacant: !props.patient.isVacant
+      isVacant: true
     });
   };
 

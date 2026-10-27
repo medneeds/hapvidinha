@@ -23,6 +23,7 @@ const CLINICAL_STATUS_OPTIONS = [
 // Helper to force uppercase on all text inputs
 const toUpperCase = (value: string) => value.toUpperCase();
 import { cn } from "@/lib/utils";
+import { releaseBedForFilling } from "@/utils/releaseBed";
 import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetailedAge";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientReportDialog } from "./PatientReportDialog";
@@ -709,7 +710,7 @@ function InlineEditableField({ value, onUpdate, placeholder = "-", className, co
         type="text"
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value.toUpperCase())}
-        className={cn("bg-background border border-primary/30 rounded px-1.5 py-0.5 outline-none text-sm w-full uppercase", className)}
+        className={cn("bg-background text-foreground caret-primary border border-primary/50 rounded px-1.5 py-0.5 outline-none text-sm w-full uppercase focus:border-primary focus:ring-2 focus:ring-primary/20", className)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleSave();
           if (e.key === 'Escape') setIsEditing(false);
@@ -731,7 +732,7 @@ function InlineEditableField({ value, onUpdate, placeholder = "-", className, co
         setIsEditing(true);
       }}
     >
-      {value || <span className="text-muted-foreground/50">{placeholder}</span>}
+      {value || <span className="text-muted-foreground">{placeholder}</span>}
     </span>
   );
 }
@@ -1025,8 +1026,13 @@ export function UtiPatientCard({
     });
   };
 
-  // Toggle bed vacancy status
+  // Toggle bed vacancy status. Releasing a vacant bed always starts clean
+  // (no birth date, admission dates or lists left from the previous patient).
   const handleToggleVacancy = (isVacant: boolean) => {
+    if (!isVacant && patient.isVacant) {
+      onUpdate(releaseBedForFilling(patient));
+      return;
+    }
     onUpdate({
       ...patient,
       isVacant
@@ -1147,7 +1153,7 @@ export function UtiPatientCard({
                 </div>
                 
                 {/* Patient Name + Birth Date + Age - Flexible grow */}
-                <div className="flex-1 flex items-baseline gap-1 md:gap-1.5 min-w-0 flex-wrap">
+                <div className="flex-1 flex items-baseline gap-2 md:gap-3 min-w-0 flex-wrap">
                   {namesHidden ? (
                     <span className="text-xs md:text-sm font-semibold truncate tracking-widest opacity-70">{displayName}</span>
                   ) : (

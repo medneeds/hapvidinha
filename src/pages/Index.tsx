@@ -100,6 +100,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { DeathReviewBadge } from "@/components/DeathReviewBadge";
 import { buildPatientSlotPayloadFromPatient, vacantPatientSlotPayload } from "@/utils/patientSlotPayload";
+import { RELEASED_BED_FIELDS } from "@/utils/releaseBed";
 import type { Database } from "@/integrations/supabase/types";
 
 const STORAGE_KEY = "hospital_patients_data";
@@ -462,6 +463,8 @@ const Index = () => {
     if (vacantPlaceholderId) {
       try {
         await dbUpdatePatient(vacantPlaceholderId, {
+          // Wipe anything left by the previous occupant (birth date, UTI dates, lists...)
+          ...RELEASED_BED_FIELDS,
           id: vacantPlaceholderId,
           bedNumber: newBedNumber,
           name: "",
