@@ -1,3 +1,4 @@
+import { isMobileViewport } from "@/hooks/use-mobile";
 import { Patient, SectorType } from "@/types/patient";
 import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
 import { getFixedBedCount } from "@/utils/bedCapacityStore";
@@ -182,7 +183,7 @@ export function SectorSection({
     : patients;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
   // "Expandir/retrair todos" — mesma ação da barra de setor da UTI (colunas dos cartões)
-  const [allCardsCollapsed, setAllCardsCollapsed] = useState(false);
+  const [allCardsCollapsed, setAllCardsCollapsed] = useState(isMobileViewport);
   const hasOccupied = patients.some((p) => !p.isVacant);
 
   // Pending post-death reviews for THIS sector (beds no longer in the list)
