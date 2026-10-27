@@ -404,6 +404,7 @@ export function SectorSection({
                             onPrintPatient={onPrintPatient}
                             onRefetch={onRefetch}
                             dragDisabled={isFixedBedSector}
+                            forceCollapsed={allCardsCollapsed}
                           />
                         );
                       })}
