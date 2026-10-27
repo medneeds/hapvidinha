@@ -1088,17 +1088,17 @@ const Index = () => {
           {/* Header */}
           <DynamicHeader>
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-sidebar-border/40 to-transparent print:hidden"></div>
-            <div className="w-full px-2 sm:px-4 py-2 sm:py-3 print:py-0.5 print:px-1">
+            <div className="w-full px-2 sm:px-4 py-2 md:py-3 print:py-0.5 print:px-1">
               <div className="flex items-center justify-between gap-2">
                 {/* Left side: Sidebar button + Title + Department selector */}
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 pl-12 md:pl-[15.5rem]">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 pl-11 md:pl-[15.5rem]">
                   {/* Trigger da sidebar unificado no FloatingSidebarTrigger (fora da sidebar) */}
                   <div className="min-w-0 flex-1 flex items-center gap-2 sm:gap-3 flex-wrap">
 
                     <div className="print:hidden min-w-0 max-w-full">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="inline-flex max-w-full min-w-0 items-center gap-2 h-10 sm:h-11 px-4 sm:px-5 bg-sidebar-accent/70 backdrop-blur-sm border border-sidebar-border text-sidebar-foreground text-base sm:text-lg font-bold uppercase tracking-tight hover:bg-sidebar-accent hover:border-sidebar-foreground/30 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
+                          <button className="inline-flex max-w-full min-w-0 items-center gap-1.5 md:gap-2 h-9 md:h-11 px-3 md:px-5 bg-sidebar-accent/70 backdrop-blur-sm border border-sidebar-border text-sidebar-foreground text-xs md:text-lg font-bold uppercase tracking-tight hover:bg-sidebar-accent hover:border-sidebar-foreground/30 transition-all duration-200 rounded-full cursor-pointer shadow-sm hover:shadow-md">
                             <Building2 className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-90" />
                             <span className="truncate md:hidden lg:inline">{getDepartmentLabel(currentDepartment)}</span>
                             <ChevronDown className="h-4 sm:h-5 w-4 sm:w-5 flex-shrink-0 opacity-70" />
@@ -1141,7 +1141,7 @@ const Index = () => {
                 </div>
 
                 {/* Right side: Action buttons + Theme toggle */}
-                <div className="flex gap-1.5 sm:gap-3 print:gap-2 items-center flex-shrink-0 pr-[52px] sm:pr-[94px]">
+                <div className="flex gap-1.5 md:gap-3 print:gap-2 items-center flex-shrink-0 pr-[44px] sm:pr-[94px]">
                   {/* Busca de paciente por nome - funcionalidade oculta (código preservado) */}
 
                   {/* Prioridades UTI - funcionalidade oculta (código preservado) */}
@@ -1153,7 +1153,7 @@ const Index = () => {
                         variant={selectionMode ? "default" : "outline"}
                         size="icon"
                         onClick={handleToggleSelectionMode}
-                        className={`print:hidden h-11 w-11 transition-all duration-200 ${selectionMode ? SELECTION_ACTIVE_STYLES[currentDepartment] : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}
+                        className={`print:hidden h-9 w-9 transition-all duration-200 ${selectionMode ? SELECTION_ACTIVE_STYLES[currentDepartment] : 'bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30'}`}
                         title="Modo de seleção"
                       >
                         <CheckSquare className="h-4 w-4" />
@@ -1164,7 +1164,7 @@ const Index = () => {
                             variant="outline"
                             size="icon"
                             onClick={handlePrintSelected}
-                            className="print:hidden h-11 w-11 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 transition-all duration-200"
+                            className="print:hidden h-9 w-9 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 transition-all duration-200"
                             title={`Imprimir ${selectedPatients.size}`}
                           >
                             <Printer className="h-4 w-4" />
@@ -1173,7 +1173,7 @@ const Index = () => {
                             variant="destructive"
                             size="icon"
                             onClick={handleDeleteSelected}
-                            className="print:hidden h-11 w-11 bg-red-600 text-white hover:bg-red-700 border-0"
+                            className="print:hidden h-9 w-9 bg-red-600 text-white hover:bg-red-700 border-0"
                             title={`Deletar ${selectedPatients.size}`}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -1185,7 +1185,7 @@ const Index = () => {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="print:hidden h-11 w-11 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 transition-all duration-200"
+                            className="print:hidden h-9 w-9 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-foreground/30 transition-all duration-200"
                           >
                             <MoreVertical className="h-4 w-4" />
                           </Button>

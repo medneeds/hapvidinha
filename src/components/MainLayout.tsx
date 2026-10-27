@@ -95,7 +95,7 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
         
         <div className="flex-1 flex flex-col w-full">
           <main
-            className="flex-1 overflow-auto"
+            className="flex-1 md:overflow-auto"
             onPointerMove={handleGlassPointerMove}
             onPointerLeave={resetGlassPointer}
           >
@@ -104,7 +104,7 @@ export function MainLayout({ children, onOpenHandover }: MainLayoutProps) {
             </PageTransition>
           </main>
           
-          <footer className="fixed bottom-2 right-4 z-50 pointer-events-none">
+          <footer className="px-4 pb-3 pt-1 text-right md:p-0 md:fixed md:bottom-2 md:right-4 z-50 pointer-events-none print:hidden">
             <p className="text-[10px] text-muted-foreground/40 italic">
               {whitelabel.credits.footerText}
             </p>
