@@ -575,7 +575,9 @@ export function EmergencyPatientCard({
                 <BedResponsibilityChip patient={patient} onOpenResponsibility={() => canEdit && setResponsibilityOpen(true)} />
 
                 {/* Nome + DN + idade */}
-                <div className="flex-1 flex items-center gap-2 md:gap-3 min-w-0 flex-wrap">
+                <div className="flex-1 flex items-center gap-x-2 gap-y-0.5 md:gap-3 min-w-0 flex-wrap">
+                  {/* Celular: nome ocupa a linha inteira; no computador o wrapper some (md:contents) */}
+                  <div className="flex w-full min-w-0 items-center gap-1 md:contents">
                   {isPalliative && <PalliativeButterflyIcon />}
                   {namesHidden ? (
                     <span className="text-xs md:text-sm font-semibold tracking-widest opacity-70">{displayName}</span>
@@ -614,6 +616,7 @@ export function EmergencyPatientCard({
                     <div className={cn(showAllocationBar && "sr-only")}>
                       <AllocationPendingBadge patient={patient} onStatusChange={onRefetch} />
                     </div>
+                  </div>
                   </div>
                   <div className="shrink-0 flex items-center gap-1 text-[10px] md:text-xs text-muted-foreground">
                     <span className="font-semibold opacity-70">DN:</span>

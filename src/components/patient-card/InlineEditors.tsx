@@ -88,7 +88,7 @@ const SECTOR_CONFIRM: Record<EditorColorVariant, string> = {
 
 /** Main card column cell: no box, thin divider between columns (compact layout shared by UE and UTI). */
 export const COLUMN_CELL =
-  "min-w-0 px-1.5 rounded-md transition-colors duration-200 md:border-l md:first:border-l-0 md:rounded-none border-border/50";
+  "min-w-0 px-1.5 py-1 md:py-0 rounded-none transition-colors duration-200 border-t first:border-t-0 md:border-t-0 md:border-l md:first:border-l-0 border-border/50";
 
 /** Very light hover tint of a column in the sector colour. */
 export const COLUMN_HOVER: Record<EditorColorVariant, string> = {
