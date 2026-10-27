@@ -848,6 +848,8 @@ export function usePatients(department?: Department) {
               setPatients(prev => prev.filter(p => p.id !== newRecord.id));
               return;
             }
+            // Echo of our own in-flight edits: local state is already newer.
+            if (isLocallyEditing(newRecord.id)) return;
             const updatedPatient = mapRecordToPatient(newRecord);
             setPatients(prev => {
               const exists = prev.some(p => p.id === updatedPatient.id);
