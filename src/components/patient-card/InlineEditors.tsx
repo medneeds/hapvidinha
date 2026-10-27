@@ -93,9 +93,11 @@ interface SortableItemProps {
   highlightColorVariant?: EditorColorVariant;
   /** Extra always-visible action(s) for this item (e.g. PSM status cycle on UE pendencies). */
   extraActions?: React.ReactNode;
+  /** Denser rows for the main card columns (smaller text and padding). */
+  compact?: boolean;
 }
 
-function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus, highlightColorVariant = 'blue', extraActions }: SortableItemProps) {
+function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus, highlightColorVariant = 'blue', extraActions, compact = false }: SortableItemProps) {
   const [isEditing, setIsEditing] = useState(autoFocus || false);
   const [localValue, setLocalValue] = useState(value);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -173,7 +175,8 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       ref={setNodeRef} 
       style={style} 
       className={cn(
-        "flex items-center gap-1 group py-1 rounded-sm px-1 -mx-0.5 transition-all duration-150",
+        "flex items-start gap-1 group rounded-sm px-1 -mx-0.5 transition-all duration-150",
+        compact ? "py-0.5" : "py-1 items-center",
         isDragging && "z-50 shadow-sm",
         isHighlighted ? hStyles.bg : sectorHover
       )}
@@ -189,6 +192,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       )}
       <span className={cn(
         "font-semibold text-[10px] min-w-[14px] flex-shrink-0 tabular-nums",
+        compact && "leading-snug",
         isHighlighted ? hStyles.number : "text-muted-foreground"
       )}>{index + 1}.</span>
       
@@ -212,7 +216,8 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
         <>
           <span 
             className={cn(
-              "flex-1 text-[11px] break-words cursor-pointer transition-colors leading-relaxed tracking-tight",
+              "flex-1 break-words cursor-pointer transition-colors tracking-tight",
+              compact ? "text-[10px] leading-snug font-medium uppercase" : "text-[11px] leading-relaxed",
               sectorTextHover,
               isHighlighted ? hStyles.text : "text-foreground/90"
             )}
@@ -285,6 +290,8 @@ interface InlineEditableArrayProps {
   headerActions?: React.ReactNode;
   /** Extra per-item action (UE only: PSM status cycle). */
   renderItemActions?: (item: string, index: number) => React.ReactNode;
+  /** Compact column style (no box, sentence-case title, denser rows) used in the main card columns. */
+  compact?: boolean;
 }
 
 export function InlineEditableArray({ 
@@ -308,6 +315,7 @@ export function InlineEditableArray({
   highlightColorVariant = 'blue',
   headerActions,
   renderItemActions,
+  compact = false,
 }: InlineEditableArrayProps) {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newItemValue, setNewItemValue] = useState("");
@@ -466,13 +474,17 @@ export function InlineEditableArray({
   const hiddenCount = maxCollapsedItems && !alwaysShowAll ? Math.max(0, items.length - maxCollapsedItems) : 0;
 
   return (
-    <div className={cn("rounded-md p-1.5", colorClass)}>
+    <div className={cn(compact ? "py-0.5" : "rounded-md p-1.5", colorClass)}>
       {label && (
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-1.5">
-            {icon}
-            <span className="text-[10px] font-semibold text-muted-foreground tracking-wide uppercase">{label}</span>
-            {items.length > 0 && (
+        <div className={cn("flex items-center justify-between", compact ? "mb-0.5 gap-1" : "mb-1")}>
+          <div className={cn("flex items-center min-w-0", compact ? "gap-1" : "gap-1.5")}>
+            {!compact && icon}
+            {compact ? (
+              <span className="text-[10px] font-medium text-muted-foreground truncate">{label}</span>
+            ) : (
+              <span className="text-[10px] font-semibold text-muted-foreground tracking-wide uppercase">{label}</span>
+            )}
+            {!compact && items.length > 0 && (
               <Badge variant="secondary" className="h-3.5 px-1 text-[9px] font-medium">{items.length}</Badge>
             )}
           </div>
@@ -538,6 +550,7 @@ export function InlineEditableArray({
                     onKeyDown={handleItemKeyDown}
                     highlightColorVariant={highlightColorVariant}
                     extraActions={renderItemActions?.(item, realIdx)}
+                    compact={compact}
                   />
                 );
               })}
@@ -545,7 +558,7 @@ export function InlineEditableArray({
           </DndContext>
         ) : !isAddingNew ? (
           <span 
-            className="text-[11px] text-muted-foreground/50 cursor-pointer hover:text-muted-foreground italic pl-0.5"
+            className={cn("text-muted-foreground/50 cursor-pointer hover:text-muted-foreground italic pl-0.5", compact ? "text-[10px]" : "text-[11px]")}
             onClick={() => setIsAddingNew(true)}
           >
             {placeholder}
