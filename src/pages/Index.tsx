@@ -72,7 +72,7 @@ import {
 import { cn } from "@/lib/utils";
 import { usePatients } from "@/hooks/usePatients";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, isMobileViewport } from "@/hooks/use-mobile";
 import { useHospital } from "@/contexts/HospitalContext";
 import {
   DropdownMenu,
@@ -206,7 +206,7 @@ const Index = () => {
   });
   const [newChecklistItem, setNewChecklistItem] = useState("");
   const [isOutsideSectionOpen, setIsOutsideSectionOpen] = useState(false);
-  const [outsideCardsCollapsed, setOutsideCardsCollapsed] = useState(false);
+  const [outsideCardsCollapsed, setOutsideCardsCollapsed] = useState(isMobileViewport);
   // UTI unit selector — persistent per session via sessionStorage
   const [selectedUtiUnit, setSelectedUtiUnit] = useState<'UTI 1' | 'UTI 2' | null>(() => {
     const saved = sessionStorage.getItem('selected_uti_unit');
