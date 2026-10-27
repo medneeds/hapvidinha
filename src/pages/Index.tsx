@@ -4,7 +4,7 @@ import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { EmptySectorState } from "@/components/EmptySectorState";
 import { UtiSectorSection } from "@/components/UtiSectorSection";
 import { UtiUnitSelector } from "@/components/UtiUnitSelector";
-import { PatientCard } from "@/components/PatientCard";
+import { EmergencyPatientCard } from "@/components/EmergencyPatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
 import { PrintUtiLayout } from "@/components/PrintUtiLayout";
 import { PrintPatientLayout } from "@/components/PrintPatientLayout";
@@ -156,7 +156,7 @@ function SortableOutsidePatientCard(props: SortableOutsidePatientCardProps) {
         <GripVertical className="h-4 w-4 text-muted-foreground" />
       </button>
       <div className="flex-1">
-        <PatientCard {...props} />
+        <EmergencyPatientCard {...props} />
       </div>
     </div>
   );

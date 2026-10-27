@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Activity, AlertCircle, ArrowLeftRight, ArrowRightLeft, BedDouble, ChevronDown, ChevronRight, ClipboardList,
-  Edit, FileEdit, FileText, FlaskConical, FolderOpen, MoreVertical, Plus, Printer, Shuffle, Skull,
+  Edit, FileEdit, FileText, FlaskConical, FolderOpen, MoreVertical, Printer, Shuffle, Skull,
   Stethoscope, Trash2, TrendingUp, Utensils, X,
 } from "lucide-react";
 import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SECTOR_FIELD_HOVER } from "@/components/patient-card/InlineEditors";
