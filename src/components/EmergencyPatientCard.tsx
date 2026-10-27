@@ -56,6 +56,8 @@ interface EmergencyPatientCardProps {
   onTransfer?: (patientId: string, newSector: Patient["sector"], targetBedNumber?: string, vacantPlaceholderId?: string) => void;
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
+  /** Section-level "expand/collapse all": hides or shows the 5 columns of every card. */
+  forceCollapsed?: boolean;
 }
 
 const SECTOR_LABELS: Record<Sector, string> = {
@@ -160,15 +162,15 @@ function BedResponsibilityChip({ patient, onOpenResponsibility }: { patient: Pat
     : resp?.type ? [RESPONSIBILITY_LABEL[resp.type] || resp.type.toUpperCase()] : [];
 
   return (
-    <div className="w-fit flex flex-col items-stretch shrink-0">
-      <div className={cn("w-full rounded border px-1.5 py-0.5 text-center", tone.bed)}>
+    <div className="flex items-stretch gap-1 shrink-0">
+      <div className={cn("flex items-center justify-center rounded border px-1.5 py-0.5 text-center", tone.bed)}>
         <span className="text-xs font-bold tabular-nums leading-none inline-block min-w-8">{patient.bedNumber}</span>
       </div>
       {labels.length === 0 ? (
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onOpenResponsibility(); }}
-          className="mt-1 w-full inline-flex items-center justify-center rounded border border-dashed border-muted-foreground/25 px-1 py-0.5 text-[9px] font-medium leading-none text-muted-foreground/60 hover:border-muted-foreground/50 hover:text-muted-foreground transition-colors print:hidden"
+          className="min-w-[22px] inline-flex items-center justify-center rounded border border-dashed border-muted-foreground/25 px-1 py-0.5 text-[9px] font-medium leading-none text-muted-foreground/60 hover:border-muted-foreground/50 hover:text-muted-foreground transition-colors print:hidden"
           title="Definir responsabilidade médica"
         >
           +
@@ -177,7 +179,7 @@ function BedResponsibilityChip({ patient, onOpenResponsibility }: { patient: Pat
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onOpenResponsibility(); }}
-          className="mt-1 w-full inline-flex flex-col items-center rounded border px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wide leading-none transition-colors print:hidden"
+          className="inline-flex flex-col items-center justify-center rounded border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide leading-none transition-colors print:hidden"
           style={{ color, borderColor: `${color}40` }}
           title={`Responsabilidade: ${labels.join(" + ")}${office ? ` • ${office}` : ""} — clique para alterar`}
         >
@@ -197,6 +199,7 @@ export function EmergencyPatientCard({
   onTransfer,
   onPrintPatient,
   onRefetch,
+  forceCollapsed,
 }: EmergencyPatientCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -208,7 +211,7 @@ export function EmergencyPatientCard({
   const sector: Sector = patient.sector || "blue";
   const tone = CARD_TONE[sector] || CARD_TONE.blue;
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(forceCollapsed ?? false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeColumn, setActiveColumn] = useState<UeColumn | null>(null);
   const [editingAdmission, setEditingAdmission] = useState(false);
@@ -242,6 +245,10 @@ export function EmergencyPatientCard({
     return true;
   }, [role, user?.id, patient.createdBy]);
   const canMove = role === "medico" || role === "admin";
+
+  useEffect(() => {
+    if (forceCollapsed !== undefined) setIsCollapsed(forceCollapsed);
+  }, [forceCollapsed]);
 
   useEffect(() => {
     if (!isExpanded) setEditingAdmission(false);
@@ -299,12 +306,12 @@ export function EmergencyPatientCard({
           <div className="flex items-stretch">
             <div className={cn("flex-1 p-1.5 space-y-1.5 md:space-y-1 min-w-0", !canEdit && "[&_.cursor-pointer]:pointer-events-none")}>
               {/* Linha de identificação */}
-              <div className={cn("flex flex-wrap items-start gap-1 md:gap-1.5 border-l rounded-r pl-1.5", tone.divider)}>
+              <div className={cn("flex flex-wrap items-center gap-1 md:gap-1.5 border-l rounded-r pl-1.5", tone.divider)}>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsCollapsed(!isCollapsed)}
-                  className="shrink-0 h-5 w-5 p-0 mt-0.5 text-muted-foreground hover:text-foreground"
+                  className="shrink-0 h-5 w-5 p-0 text-muted-foreground hover:text-foreground"
                   title={isCollapsed ? "Expandir colunas" : "Retrair colunas"}
                 >
                   {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -313,7 +320,7 @@ export function EmergencyPatientCard({
                 <BedResponsibilityChip patient={patient} onOpenResponsibility={() => canEdit && setResponsibilityOpen(true)} />
 
                 {/* Nome + DN + idade */}
-                <div className="flex-1 flex items-baseline gap-2 md:gap-3 min-w-0 flex-wrap pt-0.5">
+                <div className="flex-1 flex items-baseline gap-2 md:gap-3 min-w-0 flex-wrap">
                   {namesHidden ? (
                     <span className="text-xs md:text-sm font-semibold tracking-widest opacity-70">{displayName}</span>
                   ) : (

@@ -3,7 +3,7 @@ import { SECTOR_BED_CONFIG } from "@/utils/bedNaming";
 import { getFixedBedCount } from "@/utils/bedCapacityStore";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { EmergencyPatientCard } from "./EmergencyPatientCard";
-import { Activity, Printer, Plus, ChevronDown, GripVertical } from "lucide-react";
+import { Activity, Printer, Plus, ChevronDown, GripVertical, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { Button } from "@/components/ui/button";
 import { EmptySectorState } from "@/components/EmptySectorState";
@@ -83,7 +83,7 @@ const sectorInfo = {
   }
 };
 
-function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode, isSelected, onToggleSelection, onTransfer, onPrintPatient, onRefetch, dragDisabled }: {
+function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectionMode, isSelected, onToggleSelection, onTransfer, onPrintPatient, onRefetch, dragDisabled, forceCollapsed }: {
   patient: Patient;
   onUpdate: (patient: Patient) => void;
   onDelete?: (patientId: string) => void;
@@ -95,6 +95,7 @@ function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectio
   onPrintPatient?: (patientId: string) => void;
   onRefetch?: () => void;
   dragDisabled?: boolean;
+  forceCollapsed?: boolean;
 }) {
   const {
     attributes,
@@ -142,6 +143,7 @@ function SortablePatientCard({ patient, onUpdate, onDelete, onUndelete, selectio
           onTransfer={onTransfer}
           onPrintPatient={onPrintPatient}
           onRefetch={onRefetch}
+          forceCollapsed={forceCollapsed}
         />
       </div>
     </div>
@@ -179,6 +181,9 @@ export function SectorSection({
     ? [...patients].sort((a, b) => a.bedNumber.localeCompare(b.bedNumber, 'pt-BR', { numeric: true }))
     : patients;
   const [internalIsOpen, setInternalIsOpen] = useState(patients.length > 0);
+  // "Expandir/retrair todos" — mesma ação da barra de setor da UTI (colunas dos cartões)
+  const [allCardsCollapsed, setAllCardsCollapsed] = useState(false);
+  const hasOccupied = patients.some((p) => !p.isVacant);
 
   // Pending post-death reviews for THIS sector (beds no longer in the list)
   const department = (patients[0] as any)?.department as string | undefined;
@@ -254,6 +259,7 @@ export function SectorSection({
         onPrintPatient={onPrintPatient}
         onRefetch={onRefetch}
         dragDisabled={isFixedBedSector}
+        forceCollapsed={allCardsCollapsed}
       />
     ))
   );
@@ -285,6 +291,17 @@ export function SectorSection({
             </button>
           </CollapsibleTrigger>
           <div className="flex items-center gap-2">
+            {hasOccupied && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setAllCardsCollapsed(!allCardsCollapsed)}
+                className={cn(SECTION_ICON_BUTTON, "print:hidden")}
+                title={allCardsCollapsed ? "Expandir todos os pacientes" : "Retrair todos os pacientes"}
+              >
+                {allCardsCollapsed ? <ChevronsUpDown className={SECTION_ICON} /> : <ChevronsDownUp className={SECTION_ICON} />}
+              </Button>
+            )}
             {onAddExtraBed && (
               <Button
                 variant="outline"
@@ -387,6 +404,7 @@ export function SectorSection({
                             onPrintPatient={onPrintPatient}
                             onRefetch={onRefetch}
                             dragDisabled={isFixedBedSector}
+                            forceCollapsed={allCardsCollapsed}
                           />
                         );
                       })}
