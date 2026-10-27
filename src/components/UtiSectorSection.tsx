@@ -238,8 +238,8 @@ export function UtiSectorSection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2 print:space-y-0.5 print:break-inside-avoid">
-      <div className={`${headerClass} rounded-xl p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[48px] print:h-auto flex items-center`}>
-        <div className="flex items-center justify-between w-full gap-3">
+      <div className={`${headerClass} rounded-xl p-1.5 md:p-2 border border-border/50 shadow-md print:p-1 print:mb-0.5 print:rounded-md transition-all duration-200 min-h-[44px] md:min-h-[48px] print:h-auto flex items-center`}>
+        <div className="flex items-center justify-between w-full gap-2 md:gap-3">
           {selectionMode && patients.length > 0 && (
             <div className="flex items-center print:hidden" onClick={(e) => e.stopPropagation()}>
               <Checkbox
@@ -257,18 +257,21 @@ export function UtiSectorSection({
             </div>
           )}
           <CollapsibleTrigger asChild>
-            <button className="flex items-center gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1">
-              <ChevronDown className={`h-5 w-5 transition-transform print:hidden ${chevronClass} ${isOpen ? '' : '-rotate-90'}`} />
-              <h2 className={`text-lg font-bold print:text-[10px] uppercase ${titleClass}`}>{displayTitle}</h2>
+            <button className="flex items-center gap-1.5 md:gap-2 hover:opacity-80 transition-opacity print:pointer-events-none flex-1 min-w-0">
+              <ChevronDown className={`h-4 w-4 md:h-5 md:w-5 shrink-0 transition-transform print:hidden ${chevronClass} ${isOpen ? '' : '-rotate-90'}`} />
+              <h2 className={`text-sm md:text-lg font-bold print:text-[10px] uppercase text-left leading-tight truncate md:whitespace-normal md:overflow-visible ${titleClass}`}>
+                <span className="md:hidden print:hidden">{String(displayTitle).replace(/UNIDADE DE TERAPIA INTENSIVA/i, "UTI")}</span>
+                <span className="hidden md:inline print:inline">{displayTitle}</span>
+              </h2>
             </button>
           </CollapsibleTrigger>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
             {patients.length > 0 && (
               <Button
                 variant="outline"
                 size="icon"
                 onClick={() => setAllCardsCollapsed(!allCardsCollapsed)}
-                className={cn(SECTION_ICON_BUTTON, "print:hidden", buttonClass)}
+                className={cn(SECTION_ICON_BUTTON, "max-md:h-8 max-md:w-8 print:hidden", buttonClass)}
                 title={allCardsCollapsed ? "Expandir todos os pacientes" : "Retrair todos os pacientes"}
               >
                 {allCardsCollapsed ? (
@@ -283,7 +286,7 @@ export function UtiSectorSection({
                 variant="outline"
                 size="icon"
                 onClick={onAddExtraBed}
-                className={cn(SECTION_ICON_BUTTON, "print:hidden", buttonClass)}
+                className={cn(SECTION_ICON_BUTTON, "max-md:h-8 max-md:w-8 print:hidden", buttonClass)}
                 title="Adicionar leito extra"
               >
                 <Plus className={SECTION_ICON} />
@@ -294,7 +297,7 @@ export function UtiSectorSection({
                 variant="outline"
                 size="icon"
                 onClick={onPrintSector}
-                className={cn(SECTION_ICON_BUTTON, "print:hidden")}
+                className={cn(SECTION_ICON_BUTTON, "max-md:h-8 max-md:w-8 print:hidden")}
                 title="Imprimir setor"
               >
                 <Printer className={SECTION_ICON} />
