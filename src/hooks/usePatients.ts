@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { getChangedPatientFields } from "@/utils/patientDiff";
 import { supabase } from "@/integrations/supabase/client";
 import { Patient } from "@/types/patient";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +23,21 @@ export function usePatients(department?: Department) {
   const { toast } = useToast();
   const { currentState, currentHospital } = useHospital();
   const { user } = useAuth();
+
+  // Latest local snapshot (updated synchronously on optimistic edits).
+  const patientsRef = useRef<Patient[]>([]);
+  useEffect(() => { patientsRef.current = patients; }, [patients]);
+
+  // Per-patient write queue: edits are applied locally at once and persisted
+  // in order, so quick successive entries never overwrite each other.
+  const writeQueueRef = useRef<Map<string, Promise<void>>>(new Map());
+  const pendingWritesRef = useRef<Map<string, number>>(new Map());
+  const lastWriteAtRef = useRef<Map<string, number>>(new Map());
+  const LOCAL_WRITE_GRACE_MS = 2500;
+  const isLocallyEditing = (id: string) =>
+    (pendingWritesRef.current.get(id) || 0) > 0 ||
+    Date.now() - (lastWriteAtRef.current.get(id) || 0) < LOCAL_WRITE_GRACE_MS;
+
 
   const fetchPatients = async () => {
     try {
@@ -249,7 +265,11 @@ export function usePatients(department?: Department) {
         return extractNumber(a.bedNumber) - extractNumber(b.bedNumber);
       });
 
-      setPatients(sortedPatients);
+      // Keep local values for patients with edits still being saved, so a
+      // background refresh never wipes what the user just typed.
+      setPatients(prev => sortedPatients.map(p =>
+        isLocallyEditing(p.id) ? (prev.find(x => x.id === p.id) ?? p) : p
+      ));
     } catch (error) {
       console.error('Error fetching patients:', error);
       toast({
@@ -262,9 +282,20 @@ export function usePatients(department?: Department) {
     }
   };
 
-  const updatePatient = async (patientId: string, updates: Partial<Patient>) => {
-    try {
-      const currentPatient = patients.find(p => p.id === patientId);
+  const updatePatient = async (patientId: string, rawUpdates: Partial<Patient>) => {
+    const currentPatient = patientsRef.current.find(p => p.id === patientId);
+    // Persist only what actually changed (callers usually send the full patient).
+    const updates = getChangedPatientFields(currentPatient, rawUpdates);
+    if (Object.keys(updates).length === 0) return;
+
+    // Optimistic: show the edit immediately and make it the base for the next edit.
+    if (currentPatient) {
+      patientsRef.current = patientsRef.current.map(p => p.id === patientId ? { ...p, ...updates } : p);
+      setPatients(prev => prev.map(p => p.id === patientId ? { ...p, ...updates } : p));
+    }
+    pendingWritesRef.current.set(patientId, (pendingWritesRef.current.get(patientId) || 0) + 1);
+
+    const persist = async () => {
       const isProtectedUtiSlot = department === 'UTI' && isFixedUtiBed(currentPatient?.sector, currentPatient?.bedNumber);
       const dbUpdates: any = {};
       
@@ -341,7 +372,7 @@ export function usePatients(department?: Department) {
       if (updates.insuranceCardNumber !== undefined) dbUpdates.insurance_card_number = updates.insuranceCardNumber;
       if (updates.insuranceDuration !== undefined) dbUpdates.insurance_duration = updates.insuranceDuration;
 
-      console.log('Updating patient:', patientId, 'with data:', dbUpdates);
+      if (Object.keys(dbUpdates).length === 0) return;
 
       const { error } = await supabase
         .from('patients')
@@ -352,23 +383,39 @@ export function usePatients(department?: Department) {
         console.error('Supabase update error:', error);
         throw error;
       }
+    };
 
-      // Update local state
-      setPatients(prev => prev.map(p => 
-        p.id === patientId ? { ...p, ...updates } : p
-      ));
+    // Chain after any save still running for this patient (keeps order).
+    const previous = writeQueueRef.current.get(patientId) ?? Promise.resolve();
+    const task = previous.catch(() => undefined).then(persist);
+    writeQueueRef.current.set(patientId, task.catch(() => undefined));
 
+    const finishWrite = () => {
+      const left = Math.max(0, (pendingWritesRef.current.get(patientId) || 1) - 1);
+      if (left === 0) pendingWritesRef.current.delete(patientId);
+      else pendingWritesRef.current.set(patientId, left);
+      return left;
+    };
+
+    try {
+      await task;
+      finishWrite();
+      lastWriteAtRef.current.set(patientId, Date.now());
       toast({
         title: "Paciente atualizado",
         description: "As informações foram salvas com sucesso.",
       });
     } catch (error) {
       console.error('Error updating patient:', error);
+      const left = finishWrite();
+      lastWriteAtRef.current.delete(patientId);
       toast({
         title: "Erro ao atualizar",
         description: "Não foi possível salvar as alterações.",
         variant: "destructive",
       });
+      // Resync with what is really stored so the screen never shows unsaved data.
+      if (left === 0) fetchPatients();
       throw error;
     }
   };
@@ -801,6 +848,8 @@ export function usePatients(department?: Department) {
               setPatients(prev => prev.filter(p => p.id !== newRecord.id));
               return;
             }
+            // Echo of our own in-flight edits: local state is already newer.
+            if (isLocallyEditing(newRecord.id)) return;
             const updatedPatient = mapRecordToPatient(newRecord);
             setPatients(prev => {
               const exists = prev.some(p => p.id === updatedPatient.id);

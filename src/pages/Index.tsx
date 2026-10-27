@@ -418,17 +418,17 @@ const Index = () => {
 
   const handleUpdatePatient = async (updatedPatient: Patient) => {
     saveToHistory(patients);
-    
+
+    // Show the edit immediately so the next entry builds on it (no waiting for the server).
+    setPatients((prev) =>
+      prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
+    );
+
     try {
-      // Update in database
+      // Saves only the changed fields, queued in order per patient.
       await dbUpdatePatient(updatedPatient.id, updatedPatient);
-      
-      // Update local state (will be synced by realtime)
-      setPatients((prev) =>
-        prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
-      );
     } catch (error) {
-      // Error toast already shown in dbUpdatePatient
+      // Error toast + resync already handled in dbUpdatePatient
       console.error("Failed to update patient:", error);
     }
   };
