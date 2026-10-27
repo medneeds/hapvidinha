@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { getChangedPatientFields } from "@/utils/patientDiff";
 import { supabase } from "@/integrations/supabase/client";
 import { Patient } from "@/types/patient";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +23,21 @@ export function usePatients(department?: Department) {
   const { toast } = useToast();
   const { currentState, currentHospital } = useHospital();
   const { user } = useAuth();
+
+  // Latest local snapshot (updated synchronously on optimistic edits).
+  const patientsRef = useRef<Patient[]>([]);
+  useEffect(() => { patientsRef.current = patients; }, [patients]);
+
+  // Per-patient write queue: edits are applied locally at once and persisted
+  // in order, so quick successive entries never overwrite each other.
+  const writeQueueRef = useRef<Map<string, Promise<void>>>(new Map());
+  const pendingWritesRef = useRef<Map<string, number>>(new Map());
+  const lastWriteAtRef = useRef<Map<string, number>>(new Map());
+  const LOCAL_WRITE_GRACE_MS = 2500;
+  const isLocallyEditing = (id: string) =>
+    (pendingWritesRef.current.get(id) || 0) > 0 ||
+    Date.now() - (lastWriteAtRef.current.get(id) || 0) < LOCAL_WRITE_GRACE_MS;
+
 
   const fetchPatients = async () => {
     try {
@@ -249,7 +265,11 @@ export function usePatients(department?: Department) {
         return extractNumber(a.bedNumber) - extractNumber(b.bedNumber);
       });
 
-      setPatients(sortedPatients);
+      // Keep local values for patients with edits still being saved, so a
+      // background refresh never wipes what the user just typed.
+      setPatients(prev => sortedPatients.map(p =>
+        isLocallyEditing(p.id) ? (prev.find(x => x.id === p.id) ?? p) : p
+      ));
     } catch (error) {
       console.error('Error fetching patients:', error);
       toast({
