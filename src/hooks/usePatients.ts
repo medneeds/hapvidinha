@@ -372,7 +372,7 @@ export function usePatients(department?: Department) {
       if (updates.insuranceCardNumber !== undefined) dbUpdates.insurance_card_number = updates.insuranceCardNumber;
       if (updates.insuranceDuration !== undefined) dbUpdates.insurance_duration = updates.insuranceDuration;
 
-      console.log('Updating patient:', patientId, 'with data:', dbUpdates);
+      if (Object.keys(dbUpdates).length === 0) return;
 
       const { error } = await supabase
         .from('patients')
@@ -383,12 +383,15 @@ export function usePatients(department?: Department) {
         console.error('Supabase update error:', error);
         throw error;
       }
+    };
 
-      // Update local state
-      setPatients(prev => prev.map(p => 
-        p.id === patientId ? { ...p, ...updates } : p
-      ));
+    // Chain after any save still running for this patient (keeps order).
+    const previous = writeQueueRef.current.get(patientId) ?? Promise.resolve();
+    const task = previous.catch(() => undefined).then(persist);
+    writeQueueRef.current.set(patientId, task.catch(() => undefined));
 
+    try {
+      await task;
       toast({
         title: "Paciente atualizado",
         description: "As informações foram salvas com sucesso.",
@@ -400,7 +403,14 @@ export function usePatients(department?: Department) {
         description: "Não foi possível salvar as alterações.",
         variant: "destructive",
       });
+      // Resync with what is really stored so the screen never shows unsaved data.
+      pendingWritesRef.current.set(patientId, Math.max(0, (pendingWritesRef.current.get(patientId) || 1) - 1));
+      lastWriteAtRef.current.delete(patientId);
+      fetchPatients();
       throw error;
+    } finally {
+      const left = Math.max(0, (pendingWritesRef.current.get(patientId) || 0) - (pendingWritesRef.current.has(patientId) ? 0 : 0));
+      void left;
     }
   };
 
