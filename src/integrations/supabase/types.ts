@@ -2980,6 +2980,18 @@ export type Database = {
       setup_medicoporta_user: { Args: never; Returns: undefined }
       setup_medicouti_user: { Args: never; Returns: undefined }
       setup_visitante_user: { Args: never; Returns: undefined }
+      transfer_patient_to_uti: {
+        Args: {
+          p_delete_source?: boolean
+          p_destination_label: string
+          p_notes?: string
+          p_origin_label: string
+          p_snapshot?: Json
+          p_source_id: string
+          p_target_id: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       app_role:
