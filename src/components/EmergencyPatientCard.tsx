@@ -502,6 +502,21 @@ export function EmergencyPatientCard({
                       </>
                     )}
                   </div>
+                  {/* PRONT. / ATEND. — linha discreta, clique para copiar */}
+                  {(patient.medicalRecordNumber || patient.attendanceNumber) && (
+                    <div className="shrink-0 flex items-center gap-2 text-[10px] italic text-muted-foreground/80">
+                      {patient.medicalRecordNumber && (
+                        <button type="button" className="hover:text-primary transition-colors" title="Copiar prontuário" onClick={() => copyText(patient.medicalRecordNumber!, "Prontuário")}>
+                          <span className="font-semibold not-italic">PRONT.</span> {patient.medicalRecordNumber}
+                        </button>
+                      )}
+                      {patient.attendanceNumber && (
+                        <button type="button" className="hover:text-primary transition-colors" title="Copiar atendimento" onClick={() => copyText(patient.attendanceNumber!, "Atendimento")}>
+                          <span className="font-semibold not-italic">ATEND.</span> {patient.attendanceNumber}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* TPS · ADM emergência · PSM */}
@@ -617,6 +632,17 @@ export function EmergencyPatientCard({
                       label="Exames"
                       icon={<FlaskConical className="h-2.5 w-2.5 text-muted-foreground" />}
                       iconColorClass="text-muted-foreground hover:text-foreground"
+                      headerActions={FEATURE_FLAGS.EXAMINUS_AI_ENABLED && canEdit ? (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-4 w-4 text-muted-foreground hover:text-foreground"
+                          onClick={(e) => { e.stopPropagation(); setExamCurvesOpen(true); }}
+                          title="Adicionar curva de exames"
+                        >
+                          <TrendingUp className="h-3 w-3" />
+                        </Button>
+                      ) : undefined}
                       alwaysShowAll
                       fieldId="exames"
                       isActive={activeColumn === "exames"}
@@ -650,6 +676,32 @@ export function EmergencyPatientCard({
                       label="Programações / Pendências"
                       icon={<ClipboardList className="h-2.5 w-2.5 text-muted-foreground" />}
                       iconColorClass="text-muted-foreground hover:text-foreground"
+                      headerActions={canEdit ? (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-4 w-4 text-muted-foreground hover:text-foreground"
+                          onClick={(e) => { e.stopPropagation(); setTemplatesOpen(true); }}
+                          title="Templates rápidos"
+                        >
+                          <Zap className="h-3 w-3" />
+                        </Button>
+                      ) : undefined}
+                      renderItemActions={(item, index) => {
+                        const idx = getPsmCycleIndex(item);
+                        if (idx < 0) return null;
+                        const cfg = PSM_ITEM_ICON[PSM_CYCLE[idx].status];
+                        return (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); if (canEdit) cyclePendencyPsm(index); }}
+                            className={cn("h-4 w-4 shrink-0 inline-flex items-center justify-center rounded-full transition-transform hover:scale-110", cfg.className)}
+                            title={`${cfg.title} — clique para avançar o status do PSM`}
+                          >
+                            <cfg.Icon className="h-3.5 w-3.5" />
+                          </button>
+                        );
+                      }}
                       alwaysShowAll
                       highlightedIndices={patient.highlightedPendencies || []}
                       onUpdateHighlights={(indices) => update({ highlightedPendencies: indices })}
@@ -852,8 +904,62 @@ export function EmergencyPatientCard({
           </CollapsibleContent>
         </Collapsible>
       </div>
+      </div>
 
       <EditPatientDialog patient={patient} open={editOpen} onOpenChange={setEditOpen} onSave={(p) => { onUpdate(p); setEditOpen(false); }} />
+
+      <PatientInfoDialog
+        open={infoOpen}
+        onOpenChange={setInfoOpen}
+        patient={patient}
+        canEdit={canEdit}
+        onApply={async (changes) => update(changes)}
+      />
+
+      <QuickTemplatesDialog
+        open={templatesOpen}
+        onOpenChange={setTemplatesOpen}
+        patientName={patient.name}
+        onAddTemplates={(templates) => {
+          if (!templates?.length) return;
+          update({ pendencies: [...(patient.pendencies || []), ...templates.map((t) => t.toUpperCase())] });
+          toast({ title: `${templates.length} template(s) adicionado(s)` });
+        }}
+      />
+
+      {FEATURE_FLAGS.EXAMINUS_AI_ENABLED && (
+        <ExamCurvesDialog
+          open={examCurvesOpen}
+          onOpenChange={setExamCurvesOpen}
+          patientName={patient.name}
+          onAddCurves={async (curves: string[]) => {
+            if (!curves?.length) return;
+            update({ relevantExams: [...(patient.relevantExams || []), ...curves.map((c) => c.toUpperCase())] });
+          }}
+        />
+      )}
+
+      <SepsisProtocolWizardDialog
+        patient={patient}
+        isOpen={sepsisWizardOpen}
+        onClose={() => setSepsisWizardOpen(false)}
+        onSuccess={() => refetchSepsis()}
+        existingProtocolId={sepsisProtocol?.id || null}
+      />
+      <StrokeProtocolWizardDialog
+        patient={patient}
+        isOpen={strokeWizardOpen}
+        onClose={() => setStrokeWizardOpen(false)}
+        onSuccess={() => refetchStroke()}
+        existingProtocolId={strokeProtocol?.id || null}
+      />
+      <ChestPainProtocolWizardDialog
+        patient={patient}
+        isOpen={chestPainWizardOpen}
+        onClose={() => setChestPainWizardOpen(false)}
+        onSuccess={() => refetchChestPain()}
+        existingProtocolId={chestPainProtocol?.id || null}
+      />
 
       <PatientMovementDialog
         patient={patient}
