@@ -20,7 +20,7 @@ import {
   Edit, FileEdit, FileText, FlaskConical, FolderOpen, MoreVertical, Printer, Shuffle, Skull,
   Stethoscope, Trash2, TrendingUp, Utensils, X, Copy, Info, Zap, Clock, CircleCheck, AlertTriangle, ArrowUpCircle,
 } from "lucide-react";
-import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SECTOR_FIELD_HOVER, SmoothCollapse, COLLAPSIBLE_CONTENT_MOTION, COLUMN_CELL, COLUMN_HOVER } from "@/components/patient-card/InlineEditors";
+import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SECTOR_FIELD_HOVER, SmoothCollapse, COLLAPSIBLE_CONTENT_MOTION, COLUMN_CELL, COLUMN_HOVER, SECTOR_INPUT } from "@/components/patient-card/InlineEditors";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { PatientReportDialog } from "./PatientReportDialog";
@@ -540,7 +540,7 @@ export function EmergencyPatientCard({
                         type="datetime-local"
                         autoFocus
                         defaultValue={admission ? toLocalInput(admission) : toLocalInput(new Date())}
-                        className="bg-background text-foreground border border-primary/50 rounded px-1 text-[10px] h-5 outline-none focus:border-primary"
+                        className={cn("bg-background text-foreground border rounded px-1 text-[10px] h-5 outline-none", SECTOR_INPUT[sector])}
                         onBlur={(e) => handleSaveAdmission(e.currentTarget.value)}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") handleSaveAdmission(e.currentTarget.value);

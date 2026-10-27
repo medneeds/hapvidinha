@@ -70,6 +70,22 @@ const SECTOR_TEXT_HOVER: Record<EditorColorVariant, string> = {
   outside: "hover:text-foreground",
 };
 
+/** Typing boxes (border, focus ring, caret) in the sector colour. */
+export const SECTOR_INPUT: Record<EditorColorVariant, string> = {
+  blue: "border-stable/45 focus:border-stable focus:ring-2 focus:ring-stable/20 caret-stable",
+  yellow: "border-warning/50 focus:border-warning focus:ring-2 focus:ring-warning/20 caret-warning",
+  red: "border-critical/45 focus:border-critical focus:ring-2 focus:ring-critical/20 caret-critical",
+  outside: "border-muted-foreground/40 focus:border-muted-foreground focus:ring-2 focus:ring-muted-foreground/20 caret-foreground",
+};
+
+/** Confirm (✓) icon colour in the sector colour. */
+const SECTOR_CONFIRM: Record<EditorColorVariant, string> = {
+  blue: "text-stable",
+  yellow: "text-warning",
+  red: "text-critical",
+  outside: "text-muted-foreground",
+};
+
 /** Main card column cell: no box, thin divider between columns (compact layout shared by UE and UTI). */
 export const COLUMN_CELL =
   "min-w-0 px-1.5 rounded-md transition-colors duration-200 md:border-l md:first:border-l-0 md:rounded-none border-border/50";
@@ -218,7 +234,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
               autoResize(e.currentTarget);
             }}
             rows={1}
-            className="flex-1 min-w-0 w-full text-[12px] leading-snug bg-background border border-primary/40 rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 overflow-hidden whitespace-pre-wrap break-words"
+            className={cn("flex-1 min-w-0 w-full text-[12px] leading-snug bg-background text-foreground border rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm overflow-hidden whitespace-pre-wrap break-words", SECTOR_INPUT[highlightColorVariant])}
             onKeyDown={handleKeyDownInternal}
             onBlur={handleSave}
             onClick={(e) => e.stopPropagation()}
@@ -594,7 +610,7 @@ export function InlineEditableArray({
               }}
               placeholder="NOVO ITEM..."
               rows={1}
-              className="flex-1 min-w-0 w-full text-[12px] leading-snug bg-background border border-primary/40 rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 overflow-hidden whitespace-pre-wrap break-words placeholder:font-normal placeholder:text-muted-foreground/50"
+              className={cn("flex-1 min-w-0 w-full text-[12px] leading-snug bg-background text-foreground border rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm overflow-hidden whitespace-pre-wrap break-words placeholder:font-normal placeholder:text-muted-foreground/50", SECTOR_INPUT[highlightColorVariant])}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -612,7 +628,7 @@ export function InlineEditableArray({
               onBlur={() => handleAddItem(false)}
             />
             <Button size="icon" variant="ghost" className="h-5 w-5" onClick={() => handleAddItem(false)}>
-              <Check className="h-3 w-3 text-green-600" />
+              <Check className={cn("h-3 w-3", SECTOR_CONFIRM[highlightColorVariant])} />
             </Button>
             <Button 
               size="icon" 
@@ -682,7 +698,7 @@ export function InlineEditableField({ value, onUpdate, placeholder = "-", classN
         type="text"
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value.toUpperCase())}
-        className={cn("bg-background text-foreground caret-primary border border-primary/50 rounded px-1.5 py-0.5 outline-none text-sm w-full uppercase focus:border-primary focus:ring-2 focus:ring-primary/20", className)}
+        className={cn("bg-background text-foreground border rounded px-1.5 py-0.5 outline-none text-sm w-full uppercase", SECTOR_INPUT[colorVariant], className)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleSave();
           if (e.key === 'Escape') setIsEditing(false);
@@ -759,7 +775,7 @@ export function InlineEditableTextarea({ value, onUpdate, placeholder = "-", col
         onChange={(e) => {
           setLocalValue(e.target.value.toUpperCase());
         }}
-        className="w-full bg-background border border-primary/30 rounded px-2 py-1.5 outline-none text-xs uppercase min-h-[80px] max-h-[300px] resize-y overflow-auto"
+        className={cn("w-full bg-background text-foreground border rounded px-2 py-1.5 outline-none text-xs uppercase min-h-[80px] max-h-[300px] resize-y overflow-auto", SECTOR_INPUT[colorVariant])}
         onKeyDown={(e) => {
           if (e.key === 'Escape') setIsEditing(false);
         }}
