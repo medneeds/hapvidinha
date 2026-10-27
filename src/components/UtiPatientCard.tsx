@@ -775,7 +775,7 @@ export function UtiPatientCard({
                   <Stethoscope className="h-3.5 w-3.5 text-slate-500" />
                   <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">CLÍNICO</span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2">
                   <InlineEditableArray
                     items={especialidades}
                     onUpdate={(items) => handleUpdateField("utiSpecialties", items)}
@@ -784,14 +784,7 @@ export function UtiPatientCard({
                     alwaysShowAll
                     highlightColorVariant={colorVariant}
                   />
-                  <InlineEditableArray
-                    items={exames}
-                    onUpdate={(items) => handleUpdateField("relevantExams", items)}
-                    label="EXAMES"
-                    colorClass="bg-muted/50 border border-border/50"
-                    alwaysShowAll
-                    highlightColorVariant={colorVariant}
-                  />
+                  {/* EXAMES agora é a 3ª coluna do cartão (após Antecedentes) */}
                 </div>
               </div>
 
