@@ -657,7 +657,7 @@ export function InlineEditableField({ value, onUpdate, placeholder = "-", classN
     <span 
       className={cn(
         "cursor-pointer transition-colors rounded-sm px-0.5 -mx-0.5",
-        colorVariant === 'yellow' ? "hover:bg-warning/[0.07] hover:text-warning" : "hover:bg-stable/[0.07] hover:text-stable",
+        SECTOR_FIELD_HOVER[colorVariant],
         className
       )}
       onClick={(e) => {
@@ -737,7 +737,7 @@ export function InlineEditableTextarea({ value, onUpdate, placeholder = "-", col
         ref={contentRef}
         className={cn(
           "cursor-pointer transition-all duration-200 text-xs whitespace-pre-wrap overflow-hidden rounded-sm px-1 -mx-1",
-          colorVariant === 'yellow' ? "hover:bg-warning/[0.07] hover:text-warning" : "hover:bg-stable/[0.07] hover:text-stable",
+          SECTOR_FIELD_HOVER[colorVariant],
           !isTextExpanded && hasOverflow ? "max-h-[48px]" : "max-h-none"
         )}
         onClick={(e) => {
