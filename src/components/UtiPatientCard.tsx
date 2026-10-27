@@ -23,7 +23,7 @@ const CLINICAL_STATUS_OPTIONS = [
 // Helper to force uppercase on all text inputs
 const toUpperCase = (value: string) => value.toUpperCase();
 import { cn } from "@/lib/utils";
-import { InlineEditableArray, InlineEditableField, InlineEditableTextarea } from "@/components/patient-card/InlineEditors";
+import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SmoothCollapse, COLLAPSIBLE_CONTENT_MOTION } from "@/components/patient-card/InlineEditors";
 import { releaseBedForFilling } from "@/utils/releaseBed";
 import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetailedAge";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -562,8 +562,8 @@ export function UtiPatientCard({
               </div>
 
               {/* Row 2: 5 columns on desktop (Hipóteses · Antecedentes · Exames · Plano · Pendências), 2 per row on mobile */}
-              {!isCollapsed && (
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+              <SmoothCollapse open={!isCollapsed} className="!mt-0">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-1.5 pt-1.5 md:pt-1">
                   <div className={cn("rounded-lg p-1 md:p-1.5 border border-t-2 md:border-t md:border-l", colors.col1, patientSectionHover)}>
                     <InlineEditableArray
                       items={diagnosticos}
@@ -652,7 +652,7 @@ export function UtiPatientCard({
                     />
                   </div>
                 </div>
-              )}
+              </SmoothCollapse>
             </div>
 
             {/* Right Actions + Expand Button - Horizontal when collapsed, Vertical when expanded */}
@@ -747,7 +747,7 @@ export function UtiPatientCard({
           </div>
 
           {/* Expanded Content - Complete UTI fields */}
-          <CollapsibleContent>
+          <CollapsibleContent className={COLLAPSIBLE_CONTENT_MOTION}>
             <div className="border-t border-border/30 p-3 space-y-3 bg-muted/5">
               
               {/* 🔴 CRÍTICO - Patient safety items */}

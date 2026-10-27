@@ -18,9 +18,9 @@ import {
 import {
   Activity, AlertCircle, ArrowLeftRight, ArrowRightLeft, BedDouble, ChevronDown, ChevronRight, ClipboardList,
   Edit, FileEdit, FileText, FlaskConical, FolderOpen, MoreVertical, Printer, Shuffle, Skull,
-  Stethoscope, Trash2, TrendingUp, Utensils, X,
+  Stethoscope, Trash2, TrendingUp, Utensils, X, Copy, Info, Zap, Clock, CircleCheck, AlertTriangle, ArrowUpCircle,
 } from "lucide-react";
-import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SECTOR_FIELD_HOVER } from "@/components/patient-card/InlineEditors";
+import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SECTOR_FIELD_HOVER, SmoothCollapse, COLLAPSIBLE_CONTENT_MOTION } from "@/components/patient-card/InlineEditors";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { PatientReportDialog } from "./PatientReportDialog";
@@ -31,6 +31,21 @@ import { DietReleaseDialog } from "./DietReleaseDialog";
 import { RequestBedAllocationDialog } from "./RequestBedAllocationDialog";
 import { PasswordConfirmDialog } from "@/components/PasswordConfirmDialog";
 import { TransferToUtiDialog } from "./TransferToUtiDialog";
+import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
+import { ExamCurvesDialog } from "./ExamCurvesDialog";
+import { PatientInfoDialog } from "./PatientInfoDialog";
+import { AllocationPendingBadge } from "./AllocationPendingBadge";
+import { PalliativeButterflyIcon } from "./PalliativeButterflyIcon";
+import { SepsisActiveBanner } from "./SepsisActiveBanner";
+import { StrokeActiveBanner } from "./StrokeActiveBanner";
+import { ChestPainActiveBanner } from "./ChestPainActiveBanner";
+import { SepsisProtocolWizardDialog } from "./SepsisProtocolWizardDialog";
+import { StrokeProtocolWizardDialog } from "./StrokeProtocolWizardDialog";
+import { ChestPainProtocolWizardDialog } from "./ChestPainProtocolWizardDialog";
+import { AllocationStatusBar, hasAllocationStatusBar } from "@/components/patient-card/AllocationStatusBar";
+import { FEATURE_FLAGS } from "@/config/featureFlags";
+import { useConductHistory } from "@/hooks/useConductHistory";
+import { describeListChange } from "@/utils/conductHistory";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
@@ -41,7 +56,7 @@ import { useStrokeProtocol } from "@/hooks/useStrokeProtocol";
 import { useChestPainProtocol } from "@/hooks/useChestPainProtocol";
 import { getPatientAgeDisplay } from "@/utils/ageDisplay";
 import { formatTps } from "@/utils/stayTime";
-import { getPatientPsmState, nextPatientPsm, PSM_CYCLE, type PsmState } from "@/utils/psmCycle";
+import { getPatientPsmState, nextPatientPsm, PSM_CYCLE, cyclePsmText, getPsmCycleIndex, type PsmState } from "@/utils/psmCycle";
 import { RELEASED_BED_FIELDS } from "@/utils/releaseBed";
 
 type Sector = Patient["sector"];
@@ -118,6 +133,16 @@ const PSM_PILL: Record<PsmState, string> = {
   desfavoravel: "bg-critical/10 border-critical/40 text-critical",
   ir_para: "bg-stable/10 border-stable/40 text-stable",
 };
+
+const PSM_ITEM_ICON: Record<PsmState, { Icon: typeof Clock; className: string; title: string }> = {
+  aguardando: { Icon: Clock, className: "text-warning", title: "Aguardando PSM" },
+  favoravel: { Icon: CircleCheck, className: "text-success", title: "PSM favorável" },
+  desfavoravel: { Icon: AlertTriangle, className: "text-critical", title: "PSM desfavorável" },
+  ir_para: { Icon: ArrowUpCircle, className: "text-stable", title: "Ir para — auditoria aprovou" },
+};
+
+/** Fields whose changes are written to the conduct history (same set as before). */
+const TRACKED_LIST_FIELDS = ["diagnoses", "medicalHistory", "relevantExams", "pendencies", "schedule"] as const;
 
 const RESPONSIBILITY_LABEL: Record<string, string> = {
   porta: "PRT",
@@ -227,10 +252,17 @@ export function EmergencyPatientCard({
   const [bedRequestOpen, setBedRequestOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [utiTransferOpen, setUtiTransferOpen] = useState(false);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
+  const [examCurvesOpen, setExamCurvesOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [sepsisWizardOpen, setSepsisWizardOpen] = useState(false);
+  const [strokeWizardOpen, setStrokeWizardOpen] = useState(false);
+  const [chestPainWizardOpen, setChestPainWizardOpen] = useState(false);
 
-  const { isProtocolActive: hasSepsis } = useSepsisProtocol(patient.id);
-  const { isProtocolActive: hasStroke } = useStrokeProtocol(patient.id);
-  const { isProtocolActive: hasChestPain } = useChestPainProtocol(patient.id);
+  const { activeProtocol: sepsisProtocol, isProtocolActive: hasSepsis, refetch: refetchSepsis } = useSepsisProtocol(patient.id);
+  const { activeProtocol: strokeProtocol, isProtocolActive: hasStroke, refetch: refetchStroke } = useStrokeProtocol(patient.id);
+  const { activeProtocol: chestPainProtocol, isProtocolActive: hasChestPain, refetch: refetchChestPain } = useChestPainProtocol(patient.id);
+  const { recordChange } = useConductHistory(patient.id);
   const activeProtocol = hasSepsis ? "Sepse" : hasStroke ? "AVC" : hasChestPain ? "Dor Torácica" : null;
 
   const stayTimer = useSectorStayTimer(patient.admissionDate);
@@ -254,7 +286,36 @@ export function EmergencyPatientCard({
     if (!isExpanded) setEditingAdmission(false);
   }, [isExpanded]);
 
-  const update = (changes: Partial<Patient>) => onUpdate({ ...patient, ...changes });
+  const update = (changes: Partial<Patient>) => {
+    // Histórico de condutas: registra inclusões, remoções e edições nos campos clínicos
+    for (const field of TRACKED_LIST_FIELDS) {
+      const next = changes[field] as string[] | undefined;
+      if (next === undefined) continue;
+      describeListChange((patient[field] as string[]) || [], next).forEach((c) => recordChange({ fieldName: field, ...c }));
+    }
+    if (changes.admissionHistory !== undefined && (changes.admissionHistory || "") !== (patient.admissionHistory || "")) {
+      recordChange({ fieldName: "admissionHistory", oldValue: patient.admissionHistory || null, newValue: changes.admissionHistory || null });
+    }
+    onUpdate({ ...patient, ...changes });
+  };
+
+  const copyText = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: `${label} copiado`, description: text });
+    } catch {
+      toast({ title: "Não foi possível copiar", variant: "destructive" });
+    }
+  };
+
+  const cyclePendencyPsm = (index: number) => {
+    const pendencies = patient.pendencies || [];
+    const cycled = cyclePsmText(pendencies[index] || "");
+    if (!cycled) return;
+    const updated = [...pendencies];
+    updated[index] = cycled.text;
+    update({ pendencies: updated, psmStatus: cycled.status as Patient["psmStatus"] });
+  };
 
   const handleTab = (column: UeColumn) => {
     const idx = COLUMN_ORDER.indexOf(column);
@@ -293,11 +354,66 @@ export function EmergencyPatientCard({
 
   const isFixedSlot = ["red", "yellow", "blue"].includes(sector) && /^[VAZ]\d{2}$/.test(patient.bedNumber);
   const displayName = maskName(patient.name, namesHidden);
+  const showAllocationBar = hasAllocationStatusBar(patient);
+  const showSepsisBanner = hasSepsis && sepsisProtocol?.outcome == null;
+  const showStrokeBanner = hasStroke && strokeProtocol?.outcome == null;
+  const showChestPainBanner = hasChestPain && chestPainProtocol?.outcome == null;
+  const hasTopBar = showAllocationBar || showSepsisBanner || showStrokeBanner || showChestPainBanner;
+  const isPalliative = (patient.pendencies || []).some((p) => p.toUpperCase().includes("CUIDADOS PALIATIVOS"));
 
   return (
     <>
+      <div className="relative">
+      <AllocationStatusBar patient={patient} />
+      {showSepsisBanner && sepsisProtocol && (
+        <SepsisActiveBanner
+          protocolCreatedAt={sepsisProtocol.created_at}
+          openingDate={sepsisProtocol.opening_date}
+          openingTime={sepsisProtocol.opening_time}
+          outcome={sepsisProtocol.outcome}
+          sector={sector as any}
+          hasCultures={!!(sepsisProtocol.blood_culture_date && sepsisProtocol.blood_culture_time)}
+          hasAntibiotic={!!(sepsisProtocol.antibiotic_administration_date && sepsisProtocol.antibiotic_administration_time)}
+          antibioticDate={sepsisProtocol.antibiotic_administration_date}
+          antibioticTime={sepsisProtocol.antibiotic_administration_time}
+          bloodCultureTime={sepsisProtocol.blood_culture_time}
+          onClick={() => setSepsisWizardOpen(true)}
+        />
+      )}
+      {showStrokeBanner && strokeProtocol && (
+        <StrokeActiveBanner
+          protocolCreatedAt={strokeProtocol.created_at}
+          openingDate={strokeProtocol.opening_date}
+          openingTime={strokeProtocol.opening_time}
+          outcome={strokeProtocol.outcome}
+          sector={sector as any}
+          hasCt={!!(strokeProtocol.ct_date && strokeProtocol.ct_time)}
+          hasThrombolysis={!!(strokeProtocol.thrombolysis_date && strokeProtocol.thrombolysis_time)}
+          ctTime={strokeProtocol.ct_time}
+          thrombolysisTime={strokeProtocol.thrombolysis_time}
+          nihssTotal={strokeProtocol.nihss_total}
+          onClick={() => setStrokeWizardOpen(true)}
+        />
+      )}
+      {showChestPainBanner && chestPainProtocol && (
+        <ChestPainActiveBanner
+          protocolCreatedAt={chestPainProtocol.created_at}
+          openingDate={chestPainProtocol.opening_date}
+          openingTime={chestPainProtocol.opening_time}
+          outcome={chestPainProtocol.outcome}
+          sector={sector as any}
+          hasEcg={!!(chestPainProtocol.ecg_date && chestPainProtocol.ecg_time)}
+          ecgTime={chestPainProtocol.ecg_time}
+          isStemi={chestPainProtocol.is_stemi}
+          heartScore={chestPainProtocol.heart_total}
+          heartRiskLevel={chestPainProtocol.heart_risk_level}
+          hasBalloon={!!(chestPainProtocol.balloon_date && chestPainProtocol.balloon_time)}
+          balloonTime={chestPainProtocol.balloon_time}
+          onClick={() => setChestPainWizardOpen(true)}
+        />
+      )}
       <div
-        className={cn("border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200", tone.card, tone.glass)}
+        className={cn("border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200", tone.card, tone.glass, hasTopBar && "rounded-t-none")}
         data-patient-id={patient.id}
         onPointerMove={updateClinicalGlassPointer}
         onPointerLeave={resetClinicalGlassPointer}
@@ -320,7 +436,8 @@ export function EmergencyPatientCard({
                 <BedResponsibilityChip patient={patient} onOpenResponsibility={() => canEdit && setResponsibilityOpen(true)} />
 
                 {/* Nome + DN + idade */}
-                <div className="flex-1 flex items-baseline gap-2 md:gap-3 min-w-0 flex-wrap">
+                <div className="flex-1 flex items-center gap-2 md:gap-3 min-w-0 flex-wrap">
+                  {isPalliative && <PalliativeButterflyIcon />}
                   {namesHidden ? (
                     <span className="text-xs md:text-sm font-semibold tracking-widest opacity-70">{displayName}</span>
                   ) : (
@@ -336,6 +453,29 @@ export function EmergencyPatientCard({
                       colorVariant={sector}
                     />
                   )}
+                  <div className="shrink-0 flex items-center gap-0.5 -ml-1 print:hidden">
+                    {patient.name && !namesHidden && (
+                      <button
+                        type="button"
+                        onClick={() => copyText(patient.name, "Nome")}
+                        className="h-5 w-5 inline-flex items-center justify-center rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors"
+                        title="Copiar nome"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setInfoOpen(true)}
+                      className="h-5 w-5 inline-flex items-center justify-center rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors"
+                      title="Ver informações administrativas"
+                    >
+                      <Info className="h-3 w-3" />
+                    </button>
+                    <div className={cn(showAllocationBar && "sr-only")}>
+                      <AllocationPendingBadge patient={patient} onStatusChange={onRefetch} />
+                    </div>
+                  </div>
                   <div className="shrink-0 flex items-center gap-1 text-[10px] md:text-xs text-muted-foreground">
                     <span className="font-semibold opacity-70">DN:</span>
                     <InlineEditableField
@@ -362,6 +502,21 @@ export function EmergencyPatientCard({
                       </>
                     )}
                   </div>
+                  {/* PRONT. / ATEND. — linha discreta, clique para copiar */}
+                  {(patient.medicalRecordNumber || patient.attendanceNumber) && (
+                    <div className="shrink-0 flex items-center gap-2 text-[10px] italic text-muted-foreground/80">
+                      {patient.medicalRecordNumber && (
+                        <button type="button" className="hover:text-primary transition-colors" title="Copiar prontuário" onClick={() => copyText(patient.medicalRecordNumber!, "Prontuário")}>
+                          <span className="font-semibold not-italic">PRONT.</span> {patient.medicalRecordNumber}
+                        </button>
+                      )}
+                      {patient.attendanceNumber && (
+                        <button type="button" className="hover:text-primary transition-colors" title="Copiar atendimento" onClick={() => copyText(patient.attendanceNumber!, "Atendimento")}>
+                          <span className="font-semibold not-italic">ATEND.</span> {patient.attendanceNumber}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* TPS · ADM emergência · PSM */}
@@ -432,8 +587,8 @@ export function EmergencyPatientCard({
               </div>
 
               {/* 5 colunas */}
-              {!isCollapsed && (
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+              <SmoothCollapse open={!isCollapsed} className="!mt-0">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-1 md:gap-1.5 pt-1.5 md:pt-1">
                   <div className={cn("rounded-lg p-1 md:p-1.5 border bg-muted/30 border-border/60", SECTION_GLASS[sector])}>
                     <InlineEditableArray
                       items={patient.diagnoses || []}
@@ -477,6 +632,17 @@ export function EmergencyPatientCard({
                       label="Exames"
                       icon={<FlaskConical className="h-2.5 w-2.5 text-muted-foreground" />}
                       iconColorClass="text-muted-foreground hover:text-foreground"
+                      headerActions={FEATURE_FLAGS.EXAMINUS_AI_ENABLED && canEdit ? (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-4 w-4 text-muted-foreground hover:text-foreground"
+                          onClick={(e) => { e.stopPropagation(); setExamCurvesOpen(true); }}
+                          title="Adicionar curva de exames"
+                        >
+                          <TrendingUp className="h-3 w-3" />
+                        </Button>
+                      ) : undefined}
                       alwaysShowAll
                       fieldId="exames"
                       isActive={activeColumn === "exames"}
@@ -510,6 +676,32 @@ export function EmergencyPatientCard({
                       label="Programações / Pendências"
                       icon={<ClipboardList className="h-2.5 w-2.5 text-muted-foreground" />}
                       iconColorClass="text-muted-foreground hover:text-foreground"
+                      headerActions={canEdit ? (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-4 w-4 text-muted-foreground hover:text-foreground"
+                          onClick={(e) => { e.stopPropagation(); setTemplatesOpen(true); }}
+                          title="Templates rápidos"
+                        >
+                          <Zap className="h-3 w-3" />
+                        </Button>
+                      ) : undefined}
+                      renderItemActions={(item, index) => {
+                        const idx = getPsmCycleIndex(item);
+                        if (idx < 0) return null;
+                        const cfg = PSM_ITEM_ICON[PSM_CYCLE[idx].status];
+                        return (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); if (canEdit) cyclePendencyPsm(index); }}
+                            className={cn("h-4 w-4 shrink-0 inline-flex items-center justify-center rounded-full transition-transform hover:scale-110", cfg.className)}
+                            title={`${cfg.title} — clique para avançar o status do PSM`}
+                          >
+                            <cfg.Icon className="h-3.5 w-3.5" />
+                          </button>
+                        );
+                      }}
                       alwaysShowAll
                       highlightedIndices={patient.highlightedPendencies || []}
                       onUpdateHighlights={(indices) => update({ highlightedPendencies: indices })}
@@ -522,7 +714,7 @@ export function EmergencyPatientCard({
                     />
                   </div>
                 </div>
-              )}
+              </SmoothCollapse>
             </div>
 
             {/* Ações */}
@@ -666,7 +858,7 @@ export function EmergencyPatientCard({
           </div>
 
           {/* Área expandida: história admissional + administrativo */}
-          <CollapsibleContent>
+          <CollapsibleContent className={COLLAPSIBLE_CONTENT_MOTION}>
             <div className={cn("border-t border-border/30 p-3 space-y-3 bg-muted/5", !canEdit && "[&_.cursor-pointer]:pointer-events-none")}>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
@@ -712,8 +904,62 @@ export function EmergencyPatientCard({
           </CollapsibleContent>
         </Collapsible>
       </div>
+      </div>
 
       <EditPatientDialog patient={patient} open={editOpen} onOpenChange={setEditOpen} onSave={(p) => { onUpdate(p); setEditOpen(false); }} />
+
+      <PatientInfoDialog
+        open={infoOpen}
+        onOpenChange={setInfoOpen}
+        patient={patient}
+        canEdit={canEdit}
+        onApply={async (changes) => update(changes)}
+      />
+
+      <QuickTemplatesDialog
+        open={templatesOpen}
+        onOpenChange={setTemplatesOpen}
+        patientName={patient.name}
+        onAddTemplates={(templates) => {
+          if (!templates?.length) return;
+          update({ pendencies: [...(patient.pendencies || []), ...templates.map((t) => t.toUpperCase())] });
+          toast({ title: `${templates.length} template(s) adicionado(s)` });
+        }}
+      />
+
+      {FEATURE_FLAGS.EXAMINUS_AI_ENABLED && (
+        <ExamCurvesDialog
+          open={examCurvesOpen}
+          onOpenChange={setExamCurvesOpen}
+          patientName={patient.name}
+          onAddCurves={async (curves: string[]) => {
+            if (!curves?.length) return;
+            update({ relevantExams: [...(patient.relevantExams || []), ...curves.map((c) => c.toUpperCase())] });
+          }}
+        />
+      )}
+
+      <SepsisProtocolWizardDialog
+        patient={patient}
+        isOpen={sepsisWizardOpen}
+        onClose={() => setSepsisWizardOpen(false)}
+        onSuccess={() => refetchSepsis()}
+        existingProtocolId={sepsisProtocol?.id || null}
+      />
+      <StrokeProtocolWizardDialog
+        patient={patient}
+        isOpen={strokeWizardOpen}
+        onClose={() => setStrokeWizardOpen(false)}
+        onSuccess={() => refetchStroke()}
+        existingProtocolId={strokeProtocol?.id || null}
+      />
+      <ChestPainProtocolWizardDialog
+        patient={patient}
+        isOpen={chestPainWizardOpen}
+        onClose={() => setChestPainWizardOpen(false)}
+        onSuccess={() => refetchChestPain()}
+        existingProtocolId={chestPainProtocol?.id || null}
+      />
 
       <PatientMovementDialog
         patient={patient}
