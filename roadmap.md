@@ -1,11 +1,12 @@
 # Roadmap — UE no estilo da UTI + transferência UE → UTI
 
-- [ ] Extrair editores inline (colunas, campos) para módulo compartilhado
-- [ ] UTI: coluna Exames (5 colunas, Tab na nova ordem; sai do "Clínico")
-- [ ] Formatador TPS (min/h/d) + teste
-- [ ] Novo cartão da UE (identificação: leito+pílula médico, nome, DN+idade, TPS, ADM emergência, PSM; 5 colunas; expandido: história + administrativo; menu de ações)
-- [ ] Trocar cartão na UE Adulto e Pediátrica (SectorSection)
-- [ ] Função do banco transfer_patient_to_uti (atômica, médico/admin)
-- [ ] Diálogo "Transferir para UTI" (UTI 1/2, leitos vagos, resumo) — só UE Adulto
-- [ ] Testes: dados levados na transferência
-- [ ] Verificação na prévia (UE e UTI)
+- [x] Extrair editores inline (colunas, campos) para módulo compartilhado
+- [x] UTI: coluna Exames (5 colunas, Tab na nova ordem; sai do "Clínico")
+- [x] Formatador TPS (min/h/d) + teste
+- [x] Novo cartão da UE (identificação, 5 colunas, área expandida, menu de ações)
+- [x] Trocar cartão na UE Adulto e Pediátrica
+- [x] Função do banco transfer_patient_to_uti (atômica, médico/admin)
+- [x] Diálogo "Transferir para UTI" — só UE Adulto
+- [x] Testes: TPS, PSM, rótulos/leitos da transferência; simulação da função no banco (desfeita)
+- [x] Verificação na prévia (UE claro/escuro e UTI)
+- [ ] Próxima etapa (fora do escopo aprovado): impressão/PDF da UE no novo layout
