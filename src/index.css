@@ -39,6 +39,8 @@
     --warning-foreground: 0 0% 100%;
     --stable: 210 80% 42%;
     --stable-foreground: 0 0% 100%;
+    --success: 142 64% 34%;
+    --success-foreground: 0 0% 100%;
     --border: 210 20% 88%;
     --input: 210 20% 88%;
     --ring: 210 80% 42%;
@@ -96,6 +98,8 @@
     --warning-foreground: 0 0% 100%;
     --stable: 210 70% 55%;
     --stable-foreground: 0 0% 100%;
+    --success: 142 55% 45%;
+    --success-foreground: 0 0% 100%;
     --border: 210 20% 22%;
     --input: 210 20% 22%;
     --ring: 210 70% 65%;
