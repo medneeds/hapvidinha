@@ -1153,7 +1153,7 @@ export function UtiPatientCard({
                 </div>
                 
                 {/* Patient Name + Birth Date + Age - Flexible grow */}
-                <div className="flex-1 flex items-baseline gap-1 md:gap-1.5 min-w-0 flex-wrap">
+                <div className="flex-1 flex items-baseline gap-2 md:gap-3 min-w-0 flex-wrap">
                   {namesHidden ? (
                     <span className="text-xs md:text-sm font-semibold truncate tracking-widest opacity-70">{displayName}</span>
                   ) : (
