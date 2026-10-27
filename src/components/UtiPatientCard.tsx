@@ -23,7 +23,7 @@ const CLINICAL_STATUS_OPTIONS = [
 // Helper to force uppercase on all text inputs
 const toUpperCase = (value: string) => value.toUpperCase();
 import { cn } from "@/lib/utils";
-import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SmoothCollapse, COLLAPSIBLE_CONTENT_MOTION } from "@/components/patient-card/InlineEditors";
+import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SmoothCollapse, COLLAPSIBLE_CONTENT_MOTION, COLUMN_CELL, COLUMN_HOVER } from "@/components/patient-card/InlineEditors";
 import { releaseBedForFilling } from "@/utils/releaseBed";
 import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetailedAge";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -283,6 +283,7 @@ export function UtiPatientCard({
   const patientSectionHover = colorVariant === 'yellow'
     ? "clinical-glass-section clinical-glass-warning"
     : "clinical-glass-section clinical-glass-stable";
+  const columnHover = COLUMN_HOVER[colorVariant];
   const patientCardGlass = colorVariant === 'yellow'
     ? "clinical-glass-card clinical-glass-warning"
     : "clinical-glass-card clinical-glass-stable";

@@ -70,6 +70,18 @@ const SECTOR_TEXT_HOVER: Record<EditorColorVariant, string> = {
   outside: "hover:text-foreground",
 };
 
+/** Main card column cell: no box, thin divider between columns (compact layout shared by UE and UTI). */
+export const COLUMN_CELL =
+  "min-w-0 px-1.5 rounded-md transition-colors duration-200 md:border-l md:first:border-l-0 md:rounded-none border-border/50";
+
+/** Very light hover tint of a column in the sector colour. */
+export const COLUMN_HOVER: Record<EditorColorVariant, string> = {
+  blue: "hover:bg-stable/[0.03]",
+  yellow: "hover:bg-warning/[0.03]",
+  red: "hover:bg-critical/[0.03]",
+  outside: "hover:bg-muted-foreground/[0.03]",
+};
+
 /** Hover tint for clickable inline values, in the sector colour. */
 export const SECTOR_FIELD_HOVER: Record<EditorColorVariant, string> = {
   blue: "hover:bg-stable/[0.07] hover:text-stable",
