@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Plus, GripVertical, Trash2, Star, ChevronDown } from "lucide-react";
+import { Check, X, Plus, GripVertical, Star, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DndContext,
@@ -106,16 +106,27 @@ export const SECTOR_FIELD_HOVER: Record<EditorColorVariant, string> = {
   outside: "hover:bg-muted-foreground/[0.07] hover:text-foreground",
 };
 
+/** Small, light row action (star / remove / confirm). Native button: no ghost box, no cursor glow. */
+const ROW_ACTION =
+  "inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] outline-none transition-[opacity,color,background-color] duration-150 focus-visible:ring-1 focus-visible:ring-ring";
+
+/** Hidden until the row is hovered/focused; softly visible on touch screens (no hover there). */
+const ROW_ACTION_REVEAL =
+  "opacity-0 group-hover/row:opacity-100 group-focus-within/row:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-60";
+
+/** Keeps the typing box focused when a row button is pressed, so blur does not save/close it first. */
+const keepFocus = (e: React.MouseEvent) => e.preventDefault();
+
 // Sortable Item for drag-and-drop with optional highlight
 interface SortableItemProps {
   id: string;
   index: number;
   value: string;
-  onEdit: (newValue: string) => void;
-  onDelete: () => void;
+  onEdit: (id: string, newValue: string) => void;
+  onDelete: (id: string) => void;
   showDragHandle?: boolean;
   isHighlighted?: boolean;
-  onToggleHighlight?: () => void;
+  onToggleHighlight?: (id: string) => void;
   onKeyDown?: (e: React.KeyboardEvent) => void;
   autoFocus?: boolean;
   highlightColorVariant?: EditorColorVariant;
@@ -123,11 +134,14 @@ interface SortableItemProps {
   extraActions?: React.ReactNode;
   /** Denser rows for the main card columns (smaller text and padding). */
   compact?: boolean;
+  /** Fade in when the row was just added in this session. */
+  animateIn?: boolean;
 }
 
-function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus, highlightColorVariant = 'blue', extraActions, compact = false }: SortableItemProps) {
+const SortableItem = memo(function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = true, isHighlighted, onToggleHighlight, onKeyDown, autoFocus, highlightColorVariant = 'blue', extraActions, compact = false, animateIn = false }: SortableItemProps) {
   const [isEditing, setIsEditing] = useState(autoFocus || false);
   const [localValue, setLocalValue] = useState(value);
+  const [isLeaving, setIsLeaving] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-grow textarea height to fit the full content while editing
@@ -146,11 +160,13 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
     isDragging,
   } = useSortable({ id });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+  const style: React.CSSProperties = isLeaving
+    ? { opacity: 0, transform: 'translateX(-4px)', transition: 'opacity 140ms ease, transform 140ms ease' }
+    : {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+      };
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -173,10 +189,24 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
   }, [autoFocus]);
 
   const handleSave = () => {
-    if (localValue.trim()) {
-      onEdit(localValue.trim().toUpperCase());
+    const next = localValue.trim().toUpperCase();
+    if (next && next !== value) {
+      onEdit(id, next);
     }
     setIsEditing(false);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isLeaving) return;
+    const reduceMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      onDelete(id);
+      return;
+    }
+    // Short fade-out, then remove (by id, so other deletions in between cannot shift it).
+    setIsLeaving(true);
+    window.setTimeout(() => onDelete(id), 140);
   };
 
   const handleKeyDownInternal = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -189,6 +219,7 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       handleSave();
       onKeyDown?.(e);
     } else if (e.key === 'Escape') {
+      setLocalValue(value);
       setIsEditing(false);
     }
   };
@@ -203,15 +234,19 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       ref={setNodeRef} 
       style={style} 
       className={cn(
-        "flex items-start gap-1 group rounded-sm px-1 -mx-0.5 transition-all duration-150",
+        "flex items-start gap-1 group/row rounded-sm px-1 -mx-0.5 transition-colors duration-150",
         compact ? "py-0.5" : "py-1 items-center",
         isDragging && "z-50 shadow-sm",
-        isHighlighted ? hStyles.bg : sectorHover
+        isHighlighted ? hStyles.bg : sectorHover,
+        animateIn && "animate-in fade-in-0 slide-in-from-top-1 duration-200 motion-reduce:animate-none"
       )}
     >
       {showDragHandle && (
         <button
-          className="cursor-grab active:cursor-grabbing p-0 opacity-30 hover:opacity-80 transition-opacity flex-shrink-0"
+          type="button"
+          data-no-glass
+          className="cursor-grab active:cursor-grabbing p-0 mt-[2px] opacity-30 hover:opacity-80 transition-opacity flex-shrink-0 touch-none"
+          aria-label="Arrastar para reordenar"
           {...attributes}
           {...listeners}
         >
@@ -225,26 +260,28 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
       )}>{index + 1}.</span>
       
       {isEditing ? (
-        <div className="flex-1 flex items-start gap-1 min-w-0">
-          <textarea
-            ref={inputRef}
-            value={localValue}
-            onChange={(e) => {
-              setLocalValue(e.target.value.toUpperCase());
-              autoResize(e.currentTarget);
-            }}
-            rows={1}
-            className={cn("flex-1 min-w-0 w-full text-[12px] leading-snug bg-background text-foreground border rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm overflow-hidden whitespace-pre-wrap break-words", SECTOR_INPUT[highlightColorVariant])}
-            onKeyDown={handleKeyDownInternal}
-            onBlur={handleSave}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+        <textarea
+          ref={inputRef}
+          value={localValue}
+          onChange={(e) => {
+            setLocalValue(e.target.value.toUpperCase());
+            autoResize(e.currentTarget);
+          }}
+          rows={1}
+          className={cn(
+            "flex-1 min-w-0 w-full bg-background text-foreground border rounded outline-none uppercase font-medium tracking-tight resize-none overflow-hidden whitespace-pre-wrap break-words",
+            compact ? "text-[11px] leading-snug px-1.5 py-0.5" : "text-[12px] leading-snug px-2 py-1",
+            SECTOR_INPUT[highlightColorVariant]
+          )}
+          onKeyDown={handleKeyDownInternal}
+          onBlur={handleSave}
+          onClick={(e) => e.stopPropagation()}
+        />
       ) : (
         <>
           <span 
             className={cn(
-              "flex-1 break-words cursor-pointer transition-colors tracking-tight",
+              "flex-1 min-w-0 break-words cursor-text transition-colors tracking-tight",
               compact ? "text-[10px] leading-snug font-medium uppercase" : "text-[11px] leading-relaxed",
               sectorTextHover,
               isHighlighted ? hStyles.text : "text-foreground/90"
@@ -258,40 +295,46 @@ function SortableItem({ id, index, value, onEdit, onDelete, showDragHandle = tru
           </span>
           {extraActions}
           {onToggleHighlight && (
-            <Button
-              size="icon"
-              variant="ghost"
+            <button
+              type="button"
+              data-no-glass
               className={cn(
-                "h-4 w-4 transition-opacity flex-shrink-0",
-                isHighlighted ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                ROW_ACTION,
+                isHighlighted ? "opacity-100" : ROW_ACTION_REVEAL,
+                "hover:bg-muted/60"
               )}
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleHighlight();
+                onToggleHighlight(id);
               }}
+              title={isHighlighted ? "Remover destaque" : "Destacar"}
+              aria-label={isHighlighted ? "Remover destaque" : "Destacar item"}
             >
               <Star className={cn(
-                "h-3 w-3 transition-colors",
+                "h-2.5 w-2.5 transition-colors",
                 isHighlighted ? hStyles.star : "text-muted-foreground"
               )} />
-            </Button>
+            </button>
           )}
-          <Button 
-            size="icon" 
-            variant="ghost" 
-            className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
+          <button
+            type="button"
+            data-no-glass
+            className={cn(
+              ROW_ACTION,
+              ROW_ACTION_REVEAL,
+              "text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            )}
+            onClick={handleDelete}
+            title="Remover item"
+            aria-label="Remover item"
           >
-            <Trash2 className="h-2.5 w-2.5 text-destructive" />
-          </Button>
+            <X className="h-2.5 w-2.5" />
+          </button>
         </>
       )}
     </div>
   );
-}
+});
 
 // Inline editable array field with full functionality
 interface InlineEditableArrayProps {
@@ -357,10 +400,16 @@ export function InlineEditableArray({
   };
 
   const [itemIds, setItemIds] = useState<string[]>(() => items.map(() => makeId()));
+  // Rows added in this session fade in; existing rows render without motion.
+  const freshIdsRef = useRef<Set<string>>(new Set());
   
   // Track previous items length to detect external changes vs internal changes
   const prevItemsLengthRef = useRef(items.length);
   const isInternalChangeRef = useRef(false);
+
+  // Latest values for the stable row callbacks (lets memoized rows skip re-rendering while typing).
+  const latestRef = useRef({ items, itemIds, highlightedIndices, onUpdate, onUpdateBoth, onUpdateHighlights, onTabPress });
+  latestRef.current = { items, itemIds, highlightedIndices, onUpdate, onUpdateBoth, onUpdateHighlights, onTabPress };
 
   // Keep ids array length in sync with items length
   useEffect(() => {
@@ -403,6 +452,13 @@ export function InlineEditableArray({
       newInputRef.current.focus();
     }
   }, [isAddingNew]);
+
+  // Shrink the new-item box back to one line once its text is cleared (after Enter).
+  useEffect(() => {
+    if (!newItemValue && newInputRef.current) {
+      newInputRef.current.style.height = 'auto';
+    }
+  }, [newItemValue]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -449,8 +505,10 @@ export function InlineEditableArray({
 
   const handleAddItem = (continueAdding: boolean = false) => {
     if (newItemValue.trim()) {
+      const newId = makeId();
+      freshIdsRef.current.add(newId);
       isInternalChangeRef.current = true;
-      setItemIds((prev) => [...prev, makeId()]);
+      setItemIds((prev) => [...prev, newId]);
       onUpdate([...items, newItemValue.trim().toUpperCase()]);
       setNewItemValue("");
       if (!continueAdding) {
@@ -461,42 +519,64 @@ export function InlineEditableArray({
     }
   };
 
-  const handleNewItemKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      // Enter: salva e continua adicionando na mesma coluna
-      handleAddItem(true);
-      onEnterPress?.();
-    } else if (e.key === 'Tab') {
-      e.preventDefault();
-      // Tab: salva e move para próxima coluna
-      handleAddItem(false);
-      onTabPress?.();
-    } else if (e.key === 'Escape') {
-      setIsAddingNew(false);
-      setNewItemValue("");
-    }
+  const cancelAdding = () => {
+    setIsAddingNew(false);
+    setNewItemValue("");
   };
 
-  const handleItemKeyDown = (e: React.KeyboardEvent) => {
+  const openAdding = () => {
+    if (isAddingNew) {
+      newInputRef.current?.focus();
+      return;
+    }
+    setIsAddingNew(true);
+  };
+
+  // Stable row callbacks: resolve the row by id against the latest list.
+  const editItem = useCallback((id: string, newValue: string) => {
+    const { items: cur, itemIds: ids, onUpdate: update } = latestRef.current;
+    const idx = ids.indexOf(id);
+    if (idx < 0 || cur[idx] === newValue) return;
+    const next = [...cur];
+    next[idx] = newValue;
+    update(next);
+  }, []);
+
+  const deleteItem = useCallback((id: string) => {
+    const { items: cur, itemIds: ids, highlightedIndices: hl, onUpdate: update, onUpdateBoth: updateBoth, onUpdateHighlights: updateHl } = latestRef.current;
+    const idx = ids.indexOf(id);
+    if (idx < 0) return;
+    isInternalChangeRef.current = true;
+    freshIdsRef.current.delete(id);
+    setItemIds((prev) => prev.filter((x) => x !== id));
+    const newItems = cur.filter((_, i) => i !== idx);
+    const newHighlights = hl.filter(i => i !== idx).map(i => (i > idx ? i - 1 : i));
+    // Use combined update to prevent race conditions
+    if (updateBoth) {
+      updateBoth(newItems, newHighlights);
+    } else {
+      update(newItems);
+      updateHl?.(newHighlights);
+    }
+  }, []);
+
+  const toggleHighlight = useCallback((id: string) => {
+    const { itemIds: ids, highlightedIndices: hl, onUpdateHighlights: updateHl } = latestRef.current;
+    if (!updateHl) return;
+    const idx = ids.indexOf(id);
+    if (idx < 0) return;
+    updateHl(hl.includes(idx) ? hl.filter(i => i !== idx) : [...hl, idx]);
+  }, []);
+
+  const handleItemKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       // Enter pressed on existing item - start adding new
       setIsAddingNew(true);
     } else if (e.key === 'Tab') {
       // Tab pressed - move to next column
-      onTabPress?.();
+      latestRef.current.onTabPress?.();
     }
-  };
-
-  const toggleHighlight = (index: number) => {
-    if (!onUpdateHighlights) return;
-    const isHighlighted = highlightedIndices.includes(index);
-    if (isHighlighted) {
-      onUpdateHighlights(highlightedIndices.filter(i => i !== index));
-    } else {
-      onUpdateHighlights([...highlightedIndices, index]);
-    }
-  };
+  }, []);
 
   const displayItems = maxCollapsedItems && !alwaysShowAll ? items.slice(0, maxCollapsedItems) : items;
   const hiddenCount = maxCollapsedItems && !alwaysShowAll ? Math.max(0, items.length - maxCollapsedItems) : 0;
@@ -518,18 +598,20 @@ export function InlineEditableArray({
           </div>
           <div className="flex items-center gap-0.5">
             {headerActions}
-            <Button
-              size="icon"
-              variant="ghost"
-              className={cn("h-4 w-4", iconColorClass)}
+            <button
+              type="button"
+              data-no-glass
+              className={cn(ROW_ACTION, "hover:bg-muted/60", iconColorClass)}
+              onMouseDown={keepFocus}
               onClick={(e) => {
                 e.stopPropagation();
-                setIsAddingNew(true);
+                openAdding();
               }}
               title="Adicionar item"
+              aria-label="Adicionar item"
             >
               <Plus className="h-3 w-3" />
-            </Button>
+            </button>
           </div>
         </div>
       )}
@@ -538,47 +620,26 @@ export function InlineEditableArray({
         {items.length > 0 ? (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={itemIds.slice(0, displayItems.length)} strategy={verticalListSortingStrategy}>
-              {displayItems.map((item, displayIdx) => {
-                // displayIdx is the index in displayItems, which may be limited
-                // For all operations, we need the real index in the full items array
-                const realIdx = displayIdx; // Since displayItems = items.slice(0, maxCollapsedItems), displayIdx === realIdx for displayed items
-                
+              {displayItems.map((item, realIdx) => {
+                // displayItems = items.slice(0, maxCollapsedItems), so the display index is the real index
+                const id = itemIds[realIdx];
+                if (!id) return null;
                 return (
                   <SortableItem
-                    key={itemIds[realIdx]}
-                    id={itemIds[realIdx]}
+                    key={id}
+                    id={id}
                     index={realIdx}
                     value={item}
-                    onEdit={(newValue) => {
-                      const newItems = [...items];
-                      newItems[realIdx] = newValue;
-                      onUpdate(newItems);
-                    }}
-                    onDelete={() => {
-                      isInternalChangeRef.current = true;
-                      setItemIds((prev) => prev.filter((_, i) => i !== realIdx));
-                      const newItems = items.filter((_, i) => i !== realIdx);
-                      const newHighlights = highlightedIndices
-                        .filter(i => i !== realIdx)
-                        .map(i => i > realIdx ? i - 1 : i);
-                      
-                      // Use combined update to prevent race conditions
-                      if (onUpdateBoth) {
-                        onUpdateBoth(newItems, newHighlights);
-                      } else {
-                        onUpdate(newItems);
-                        if (onUpdateHighlights) {
-                          onUpdateHighlights(newHighlights);
-                        }
-                      }
-                    }}
+                    onEdit={editItem}
+                    onDelete={deleteItem}
                     showDragHandle={showNumbers}
                     isHighlighted={highlightedIndices.includes(realIdx)}
-                    onToggleHighlight={onUpdateHighlights ? () => toggleHighlight(realIdx) : undefined}
+                    onToggleHighlight={onUpdateHighlights ? toggleHighlight : undefined}
                     onKeyDown={handleItemKeyDown}
                     highlightColorVariant={highlightColorVariant}
                     extraActions={renderItemActions?.(item, realIdx)}
                     compact={compact}
+                    animateIn={freshIdsRef.current.has(id)}
                   />
                 );
               })}
@@ -598,7 +659,15 @@ export function InlineEditableArray({
         )}
         
         {isAddingNew && (
-          <div className="flex items-start gap-1 mt-1 pt-1 border-t border-border/30">
+          <div className={cn(
+            "flex items-start gap-1 rounded-sm px-1 -mx-0.5 animate-in fade-in-0 duration-150 motion-reduce:animate-none",
+            compact ? "py-0.5" : "py-1"
+          )}>
+            {showNumbers && <span className="w-2.5 flex-shrink-0" aria-hidden />}
+            <span className={cn(
+              "font-semibold text-[10px] min-w-[14px] flex-shrink-0 tabular-nums text-muted-foreground/60",
+              compact ? "leading-snug pt-[3px]" : "pt-1"
+            )}>{items.length + 1}.</span>
             <textarea
               ref={newInputRef}
               value={newItemValue}
@@ -608,9 +677,13 @@ export function InlineEditableArray({
                 el.style.height = 'auto';
                 el.style.height = `${el.scrollHeight}px`;
               }}
-              placeholder="NOVO ITEM..."
+              placeholder="NOVO ITEM…"
               rows={1}
-              className={cn("flex-1 min-w-0 w-full text-[12px] leading-snug bg-background text-foreground border rounded px-2 py-1 outline-none uppercase font-medium tracking-tight resize-none shadow-sm overflow-hidden whitespace-pre-wrap break-words placeholder:font-normal placeholder:text-muted-foreground/50", SECTOR_INPUT[highlightColorVariant])}
+              className={cn(
+                "flex-1 min-w-0 w-full bg-background text-foreground border rounded outline-none uppercase font-medium tracking-tight resize-none overflow-hidden whitespace-pre-wrap break-words placeholder:font-normal placeholder:text-muted-foreground/50",
+                compact ? "text-[11px] leading-snug px-1.5 py-0.5" : "text-[12px] leading-snug px-2 py-1",
+                SECTOR_INPUT[highlightColorVariant]
+              )}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -621,41 +694,49 @@ export function InlineEditableArray({
                   handleAddItem(false);
                   onTabPress?.();
                 } else if (e.key === 'Escape') {
-                  setIsAddingNew(false);
-                  setNewItemValue("");
+                  cancelAdding();
                 }
               }}
               onBlur={() => handleAddItem(false)}
             />
-            <Button size="icon" variant="ghost" className="h-5 w-5" onClick={() => handleAddItem(false)}>
-              <Check className={cn("h-3 w-3", SECTOR_CONFIRM[highlightColorVariant])} />
-            </Button>
-            <Button 
-              size="icon" 
-              variant="ghost" 
-              className="h-5 w-5" 
-              onClick={() => {
-                setIsAddingNew(false);
-                setNewItemValue("");
-              }}
+            <button
+              type="button"
+              data-no-glass
+              className={cn(ROW_ACTION, "mt-[3px] hover:bg-muted/60", SECTOR_CONFIRM[highlightColorVariant])}
+              onMouseDown={keepFocus}
+              onClick={() => handleAddItem(false)}
+              title="Salvar item (Enter)"
+              aria-label="Salvar item"
             >
-              <X className="h-3 w-3 text-destructive" />
-            </Button>
+              <Check className="h-3 w-3" />
+            </button>
+            <button
+              type="button"
+              data-no-glass
+              className={cn(ROW_ACTION, "mt-[3px] text-muted-foreground hover:text-destructive hover:bg-destructive/10")}
+              onMouseDown={keepFocus}
+              onClick={cancelAdding}
+              title="Cancelar (Esc)"
+              aria-label="Cancelar"
+            >
+              <X className="h-3 w-3" />
+            </button>
           </div>
         )}
         
         {!label && !isAddingNew && items.length > 0 && (
-          <Button
-            size="sm"
-            variant="ghost"
-            className={cn("h-5 text-[10px] p-0 mt-1.5", iconColorClass)}
+          <button
+            type="button"
+            data-no-glass
+            className={cn("inline-flex items-center h-5 text-[10px] mt-1 rounded-sm px-1 -mx-1 transition-colors hover:bg-muted/60", iconColorClass)}
+            onMouseDown={keepFocus}
             onClick={(e) => {
               e.stopPropagation();
               setIsAddingNew(true);
             }}
           >
             <Plus className="h-3 w-3 mr-0.5" /> Adicionar
-          </Button>
+          </button>
         )}
       </div>
     </div>
