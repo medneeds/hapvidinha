@@ -19,6 +19,7 @@ interface Props {
 }
 
 type Field = keyof Pick<Patient,
+  | "name"
   | "birthDate"
   | "medicalRecordNumber"
   | "attendanceNumber"
@@ -32,6 +33,7 @@ type Field = keyof Pick<Patient,
 >;
 
 const FIELDS: { key: Field; label: string; placeholder?: string }[] = [
+  { key: "name", label: "Nome" },
   { key: "birthDate", label: "Data de nascimento", placeholder: "DD/MM/AAAA" },
   { key: "medicalRecordNumber", label: "Prontuário" },
   { key: "attendanceNumber", label: "Atendimento" },
@@ -44,7 +46,7 @@ const FIELDS: { key: Field; label: string; placeholder?: string }[] = [
   { key: "insuranceDuration", label: "Tempo Plano" },
 ];
 
-const AI_FIELDS: Field[] = ["birthDate", "medicalRecordNumber", "attendanceNumber"];
+const AI_FIELDS: Field[] = ["name", "birthDate", "medicalRecordNumber", "attendanceNumber"];
 
 export function PatientInfoDialog({ open, onOpenChange, patient, onApply, canEdit = true }: Props) {
   const { toast } = useToast();
@@ -83,7 +85,10 @@ export function PatientInfoDialog({ open, onOpenChange, patient, onApply, canEdi
     const updates: Partial<Patient> = {};
     for (const f of FIELDS) {
       const v = values[f.key]?.trim() || null;
-      if (f.key === "birthDate") {
+      if (f.key === "name") {
+        // O nome nunca é apagado por esta janela: vazio mantém o nome atual.
+        (updates as any).name = v ? v.replace(/\s+/g, " ").toUpperCase() : (patient.name || "");
+      } else if (f.key === "birthDate") {
         (updates as any).birthDate = v || "";
       } else {
         (updates as any)[f.key] = v ? v.toUpperCase() : null;
@@ -128,7 +133,7 @@ export function PatientInfoDialog({ open, onOpenChange, patient, onApply, canEdi
         if (v) { next[key] = v; found.add(key); }
       }
       if (found.size === 0) {
-        toast({ title: "Nenhum dado encontrado", description: "Não achei data de nascimento, prontuário ou atendimento." });
+        toast({ title: "Nenhum dado encontrado", description: "Não achei nome, data de nascimento, prontuário ou atendimento." });
         return;
       }
       setValues(next);
@@ -155,7 +160,7 @@ export function PatientInfoDialog({ open, onOpenChange, patient, onApply, canEdi
             <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
               <Sparkles className="h-3.5 w-3.5" />
               Reconhecer com IA
-              <span className="font-normal text-muted-foreground">— nascimento, prontuário e atendimento</span>
+              <span className="font-normal text-muted-foreground">— nome, nascimento, prontuário e atendimento</span>
             </div>
             <Textarea
               value={aiText}
