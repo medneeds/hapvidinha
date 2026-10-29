@@ -144,6 +144,8 @@ export function UtiPatientCard({
   currentUtiUnit
 }: UtiPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const { toast } = useToast();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   
