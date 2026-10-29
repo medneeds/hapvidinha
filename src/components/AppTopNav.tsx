@@ -103,7 +103,9 @@ export function AppTopNav() {
   const isDoorUser = role === "porta";
   const isRecepcao = role === "recepcao";
   const isEnfermagem = role === "enfermagem";
-  const mapOnly = isDoorUser || isRecepcao;
+  // Every user navigates the clinical areas (Mapa, Movimentações, Documentos);
+  // only the admin panel stays restricted.
+  const noAdminPanel = isDoorUser || isRecepcao || isEnfermagem;
   const canAccessRepository = !!user && REPOSITORY_USER_IDS.includes(user.id);
 
   const groups: NavGroup[] = [];
@@ -115,13 +117,11 @@ export function AppTopNav() {
     icon: Stethoscope,
     items: [
       { name: "MAPA", description: "Leitos e pacientes do setor", icon: LayoutDashboard, link: "/" },
-      ...(!mapOnly
-        ? [{ name: "MOVIMENTAÇÕES", description: "Altas, transferências e óbitos", icon: ArrowRightLeft, link: "/movements" }]
-        : []),
+      { name: "MOVIMENTAÇÕES", description: "Altas, transferências e óbitos", icon: ArrowRightLeft, link: "/movements" },
     ],
   });
 
-  if (!mapOnly) {
+  {
     groups.push({
       key: "documentos",
       title: "DOCUMENTOS",
