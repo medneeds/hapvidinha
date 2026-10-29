@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus, FileEdit, FlaskConical } from "lucide-react";
+import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus, FileEdit, FlaskConical, Info } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -28,6 +28,9 @@ import { releaseBedForFilling } from "@/utils/releaseBed";
 import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetailedAge";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientReportDialog } from "./PatientReportDialog";
+import { PatientInfoDialog } from "./PatientInfoDialog";
+import { AdminIdentifiers } from "./patient-card/AdminIdentifiers";
+import { useToast } from "@/hooks/use-toast";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { UtiReallocationDialog } from "./UtiReallocationDialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -301,6 +304,13 @@ export function UtiPatientCard({
     return value ? [value as string] : [];
   };
 
+  const copyText = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: "Copiado", description: `${label} copiado.` });
+    } catch { /* ignora */ }
+  };
+
   const handleUpdateField = (key: keyof Patient, value: string | string[] | number[]) => {
     onUpdate({
       ...patient,
@@ -537,6 +547,14 @@ export function UtiPatientCard({
                     colorVariant={colorVariant}
                     />
                   )}
+                  <button
+                    type="button"
+                    onClick={() => setInfoOpen(true)}
+                    className="shrink-0 -ml-1 h-5 w-5 inline-flex items-center justify-center rounded text-muted-foreground/70 hover:text-primary hover:bg-primary/10 transition-colors print:hidden"
+                    title="Ver informações administrativas"
+                  >
+                    <Info className="h-3 w-3" />
+                  </button>
                   {/* Birth date (DN) */}
                   <div className="shrink-0 flex items-center gap-1 text-[10px] md:text-xs text-muted-foreground">
                     <span className="font-semibold opacity-70">DN:</span>
@@ -573,6 +591,8 @@ export function UtiPatientCard({
                       </>
                     )}
                   </div>
+                  {/* PRONT. / ATEND. — logo após a idade */}
+                  <AdminIdentifiers patient={patient} onCopy={copyText} />
                 </div>
                 {/* Ações (celular): no canto da linha do paciente */}
                 <div className="md:hidden ml-auto flex items-center gap-0.5 shrink-0 print:hidden">
@@ -919,6 +939,12 @@ export function UtiPatientCard({
         onSuccess={handleReallocationSuccess}
         currentUtiUnit={derivedUtiUnit}
         allPatients={allPatients}
+      />
+      <PatientInfoDialog
+        open={infoOpen}
+        onOpenChange={setInfoOpen}
+        patient={patient}
+        onApply={async (changes) => { await onUpdate({ ...patient, ...changes }); }}
       />
       {patient.name && (
         <PatientReportDialog patient={patient} open={reportDialogOpen} onOpenChange={setReportDialogOpen} />
