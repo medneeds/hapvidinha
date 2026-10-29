@@ -35,6 +35,7 @@ import { TransferToUtiDialog } from "./TransferToUtiDialog";
 import { QuickTemplatesDialog } from "./QuickTemplatesDialog";
 import { ExamCurvesDialog } from "./ExamCurvesDialog";
 import { PatientInfoDialog } from "./PatientInfoDialog";
+import { AdminIdentifiers } from "./patient-card/AdminIdentifiers";
 import { AllocationPendingBadge } from "./AllocationPendingBadge";
 import { PalliativeButterflyIcon } from "./PalliativeButterflyIcon";
 import { SepsisActiveBanner } from "./SepsisActiveBanner";
@@ -645,21 +646,8 @@ export function EmergencyPatientCard({
                       </>
                     )}
                   </div>
-                  {/* PRONT. / ATEND. — linha discreta, clique para copiar */}
-                  {(patient.medicalRecordNumber || patient.attendanceNumber) && (
-                    <div className="shrink-0 flex items-center gap-2 text-[10px] italic text-muted-foreground/80">
-                      {patient.medicalRecordNumber && (
-                        <button type="button" className="hover:text-primary transition-colors" title="Copiar prontuário" onClick={() => copyText(patient.medicalRecordNumber!, "Prontuário")}>
-                          <span className="font-semibold not-italic">PRONT.</span> {patient.medicalRecordNumber}
-                        </button>
-                      )}
-                      {patient.attendanceNumber && (
-                        <button type="button" className="hover:text-primary transition-colors" title="Copiar atendimento" onClick={() => copyText(patient.attendanceNumber!, "Atendimento")}>
-                          <span className="font-semibold not-italic">ATEND.</span> {patient.attendanceNumber}
-                        </button>
-                      )}
-                    </div>
-                  )}
+                  {/* PRONT. / ATEND. — logo após a idade, clique para copiar */}
+                  <AdminIdentifiers patient={patient} onCopy={copyText} />
                 </div>
                 {/* Ações (celular): no canto da linha do paciente */}
                 <div className="md:hidden ml-auto flex items-center gap-0.5 shrink-0 print:hidden">
@@ -1022,7 +1010,7 @@ export function EmergencyPatientCard({
       )}
 
       <BedSwapDialog open={bedSwapOpen} onOpenChange={setBedSwapOpen} patient={patient} onSwapped={onRefetch} />
-      <DietReleaseDialog isOpen={dietOpen} onClose={() => setDietOpen(false)} patient={patient} />
+      <DietReleaseDialog isOpen={dietOpen} onClose={() => setDietOpen(false)} patient={patient} onBirthDateChange={canEdit ? (v) => update({ birthDate: v }) : undefined} />
       <RequestBedAllocationDialog open={bedRequestOpen} onOpenChange={setBedRequestOpen} patient={patient} />
 
       {isAdultUe && (

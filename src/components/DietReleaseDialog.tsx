@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { parseBirthDate } from "@/utils/calculateDetailedAge";
 import { Patient } from "@/types/patient";
 import {
   Dialog,
@@ -21,6 +22,8 @@ interface DietReleaseDialogProps {
   isOpen: boolean;
   onClose: () => void;
   patient: Patient;
+  /** Sincroniza a data de nascimento digitada aqui com o cadastro do paciente. */
+  onBirthDateChange?: (birthDate: string) => void;
 }
 
 const DIET_TYPES = [
@@ -40,7 +43,7 @@ const RESTRICTIONS = [
   { id: "sem_residuo", label: "Sem Resíduo", desc: "" },
 ];
 
-export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialogProps) {
+export function DietReleaseDialog({ isOpen, onClose, patient, onBirthDateChange }: DietReleaseDialogProps) {
   const [dietRoute, setDietRoute] = useState<"oral" | "enteral">("oral");
   const [selectedDietType, setSelectedDietType] = useState<string>("");
   const [customDietType, setCustomDietType] = useState("");
@@ -50,6 +53,19 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
   const [doctorName, setDoctorName] = useState("");
   const [crm, setCrm] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+
+  // DN vem do cadastro do paciente ao abrir (e acompanha mudanças feitas no cartão).
+  useEffect(() => {
+    if (isOpen) setBirthDate(patient.birthDate || "");
+  }, [isOpen, patient.birthDate]);
+
+  /** Data completa e válida digitada aqui volta para o cadastro do paciente. */
+  const syncBirthDate = (value: string) => {
+    if (!onBirthDateChange) return;
+    if (value.length !== 10 || !parseBirthDate(value)) return;
+    if (value === (patient.birthDate || "")) return;
+    onBirthDateChange(value);
+  };
 
   const formatDateInput = (value: string): string => {
     const numbers = value.replace(/\D/g, '');
@@ -85,6 +101,7 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
   };
 
   const handlePrint = () => {
+    syncBirthDate(birthDate);
     setShowPreview(true);
   };
 
@@ -281,6 +298,7 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
               placeholder="DD/MM/AAAA"
               value={birthDate}
               onChange={(e) => setBirthDate(formatDateInput(e.target.value))}
+              onBlur={() => syncBirthDate(birthDate)}
               maxLength={10}
               className="text-sm max-w-[200px]"
             />
@@ -323,7 +341,7 @@ export function DietReleaseDialog({ isOpen, onClose, patient }: DietReleaseDialo
           <div className="flex gap-2">
             <Button
               variant="outline"
-              onClick={() => setShowPreview(true)}
+              onClick={handlePrint}
               disabled={!isFormValid}
               className="gap-2"
             >
