@@ -121,20 +121,18 @@ export function AppTopNav() {
     ],
   });
 
-  {
-    groups.push({
-      key: "documentos",
-      title: "DOCUMENTOS",
-      description: "Modelos e arquivos compartilhados",
-      icon: FolderOpen,
-      items: [
-        { name: "DOCUMENTOS", description: "Modelos e formulários clínicos", icon: FolderOpen, link: "/documents" },
-        ...(canAccessRepository
-          ? [{ name: "REPOSITÓRIO", description: "Arquivos compartilhados do hospital", icon: FolderArchive, link: "/repositorio" }]
-          : []),
-      ],
-    });
-  }
+  groups.push({
+    key: "documentos",
+    title: "DOCUMENTOS",
+    description: "Modelos e arquivos compartilhados",
+    icon: FolderOpen,
+    items: [
+      { name: "DOCUMENTOS", description: "Modelos e formulários clínicos", icon: FolderOpen, link: "/documents" },
+      ...(canAccessRepository
+        ? [{ name: "REPOSITÓRIO", description: "Arquivos compartilhados do hospital", icon: FolderArchive, link: "/repositorio" }]
+        : []),
+    ],
+  });
 
   groups.push({
     key: "recursos",
@@ -148,7 +146,7 @@ export function AppTopNav() {
     ],
   });
 
-  if (!mapOnly && !isEnfermagem) {
+  if (!noAdminPanel) {
     groups.push({
       key: "admin",
       title: "PAINEL ADMIN",
