@@ -173,11 +173,7 @@ export function AppSidebar({
   ];
 
   // Filtra itens de menu baseado no papel do usuário
-  const baseMenuItems = isDoorUser 
-    ? allMenuItems.filter(item => item.title === "MAPA")
-    : isRecepcao
-    ? allMenuItems.filter(item => item.title === "MAPA")
-    : isEnfermagem
+  const baseMenuItems = isDoorUser || isRecepcao || isEnfermagem
     ? allMenuItems.filter(item => item.title === "MAPA" || item.title === "MOVIMENTAÇÕES" || item.title === "DOCUMENTOS")
     : isCoordenadorMedico
     ? allMenuItems.map(item => {

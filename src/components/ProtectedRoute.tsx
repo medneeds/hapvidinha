@@ -18,8 +18,8 @@ const LEGACY_GENERIC_USERS = [
   "coordenador@sistema.local",
 ];
 
-// Roles autorizadas a acessar a plataforma (apenas médicos com CRM + admin de gestão)
-const ALLOWED_ROLES = new Set(["medico", "admin"]);
+// Roles autorizadas a acessar a plataforma (médicos com CRM, incluindo Porta, + admin de gestão)
+const ALLOWED_ROLES = new Set(["medico", "porta", "admin"]);
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading, status, role, signOut } = useAuth();
