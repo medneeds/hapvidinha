@@ -243,7 +243,7 @@ export function PatientInfoDialog({ open, onOpenChange, patient, onApply, canEdi
             <>
               <Button variant="ghost" onClick={() => onOpenChange(false)}>Fechar</Button>
               {canEdit && (
-                <Button variant="outline" onClick={() => setEditing(true)}>
+                <Button variant="outline" onClick={() => { setValues(loadValues()); setEditing(true); }}>
                   <Pencil className="h-4 w-4 mr-1" /> Editar
                 </Button>
               )}
