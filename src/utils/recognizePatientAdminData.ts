@@ -1,12 +1,13 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export interface RecognizedAdminData {
+  name: string | null;
   birthDate: string | null;
   medicalRecordNumber: string | null;
   attendanceNumber: string | null;
 }
 
-/** Envia texto colado e/ou print para a IA e devolve DN, prontuário e atendimento. */
+/** Envia texto colado e/ou print para a IA e devolve nome, DN, prontuário e atendimento. */
 export async function recognizePatientAdminData(input: { text?: string; image?: string | null }): Promise<RecognizedAdminData> {
   const { data, error } = await supabase.functions.invoke("extract-patient-admin-data", {
     body: { text: input.text?.slice(0, 20000) || null, image: input.image || null },
@@ -20,6 +21,7 @@ export async function recognizePatientAdminData(input: { text?: string; image?: 
     throw new Error(message);
   }
   return {
+    name: data?.patientName ?? null,
     birthDate: data?.birthDate ?? null,
     medicalRecordNumber: data?.medicalRecordNumber ?? null,
     attendanceNumber: data?.attendanceNumber ?? null,

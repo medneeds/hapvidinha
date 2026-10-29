@@ -1,4 +1,4 @@
-// Reconhece Data de Nascimento, Prontuário e Atendimento a partir de texto colado
+// Reconhece Nome, Data de Nascimento, Prontuário e Atendimento a partir de texto colado
 // ou de um print (imagem) do sistema hospitalar, usando Lovable AI.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -28,6 +28,7 @@ const BodySchema = z.object({
 });
 
 const ResultSchema = z.object({
+  patientName: z.string().nullable(),
   birthDate: z.string().nullable(),
   medicalRecordNumber: z.string().nullable(),
   attendanceNumber: z.string().nullable(),
@@ -35,6 +36,7 @@ const ResultSchema = z.object({
 
 const INSTRUCTIONS = `Você extrai dados administrativos de pacientes de textos ou prints de sistemas hospitalares brasileiros (ex.: Samweb, Siga, MV, Tasy).
 Retorne SOMENTE:
+- patientName: nome completo do PACIENTE (rótulos comuns: "Paciente", "Nome", "Nome do Paciente", "Beneficiário"). Nunca use o nome da mãe, do pai, do responsável, do acompanhante ou do médico. Sem rótulos, sem números.
 - birthDate: data de nascimento do paciente (rótulos comuns: "Data de Nascimento", "Dt. Nasc.", "DN", "Nascimento"). Formato DD/MM/AAAA.
 - medicalRecordNumber: número do prontuário (rótulos comuns: "Prontuário", "Pront.", "Nº Prontuário", "Registro", "Cód. Paciente").
 - attendanceNumber: número do atendimento (rótulos comuns: "Atendimento", "Atend.", "Nº Atendimento", "Senha de atendimento", "Conta", "Guia de atendimento").
@@ -65,6 +67,17 @@ function normalizeDate(value: string | null): string | null {
   m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (m) return normalizeDate(`${m[3]}/${m[2]}/${m[1]}`);
   return null;
+}
+
+function cleanName(value: string | null): string | null {
+  if (!value) return null;
+  const v = value
+    .replace(/^(nome( do paciente)?|paciente|benefici[aá]rio)\s*[:#-]?\s*/i, "")
+    .replace(/[^\p{L}\s'.-]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (v.length < 3 || v.length > 120) return null;
+  return v.toUpperCase();
 }
 
 function cleanId(value: string | null): string | null {
@@ -150,6 +163,7 @@ Deno.serve(async (req) => {
     if (!output) return json({ error: "Não foi possível reconhecer os dados." }, 422);
 
     return json({
+      patientName: cleanName(output.patientName),
       birthDate: normalizeDate(output.birthDate),
       medicalRecordNumber: cleanId(output.medicalRecordNumber),
       attendanceNumber: cleanId(output.attendanceNumber),
