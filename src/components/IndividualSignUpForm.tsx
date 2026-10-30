@@ -66,7 +66,7 @@ const signUpSchema = z.object({
   password: z.string()
     .min(6, { message: "SENHA DEVE TER 6 CARACTERES" })
     .max(6, { message: "SENHA DEVE TER 6 CARACTERES" })
-    .regex(/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{6}$/, { message: "SENHA: 6 CARACTERES COM LETRAS E NÚMEROS" }),
+    .regex(PASSWORD_REGEX, { message: PASSWORD_RULE_MESSAGE }),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "SENHAS NÃO CONFEREM",
@@ -167,11 +167,7 @@ export function IndividualSignUpForm({
       });
 
       if (authError) {
-        if (authError.message.includes("User already registered")) {
-          toast.error("USUÁRIO JÁ CADASTRADO");
-        } else {
-          toast.error("ERRO AO CADASTRAR: " + authError.message.toUpperCase());
-        }
+        toast.error("ERRO AO CADASTRAR: " + translatePasswordError(authError.message));
         setLoading(false);
         return;
       }
@@ -606,7 +602,7 @@ export function IndividualSignUpForm({
           <ul className="text-[10px] text-blue-700 space-y-1 pl-5 list-disc">
             {needsCouncil && <li><strong>{councilLabel}:</strong> Registro profissional obrigatório</li>}
             <li><strong>Usuário:</strong> Apenas letras maiúsculas, números e ponto (.)</li>
-            <li><strong>Senha:</strong> Exatamente 6 caracteres com letras E números (ex: ABC123)</li>
+            <li><strong>Senha:</strong> Exatamente 6 caracteres, letras maiúsculas e/ou números (ex: ABC123)</li>
             <li>Todos os campos marcados com <strong>*</strong> são obrigatórios</li>
           </ul>
         </div>
