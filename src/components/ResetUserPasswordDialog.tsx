@@ -25,7 +25,7 @@ const passwordSchema = z.object({
   newPassword: z.string()
     .min(6, { message: "SENHA DEVE TER 6 CARACTERES" })
     .max(6, { message: "SENHA DEVE TER 6 CARACTERES" })
-    .regex(/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{6}$/, { message: "SENHA: 6 CARACTERES COM LETRAS MAIÚSCULAS E NÚMEROS" }),
+    .regex(/^[A-Z0-9]{6}$/, { message: "SENHA: 6 CARACTERES (LETRAS MAIÚSCULAS E/OU NÚMEROS)" }),
   confirmPassword: z.string(),
 }).refine((data) => data.newPassword === data.confirmPassword, {
   message: "SENHAS NÃO CONFEREM",
