@@ -1,3 +1,4 @@
+import { PASSWORD_REGEX, PASSWORD_RULE_MESSAGE, translatePasswordError } from "@/utils/passwordRule";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHospital } from "@/contexts/HospitalContext";
