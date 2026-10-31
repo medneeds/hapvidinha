@@ -105,8 +105,8 @@ export function buildHemoPrintHtml(docs: HemoPrintDoc[], meta: { patientName: st
   @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .doc { animation: none; } }
   @page { margin: 0; }
-  @page portrait { size: A4 portrait; margin: 0; }
-  @page landscape { size: A4 landscape; margin: 0; }
+  @page hemo-portrait { size: A4 portrait; margin: 0; }
+  @page hemo-landscape { size: A4 landscape; margin: 0; }
   @media print {
     html, body { background: #fff; }
     header { display: none; }
@@ -114,8 +114,8 @@ export function buildHemoPrintHtml(docs: HemoPrintDoc[], meta: { patientName: st
     .doc { display: block !important; gap: 0; animation: none; }
     body[data-print="one"] .doc:not(.active) { display: none !important; }
     .sheet { box-shadow: none; break-after: page; page-break-after: always; }
-    .sheet.portrait { page: portrait; width: 210mm; height: 297mm; aspect-ratio: auto; }
-    .sheet.landscape { page: landscape; width: 297mm; height: 210mm; aspect-ratio: auto; }
+    .sheet.portrait { page: hemo-portrait; width: 210mm; height: 297mm; aspect-ratio: auto; }
+    .sheet.landscape { page: hemo-landscape; width: 297mm; height: 210mm; aspect-ratio: auto; }
     .doc:last-of-type .sheet:last-child { break-after: auto; page-break-after: auto; }
   }
 </style>
