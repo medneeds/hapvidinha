@@ -36,6 +36,8 @@ interface UtiSectorSectionProps {
   colorVariant?: ColorVariant;
   allPatients?: Patient[]; // All UTI patients for reallocation across units
   currentUtiUnit?: string; // "UTI 1" or "UTI 2"
+  /** Extra action shown on vacant beds (e.g. receive a patient in transit). */
+  renderVacantAction?: (patient: Patient) => ReactNode;
 }
 
 const sectorInfo = {
@@ -72,6 +74,7 @@ interface UtiRowProps {
   forceCollapsed?: boolean;
   allPatients?: Patient[];
   currentUtiUnit?: string;
+  renderVacantAction?: (patient: Patient) => ReactNode;
 }
 
 function UtiRow(props: UtiRowProps) {
@@ -149,6 +152,7 @@ function UtiRow(props: UtiRowProps) {
           forceCollapsed={props.forceCollapsed}
           allPatients={props.allPatients}
           currentUtiUnit={props.currentUtiUnit}
+          vacantAction={props.patient.isVacant ? props.renderVacantAction?.(props.patient) : undefined}
         />
       </div>
     </div>
@@ -176,7 +180,8 @@ export function UtiSectorSection({
   onRefetch,
   colorVariant = 'blue',
   allPatients = [],
-  currentUtiUnit
+  currentUtiUnit,
+  renderVacantAction
 }: UtiSectorSectionProps) {
   const info = sectorInfo[sector];
   const displayTitle = customTitle || info.title;
@@ -335,6 +340,7 @@ export function UtiSectorSection({
                 forceCollapsed={allCardsCollapsed}
                 allPatients={allPatients}
                 currentUtiUnit={currentUtiUnit}
+                renderVacantAction={renderVacantAction}
               />
             ))}
           </div>
