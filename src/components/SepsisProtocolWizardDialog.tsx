@@ -26,8 +26,9 @@ import { useToast } from "@/hooks/use-toast";
 import { toast as popupToast } from "sonner";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock, Download, AlertTriangle, CheckCircle2, Stethoscope, Trash2 } from "lucide-react";
-import { generateSepsisProtocolPdf } from "@/utils/sepsisProtocolPdf";
+import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock, FileText, Loader2, AlertTriangle, CheckCircle2, Stethoscope, Trash2 } from "lucide-react";
+import { localPartsToTimestamp, timestampToLocalParts } from "@/utils/sepsisFicha";
+import { printSepsisFicha, type SepsisFichaProgress } from "@/utils/sepsisFichaPrint";
 import { DeleteSepsisProtocolDialog } from "./DeleteSepsisProtocolDialog";
 import { cn } from "@/lib/utils";
 
@@ -76,6 +77,8 @@ interface FormData {
   dysfunction_acidosis: boolean;
   dysfunction_consciousness: boolean;
   dysfunction_bilirubin: boolean;
+  dysfunction_excluded_day: string;
+  dysfunction_excluded_hour: string;
   // Infection
   has_infection: boolean | null;
   focus_pulmonary: boolean;
@@ -84,19 +87,35 @@ interface FormData {
   focus_skin: boolean;
   focus_neurological: boolean;
   focus_other: string;
+  infection_excluded_day: string;
+  infection_excluded_hour: string;
   // Treatment
+  medical_evaluation_date: string;
+  medical_evaluation_time: string;
   blood_culture_date: string;
   blood_culture_time: string;
   lactate_date: string;
   lactate_time: string;
+  lactate_result: string;
+  lactate_result_date: string;
+  lactate_result_time: string;
+  second_lactate_date: string;
+  second_lactate_time: string;
+  second_lactate_result: string;
+  second_lactate_result_date: string;
+  second_lactate_result_time: string;
   antibiotic_prescription_date: string;
   antibiotic_prescription_time: string;
   antibiotic_administration_date: string;
   antibiotic_administration_time: string;
   antibiotic_names: string;
   volume_administered: string;
+  fluid_date: string;
+  fluid_time: string;
+  fluid_solution: string;
   // Outcome
   destination: string;
+  destination_hospital: string;
   destination_date: string;
   destination_time: string;
   outcome: string;
@@ -129,6 +148,8 @@ const initialFormData: FormData = {
   dysfunction_acidosis: false,
   dysfunction_consciousness: false,
   dysfunction_bilirubin: false,
+  dysfunction_excluded_day: "",
+  dysfunction_excluded_hour: "",
   has_infection: null,
   focus_pulmonary: false,
   focus_urinary: false,
@@ -136,17 +157,33 @@ const initialFormData: FormData = {
   focus_skin: false,
   focus_neurological: false,
   focus_other: "",
+  infection_excluded_day: "",
+  infection_excluded_hour: "",
+  medical_evaluation_date: "",
+  medical_evaluation_time: "",
   blood_culture_date: "",
   blood_culture_time: "",
   lactate_date: "",
   lactate_time: "",
+  lactate_result: "",
+  lactate_result_date: "",
+  lactate_result_time: "",
+  second_lactate_date: "",
+  second_lactate_time: "",
+  second_lactate_result: "",
+  second_lactate_result_date: "",
+  second_lactate_result_time: "",
   antibiotic_prescription_date: "",
   antibiotic_prescription_time: "",
   antibiotic_administration_date: "",
   antibiotic_administration_time: "",
   antibiotic_names: "",
   volume_administered: "",
+  fluid_date: "",
+  fluid_time: "",
+  fluid_solution: "",
   destination: "",
+  destination_hospital: "",
   destination_date: "",
   destination_time: "",
   outcome: "",
@@ -170,6 +207,7 @@ export function SepsisProtocolWizardDialog({
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [fichaProgress, setFichaProgress] = useState<SepsisFichaProgress | null>(null);
   const { toast } = useToast();
   const { currentHospital, currentState } = useHospital();
   const { user } = useAuth();
@@ -177,9 +215,13 @@ export function SepsisProtocolWizardDialog({
   // Initialize form with patient data
   useEffect(() => {
     if (isOpen && patient) {
+      const br = (patient.birthDate || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
       setFormData({
         ...initialFormData,
         patient_name: patient.name || "",
+        birth_date: br ? `${br[3]}-${br[2]}-${br[1]}` : "",
+        attendance_number: patient.attendanceNumber || "",
+        hospital: (currentHospital?.name || "").toUpperCase(),
       });
       if (!existingProtocolId) {
         setCurrentStep(0);
@@ -188,7 +230,26 @@ export function SepsisProtocolWizardDialog({
         setElapsedSeconds(0);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, patient, existingProtocolId]);
+
+  // New protocol: the logged-in doctor opens the form
+  useEffect(() => {
+    if (!isOpen || existingProtocolId || !user) return;
+    let active = true;
+    supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        const name = (data?.full_name || "").trim().toUpperCase();
+        if (active && name) setFormData((f) => (f.responsible_name ? f : { ...f, responsible_name: name }));
+      });
+    return () => {
+      active = false;
+    };
+  }, [isOpen, existingProtocolId, user]);
 
   // Load existing protocol data
   useEffect(() => {
@@ -226,6 +287,8 @@ export function SepsisProtocolWizardDialog({
             dysfunction_acidosis: data.dysfunction_acidosis || false,
             dysfunction_consciousness: data.dysfunction_consciousness || false,
             dysfunction_bilirubin: data.dysfunction_bilirubin || false,
+            dysfunction_excluded_day: timestampToLocalParts(data.dysfunction_excluded_date).date,
+            dysfunction_excluded_hour: timestampToLocalParts(data.dysfunction_excluded_date).time,
             has_infection: data.has_infection,
             focus_pulmonary: data.focus_pulmonary || false,
             focus_urinary: data.focus_urinary || false,
@@ -233,17 +296,33 @@ export function SepsisProtocolWizardDialog({
             focus_skin: data.focus_skin || false,
             focus_neurological: data.focus_neurological || false,
             focus_other: data.focus_other || "",
+            infection_excluded_day: timestampToLocalParts(data.infection_excluded_date).date,
+            infection_excluded_hour: timestampToLocalParts(data.infection_excluded_date).time,
+            medical_evaluation_date: data.medical_evaluation_date || "",
+            medical_evaluation_time: data.medical_evaluation_time || "",
             blood_culture_date: data.blood_culture_date || "",
             blood_culture_time: data.blood_culture_time || "",
             lactate_date: data.lactate_date || "",
             lactate_time: data.lactate_time || "",
+            lactate_result: data.lactate_result || "",
+            lactate_result_date: data.lactate_result_date || "",
+            lactate_result_time: data.lactate_result_time || "",
+            second_lactate_date: data.second_lactate_date || "",
+            second_lactate_time: data.second_lactate_time || "",
+            second_lactate_result: data.second_lactate_result || "",
+            second_lactate_result_date: data.second_lactate_result_date || "",
+            second_lactate_result_time: data.second_lactate_result_time || "",
             antibiotic_prescription_date: data.antibiotic_prescription_date || "",
             antibiotic_prescription_time: data.antibiotic_prescription_time || "",
             antibiotic_administration_date: (data as any).antibiotic_administration_date || "",
             antibiotic_administration_time: (data as any).antibiotic_administration_time || "",
             antibiotic_names: (data as any).antibiotic_names || "",
             volume_administered: data.volume_administered?.toString() || "",
+            fluid_date: data.fluid_date || "",
+            fluid_time: data.fluid_time || "",
+            fluid_solution: data.fluid_solution || "",
             destination: data.destination || "",
+            destination_hospital: data.destination_hospital || "",
             destination_date: data.destination_date || "",
             destination_time: data.destination_time || "",
             outcome: data.outcome || "",
@@ -339,6 +418,29 @@ export function SepsisProtocolWizardDialog({
     return pendencies;
   };
 
+  const exclusionData = () => ({
+    dysfunction_excluded_date:
+      formData.has_organic_dysfunction === false ? localPartsToTimestamp(formData.dysfunction_excluded_day, formData.dysfunction_excluded_hour) : null,
+    infection_excluded_date:
+      formData.has_infection === false ? localPartsToTimestamp(formData.infection_excluded_day, formData.infection_excluded_hour) : null,
+  });
+
+  const fichaTreatmentData = () => ({
+    medical_evaluation_date: formData.medical_evaluation_date || null,
+    medical_evaluation_time: formData.medical_evaluation_time || null,
+    lactate_result: formData.lactate_result.trim().toUpperCase() || null,
+    lactate_result_date: formData.lactate_result_date || null,
+    lactate_result_time: formData.lactate_result_time || null,
+    second_lactate_date: formData.second_lactate_date || null,
+    second_lactate_time: formData.second_lactate_time || null,
+    second_lactate_result: formData.second_lactate_result.trim().toUpperCase() || null,
+    second_lactate_result_date: formData.second_lactate_result_date || null,
+    second_lactate_result_time: formData.second_lactate_result_time || null,
+    fluid_date: formData.fluid_date || null,
+    fluid_time: formData.fluid_time || null,
+    fluid_solution: formData.fluid_solution.trim().toUpperCase() || null,
+  });
+
   const getFullProtocolUpdateData = (outcomeDate?: string, outcomeTime?: string) => ({
     patient_name: formData.patient_name?.trim().toUpperCase(),
     birth_date: formData.birth_date || null,
@@ -387,6 +489,9 @@ export function SepsisProtocolWizardDialog({
     outcome_date: outcomeDate || formData.outcome_date || null,
     outcome_time: outcomeTime || formData.outcome_time || null,
     notes: formData.notes || null,
+    destination_hospital: formData.destination_hospital.trim().toUpperCase() || null,
+    ...exclusionData(),
+    ...fichaTreatmentData(),
   });
 
   const handleStartProtocol = async () => {
@@ -474,6 +579,7 @@ export function SepsisProtocolWizardDialog({
           dysfunction_acidosis: formData.dysfunction_acidosis,
           dysfunction_consciousness: formData.dysfunction_consciousness,
           dysfunction_bilirubin: formData.dysfunction_bilirubin,
+          dysfunction_excluded_date: exclusionData().dysfunction_excluded_date,
         };
       } else if (stepKey === "focus") {
         updateData = {
@@ -484,6 +590,7 @@ export function SepsisProtocolWizardDialog({
           focus_skin: formData.focus_skin,
           focus_neurological: formData.focus_neurological,
           focus_other: formData.focus_other || null,
+          infection_excluded_date: exclusionData().infection_excluded_date,
         };
       } else if (stepKey === "treatment") {
         updateData = {
@@ -498,12 +605,14 @@ export function SepsisProtocolWizardDialog({
           antibiotic_names: formData.antibiotic_names || null,
           volume_administered: formData.volume_administered ? parseFloat(formData.volume_administered) : null,
           patient_weight: formData.patient_weight ? parseFloat(formData.patient_weight) : null,
+          ...fichaTreatmentData(),
         };
       } else if (stepKey === "outcome") {
         updateData = {
           destination: formData.destination || null,
           destination_date: formData.destination_date || null,
           destination_time: formData.destination_time || null,
+          destination_hospital: formData.destination_hospital.trim().toUpperCase() || null,
           outcome: formData.outcome || null,
           outcome_date: formData.outcome_date || null,
           outcome_time: formData.outcome_time || null,
