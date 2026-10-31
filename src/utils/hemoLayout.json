@@ -263,7 +263,8 @@
         "x": 56,
         "y": 186.5,
         "maxWidth": 196,
-        "size": 7.5
+        "size": 8.5,
+        "stack": true
       },
       "leito": {
         "page": 0,
@@ -349,7 +350,8 @@
         "page": 0,
         "x": 389,
         "y": 106,
-        "maxWidth": 250
+        "maxWidth": 265,
+        "stack": true
       }
     }
   },
@@ -361,7 +363,8 @@
         "page": 0,
         "x": 389,
         "y": 106,
-        "maxWidth": 250
+        "maxWidth": 265,
+        "stack": true
       }
     }
   },
@@ -373,7 +376,8 @@
         "page": 0,
         "x": 389,
         "y": 106,
-        "maxWidth": 250
+        "maxWidth": 265,
+        "stack": true
       },
       "qtdHemacias": {
         "page": 0,

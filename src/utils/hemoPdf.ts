@@ -17,6 +17,8 @@ interface Spot {
   line2?: { x: number; y: number; maxWidth: number };
   lineHeight?: number;
   maxLines?: number;
+  /** When the text doesn't fit, wrap it into two small lines stacked just above the baseline. */
+  stack?: boolean;
 }
 interface DocLayout {
   file: string;
@@ -82,6 +84,19 @@ function drawSpot(page: PDFPage, spot: Spot, raw: string, regular: PDFFont, bold
   const softMin = Math.max(MIN_SIZE, size - 1.5);
   let s = size;
   while (!fits(s) && s > softMin) s -= 0.25;
+  if (!fits(s) && spot.stack) {
+    let st = Math.min(size, 7);
+    let lines = wrap(text, font, st, maxW);
+    while (lines.length > 2 && st > MIN_SIZE) {
+      st -= 0.25;
+      lines = wrap(text, font, st, maxW);
+    }
+    const gap = st + 1;
+    lines.forEach((l, idx) =>
+      page.drawText(l, { x: spot.x, y: H - spot.y + (lines.length - 1 - idx) * gap, size: st, font, color: INK })
+    );
+    return;
+  }
   if (fits(s) || !spot.line2) {
     while (!fits(s) && s > MIN_SIZE) s -= 0.25;
     page.drawText(text, { x: spot.x, y: H - spot.y, size: s, font, color: INK });
