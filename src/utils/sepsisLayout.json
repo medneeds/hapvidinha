@@ -1,0 +1,759 @@
+{
+ "_note": "Positions in PDF points from the TOP-LEFT of the page; y is the text baseline. Page 0 = frente (identificação e critérios), page 1 = verso (fluxograma). The original PDF is never modified — only these texts are drawn over it.",
+ "file": "protocolo-sepse-adulto.pdf",
+ "size": 8,
+ "pageSizes": [
+  8,
+  6.5
+ ],
+ "fields": {
+  "nome": {
+   "page": 0,
+   "x": 117,
+   "y": 61,
+   "maxWidth": 318,
+   "size": 9
+  },
+  "nasc_d": {
+   "page": 0,
+   "x": 99.5,
+   "y": 80,
+   "align": "center",
+   "maxWidth": 20
+  },
+  "nasc_m": {
+   "page": 0,
+   "x": 124.5,
+   "y": 80,
+   "align": "center",
+   "maxWidth": 20
+  },
+  "nasc_a": {
+   "page": 0,
+   "x": 148.5,
+   "y": 80,
+   "align": "center",
+   "maxWidth": 20
+  },
+  "atendimento": {
+   "page": 0,
+   "x": 226,
+   "y": 80,
+   "maxWidth": 75
+  },
+  "hospital": {
+   "page": 0,
+   "x": 339,
+   "y": 80,
+   "maxWidth": 97
+  },
+  "responsavel": {
+   "page": 0,
+   "x": 135,
+   "y": 99,
+   "maxWidth": 132
+  },
+  "abertura_d": {
+   "page": 0,
+   "x": 301.5,
+   "y": 99,
+   "align": "center",
+   "maxWidth": 21
+  },
+  "abertura_m": {
+   "page": 0,
+   "x": 327.5,
+   "y": 99,
+   "align": "center",
+   "maxWidth": 20
+  },
+  "abertura_a": {
+   "page": 0,
+   "x": 353,
+   "y": 99,
+   "align": "center",
+   "maxWidth": 21
+  },
+  "abertura_hora": {
+   "page": 0,
+   "x": 391,
+   "y": 99,
+   "maxWidth": 48
+  },
+  "sirs_temp_high": {
+   "page": 0,
+   "x": 39.5,
+   "y": 192.3,
+   "align": "center",
+   "size": 10
+  },
+  "sirs_temp_low": {
+   "page": 0,
+   "x": 39.5,
+   "y": 207.3,
+   "align": "center",
+   "size": 10
+  },
+  "sirs_heart_rate": {
+   "page": 0,
+   "x": 39.5,
+   "y": 222,
+   "align": "center",
+   "size": 10
+  },
+  "sirs_respiratory_rate": {
+   "page": 0,
+   "x": 39.5,
+   "y": 238.6,
+   "align": "center",
+   "size": 10
+  },
+  "sirs_leukocytosis": {
+   "page": 0,
+   "x": 39.5,
+   "y": 274.4,
+   "align": "center",
+   "size": 10
+  },
+  "sirs_leukopenia": {
+   "page": 0,
+   "x": 39.5,
+   "y": 289.2,
+   "align": "center",
+   "size": 10
+  },
+  "sirs_young_cells": {
+   "page": 0,
+   "x": 39.5,
+   "y": 304.2,
+   "align": "center",
+   "size": 10
+  },
+  "dysfunction_hypotension": {
+   "page": 0,
+   "x": 196,
+   "y": 197,
+   "align": "center",
+   "size": 10
+  },
+  "dysfunction_oliguria": {
+   "page": 0,
+   "x": 196,
+   "y": 211.9,
+   "align": "center",
+   "size": 10
+  },
+  "dysfunction_pao2": {
+   "page": 0,
+   "x": 196,
+   "y": 226.7,
+   "align": "center",
+   "size": 10
+  },
+  "dysfunction_platelets": {
+   "page": 0,
+   "x": 196,
+   "y": 243.2,
+   "align": "center",
+   "size": 10
+  },
+  "dysfunction_acidosis": {
+   "page": 0,
+   "x": 196,
+   "y": 261.9,
+   "align": "center",
+   "size": 10
+  },
+  "dysfunction_consciousness": {
+   "page": 0,
+   "x": 196,
+   "y": 278.5,
+   "align": "center",
+   "size": 10
+  },
+  "dysfunction_bilirubin": {
+   "page": 0,
+   "x": 196,
+   "y": 295.9,
+   "align": "center",
+   "size": 10
+  },
+  "aval_d": {
+   "page": 1,
+   "x": 439,
+   "y": 174.5,
+   "align": "center",
+   "maxWidth": 13
+  },
+  "aval_m": {
+   "page": 1,
+   "x": 459.5,
+   "y": 174.5,
+   "align": "center",
+   "maxWidth": 20
+  },
+  "aval_a": {
+   "page": 1,
+   "x": 481.5,
+   "y": 174.5,
+   "align": "center",
+   "maxWidth": 17
+  },
+  "aval_h": {
+   "page": 1,
+   "x": 510,
+   "y": 174.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "aval_min": {
+   "page": 1,
+   "x": 529,
+   "y": 174.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "hemo_d": {
+   "page": 1,
+   "x": 122,
+   "y": 243.5,
+   "align": "center",
+   "maxWidth": 13
+  },
+  "hemo_m": {
+   "page": 1,
+   "x": 139,
+   "y": 243.5,
+   "align": "center",
+   "maxWidth": 18
+  },
+  "hemo_a": {
+   "page": 1,
+   "x": 156.5,
+   "y": 243.5,
+   "align": "center",
+   "maxWidth": 17
+  },
+  "hemo_h": {
+   "page": 1,
+   "x": 182,
+   "y": 243.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "hemo_min": {
+   "page": 1,
+   "x": 198,
+   "y": 243.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "lact_d": {
+   "page": 1,
+   "x": 122,
+   "y": 255.5,
+   "align": "center",
+   "maxWidth": 13
+  },
+  "lact_m": {
+   "page": 1,
+   "x": 139,
+   "y": 255.5,
+   "align": "center",
+   "maxWidth": 18
+  },
+  "lact_a": {
+   "page": 1,
+   "x": 156.5,
+   "y": 255.5,
+   "align": "center",
+   "maxWidth": 17
+  },
+  "lact_h": {
+   "page": 1,
+   "x": 182,
+   "y": 255.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "lact_min": {
+   "page": 1,
+   "x": 198,
+   "y": 255.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "lact_res": {
+   "page": 1,
+   "x": 147,
+   "y": 261.5,
+   "maxWidth": 66
+  },
+  "lactres_d": {
+   "page": 1,
+   "x": 122,
+   "y": 267.5,
+   "align": "center",
+   "maxWidth": 13
+  },
+  "lactres_m": {
+   "page": 1,
+   "x": 139,
+   "y": 267.5,
+   "align": "center",
+   "maxWidth": 18
+  },
+  "lactres_a": {
+   "page": 1,
+   "x": 156.5,
+   "y": 267.5,
+   "align": "center",
+   "maxWidth": 17
+  },
+  "lactres_h": {
+   "page": 1,
+   "x": 182,
+   "y": 267.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "lactres_min": {
+   "page": 1,
+   "x": 198,
+   "y": 267.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "exc1_d": {
+   "page": 1,
+   "x": 439.5,
+   "y": 290.5,
+   "align": "center",
+   "maxWidth": 14
+  },
+  "exc1_m": {
+   "page": 1,
+   "x": 460,
+   "y": 290.5,
+   "align": "center",
+   "maxWidth": 19
+  },
+  "exc1_a": {
+   "page": 1,
+   "x": 481,
+   "y": 290.5,
+   "align": "center",
+   "maxWidth": 17
+  },
+  "exc1_h": {
+   "page": 1,
+   "x": 510,
+   "y": 290.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "exc1_min": {
+   "page": 1,
+   "x": 528,
+   "y": 290.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "atb1": {
+   "page": 1,
+   "x": 79,
+   "y": 304,
+   "maxWidth": 82,
+   "wrapBelow": true,
+   "minSize": 4.5
+  },
+  "prescr_d": {
+   "page": 1,
+   "x": 85.5,
+   "y": 321.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "prescr_m": {
+   "page": 1,
+   "x": 103.5,
+   "y": 321.5,
+   "align": "center",
+   "maxWidth": 18
+  },
+  "prescr_a": {
+   "page": 1,
+   "x": 123,
+   "y": 321.5,
+   "align": "center",
+   "maxWidth": 15
+  },
+  "prescr_h": {
+   "page": 1,
+   "x": 131,
+   "y": 330.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "prescr_min": {
+   "page": 1,
+   "x": 146,
+   "y": 330.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "atb2": {
+   "page": 1,
+   "x": 76,
+   "y": 346,
+   "maxWidth": 86,
+   "wrapBelow": true,
+   "minSize": 4.5
+  },
+  "adm_d": {
+   "page": 1,
+   "x": 85,
+   "y": 362.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "adm_m": {
+   "page": 1,
+   "x": 103,
+   "y": 362.5,
+   "align": "center",
+   "maxWidth": 18
+  },
+  "adm_a": {
+   "page": 1,
+   "x": 122.5,
+   "y": 362.5,
+   "align": "center",
+   "maxWidth": 15
+  },
+  "adm_h": {
+   "page": 1,
+   "x": 131,
+   "y": 371,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "adm_min": {
+   "page": 1,
+   "x": 146,
+   "y": 371,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "foco_pulm": {
+   "page": 1,
+   "x": 467.5,
+   "y": 430.5,
+   "align": "center",
+   "size": 6
+  },
+  "foco_uri": {
+   "page": 1,
+   "x": 500,
+   "y": 430.5,
+   "align": "center",
+   "size": 6
+  },
+  "foco_abd": {
+   "page": 1,
+   "x": 414.5,
+   "y": 437.5,
+   "align": "center",
+   "size": 6
+  },
+  "foco_cut": {
+   "page": 1,
+   "x": 444,
+   "y": 437.5,
+   "align": "center",
+   "size": 6
+  },
+  "foco_neuro": {
+   "page": 1,
+   "x": 473,
+   "y": 437.5,
+   "align": "center",
+   "size": 6
+  },
+  "foco_outros": {
+   "page": 1,
+   "x": 453,
+   "y": 443,
+   "maxWidth": 52,
+   "size": 6
+  },
+  "lact2_d": {
+   "page": 1,
+   "x": 87.5,
+   "y": 457.5,
+   "align": "center",
+   "maxWidth": 13
+  },
+  "lact2_m": {
+   "page": 1,
+   "x": 106,
+   "y": 457.5,
+   "align": "center",
+   "maxWidth": 18
+  },
+  "lact2_a": {
+   "page": 1,
+   "x": 125.5,
+   "y": 457.5,
+   "align": "center",
+   "maxWidth": 15
+  },
+  "lact2_h": {
+   "page": 1,
+   "x": 149.5,
+   "y": 457.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "lact2_min": {
+   "page": 1,
+   "x": 165,
+   "y": 457.5,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "lact2_res": {
+   "page": 1,
+   "x": 108,
+   "y": 467.5,
+   "maxWidth": 76
+  },
+  "lact2res_d": {
+   "page": 1,
+   "x": 87.5,
+   "y": 478,
+   "align": "center",
+   "maxWidth": 13
+  },
+  "lact2res_m": {
+   "page": 1,
+   "x": 106,
+   "y": 478,
+   "align": "center",
+   "maxWidth": 18
+  },
+  "lact2res_a": {
+   "page": 1,
+   "x": 125.5,
+   "y": 478,
+   "align": "center",
+   "maxWidth": 15
+  },
+  "lact2res_h": {
+   "page": 1,
+   "x": 149.5,
+   "y": 478,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "lact2res_min": {
+   "page": 1,
+   "x": 165,
+   "y": 478,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "exc2_d": {
+   "page": 1,
+   "x": 445,
+   "y": 603,
+   "align": "center",
+   "maxWidth": 14
+  },
+  "exc2_m": {
+   "page": 1,
+   "x": 466,
+   "y": 603,
+   "align": "center",
+   "maxWidth": 20
+  },
+  "exc2_a": {
+   "page": 1,
+   "x": 487.5,
+   "y": 603,
+   "align": "center",
+   "maxWidth": 17
+  },
+  "exc2_h": {
+   "page": 1,
+   "x": 513.5,
+   "y": 603,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "exc2_min": {
+   "page": 1,
+   "x": 531,
+   "y": 603,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "vol_d": {
+   "page": 1,
+   "x": 97.5,
+   "y": 623,
+   "align": "center",
+   "maxWidth": 11
+  },
+  "vol_m": {
+   "page": 1,
+   "x": 116,
+   "y": 623,
+   "align": "center",
+   "maxWidth": 18
+  },
+  "vol_a": {
+   "page": 1,
+   "x": 134.5,
+   "y": 623,
+   "align": "center",
+   "maxWidth": 15
+  },
+  "vol_h": {
+   "page": 1,
+   "x": 158.5,
+   "y": 623,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "vol_min": {
+   "page": 1,
+   "x": 173,
+   "y": 623,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "peso": {
+   "page": 1,
+   "x": 103,
+   "y": 631.5,
+   "maxWidth": 20
+  },
+  "volume": {
+   "page": 1,
+   "x": 197,
+   "y": 631.5,
+   "maxWidth": 22
+  },
+  "solucao": {
+   "page": 1,
+   "x": 155,
+   "y": 640,
+   "maxWidth": 58
+  },
+  "dest_uti": {
+   "page": 1,
+   "x": 325.5,
+   "y": 679,
+   "align": "center",
+   "size": 7
+  },
+  "dest_int": {
+   "page": 1,
+   "x": 345,
+   "y": 679,
+   "align": "center",
+   "size": 7
+  },
+  "dest_d": {
+   "page": 1,
+   "x": 280.5,
+   "y": 687,
+   "align": "center",
+   "maxWidth": 15
+  },
+  "dest_m": {
+   "page": 1,
+   "x": 302.5,
+   "y": 687,
+   "align": "center",
+   "maxWidth": 20
+  },
+  "dest_a": {
+   "page": 1,
+   "x": 324.5,
+   "y": 687,
+   "align": "center",
+   "maxWidth": 17
+  },
+  "dest_h": {
+   "page": 1,
+   "x": 356.5,
+   "y": 687,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "dest_min": {
+   "page": 1,
+   "x": 374.5,
+   "y": 687,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "dest_hosp": {
+   "page": 1,
+   "x": 341,
+   "y": 693.5,
+   "maxWidth": 64
+  },
+  "desf_alta": {
+   "page": 1,
+   "x": 329,
+   "y": 731.5,
+   "align": "center",
+   "size": 7
+  },
+  "desf_obito": {
+   "page": 1,
+   "x": 352,
+   "y": 731.5,
+   "align": "center",
+   "size": 7
+  },
+  "desf_d": {
+   "page": 1,
+   "x": 279.5,
+   "y": 739,
+   "align": "center",
+   "maxWidth": 15
+  },
+  "desf_m": {
+   "page": 1,
+   "x": 302,
+   "y": 739,
+   "align": "center",
+   "maxWidth": 20
+  },
+  "desf_a": {
+   "page": 1,
+   "x": 323,
+   "y": 739,
+   "align": "center",
+   "maxWidth": 17
+  },
+  "desf_h": {
+   "page": 1,
+   "x": 355.5,
+   "y": 739,
+   "align": "center",
+   "maxWidth": 12
+  },
+  "desf_min": {
+   "page": 1,
+   "x": 373.5,
+   "y": 739,
+   "align": "center",
+   "maxWidth": 12
+  }
+ }
+}
