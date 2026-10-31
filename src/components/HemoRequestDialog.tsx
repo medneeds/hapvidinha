@@ -3,7 +3,6 @@ import { Droplet, Loader2, Printer } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -47,15 +46,27 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function Field({ label, required, className, children }: { label: string; required?: boolean; className?: string; children: ReactNode }) {
+function Field({ label, required, className, group, children }: { label: string; required?: boolean; className?: string; group?: boolean; children: ReactNode }) {
+  const caption = (
+    <span className="block text-xs font-medium leading-none">
+      {label}
+      {required && <span className="text-destructive"> *</span>}
+    </span>
+  );
+  // Inputs sit inside a <label> (click/screen-reader association); button groups use a labelled group instead.
+  if (group) {
+    return (
+      <div role="group" aria-label={label} className={cn("space-y-1.5", className)}>
+        {caption}
+        <div>{children}</div>
+      </div>
+    );
+  }
   return (
-    <div className={cn("space-y-1", className)}>
-      <Label className="text-xs font-medium">
-        {label}
-        {required && <span className="text-destructive"> *</span>}
-      </Label>
+    <label className={cn("block space-y-1.5", className)}>
+      {caption}
       {children}
-    </div>
+    </label>
   );
 }
 
@@ -226,7 +237,7 @@ export function HemoRequestDialog({ patient, open, onOpenChange }: HemoRequestDi
               </Field>
               <Field label="Idade"><Input {...text("idade")} /></Field>
               <Field label="Peso"><Input {...text("peso")} placeholder="Ex.: 62 KG" /></Field>
-              <Field label="Sexo">
+              <Field label="Sexo" group>
                 <Choice value={form.sexo} options={[{ value: "F", label: "Fem." }, { value: "M", label: "Masc." }]} onChange={(v) => set("sexo", v)} />
               </Field>
               <Field label="Médico" className="col-span-2 sm:col-span-4"><Input {...text("medico")} /></Field>
@@ -244,10 +255,10 @@ export function HemoRequestDialog({ patient, open, onOpenChange }: HemoRequestDi
 
           <Section title="Dados clínicos">
             <div className="grid grid-cols-2 gap-2.5">
-              <Field label="Grupo sanguíneo">
+              <Field label="Grupo sanguíneo" group>
                 <Choice value={form.grupo as "A" | "B" | "AB" | "O" | ""} options={["A", "B", "AB", "O"].map((g) => ({ value: g as "A", label: g }))} onChange={(v) => set("grupo", v)} />
               </Field>
-              <Field label="Fator RH">
+              <Field label="Fator RH" group>
                 <Choice value={form.fatorRh as "POSITIVO" | "NEGATIVO" | ""} options={[{ value: "POSITIVO", label: "Positivo" }, { value: "NEGATIVO", label: "Negativo" }]} onChange={(v) => set("fatorRh", v)} />
               </Field>
               <Field label="Diagnóstico" className="col-span-2"><Input {...text("diagnostico")} /></Field>
@@ -261,13 +272,13 @@ export function HemoRequestDialog({ patient, open, onOpenChange }: HemoRequestDi
 
           <Section title="Histórico transfusional">
             <div className="grid grid-cols-2 gap-2.5">
-              <Field label="Transfusões prévias?"><Choice value={form.transfPrevias} options={YES_NO} onChange={(v) => set("transfPrevias", v)} /></Field>
-              <Field label="Teve reação transfusional?"><Choice value={form.reacao} options={YES_NO} onChange={(v) => set("reacao", v)} /></Field>
+              <Field label="Transfusões prévias?" group><Choice value={form.transfPrevias} options={YES_NO} onChange={(v) => set("transfPrevias", v)} /></Field>
+              <Field label="Teve reação transfusional?" group><Choice value={form.reacao} options={YES_NO} onChange={(v) => set("reacao", v)} /></Field>
               <Field label="Qual tipo?" className="col-span-2"><Input {...text("qualTipo")} /></Field>
               {!isMale && (
                 <>
-                  <Field label="Está gestante?"><Choice value={form.gestante} options={YES_NO} onChange={(v) => set("gestante", v)} /></Field>
-                  <Field label="Gestações anteriores?"><Choice value={form.gestacoes} options={YES_NO} onChange={(v) => set("gestacoes", v)} /></Field>
+                  <Field label="Está gestante?" group><Choice value={form.gestante} options={YES_NO} onChange={(v) => set("gestante", v)} /></Field>
+                  <Field label="Gestações anteriores?" group><Choice value={form.gestacoes} options={YES_NO} onChange={(v) => set("gestacoes", v)} /></Field>
                 </>
               )}
             </div>
