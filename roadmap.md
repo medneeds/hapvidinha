@@ -8,3 +8,9 @@
 - [x] 6. Signature footer not overlapping on mobile
 - [x] 7. Documents / Movements / Repository mobile fixes
 - [x] Verify 390px light/dark + 1280px unchanged
+
+# Roadmap — UTI transit + hemocomponents (2026-10-31)
+
+- [x] UE→UTI "Em trânsito · Aguardando alocação" (send, allocate, receive on vacant bed)
+- [ ] Alta / óbito / cancelar envio for a patient still in transit — waiting on user's go-ahead
+- [ ] "Solicitar Hemocomponentes" in patient actions (UE Adulto, UE Pediátrica, UTI 1/2): on-screen form → auto-filled PDF → history record — waiting on user's PDFs with marked fields
