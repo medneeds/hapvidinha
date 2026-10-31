@@ -469,6 +469,12 @@ export function EmergencyPatientCard({
                           Solicitar Hemocomponentes
                         </DropdownMenuItem>
                       )}
+                      {patient.name && (
+                        <DropdownMenuItem onClick={() => setSepsisWizardOpen(true)}>
+                          <Activity className={cn("h-4 w-4 mr-2", hasSepsis ? "text-warning animate-pulse" : "text-critical")} />
+                          {hasSepsis ? "Protocolo Sepse (ativo)" : "Abrir Protocolo Sepse"}
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem onClick={() => setDietOpen(true)}>
                         <Utensils className="h-4 w-4 mr-2 text-success" />
                         Liberar Dieta

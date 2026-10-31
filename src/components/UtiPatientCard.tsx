@@ -29,6 +29,7 @@ import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetail
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientReportDialog } from "./PatientReportDialog";
 import { HemoRequestDialog } from "./HemoRequestDialog";
+import { SepsisProtocolLauncher } from "./SepsisProtocolLauncher";
 import { PatientInfoDialog } from "./PatientInfoDialog";
 import { AdminIdentifiers } from "./patient-card/AdminIdentifiers";
 import { useToast } from "@/hooks/use-toast";
@@ -166,6 +167,7 @@ export function UtiPatientCard({
   const displayName = maskName(patient.name, namesHidden);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [hemoOpen, setHemoOpen] = useState(false);
+  const [sepsisOpen, setSepsisOpen] = useState(false);
 
   // Sync with forceCollapsed prop when it changes
   useEffect(() => {
@@ -414,6 +416,12 @@ export function UtiPatientCard({
                     <DropdownMenuItem onClick={() => setHemoOpen(true)}>
                       <Droplet className="h-4 w-4 mr-2 text-critical" />
                       Solicitar Hemocomponentes
+                    </DropdownMenuItem>
+                  )}
+                  {patient.name && (
+                    <DropdownMenuItem onClick={() => setSepsisOpen(true)}>
+                      <Activity className="h-4 w-4 mr-2 text-critical" />
+                      Abrir Protocolo Sepse
                     </DropdownMenuItem>
                   )}
 
@@ -964,6 +972,7 @@ export function UtiPatientCard({
         <PatientReportDialog patient={patient} open={reportDialogOpen} onOpenChange={setReportDialogOpen} />
       )}
       {patient.name && <HemoRequestDialog patient={patient} open={hemoOpen} onOpenChange={setHemoOpen} />}
+      {patient.name && <SepsisProtocolLauncher patient={patient} open={sepsisOpen} onOpenChange={setSepsisOpen} />}
     </>
   );
 }
