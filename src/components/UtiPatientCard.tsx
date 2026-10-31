@@ -962,8 +962,8 @@ export function UtiPatientCard({
       />
       {patient.name && (
         <PatientReportDialog patient={patient} open={reportDialogOpen} onOpenChange={setReportDialogOpen} />
-        {patient.name && <HemoRequestDialog patient={patient} open={hemoOpen} onOpenChange={setHemoOpen} />}
       )}
+      {patient.name && <HemoRequestDialog patient={patient} open={hemoOpen} onOpenChange={setHemoOpen} />}
     </>
   );
 }
