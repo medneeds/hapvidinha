@@ -449,28 +449,28 @@
   },
   "foco_pulm": {
    "page": 1,
-   "x": 465,
+   "x": 458.75,
    "y": 430.5,
    "align": "center",
    "size": 6
   },
   "foco_uri": {
    "page": 1,
-   "x": 497,
+   "x": 491.25,
    "y": 430.5,
    "align": "center",
    "size": 6
   },
   "foco_abd": {
    "page": 1,
-   "x": 413.5,
+   "x": 417.75,
    "y": 437.5,
    "align": "center",
    "size": 6
   },
   "foco_cut": {
    "page": 1,
-   "x": 442.5,
+   "x": 452.5,
    "y": 437.5,
    "align": "center",
    "size": 6
@@ -655,14 +655,14 @@
   },
   "dest_uti": {
    "page": 1,
-   "x": 323,
+   "x": 319.25,
    "y": 679,
    "align": "center",
    "size": 7
   },
   "dest_int": {
    "page": 1,
-   "x": 342,
+   "x": 340,
    "y": 679,
    "align": "center",
    "size": 7
@@ -710,14 +710,14 @@
   },
   "desf_alta": {
    "page": 1,
-   "x": 332,
+   "x": 327.75,
    "y": 731.5,
    "align": "center",
    "size": 7
   },
   "desf_obito": {
    "page": 1,
-   "x": 353.5,
+   "x": 351.25,
    "y": 731.5,
    "align": "center",
    "size": 7
