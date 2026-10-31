@@ -350,8 +350,7 @@
         "page": 0,
         "x": 389,
         "y": 106,
-        "maxWidth": 265,
-        "stack": true
+        "maxWidth": 250
       }
     }
   },
@@ -363,8 +362,7 @@
         "page": 0,
         "x": 389,
         "y": 106,
-        "maxWidth": 265,
-        "stack": true
+        "maxWidth": 250
       }
     }
   },
@@ -376,8 +374,7 @@
         "page": 0,
         "x": 389,
         "y": 106,
-        "maxWidth": 265,
-        "stack": true
+        "maxWidth": 250
       },
       "qtdHemacias": {
         "page": 0,
