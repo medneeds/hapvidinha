@@ -15,6 +15,13 @@
       "when": 1793437995285,
       "tag": "0001_uti_transit_waiting_area",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793481510269,
+      "tag": "0002_sepsis_ficha_extra_fields",
+      "breakpoints": true
     }
   ]
 }
