@@ -245,8 +245,10 @@ export function hemoHistorySummary(form: HemoForm): string {
     extrema: "EXTREMA URGÊNCIA",
   };
   const lines = [
-    "SOLICITAÇÃO DE HEMOCOMPONENTES",
+    HEMO_HISTORY_PREFIX,
     `DATA: ${form.data} ${form.hora}`,
+    form.prontuario.trim() && `PRONTUÁRIO: ${form.prontuario.trim().toUpperCase()}`,
+    form.atendimento.trim() && `ATENDIMENTO: ${form.atendimento.trim().toUpperCase()}`,
     hemocomponentsSummary(form) && `HEMOCOMPONENTES: ${hemocomponentsSummary(form)}`,
     form.indicacao.trim() && `INDICAÇÃO: ${form.indicacao.trim().toUpperCase()}`,
     form.hbHt.trim() && `HB/HT: ${form.hbHt.trim().toUpperCase()}`,
@@ -255,4 +257,71 @@ export function hemoHistorySummary(form: HemoForm): string {
     ...docs,
   ];
   return lines.filter(Boolean).join("\n");
+}
+
+/** First line of every hemocomponent request saved in the patient's history. */
+export const HEMO_HISTORY_PREFIX = "SOLICITAÇÃO DE HEMOCOMPONENTES";
+
+export interface HemoHistoryEntry {
+  data: string;
+  prontuario: string;
+  atendimento: string;
+  hemocomponentes: string;
+  indicacao: string;
+  hbHt: string;
+  tipo: string;
+  documentos: string[];
+}
+
+/** Reads back the summary written by `hemoHistorySummary`. */
+export function parseHemoHistory(content: string): HemoHistoryEntry {
+  const entry: HemoHistoryEntry = { data: "", prontuario: "", atendimento: "", hemocomponentes: "", indicacao: "", hbHt: "", tipo: "", documentos: [] };
+  const keys: Record<string, keyof Omit<HemoHistoryEntry, "documentos">> = {
+    "DATA": "data",
+    "PRONTUÁRIO": "prontuario",
+    "ATENDIMENTO": "atendimento",
+    "HEMOCOMPONENTES": "hemocomponentes",
+    "INDICAÇÃO": "indicacao",
+    "HB/HT": "hbHt",
+    "TIPO": "tipo",
+  };
+  let inDocs = false;
+  for (const raw of (content || "").split("\n")) {
+    const line = raw.trim();
+    if (!line || line === HEMO_HISTORY_PREFIX) continue;
+    if (line === "DOCUMENTOS EMITIDOS:") {
+      inDocs = true;
+      continue;
+    }
+    if (inDocs && line.startsWith("- ")) {
+      entry.documentos.push(line.slice(2).trim());
+      continue;
+    }
+    const i = line.indexOf(":");
+    const key = i > 0 ? keys[line.slice(0, i).trim()] : undefined;
+    if (key) entry[key] = line.slice(i + 1).trim();
+  }
+  return entry;
+}
+
+const normName = (s: string | null | undefined) =>
+  (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim().toUpperCase();
+const normId = (s: string | null | undefined) => (s || "").replace(/\D/g, "");
+
+/**
+ * A saved request belongs to this patient when it is a hemocomponent request with the same name
+ * and — when both sides have one — the same prontuário. Bed rows are reused by the next occupant,
+ * so the record id alone is not enough.
+ */
+export function isSamePatientHemoRecord(
+  record: { patient_name: string | null; report_content: string | null },
+  patient: { name: string; medicalRecordNumber?: string | null }
+): boolean {
+  const content = record.report_content || "";
+  if (!content.startsWith(HEMO_HISTORY_PREFIX)) return false;
+  if (!normName(patient.name) || normName(record.patient_name) !== normName(patient.name)) return false;
+  const recProntuario = normId(parseHemoHistory(content).prontuario);
+  const patProntuario = normId(patient.medicalRecordNumber);
+  if (recProntuario && patProntuario && recProntuario !== patProntuario) return false;
+  return true;
 }
