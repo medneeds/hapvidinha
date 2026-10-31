@@ -21,6 +21,8 @@ export interface Spot {
   stack?: boolean;
   /** When the text doesn't fit, continue on a second small line just below the baseline. */
   wrapBelow?: boolean;
+  /** Extra space between the two wrapped lines (stack / wrapBelow). */
+  lineGap?: number;
 }
 
 export interface DocLayout {
@@ -95,7 +97,7 @@ export function drawSpot(page: PDFPage, spot: Spot, raw: string, regular: PDFFon
       st -= 0.25;
       lines = wrap(text, font, st, maxW);
     }
-    const gap = st + (spot.wrapBelow ? 0.6 : 1);
+    const gap = st + (spot.lineGap ?? (spot.wrapBelow ? 0.6 : 1));
     lines.forEach((l, idx) => {
       const offset = spot.wrapBelow ? -idx * gap : (lines.length - 1 - idx) * gap;
       page.drawText(l, { x: spot.x, y: H - spot.y + offset, size: st, font, color: INK });

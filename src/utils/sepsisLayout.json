@@ -364,8 +364,9 @@
    "x": 85,
    "y": 307.8,
    "maxWidth": 70,
-   "wrapBelow": true,
-   "minSize": 4.5
+   "minSize": 4.3,
+   "stack": true,
+   "lineGap": 0.2
   },
   "prescr_d": {
    "page": 1,
@@ -407,8 +408,9 @@
    "x": 83,
    "y": 348.6,
    "maxWidth": 74,
-   "wrapBelow": true,
-   "minSize": 4.5
+   "minSize": 4.3,
+   "stack": true,
+   "lineGap": 0.2
   },
   "adm_d": {
    "page": 1,
