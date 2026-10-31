@@ -143,7 +143,7 @@ export function HemoRequestDialog({ patient, open, onOpenChange }: HemoRequestDi
     setSubmitting(true);
     try {
       const bytes = await generateHemoPdf(buildHemoFieldValues(form), form.docs);
-      const blob = new Blob([bytes], { type: "application/pdf" });
+      const blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       if (tab) tab.location.href = url;
       else {
