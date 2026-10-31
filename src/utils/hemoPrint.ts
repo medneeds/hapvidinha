@@ -44,7 +44,7 @@ const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /** Standalone light-theme HTML page with one tab (and path) per document. */
-export function buildHemoPrintHtml(docs: HemoPrintDoc[], meta: { patientName: string; issuedAt: string; label?: string; unit?: [string, string] }): string {
+export function buildHemoPrintHtml(docs: HemoPrintDoc[], meta: { patientName: string; issuedAt: string; label?: string; unit?: [string, string]; printOne?: string }): string {
   const label = meta.label || "Hemocomponentes";
   const [one, many] = meta.unit || ["documento", "documentos"];
   const tabs = docs
@@ -130,7 +130,7 @@ export function buildHemoPrintHtml(docs: HemoPrintDoc[], meta: { patientName: st
     </div>
     <div class="actions">
       ${docs.length > 1 ? `<button type="button" id="print-all">Imprimir todos (${docs.length})</button>` : ""}
-      <button type="button" class="primary" id="print-one">Imprimir ${docs.length > 1 ? `esta ${esc(one) === "documento" ? "aba" : esc(one)}` : "documento"}</button>
+      <button type="button" class="primary" id="print-one">Imprimir ${esc(meta.printOne || "este documento")}</button>
     </div>
   </div>
   <nav role="tablist">${tabs}</nav>
