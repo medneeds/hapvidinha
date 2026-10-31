@@ -703,6 +703,19 @@ export function SepsisProtocolWizardDialog({
 
     setIsSubmitting(true);
     try {
+      // Without an outcome the protocol is saved as it is and stays open (nothing is mandatory).
+      if (!formData.outcome) {
+        const { error } = await supabase
+          .from('sepsis_protocols')
+          .update(getFullProtocolUpdateData(formData.outcome_date || null, formData.outcome_time || null))
+          .eq('id', protocolId);
+        if (error) throw error;
+        toast({ title: "Protocolo Sepse salvo", description: "Sem desfecho informado, o protocolo continua em aberto." });
+        onSuccess?.();
+        onClose();
+        return;
+      }
+
       const now = new Date();
       const resolvedOutcomeDate = formData.outcome_date || now.toISOString().split("T")[0];
       const resolvedOutcomeTime = formData.outcome_time || now.toTimeString().slice(0, 5);
@@ -719,6 +732,7 @@ export function SepsisProtocolWizardDialog({
       if (!data?.outcome) {
         throw new Error("O protocolo não pôde ser encerrado. Atualize a página e tente novamente.");
       }
+
 
       setFormData(prev => ({
         ...prev,
