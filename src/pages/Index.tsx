@@ -3,6 +3,8 @@ import { SectorSection } from "@/components/SectorSection";
 import { SectorBedIcon } from "@/components/SectorBedIcon";
 import { EmptySectorState } from "@/components/EmptySectorState";
 import { UtiSectorSection } from "@/components/UtiSectorSection";
+import { UtiTransitSection, ReceiveTransitButton } from "@/components/UtiTransitSection";
+import { useUtiTransitPatients } from "@/hooks/useUtiTransitPatients";
 import { UtiUnitSelector } from "@/components/UtiUnitSelector";
 import { EmergencyPatientCard } from "@/components/EmergencyPatientCard";
 import { PrintLayout } from "@/components/PrintLayout";
@@ -186,6 +188,11 @@ const Index = () => {
   
   // Use real database patients filtered by department
   const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient, reorderPatients: dbReorderPatients, refetch } = usePatients(currentDepartment);
+  const { transitPatients, allocate: allocateTransit, setDiscussing: setTransitDiscussing, refetch: refetchTransit } = useUtiTransitPatients(currentDepartment === "UTI");
+  const handleTransitAllocated = () => { refetch(); refetchTransit(); };
+  const renderReceiveTransit = (bed: Patient) => (
+    <ReceiveTransitButton bed={bed} transitPatients={transitPatients} allocate={allocateTransit} onAllocated={handleTransitAllocated} />
+  );
   const [patients, setPatients] = useState<Patient[]>(dbPatients);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [history, setHistory] = useState<Patient[][]>(() => {
@@ -1400,6 +1407,15 @@ const Index = () => {
                       </button>
                     </div>
 
+                    <UtiTransitSection
+                      unit={selectedUtiUnit}
+                      transitPatients={transitPatients}
+                      utiBeds={patients}
+                      allocate={allocateTransit}
+                      setDiscussing={setTransitDiscussing}
+                      onAllocated={handleTransitAllocated}
+                    />
+
                     {selectedUtiUnit === 'UTI 1' && (
                       <UtiSectorSection
                         sector="blue"
@@ -1420,6 +1436,7 @@ const Index = () => {
                         colorVariant="blue"
                         allPatients={patients}
                         currentUtiUnit="UTI 1"
+                        renderVacantAction={renderReceiveTransit}
                       />
                     )}
                     {selectedUtiUnit === 'UTI 2' && (
@@ -1442,6 +1459,7 @@ const Index = () => {
                         colorVariant="yellow"
                         allPatients={patients}
                         currentUtiUnit="UTI 2"
+                        renderVacantAction={renderReceiveTransit}
                       />
                     )}
 
