@@ -16,7 +16,7 @@ export async function printSepsisFicha(
   if (win) {
     try {
       win.document.open();
-      win.document.write(HEMO_PRINT_LOADING_HTML.replace("Gerando documentos…", "Gerando ficha do protocolo…"));
+      win.document.write(HEMO_PRINT_LOADING_HTML.replaceAll("Gerando documentos…", "Gerando ficha do protocolo…"));
       win.document.close();
     } catch {
       /* window still usable */
