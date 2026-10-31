@@ -443,33 +443,10 @@ export function SepsisProtocolWizardDialog({
     });
   };
 
+  // No field is mandatory; the only thing needed to save is an opened protocol.
   const getProtocolPendencies = () => {
     const pendencies: Array<{ step: number; message: string }> = [];
-    const hasSelectedFocus =
-      [formData.focus_pulmonary, formData.focus_urinary, formData.focus_abdominal, formData.focus_skin, formData.focus_neurological].some(Boolean) ||
-      !!formData.focus_other?.trim();
-
     if (!protocolId) pendencies.push({ step: 0, message: "Abra o protocolo antes de tentar finalizar." });
-    if (!formData.patient_name?.trim()) pendencies.push({ step: 0, message: "Identificação: informe o nome do paciente." });
-    if (!formData.opening_date || !formData.opening_time) pendencies.push({ step: 0, message: "Identificação: confirme data e hora de abertura." });
-    if (formData.has_organic_dysfunction === null) pendencies.push({ step: 2, message: "Disfunções: responda SIM ou NÃO para disfunção orgânica." });
-    if (formData.has_infection === null) pendencies.push({ step: 3, message: "Foco infeccioso: responda SIM ou NÃO para infecção suspeita/confirmada." });
-    if (formData.has_infection === true && !hasSelectedFocus) pendencies.push({ step: 3, message: "Foco infeccioso: selecione um foco ou descreva em Outro." });
-    if ((formData.antibiotic_administration_date || formData.antibiotic_administration_time) && !formData.antibiotic_names?.trim()) {
-      pendencies.push({ step: 4, message: "Tratamento: informe o(s) antibiótico(s) administrado(s)." });
-    }
-    const treatmentDateTimePendencies = [
-      ...getDateTimePairPendencies(formData.blood_culture_date, formData.blood_culture_time, "Hemocultura"),
-      ...getDateTimePairPendencies(formData.lactate_date, formData.lactate_time, "Lactato"),
-      ...getDateTimePairPendencies(formData.antibiotic_prescription_date, formData.antibiotic_prescription_time, "Prescrição de antibiótico"),
-      ...getDateTimePairPendencies(formData.antibiotic_administration_date, formData.antibiotic_administration_time, "Administração de antibiótico"),
-    ];
-    treatmentDateTimePendencies.forEach((message) => pendencies.push({ step: 4, message }));
-    getDateTimePairPendencies(formData.destination_date, formData.destination_time, "Destino").forEach((message) =>
-      pendencies.push({ step: 5, message }),
-    );
-    if (!formData.outcome) pendencies.push({ step: 5, message: "Desfecho: selecione o desfecho para encerrar." });
-
     return pendencies;
   };
 
@@ -808,36 +785,8 @@ export function SepsisProtocolWizardDialog({
     onClose();
   };
 
-  // Per-step validation: returns null if OK, otherwise an error message
-  const validateCurrentStep = (): string | null => {
-    const step = STEPS[currentStep].key;
-    if (step === "identification") {
-      if (!formData.patient_name?.trim()) return "Nome do paciente é obrigatório.";
-    }
-    if (step === "dysfunction") {
-      if (formData.has_organic_dysfunction === null)
-        return "Informe se há disfunção orgânica confirmada (SIM/NÃO).";
-    }
-    if (step === "focus") {
-      if (formData.has_infection === null)
-        return "Informe se há infecção confirmada ou suspeita (SIM/NÃO).";
-      if (formData.has_infection === true) {
-        const focusCount =
-          [formData.focus_pulmonary, formData.focus_urinary, formData.focus_abdominal,
-            formData.focus_skin, formData.focus_neurological].filter(Boolean).length +
-          (formData.focus_other?.trim() ? 1 : 0);
-        if (focusCount === 0)
-          return "Selecione ao menos um foco infeccioso ou descreva em 'Outro'.";
-      }
-    }
-    if (step === "treatment") {
-      const hasAdmin =
-        formData.antibiotic_administration_date && formData.antibiotic_administration_time;
-      if (hasAdmin && !formData.antibiotic_names?.trim())
-        return "Informe o(s) antibiótico(s) administrado(s).";
-    }
-    return null;
-  };
+  // No field is mandatory: every step can be saved and skipped with whatever was filled in.
+  const validateCurrentStep = (): string | null => null;
 
   const sirsCount = [
     formData.sirs_temp_high,
