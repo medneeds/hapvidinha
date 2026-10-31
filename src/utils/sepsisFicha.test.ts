@@ -6,10 +6,8 @@ import layout from "./sepsisLayout.json";
 import { buildSepsisFichaValues, generateSepsisFichaPdf, localPartsToTimestamp, splitDate, splitTime, timestampToLocalParts } from "./sepsisFicha";
 
 const ORIGINAL = resolve(__dirname, "../../public/documents/protocolo-sepse-adulto.pdf");
-const fetchLocal = async () => {
-  const b = readFileSync(ORIGINAL);
-  return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) as ArrayBuffer;
-};
+// Plain Uint8Array copy: the test DOM's ArrayBuffer is a different realm from Node's file buffer.
+const fetchLocal = async () => Uint8Array.from(readFileSync(ORIGINAL)) as unknown as ArrayBuffer;
 
 const full = {
   patient_name: "maria silva",
