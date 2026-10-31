@@ -26,8 +26,9 @@ import { useToast } from "@/hooks/use-toast";
 import { toast as popupToast } from "sonner";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock, Download, AlertTriangle, CheckCircle2, Stethoscope, Trash2 } from "lucide-react";
-import { generateSepsisProtocolPdf } from "@/utils/sepsisProtocolPdf";
+import { Activity, ArrowLeft, ArrowRight, Check, ChevronRight, Clock, FileText, Loader2, AlertTriangle, CheckCircle2, Stethoscope, Trash2 } from "lucide-react";
+import { localPartsToTimestamp, timestampToLocalParts } from "@/utils/sepsisFicha";
+import { printSepsisFicha, type SepsisFichaProgress } from "@/utils/sepsisFichaPrint";
 import { DeleteSepsisProtocolDialog } from "./DeleteSepsisProtocolDialog";
 import { cn } from "@/lib/utils";
 
@@ -76,6 +77,8 @@ interface FormData {
   dysfunction_acidosis: boolean;
   dysfunction_consciousness: boolean;
   dysfunction_bilirubin: boolean;
+  dysfunction_excluded_day: string;
+  dysfunction_excluded_hour: string;
   // Infection
   has_infection: boolean | null;
   focus_pulmonary: boolean;
@@ -84,19 +87,35 @@ interface FormData {
   focus_skin: boolean;
   focus_neurological: boolean;
   focus_other: string;
+  infection_excluded_day: string;
+  infection_excluded_hour: string;
   // Treatment
+  medical_evaluation_date: string;
+  medical_evaluation_time: string;
   blood_culture_date: string;
   blood_culture_time: string;
   lactate_date: string;
   lactate_time: string;
+  lactate_result: string;
+  lactate_result_date: string;
+  lactate_result_time: string;
+  second_lactate_date: string;
+  second_lactate_time: string;
+  second_lactate_result: string;
+  second_lactate_result_date: string;
+  second_lactate_result_time: string;
   antibiotic_prescription_date: string;
   antibiotic_prescription_time: string;
   antibiotic_administration_date: string;
   antibiotic_administration_time: string;
   antibiotic_names: string;
   volume_administered: string;
+  fluid_date: string;
+  fluid_time: string;
+  fluid_solution: string;
   // Outcome
   destination: string;
+  destination_hospital: string;
   destination_date: string;
   destination_time: string;
   outcome: string;
@@ -129,6 +148,8 @@ const initialFormData: FormData = {
   dysfunction_acidosis: false,
   dysfunction_consciousness: false,
   dysfunction_bilirubin: false,
+  dysfunction_excluded_day: "",
+  dysfunction_excluded_hour: "",
   has_infection: null,
   focus_pulmonary: false,
   focus_urinary: false,
@@ -136,17 +157,33 @@ const initialFormData: FormData = {
   focus_skin: false,
   focus_neurological: false,
   focus_other: "",
+  infection_excluded_day: "",
+  infection_excluded_hour: "",
+  medical_evaluation_date: "",
+  medical_evaluation_time: "",
   blood_culture_date: "",
   blood_culture_time: "",
   lactate_date: "",
   lactate_time: "",
+  lactate_result: "",
+  lactate_result_date: "",
+  lactate_result_time: "",
+  second_lactate_date: "",
+  second_lactate_time: "",
+  second_lactate_result: "",
+  second_lactate_result_date: "",
+  second_lactate_result_time: "",
   antibiotic_prescription_date: "",
   antibiotic_prescription_time: "",
   antibiotic_administration_date: "",
   antibiotic_administration_time: "",
   antibiotic_names: "",
   volume_administered: "",
+  fluid_date: "",
+  fluid_time: "",
+  fluid_solution: "",
   destination: "",
+  destination_hospital: "",
   destination_date: "",
   destination_time: "",
   outcome: "",
@@ -154,6 +191,61 @@ const initialFormData: FormData = {
   outcome_time: "",
   notes: "",
 };
+
+const FICHA_STEPS = ["Frente · identificação e critérios", "Verso · gerenciamento do protocolo"];
+
+/** Overlay shown while the original form is filled and turned into its print pages. */
+function SepsisFichaGeneratingOverlay({ progress }: { progress: SepsisFichaProgress }) {
+  const total = FICHA_STEPS.length;
+  const pct = Math.round(((progress.finished ? total : progress.index + 0.5) / total) * 100);
+  return (
+    <div
+      className="absolute inset-0 z-20 flex items-center justify-center rounded-[inherit] bg-background/90 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in-0"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="w-full max-w-xs space-y-5 px-6">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="relative h-16 w-16">
+            {!progress.finished && <span className="absolute inset-0 rounded-full bg-critical/15 motion-safe:animate-ping [animation-duration:1.8s]" />}
+            <span
+              className={cn(
+                "relative flex h-16 w-16 items-center justify-center rounded-full ring-1 transition-colors duration-300",
+                progress.finished ? "bg-critical text-critical-foreground ring-critical" : "bg-critical/10 text-critical ring-critical/30"
+              )}
+            >
+              {progress.finished ? <Check className="h-7 w-7 motion-safe:animate-in motion-safe:zoom-in-50" /> : <Activity className="h-7 w-7 motion-safe:animate-pulse" />}
+            </span>
+          </div>
+          <div className="space-y-0.5">
+            <p className="text-sm font-semibold">{progress.finished ? "Ficha pronta" : "Gerando ficha do protocolo"}</p>
+            <p className="min-h-[1rem] text-xs text-muted-foreground">
+              {progress.finished ? "Abrindo a janela de impressão…" : `${progress.index + 1} de ${total} · ${FICHA_STEPS[progress.index]?.split(" · ")[0]}`}
+            </p>
+          </div>
+        </div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+          <div className="h-full rounded-full bg-critical transition-[width] duration-500 ease-out" style={{ width: `${pct}%` }} />
+        </div>
+        <ul className="space-y-1.5">
+          {FICHA_STEPS.map((label, i) => {
+            const state = progress.finished || i < progress.index ? "done" : i === progress.index ? "active" : "pending";
+            return (
+              <li key={label} className={cn("flex items-center gap-2 text-xs transition-colors", state === "pending" ? "text-muted-foreground/70" : "text-foreground")}>
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+                  {state === "done" && <Check className="h-3.5 w-3.5 text-critical" />}
+                  {state === "active" && <Loader2 className="h-3.5 w-3.5 animate-spin text-critical" />}
+                  {state === "pending" && <span className="h-2 w-2 rounded-full border border-muted-foreground/50" />}
+                </span>
+                <span className={cn("truncate", state === "active" && "font-medium")}>{label}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 export function SepsisProtocolWizardDialog({
   patient,
@@ -170,6 +262,7 @@ export function SepsisProtocolWizardDialog({
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [fichaProgress, setFichaProgress] = useState<SepsisFichaProgress | null>(null);
   const { toast } = useToast();
   const { currentHospital, currentState } = useHospital();
   const { user } = useAuth();
@@ -177,9 +270,13 @@ export function SepsisProtocolWizardDialog({
   // Initialize form with patient data
   useEffect(() => {
     if (isOpen && patient) {
+      const br = (patient.birthDate || "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
       setFormData({
         ...initialFormData,
         patient_name: patient.name || "",
+        birth_date: br ? `${br[3]}-${br[2]}-${br[1]}` : "",
+        attendance_number: patient.attendanceNumber || "",
+        hospital: (currentHospital?.name || "").toUpperCase(),
       });
       if (!existingProtocolId) {
         setCurrentStep(0);
@@ -188,7 +285,26 @@ export function SepsisProtocolWizardDialog({
         setElapsedSeconds(0);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, patient, existingProtocolId]);
+
+  // New protocol: the logged-in doctor opens the form
+  useEffect(() => {
+    if (!isOpen || existingProtocolId || !user) return;
+    let active = true;
+    supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        const name = (data?.full_name || "").trim().toUpperCase();
+        if (active && name) setFormData((f) => (f.responsible_name ? f : { ...f, responsible_name: name }));
+      });
+    return () => {
+      active = false;
+    };
+  }, [isOpen, existingProtocolId, user]);
 
   // Load existing protocol data
   useEffect(() => {
@@ -226,6 +342,8 @@ export function SepsisProtocolWizardDialog({
             dysfunction_acidosis: data.dysfunction_acidosis || false,
             dysfunction_consciousness: data.dysfunction_consciousness || false,
             dysfunction_bilirubin: data.dysfunction_bilirubin || false,
+            dysfunction_excluded_day: timestampToLocalParts(data.dysfunction_excluded_date).date,
+            dysfunction_excluded_hour: timestampToLocalParts(data.dysfunction_excluded_date).time,
             has_infection: data.has_infection,
             focus_pulmonary: data.focus_pulmonary || false,
             focus_urinary: data.focus_urinary || false,
@@ -233,17 +351,33 @@ export function SepsisProtocolWizardDialog({
             focus_skin: data.focus_skin || false,
             focus_neurological: data.focus_neurological || false,
             focus_other: data.focus_other || "",
+            infection_excluded_day: timestampToLocalParts(data.infection_excluded_date).date,
+            infection_excluded_hour: timestampToLocalParts(data.infection_excluded_date).time,
+            medical_evaluation_date: data.medical_evaluation_date || "",
+            medical_evaluation_time: data.medical_evaluation_time || "",
             blood_culture_date: data.blood_culture_date || "",
             blood_culture_time: data.blood_culture_time || "",
             lactate_date: data.lactate_date || "",
             lactate_time: data.lactate_time || "",
+            lactate_result: data.lactate_result || "",
+            lactate_result_date: data.lactate_result_date || "",
+            lactate_result_time: data.lactate_result_time || "",
+            second_lactate_date: data.second_lactate_date || "",
+            second_lactate_time: data.second_lactate_time || "",
+            second_lactate_result: data.second_lactate_result || "",
+            second_lactate_result_date: data.second_lactate_result_date || "",
+            second_lactate_result_time: data.second_lactate_result_time || "",
             antibiotic_prescription_date: data.antibiotic_prescription_date || "",
             antibiotic_prescription_time: data.antibiotic_prescription_time || "",
             antibiotic_administration_date: (data as any).antibiotic_administration_date || "",
             antibiotic_administration_time: (data as any).antibiotic_administration_time || "",
             antibiotic_names: (data as any).antibiotic_names || "",
             volume_administered: data.volume_administered?.toString() || "",
+            fluid_date: data.fluid_date || "",
+            fluid_time: data.fluid_time || "",
+            fluid_solution: data.fluid_solution || "",
             destination: data.destination || "",
+            destination_hospital: data.destination_hospital || "",
             destination_date: data.destination_date || "",
             destination_time: data.destination_time || "",
             outcome: data.outcome || "",
@@ -339,6 +473,29 @@ export function SepsisProtocolWizardDialog({
     return pendencies;
   };
 
+  const exclusionData = () => ({
+    dysfunction_excluded_date:
+      formData.has_organic_dysfunction === false ? localPartsToTimestamp(formData.dysfunction_excluded_day, formData.dysfunction_excluded_hour) : null,
+    infection_excluded_date:
+      formData.has_infection === false ? localPartsToTimestamp(formData.infection_excluded_day, formData.infection_excluded_hour) : null,
+  });
+
+  const fichaTreatmentData = () => ({
+    medical_evaluation_date: formData.medical_evaluation_date || null,
+    medical_evaluation_time: formData.medical_evaluation_time || null,
+    lactate_result: formData.lactate_result.trim().toUpperCase() || null,
+    lactate_result_date: formData.lactate_result_date || null,
+    lactate_result_time: formData.lactate_result_time || null,
+    second_lactate_date: formData.second_lactate_date || null,
+    second_lactate_time: formData.second_lactate_time || null,
+    second_lactate_result: formData.second_lactate_result.trim().toUpperCase() || null,
+    second_lactate_result_date: formData.second_lactate_result_date || null,
+    second_lactate_result_time: formData.second_lactate_result_time || null,
+    fluid_date: formData.fluid_date || null,
+    fluid_time: formData.fluid_time || null,
+    fluid_solution: formData.fluid_solution.trim().toUpperCase() || null,
+  });
+
   const getFullProtocolUpdateData = (outcomeDate?: string, outcomeTime?: string) => ({
     patient_name: formData.patient_name?.trim().toUpperCase(),
     birth_date: formData.birth_date || null,
@@ -387,6 +544,9 @@ export function SepsisProtocolWizardDialog({
     outcome_date: outcomeDate || formData.outcome_date || null,
     outcome_time: outcomeTime || formData.outcome_time || null,
     notes: formData.notes || null,
+    destination_hospital: formData.destination_hospital.trim().toUpperCase() || null,
+    ...exclusionData(),
+    ...fichaTreatmentData(),
   });
 
   const handleStartProtocol = async () => {
@@ -474,6 +634,7 @@ export function SepsisProtocolWizardDialog({
           dysfunction_acidosis: formData.dysfunction_acidosis,
           dysfunction_consciousness: formData.dysfunction_consciousness,
           dysfunction_bilirubin: formData.dysfunction_bilirubin,
+          dysfunction_excluded_date: exclusionData().dysfunction_excluded_date,
         };
       } else if (stepKey === "focus") {
         updateData = {
@@ -484,6 +645,7 @@ export function SepsisProtocolWizardDialog({
           focus_skin: formData.focus_skin,
           focus_neurological: formData.focus_neurological,
           focus_other: formData.focus_other || null,
+          infection_excluded_date: exclusionData().infection_excluded_date,
         };
       } else if (stepKey === "treatment") {
         updateData = {
@@ -498,12 +660,14 @@ export function SepsisProtocolWizardDialog({
           antibiotic_names: formData.antibiotic_names || null,
           volume_administered: formData.volume_administered ? parseFloat(formData.volume_administered) : null,
           patient_weight: formData.patient_weight ? parseFloat(formData.patient_weight) : null,
+          ...fichaTreatmentData(),
         };
       } else if (stepKey === "outcome") {
         updateData = {
           destination: formData.destination || null,
           destination_date: formData.destination_date || null,
           destination_time: formData.destination_time || null,
+          destination_hospital: formData.destination_hospital.trim().toUpperCase() || null,
           outcome: formData.outcome || null,
           outcome_date: formData.outcome_date || null,
           outcome_time: formData.outcome_time || null,
@@ -603,6 +767,36 @@ export function SepsisProtocolWizardDialog({
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  /** Fills the original sepsis form (frente e verso) with what is on screen and opens it to print. */
+  const handlePrintFicha = async () => {
+    if (fichaProgress) return;
+    setFichaProgress({ index: 0, total: 2, finished: false });
+    try {
+      const mode = await printSepsisFicha(
+        {
+          ...formData,
+          patient_name: formData.patient_name || patient?.name || "",
+          ...exclusionData(),
+        },
+        setFichaProgress
+      );
+      if (protocolId && !isSubmitting) void saveCurrentStep();
+      await new Promise((r) => setTimeout(r, 500));
+      toast({
+        title: "Ficha gerada",
+        description:
+          mode === "window"
+            ? "Frente e verso abertos em abas na janela de impressão."
+            : "O navegador bloqueou a janela de impressão; o PDF da ficha foi baixado.",
+      });
+    } catch (e: any) {
+      console.error("Erro ao gerar ficha do protocolo de sepse:", e);
+      toast({ title: "Não foi possível gerar a ficha", description: e?.message || "Tente novamente.", variant: "destructive" });
+    } finally {
+      setFichaProgress(null);
     }
   };
 
@@ -798,6 +992,18 @@ export function SepsisProtocolWizardDialog({
                 <span className="text-sm">NÃO</span>
               </label>
             </div>
+            {formData.has_organic_dysfunction === false && (
+              <div className="mt-3 space-y-2 rounded-lg bg-muted/50 p-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase">Exclusão da disfunção (opcional)</h4>
+                  <NowButton dateField="dysfunction_excluded_day" timeField="dysfunction_excluded_hour" />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div><Label className="text-xs">Data</Label><Input type="date" value={formData.dysfunction_excluded_day} onChange={e => updateField("dysfunction_excluded_day", e.target.value)} /></div>
+                  <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.dysfunction_excluded_hour} onChange={e => updateField("dysfunction_excluded_hour", e.target.value)} /></div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -818,6 +1024,18 @@ export function SepsisProtocolWizardDialog({
                 <span className="text-sm">NÃO</span>
               </label>
             </div>
+            {formData.has_infection === false && (
+              <div className="mt-3 space-y-2 rounded-lg bg-muted/50 p-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase">Exclusão da infecção (opcional)</h4>
+                  <NowButton dateField="infection_excluded_day" timeField="infection_excluded_hour" />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div><Label className="text-xs">Data</Label><Input type="date" value={formData.infection_excluded_day} onChange={e => updateField("infection_excluded_day", e.target.value)} /></div>
+                  <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.infection_excluded_hour} onChange={e => updateField("infection_excluded_hour", e.target.value)} /></div>
+                </div>
+              </div>
+            )}
           </div>
           <p className="text-xs text-muted-foreground">Foco infeccioso suspeito/confirmado:</p>
           {[
@@ -843,6 +1061,17 @@ export function SepsisProtocolWizardDialog({
     if (step === "treatment") {
       return (
         <div className="space-y-4">
+          <p className="text-xs text-muted-foreground">Todos os campos são opcionais; o que for preenchido aparece no verso da ficha.</p>
+          <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Avaliação Médica</h4>
+              <NowButton dateField="medical_evaluation_date" timeField="medical_evaluation_time" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data</Label><Input type="date" value={formData.medical_evaluation_date} onChange={e => updateField("medical_evaluation_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.medical_evaluation_time} onChange={e => updateField("medical_evaluation_time", e.target.value)} /></div>
+            </div>
+          </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold uppercase">Hemocultura</h4>
@@ -861,6 +1090,32 @@ export function SepsisProtocolWizardDialog({
             <div className="grid grid-cols-2 gap-2">
               <div><Label className="text-xs">Data</Label><Input type="date" value={formData.lactate_date} onChange={e => updateField("lactate_date", e.target.value)} /></div>
               <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.lactate_time} onChange={e => updateField("lactate_time", e.target.value)} /></div>
+            </div>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 pt-1">
+              <div><Label className="text-xs">Resultado</Label><Input value={formData.lactate_result} onChange={e => updateField("lactate_result", e.target.value.toUpperCase())} className="uppercase" placeholder="EX: 3,8 MMOL/L" /></div>
+              <NowButton dateField="lactate_result_date" timeField="lactate_result_time" label="RESULTADO AGORA" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data do resultado</Label><Input type="date" value={formData.lactate_result_date} onChange={e => updateField("lactate_result_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora do resultado</Label><Input type="time" value={formData.lactate_result_time} onChange={e => updateField("lactate_result_time", e.target.value)} /></div>
+            </div>
+          </div>
+          <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Segundo Lactato</h4>
+              <NowButton dateField="second_lactate_date" timeField="second_lactate_time" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data da coleta</Label><Input type="date" value={formData.second_lactate_date} onChange={e => updateField("second_lactate_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora da coleta</Label><Input type="time" value={formData.second_lactate_time} onChange={e => updateField("second_lactate_time", e.target.value)} /></div>
+            </div>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 pt-1">
+              <div><Label className="text-xs">Resultado</Label><Input value={formData.second_lactate_result} onChange={e => updateField("second_lactate_result", e.target.value.toUpperCase())} className="uppercase" placeholder="EX: 2,1 MMOL/L" /></div>
+              <NowButton dateField="second_lactate_result_date" timeField="second_lactate_result_time" label="RESULTADO AGORA" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data do resultado</Label><Input type="date" value={formData.second_lactate_result_date} onChange={e => updateField("second_lactate_result_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora do resultado</Label><Input type="time" value={formData.second_lactate_result_time} onChange={e => updateField("second_lactate_result_time", e.target.value)} /></div>
             </div>
           </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
@@ -893,7 +1148,15 @@ export function SepsisProtocolWizardDialog({
             />
           </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
-            <h4 className="text-xs font-bold uppercase">Ressuscitação Volêmica</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Reposição Volêmica</h4>
+              <NowButton dateField="fluid_date" timeField="fluid_time" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data</Label><Input type="date" value={formData.fluid_date} onChange={e => updateField("fluid_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.fluid_time} onChange={e => updateField("fluid_time", e.target.value)} /></div>
+            </div>
+            <div><Label className="text-xs">Solução administrada</Label><Input value={formData.fluid_solution} onChange={e => updateField("fluid_solution", e.target.value.toUpperCase())} className="uppercase" placeholder="EX: RINGER LACTATO" /></div>
             <div className="grid grid-cols-2 gap-2">
               <div><Label className="text-xs">Peso (kg)</Label><Input type="number" step="0.1" value={formData.patient_weight} onChange={e => updateField("patient_weight", e.target.value)} /></div>
               <div><Label className="text-xs">Volume (mL)</Label><Input type="number" value={formData.volume_administered} onChange={e => updateField("volume_administered", e.target.value)} /></div>
@@ -925,6 +1188,10 @@ export function SepsisProtocolWizardDialog({
             </div>
             <div><Label className="text-xs">Data Destino</Label><Input type="date" value={formData.destination_date} onChange={e => updateField("destination_date", e.target.value)} /></div>
             <div><Label className="text-xs">Hora Destino</Label><Input type="time" value={formData.destination_time} onChange={e => updateField("destination_time", e.target.value)} /></div>
+            <div className="col-span-2">
+              <Label className="text-xs">Hospital de destino</Label>
+              <Input value={formData.destination_hospital} onChange={e => updateField("destination_hospital", e.target.value.toUpperCase())} className="uppercase" placeholder="OPCIONAL" />
+            </div>
           </div>
           <div className="border-t pt-4 space-y-3">
             <div className="col-span-2">
@@ -962,6 +1229,7 @@ export function SepsisProtocolWizardDialog({
   return (
     <Dialog open={isOpen} onOpenChange={v => { if (!v && !isSubmitting) onClose(); }}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-0 gap-0" onInteractOutside={e => { if (isSubmitting || protocolId) e.preventDefault(); }} onEscapeKeyDown={e => { if (isSubmitting) e.preventDefault(); }}>
+        {fichaProgress && <SepsisFichaGeneratingOverlay progress={fichaProgress} />}
         {/* Timer Header */}
         {startTime && (
           <div className={cn(
@@ -1068,10 +1336,11 @@ export function SepsisProtocolWizardDialog({
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => generateSepsisProtocolPdf({ ...formData, created_at: startTime?.toISOString() || new Date().toISOString(), patient_weight: formData.patient_weight ? parseFloat(formData.patient_weight) : null, volume_administered: formData.volume_administered ? parseFloat(formData.volume_administered) : null } as any)}
+              onClick={handlePrintFicha}
+              disabled={fichaProgress !== null}
             >
-              <Download className="h-4 w-4 mr-1" />
-              PDF
+              <FileText className="h-4 w-4 mr-1" />
+              FICHA
             </Button>
           )}
           {protocolId && currentStep > 0 && currentStep < STEPS.length - 1 && (

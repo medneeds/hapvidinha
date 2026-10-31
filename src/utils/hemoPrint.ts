@@ -1,5 +1,4 @@
 import workerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
-import type { HemoDocKey } from "./hemoRequest";
 
 /**
  * Tabbed print window for the hemocomponent documents: every filled document becomes its own
@@ -12,7 +11,7 @@ export interface HemoPrintPage {
   landscape: boolean;
 }
 export interface HemoPrintDoc {
-  key: HemoDocKey;
+  key: string;
   title: string;
   detail: string;
   pages: HemoPrintPage[];
@@ -45,7 +44,9 @@ const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /** Standalone light-theme HTML page with one tab (and path) per document. */
-export function buildHemoPrintHtml(docs: HemoPrintDoc[], meta: { patientName: string; issuedAt: string }): string {
+export function buildHemoPrintHtml(docs: HemoPrintDoc[], meta: { patientName: string; issuedAt: string; label?: string; unit?: [string, string]; printOne?: string; printAll?: string }): string {
+  const label = meta.label || "Hemocomponentes";
+  const [one, many] = meta.unit || ["documento", "documentos"];
   const tabs = docs
     .map(
       (d, i) => `<a class="tab" href="#/${d.key}" data-key="${d.key}" role="tab">
@@ -71,7 +72,7 @@ export function buildHemoPrintHtml(docs: HemoPrintDoc[], meta: { patientName: st
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hemocomponentes · ${esc(meta.patientName)}</title>
+<title>${esc(label)} · ${esc(meta.patientName)}</title>
 <style>
   :root { color-scheme: light; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --accent:#be123c; --accent-soft:#fff1f2; }
   * { box-sizing: border-box; }
@@ -125,11 +126,11 @@ export function buildHemoPrintHtml(docs: HemoPrintDoc[], meta: { patientName: st
   <div class="top">
     <div>
       <h1>${esc(meta.patientName)}</h1>
-      <p>Hemocomponentes · emitido em ${esc(meta.issuedAt)} · ${docs.length} documento${docs.length === 1 ? "" : "s"}</p>
+      <p>${esc(label)} · emitido em ${esc(meta.issuedAt)} · ${docs.length} ${docs.length === 1 ? one : many}</p>
     </div>
     <div class="actions">
-      ${docs.length > 1 ? `<button type="button" id="print-all">Imprimir todos (${docs.length})</button>` : ""}
-      <button type="button" class="primary" id="print-one">Imprimir este documento</button>
+      ${docs.length > 1 ? `<button type="button" id="print-all">${esc(meta.printAll || `Imprimir todos (${docs.length})`)}</button>` : ""}
+      <button type="button" class="primary" id="print-one">Imprimir ${esc(meta.printOne || "este documento")}</button>
     </div>
   </div>
   <nav role="tablist">${tabs}</nav>

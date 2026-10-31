@@ -2001,6 +2001,7 @@ export type Database = {
           deletion_reason: string | null
           destination: string | null
           destination_date: string | null
+          destination_hospital: string | null
           destination_time: string | null
           dysfunction_acidosis: boolean | null
           dysfunction_bilirubin: boolean | null
@@ -2010,6 +2011,9 @@ export type Database = {
           dysfunction_oliguria: boolean | null
           dysfunction_pao2: boolean | null
           dysfunction_platelets: boolean | null
+          fluid_date: string | null
+          fluid_solution: string | null
+          fluid_time: string | null
           focus_abdominal: boolean | null
           focus_neurological: boolean | null
           focus_other: string | null
@@ -2023,7 +2027,12 @@ export type Database = {
           id: string
           infection_excluded_date: string | null
           lactate_date: string | null
+          lactate_result: string | null
+          lactate_result_date: string | null
+          lactate_result_time: string | null
           lactate_time: string | null
+          medical_evaluation_date: string | null
+          medical_evaluation_time: string | null
           notes: string | null
           opening_date: string | null
           opening_time: string | null
@@ -2034,6 +2043,11 @@ export type Database = {
           patient_name: string
           patient_weight: number | null
           responsible_name: string | null
+          second_lactate_date: string | null
+          second_lactate_result: string | null
+          second_lactate_result_date: string | null
+          second_lactate_result_time: string | null
+          second_lactate_time: string | null
           sirs_heart_rate: boolean | null
           sirs_leukocytosis: boolean | null
           sirs_leukopenia: boolean | null
@@ -2060,6 +2074,7 @@ export type Database = {
           deletion_reason?: string | null
           destination?: string | null
           destination_date?: string | null
+          destination_hospital?: string | null
           destination_time?: string | null
           dysfunction_acidosis?: boolean | null
           dysfunction_bilirubin?: boolean | null
@@ -2069,6 +2084,9 @@ export type Database = {
           dysfunction_oliguria?: boolean | null
           dysfunction_pao2?: boolean | null
           dysfunction_platelets?: boolean | null
+          fluid_date?: string | null
+          fluid_solution?: string | null
+          fluid_time?: string | null
           focus_abdominal?: boolean | null
           focus_neurological?: boolean | null
           focus_other?: string | null
@@ -2082,7 +2100,12 @@ export type Database = {
           id?: string
           infection_excluded_date?: string | null
           lactate_date?: string | null
+          lactate_result?: string | null
+          lactate_result_date?: string | null
+          lactate_result_time?: string | null
           lactate_time?: string | null
+          medical_evaluation_date?: string | null
+          medical_evaluation_time?: string | null
           notes?: string | null
           opening_date?: string | null
           opening_time?: string | null
@@ -2093,6 +2116,11 @@ export type Database = {
           patient_name: string
           patient_weight?: number | null
           responsible_name?: string | null
+          second_lactate_date?: string | null
+          second_lactate_result?: string | null
+          second_lactate_result_date?: string | null
+          second_lactate_result_time?: string | null
+          second_lactate_time?: string | null
           sirs_heart_rate?: boolean | null
           sirs_leukocytosis?: boolean | null
           sirs_leukopenia?: boolean | null
@@ -2119,6 +2147,7 @@ export type Database = {
           deletion_reason?: string | null
           destination?: string | null
           destination_date?: string | null
+          destination_hospital?: string | null
           destination_time?: string | null
           dysfunction_acidosis?: boolean | null
           dysfunction_bilirubin?: boolean | null
@@ -2128,6 +2157,9 @@ export type Database = {
           dysfunction_oliguria?: boolean | null
           dysfunction_pao2?: boolean | null
           dysfunction_platelets?: boolean | null
+          fluid_date?: string | null
+          fluid_solution?: string | null
+          fluid_time?: string | null
           focus_abdominal?: boolean | null
           focus_neurological?: boolean | null
           focus_other?: string | null
@@ -2141,7 +2173,12 @@ export type Database = {
           id?: string
           infection_excluded_date?: string | null
           lactate_date?: string | null
+          lactate_result?: string | null
+          lactate_result_date?: string | null
+          lactate_result_time?: string | null
           lactate_time?: string | null
+          medical_evaluation_date?: string | null
+          medical_evaluation_time?: string | null
           notes?: string | null
           opening_date?: string | null
           opening_time?: string | null
@@ -2152,6 +2189,11 @@ export type Database = {
           patient_name?: string
           patient_weight?: number | null
           responsible_name?: string | null
+          second_lactate_date?: string | null
+          second_lactate_result?: string | null
+          second_lactate_result_date?: string | null
+          second_lactate_result_time?: string | null
+          second_lactate_time?: string | null
           sirs_heart_rate?: boolean | null
           sirs_leukocytosis?: boolean | null
           sirs_leukopenia?: boolean | null

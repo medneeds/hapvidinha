@@ -10,10 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Activity, Search, FileText, Eye, Download, AlertTriangle, CheckCircle2, Clock, XCircle, Trash2 } from "lucide-react";
+import { Activity, Search, FileText, Eye, Printer, AlertTriangle, CheckCircle2, Clock, XCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { generateSepsisProtocolPdf } from "@/utils/sepsisProtocolPdf";
+import { printSepsisFicha } from "@/utils/sepsisFichaPrint";
+import { toast } from "sonner";
 import { DeleteSepsisProtocolDialog } from "@/components/DeleteSepsisProtocolDialog";
 
 interface SepsisProtocolRow {
@@ -133,13 +134,16 @@ export default function SepsisProtocolsAdminPage() {
     return <Badge variant="outline" className={cfg.color}>{cfg.icon}{outcome}</Badge>;
   };
 
+  /** Opens the original sepsis form (frente e verso) filled with this protocol, ready to print. */
   const handleExportPdf = (protocol: SepsisProtocolRow) => {
-    generateSepsisProtocolPdf({
-      ...protocol,
-      antibiotic_administration_date: (protocol as any).antibiotic_administration_date || null,
-      antibiotic_administration_time: (protocol as any).antibiotic_administration_time || null,
-      antibiotic_names: (protocol as any).antibiotic_names || null,
-    });
+    printSepsisFicha(protocol as any)
+      .then((mode) => {
+        if (mode === "download") toast.info("O navegador bloqueou a janela de impressão; o PDF da ficha foi baixado.");
+      })
+      .catch((e) => {
+        console.error("Erro ao gerar ficha do protocolo de sepse:", e);
+        toast.error("Não foi possível gerar a ficha", { description: e?.message || "Tente novamente." });
+      });
   };
 
   return (
@@ -213,7 +217,7 @@ export default function SepsisProtocolsAdminPage() {
                     <TableCell className="text-right">
                       <div className="flex gap-1 justify-end">
                         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); setSelectedProtocol(p); }} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); handleExportPdf(p); }} title="Exportar PDF"><Download className="h-3.5 w-3.5" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); handleExportPdf(p); }} title="Imprimir ficha do protocolo"><Printer className="h-3.5 w-3.5" /></Button>
                         {canDelete(p) && (
                           <Button
                             variant="ghost"
@@ -347,8 +351,8 @@ export default function SepsisProtocolsAdminPage() {
                     </Button>
                   ) : <span />}
                   <Button size="sm" variant="outline" onClick={() => handleExportPdf(selectedProtocol)}>
-                    <Download className="h-4 w-4 mr-1" />
-                    EXPORTAR PDF
+                    <FileText className="h-4 w-4 mr-1" />
+                    IMPRIMIR FICHA
                   </Button>
                 </div>
               </div>
