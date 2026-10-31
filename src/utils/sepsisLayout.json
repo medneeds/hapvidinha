@@ -4,7 +4,7 @@
  "size": 8,
  "pageSizes": [
   8,
-  6.5
+  6
  ],
  "fields": {
   "nome": {
@@ -180,580 +180,580 @@
   },
   "aval_d": {
    "page": 1,
-   "x": 439,
-   "y": 174.5,
+   "x": 443.5,
+   "y": 174.8,
    "align": "center",
-   "maxWidth": 13
+   "maxWidth": 17
   },
   "aval_m": {
    "page": 1,
-   "x": 459.5,
-   "y": 174.5,
+   "x": 465.5,
+   "y": 174.8,
    "align": "center",
-   "maxWidth": 20
+   "maxWidth": 21
   },
   "aval_a": {
    "page": 1,
-   "x": 481.5,
-   "y": 174.5,
+   "x": 487.2,
+   "y": 174.8,
    "align": "center",
-   "maxWidth": 17
+   "maxWidth": 17.5
   },
   "aval_h": {
    "page": 1,
-   "x": 510,
-   "y": 174.5,
+   "x": 514.5,
+   "y": 174.8,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 13
   },
   "aval_min": {
    "page": 1,
-   "x": 529,
-   "y": 174.5,
+   "x": 532.8,
+   "y": 174.8,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 13.5
   },
   "hemo_d": {
    "page": 1,
-   "x": 122,
-   "y": 243.5,
+   "x": 133.0,
+   "y": 242.4,
    "align": "center",
-   "maxWidth": 13
+   "maxWidth": 11.0
   },
   "hemo_m": {
    "page": 1,
-   "x": 139,
-   "y": 243.5,
-   "align": "center",
-   "maxWidth": 18
-  },
-  "hemo_a": {
-   "page": 1,
-   "x": 156.5,
-   "y": 243.5,
-   "align": "center",
-   "maxWidth": 17
-  },
-  "hemo_h": {
-   "page": 1,
-   "x": 182,
-   "y": 243.5,
-   "align": "center",
-   "maxWidth": 12
-  },
-  "hemo_min": {
-   "page": 1,
-   "x": 198,
-   "y": 243.5,
-   "align": "center",
-   "maxWidth": 12
-  },
-  "lact_d": {
-   "page": 1,
-   "x": 122,
-   "y": 255.5,
-   "align": "center",
-   "maxWidth": 13
-  },
-  "lact_m": {
-   "page": 1,
-   "x": 139,
-   "y": 255.5,
-   "align": "center",
-   "maxWidth": 18
-  },
-  "lact_a": {
-   "page": 1,
-   "x": 156.5,
-   "y": 255.5,
-   "align": "center",
-   "maxWidth": 17
-  },
-  "lact_h": {
-   "page": 1,
-   "x": 182,
-   "y": 255.5,
-   "align": "center",
-   "maxWidth": 12
-  },
-  "lact_min": {
-   "page": 1,
-   "x": 198,
-   "y": 255.5,
-   "align": "center",
-   "maxWidth": 12
-  },
-  "lact_res": {
-   "page": 1,
-   "x": 147,
-   "y": 261.5,
-   "maxWidth": 66
-  },
-  "lactres_d": {
-   "page": 1,
-   "x": 122,
-   "y": 267.5,
-   "align": "center",
-   "maxWidth": 13
-  },
-  "lactres_m": {
-   "page": 1,
-   "x": 139,
-   "y": 267.5,
-   "align": "center",
-   "maxWidth": 18
-  },
-  "lactres_a": {
-   "page": 1,
-   "x": 156.5,
-   "y": 267.5,
-   "align": "center",
-   "maxWidth": 17
-  },
-  "lactres_h": {
-   "page": 1,
-   "x": 182,
-   "y": 267.5,
-   "align": "center",
-   "maxWidth": 12
-  },
-  "lactres_min": {
-   "page": 1,
-   "x": 198,
-   "y": 267.5,
-   "align": "center",
-   "maxWidth": 12
-  },
-  "exc1_d": {
-   "page": 1,
-   "x": 439.5,
-   "y": 290.5,
+   "x": 148.0,
+   "y": 242.4,
    "align": "center",
    "maxWidth": 14
   },
+  "hemo_a": {
+   "page": 1,
+   "x": 164.5,
+   "y": 242.4,
+   "align": "center",
+   "maxWidth": 13
+  },
+  "hemo_h": {
+   "page": 1,
+   "x": 189.8,
+   "y": 242.4,
+   "align": "center",
+   "maxWidth": 10.7
+  },
+  "hemo_min": {
+   "page": 1,
+   "x": 204.8,
+   "y": 242.4,
+   "align": "center",
+   "maxWidth": 10.7
+  },
+  "lact_d": {
+   "page": 1,
+   "x": 133.0,
+   "y": 254.5,
+   "align": "center",
+   "maxWidth": 11.0
+  },
+  "lact_m": {
+   "page": 1,
+   "x": 148.0,
+   "y": 254.5,
+   "align": "center",
+   "maxWidth": 14
+  },
+  "lact_a": {
+   "page": 1,
+   "x": 164.5,
+   "y": 254.5,
+   "align": "center",
+   "maxWidth": 13
+  },
+  "lact_h": {
+   "page": 1,
+   "x": 189.8,
+   "y": 254.5,
+   "align": "center",
+   "maxWidth": 10.7
+  },
+  "lact_min": {
+   "page": 1,
+   "x": 204.8,
+   "y": 254.5,
+   "align": "center",
+   "maxWidth": 10.7
+  },
+  "lactres_d": {
+   "page": 1,
+   "x": 133.0,
+   "y": 267.6,
+   "align": "center",
+   "maxWidth": 11.0
+  },
+  "lactres_m": {
+   "page": 1,
+   "x": 148.0,
+   "y": 267.6,
+   "align": "center",
+   "maxWidth": 14
+  },
+  "lactres_a": {
+   "page": 1,
+   "x": 164.5,
+   "y": 267.6,
+   "align": "center",
+   "maxWidth": 13
+  },
+  "lactres_h": {
+   "page": 1,
+   "x": 189.8,
+   "y": 267.6,
+   "align": "center",
+   "maxWidth": 10.7
+  },
+  "lactres_min": {
+   "page": 1,
+   "x": 204.8,
+   "y": 267.6,
+   "align": "center",
+   "maxWidth": 10.7
+  },
+  "lact_res": {
+   "page": 1,
+   "x": 141,
+   "y": 261.1,
+   "maxWidth": 76
+  },
+  "exc1_d": {
+   "page": 1,
+   "x": 441.2,
+   "y": 294.0,
+   "align": "center",
+   "maxWidth": 14.5
+  },
   "exc1_m": {
    "page": 1,
-   "x": 460,
-   "y": 290.5,
+   "x": 459.8,
+   "y": 294.0,
    "align": "center",
-   "maxWidth": 19
+   "maxWidth": 17.5
   },
   "exc1_a": {
    "page": 1,
-   "x": 481,
-   "y": 290.5,
+   "x": 478.6,
+   "y": 294.0,
    "align": "center",
-   "maxWidth": 17
+   "maxWidth": 14.3
   },
   "exc1_h": {
    "page": 1,
-   "x": 510,
-   "y": 290.5,
+   "x": 502.1,
+   "y": 294.0,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 11.3
   },
   "exc1_min": {
    "page": 1,
-   "x": 528,
-   "y": 290.5,
+   "x": 517.5,
+   "y": 294.0,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 11
   },
   "atb1": {
    "page": 1,
-   "x": 79,
-   "y": 304,
-   "maxWidth": 82,
+   "x": 85,
+   "y": 307.8,
+   "maxWidth": 70,
    "wrapBelow": true,
    "minSize": 4.5
   },
   "prescr_d": {
    "page": 1,
-   "x": 85.5,
-   "y": 321.5,
+   "x": 94.8,
+   "y": 322.8,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 16.0
   },
   "prescr_m": {
    "page": 1,
-   "x": 103.5,
-   "y": 321.5,
+   "x": 114.8,
+   "y": 322.8,
    "align": "center",
-   "maxWidth": 18
+   "maxWidth": 19.3
   },
   "prescr_a": {
    "page": 1,
-   "x": 123,
-   "y": 321.5,
+   "x": 135.8,
+   "y": 322.8,
    "align": "center",
-   "maxWidth": 15
+   "maxWidth": 16.0
   },
   "prescr_h": {
    "page": 1,
-   "x": 131,
-   "y": 330.5,
+   "x": 105.4,
+   "y": 329.6,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 12.8
   },
   "prescr_min": {
    "page": 1,
-   "x": 146,
-   "y": 330.5,
+   "x": 122.6,
+   "y": 329.6,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 12.8
   },
   "atb2": {
    "page": 1,
-   "x": 76,
-   "y": 346,
-   "maxWidth": 86,
+   "x": 83,
+   "y": 348.6,
+   "maxWidth": 74,
    "wrapBelow": true,
    "minSize": 4.5
   },
   "adm_d": {
    "page": 1,
-   "x": 85,
-   "y": 362.5,
+   "x": 94.8,
+   "y": 364.8,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 12.5
   },
   "adm_m": {
    "page": 1,
-   "x": 103,
-   "y": 362.5,
+   "x": 113.7,
+   "y": 364.8,
    "align": "center",
-   "maxWidth": 18
+   "maxWidth": 19.7
   },
   "adm_a": {
    "page": 1,
-   "x": 122.5,
-   "y": 362.5,
+   "x": 134.2,
+   "y": 364.8,
    "align": "center",
-   "maxWidth": 15
+   "maxWidth": 16.7
   },
   "adm_h": {
    "page": 1,
-   "x": 131,
-   "y": 371,
+   "x": 105.5,
+   "y": 373.0,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 13
   },
   "adm_min": {
    "page": 1,
-   "x": 146,
-   "y": 371,
+   "x": 122.6,
+   "y": 373.0,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 12.8
   },
   "foco_pulm": {
    "page": 1,
-   "x": 467.5,
+   "x": 465,
    "y": 430.5,
    "align": "center",
    "size": 6
   },
   "foco_uri": {
    "page": 1,
-   "x": 500,
+   "x": 497,
    "y": 430.5,
    "align": "center",
    "size": 6
   },
   "foco_abd": {
    "page": 1,
-   "x": 414.5,
+   "x": 413.5,
    "y": 437.5,
    "align": "center",
    "size": 6
   },
   "foco_cut": {
    "page": 1,
-   "x": 444,
+   "x": 442.5,
    "y": 437.5,
    "align": "center",
    "size": 6
   },
   "foco_neuro": {
    "page": 1,
-   "x": 473,
+   "x": 472,
    "y": 437.5,
    "align": "center",
    "size": 6
   },
   "foco_outros": {
    "page": 1,
-   "x": 453,
-   "y": 443,
-   "maxWidth": 52,
-   "size": 6
+   "x": 452,
+   "y": 443.6,
+   "maxWidth": 46,
+   "size": 5.5
   },
   "lact2_d": {
    "page": 1,
-   "x": 87.5,
-   "y": 457.5,
+   "x": 100.5,
+   "y": 459.3,
    "align": "center",
    "maxWidth": 13
   },
   "lact2_m": {
    "page": 1,
-   "x": 106,
-   "y": 457.5,
+   "x": 118.0,
+   "y": 459.3,
    "align": "center",
-   "maxWidth": 18
+   "maxWidth": 16
   },
   "lact2_a": {
    "page": 1,
-   "x": 125.5,
-   "y": 457.5,
+   "x": 141.8,
+   "y": 459.3,
    "align": "center",
-   "maxWidth": 15
+   "maxWidth": 12.7
   },
   "lact2_h": {
    "page": 1,
-   "x": 149.5,
-   "y": 457.5,
+   "x": 166.2,
+   "y": 459.3,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 12.5
   },
   "lact2_min": {
    "page": 1,
-   "x": 165,
-   "y": 457.5,
+   "x": 183.0,
+   "y": 459.3,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 11.0
   },
   "lact2_res": {
    "page": 1,
-   "x": 108,
-   "y": 467.5,
-   "maxWidth": 76
+   "x": 113,
+   "y": 469.3,
+   "maxWidth": 74
   },
   "lact2res_d": {
    "page": 1,
-   "x": 87.5,
-   "y": 478,
+   "x": 98.2,
+   "y": 479.4,
    "align": "center",
-   "maxWidth": 13
+   "maxWidth": 9.5
   },
   "lact2res_m": {
    "page": 1,
-   "x": 106,
-   "y": 478,
+   "x": 117.8,
+   "y": 479.4,
    "align": "center",
-   "maxWidth": 18
+   "maxWidth": 15.5
   },
   "lact2res_a": {
    "page": 1,
-   "x": 125.5,
-   "y": 478,
+   "x": 139.5,
+   "y": 479.4,
    "align": "center",
-   "maxWidth": 15
+   "maxWidth": 13
   },
   "lact2res_h": {
    "page": 1,
-   "x": 149.5,
-   "y": 478,
+   "x": 165.8,
+   "y": 479.4,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 12.5
   },
   "lact2res_min": {
    "page": 1,
-   "x": 165,
-   "y": 478,
+   "x": 183.0,
+   "y": 479.4,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 11.0
   },
   "exc2_d": {
    "page": 1,
-   "x": 445,
-   "y": 603,
+   "x": 449.0,
+   "y": 605.0,
    "align": "center",
-   "maxWidth": 14
+   "maxWidth": 14.4
   },
   "exc2_m": {
    "page": 1,
-   "x": 466,
-   "y": 603,
+   "x": 467.6,
+   "y": 605.0,
    "align": "center",
-   "maxWidth": 20
+   "maxWidth": 17.7
   },
   "exc2_a": {
    "page": 1,
-   "x": 487.5,
-   "y": 603,
+   "x": 486.6,
+   "y": 605.0,
    "align": "center",
-   "maxWidth": 17
+   "maxWidth": 14.8
   },
   "exc2_h": {
    "page": 1,
-   "x": 513.5,
-   "y": 603,
+   "x": 509.9,
+   "y": 605.0,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 11.3
   },
   "exc2_min": {
    "page": 1,
-   "x": 531,
-   "y": 603,
+   "x": 525.3,
+   "y": 605.0,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 11.0
   },
   "vol_d": {
    "page": 1,
-   "x": 97.5,
-   "y": 623,
+   "x": 106.1,
+   "y": 623.8,
    "align": "center",
-   "maxWidth": 11
+   "maxWidth": 16.2
   },
   "vol_m": {
    "page": 1,
-   "x": 116,
-   "y": 623,
+   "x": 126.8,
+   "y": 623.8,
    "align": "center",
-   "maxWidth": 18
+   "maxWidth": 20.0
   },
   "vol_a": {
    "page": 1,
-   "x": 134.5,
-   "y": 623,
+   "x": 145.8,
+   "y": 623.8,
    "align": "center",
-   "maxWidth": 15
+   "maxWidth": 13.3
   },
   "vol_h": {
    "page": 1,
-   "x": 158.5,
-   "y": 623,
+   "x": 173.8,
+   "y": 623.8,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 12.7
   },
   "vol_min": {
    "page": 1,
-   "x": 173,
-   "y": 623,
+   "x": 191.5,
+   "y": 623.8,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 13
   },
   "peso": {
    "page": 1,
-   "x": 103,
-   "y": 631.5,
-   "maxWidth": 20
+   "x": 102,
+   "y": 632.3,
+   "maxWidth": 15
   },
   "volume": {
    "page": 1,
-   "x": 197,
-   "y": 631.5,
-   "maxWidth": 22
+   "x": 190,
+   "y": 632.3,
+   "maxWidth": 26
   },
   "solucao": {
    "page": 1,
    "x": 155,
-   "y": 640,
-   "maxWidth": 58
+   "y": 640.8,
+   "maxWidth": 50
   },
   "dest_uti": {
    "page": 1,
-   "x": 325.5,
+   "x": 323,
    "y": 679,
    "align": "center",
    "size": 7
   },
   "dest_int": {
    "page": 1,
-   "x": 345,
+   "x": 342,
    "y": 679,
    "align": "center",
    "size": 7
   },
   "dest_d": {
    "page": 1,
-   "x": 280.5,
-   "y": 687,
+   "x": 286.2,
+   "y": 686.9,
    "align": "center",
-   "maxWidth": 15
+   "maxWidth": 14.5
   },
   "dest_m": {
    "page": 1,
-   "x": 302.5,
-   "y": 687,
+   "x": 311.5,
+   "y": 686.9,
    "align": "center",
-   "maxWidth": 20
+   "maxWidth": 14.6
   },
   "dest_a": {
    "page": 1,
-   "x": 324.5,
-   "y": 687,
+   "x": 333.1,
+   "y": 686.9,
    "align": "center",
-   "maxWidth": 17
+   "maxWidth": 14.2
   },
   "dest_h": {
    "page": 1,
-   "x": 356.5,
-   "y": 687,
+   "x": 364.8,
+   "y": 686.9,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 14.5
   },
   "dest_min": {
    "page": 1,
-   "x": 374.5,
-   "y": 687,
+   "x": 385.5,
+   "y": 686.9,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 13
   },
   "dest_hosp": {
    "page": 1,
-   "x": 341,
-   "y": 693.5,
-   "maxWidth": 64
+   "x": 340,
+   "y": 695.6,
+   "maxWidth": 58
   },
   "desf_alta": {
    "page": 1,
-   "x": 329,
+   "x": 332,
    "y": 731.5,
    "align": "center",
    "size": 7
   },
   "desf_obito": {
    "page": 1,
-   "x": 352,
+   "x": 353.5,
    "y": 731.5,
    "align": "center",
    "size": 7
   },
   "desf_d": {
    "page": 1,
-   "x": 279.5,
-   "y": 739,
+   "x": 286.6,
+   "y": 739.4,
    "align": "center",
-   "maxWidth": 15
+   "maxWidth": 18.8
   },
   "desf_m": {
    "page": 1,
-   "x": 302,
-   "y": 739,
+   "x": 310.5,
+   "y": 739.4,
    "align": "center",
-   "maxWidth": 20
+   "maxWidth": 22.6
   },
   "desf_a": {
    "page": 1,
-   "x": 323,
-   "y": 739,
+   "x": 334.0,
+   "y": 739.4,
    "align": "center",
-   "maxWidth": 17
+   "maxWidth": 19.6
   },
   "desf_h": {
    "page": 1,
-   "x": 355.5,
-   "y": 739,
+   "x": 363.2,
+   "y": 739.4,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 14.5
   },
   "desf_min": {
    "page": 1,
-   "x": 373.5,
-   "y": 739,
+   "x": 382.9,
+   "y": 739.4,
    "align": "center",
-   "maxWidth": 12
+   "maxWidth": 15.3
   }
  }
 }
