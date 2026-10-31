@@ -19,12 +19,13 @@ import {
 import {
   Activity, AlertCircle, ArrowLeftRight, ArrowRightLeft, BedDouble, ChevronDown, ChevronRight, ClipboardList,
   Edit, FileEdit, FileText, FlaskConical, FolderOpen, MoreVertical, Printer, Shuffle, Skull,
-  Stethoscope, Trash2, TrendingUp, Utensils, X, Copy, Info, Zap, Clock, CircleCheck, AlertTriangle, ArrowUpCircle,
+  Stethoscope, Trash2, TrendingUp, Utensils, X, Copy, Info, Zap, Clock, CircleCheck, AlertTriangle, ArrowUpCircle, Droplet,
 } from "lucide-react";
 import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SECTOR_FIELD_HOVER, SmoothCollapse, COLLAPSIBLE_CONTENT_MOTION, COLUMN_CELL, COLUMN_HOVER, SECTOR_INPUT } from "@/components/patient-card/InlineEditors";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientMovementDialog } from "./PatientMovementDialog";
 import { PatientReportDialog } from "./PatientReportDialog";
+import { HemoRequestDialog } from "./HemoRequestDialog";
 import { MedicalResponsibilityDialog } from "./MedicalResponsibilityDialog";
 import { BedSelectionDialog } from "./BedSelectionDialog";
 import { BedSwapDialog } from "./BedSwapDialog";
@@ -247,6 +248,7 @@ export function EmergencyPatientCard({
   const [movementType, setMovementType] = useState<"ALTA" | "ÓBITO" | "TRANSFERÊNCIA" | null>(null);
   const [movementOpen, setMovementOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [hemoOpen, setHemoOpen] = useState(false);
   const [responsibilityOpen, setResponsibilityOpen] = useState(false);
   const [bedPickerSector, setBedPickerSector] = useState<Sector | null>(null);
   const [bedSwapOpen, setBedSwapOpen] = useState(false);
@@ -459,6 +461,12 @@ export function EmergencyPatientCard({
                         <DropdownMenuItem onClick={() => setReportOpen(true)}>
                           <FileEdit className="h-4 w-4 mr-2 text-primary" />
                           Emitir Relatório
+                        </DropdownMenuItem>
+                      )}
+                      {patient.name && (
+                        <DropdownMenuItem onClick={() => setHemoOpen(true)}>
+                          <Droplet className="h-4 w-4 mr-2 text-critical" />
+                          Solicitar Hemocomponentes
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={() => setDietOpen(true)}>
@@ -981,6 +989,7 @@ export function EmergencyPatientCard({
       />
 
       {patient.name && <PatientReportDialog patient={patient} open={reportOpen} onOpenChange={setReportOpen} />}
+      {patient.name && <HemoRequestDialog patient={patient} open={hemoOpen} onOpenChange={setHemoOpen} />}
 
       <MedicalResponsibilityDialog
         open={responsibilityOpen}

@@ -1,0 +1,399 @@
+{
+  "_note": "Positions in PDF points from the TOP-LEFT of the page; y is the text baseline. align: left (default) | center. The original PDFs are never modified — only these texts are drawn over them.",
+  "solicitacao": {
+    "file": "solicitacao-hemoconcentrados.pdf",
+    "size": 8.5,
+    "fields": {
+      "nome": {
+        "page": 0,
+        "x": 108,
+        "y": 90.3,
+        "maxWidth": 455
+      },
+      "prontuario": {
+        "page": 0,
+        "x": 155,
+        "y": 101.7,
+        "maxWidth": 115
+      },
+      "leito": {
+        "page": 0,
+        "x": 336,
+        "y": 101.7,
+        "maxWidth": 118
+      },
+      "setor": {
+        "page": 0,
+        "x": 481,
+        "y": 101.7,
+        "maxWidth": 85,
+        "size": 7
+      },
+      "sexoF": {
+        "page": 0,
+        "x": 48.5,
+        "y": 116,
+        "align": "center"
+      },
+      "sexoM": {
+        "page": 0,
+        "x": 95.5,
+        "y": 116,
+        "align": "center"
+      },
+      "idade": {
+        "page": 0,
+        "x": 182,
+        "y": 114.7,
+        "maxWidth": 85
+      },
+      "peso": {
+        "page": 0,
+        "x": 360,
+        "y": 114.7,
+        "maxWidth": 50
+      },
+      "grupo": {
+        "page": 0,
+        "x": 88.6,
+        "y": 126.7,
+        "maxWidth": 135
+      },
+      "fatorRh": {
+        "page": 0,
+        "x": 263.5,
+        "y": 126.7,
+        "maxWidth": 195
+      },
+      "diagnostico": {
+        "page": 0,
+        "x": 70,
+        "y": 139.2,
+        "maxWidth": 493,
+        "line2": {
+          "x": 21.6,
+          "y": 152.2,
+          "maxWidth": 541
+        }
+      },
+      "indicacao": {
+        "page": 0,
+        "x": 112,
+        "y": 165.1,
+        "maxWidth": 451
+      },
+      "hemocomponentes": {
+        "page": 0,
+        "x": 29,
+        "y": 198.5,
+        "maxWidth": 530,
+        "lineHeight": 11.4,
+        "maxLines": 2
+      },
+      "dadosClinicos": {
+        "page": 0,
+        "x": 134.6,
+        "y": 227.1,
+        "maxWidth": 428
+      },
+      "hbHt": {
+        "page": 0,
+        "x": 60,
+        "y": 237.7,
+        "maxWidth": 190
+      },
+      "plaquetas": {
+        "page": 0,
+        "x": 389,
+        "y": 237.7,
+        "maxWidth": 160
+      },
+      "medicamentos": {
+        "page": 0,
+        "x": 106,
+        "y": 250.7,
+        "maxWidth": 459,
+        "line2": {
+          "x": 21.6,
+          "y": 263.7,
+          "maxWidth": 543
+        }
+      },
+      "transfPreviasSim": {
+        "page": 0,
+        "x": 160.8,
+        "y": 276.6,
+        "align": "center"
+      },
+      "transfPreviasNao": {
+        "page": 0,
+        "x": 195.8,
+        "y": 276.6,
+        "align": "center"
+      },
+      "reacaoSim": {
+        "page": 0,
+        "x": 160.8,
+        "y": 289.6,
+        "align": "center"
+      },
+      "reacaoNao": {
+        "page": 0,
+        "x": 195.8,
+        "y": 289.6,
+        "align": "center"
+      },
+      "qualTipo": {
+        "page": 0,
+        "x": 60.5,
+        "y": 300.5,
+        "maxWidth": 503,
+        "line2": {
+          "x": 21.6,
+          "y": 313.5,
+          "maxWidth": 541
+        }
+      },
+      "gestanteSim": {
+        "page": 0,
+        "x": 162.3,
+        "y": 327,
+        "align": "center"
+      },
+      "gestanteNao": {
+        "page": 0,
+        "x": 197,
+        "y": 327,
+        "align": "center"
+      },
+      "gestacoesSim": {
+        "page": 0,
+        "x": 162.3,
+        "y": 339.4,
+        "align": "center"
+      },
+      "gestacoesNao": {
+        "page": 0,
+        "x": 197,
+        "y": 339.4,
+        "align": "center"
+      },
+      "tipoProgramada": {
+        "page": 0,
+        "x": 26,
+        "y": 371,
+        "align": "center"
+      },
+      "tipoNaoUrgente": {
+        "page": 0,
+        "x": 26,
+        "y": 383.4,
+        "align": "center"
+      },
+      "tipoUrgente": {
+        "page": 0,
+        "x": 26,
+        "y": 395.6,
+        "align": "center"
+      },
+      "tipoExtrema": {
+        "page": 0,
+        "x": 26,
+        "y": 408.4,
+        "align": "center"
+      },
+      "progDia": {
+        "page": 0,
+        "x": 216,
+        "y": 369.5,
+        "align": "center"
+      },
+      "progMes": {
+        "page": 0,
+        "x": 237.6,
+        "y": 369.5,
+        "align": "center"
+      },
+      "progAno": {
+        "page": 0,
+        "x": 258,
+        "y": 369.5,
+        "align": "center",
+        "size": 7.5
+      },
+      "progHora": {
+        "page": 0,
+        "x": 293,
+        "y": 368.7,
+        "maxWidth": 60
+      },
+      "dataDia": {
+        "page": 0,
+        "x": 51.6,
+        "y": 443.5,
+        "align": "center"
+      },
+      "dataMes": {
+        "page": 0,
+        "x": 72.5,
+        "y": 443.5,
+        "align": "center"
+      },
+      "dataAno": {
+        "page": 0,
+        "x": 94,
+        "y": 443.5,
+        "align": "center",
+        "size": 7.5
+      },
+      "hora": {
+        "page": 0,
+        "x": 177,
+        "y": 442.7,
+        "maxWidth": 55
+      }
+    }
+  },
+  "termo": {
+    "file": "termo-esclarecimento-hemotransfusao.pdf",
+    "size": 8.5,
+    "fields": {
+      "nome": {
+        "page": 0,
+        "x": 56,
+        "y": 186.5,
+        "maxWidth": 196,
+        "size": 8.5,
+        "stack": true
+      },
+      "leito": {
+        "page": 0,
+        "x": 304.6,
+        "y": 186.5,
+        "maxWidth": 46
+      },
+      "prontuario": {
+        "page": 0,
+        "x": 385,
+        "y": 186.5,
+        "maxWidth": 57
+      },
+      "atendimento": {
+        "page": 0,
+        "x": 502,
+        "y": 186.5,
+        "maxWidth": 68
+      },
+      "dnDia": {
+        "page": 0,
+        "x": 124,
+        "y": 203.8,
+        "align": "center"
+      },
+      "dnMes": {
+        "page": 0,
+        "x": 147,
+        "y": 203.8,
+        "align": "center"
+      },
+      "dnAno": {
+        "page": 0,
+        "x": 170.6,
+        "y": 203.8,
+        "align": "center",
+        "size": 7
+      },
+      "medico": {
+        "page": 0,
+        "x": 217.4,
+        "y": 203.8,
+        "maxWidth": 128
+      },
+      "aceito": {
+        "page": 0,
+        "x": 31.7,
+        "y": 409,
+        "align": "center"
+      },
+      "naoAceito": {
+        "page": 0,
+        "x": 31.7,
+        "y": 431,
+        "align": "center"
+      },
+      "naoObtido": {
+        "page": 0,
+        "x": 31.7,
+        "y": 453.6,
+        "align": "center"
+      },
+      "dia": {
+        "page": 0,
+        "x": 442.6,
+        "y": 504.5,
+        "align": "center"
+      },
+      "mes": {
+        "page": 0,
+        "x": 495,
+        "y": 504.5,
+        "align": "center",
+        "maxWidth": 66
+      }
+    }
+  },
+  "sadtAto": {
+    "file": "hemoc-ato-sadt.pdf",
+    "size": 9,
+    "fields": {
+      "nome": {
+        "page": 0,
+        "x": 389,
+        "y": 106,
+        "maxWidth": 250
+      }
+    }
+  },
+  "sadtExames": {
+    "file": "hemoc-exames-sadt.pdf",
+    "size": 9,
+    "fields": {
+      "nome": {
+        "page": 0,
+        "x": 389,
+        "y": 106,
+        "maxWidth": 250
+      }
+    }
+  },
+  "sadtConcentrados": {
+    "file": "hemoc-concentrados-sadt.pdf",
+    "size": 9,
+    "fields": {
+      "nome": {
+        "page": 0,
+        "x": 389,
+        "y": 106,
+        "maxWidth": 250
+      },
+      "qtdHemacias": {
+        "page": 0,
+        "x": 384,
+        "y": 200,
+        "align": "center"
+      },
+      "qtdPlaquetas": {
+        "page": 0,
+        "x": 384,
+        "y": 212,
+        "align": "center"
+      },
+      "qtdPlasma": {
+        "page": 0,
+        "x": 384,
+        "y": 225,
+        "align": "center"
+      }
+    }
+  }
+}

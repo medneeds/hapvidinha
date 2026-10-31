@@ -1,7 +1,7 @@
 import { Patient } from "@/types/patient";
 import { useState, useRef, useEffect, useMemo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus, FileEdit, FlaskConical, Info } from "lucide-react";
+import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus, FileEdit, FlaskConical, Info, Droplet } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -28,6 +28,7 @@ import { releaseBedForFilling } from "@/utils/releaseBed";
 import { calculateDetailedAge, formatDetailedAge } from "@/utils/calculateDetailedAge";
 import { EditPatientDialog } from "./EditPatientDialog";
 import { PatientReportDialog } from "./PatientReportDialog";
+import { HemoRequestDialog } from "./HemoRequestDialog";
 import { PatientInfoDialog } from "./PatientInfoDialog";
 import { AdminIdentifiers } from "./patient-card/AdminIdentifiers";
 import { useToast } from "@/hooks/use-toast";
@@ -164,6 +165,7 @@ export function UtiPatientCard({
   const canMove = role === 'medico' || role === 'admin';
   const displayName = maskName(patient.name, namesHidden);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [hemoOpen, setHemoOpen] = useState(false);
 
   // Sync with forceCollapsed prop when it changes
   useEffect(() => {
@@ -406,6 +408,12 @@ export function UtiPatientCard({
                     <DropdownMenuItem onClick={() => setReportDialogOpen(true)}>
                       <FileEdit className="h-4 w-4 mr-2 text-primary" />
                       Emitir Relatório
+                    </DropdownMenuItem>
+                  )}
+                  {patient.name && (
+                    <DropdownMenuItem onClick={() => setHemoOpen(true)}>
+                      <Droplet className="h-4 w-4 mr-2 text-critical" />
+                      Solicitar Hemocomponentes
                     </DropdownMenuItem>
                   )}
 
@@ -955,6 +963,7 @@ export function UtiPatientCard({
       {patient.name && (
         <PatientReportDialog patient={patient} open={reportDialogOpen} onOpenChange={setReportDialogOpen} />
       )}
+      {patient.name && <HemoRequestDialog patient={patient} open={hemoOpen} onOpenChange={setHemoOpen} />}
     </>
   );
 }
