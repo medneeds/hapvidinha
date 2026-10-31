@@ -4,6 +4,9 @@ import {
   buildDefaultHemoForm,
   buildHemoFieldValues,
   formatQuantity,
+  hemoHistorySummary,
+  isSamePatientHemoRecord,
+  parseHemoHistory,
   hemocomponentsSummary,
   validateHemoForm,
 } from "./hemoRequest";
@@ -116,5 +119,33 @@ describe("solicitação de hemocomponentes", () => {
       const spots = (layout as any)[doc].fields;
       for (const key of Object.keys(fields)) expect(spots[key], `${doc}.${key}`).toBeDefined();
     }
+  });
+});
+
+describe("histórico de solicitações de hemocomponentes", () => {
+  const summary = (overrides: Partial<ReturnType<typeof buildDefaultHemoForm>> = {}) =>
+    hemoHistorySummary({ ...buildDefaultHemoForm(patient, { department: "UTI", now }), qtdHemacias: "3", indicacao: "anemia grave", tipo: "urgente", ...overrides });
+
+  it("reads back the saved summary (date, prontuário, hemocomponents, type and documents)", () => {
+    const e = parseHemoHistory(summary());
+    expect(e.data).toBe("31/10/2026 06:44");
+    expect(e.prontuario).toBe("13693030");
+    expect(e.hemocomponentes).toContain("03");
+    expect(e.indicacao).toBe("ANEMIA GRAVE");
+    expect(e.tipo).toBe("URGENTE (3H)");
+    expect(e.documentos.length).toBeGreaterThan(0);
+  });
+
+  it("shows only this patient's requests: same name, and same prontuário when both have one", () => {
+    const content = summary();
+    const p = { name: "Thalita da Conceicao", medicalRecordNumber: "13693030" };
+    expect(isSamePatientHemoRecord({ patient_name: "THALITA DA CONCEIÇÃO", report_content: content }, p)).toBe(true);
+    expect(isSamePatientHemoRecord({ patient_name: "MARIA SOUSA", report_content: content }, p)).toBe(false);
+    expect(isSamePatientHemoRecord({ patient_name: "Thalita da Conceicao", report_content: content }, { ...p, medicalRecordNumber: "999" })).toBe(false);
+    expect(isSamePatientHemoRecord({ patient_name: "Thalita da Conceicao", report_content: content }, { ...p, medicalRecordNumber: null })).toBe(true);
+  });
+
+  it("ignores other reports saved for the patient", () => {
+    expect(isSamePatientHemoRecord({ patient_name: "Thalita da Conceicao", report_content: "RELATÓRIO MÉDICO..." }, { name: "Thalita da Conceicao" })).toBe(false);
   });
 });
