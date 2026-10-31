@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Activity, Search, FileText, Eye, Download, AlertTriangle, CheckCircle2, Clock, XCircle, Trash2 } from "lucide-react";
+import { Activity, Search, FileText, Eye, Printer, AlertTriangle, CheckCircle2, Clock, XCircle, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { printSepsisFicha } from "@/utils/sepsisFichaPrint";
@@ -217,7 +217,7 @@ export default function SepsisProtocolsAdminPage() {
                     <TableCell className="text-right">
                       <div className="flex gap-1 justify-end">
                         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); setSelectedProtocol(p); }} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); handleExportPdf(p); }} title="Imprimir ficha do protocolo"><Download className="h-3.5 w-3.5" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); handleExportPdf(p); }} title="Imprimir ficha do protocolo"><Printer className="h-3.5 w-3.5" /></Button>
                         {canDelete(p) && (
                           <Button
                             variant="ghost"
