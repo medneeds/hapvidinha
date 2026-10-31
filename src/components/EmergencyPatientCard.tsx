@@ -470,7 +470,7 @@ export function EmergencyPatientCard({
                         </DropdownMenuItem>
                       )}
                       {patient.name && (
-                        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setTimeout(() => setSepsisWizardOpen(true), 100); }}>
+                        <DropdownMenuItem onClick={() => setSepsisWizardOpen(true)}>
                           <Activity className={cn("h-4 w-4 mr-2", hasSepsis ? "text-warning animate-pulse" : "text-critical")} />
                           {hasSepsis ? "Protocolo Sepse (ativo)" : "Abrir Protocolo Sepse"}
                         </DropdownMenuItem>
