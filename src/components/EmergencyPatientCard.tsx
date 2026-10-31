@@ -19,7 +19,7 @@ import {
 import {
   Activity, AlertCircle, ArrowLeftRight, ArrowRightLeft, BedDouble, ChevronDown, ChevronRight, ClipboardList,
   Edit, FileEdit, FileText, FlaskConical, FolderOpen, MoreVertical, Printer, Shuffle, Skull,
-  Stethoscope, Trash2, TrendingUp, Utensils, X, Copy, Info, Zap, Clock, CircleCheck, AlertTriangle, ArrowUpCircle,
+  Stethoscope, Trash2, TrendingUp, Utensils, X, Copy, Info, Zap, Clock, CircleCheck, AlertTriangle, ArrowUpCircle, Droplet,
 } from "lucide-react";
 import { InlineEditableArray, InlineEditableField, InlineEditableTextarea, SECTOR_FIELD_HOVER, SmoothCollapse, COLLAPSIBLE_CONTENT_MOTION, COLUMN_CELL, COLUMN_HOVER, SECTOR_INPUT } from "@/components/patient-card/InlineEditors";
 import { EditPatientDialog } from "./EditPatientDialog";
