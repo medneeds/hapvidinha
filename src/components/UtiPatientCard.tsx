@@ -1,5 +1,5 @@
 import { Patient } from "@/types/patient";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Edit, ChevronDown, ChevronRight, MoreVertical, Check, X, Plus, GripVertical, Trash2, AlertTriangle, Stethoscope, ClipboardList, Clock, FileText, FolderOpen, Pill, Activity, Heart, User, Star, Printer, TrendingUp, Skull, ArrowRightLeft, ArrowLeftRight, BedDouble, DoorOpen, UserPlus, FileEdit, FlaskConical, Info } from "lucide-react";
 import {
@@ -90,6 +90,8 @@ interface UtiPatientCardProps {
   forceCollapsed?: boolean;
   allPatients?: Patient[]; // All UTI patients for reallocation
   currentUtiUnit?: string; // "UTI 1" or "UTI 2"
+  /** Extra action on a vacant bed (e.g. "Receber em trânsito"). */
+  vacantAction?: React.ReactNode;
 }
 
 // Parse date robustly: prefer DD/MM/YYYY (BR), fallback ISO YYYY-MM-DD. Uses UTC to evitar shift de fuso.
@@ -141,7 +143,8 @@ export function UtiPatientCard({
   colorVariant = 'blue',
   forceCollapsed,
   allPatients = [],
-  currentUtiUnit
+  currentUtiUnit,
+  vacantAction
 }: UtiPatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
@@ -485,7 +488,8 @@ export function UtiPatientCard({
               </div>
             </div>
             {/* Actions for vacant bed */}
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center justify-end gap-1">
+              {vacantAction}
               <Button
                 variant="outline"
                 size="sm"

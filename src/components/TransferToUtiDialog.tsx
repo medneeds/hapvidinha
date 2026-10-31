@@ -5,7 +5,6 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useToast } from "@/hooks/use-toast";
 import { isWithinFixedRange } from "@/utils/bedCapacityStore";
 import {
-  buildUtiDestinationLabel,
   buildUtiOriginLabel,
   getVacantUtiBeds,
   type UtiBedRow,
@@ -13,7 +12,6 @@ import {
 } from "@/utils/utiTransfer";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { BedDouble, Loader2, ArrowRight } from "lucide-react";
 
 interface TransferToUtiDialogProps {
@@ -32,12 +30,10 @@ export function TransferToUtiDialog({ open, onOpenChange, patient, department, o
   const [unit, setUnit] = useState<UtiUnit>("UTI 1");
   const [rows, setRows] = useState<UtiBedRow[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!open || !currentHospital || !currentState) return;
-    setSelectedId(null);
     setLoading(true);
     supabase
       .from("patients")
@@ -56,8 +52,7 @@ export function TransferToUtiDialog({ open, onOpenChange, patient, department, o
       });
   }, [open, currentHospital, currentState, toast]);
 
-  const vacantBeds = useMemo(() => getVacantUtiBeds(rows, unit), [rows, unit]);
-  const selectedBed = vacantBeds.find((b) => b.id === selectedId) || null;
+  const vacantCount = useMemo(() => getVacantUtiBeds(rows, unit).length, [rows, unit]);
   const originLabel = buildUtiOriginLabel(department, patient.sector, patient.bedNumber);
 
   const carried = [
@@ -69,15 +64,13 @@ export function TransferToUtiDialog({ open, onOpenChange, patient, department, o
   ];
 
   const handleConfirm = async () => {
-    if (!selectedBed) return;
     setSubmitting(true);
     // Fixed UE slots (V/A/Z within the configured capacity) stay as vacant beds; extra beds are removed.
     const deleteSource = !isWithinFixedRange(department, patient.sector, patient.bedNumber);
-    const { error } = await supabase.rpc("transfer_patient_to_uti", {
+    const { error } = await supabase.rpc("send_patient_to_uti_transit", {
       p_source_id: patient.id,
-      p_target_id: selectedBed.id,
+      p_target_unit: unit,
       p_origin_label: originLabel,
-      p_destination_label: buildUtiDestinationLabel(unit, selectedBed.bed_number),
       p_delete_source: deleteSource,
       p_snapshot: patient as any,
     });
@@ -87,8 +80,8 @@ export function TransferToUtiDialog({ open, onOpenChange, patient, department, o
       return;
     }
     toast({
-      title: "Paciente transferido para a UTI",
-      description: `${patient.name} agora está em ${unit} – leito ${selectedBed.bed_number}.`,
+      title: "Paciente enviado para a UTI",
+      description: `${patient.name} está em trânsito, aguardando a ${unit} escolher o leito.`,
     });
     onOpenChange(false);
     onTransferred?.();
@@ -103,7 +96,7 @@ export function TransferToUtiDialog({ open, onOpenChange, patient, department, o
             Transferir para UTI
           </DialogTitle>
           <DialogDescription>
-            {patient.name} sai de {originLabel} e leva os dados clínicos para o leito escolhido.
+            {patient.name} sai de {originLabel} e leva os dados clínicos. A UTI decide o leito.
           </DialogDescription>
         </DialogHeader>
 
@@ -114,43 +107,22 @@ export function TransferToUtiDialog({ open, onOpenChange, patient, department, o
                 key={u}
                 type="button"
                 variant={unit === u ? "default" : "outline"}
-                onClick={() => { setUnit(u); setSelectedId(null); }}
+                onClick={() => setUnit(u)}
               >
                 {u}
               </Button>
             ))}
           </div>
 
-          <div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Leitos vagos</p>
+          <p className="text-xs text-muted-foreground">
             {loading ? (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground py-3">
-                <Loader2 className="h-4 w-4 animate-spin" /> Carregando leitos…
-              </div>
-            ) : vacantBeds.length === 0 ? (
-              <p className="text-sm text-muted-foreground rounded-md border border-dashed border-border p-3">
-                Não há leito vago na {unit} no momento.
-              </p>
+              <span className="inline-flex items-center gap-2"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Conferindo leitos…</span>
+            ) : vacantCount > 0 ? (
+              <>A {unit} tem <span className="font-semibold text-foreground tabular-nums">{vacantCount}</span> leito(s) vago(s) agora.</>
             ) : (
-              <div className="grid grid-cols-5 gap-2">
-                {vacantBeds.map((bed) => (
-                  <button
-                    key={bed.id}
-                    type="button"
-                    onClick={() => setSelectedId(bed.id)}
-                    className={cn(
-                      "rounded-md border px-2 py-2 text-sm font-bold tabular-nums transition-colors",
-                      selectedId === bed.id
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border text-foreground hover:border-primary/50 hover:bg-primary/5"
-                    )}
-                  >
-                    {bed.bed_number}
-                  </button>
-                ))}
-              </div>
+              <>A {unit} está sem leito vago agora. O paciente aguarda em trânsito até a liberação.</>
             )}
-          </div>
+          </p>
 
           <div className="rounded-md border border-border bg-muted/30 p-3 space-y-1.5">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">O que vai junto</p>
@@ -161,16 +133,16 @@ export function TransferToUtiDialog({ open, onOpenChange, patient, department, o
               ))}
             </ul>
             <p className="text-[11px] text-muted-foreground pt-1">
-              Na UTI: admissão hoje (DIH 0) e setor de origem "{originLabel}". O leito {patient.bedNumber} é liberado.
+              O leito {patient.bedNumber} é liberado agora. O paciente fica em "Em trânsito · Aguardando alocação" na {unit}, e a UTI escolhe o leito. Setor de origem: "{originLabel}".
             </p>
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={submitting}>Cancelar</Button>
-          <Button onClick={handleConfirm} disabled={!selectedBed || submitting}>
+          <Button onClick={handleConfirm} disabled={submitting}>
             {submitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <ArrowRight className="h-4 w-4 mr-2" />}
-            {selectedBed ? `Transferir para ${unit} – ${selectedBed.bed_number}` : "Escolha um leito"}
+            Enviar para {unit}
           </Button>
         </DialogFooter>
       </DialogContent>
