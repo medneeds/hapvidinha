@@ -68,9 +68,10 @@ export async function imagesToPdf(files: File[], filename = "imagens.pdf"): Prom
 
 /** Render each PDF page to PNG using pdfjs and return as image files. */
 export async function pdfToImages(file: File, scale = 2): Promise<File[]> {
-  const pdfjs = await import("pdfjs-dist");
-  // worker via CDN to avoid bundling issues
-  (pdfjs as any).GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${(pdfjs as any).version}/build/pdf.worker.min.mjs`;
+  // Legacy build: polyfills newer Map/WeakMap methods that the modern build needs and many browsers lack.
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const { default: workerUrl } = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs?url");
+  (pdfjs as any).GlobalWorkerOptions.workerSrc = workerUrl;
   const data = new Uint8Array(await file.arrayBuffer());
   const pdf = await (pdfjs as any).getDocument({ data }).promise;
   const out: File[] = [];
