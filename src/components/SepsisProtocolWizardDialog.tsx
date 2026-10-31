@@ -702,7 +702,7 @@ export function SepsisProtocolWizardDialog({
       if (!formData.outcome) {
         const { error } = await supabase
           .from('sepsis_protocols')
-          .update(getFullProtocolUpdateData(formData.outcome_date || null, formData.outcome_time || null))
+          .update(getFullProtocolUpdateData())
           .eq('id', protocolId);
         if (error) throw error;
         toast({ title: "Protocolo Sepse salvo", description: "Sem desfecho informado, o protocolo continua em aberto." });
