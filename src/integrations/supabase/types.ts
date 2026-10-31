@@ -1723,6 +1723,9 @@ export type Database = {
           schedule: string | null
           sector: string
           state_id: string
+          transit_movement_id: string | null
+          transit_started_at: string | null
+          transit_target_unit: string | null
           updated_at: string
           uti_admission_date: string | null
           uti_admission_reason: string | null
@@ -1781,6 +1784,9 @@ export type Database = {
           schedule?: string | null
           sector: string
           state_id: string
+          transit_movement_id?: string | null
+          transit_started_at?: string | null
+          transit_target_unit?: string | null
           updated_at?: string
           uti_admission_date?: string | null
           uti_admission_reason?: string | null
@@ -1839,6 +1845,9 @@ export type Database = {
           schedule?: string | null
           sector?: string
           state_id?: string
+          transit_movement_id?: string | null
+          transit_started_at?: string | null
+          transit_target_unit?: string | null
           updated_at?: string
           uti_admission_date?: string | null
           uti_admission_reason?: string | null
@@ -2934,6 +2943,10 @@ export type Database = {
         Args: { p_email: string; p_new_password: string }
         Returns: Json
       }
+      allocate_uti_transit_patient: {
+        Args: { p_target_bed_id: string; p_transit_id: string }
+        Returns: Json
+      }
       get_auth_user_id_by_email: { Args: { p_email: string }; Returns: string }
       has_role: {
         Args: {
@@ -2976,6 +2989,17 @@ export type Database = {
           name: string
           sector: string
         }[]
+      }
+      send_patient_to_uti_transit: {
+        Args: {
+          p_delete_source?: boolean
+          p_notes?: string
+          p_origin_label: string
+          p_snapshot?: Json
+          p_source_id: string
+          p_target_unit: string
+        }
+        Returns: Json
       }
       setup_medicoporta_user: { Args: never; Returns: undefined }
       setup_medicouti_user: { Args: never; Returns: undefined }

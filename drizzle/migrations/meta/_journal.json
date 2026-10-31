@@ -8,6 +8,13 @@
       "when": 1793137990586,
       "tag": "0000_transfer_patient_to_uti",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793437995285,
+      "tag": "0001_uti_transit_waiting_area",
+      "breakpoints": true
     }
   ]
 }
