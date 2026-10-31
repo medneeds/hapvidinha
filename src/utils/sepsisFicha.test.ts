@@ -1,13 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { PDFDocument } from "pdf-lib";
 import layout from "./sepsisLayout.json";
 import { buildSepsisFichaValues, generateSepsisFichaPdf, localPartsToTimestamp, splitDate, splitTime, timestampToLocalParts } from "./sepsisFicha";
 
-const ORIGINAL = resolve(__dirname, "../../public/documents/protocolo-sepse-adulto.pdf");
-// Plain Uint8Array copy: the test DOM's ArrayBuffer is a different realm from Node's file buffer.
-const fetchLocal = async () => Uint8Array.from(readFileSync(ORIGINAL)) as unknown as ArrayBuffer;
+// Stand-in for the original form: two blank A4 portrait pages, like protocolo-sepse-adulto.pdf.
+const fetchLocal = async () => {
+  const doc = await PDFDocument.create();
+  doc.addPage([595.3, 841.9]);
+  doc.addPage([595.3, 841.9]);
+  return (await doc.save()) as unknown as ArrayBuffer;
+};
 
 const full = {
   patient_name: "maria silva",
