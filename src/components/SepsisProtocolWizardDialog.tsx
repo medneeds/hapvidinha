@@ -423,11 +423,6 @@ export function SepsisProtocolWizardDialog({
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const getDateTimePairPendencies = (dateValue: string, timeValue: string, label: string) => {
-    if (dateValue && !timeValue) return [`${label}: informe a hora.`];
-    if (!dateValue && timeValue) return [`${label}: informe a data.`];
-    return [];
-  };
 
   const showPendingPopup = (title: string, pendencies: string[]) => {
     popupToast.error(title, {
@@ -1158,7 +1153,7 @@ export function SepsisProtocolWizardDialog({
           </div>
           <div className="border-t pt-4 space-y-3">
             <div className="col-span-2">
-              <Label className="text-xs font-semibold uppercase">Desfecho *</Label>
+              <Label className="text-xs font-semibold uppercase">Desfecho</Label>
               <Select value={formData.outcome} onValueChange={v => updateField("outcome", v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione o desfecho" /></SelectTrigger>
                 <SelectContent>
@@ -1294,7 +1289,7 @@ export function SepsisProtocolWizardDialog({
               ANTERIOR
             </Button>
           )}
-          {protocolId && (
+          {(protocolId || currentStep === 0) && (
             <Button
               type="button"
               variant="ghost"
