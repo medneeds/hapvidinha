@@ -421,7 +421,7 @@ export function UtiPatientCard({
                   {patient.name && (
                     <DropdownMenuItem onClick={() => setSepsisOpen(true)}>
                       <Activity className="h-4 w-4 mr-2 text-critical" />
-                      Protocolo Sepse
+                      Abrir Protocolo Sepse
                     </DropdownMenuItem>
                   )}
 
