@@ -16,7 +16,7 @@ export async function printSepsisFicha(
   if (win) {
     try {
       win.document.open();
-      win.document.write(HEMO_PRINT_LOADING_HTML.replaceAll("Gerando documentos…", "Gerando ficha do protocolo…"));
+      win.document.write(HEMO_PRINT_LOADING_HTML.split("Gerando documentos…").join("Gerando ficha do protocolo…"));
       win.document.close();
     } catch {
       /* window still usable */
@@ -41,6 +41,7 @@ export async function printSepsisFicha(
         label: "Protocolo de Sepse",
         unit: ["página", "páginas"],
         printOne: "esta página",
+        printAll: "Imprimir frente e verso",
       });
       const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
       win.location.replace(`${url}#/${docs[0].key}`);
