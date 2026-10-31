@@ -35,10 +35,17 @@ export const INK = rgb(0.05, 0.28, 0.7);
 const MIN_SIZE = 5.5;
 const WIN_ANSI_EXTRA = "–—‘’“”•…€";
 
-/** Helvetica (WinAnsi) cannot encode every character — drop the ones it can't print. */
+/**
+ * Helvetica (WinAnsi) cannot encode every character — line breaks and tabs become spaces
+ * (a text typed on several lines must still print) and other unprintable characters are dropped.
+ */
 export const toPrintable = (s: string) =>
-  Array.from(s.normalize("NFC"))
-    .filter((c) => c.charCodeAt(0) <= 0xff || WIN_ANSI_EXTRA.includes(c))
+  Array.from(s.normalize("NFC").replace(/[\r\n\t\v\f\u2028\u2029]+/g, " "))
+    .filter((c) => {
+      const code = c.charCodeAt(0);
+      if (code < 0x20 || (code >= 0x7f && code < 0xa0)) return false;
+      return code <= 0xff || WIN_ANSI_EXTRA.includes(c);
+    })
     .join("");
 
 export function wrap(text: string, font: PDFFont, size: number, width: number): string[] {

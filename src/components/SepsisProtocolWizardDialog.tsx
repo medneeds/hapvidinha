@@ -423,11 +423,6 @@ export function SepsisProtocolWizardDialog({
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const getDateTimePairPendencies = (dateValue: string, timeValue: string, label: string) => {
-    if (dateValue && !timeValue) return [`${label}: informe a hora.`];
-    if (!dateValue && timeValue) return [`${label}: informe a data.`];
-    return [];
-  };
 
   const showPendingPopup = (title: string, pendencies: string[]) => {
     popupToast.error(title, {
@@ -443,33 +438,10 @@ export function SepsisProtocolWizardDialog({
     });
   };
 
+  // No field is mandatory; the only thing needed to save is an opened protocol.
   const getProtocolPendencies = () => {
     const pendencies: Array<{ step: number; message: string }> = [];
-    const hasSelectedFocus =
-      [formData.focus_pulmonary, formData.focus_urinary, formData.focus_abdominal, formData.focus_skin, formData.focus_neurological].some(Boolean) ||
-      !!formData.focus_other?.trim();
-
     if (!protocolId) pendencies.push({ step: 0, message: "Abra o protocolo antes de tentar finalizar." });
-    if (!formData.patient_name?.trim()) pendencies.push({ step: 0, message: "Identificação: informe o nome do paciente." });
-    if (!formData.opening_date || !formData.opening_time) pendencies.push({ step: 0, message: "Identificação: confirme data e hora de abertura." });
-    if (formData.has_organic_dysfunction === null) pendencies.push({ step: 2, message: "Disfunções: responda SIM ou NÃO para disfunção orgânica." });
-    if (formData.has_infection === null) pendencies.push({ step: 3, message: "Foco infeccioso: responda SIM ou NÃO para infecção suspeita/confirmada." });
-    if (formData.has_infection === true && !hasSelectedFocus) pendencies.push({ step: 3, message: "Foco infeccioso: selecione um foco ou descreva em Outro." });
-    if ((formData.antibiotic_administration_date || formData.antibiotic_administration_time) && !formData.antibiotic_names?.trim()) {
-      pendencies.push({ step: 4, message: "Tratamento: informe o(s) antibiótico(s) administrado(s)." });
-    }
-    const treatmentDateTimePendencies = [
-      ...getDateTimePairPendencies(formData.blood_culture_date, formData.blood_culture_time, "Hemocultura"),
-      ...getDateTimePairPendencies(formData.lactate_date, formData.lactate_time, "Lactato"),
-      ...getDateTimePairPendencies(formData.antibiotic_prescription_date, formData.antibiotic_prescription_time, "Prescrição de antibiótico"),
-      ...getDateTimePairPendencies(formData.antibiotic_administration_date, formData.antibiotic_administration_time, "Administração de antibiótico"),
-    ];
-    treatmentDateTimePendencies.forEach((message) => pendencies.push({ step: 4, message }));
-    getDateTimePairPendencies(formData.destination_date, formData.destination_time, "Destino").forEach((message) =>
-      pendencies.push({ step: 5, message }),
-    );
-    if (!formData.outcome) pendencies.push({ step: 5, message: "Desfecho: selecione o desfecho para encerrar." });
-
     return pendencies;
   };
 
@@ -726,6 +698,19 @@ export function SepsisProtocolWizardDialog({
 
     setIsSubmitting(true);
     try {
+      // Without an outcome the protocol is saved as it is and stays open (nothing is mandatory).
+      if (!formData.outcome) {
+        const { error } = await supabase
+          .from('sepsis_protocols')
+          .update(getFullProtocolUpdateData())
+          .eq('id', protocolId);
+        if (error) throw error;
+        toast({ title: "Protocolo Sepse salvo", description: "Sem desfecho informado, o protocolo continua em aberto." });
+        onSuccess?.();
+        onClose();
+        return;
+      }
+
       const now = new Date();
       const resolvedOutcomeDate = formData.outcome_date || now.toISOString().split("T")[0];
       const resolvedOutcomeTime = formData.outcome_time || now.toTimeString().slice(0, 5);
@@ -742,6 +727,7 @@ export function SepsisProtocolWizardDialog({
       if (!data?.outcome) {
         throw new Error("O protocolo não pôde ser encerrado. Atualize a página e tente novamente.");
       }
+
 
       setFormData(prev => ({
         ...prev,
@@ -808,36 +794,8 @@ export function SepsisProtocolWizardDialog({
     onClose();
   };
 
-  // Per-step validation: returns null if OK, otherwise an error message
-  const validateCurrentStep = (): string | null => {
-    const step = STEPS[currentStep].key;
-    if (step === "identification") {
-      if (!formData.patient_name?.trim()) return "Nome do paciente é obrigatório.";
-    }
-    if (step === "dysfunction") {
-      if (formData.has_organic_dysfunction === null)
-        return "Informe se há disfunção orgânica confirmada (SIM/NÃO).";
-    }
-    if (step === "focus") {
-      if (formData.has_infection === null)
-        return "Informe se há infecção confirmada ou suspeita (SIM/NÃO).";
-      if (formData.has_infection === true) {
-        const focusCount =
-          [formData.focus_pulmonary, formData.focus_urinary, formData.focus_abdominal,
-            formData.focus_skin, formData.focus_neurological].filter(Boolean).length +
-          (formData.focus_other?.trim() ? 1 : 0);
-        if (focusCount === 0)
-          return "Selecione ao menos um foco infeccioso ou descreva em 'Outro'.";
-      }
-    }
-    if (step === "treatment") {
-      const hasAdmin =
-        formData.antibiotic_administration_date && formData.antibiotic_administration_time;
-      if (hasAdmin && !formData.antibiotic_names?.trim())
-        return "Informe o(s) antibiótico(s) administrado(s).";
-    }
-    return null;
-  };
+  // No field is mandatory: every step can be saved and skipped with whatever was filled in.
+  const validateCurrentStep = (): string | null => null;
 
   const sirsCount = [
     formData.sirs_temp_high,
@@ -1195,7 +1153,7 @@ export function SepsisProtocolWizardDialog({
           </div>
           <div className="border-t pt-4 space-y-3">
             <div className="col-span-2">
-              <Label className="text-xs font-semibold uppercase">Desfecho *</Label>
+              <Label className="text-xs font-semibold uppercase">Desfecho</Label>
               <Select value={formData.outcome} onValueChange={v => updateField("outcome", v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione o desfecho" /></SelectTrigger>
                 <SelectContent>
@@ -1331,7 +1289,7 @@ export function SepsisProtocolWizardDialog({
               ANTERIOR
             </Button>
           )}
-          {protocolId && (
+          {(protocolId || currentStep === 0) && (
             <Button
               type="button"
               variant="ghost"
