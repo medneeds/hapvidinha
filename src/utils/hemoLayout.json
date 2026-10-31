@@ -7,25 +7,25 @@
       "nome": {
         "page": 0,
         "x": 108,
-        "y": 91.1,
+        "y": 90.3,
         "maxWidth": 455
       },
       "prontuario": {
         "page": 0,
         "x": 155,
-        "y": 102.5,
+        "y": 101.7,
         "maxWidth": 115
       },
       "leito": {
         "page": 0,
         "x": 336,
-        "y": 102.5,
+        "y": 101.7,
         "maxWidth": 118
       },
       "setor": {
         "page": 0,
         "x": 481,
-        "y": 102.5,
+        "y": 101.7,
         "maxWidth": 85,
         "size": 7
       },
@@ -44,42 +44,42 @@
       "idade": {
         "page": 0,
         "x": 182,
-        "y": 115.5,
+        "y": 114.7,
         "maxWidth": 85
       },
       "peso": {
         "page": 0,
         "x": 360,
-        "y": 115.5,
+        "y": 114.7,
         "maxWidth": 50
       },
       "grupo": {
         "page": 0,
         "x": 88.6,
-        "y": 127.5,
+        "y": 126.7,
         "maxWidth": 135
       },
       "fatorRh": {
         "page": 0,
         "x": 263.5,
-        "y": 127.5,
+        "y": 126.7,
         "maxWidth": 195
       },
       "diagnostico": {
         "page": 0,
         "x": 70,
-        "y": 140.0,
+        "y": 139.2,
         "maxWidth": 493,
         "line2": {
           "x": 21.6,
-          "y": 153.0,
+          "y": 152.2,
           "maxWidth": 541
         }
       },
       "indicacao": {
         "page": 0,
         "x": 112,
-        "y": 165.9,
+        "y": 165.1,
         "maxWidth": 451
       },
       "hemocomponentes": {
@@ -93,29 +93,29 @@
       "dadosClinicos": {
         "page": 0,
         "x": 134.6,
-        "y": 227.9,
+        "y": 227.1,
         "maxWidth": 428
       },
       "hbHt": {
         "page": 0,
         "x": 60,
-        "y": 238.5,
+        "y": 237.7,
         "maxWidth": 190
       },
       "plaquetas": {
         "page": 0,
         "x": 389,
-        "y": 238.5,
+        "y": 237.7,
         "maxWidth": 160
       },
       "medicamentos": {
         "page": 0,
         "x": 106,
-        "y": 251.5,
+        "y": 250.7,
         "maxWidth": 459,
         "line2": {
           "x": 21.6,
-          "y": 264.5,
+          "y": 263.7,
           "maxWidth": 543
         }
       },
@@ -146,35 +146,35 @@
       "qualTipo": {
         "page": 0,
         "x": 60.5,
-        "y": 301.3,
+        "y": 300.5,
         "maxWidth": 503,
         "line2": {
           "x": 21.6,
-          "y": 314.3,
+          "y": 313.5,
           "maxWidth": 541
         }
       },
       "gestanteSim": {
         "page": 0,
-        "x": 160.8,
+        "x": 162.3,
         "y": 327,
         "align": "center"
       },
       "gestanteNao": {
         "page": 0,
-        "x": 195.8,
+        "x": 197,
         "y": 327,
         "align": "center"
       },
       "gestacoesSim": {
         "page": 0,
-        "x": 160.8,
+        "x": 162.3,
         "y": 339.4,
         "align": "center"
       },
       "gestacoesNao": {
         "page": 0,
-        "x": 195.8,
+        "x": 197,
         "y": 339.4,
         "align": "center"
       },
@@ -224,7 +224,7 @@
       "progHora": {
         "page": 0,
         "x": 293,
-        "y": 369.5,
+        "y": 368.7,
         "maxWidth": 60
       },
       "dataDia": {
@@ -249,7 +249,7 @@
       "hora": {
         "page": 0,
         "x": 177,
-        "y": 443.5,
+        "y": 442.7,
         "maxWidth": 55
       }
     }
