@@ -6,7 +6,7 @@ import termoRecusaAsset from "@/assets/documents/termo-recusa-tratamento.pdf.ass
  * "SÃO LUÍS/MA, __/__/____." is an automatic date field (the day it is printed), so the
  * stored PDF leaves that spot blank and the date of printing is written there when downloading.
  */
-export const TERMO_RECUSA_DATE_SPOT = { x: 104.3, baselineFromTop: 548.3, size: 10 } as const;
+export const TERMO_RECUSA_DATE_SPOT = { x: 104.3, baselineFromTop: 548.3, size: 10.5 } as const;
 
 export function formatTermoRecusaDate(d: Date): string {
   const dd = String(d.getDate()).padStart(2, "0");
