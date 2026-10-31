@@ -13,7 +13,8 @@ import {
   Heart,
   Workflow,
   Sparkles,
-  Download
+  Download,
+  FileX
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +22,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "sonner";
 import { AppPageHeader } from "@/components/AppPageHeader";
 import termoConsentimentoGuaras from "@/assets/documents/termo-consentimento-guaras.pdf.asset.json";
+import { downloadTermoRecusa } from "@/utils/termoRecusa";
 
 
 export default function DocumentsPage() {
@@ -283,6 +286,44 @@ export default function DocumentsPage() {
               </p>
             </div>
             <Button variant="outline" size="sm" className="gap-2 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all flex-shrink-0 w-full md:w-auto">
+              <Download className="h-4 w-4" />
+              Download
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Termo de Recusa de Tratamento Guarás */}
+        <Card
+          className="relative overflow-hidden border-critical/30 shadow-lg bg-gradient-to-r from-critical/5 via-background to-critical/5 group cursor-pointer hover:shadow-xl hover:border-critical/50 transition-all duration-500"
+          onClick={async () => {
+            try {
+              await downloadTermoRecusa();
+            } catch (e: any) {
+              toast.error("Não foi possível baixar o termo", { description: e?.message || "Tente novamente." });
+            }
+          }}
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-critical/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <CardContent className="p-4 md:p-6 flex flex-wrap md:flex-nowrap items-center gap-3 md:gap-5 relative z-10">
+            <div className="relative flex-shrink-0">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-critical/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <FileX className="h-6 w-6 md:h-8 md:w-8 text-critical" />
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h3 className="font-bold text-base md:text-lg leading-tight text-foreground group-hover:text-critical transition-colors">
+                  Termo de Recusa de Tratamento
+                </h3>
+                <Badge className="bg-critical/15 text-critical border-critical/30 text-[10px]">
+                  GUARÁS
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Recusa de tratamento pelo paciente ou responsável legal (PDF para impressão, já com a data do dia)
+              </p>
+            </div>
+            <Button variant="outline" size="sm" className="gap-2 group-hover:bg-critical group-hover:text-critical-foreground group-hover:border-critical transition-all flex-shrink-0 w-full md:w-auto">
               <Download className="h-4 w-4" />
               Download
             </Button>
