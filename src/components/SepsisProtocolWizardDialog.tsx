@@ -192,6 +192,61 @@ const initialFormData: FormData = {
   notes: "",
 };
 
+const FICHA_STEPS = ["Frente · identificação e critérios", "Verso · gerenciamento do protocolo"];
+
+/** Overlay shown while the original form is filled and turned into its print pages. */
+function SepsisFichaGeneratingOverlay({ progress }: { progress: SepsisFichaProgress }) {
+  const total = FICHA_STEPS.length;
+  const pct = Math.round(((progress.finished ? total : progress.index + 0.5) / total) * 100);
+  return (
+    <div
+      className="absolute inset-0 z-20 flex items-center justify-center rounded-[inherit] bg-background/90 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in-0"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="w-full max-w-xs space-y-5 px-6">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="relative h-16 w-16">
+            {!progress.finished && <span className="absolute inset-0 rounded-full bg-critical/15 motion-safe:animate-ping [animation-duration:1.8s]" />}
+            <span
+              className={cn(
+                "relative flex h-16 w-16 items-center justify-center rounded-full ring-1 transition-colors duration-300",
+                progress.finished ? "bg-critical text-critical-foreground ring-critical" : "bg-critical/10 text-critical ring-critical/30"
+              )}
+            >
+              {progress.finished ? <Check className="h-7 w-7 motion-safe:animate-in motion-safe:zoom-in-50" /> : <Activity className="h-7 w-7 motion-safe:animate-pulse" />}
+            </span>
+          </div>
+          <div className="space-y-0.5">
+            <p className="text-sm font-semibold">{progress.finished ? "Ficha pronta" : "Gerando ficha do protocolo"}</p>
+            <p className="min-h-[1rem] text-xs text-muted-foreground">
+              {progress.finished ? "Abrindo a janela de impressão…" : `${progress.index + 1} de ${total} · ${FICHA_STEPS[progress.index]?.split(" · ")[0]}`}
+            </p>
+          </div>
+        </div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+          <div className="h-full rounded-full bg-critical transition-[width] duration-500 ease-out" style={{ width: `${pct}%` }} />
+        </div>
+        <ul className="space-y-1.5">
+          {FICHA_STEPS.map((label, i) => {
+            const state = progress.finished || i < progress.index ? "done" : i === progress.index ? "active" : "pending";
+            return (
+              <li key={label} className={cn("flex items-center gap-2 text-xs transition-colors", state === "pending" ? "text-muted-foreground/70" : "text-foreground")}>
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+                  {state === "done" && <Check className="h-3.5 w-3.5 text-critical" />}
+                  {state === "active" && <Loader2 className="h-3.5 w-3.5 animate-spin text-critical" />}
+                  {state === "pending" && <span className="h-2 w-2 rounded-full border border-muted-foreground/50" />}
+                </span>
+                <span className={cn("truncate", state === "active" && "font-medium")}>{label}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 export function SepsisProtocolWizardDialog({
   patient,
   isOpen,
@@ -715,6 +770,36 @@ export function SepsisProtocolWizardDialog({
     }
   };
 
+  /** Fills the original sepsis form (frente e verso) with what is on screen and opens it to print. */
+  const handlePrintFicha = async () => {
+    if (fichaProgress) return;
+    setFichaProgress({ index: 0, total: 2, finished: false });
+    try {
+      const mode = await printSepsisFicha(
+        {
+          ...formData,
+          patient_name: formData.patient_name || patient?.name || "",
+          ...exclusionData(),
+        },
+        setFichaProgress
+      );
+      if (protocolId && !isSubmitting) void saveCurrentStep();
+      await new Promise((r) => setTimeout(r, 500));
+      toast({
+        title: "Ficha gerada",
+        description:
+          mode === "window"
+            ? "Frente e verso abertos em abas na janela de impressão."
+            : "O navegador bloqueou a janela de impressão; o PDF da ficha foi baixado.",
+      });
+    } catch (e: any) {
+      console.error("Erro ao gerar ficha do protocolo de sepse:", e);
+      toast({ title: "Não foi possível gerar a ficha", description: e?.message || "Tente novamente.", variant: "destructive" });
+    } finally {
+      setFichaProgress(null);
+    }
+  };
+
   const handleProtocolDeleted = () => {
     setProtocolId(null);
     setFormData({ ...initialFormData });
@@ -907,6 +992,18 @@ export function SepsisProtocolWizardDialog({
                 <span className="text-sm">NÃO</span>
               </label>
             </div>
+            {formData.has_organic_dysfunction === false && (
+              <div className="mt-3 space-y-2 rounded-lg bg-muted/50 p-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase">Exclusão da disfunção (opcional)</h4>
+                  <NowButton dateField="dysfunction_excluded_day" timeField="dysfunction_excluded_hour" />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div><Label className="text-xs">Data</Label><Input type="date" value={formData.dysfunction_excluded_day} onChange={e => updateField("dysfunction_excluded_day", e.target.value)} /></div>
+                  <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.dysfunction_excluded_hour} onChange={e => updateField("dysfunction_excluded_hour", e.target.value)} /></div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -927,6 +1024,18 @@ export function SepsisProtocolWizardDialog({
                 <span className="text-sm">NÃO</span>
               </label>
             </div>
+            {formData.has_infection === false && (
+              <div className="mt-3 space-y-2 rounded-lg bg-muted/50 p-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase">Exclusão da infecção (opcional)</h4>
+                  <NowButton dateField="infection_excluded_day" timeField="infection_excluded_hour" />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div><Label className="text-xs">Data</Label><Input type="date" value={formData.infection_excluded_day} onChange={e => updateField("infection_excluded_day", e.target.value)} /></div>
+                  <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.infection_excluded_hour} onChange={e => updateField("infection_excluded_hour", e.target.value)} /></div>
+                </div>
+              </div>
+            )}
           </div>
           <p className="text-xs text-muted-foreground">Foco infeccioso suspeito/confirmado:</p>
           {[
@@ -952,6 +1061,17 @@ export function SepsisProtocolWizardDialog({
     if (step === "treatment") {
       return (
         <div className="space-y-4">
+          <p className="text-xs text-muted-foreground">Todos os campos são opcionais; o que for preenchido aparece no verso da ficha.</p>
+          <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Avaliação Médica</h4>
+              <NowButton dateField="medical_evaluation_date" timeField="medical_evaluation_time" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data</Label><Input type="date" value={formData.medical_evaluation_date} onChange={e => updateField("medical_evaluation_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.medical_evaluation_time} onChange={e => updateField("medical_evaluation_time", e.target.value)} /></div>
+            </div>
+          </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold uppercase">Hemocultura</h4>
@@ -970,6 +1090,32 @@ export function SepsisProtocolWizardDialog({
             <div className="grid grid-cols-2 gap-2">
               <div><Label className="text-xs">Data</Label><Input type="date" value={formData.lactate_date} onChange={e => updateField("lactate_date", e.target.value)} /></div>
               <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.lactate_time} onChange={e => updateField("lactate_time", e.target.value)} /></div>
+            </div>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 pt-1">
+              <div><Label className="text-xs">Resultado</Label><Input value={formData.lactate_result} onChange={e => updateField("lactate_result", e.target.value.toUpperCase())} className="uppercase" placeholder="EX: 3,8 MMOL/L" /></div>
+              <NowButton dateField="lactate_result_date" timeField="lactate_result_time" label="RESULTADO AGORA" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data do resultado</Label><Input type="date" value={formData.lactate_result_date} onChange={e => updateField("lactate_result_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora do resultado</Label><Input type="time" value={formData.lactate_result_time} onChange={e => updateField("lactate_result_time", e.target.value)} /></div>
+            </div>
+          </div>
+          <div className="space-y-2 p-3 rounded-lg bg-muted/50">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Segundo Lactato</h4>
+              <NowButton dateField="second_lactate_date" timeField="second_lactate_time" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data da coleta</Label><Input type="date" value={formData.second_lactate_date} onChange={e => updateField("second_lactate_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora da coleta</Label><Input type="time" value={formData.second_lactate_time} onChange={e => updateField("second_lactate_time", e.target.value)} /></div>
+            </div>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 pt-1">
+              <div><Label className="text-xs">Resultado</Label><Input value={formData.second_lactate_result} onChange={e => updateField("second_lactate_result", e.target.value.toUpperCase())} className="uppercase" placeholder="EX: 2,1 MMOL/L" /></div>
+              <NowButton dateField="second_lactate_result_date" timeField="second_lactate_result_time" label="RESULTADO AGORA" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data do resultado</Label><Input type="date" value={formData.second_lactate_result_date} onChange={e => updateField("second_lactate_result_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora do resultado</Label><Input type="time" value={formData.second_lactate_result_time} onChange={e => updateField("second_lactate_result_time", e.target.value)} /></div>
             </div>
           </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
@@ -1002,7 +1148,15 @@ export function SepsisProtocolWizardDialog({
             />
           </div>
           <div className="space-y-2 p-3 rounded-lg bg-muted/50">
-            <h4 className="text-xs font-bold uppercase">Ressuscitação Volêmica</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold uppercase">Reposição Volêmica</h4>
+              <NowButton dateField="fluid_date" timeField="fluid_time" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div><Label className="text-xs">Data</Label><Input type="date" value={formData.fluid_date} onChange={e => updateField("fluid_date", e.target.value)} /></div>
+              <div><Label className="text-xs">Hora</Label><Input type="time" value={formData.fluid_time} onChange={e => updateField("fluid_time", e.target.value)} /></div>
+            </div>
+            <div><Label className="text-xs">Solução administrada</Label><Input value={formData.fluid_solution} onChange={e => updateField("fluid_solution", e.target.value.toUpperCase())} className="uppercase" placeholder="EX: RINGER LACTATO" /></div>
             <div className="grid grid-cols-2 gap-2">
               <div><Label className="text-xs">Peso (kg)</Label><Input type="number" step="0.1" value={formData.patient_weight} onChange={e => updateField("patient_weight", e.target.value)} /></div>
               <div><Label className="text-xs">Volume (mL)</Label><Input type="number" value={formData.volume_administered} onChange={e => updateField("volume_administered", e.target.value)} /></div>
@@ -1034,6 +1188,10 @@ export function SepsisProtocolWizardDialog({
             </div>
             <div><Label className="text-xs">Data Destino</Label><Input type="date" value={formData.destination_date} onChange={e => updateField("destination_date", e.target.value)} /></div>
             <div><Label className="text-xs">Hora Destino</Label><Input type="time" value={formData.destination_time} onChange={e => updateField("destination_time", e.target.value)} /></div>
+            <div className="col-span-2">
+              <Label className="text-xs">Hospital de destino</Label>
+              <Input value={formData.destination_hospital} onChange={e => updateField("destination_hospital", e.target.value.toUpperCase())} className="uppercase" placeholder="OPCIONAL" />
+            </div>
           </div>
           <div className="border-t pt-4 space-y-3">
             <div className="col-span-2">
@@ -1071,6 +1229,7 @@ export function SepsisProtocolWizardDialog({
   return (
     <Dialog open={isOpen} onOpenChange={v => { if (!v && !isSubmitting) onClose(); }}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col p-0 gap-0" onInteractOutside={e => { if (isSubmitting || protocolId) e.preventDefault(); }} onEscapeKeyDown={e => { if (isSubmitting) e.preventDefault(); }}>
+        {fichaProgress && <SepsisFichaGeneratingOverlay progress={fichaProgress} />}
         {/* Timer Header */}
         {startTime && (
           <div className={cn(
@@ -1177,10 +1336,11 @@ export function SepsisProtocolWizardDialog({
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => generateSepsisProtocolPdf({ ...formData, created_at: startTime?.toISOString() || new Date().toISOString(), patient_weight: formData.patient_weight ? parseFloat(formData.patient_weight) : null, volume_administered: formData.volume_administered ? parseFloat(formData.volume_administered) : null } as any)}
+              onClick={handlePrintFicha}
+              disabled={fichaProgress !== null}
             >
-              <Download className="h-4 w-4 mr-1" />
-              PDF
+              <FileText className="h-4 w-4 mr-1" />
+              FICHA
             </Button>
           )}
           {protocolId && currentStep > 0 && currentStep < STEPS.length - 1 && (
