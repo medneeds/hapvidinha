@@ -412,6 +412,7 @@ export function HemoRequestDialog({ patient, open, onOpenChange }: HemoRequestDi
       });
       onOpenChange(false);
     } catch (e: any) {
+      console.error("Erro ao gerar documentos de hemocomponentes:", e);
       win?.close();
       toast({ title: "Não foi possível gerar os documentos", description: e?.message || "Tente novamente.", variant: "destructive" });
     } finally {
