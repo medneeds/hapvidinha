@@ -1,4 +1,4 @@
-import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import workerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import type { HemoDocKey } from "./hemoRequest";
 
 /**
@@ -20,7 +20,7 @@ export interface HemoPrintDoc {
 
 /** Rasterizes every page of a filled PDF (≈200 dpi) for the print window. */
 export async function renderPdfPages(bytes: Uint8Array, scale = 2.8): Promise<HemoPrintPage[]> {
-  const pdfjs: any = await import("pdfjs-dist");
+  const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
   const pdf = await pdfjs.getDocument({ data: bytes.slice() }).promise;
   const pages: HemoPrintPage[] = [];
