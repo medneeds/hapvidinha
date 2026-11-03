@@ -68,5 +68,16 @@ export function useUtiTransitPatients(enabled = true) {
     return { error };
   }, [refetch]);
 
-  return { transitPatients, refetch, allocate, setDiscussing };
+  /** Close a transfer request sent by mistake: the patient leaves the waiting list; the movement stays, marked as cancelled. */
+  const cancelTransit = useCallback(async (transitId: string, reason: string) => {
+    const { error } = await supabase.rpc("cancel_uti_transit_patient", {
+      p_transit_id: transitId,
+      p_reason: reason,
+    });
+    if (!error) setTransitPatients((prev) => prev.filter((p) => p.id !== transitId));
+    await refetch();
+    return { error };
+  }, [refetch]);
+
+  return { transitPatients, refetch, allocate, setDiscussing, cancelTransit };
 }
