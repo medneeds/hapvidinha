@@ -2989,6 +2989,10 @@ export type Database = {
         Args: { p_target_bed_id: string; p_transit_id: string }
         Returns: Json
       }
+      cancel_uti_transit_patient: {
+        Args: { p_reason?: string; p_transit_id: string }
+        Returns: Json
+      }
       get_auth_user_id_by_email: { Args: { p_email: string }; Returns: string }
       has_role: {
         Args: {

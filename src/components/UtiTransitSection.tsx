@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRightLeft, BedDouble, ChevronDown, Clock, Loader2, MessageSquare, UserPlus } from "lucide-react";
+import { ArrowRightLeft, BedDouble, ChevronDown, Clock, Loader2, MessageSquare, UserPlus, XCircle } from "lucide-react";
 import type { Patient } from "@/types/patient";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
@@ -71,12 +72,14 @@ function TransitPatientCard({
   canAllocate,
   onAllocate,
   onToggleDiscussing,
+  onCancel,
 }: {
   patient: TransitPatient;
   now: Date;
   canAllocate: boolean;
   onAllocate: () => void;
   onToggleDiscussing: () => void;
+  onCancel: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
@@ -116,6 +119,16 @@ function TransitPatientCard({
                 <Button size="sm" className="h-7 text-xs gap-1.5" onClick={onAllocate}>
                   <BedDouble className="h-3.5 w-3.5" />
                   Alocar em leito
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs gap-1.5 text-destructive border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
+                  onClick={onCancel}
+                  title="Encerrar pedido de transferência (enviado por engano ou preenchido errado)"
+                >
+                  <XCircle className="h-3.5 w-3.5" />
+                  Encerrar
                 </Button>
               </>
             )}
@@ -252,20 +265,93 @@ function PickBedDialog({
   );
 }
 
+type CancelFn = (transitId: string, reason: string) => Promise<{ error: { message: string } | null }>;
+
+const CANCEL_REASONS = ["Pedido por engano", "Preenchimento incorreto", "Outro motivo"] as const;
+
+/** Close a transfer request sent by mistake: the patient only leaves the waiting list (movement kept as cancelled). */
+function CancelTransitDialog({ patient, onClose, cancelTransit }: { patient: TransitPatient | null; onClose: () => void; cancelTransit: CancelFn }) {
+  const { toast } = useToast();
+  const [reason, setReason] = useState<(typeof CANCEL_REASONS)[number]>(CANCEL_REASONS[0]);
+  const [details, setDetails] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (patient) {
+      setReason(CANCEL_REASONS[0]);
+      setDetails("");
+    }
+  }, [patient]);
+
+  const confirm = async () => {
+    if (!patient) return;
+    setBusy(true);
+    const text = [reason, details.trim()].filter(Boolean).join(" – ").toUpperCase();
+    const { error } = await cancelTransit(patient.id, text);
+    setBusy(false);
+    if (error) {
+      toast({ title: "Não foi possível encerrar", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Pedido encerrado", description: `${patient.name} saiu da espera da UTI.` });
+    onClose();
+  };
+
+  return (
+    <Dialog open={!!patient} onOpenChange={(o) => !o && !busy && onClose()}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <XCircle className="h-5 w-5 text-destructive" />
+            Encerrar pedido de transferência
+          </DialogTitle>
+          <DialogDescription>
+            {patient?.name} sai da espera da {patient?.transitTargetUnit}. O registro fica em Movimentações como transferência cancelada.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {CANCEL_REASONS.map((r) => (
+              <Button key={r} type="button" size="sm" variant={reason === r ? "default" : "outline"} className="h-auto py-2 text-xs whitespace-normal" onClick={() => setReason(r)}>
+                {r}
+              </Button>
+            ))}
+          </div>
+          <Textarea
+            value={details}
+            onChange={(e) => setDetails(e.target.value.toUpperCase())}
+            placeholder="OBSERVAÇÃO (OPCIONAL)"
+            className="min-h-[64px] text-sm uppercase"
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={busy}>Voltar</Button>
+          <Button variant="destructive" onClick={confirm} disabled={busy}>
+            {busy ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <XCircle className="h-4 w-4 mr-2" />}
+            Encerrar pedido
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 interface UtiTransitSectionProps {
   unit: UtiUnit;
   transitPatients: TransitPatient[];
   utiBeds: Patient[];
   allocate: AllocateFn;
   setDiscussing: (id: string, discussing: boolean) => Promise<{ error: unknown }>;
+  cancelTransit: CancelFn;
   onAllocated?: () => void;
 }
 
 /** "Em trânsito · Aguardando alocação" — waiting patients indicated for this UTI. */
-export function UtiTransitSection({ unit, transitPatients, utiBeds, allocate, setDiscussing, onAllocated }: UtiTransitSectionProps) {
+export function UtiTransitSection({ unit, transitPatients, utiBeds, allocate, setDiscussing, cancelTransit, onAllocated }: UtiTransitSectionProps) {
   const list = useMemo(() => transitForUnitSection(transitPatients, unit), [transitPatients, unit]);
   const [open, setOpen] = useState(list.length > 0);
   const [picking, setPicking] = useState<TransitPatient | null>(null);
+  const [cancelling, setCancelling] = useState<TransitPatient | null>(null);
   const canAllocate = useCanAllocate();
   const now = useNowTick();
 
@@ -304,11 +390,13 @@ export function UtiTransitSection({ unit, transitPatients, utiBeds, allocate, se
               canAllocate={canAllocate}
               onAllocate={() => setPicking(p)}
               onToggleDiscussing={() => setDiscussing(p.id, p.allocationStatus !== "discussing")}
+              onCancel={() => setCancelling(p)}
             />
           ))
         )}
       </CollapsibleContent>
       <PickBedDialog patient={picking} beds={utiBeds} onClose={() => setPicking(null)} allocate={allocate} onAllocated={onAllocated} />
+      <CancelTransitDialog patient={cancelling} onClose={() => setCancelling(null)} cancelTransit={cancelTransit} />
     </Collapsible>
   );
 }

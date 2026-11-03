@@ -188,7 +188,7 @@ const Index = () => {
   
   // Use real database patients filtered by department
   const { patients: dbPatients, isLoading: patientsLoading, updatePatient: dbUpdatePatient, createPatient: dbCreatePatient, deletePatient: dbDeletePatient, reorderPatients: dbReorderPatients, refetch } = usePatients(currentDepartment);
-  const { transitPatients, allocate: allocateTransit, setDiscussing: setTransitDiscussing, refetch: refetchTransit } = useUtiTransitPatients(currentDepartment === "UTI");
+  const { transitPatients, allocate: allocateTransit, setDiscussing: setTransitDiscussing, cancelTransit, refetch: refetchTransit } = useUtiTransitPatients(currentDepartment === "UTI");
   const handleTransitAllocated = () => { refetch(); refetchTransit(); };
   const renderReceiveTransit = (bed: Patient) => (
     <ReceiveTransitButton bed={bed} transitPatients={transitPatients} allocate={allocateTransit} onAllocated={handleTransitAllocated} />
@@ -1413,6 +1413,7 @@ const Index = () => {
                       utiBeds={patients}
                       allocate={allocateTransit}
                       setDiscussing={setTransitDiscussing}
+                      cancelTransit={cancelTransit}
                       onAllocated={handleTransitAllocated}
                     />
 
