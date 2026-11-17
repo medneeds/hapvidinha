@@ -45,9 +45,12 @@ export function mapTransitRow(p: any): TransitPatient {
 const byWaitStart = (a: TransitPatient, b: TransitPatient) =>
   (a.transitStartedAt || "").localeCompare(b.transitStartedAt || "");
 
-/** Section of one UTI: only patients the emergency indicated for that unit, longest wait first. */
+/**
+ * Section of one UTI: every waiting patient — either UTI may take any of them —
+ * the ones the emergency indicated for this unit first, longest wait first.
+ */
 export function transitForUnitSection(list: TransitPatient[], unit: UtiUnit): TransitPatient[] {
-  return list.filter((p) => p.transitTargetUnit === unit).sort(byWaitStart);
+  return transitForBed(list, unit);
 }
 
 /** Picking for a vacant bed: every waiting patient, the bed's own unit first (the UTI may take the other unit's patient). */

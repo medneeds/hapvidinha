@@ -165,15 +165,17 @@ function TransitPatientCard({
   );
 }
 
-/** Pick a vacant bed for a waiting patient (the indicated UTI first; the other UTI is allowed). */
+/** Pick a vacant bed for a waiting patient in either UTI (starts on the UTI being viewed). */
 function PickBedDialog({
   patient,
+  defaultUnit,
   beds,
   onClose,
   allocate,
   onAllocated,
 }: {
   patient: TransitPatient | null;
+  defaultUnit?: UtiUnit | null;
   beds: Patient[];
   onClose: () => void;
   allocate: AllocateFn;
@@ -186,10 +188,10 @@ function PickBedDialog({
 
   useEffect(() => {
     if (patient) {
-      setUnit(patient.transitTargetUnit);
+      setUnit(defaultUnit || patient.transitTargetUnit);
       setSelected(null);
     }
-  }, [patient]);
+  }, [patient, defaultUnit]);
 
   const vacant = useMemo(() => vacantBedsOfUnit(beds, unit), [beds, unit]);
   const bed = vacant.find((b) => b.id === selected) || null;
@@ -217,7 +219,7 @@ function PickBedDialog({
             Alocar em leito
           </DialogTitle>
           <DialogDescription>
-            {patient?.name} — indicado para {patient?.transitTargetUnit}. Escolha o leito vago.
+            {patient?.name} — indicado para {patient?.transitTargetUnit}. Pode ser alocado em qualquer UTI: escolha a unidade e o leito vago.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -346,7 +348,7 @@ interface UtiTransitSectionProps {
   onAllocated?: () => void;
 }
 
-/** "Em trânsito · Aguardando alocação" — waiting patients indicated for this UTI. */
+/** "Em trânsito · Aguardando alocação" — all waiting patients (either UTI may allocate them), this UTI's first. */
 export function UtiTransitSection({ unit, transitPatients, utiBeds, allocate, setDiscussing, cancelTransit, onAllocated }: UtiTransitSectionProps) {
   const list = useMemo(() => transitForUnitSection(transitPatients, unit), [transitPatients, unit]);
   const [open, setOpen] = useState(list.length > 0);
@@ -379,7 +381,7 @@ export function UtiTransitSection({ unit, transitPatients, utiBeds, allocate, se
       <CollapsibleContent className="space-y-2">
         {list.length === 0 ? (
           <p className="text-sm text-muted-foreground rounded-lg border border-dashed border-border p-3 text-center">
-            Nenhum paciente em trânsito para a {unit}.
+            Nenhum paciente em trânsito aguardando alocação.
           </p>
         ) : (
           list.map((p) => (
@@ -395,7 +397,7 @@ export function UtiTransitSection({ unit, transitPatients, utiBeds, allocate, se
           ))
         )}
       </CollapsibleContent>
-      <PickBedDialog patient={picking} beds={utiBeds} onClose={() => setPicking(null)} allocate={allocate} onAllocated={onAllocated} />
+      <PickBedDialog patient={picking} defaultUnit={unit} beds={utiBeds} onClose={() => setPicking(null)} allocate={allocate} onAllocated={onAllocated} />
       <CancelTransitDialog patient={cancelling} onClose={() => setCancelling(null)} cancelTransit={cancelTransit} />
     </Collapsible>
   );

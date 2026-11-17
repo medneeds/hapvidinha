@@ -26,9 +26,9 @@ const list = [
 ];
 
 describe("UTI transit area", () => {
-  it("shows in a UTI section only the patients the emergency indicated for that UTI, longest wait first", () => {
-    expect(transitForUnitSection(list, "UTI 1").map((p) => p.id)).toEqual(["C", "A"]);
-    expect(transitForUnitSection(list, "UTI 2").map((p) => p.id)).toEqual(["B"]);
+  it("shows every waiting patient in both UTI sections, the indicated UTI first, longest wait first", () => {
+    expect(transitForUnitSection(list, "UTI 1").map((p) => p.id)).toEqual(["C", "A", "B"]);
+    expect(transitForUnitSection(list, "UTI 2").map((p) => p.id)).toEqual(["B", "C", "A"]);
   });
 
   it("lets a vacant bed receive any waiting patient, its own UTI first", () => {
