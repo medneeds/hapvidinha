@@ -8,6 +8,7 @@ import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
 import { format, subMonths, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { escapeHtml } from "@/utils/escapeHtml";
 
 // ── Types ──
 interface DeathRecord {
@@ -489,7 +490,7 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Relatório Analítico Clínico - ${label}</title>
+          <title>Relatório Analítico Clínico - ${escapeHtml(label)}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -602,14 +603,14 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <img src="${platformLogoUrl}" alt="HapMap" />
             <div class="header-center">
               <h1>Relatório Analítico Clínico</h1>
-              <p>Análise Epidemiológica e de Gravidade — <span class="period-badge">${periodTypeLabel}</span> ${label}</p>
+              <p>Análise Epidemiológica e de Gravidade — <span class="period-badge">${escapeHtml(periodTypeLabel)}</span> ${escapeHtml(label)}</p>
             </div>
             <img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" />
           </div>
           
           <div class="meta-bar">
-            <span><strong>Setor:</strong> ${reportData.sector}</span>
-            <span><strong>Período:</strong> ${reportData.period}</span>
+            <span><strong>Setor:</strong> ${escapeHtml(reportData.sector)}</span>
+            <span><strong>Período:</strong> ${escapeHtml(reportData.period)}</span>
             <span><strong>Total de Movimentações:</strong> ${reportData.totalMovements}</span>
             <span><strong>Gerado por:</strong> HapMap 2.0 — IA Analítica</span>
           </div>
@@ -629,13 +630,13 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <tr><th>Paciente</th><th>Data</th><th>Diagnóstico</th><th>Antecedentes</th><th>Síndrome</th></tr>
             ${reportData.deaths.map(d => `
               <tr>
-                <td><strong>${d.name}</strong></td>
-                <td>${d.date}</td>
-                <td>${d.diagnoses}</td>
-                <td>${d.history}</td>
-                <td>${d.syndrome}</td>
+                <td><strong>${escapeHtml(d.name)}</strong></td>
+                <td>${escapeHtml(d.date)}</td>
+                <td>${escapeHtml(d.diagnoses)}</td>
+                <td>${escapeHtml(d.history)}</td>
+                <td>${escapeHtml(d.syndrome)}</td>
               </tr>
-              ${d.alert ? `<tr><td colspan="5"><div class="alert-box">⚠ ${d.alert}</div></td></tr>` : ''}
+              ${d.alert ? `<tr><td colspan="5"><div class="alert-box">⚠ ${escapeHtml(d.alert)}</div></td></tr>` : ''}
             `).join('')}
           </table>` : '<p class="empty-notice">Nenhum óbito registrado no período.</p>'}
 
@@ -645,11 +646,11 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <tr><th>Paciente</th><th>Data</th><th>Diagnóstico Principal</th><th>Antecedentes</th><th>Classificação Sindrômica</th></tr>
             ${reportData.utiTransfers.map(t => `
               <tr>
-                <td><strong>${t.name}</strong></td>
-                <td>${t.date}</td>
-                <td>${t.diagnoses}</td>
-                <td>${t.history}</td>
-                <td>${t.syndrome}</td>
+                <td><strong>${escapeHtml(t.name)}</strong></td>
+                <td>${escapeHtml(t.date)}</td>
+                <td>${escapeHtml(t.diagnoses)}</td>
+                <td>${escapeHtml(t.history)}</td>
+                <td>${escapeHtml(t.syndrome)}</td>
               </tr>
             `).join('')}
           </table>` : '<p class="empty-notice">Nenhuma transferência para UTI registrada no período.</p>'}
@@ -660,7 +661,7 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <img src="${platformLogoUrl}" alt="HapMap" />
             <div class="header-center">
               <h1>Relatório Analítico Clínico</h1>
-              <p>Recorrência e Distribuição Sindrômica — ${label}</p>
+              <p>Recorrência e Distribuição Sindrômica — ${escapeHtml(label)}</p>
             </div>
             <img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" />
           </div>
@@ -671,11 +672,11 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
             <tr><th>Paciente</th><th>Visitas</th><th>Diagnósticos</th><th>Padrão Identificado</th><th>Gravidade</th></tr>
             ${reportData.recurrentPatients.map(r => `
               <tr>
-                <td><strong>${r.name}</strong></td>
-                <td style="text-align:center; font-weight:700; font-size:11pt; color:#7c3aed;">${r.visits}</td>
-                <td>${r.diagnoses}</td>
-                <td><em>${r.pattern}</em></td>
-                <td><span class="badge ${r.severity === 'GRAVÍSSIMO' ? 'badge-gravissimo' : r.severity === 'GRAVE' ? 'badge-grave' : 'badge-potencial'}">${r.severity}</span></td>
+                <td><strong>${escapeHtml(r.name)}</strong></td>
+                <td style="text-align:center; font-weight:700; font-size:11pt; color:#7c3aed;">${escapeHtml(r.visits)}</td>
+                <td>${escapeHtml(r.diagnoses)}</td>
+                <td><em>${escapeHtml(r.pattern)}</em></td>
+                <td><span class="badge ${r.severity === 'GRAVÍSSIMO' ? 'badge-gravissimo' : r.severity === 'GRAVE' ? 'badge-grave' : 'badge-potencial'}">${escapeHtml(r.severity)}</span></td>
               </tr>
             `).join('')}
           </table>` : '<p class="empty-notice">Nenhum paciente com recorrência identificada no período.</p>'}
@@ -685,7 +686,7 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
           <div style="margin-bottom: 14px;">
             ${reportData.syndromes.map(s => `
               <div class="syndrome-bar">
-                <div class="bar-label">${s.name}</div>
+                <div class="bar-label">${escapeHtml(s.name)}</div>
                 <div class="bar-track"><div class="bar-fill" style="width: ${Math.min(s.percentage * 2.5, 100)}%;"></div></div>
                 <div class="bar-value">${s.count} (${s.percentage}%)</div>
               </div>
@@ -694,7 +695,7 @@ export function ClinicalAnalyticsReport({ onClose }: { onClose: () => void }) {
 
           <h2 class="section-title amber">5. Insights para Gestão</h2>
           ${reportData.managementInsights.length > 0 ? reportData.managementInsights.map((insight, i) => `
-            <div class="insight-box"><strong>${i + 1}.</strong> ${insight}</div>
+            <div class="insight-box"><strong>${i + 1}.</strong> ${escapeHtml(insight)}</div>
           `).join('') : '<p class="empty-notice">Dados insuficientes para gerar insights no período.</p>'}
 
           <div class="footer">

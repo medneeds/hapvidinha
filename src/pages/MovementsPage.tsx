@@ -19,6 +19,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { AppPageHeader } from "@/components/AppPageHeader";
+import { escapeHtml } from "@/utils/escapeHtml";
 
 
 interface PatientMovement {
@@ -278,7 +279,7 @@ export default function MovementsPage() {
     const filterDescription = (() => {
       const parts: string[] = [];
       if (activeTab !== "all") parts.push(`Tipo: ${movementTypeLabel[activeTab] || activeTab}`);
-      if (searchTerm) parts.push(`Busca: "${searchTerm}"`);
+      if (searchTerm) parts.push(`Busca: "${escapeHtml(searchTerm)}"`);
       if (appliedStartDate) parts.push(`De: ${format(appliedStartDate, "dd/MM/yyyy")}`);
       if (appliedEndDate) parts.push(`Até: ${format(appliedEndDate, "dd/MM/yyyy")}`);
       return parts.length > 0 ? parts.join(" • ") : "Todos os registros";
@@ -298,15 +299,15 @@ export default function MovementsPage() {
 
       return `
         <tr>
-          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;font-weight:600;">${m.patient_name.toUpperCase()}</td>
-          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${sector}</td>
-          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${bed}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;font-weight:600;">${escapeHtml((m.patient_name || "").toUpperCase())}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${escapeHtml(sector)}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${escapeHtml(bed)}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">
-            <span style="background:${color};color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;">${label}</span>
+            <span style="background:${color};color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;">${escapeHtml(label)}</span>
           </td>
-          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${dest}</td>
-          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${doctor}</td>
-          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:10px;max-width:180px;overflow:hidden;text-overflow:ellipsis;">${diagnoses}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${escapeHtml(dest)}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:11px;">${escapeHtml(doctor)}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:10px;max-width:180px;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(diagnoses)}</td>
           <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;font-size:10px;white-space:nowrap;">${date}</td>
         </tr>
       `;
@@ -350,7 +351,7 @@ export default function MovementsPage() {
             <img src="${hapmapLogoUrl}" alt="HapMap" />
             <div>
               <div class="title">HISTÓRICO DE MOVIMENTAÇÕES</div>
-              <div class="subtitle">${currentDepartment} • ${whitelabel.institution.hospitalName}</div>
+              <div class="subtitle">${escapeHtml(currentDepartment)} • ${whitelabel.institution.hospitalName}</div>
             </div>
           </div>
           <div class="header-right">

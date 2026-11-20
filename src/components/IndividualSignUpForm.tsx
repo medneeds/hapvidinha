@@ -163,6 +163,9 @@ export function IndividualSignUpForm({
             crm: validated.crm,
             specialty: validated.specialty,
             phone: validated.phone || null,
+            // The server assigns this role only from a fixed list of
+            // non-administrative categories; access starts after approval.
+            role: selectedRole,
           },
         },
       });
@@ -189,18 +192,6 @@ export function IndividualSignUpForm({
 
         if (profileError) {
           console.error("Error updating profile:", profileError);
-        }
-
-        // Assign selected role
-        const { error: roleError } = await supabase
-          .from("user_roles")
-          .insert({
-            user_id: authData.user.id,
-            role: selectedRole,
-          });
-
-        if (roleError) {
-          console.error("Error assigning role:", roleError);
         }
 
         // Sign out immediately - user needs approval

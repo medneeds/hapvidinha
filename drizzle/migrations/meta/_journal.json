@@ -43,6 +43,13 @@
       "when": 1795208699200,
       "tag": "0005_restrict_remaining_clinical_access",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795210956023,
+      "tag": "0006_bind_role_checks_and_protect_signup",
+      "breakpoints": true
     }
   ]
 }

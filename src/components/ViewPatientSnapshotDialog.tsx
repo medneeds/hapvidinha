@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
 import { whitelabel } from "@/config/whitelabel";
+import { escapeHtml } from "@/utils/escapeHtml";
 
 interface ViewPatientSnapshotDialogProps {
   patient: Patient | null;
@@ -54,7 +55,7 @@ export function ViewPatientSnapshotDialog({
 
     const listItems = (items: string[] | undefined, fallback = "Não informado") => {
       if (!items || items.length === 0) return `<p style="color:#888;font-size:12px;">${fallback}</p>`;
-      return `<ol style="margin:0;padding-left:18px;">${items.map(i => `<li style="font-size:12px;margin-bottom:3px;text-transform:uppercase;">${i}</li>`).join("")}</ol>`;
+      return `<ol style="margin:0;padding-left:18px;">${items.map(i => `<li style="font-size:12px;margin-bottom:3px;text-transform:uppercase;">${escapeHtml(i)}</li>`).join("")}</ol>`;
     };
 
     const hapmapLogoUrl = whitelabel.logos.platform;
@@ -67,7 +68,7 @@ export function ViewPatientSnapshotDialog({
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Caso Clínico - ${patient.name}</title>
+        <title>Caso Clínico - ${escapeHtml(patient.name)}</title>
         <style>
           @page { size: A4 portrait; margin: 18mm; }
           * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -104,11 +105,11 @@ export function ViewPatientSnapshotDialog({
         </div>
 
         <div class="patient-header">
-          <div class="patient-name">${patient.name}</div>
+          <div class="patient-name">${escapeHtml(patient.name)}</div>
           <div class="patient-meta">
-            <div>Leito: <span>${patient.bedNumber}</span></div>
-            ${patient.age ? `<div>Idade: <span>${formatAgeDisplay(patient.age)}</span></div>` : ""}
-            <div>Setor: <span>${sectorLabel}</span></div>
+            <div>Leito: <span>${escapeHtml(patient.bedNumber)}</span></div>
+            ${patient.age ? `<div>Idade: <span>${escapeHtml(formatAgeDisplay(patient.age))}</span></div>` : ""}
+            <div>Setor: <span>${escapeHtml(sectorLabel)}</span></div>
             <div>Admissão: <span>${admissionDateStr}</span></div>
           </div>
         </div>
@@ -136,7 +137,7 @@ export function ViewPatientSnapshotDialog({
         ${patient.admissionHistory ? `
         <div class="section">
           <div class="section-title">História Admissional / Anamnese</div>
-          <div class="anamnese-box">${patient.admissionHistory}</div>
+          <div class="anamnese-box">${escapeHtml(patient.admissionHistory)}</div>
         </div>
         ` : ""}
 

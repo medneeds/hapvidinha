@@ -4,6 +4,7 @@ import { Printer, X, Download } from "lucide-react";
 import { formatAgeDisplay } from "@/utils/ageDisplay";
 import { useRef } from "react";
 import { whitelabel, getConfidentialityFooter } from "@/config/whitelabel";
+import { escapeHtml } from "@/utils/escapeHtml";
 
 interface PrintPatientPreviewDialogProps {
   patient: Patient;
@@ -61,7 +62,7 @@ export function PrintPatientPreviewDialog({ patient, onClose }: PrintPatientPrev
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Caso Clínico - ${patient.name}</title>
+          <title>Caso Clínico - ${escapeHtml(patient.name)}</title>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
             * {

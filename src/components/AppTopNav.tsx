@@ -20,7 +20,7 @@ import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { whitelabel } from "@/config/whitelabel";
+import { verifyAdminPanelPassword } from "@/utils/adminPanelPassword";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUnitChecklist } from "@/hooks/useUnitChecklist";
@@ -204,8 +204,9 @@ export function AppTopNav() {
     }
   };
 
-  const submitAdminPassword = () => {
-    if (adminPassword === whitelabel.admin.panelPassword) {
+  const submitAdminPassword = async () => {
+    const ok = await verifyAdminPanelPassword(adminPassword);
+    if (ok) {
       setAdminUnlocked(true);
       setShowAdminPassword(false);
       setAdminPassword("");

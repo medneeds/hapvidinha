@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { escapeHtml } from "@/utils/escapeHtml";
 
 // ── Types ──
 
@@ -170,15 +171,15 @@ function printPatientCase(data: {
 
   const listItems = (items: string[], fallback = "Não informado") => {
     if (!items.length) return `<p style="color:#888;font-size:12px;">${fallback}</p>`;
-    return `<ol style="margin:0;padding-left:18px;">${items.map(i => `<li style="font-size:12px;margin-bottom:3px;text-transform:uppercase;">${i}</li>`).join("")}</ol>`;
+    return `<ol style="margin:0;padding-left:18px;">${items.map(i => `<li style="font-size:12px;margin-bottom:3px;text-transform:uppercase;">${escapeHtml(i)}</li>`).join("")}</ol>`;
   };
 
   const movementInfo = data.movement_type ? `
     <div style="background:#f0f4ff;border:1px solid #d0d8ef;border-radius:6px;padding:10px 14px;margin-bottom:14px;">
-      <p style="font-size:12px;font-weight:700;color:#013ba6;margin-bottom:4px;">MOVIMENTAÇÃO: ${(movementTypeLabel[data.movement_type] || data.movement_type).toUpperCase()}</p>
-      ${data.destination ? `<p style="font-size:11px;">Destino: ${data.destination}</p>` : ''}
-      ${data.responsible_doctor ? `<p style="font-size:11px;">Médico: ${data.responsible_doctor}</p>` : ''}
-      ${data.notes ? `<p style="font-size:11px;">Notas: ${data.notes}</p>` : ''}
+      <p style="font-size:12px;font-weight:700;color:#013ba6;margin-bottom:4px;">MOVIMENTAÇÃO: ${escapeHtml((movementTypeLabel[data.movement_type] || data.movement_type).toUpperCase())}</p>
+      ${data.destination ? `<p style="font-size:11px;">Destino: ${escapeHtml(data.destination)}</p>` : ''}
+      ${data.responsible_doctor ? `<p style="font-size:11px;">Médico: ${escapeHtml(data.responsible_doctor)}</p>` : ''}
+      ${data.notes ? `<p style="font-size:11px;">Notas: ${escapeHtml(data.notes)}</p>` : ''}
       ${data.movement_date ? `<p style="font-size:11px;">Data: ${formatDateBR(data.movement_date)}</p>` : ''}
     </div>
   ` : '';
@@ -188,7 +189,7 @@ function printPatientCase(data: {
 
   printWindow.document.write(`
     <!DOCTYPE html><html><head>
-    <title>Caso Clínico - ${data.name}</title>
+    <title>Caso Clínico - ${escapeHtml(data.name)}</title>
     <style>
       @page { size: A4 portrait; margin: 18mm; }
       * { margin:0; padding:0; box-sizing:border-box; }
@@ -215,10 +216,10 @@ function printPatientCase(data: {
       <div class="header-right"><img src="${whitelabel.logos.networkFull}" alt="Rede" /></div>
     </div>
     <div class="patient-info">
-      <div class="info-item"><strong>Paciente:</strong> ${data.name}</div>
-      <div class="info-item"><strong>Leito:</strong> ${data.bed_number}</div>
-      <div class="info-item"><strong>Setor:</strong> ${sLabel}</div>
-      ${data.age ? `<div class="info-item"><strong>Idade:</strong> ${data.age}</div>` : ''}
+      <div class="info-item"><strong>Paciente:</strong> ${escapeHtml(data.name)}</div>
+      <div class="info-item"><strong>Leito:</strong> ${escapeHtml(data.bed_number)}</div>
+      <div class="info-item"><strong>Setor:</strong> ${escapeHtml(sLabel)}</div>
+      ${data.age ? `<div class="info-item"><strong>Idade:</strong> ${escapeHtml(data.age)}</div>` : ''}
       <div class="info-item"><strong>Admissão:</strong> ${admDateStr}</div>
     </div>
     ${movementInfo}
@@ -227,7 +228,7 @@ function printPatientCase(data: {
     <div class="section"><div class="section-title">Exames Relevantes</div>${listItems(data.relevant_exams)}</div>
     <div class="section"><div class="section-title">Programações / Pendências</div>${listItems(data.pendencies)}</div>
     ${data.schedule.length ? `<div class="section"><div class="section-title">Plano Terapêutico</div>${listItems(data.schedule)}</div>` : ''}
-    <div class="section"><div class="section-title">História Admissional / Anamnese</div><p style="font-size:12px;white-space:pre-wrap;">${data.admission_history || 'Não informada'}</p></div>
+    <div class="section"><div class="section-title">História Admissional / Anamnese</div><p style="font-size:12px;white-space:pre-wrap;">${escapeHtml(data.admission_history || 'Não informada')}</p></div>
     <div class="footer"><span>${whitelabel.platform.fullName}</span><span>${dateStr} ${timeStr}</span></div>
     </body></html>
   `);

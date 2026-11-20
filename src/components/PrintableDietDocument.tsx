@@ -7,6 +7,7 @@ import { useRef } from "react";
 
 // Import logos from whitelabel config
 import { whitelabel } from "@/config/whitelabel";
+import { escapeHtml } from "@/utils/escapeHtml";
 
 interface PrintableDietDocumentProps {
   patient: Patient;
@@ -55,7 +56,7 @@ export function PrintableDietDocument({
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Autorização de Dieta - ${patient.name}</title>
+          <title>Autorização de Dieta - ${escapeHtml(patient.name)}</title>
           <style>
             * {
               margin: 0;

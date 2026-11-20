@@ -23,7 +23,7 @@ import { QuickNotesDialog } from "@/components/QuickNotesDialog";
 import { MedicalCodesDialog } from "@/components/MedicalCodesDialog";
 import { useUnitChecklist } from "@/hooks/useUnitChecklist";
 import { useNavigate } from "react-router-dom";
-import { whitelabel } from "@/config/whitelabel";
+import { verifyAdminPanelPassword } from "@/utils/adminPanelPassword";
 import { useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
@@ -236,8 +236,9 @@ export function AppSidebar({
     setShowPasswordDialog(true);
   };
 
-  const handlePasswordSubmit = () => {
-    if (password === whitelabel.admin.panelPassword) {
+  const handlePasswordSubmit = async () => {
+    const ok = await verifyAdminPanelPassword(password);
+    if (ok) {
       // Unlock the section
       if (selectedSection && !unlockedSections.includes(selectedSection)) {
         setUnlockedSections(prev => [...prev, selectedSection]);

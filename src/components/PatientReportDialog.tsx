@@ -11,6 +11,7 @@ import { usePrivacy, maskName } from "@/contexts/PrivacyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHospital } from "@/contexts/HospitalContext";
 import { useDepartment } from "@/contexts/DepartmentContext";
+import { escapeHtml } from "@/utils/escapeHtml";
 
 interface Props {
   patient: Patient;
@@ -106,12 +107,12 @@ export function PatientReportDialog({ patient, open, onOpenChange }: Props) {
                   const now = new Date();
                   const dateStr = now.toLocaleDateString('pt-BR');
                   const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                  const escapedContent = reportText.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
+                  const escapedContent = escapeHtml(reportText).replace(/\n/g, '<br/>');
 
                   const printWindow = window.open('', '_blank');
                   if (!printWindow) return;
                   printWindow.document.write(`<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Relatório - ${patient.name}</title>
+<html><head><meta charset="utf-8"><title>Relatório - ${escapeHtml(patient.name)}</title>
 <style>
   @page { size: A4 portrait; margin: 18mm 15mm 15mm 15mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -177,10 +178,10 @@ export function PatientReportDialog({ patient, open, onOpenChange }: Props) {
   <div class="header"><div class="logo-main"><img src="${networkLogoUrl}" alt="Hapvida NotreDame Intermédica" /></div></div>
   <div class="title-bar"><h1>Relatório Médico</h1><span class="hospital-name">${whitelabel.institution.hospitalName}</span></div>
   <div class="patient-strip">
-    <div class="field"><span class="field-label">Paciente</span><span class="field-value">${patient.name}</span></div>
+    <div class="field"><span class="field-label">Paciente</span><span class="field-value">${escapeHtml(patient.name)}</span></div>
     <div class="divider"></div>
-    ${patient.age ? `<div class="field"><span class="field-label">Idade</span><span class="field-value">${patient.age}</span></div><div class="divider"></div>` : ''}
-    <div class="field"><span class="field-label">Leito</span><span class="field-value">${patient.bedNumber}</span></div>
+    ${patient.age ? `<div class="field"><span class="field-label">Idade</span><span class="field-value">${escapeHtml(patient.age)}</span></div><div class="divider"></div>` : ''}
+    <div class="field"><span class="field-label">Leito</span><span class="field-value">${escapeHtml(patient.bedNumber)}</span></div>
     <div class="divider"></div>
     <div class="field"><span class="field-label">Setor</span><span class="field-value">${patient.sector === 'red' ? 'Vermelho' : patient.sector === 'yellow' ? 'Amarelo' : patient.sector === 'blue' ? 'Azul' : patient.sector}</span></div>
     <div class="divider"></div>

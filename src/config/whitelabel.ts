@@ -104,11 +104,6 @@ export const whitelabel = {
   ],
 
   // ── Senha do Painel Admin ──
-  admin: {
-    /** Senha de acesso ao painel administrativo */
-    panelPassword: "NOTREDAME",
-  },
-
   // ── Documentos Impressos ──
   print: {
     /** Texto do rodapé de documentos */
