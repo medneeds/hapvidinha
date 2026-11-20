@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { translatePasswordError } from "@/utils/passwordRule";
 import {
   Dialog,
   DialogContent,
@@ -65,7 +66,7 @@ export function ChangeOwnPasswordDialog({
         resetAndClose();
       }, 2000);
     } catch (err: any) {
-      toast.error("Erro ao alterar senha: " + (err.message || "Erro desconhecido"));
+      toast.error("Erro ao alterar senha: " + translatePasswordError(err?.message || "Erro desconhecido"));
     } finally {
       setLoading(false);
     }
