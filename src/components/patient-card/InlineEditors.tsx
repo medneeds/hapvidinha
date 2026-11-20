@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Plus, GripVertical, Star, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { uppercaseKeepingCaret, caretOffsetFromPoint } from "@/utils/uppercaseInput";
 import {
   DndContext,
   closestCenter,
@@ -143,6 +144,8 @@ const SortableItem = memo(function SortableItem({ id, index, value, onEdit, onDe
   const [localValue, setLocalValue] = useState(value);
   const [isLeaving, setIsLeaving] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  // Where the user clicked in the text, so editing starts there instead of at the end.
+  const pendingCaretRef = useRef<number | null>(null);
 
   // Auto-grow textarea height to fit the full content while editing
   const autoResize = (el: HTMLTextAreaElement | null) => {
@@ -171,9 +174,12 @@ const SortableItem = memo(function SortableItem({ id, index, value, onEdit, onDe
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
-      // place caret at end + size to content on open
+      // place caret where the user clicked (or at the end) + size to content on open
       const len = inputRef.current.value.length;
-      inputRef.current.setSelectionRange(len, len);
+      const at = pendingCaretRef.current;
+      pendingCaretRef.current = null;
+      const pos = at === null ? len : Math.min(at, len);
+      inputRef.current.setSelectionRange(pos, pos);
       autoResize(inputRef.current);
     }
   }, [isEditing]);
@@ -264,7 +270,7 @@ const SortableItem = memo(function SortableItem({ id, index, value, onEdit, onDe
           ref={inputRef}
           value={localValue}
           onChange={(e) => {
-            setLocalValue(e.target.value.toUpperCase());
+            setLocalValue(uppercaseKeepingCaret(e.currentTarget, (e.nativeEvent as InputEvent).isComposing));
             autoResize(e.currentTarget);
           }}
           rows={1}
@@ -288,6 +294,7 @@ const SortableItem = memo(function SortableItem({ id, index, value, onEdit, onDe
             )}
             onClick={(e) => {
               e.stopPropagation();
+              pendingCaretRef.current = caretOffsetFromPoint(e.currentTarget, e.clientX, e.clientY);
               setIsEditing(true);
             }}
           >
@@ -672,7 +679,7 @@ export function InlineEditableArray({
               ref={newInputRef}
               value={newItemValue}
               onChange={(e) => {
-                setNewItemValue(e.target.value.toUpperCase());
+                setNewItemValue(uppercaseKeepingCaret(e.currentTarget, (e.nativeEvent as InputEvent).isComposing));
                 const el = e.currentTarget;
                 el.style.height = 'auto';
                 el.style.height = `${el.scrollHeight}px`;
@@ -778,7 +785,7 @@ export function InlineEditableField({ value, onUpdate, placeholder = "-", classN
         ref={inputRef}
         type="text"
         value={localValue}
-        onChange={(e) => setLocalValue(e.target.value.toUpperCase())}
+        onChange={(e) => setLocalValue(uppercaseKeepingCaret(e.currentTarget, (e.nativeEvent as InputEvent).isComposing))}
         className={cn("bg-background text-foreground border rounded px-1.5 py-0.5 outline-none text-sm w-full uppercase", SECTOR_INPUT[colorVariant], className)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleSave();
@@ -854,7 +861,7 @@ export function InlineEditableTextarea({ value, onUpdate, placeholder = "-", col
         ref={textareaRef}
         value={localValue}
         onChange={(e) => {
-          setLocalValue(e.target.value.toUpperCase());
+          setLocalValue(uppercaseKeepingCaret(e.currentTarget, (e.nativeEvent as InputEvent).isComposing));
         }}
         className={cn("w-full bg-background text-foreground border rounded px-2 py-1.5 outline-none text-xs uppercase min-h-[80px] max-h-[300px] resize-y overflow-auto", SECTOR_INPUT[colorVariant])}
         onKeyDown={(e) => {
