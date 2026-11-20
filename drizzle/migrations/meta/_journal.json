@@ -29,6 +29,13 @@
       "when": 1793727370877,
       "tag": "0003_cancel_uti_transit_patient",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795207138045,
+      "tag": "0004_restrict_access_to_approved_staff",
+      "breakpoints": true
     }
   ]
 }
